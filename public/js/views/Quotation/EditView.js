@@ -2,13 +2,15 @@ define([
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
+        'views/Projects/projectInfo/orderView',
+        'collections/Quotation/filterCollection',
         "common",
         "custom",
         "dataService",
         "populate",
         'constants'
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, AssigneesView, ProductItemView, ordersView, quotationCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
@@ -26,6 +28,8 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/quotation";
                 this.responseObj = {};
+                this.forSales = false;
+
                 this.render(options);
             },
 
@@ -55,7 +59,20 @@ define([
                 $(".newSelectList").hide();
             },
             chooseOption: function (e) {
+                var target = $(e.target);
+                var id = target.attr("id");
+                var type = target.attr('data-level');
+
+                var element = _.find(this.responseObj['#project'], function (el) {
+                    return el._id === id;
+                });
+
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+                if (type === 'emptyProject'){
+                    this.$el.find('#supplierDd').text(element.customer.name);
+                    this.$el.find('#supplierDd').attr('data-id', element.customer._id);
+                }
             },
             nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
@@ -123,7 +140,10 @@ define([
                     if (products && products.length) {
                         self.currentModel.save({
                             isOrder: true,
-                            workflow: workflow._id
+                            workflow: {
+                                _id: workflow._id,
+                                name: workflow.name
+                            }
                         }, {
                             headers: {
                                 mid: 57
@@ -132,7 +152,57 @@ define([
                             success: function () {
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                                if (self.redirect){
+                                    //var url = window.location.hash;
+                                    //
+                                    //Backbone.history.fragment = '';
+                                    //Backbone.history.navigate(url, {trigger: true});
+
+                                    var data ={products: JSON.stringify(products), type: "Order"};
+
+                                    dataService.postData("/jobs/update", data,  function(err, result){
+                                        if (err){
+                                            return console.log(err);
+                                        }
+
+                                    });
+                                    var filter = {
+                                        'projectName': {
+                                            key  : 'project._id',
+                                            value: [self.pId]
+                                        },
+                                        'isOrder': {
+                                            key  : 'isOrder',
+                                            value: ['true']
+                                        }
+                                    };
+
+                                    self.ordersCollection = new quotationCollection({
+                                        count      : 50,
+                                        viewType   : 'list',
+                                        contentType: 'salesOrder',
+                                        filter     : filter
+                                    });
+
+                                    function createView() {
+
+                                        new ordersView({
+                                            collection: self.ordersCollection,
+                                            projectId : self.pId,
+                                            customerId: self.customerId,
+                                            projectManager: self.projectManager,
+                                            filter: filter
+                                        }).render({activeTab: true});
+                                    };
+
+                                    self.ordersCollection.bind('reset', createView);
+
+                                    self.collection.remove(self.currentModel.get('_id'));
+
+                                } else {
+                                    Backbone.history.navigate(redirectUrl, {trigger: true});
+                                }
+
                             }
                         });
                     } else {
@@ -153,20 +223,26 @@ define([
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    //var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name: workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -179,22 +255,28 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Quotation'
+                    wId: 'Sales Order'
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                   // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name: workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -215,7 +297,15 @@ define([
                 var quantity;
                 var price;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
+                var supplier = {};
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+                var project = {};
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
@@ -236,8 +326,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
-                var workflow = this.currentModel.get('workflow');
-                workflow = workflow ? workflow._id : null;
+                var wF = this.currentModel.get('workflow');
+                var workflow = {};
+                workflow._id =  wF._id;
+                workflow.name =  wF.name;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -283,6 +375,7 @@ define([
                     supplierReference: supplierReference,
                     deliverTo: deliverTo,
                     products: products,
+                    project       : project,
                     orderDate: orderDate,
                     expectedDate: expectedDate,
                     destination: destination,
@@ -304,15 +397,19 @@ define([
                     workflow: workflow
                 };
 
-                if (supplier) {
+                if (supplier._id) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
                         },
                         wait: true,
                         success: function () {
+                            var url = window.location.hash;
+
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
@@ -360,6 +457,7 @@ define([
                     model: this.currentModel.toJSON(),
                     visible: this.visible
                 });
+                var service = this.forSales;
                 var notDiv;
                 var model;
                 var productItemContainer;
@@ -405,7 +503,15 @@ define([
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                if (App.weTrack && this.forSales){
+                    populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
+
+                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+
+                } else {
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                }
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",
@@ -419,8 +525,19 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
-                    new ProductItemView({editable: true}).render({model: model}).el
+                    new ProductItemView({editable: true, service: service}).render({model: model}).el
                 );
+
+                dataService.getData("/project/getForWtrack", null, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
+
 
 
                 if (model.groups)

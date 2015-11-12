@@ -4,6 +4,7 @@ require('pmx').init();
 module.exports = function (app, mainDb) {
     'use strict';
 
+    //var newrelic = require('newrelic');
     var events = require('events');
     var event = new events.EventEmitter();
     var logWriter = require('../helpers/logWriter');
@@ -17,7 +18,7 @@ module.exports = function (app, mainDb) {
     var models = require("../models.js")(dbsObject);
     var productRouter = require('./product')(models);
     var orderRouter = require('./order')(models);
-    var invoiceRouter = require('./invoice')(models);
+    var invoiceRouter = require('./invoice')(models, event);
     var supplierRouter = require('./supplier')(models);
     var quotationRouter = require('./quotation')(models);
     var destinationRouter = require('./destination')(models);
@@ -26,7 +27,7 @@ module.exports = function (app, mainDb) {
     var paymentTermRouter = require('./paymentTerm')(models);
     var deliverToTermRouter = require('./deliverTo')(models);
     var workflowRouter = require('./workflow')(models);
-    var paymentRouter = require('./payment')(models);
+    var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
     var importDataRouter = require('./importData')(models);
@@ -48,14 +49,13 @@ module.exports = function (app, mainDb) {
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
     var capacityRouter = require('./capacity')(models);
-
-    app.get('/', function (req, res, next) {
-        res.sendfile('index.html');
-    });
+    var payRollRouter = require('./payroll')(models);
+    var importFileRouter = require('./importFile')(models);
+    var jobsRouter = require('./jobs')(models, event);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
-    app.get('/', function (req, res) {
+    app.get('/', function (req, res, next) {
         res.sendfile('index.html');
     });
 
@@ -75,12 +75,13 @@ module.exports = function (app, mainDb) {
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
     app.use('/importData', importDataRouter);
+    app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);
     app.use('/employee', employeeRouter);
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
-    app.use('/salary', salaryRouter);
+    //app.use('/payroll', salaryRouter);
     app.use('/opportunity', opportunityRouter);
     app.use('/task', taskRouter);
     app.use('/jobPosition', jobPositionRouter);
@@ -92,6 +93,8 @@ module.exports = function (app, mainDb) {
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
     app.use('/capacity', capacityRouter);
+    app.use('/payroll', payRollRouter);
+    app.use('/jobs', jobsRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -1410,6 +1413,9 @@ module.exports = function (app, mainDb) {
             res.status(status).send({error: err.message + '\n' + err.stack});
         }
     };
+
+
+    requestHandler.initScheduler();
 
     app.use(notFound);
     app.use(errorHandler);

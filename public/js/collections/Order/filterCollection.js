@@ -43,11 +43,29 @@
                 this.count = options.count;
                 this.page = options.page || 1;
 
-                options.filter = {};
 
-                if (regex.test(this.contentType)) {
-                    options.filter.forSales = true;
+
+                if (regex.test(this.contentType) && !(options.filter)) {
+                    options.filter = {};
+
+                    options.filter = {
+                        'forSales': {
+                            key: 'forSales',
+                            value: ['true']
+                        }
+                    }
+                } else {
+                    options.filter = {};
+
+                    options.filter = {
+                        'forSales': {
+                            key: 'forSales',
+                            value: ['false']
+                        }
+                    }
                 }
+
+                this.filter = options.filter;
 
                 if (options && options.viewType) {
                     this.url += options.viewType;

@@ -11,11 +11,11 @@ var Customers = function (models) {
 
     var CONSTANTS = require('../constants/mainConstants');
 
-    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
-    var exportMap = require('../helpers/csvMap').Customers.aliases;
-    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').Customers;
+    exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'Customer', CustomerSchema)
-    }, exportMap, 'Customers');
+    }, exportMap);
 
     this.getSuppliersForDD = function (req, res, next) {
         /**

@@ -915,7 +915,7 @@ var Customers = function (event, models) {
 
             var fullName;
 
-            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+            if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
 
                 InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
                 Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
@@ -956,7 +956,7 @@ var Customers = function (event, models) {
                 if (data.salesPurchases && data.salesPurchases.salesTeam && data.salesPurchases.salesTeam._id) {
                     data.salesPurchases.salesTeam = data.salesPurchases.salesTeam._id;
                 }
-                models.get(req.session.lastDb, "Customers", customerSchema).findByIdAndUpdate({_id: _id}, data, function (err, customers) {
+                models.get(req.session.lastDb, "Customers", customerSchema).findByIdAndUpdate({_id: _id}, data, {new: true}, function (err, customers) {
                     if (err) {
                         logWriter.log("Customer.js update customer.update " + err);
                         res.send(500, {error: "Can't update customer"});
@@ -990,7 +990,7 @@ var Customers = function (event, models) {
                 data.notes[data.notes.length - 1] = obj;
             }
 
-            models.get(req.session.lastDb, 'Customers', customerSchema).findByIdAndUpdate({_id: _id}, {$set: data}, function (err, result) {
+            models.get(req.session.lastDb, 'Customers', customerSchema).findByIdAndUpdate({_id: _id}, {$set: data}, {new: true}, function (err, result) {
                 if (err) {
                     logWriter.log("Customer.js update customer.update " + err);
                     res.send(500, {error: "Can't update Customer"});

@@ -2,13 +2,16 @@
     <span id="<%=groupViewName%>"><%=groupName%></span>
 </div>
 <div id="<%=groupViewName%>Container" class="ulContent<%=groupStatus ? ' hidden' : ''%>">
+    <% if (paginationBool){%>
+        <input style="width: 90%" id="<%=groupViewName%>Input" placeholder="Search" \>
+    <%}%>
     <ul id="<%=groupViewName%>Ul" class="filterValues">
     </ul>
     <% if (paginationBool){%>
-    <li class="miniStylePagination">
-        <a class="prev" href="javascript:;">&lt;Prev</a>
-        <span class="counter"></span>
-        <a class="next" href="javascript:;">Next&gt;</a>
-    </li>
+        <li class="miniStylePagination">
+            <a class="prev" href="javascript:;">&lt;Prev</a>
+            <span class="counter"></span>
+            <a class="next" href="javascript:;">Next&gt;</a>
+        </li>
     <%}%>
 </div>

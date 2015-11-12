@@ -46,6 +46,7 @@
             events: {
                 "click #showMore": "showMore",
                 "click .thumbnail": "gotoEditForm",
+                "click .dropDown": "dropDown",
                 "click .filterButton": "showfilter",
                 "click .health-wrapper .health-container": "showHealthDd",
                 "click .health-wrapper ul li div": "chooseHealthDd",
@@ -53,6 +54,10 @@
                 "click .newSelectList li": "chooseOption",
                 "click": "hideHealth",
                 "click .filter-check-list li": "checkCheckbox"
+            },
+
+            dropDown: function (e) {
+                e.stopPropagation();
             },
 
             checkCheckbox: function (e) {

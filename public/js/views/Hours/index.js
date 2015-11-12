@@ -238,7 +238,7 @@ define([
 
             this.model.set('weeksArr', weeksArr);
 
-            custom.cashToApp('weeksArr', weeksArr);
+            custom.cacheToApp('weeksArr', weeksArr);
 
             //this.fetchHours();
         },

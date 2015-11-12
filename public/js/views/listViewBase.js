@@ -1,11 +1,13 @@
 define([
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Alpabet/AphabeticTemplate.html',
+        'text!templates/Notes/importTemplate.html',
+        'views/Notes/AttachView',
         'common',
         'dataService',
     ],
 
-    function (paginationTemplate, aphabeticTemplate, common, dataService) {
+    function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
         var ListViewBase = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -59,7 +61,7 @@ define([
                 this.collection.unbind('reset');
                 this.collection.unbind('showmore');
 
-                target$ = $(e.target);
+                target$ = $(e.target).closest('th');
                 currentParrentSortClass = target$.attr('class');
                 sortClass = currentParrentSortClass.split(' ')[1];
                 sortConst = 1;
@@ -390,7 +392,7 @@ define([
                 itemView = new this.listItemView({
                     collection : newModels,
                     page       : holder.find("#currentShowPage").val(),
-                    itemsNumber: holder.find("span#itemsNumber").text()
+                    itemsNumber: this.defaultItemsNumber
                 });
 
                 holder.append(itemView.render());
@@ -534,15 +536,21 @@ define([
                 });
             },
 
-            renderFilter: function (self) {
+            renderFilter: function (self, baseFilter) {
                 self.filterView = new this.filterView({
                     contentType: self.contentType
                 });
 
                 self.filterView.bind('filter', function (filter) {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
                     self.showFilteredPage(filter, self)
                 });
                 self.filterView.bind('defaultFilter', function () {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
                     self.showFilteredPage({}, self);
                 });
 
@@ -572,9 +580,44 @@ define([
                 }
             },
 
-            //</editor-fold>
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                if (this.exportToCsvUrl) {
+                    window.location = this.exportToCsvUrl;
+                } else {
+                    if (this.collection) {
+                        window.location = this.collection.url + '/exportToCsv';
+                    }
+                }
+            },
+
+            exportToXlsx        : function () {
+                //todo change after routes refactoring
+                if (this.exportToXlsxUrl) {
+                    window.location = this.exportToXlsxUrl;
+                } else {
+                    if (this.collection) {
+                        window.location = this.collection.url + '/exportToXlsx';
+                    }
+                }
+            },
+            fileSizeIsAcceptable: function (file) {
+                if (!file) {
+                    return false;
+                }
+                return file.size < App.File.MAXSIZE;
+            },
+
+
+            importFiles: function (context) {
+                new attachView({
+                    modelName: context.contentType,
+                    import: true
+                });
+            }
 
         });
+
 
         ListViewBase.extend = function (child) {
             var view = Backbone.View.extend.apply(this, arguments);

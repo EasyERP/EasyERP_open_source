@@ -8,7 +8,7 @@ var Opportunities = function (models, event) {
     var workflowSchema = mongoose.Schemas['workflow'];
     var fs = require('fs');
 
-    function getTotalCount (req, response) {
+    function getTotalCount(req, response) {
         var res = {};
         var data = req.query;
         var filterObj = {};
@@ -18,7 +18,7 @@ var Opportunities = function (models, event) {
         var contentType = req.params.contentType;
         var optionsObject = {};
 
-        if (filter && typeof filter === 'object' ) {
+        if (filter && typeof filter === 'object') {
             optionsObject['$and'] = [];
             //filterObj['$or'] = [];
             //or = filterObj['$or'];
@@ -46,11 +46,11 @@ var Opportunities = function (models, event) {
             case ('Leads'):
                 optionsObject['$and'].push({'isOpportunitie': false});
 
-                if ( data.filter && data.filter.isConverted) {
+                if (data.filter && data.filter.isConverted) {
                     optionsObject['$and'].push({'isOpportunitie': true});
                     optionsObject['$and'].push({'isConverted': true});
                 }
-                if (data && data.filter ) {
+                if (data && data.filter) {
                     optionsObject['$and'].push(filterObj);
                 }
                 break;
@@ -130,7 +130,7 @@ var Opportunities = function (models, event) {
             });
     };
 
-    function create (req, data, res) {
+    function create(req, data, res) {
         try {
             if (!data) {
                 logWriter.log('Opprtunities.create Incorrect Incoming Data');
@@ -140,7 +140,7 @@ var Opportunities = function (models, event) {
                 savetoDb(data);
             }
 
-            function savetoDb (data) {
+            function savetoDb(data) {
                 try {
                     var _opportunitie = new models.get(req.session.lastDb, "Opportunities", opportunitiesSchema)();
                     _opportunitie.isOpportunitie = (data.isOpportunitie) ? data.isOpportunitie : false;
@@ -306,7 +306,7 @@ var Opportunities = function (models, event) {
                                 res.send(201, {
                                     success: {
                                         massage: 'A new Opportunities create success',
-                                        id: result._id
+                                        id     : result._id
                                     }
                                 });
                             }
@@ -326,10 +326,14 @@ var Opportunities = function (models, event) {
         }
     };
 
-    function getLeadsForChart (req, response, data) {
+    function getLeadsForChart(req, response, data) {
         var res = {};
-        if (!data.dataRange) data.dataRange = 365;
-        if (!data.dataItem) data.dataItem = "M";
+        if (!data.dataRange) {
+            data.dataRange = 365;
+        }
+        if (!data.dataItem) {
+            data.dataItem = "M";
+        }
         switch (data.dataItem) {
             case "M":
                 data.dataItem = "$month";
@@ -356,21 +360,21 @@ var Opportunities = function (models, event) {
                 $match: {
                     $and: [{
                         createdBy: {$ne: null},
-                        source: {$ne: ""},
-                        $or: [{isConverted: true}, {isOpportunitie: false}]
+                        source   : {$ne: ""},
+                        $or      : [{isConverted: true}, {isOpportunitie: false}]
                     }, {'createdBy.date': {$gte: a}}]
                 }
             }, {
                 $group: {
-                    _id: {source: "$source", isOpportunitie: "$isOpportunitie"},
+                    _id  : {source: "$source", isOpportunitie: "$isOpportunitie"},
                     count: {$sum: 1}
                 }
             }, {
                 $project: {
                     "source": "$_id.source",
-                    count: 1,
-                    "isOpp": "$_id.isOpportunitie",
-                    _id: 0
+                    count   : 1,
+                    "isOpp" : "$_id.isOpportunitie",
+                    _id     : 0
                 }
             }).exec(function (err, result) {
                 if (err) {
@@ -400,7 +404,7 @@ var Opportunities = function (models, event) {
                     $match: {
                         $and: [{
                             createdBy: {$ne: null},
-                            $or: [{isConverted: true}, {isOpportunitie: false}]
+                            $or      : [{isConverted: true}, {isOpportunitie: false}]
                         },
                             {
                                 'createdBy.date': {$gte: a}
@@ -410,19 +414,19 @@ var Opportunities = function (models, event) {
                 myItem,
                 {
                     $group: {
-                        _id: {dateBy: "$dateBy", isOpportunitie: "$isOpportunitie", year: "$year"},
+                        _id  : {dateBy: "$dateBy", isOpportunitie: "$isOpportunitie", year: "$year"},
                         count: {$sum: 1},
-                        date: {$push: "$convertedDate"}
+                        date : {$push: "$convertedDate"}
                     }
                 },
                 {
                     $project: {
                         "source": "$_id.dateBy",
-                        count: 1,
-                        date: 1,
-                        year: "$_id.year",
-                        "isOpp": "$_id.isOpportunitie",
-                        _id: 0
+                        count   : 1,
+                        date    : 1,
+                        year    : "$_id.year",
+                        "isOpp" : "$_id.isOpportunitie",
+                        _id     : 0
                     }
                 },
                 {
@@ -442,7 +446,7 @@ var Opportunities = function (models, event) {
         }
     }
 
-    function get (req, response) {
+    function get(req, response) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).find({isOpportunitie: true});
@@ -463,7 +467,7 @@ var Opportunities = function (models, event) {
         });
     };
 
-    function getById (req, id, response) {
+    function getById(req, id, response) {
         var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(id);
         query.populate('company customer salesPerson salesTeam workflow').
             populate('groups.users').
@@ -471,7 +475,6 @@ var Opportunities = function (models, event) {
             populate('createdBy.user').
             populate('editedBy.user').
             populate('groups.owner', '_id login');
-
 
         query.exec(function (err, result) {
             if (err) {
@@ -503,7 +506,7 @@ var Opportunities = function (models, event) {
                     content.push({'name': {$in: condition}});
                     break;
                 case 'workflow':
-                    content.push({ 'workflow': {$in: condition.objectID()}});
+                    content.push({'workflow': {$in: condition.objectID()}});
                     break;
                 case 'Creation date':
                     content.push({
@@ -514,7 +517,9 @@ var Opportunities = function (models, event) {
                     });
                     break;
                 case 'Next action':
-                    if (!condition.length) condition = [''];
+                    if (!condition.length) {
+                        condition = [''];
+                    }
                     content.push({'nextAction.desc': {$in: condition}});
                     break;
                 case 'Expected revenue':
@@ -525,7 +530,7 @@ var Opportunities = function (models, event) {
         }
     };
 
-    function getFilter (req, response) {
+    function getFilter(req, response) {
         var res = {};
         var condition;
         var filterObj;
@@ -546,40 +551,40 @@ var Opportunities = function (models, event) {
                 if (data && data.filter) {
                     filterObj = {};
                     optionsObject['$and'].push(filterObj);
-                //    if (data.filter.condition === 'or') {
-                //        filterObj['$or'] = [];
-                //        condition = filterObj['$or'];
-                //    } else {
-                //        filterObj['$and'] = [];
-                //        condition = filterObj['$and'];
-                //}
+                    //    if (data.filter.condition === 'or') {
+                    //        filterObj['$or'] = [];
+                    //        condition = filterObj['$or'];
+                    //    } else {
+                    //        filterObj['$and'] = [];
+                    //        condition = filterObj['$and'];
+                    //}
 
-                caseFilterOpp(data.filter, condition);
+                    caseFilterOpp(data.filter, condition);
 
-                /*for (var key in data.filter) {
-                 condition = data.filter[key];
-                 switch (key) {
-                 case 'Name':
-                 or.push({ 'name': {$in: condition}});
-                 break;
-                 case 'Creation date':
-                 or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-                 break;
-                 case 'Next action':
-                 if (!condition.length) condition = [''];
-                 or.push({ 'nextAction.desc': {$in: condition}});
-                 break;
-                 case 'Expected revenue':
-                 ConvertType(condition, 'integer');
-                 or.push({ 'expectedRevenue.value': {$in: condition}});
-                 break;
-                 }
-                 }*/
-               // if (!condition.length) {
-               //     delete filterObj['$or'];
-               //     delete filterObj['$and']
-               // }
-            }
+                    /*for (var key in data.filter) {
+                     condition = data.filter[key];
+                     switch (key) {
+                     case 'Name':
+                     or.push({ 'name': {$in: condition}});
+                     break;
+                     case 'Creation date':
+                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                     break;
+                     case 'Next action':
+                     if (!condition.length) condition = [''];
+                     or.push({ 'nextAction.desc': {$in: condition}});
+                     break;
+                     case 'Expected revenue':
+                     ConvertType(condition, 'integer');
+                     or.push({ 'expectedRevenue.value': {$in: condition}});
+                     break;
+                     }
+                     }*/
+                    // if (!condition.length) {
+                    //     delete filterObj['$or'];
+                    //     delete filterObj['$and']
+                    // }
+                }
             }
                 break;
             case ('Leads'):
@@ -752,7 +757,7 @@ var Opportunities = function (models, event) {
             });
     };
 
-    function update (req, _id, data, res) {
+    function update(req, _id, data, res) {
         if (data.company && data.company._id) {
             data.company = data.company._id;
         } else if (data.company) {
@@ -775,12 +780,16 @@ var Opportunities = function (models, event) {
         }
         if (data.groups && data.groups.group) {
             data.groups.group.forEach(function (group, index) {
-                if (group._id) data.groups.group[index] = objectId(group._id.toString());
+                if (group._id) {
+                    data.groups.group[index] = objectId(group._id.toString());
+                }
             });
         }
         if (data.groups && data.groups.users) {
             data.groups.users.forEach(function (user, index) {
-                if (user._id) data.groups.users[index] = objectId(user._id.toString());
+                if (user._id) {
+                    data.groups.users[index] = objectId(user._id.toString());
+                }
             });
         }
 
@@ -792,9 +801,11 @@ var Opportunities = function (models, event) {
             };
         }
         event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
-            if (!data.info) data.info = {};
+            if (!data.info) {
+                data.info = {};
+            }
             data.sequence = sequence;
-            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, data, function (err, result) {
+            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
 
                 if (err) {
                     console.log(err);
@@ -807,22 +818,22 @@ var Opportunities = function (models, event) {
         });
     }// end update
 
-    function updateLead (req, _id, data, res) {
+    function updateLead(req, _id, data, res) {
 
-        function updateOpp () {
+        function updateOpp() {
             var createPersonCustomer = function (company) {
                 if (data.contactName && (data.contactName.first || data.contactName.last)) {
                     var _person = {
-                        name: data.contactName,
-                        email: data.email,
-                        phones: data.phones,
-                        company: company._id,
+                        name          : data.contactName,
+                        email         : data.email,
+                        phones        : data.phones,
+                        company       : company._id,
                         salesPurchases: {
-                            isCustomer: true,
+                            isCustomer : true,
                             salesPerson: data.salesPerson
                         },
-                        type: 'Person',
-                        createdBy: {user: req.session.uId}
+                        type          : 'Person',
+                        createdBy     : {user: req.session.uId}
                     };
                     models.get(req.session.lastDb, "Customers", customerSchema).find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
                         if (err) {
@@ -860,18 +871,22 @@ var Opportunities = function (models, event) {
             }
             if (data.groups && data.groups.group) {
                 data.groups.group.forEach(function (group, index) {
-                    if (group._id) data.groups.group[index] = objectId(group._id.toString());
+                    if (group._id) {
+                        data.groups.group[index] = objectId(group._id.toString());
+                    }
                 });
             }
             if (data.groups && data.groups.users) {
                 data.groups.users.forEach(function (user, index) {
-                    if (user._id) data.groups.users[index] = objectId(user._id.toString());
+                    if (user._id) {
+                        data.groups.users[index] = objectId(user._id.toString());
+                    }
                 });
             }
 
             event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
                 data.sequence = sequence;
-                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                     if (err) {
                         console.log(err);
                         logWriter.log("Opportunities.js update opportunitie.update " + err);
@@ -881,17 +896,17 @@ var Opportunities = function (models, event) {
                         if (data.createCustomer) {
                             if (data.tempCompanyField) {
                                 var _company = {
-                                    name: {
+                                    name          : {
                                         first: data.tempCompanyField,
-                                        last: ''
+                                        last : ''
                                     },
-                                    address: data.address,
+                                    address       : data.address,
                                     salesPurchases: {
-                                        isCustomer: true,
+                                        isCustomer : true,
                                         salesPerson: data.salesPerson
                                     },
-                                    type: 'Company',
-                                    createdBy: {user: req.session.uId}
+                                    type          : 'Company',
+                                    createdBy     : {user: req.session.uId}
                                 };
                                 models.get(req.session.lastDb, 'Customers', customerSchema).find({'name.first': data.tempCompanyField}, function (err, companies) {
                                     if (err) {
@@ -914,7 +929,7 @@ var Opportunities = function (models, event) {
                                             } else {
                                                 models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).update({_id: _id}, {
                                                     $set: {
-                                                        company: _res._id,
+                                                        company : _res._id,
                                                         customer: _res._id
                                                     }
                                                 }, function (err, result) {
@@ -960,7 +975,7 @@ var Opportunities = function (models, event) {
         }
     }
 
-    function updateOnlySelectedFields (req, _id, data, res) {
+    function updateOnlySelectedFields(req, _id, data, res) {
         var fileName = data.fileName;
         delete data.fileName;
         if (data.workflow && data.sequenceStart && data.workflowStart) {
@@ -968,9 +983,10 @@ var Opportunities = function (models, event) {
                 event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
                     event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
-                        if (data.workflow == data.workflowStart)
+                        if (data.workflow == data.workflowStart) {
                             data.sequence -= 1;
-                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+                        }
+                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                             if (!err) {
                                 res.send(200, {success: 'Opportunities updated', sequence: result.sequence});
                             } else {
@@ -987,7 +1003,7 @@ var Opportunities = function (models, event) {
                     delete data.workflowStart;
                     data.info = {};
                     data.sequence = sequence;
-                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                         if (!err) {
                             res.send(200, {success: 'Opportunities updated'});
                         } else {
@@ -1007,15 +1023,17 @@ var Opportunities = function (models, event) {
                 }
                 if (data.notes && data.notes.length != 0) {
                     var obj = data.notes[data.notes.length - 1];
-                    if (!obj._id)
+                    if (!obj._id) {
                         obj._id = mongoose.Types.ObjectId();
+                    }
                     obj.date = new Date();
-                    if (!obj.author)
+                    if (!obj.author) {
                         obj.author = req.session.uName;
+                    }
                     data.notes[data.notes.length - 1] = obj;
                 }
 
-                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                     if (!err) {
                         if (fileName) {
                             var os = require("os");
@@ -1056,8 +1074,8 @@ var Opportunities = function (models, event) {
 
                         }
                         res.send(200, {
-                            success: 'Opportunities updated',
-                            notes: result.notes,
+                            success : 'Opportunities updated',
+                            notes   : result.notes,
                             sequence: result.sequence
                         });
                     } else {
@@ -1071,7 +1089,7 @@ var Opportunities = function (models, event) {
 
     }
 
-    function getFilterOpportunitiesForMiniView (req, data, response) {
+    function getFilterOpportunitiesForMiniView(req, data, response) {
         var res = {};
         res['data'] = [];
         models.get(req.session.lastDb, "Department", departmentSchema).aggregate(
@@ -1156,8 +1174,9 @@ var Opportunities = function (models, event) {
                                     });
                                 } else {
 
-                                    if (data && data.status && data.status.length > 0)
+                                    if (data && data.status && data.status.length > 0) {
                                         query.where('workflow').in(data.status);
+                                    }
                                     query.select("_id name expectedRevenue.currency expectedRevenue.value nextAction.date workflow");
 
                                     query.populate('workflow', 'name').
@@ -1176,7 +1195,6 @@ var Opportunities = function (models, event) {
 
                                 }
 
-
                             } else {
                                 console.log(err);
                             }
@@ -1188,12 +1206,13 @@ var Opportunities = function (models, event) {
             });
     }
 
-    function getFilterOpportunitiesForKanban (req, data, response) {
+    function getFilterOpportunitiesForKanban(req, data, response) {
         var res = {};
         var condition;
         var cond;
         var filterObj;
         var optionsObject = {};
+
         function ConvertType(array, type) {
             if (type === 'integer') {
                 for (var i = array.length - 1; i >= 0; i--) {
@@ -1232,18 +1251,25 @@ var Opportunities = function (models, event) {
 
                             switch (key) {
                                 case 'Name':
-                                    cond.push({ 'name': {$in: condition}});
+                                    cond.push({'name': {$in: condition}});
                                     break;
                                 case 'CreationDate':
-                                    cond.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                                    cond.push({
+                                        'creationDate': {
+                                            $gte: new Date(condition[0].start),
+                                            $lte: new Date(condition[0].end)
+                                        }
+                                    });
                                     break;
                                 case 'NextAction':
-                                    if (!condition.length) condition = [''];
-                                    cond.push({ 'nextAction.desc': {$in: condition}});
+                                    if (!condition.length) {
+                                        condition = [''];
+                                    }
+                                    cond.push({'nextAction.desc': {$in: condition}});
                                     break;
                                 case 'Expected revenue':
                                     ConvertType(condition, 'integer');
-                                    cond.push({ 'expectedRevenue.value': {$in: condition}});
+                                    cond.push({'expectedRevenue.value': {$in: condition}});
                                     break;
 
                             }
@@ -1258,12 +1284,14 @@ var Opportunities = function (models, event) {
                         {
                             $match: {
                                 $and: [
-                                    {$and: [
-                                        {
-                                            isOpportunitie: true
-                                        },
-                                        optionsObject
-                                    ]},
+                                    {
+                                        $and: [
+                                            {
+                                                isOpportunitie: true
+                                            },
+                                            optionsObject
+                                        ]
+                                    },
                                     {
                                         workflow: objectId(data.workflowId)
                                     },
@@ -1334,7 +1362,7 @@ var Opportunities = function (models, event) {
             });
     };
 
-    function getCollectionLengthByWorkflows (req, res) {
+    function getCollectionLengthByWorkflows(req, res) {
         var data = {};
         data['showMore'] = false;
         models.get(req.session.lastDb, "Department", departmentSchema).aggregate(
@@ -1390,20 +1418,22 @@ var Opportunities = function (models, event) {
                         },
                         {
                             $project: {
-                                _id: 1,
+                                _id     : 1,
                                 workflow: 1
                             }
                         },
                         {
                             $group: {
-                                _id: "$workflow",
+                                _id  : "$workflow",
                                 count: {$sum: 1}
                             }
                         },
                         function (err, responseOpportunities) {
                             if (!err) {
                                 responseOpportunities.forEach(function (object) {
-                                    if (object.count > req.session.kanbanSettings.opportunities.countPerPage) data['showMore'] = true;
+                                    if (object.count > req.session.kanbanSettings.opportunities.countPerPage) {
+                                        data['showMore'] = true;
+                                    }
                                 });
                                 data['arrayOfObjects'] = responseOpportunities;
                                 res.send(data);
@@ -1417,7 +1447,7 @@ var Opportunities = function (models, event) {
             });
     }
 
-    function remove (req, _id, res) {
+    function remove(req, _id, res) {
         models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndRemove(_id, function (err, result) {
             if (err) {
                 console.log(err);
@@ -1432,22 +1462,20 @@ var Opportunities = function (models, event) {
         });
     }
 
-
-
     return {
-        getTotalCount: getTotalCount,
-        create: create,
-        get: get,
-        getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
-        getById: getById,
-        getFilterOpportunitiesForKanban: getFilterOpportunitiesForKanban,
+        getTotalCount                    : getTotalCount,
+        create                           : create,
+        get                              : get,
+        getCollectionLengthByWorkflows   : getCollectionLengthByWorkflows,
+        getById                          : getById,
+        getFilterOpportunitiesForKanban  : getFilterOpportunitiesForKanban,
         getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
-        getFilter: getFilter,
-        getLeadsForChart: getLeadsForChart,
-        update: update,
-        updateLead: updateLead,
-        updateOnlySelectedFields: updateOnlySelectedFields,
-        remove: remove
+        getFilter                        : getFilter,
+        getLeadsForChart                 : getLeadsForChart,
+        update                           : update,
+        updateLead                       : updateLead,
+        updateOnlySelectedFields         : updateOnlySelectedFields,
+        remove                           : remove
     }
 };
 module.exports = Opportunities;

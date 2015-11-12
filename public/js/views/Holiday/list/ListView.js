@@ -138,6 +138,10 @@ define([
                 var editedElementValue;
                 var editHolidayModel;
 
+                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                    this.setEditable(editedElement);
+                }
+
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
                     editedElementRowId = editedElement.closest('tr').data('id');
@@ -304,7 +308,7 @@ define([
 
                 var model = new holidayModel(startData, { parse: true });
 
-                startData.cid = model.cid;
+                startData._id = model.cid;
 
                 if (!this.isNewRow()) {
                     //this.showSaveCancelBtns();
@@ -380,6 +384,7 @@ define([
                     if (answer === true) {
                         $.each($("#listTable input:checked"), function (index, checkbox) {
                             value = checkbox.value;
+                            that.changedModels = {};;
 
                             if (value.length < 24) {
                                 that.editCollection.remove(value);
@@ -438,6 +443,7 @@ define([
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
+                    var trId = tr.attr("id");
                     var rowNumber = tr.find('[data-content="number"]').text();
                     var id = tr.data('id');
                     var template = _.template(cancelEdit);
@@ -447,10 +453,14 @@ define([
                         return cb('Empty id');
                     }
 
-                    model = collection.get(id);
+                    model = editedCollectin.get(id);
                     model = model.toJSON();
                     model.index = rowNumber;
-                    tr.replaceWith(template({ holiday: model }));
+                    if (!trId) {
+                        tr.replaceWith(template({holiday: model}));
+                    } else {
+                        tr.remove();
+                    }
                     cb();
                 }, function (err) {
                     if (!err) {

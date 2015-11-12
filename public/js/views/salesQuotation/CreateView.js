@@ -2,11 +2,18 @@
  * Created by soundstorm on 27.05.15.
  */
 define([
-    'views/Quotation/CreateView'
+    'views/Quotation/CreateView',
+        "models/QuotationModel"
 ],
-function(CreateView) {
+function(CreateView, QuotationModel) {
     var salesQuotation = CreateView.extend({
-        forSales: true
+        forSales: true,
+        responseObj: {},
+        initialize: function(){
+            this.forSales = true;
+            this.model = new QuotationModel();
+            this.render();
+        }
     });
 
     return salesQuotation;

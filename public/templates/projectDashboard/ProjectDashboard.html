@@ -3,13 +3,16 @@
     <td><%=startNumber + index + 1 %></td>
     <td><a href='#easyErp/Employees/form/<%=project.projectmanager._id%>'><%=project.projectmanager.name%></a></td>
     <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
-    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.revenueSum) ? currencySplitter(project.budget.budgetTotal.revenueSum.toFixed(2)) : 0%></td>
-    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.costSum) ? currencySplitter(project.budget.budgetTotal.costSum.toFixed(2)) : 0%></td>
-    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.profitSum) ? currencySplitter(project.budget.budgetTotal.profitSum.toFixed(2)) : 0%></td>
-    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.rateSum) ? currencySplitter(project.budget.budgetTotal.rateSum.toFixed(2)) : 0%></td>
-    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.hoursSum) ? currencySplitter(project.budget.budgetTotal.hoursSum.toFixed(2)) : 0%></td>
-    <td class="procent"><%=(project.budget && project.budget.projectValues) ? project.budget.projectValues.markUp + ' %' : '0 %'%></td>
-    <td class="procent"><%=(project.budget && project.budget.projectValues) ? project.budget.projectValues.radio + ' %' : '0 %'%></td>
+    <td><%=(project.total && project.total.revenueSum) ? currencySplitter(project.total.revenueSum.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.total && project.total.costSum) ? currencySplitter(project.total.costSum.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.total && project.total.profitSum) ? currencySplitter(project.total.profitSum.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.total && project.total.rateSum) ? currencySplitter(project.total.rateSum.byDev ? project.total.rateSum.byDev.toFixed(2) : '') : '&nbsp'%></td>
+    <td><%=(project.total && project.total.rateSum) ? currencySplitter(project.total.rateSum.byQA ?project.total.rateSum.byQA.toFixed(2) : '') : '&nbsp'%></td>
+    <td><%=(project.total && project.total.hoursSum) ? currencySplitter(project.total.hoursSum.toFixed()) : '&nbsp'%></td>
+    <td class="procent"><%=(project.total && project.total.markUp) ? (project.total.markUp ? project.total.markUp.toFixed()  : '&nbsp') : '&nbsp'%></td>
+    <td class="procent"><%=(project.total && project.total.radio) ? (project.total.radio ? project.total.radio.toFixed() : '&nbsp') : '&nbsp'%></td>
+    <td><%=(project.total && project.total.minDate) ? weekSplitter(project.total.minDate.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.total && project.total.maxDate) ? weekSplitter(project.total.maxDate.toFixed()) : '&nbsp'%></td>
 </tr>
 <% }) %>
 

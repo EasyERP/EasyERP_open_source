@@ -55,6 +55,16 @@ define([], function () {
                 backend: 'services'
             }
         },
+        DashVacation         : {
+            'Employee'   : {
+                view   : 'name',
+                backend: 'employee'
+            },
+            'Department'  : {
+                view   : 'department',
+                backend: 'department._id'
+            }
+        },
         Companies       : {
             'Name'    : {
                 view   : 'name',
@@ -139,20 +149,20 @@ define([], function () {
             }
         },
         Projects        : {
-            'Project Name'   : {
+            'Project Name' : {
                 view   : 'name',
                 backend: '_id'
             },
-            'Contact'        : {
+            'Contact'      : {
                 view   : 'customer',
                 backend: 'customer._id'
             },
-            'Status'         : {
+            'Status'       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
             'Sales Manager': {
-                view: 'projectmanager',
+                view   : 'projectmanager',
                 backend: 'projectmanager._id'
             }
         },
@@ -188,6 +198,10 @@ define([], function () {
             'Payment Way': {
                 view   : 'paymentMethod',
                 backend: 'paymentMethod._id'
+            },
+            'Name'     : {
+                view   : 'name',
+                backend: '_id'
             },
             'Status'     : {
                 view   : 'workflow',
@@ -237,6 +251,102 @@ define([], function () {
                 view   : 'canBePurchased',
                 backend: 'canBePurchased'
             }
+        },
+        salesProduct    : {
+            'Product Name'    : {
+                view   : 'name',
+                backend: '_id'
+            },
+            'Product Type'    : {
+                view   : 'productType',
+                backend: 'info.productType'
+            },
+            'Can be Sold'     : {
+                view   : 'canBeSold',
+                backend: 'canBeSold'
+            },
+            'Can be Expensed' : {
+                view   : 'canBeExpensed',
+                backend: 'canBeExpensed'
+            },
+            'Can be Purchased': {
+                view   : 'canBePurchased',
+                backend: 'canBePurchased'
+            }
+        },
+        Quotation       : {
+            'Supplier': {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Status'  : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        salesQuotation  : {
+            'Project'      : {
+                view   : 'projectName',
+                backend: 'project._id'
+            },
+            'Customer'     : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager': {
+                view   : 'projectmanager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'       : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        salesOrder      : {
+            'Project'      : {
+                view   : 'projectName',
+                backend: 'project._id'
+            },
+            'Customer'     : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager': {
+                view   : 'projectmanager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'       : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        Order           : {
+            'Supplier': {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Status'  : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        Payroll         : {
+            'Employee': {
+                view   : 'employee',
+                backend: 'employee._id'
+            },/*
+            'Month'   : {
+                view   : 'month',
+                backend: 'month'
+            },
+            'Year'    : {
+                view   : 'year',
+                backend: 'year'
+            },*/
+            'Data Key'    : {
+                view   : 'dataKey',
+                backend: 'dataKey'
+            },
         }
     };
 
@@ -270,27 +380,37 @@ define([], function () {
         SALESINVOICE      : 'salesInvoice',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
-        SALARY            : 'Salary',
+        PAYROLL           : 'Payroll',
         REVENUE           : 'Revenue',
         MONTHHOURS        : 'monthHours',
         BONUSTYPE         : 'bonusType',
         HOLIDAY           : 'Holiday',
         VACATION          : 'Vacation',
         ATTENDANCE        : 'Attendance',
-        DASHBOARD_VACATION: 'DashboardVacation',
-        DASHBOARD_HR: 'HrDashboard',
-        HOURS: 'Hours',
-        CAPACITY: 'Capacity',
+        DASHBOARD_VACATION: 'DashBoardVacation',
+        DASHBOARD_HR      : 'HrDashboard',
+        HOURS             : 'Hours',
+        CAPACITY          : 'Capacity',
+        JOBSDASHBOARD          : 'jobsDashboard',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
-            CREATE_QUOTATION        : 'Please check at most one supplier or create one',
+            CREATE_QUOTATION        : 'Supplier and project fields can not be empty!',
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },
 
         WTRACK_DB_NAME   : 'weTrack',
         FILTERS          : filters,
-        FILTERVALUESCOUNT: 7
+        FILTERVALUESCOUNT: 7,
+        DEPARTMENTS_ORDER: [
+            'iOS',
+            'Android',
+            'Web',
+            'WP',
+            'QA',
+            'Design',
+            'PM'
+        ],
     }
 });

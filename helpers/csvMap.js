@@ -1,5 +1,8 @@
 module.exports = (function () {
 
+    var moment = require('../public/js/libs/moment/moment');
+    var dateFormat = 'MMMM Do YYYY';
+
     var department = {
         collection: 'Department',
         schema    : 'Department',
@@ -18,6 +21,14 @@ module.exports = (function () {
         },
         arrayKeys : {
             users: true
+        },
+        formatters: {
+            'Created Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited Date' : function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
 
     };
@@ -75,8 +86,8 @@ module.exports = (function () {
             'groups.users'       : 'Groups Users',
             'groups.group'       : 'Groups Group',
             otherInfo            : 'Other Info',
-            expectedSalary       : 'Expected Salary',
-            proposedSalary       : 'Proposed Salary',
+            expectedSalary       : 'Expected Payroll',
+            proposedSalary       : 'Proposed Payroll',
             color                : 'Color',
             creationDate         : 'Creation Date',
             'createdBy.user'     : 'Created User',
@@ -90,7 +101,7 @@ module.exports = (function () {
             gender               : 'Gender',
             jobType              : 'JobType',
             sequence             : 'Sequence',
-            isLead               : 'IsLead',
+            isLead               : 'Is Lead',
             ID                   : 'ID',
             'social.FB'          : 'Facebook',
             'social.LI'          : 'Linkedin',
@@ -106,6 +117,48 @@ module.exports = (function () {
             hire          : true,
             fire          : true,
             attachments   : true
+        },
+        formatters: {
+            'Date Birth'       : function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Created Date'     : function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Creation Date'    : function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited By Date'   : function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Contract End Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Is Lead'          : function (number) {
+                switch (number) {
+                    case 0:
+                        return "Low";
+                    case 1:
+                        return "Medium";
+                    case 2:
+                        return "High";
+                }
+            },
+            'Hire'             : function (array) {
+                var result = [];
+                array.forEach(function (item) {
+                    result.push(moment(item).utc().format(dateFormat))
+                });
+                return result;
+            },
+            'Fire'             : function (array) {
+                var result = [];
+                array.forEach(function (item) {
+                    result.push(moment(item).utc().format(dateFormat))
+                });
+                return result;
+            }
+
         }
     };
 
@@ -210,6 +263,14 @@ module.exports = (function () {
         arrayKeys : {
             'groups.users': true,
             'groups.group': true
+        },
+        formatters: {
+            'Created Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited Date' : function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
     };
 
@@ -227,7 +288,7 @@ module.exports = (function () {
             7                            : 'Sun',
             dateByWeek                   : 'Date By Week',
             dateByMonth                  : 'Date By Month',
-            'project.id'                      : 'Project ID',
+            'project.id'                 : 'Project ID',
             'project.projectName'        : 'Project Name',
             'project.projectmanager._id' : 'Project Manager Id',
             'project.projectmanager.name': 'Project Manager Name',
@@ -264,6 +325,14 @@ module.exports = (function () {
         arrayKeys : {
             'groups.users': true,
             'groups.group': true
+        },
+        formatters: {
+            'Created Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited Date' : function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
     };
 
@@ -304,6 +373,17 @@ module.exports = (function () {
         arrayKeys : {
             'groups.users': true,
             'groups.group': true
+        },
+        formatters: {
+            'Invoice Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Created Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited Date' : function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
 
     };
@@ -363,6 +443,17 @@ module.exports = (function () {
             'companyInfo.size'              : 'Company Size',
             'companyInfo.industry'          : 'Company Industry',
             ID                              : 'Id'
+        },
+        formatters: {
+            'Date Birthday': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Created Date' : function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited Date'  : function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
     };
 
@@ -415,6 +506,17 @@ module.exports = (function () {
         arrayKeys  : {
             'groups.users': true,
             'groups.group': true
+        },
+        formatters : {
+            'Target End Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Created Date'   : function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited Date'    : function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
     };
 
@@ -455,6 +557,17 @@ module.exports = (function () {
             attachments     : 'Attachments',
             'editedBy.user' : 'Edited By User',
             'editedBy.date' : 'Edited By Date'
+        },
+        formatters : {
+            'Start Date'  : function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Created Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited Date' : function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
     };
 
@@ -491,6 +604,14 @@ module.exports = (function () {
         arrayKeys  : {
             'groups.users': true,
             'groups.group': true
+        },
+        formatters : {
+            'Created Date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            },
+            'Edited Date' : function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
     };
 

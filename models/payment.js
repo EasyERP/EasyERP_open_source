@@ -52,11 +52,11 @@ module.exports = (function () {
         var payment = this;
         var db = payment.db.db;
 
-        db.collection('settings').findAndModify({
+        db.collection('settings').findOneAndUpdate({
                 dbName: db.databaseName,
                 name: 'payment'
             },
-            [['name', 1]],
+            //[['name', 1]],
             {
                 $inc: {seq: 1}
             },
@@ -78,7 +78,7 @@ module.exports = (function () {
         var payment = this;
         var db = payment.db.db;
 
-        db.collection('Invoice').findAndModify({
+        db.collection('Invoice').findOneAndUpdate({
                 _id: doc.invoice
             },
             [['name', 1]],

@@ -11,19 +11,25 @@ var Employee = function (models) {
     var ProjectSchema = mongoose.Schemas.Project;
     //var _ = require('../node_modules/underscore');
 
-    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
-    var exportMap = require('../helpers/csvMap').Employees.aliases;
-    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').Employees;
+    exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'Employee', EmployeeSchema)
     }, exportMap, 'Employees');
     
     this.getNameAndDepartment = getNameAndDepartment;
 
-    function getNameAndDepartment (db, callback) {
+    function getNameAndDepartment (db, isEmployee, callback) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
+        var query;
 
-        Employee
-            .find()
+        if (isEmployee){
+            query =  Employee.find({isEmployee: true});
+        } else {
+            query =  Employee.find();
+        }
+
+        query
             .select('_id name department')
             //.populate('department._id', '_id departmentName')
             .sort({'name.first': 1})
@@ -38,7 +44,9 @@ var Employee = function (models) {
     };
 
     this.getForDD = function (req, res, next) {
-        getNameAndDepartment(req.session.lastDb, function(err, result) {
+        var isEmployee = req.query.isEmployee;
+
+        getNameAndDepartment(req.session.lastDb, isEmployee,  function(err, result) {
             if (err) {
                 return next(err)
             }

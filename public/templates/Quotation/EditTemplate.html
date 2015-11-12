@@ -8,14 +8,14 @@
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
-                        <button class="red confirmOrder">
+                        <button class="confirmOrder">
                             <span>Confirm Order</span>
                         </button>
-                        <button class="red cancelQuotation">
+                        <button class="cancelQuotation">
                             <span>Cancel</span>
                         </button>
                         <%} else {%>
-                        <button class="red setDraft">
+                        <button class="setDraft">
                             <span>Set Draft</span>
                         </button>
                         <%}%>
@@ -30,19 +30,26 @@
                             <%}%>
                             <div class="half-block left">
                                 <dl class="person-info">
-                                    <dt><label for="supplierDd">Supplier</label></dt>
-                                    <dd>
+                                    <dt><label for="supplierDd">
+
                                         <%if(model.supplier){%>
-                                            <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></a>
-                                        <%} else {%>
-                                            <a id="supplierDd" class="current-selected" href="javascript:;" data-id="">Select</a>
-                                        <%}%>
-                                    </dd>
-                                    <dt><label for="supplierReference">Supplier Reference</label></dt>
+                                          <%if (App.weTrack && this.forSales) {%>
+                                            Customer
+                                          <% } else { %>
+                                            Supplier
+                                          <% } %>
+                                        <% } %>
+                                    </label></dt>
                                     <dd>
-                                        <input type="text" name="supplierReference" id="supplierReference"
-                                               maxlength="32" value="<%=model.supplierReference%>"/>
+                                        <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.name%></a>
                                     </dd>
+
+                                    <%if (App.weTrack && this.forSales) {%>
+                                    <dt><label for="projectDd">Project</label></dt>
+                                    <dd>
+                                        <a id="projectDd" class="current-selected" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.projectName%></a>
+                                    </dd>
+                                    <% } %>
                                 </dl>
                             </div>
                             <div class="half-block left">

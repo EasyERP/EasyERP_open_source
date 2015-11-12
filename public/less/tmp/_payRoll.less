@@ -1,0 +1,91 @@
+table.payRoll-list {
+  width: 100%;
+  min-width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  //min-height: .01%;
+  //overflow-x: auto;
+  tfoot {
+    margin-right: 17px;
+  }
+  tbody {
+    tr:hover {
+      background: none;
+    }
+  }
+
+  #payRoll-Table {
+    padding: 0;
+    .scrollit {
+      display: block;
+      height: ~"calc(100vh - 209px)";
+      overflow-x: hidden;
+    }
+  }
+
+  th, td {
+    //box-sizing: border-box;
+    border: 1px solid white;
+    //width: 1%;
+    vertical-align: middle;
+  }
+  #payRoll-TableBody {
+    td {
+      &:nth-child(1) {
+        width: 2%;
+      }
+      &:nth-child(2) {
+        width: 2%;
+      }
+      &:nth-child(3) {
+        width: 27%;
+      }
+      &:nth-child(4) {
+        width: 7%;
+      }
+      &:nth-child(5) {
+        width: 7%;
+      }
+      &:nth-child(6) {
+        width: 7%;
+      }
+      &:nth-child(7) {
+        width: 7%;
+      }
+      &:nth-child(8) {
+        width: 7%;
+      }
+      &:nth-child(9) {
+        width: 7%;
+      }
+      &:nth-child(10) {
+        width: 7%;
+      }
+      &:nth-child(11) {
+        width: 7%;
+      }
+      &:nth-child(12) {
+        width: 13%;
+      }
+    }
+  }
+}
+.borders {
+  col {
+    border: 1px solid;
+  }
+}
+#searchContainer {
+  &.payRoll {
+    margin: 0 0 10px;
+  }
+}
+@media (min-width: 1320px) {
+  table.payRoll-list {
+    #payRoll-Table {
+      .scrollit {
+        height: ~"calc(100vh - 179px)";
+      }
+    }
+  }
+}

@@ -51,7 +51,7 @@ var Project = function (models, event) {
                                     EndDate: EndDate,
                                     progress: progress
                                 }
-                            },
+                            }, {new: true},
                             function (updateError) {
                                 if (updateError) {
                                     console.log(updateError);
@@ -84,7 +84,7 @@ var Project = function (models, event) {
                                     {
                                         $set: updateCondition,
                                         $push: {task: tasks._id}
-                                    },
+                                    }, {new: true},
                                     function (err) {
                                         if (err) {
                                             console.log(err);
@@ -114,7 +114,7 @@ var Project = function (models, event) {
                     } else if (task) {
                         var oldProjectId = task.project;
                         models.get(request.session.lastDb, 'Project', projectSchema).findByIdAndUpdate(oldProjectId,
-                            {$pull: {task: task._id}},
+                            {$pull: {task: task._id}}, {new: true},
                             function (findError) {
                                 if (findError) {
                                     console.log(findError);
@@ -136,7 +136,7 @@ var Project = function (models, event) {
                                 }
                                 models.get(request.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(tasks, {
                                     $set: data
-                                }, function (err, res) {
+                                }, {new: true}, function (err, res) {
                                     if (err) {
                                         console.log(err);
                                         logWriter.log('updateContent in Projects module eventType="' + eventType + '" by ProjectId="' + projectId + '" error=' + findError);
@@ -880,7 +880,8 @@ var Project = function (models, event) {
             populate('groups.owner', '_id name').
             populate('groups.users', '_id login').
             populate('groups.group', '_id departmentName').
-            populate('groups.owner', '_id login');
+            populate('groups.owner', '_id login').
+            populate('budget.projectTeam');
         query.exec(function (err, project) {
             if (err) {
                 logWriter.log("Project.js getProjectById project.find " + err);
@@ -900,7 +901,7 @@ var Project = function (models, event) {
         }
         res['showMore'] = false;
 
-        if (data && data.type !== 'Tasks' && data.filter) {
+        if (data && data.contentType !== 'Tasks' && data.filter) {
 
             addObj['$and'] = caseFilter(data.filter);
 
@@ -991,7 +992,7 @@ var Project = function (models, event) {
                         },
                         function (err, projectsId) {
                             if (!err) {
-                                if (data && data.type == 'Tasks') {
+                                if (data && data.contentType == 'Tasks') {
                                     var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
                                         where('project').in(projectsId.objectID());
                                     /*if (data && data.filter && data.filter.workflow) {
@@ -1198,7 +1199,7 @@ var Project = function (models, event) {
             } else {
                 res.send(200, project);
 
-                if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                     wTrackSchema = mongoose.Schemas['wTrack'];
                     wTrackModel = models.get(dbName, 'wTrack', wTrackSchema);
 
@@ -1354,7 +1355,7 @@ var Project = function (models, event) {
         }
 
         function updateTask() {
-            models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+            models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                 if (!err) {
                     if (fileName) {
                         var os = require("os");
@@ -1866,7 +1867,7 @@ var Project = function (models, event) {
     };
 
     function addAtachments(req, id, data, res) {
-        models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(id, data, function (err, result) {
+        models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(id, data, {new: true}, function (err, result) {
             if (!err) {
                 res.send(200, {success: 'Tasks updated', attachments: result.attachments});
             } else {

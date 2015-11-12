@@ -4,10 +4,10 @@ var Department = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var DepartmentSchema = mongoose.Schemas['Department'];
 
-    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
-    var exportMap = require('../helpers/csvMap').Department.aliases;
+    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').Department;
 
-    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+    exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'Department', DepartmentSchema)
     }, exportMap, "Department");
 

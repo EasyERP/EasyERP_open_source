@@ -52,8 +52,8 @@ define([
                 "click .oe_sortable": "goSort",
                 "change .editable ": "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "focusout .editing": "onChangeInput",
-                "keyup .editing": "onKeyUpInput"
+                "focusout .editing": "onChangeInput"
+                //"keyup .editing": "onKeyUpInput"
             },
 
             initialize: function (options) {
@@ -231,13 +231,16 @@ define([
 
             onChangeInput: function (e) {
                 var element = e.target;
+                var max = parseInt(element.max);
+                var min = parseInt(element.min);
+                var value = parseInt(element.value);
 
-                if (element.max && element.value > element.max) {
-                    element.value = element.max;
+                if (max && value > max) {
+                    element.value = max;
                 }
 
-                if (element.min && element.value < element.min) {
-                    element.value = element.min;
+                if (min && value < min) {
+                    element.value = min;
                 }
             },
 
@@ -681,7 +684,7 @@ define([
                 var self = this;
                 var currentEl = this.$el;
 
-                if (App.currentDb === 'weTrack') {
+                if (App.weTrack) {
                     currentEl.html('');
                     currentEl.append(_.template(ListHeaderForWTrack));
                     currentEl.append(new listItemView({

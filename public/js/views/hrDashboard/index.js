@@ -30,7 +30,7 @@ define([
                 dashCollection = this.dashCollection = new hrDashboard();
                 dashCollection.on('reset sort', this.render, this);
 
-                custom.cashToApp('hrDashboard', dashCollection);
+                custom.cacheToApp('hrDashboard', dashCollection);
             } else {
                 this.render();
             }
@@ -39,6 +39,7 @@ define([
         render: function () {
             var self = this;
             var currentEl = this.$el;
+            $('title').text(this.contentType);
 
             var start = moment().subtract(11, 'month').date(1);
             var startMonth = start.month() + 1;
@@ -68,7 +69,7 @@ define([
                     });
                 }
 
-                custom.cashToApp('arrOfDates', arrOfDates);
+                custom.cacheToApp('arrOfDates', arrOfDates);
             }
 
             currentEl.html(this.template({arrOfDates: arrOfDates, hired: hired, fired: fired}));

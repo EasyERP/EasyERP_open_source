@@ -1,95 +1,530 @@
-﻿﻿<div class="form-holder">
-  <form method="post" action="" id="createApplicationForm" class="form" data-id="<%=model._id%>">
-    <fieldset>
-      <div class="inner">
-        <ul class="dialog-tabs">
-          <li><a class="active" href="javascript:;">Main</a></li>
-          <li><a href="javascript:;">Assignees</a></li>
-          <li class="right"><button class="red hireEmployee"><span>Hire & Create Employee</span></button> <button class="red refuseEmployee"><span>Refuse</span></button></li>
-        </ul>
-        <div class="clearfix"></div>
-        <div class="dialog-tabs-items">
-          <div class="dialog-tabs-item active">
-            <div class="app-block left">
-              <div class="avatar left">
-                <div class="upload">
-                  Edit
-                  <input type="file" value="Edit" id="inputImg" accept="image/*">
-                </div>
-                <canvas id="avatar" width="140" height="140"></canvas>
-              </div>
-              <div class="app-block left marginLeft">
-                <dl class="app-empty-info">
-                  <dt><input type="text" class="name" id="first" placeholder="First name" required maxlength="32" value="<%=model.name.first%>" /></dt><dd>&nbsp;</dd>
-                  <dt><input type="text" class="name" id="last" placeholder="Last name" required maxlength="32" value="<%=model.name.last%>"/></dt><dd>&nbsp;</dd>
-                  <dt><input type="text" id="expectedSalary" placeholder="Expected Salary" maxlength="32" value="<%=model.expectedSalary%>"/></dt><dd>&nbsp;</dd>
-                  <dt><input type="text" id="proposedSalary" placeholder="Proposed Salary" maxlength="32" value="<%=model.proposedSalary%>"/></dt><dd>&nbsp;</dd>
-                </dl>
-              </div>
-            </div>
-            <div class="app-block right">
-              <dl class="app-normal-info">
-                <dt><label for="dateBirth">Date of Birth</label></dt><dd><input type="text" name="dateBirth" id="dateBirth" value="<%=model.dateBirth%>" required readonly/></dd>
-                <dt><label for="pemail">Email </label></dt><dd><input type="email" id="pemail" maxlength="48" value="<%=model.personalEmail%>"/></dd>
-                <dt><label for="phone">Phone </label></dt><dd><input type="text" id="phone" maxlength="20" value="<%=model.workPhones.phone%>"/></dd>
-                <dt><label for="tags">Tags </label></dt><dd><input type="text" id="tags" value="<%=model.tags%>" /></dd>
+﻿﻿
+<div class="form-holder">
+    <form method="post" action="" id="createApplicationForm" class="form" data-id="<%=model._id%>">
+        <fieldset>
+            <div class="inner">
 
-              </dl>
-            </div>
-            <div class="clearfix"></div>
-            <div class="app-block left bottom">
-              <textarea id="otherInfo" class="edit-app" placeholder="Fedback of interviews..."  maxlength="500"><%=model.otherInfo%></textarea>
+                <ul class="dialog-tabs">
+                    <li>
+                        <a class="active"
+                           href="javascript:;">
+                            Main
+                        </a>
+                    </li>
 
-            </div>
-            <div class="app-block right bottom">
-              <dl class="person-info">
-                  <dt><label for="nextAction">Next Action </label></dt><dd><input type="text" id="nextAction" maxlength="32" value="<%=model.nextAction%>" readonly/></dd>
-                <dt><label for="jobPositionDd">Applied Job </label></dt>
-                <dd>
-				  <a id="jobPositionDd" data-id="<%=model.jobPosition?model.jobPosition._id:""%>" class="current-selected" href="javascript:;"><%=model.jobPosition?model.jobPosition.name:"Select"%></a>
-                </dd>
-                <dt><label for="departmentDd">Department</label></dt>
-                <dd>
-				  <a id="departmentDd" data-id="<%=model.department._id?model.department._id:""%>" class="current-selected" href="javascript:;"><%=model.department.name?model.department.name:"Select"%></a>
-                </dd>
-                <dt><label for="sourceDd">Source </label></dt>
-                <dd>
-				  <a id="sourceDd" data-id="<%=model.source%>" class="current-selected" href="javascript:;"><%=model.source?model.source:"Select"%></a>
-				  <ul class="newSelectList hidden">
-                    <li id="www.rabota.ua">www.rabota.ua</li>
-                    <li id="www.work.ua">www.work.ua</li>
-                    <li id="www.ain.net">www.ain.net</li>
-                    <li id="other">other</li>
-				  </ul>
-                </dd>
-                <dt><label for="workflowsDd">Stage</label></dt><dd id="selectWorkflow">
-                  <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
-				</dd>
-                <dt><label for="jobTypeDd">Job type</label></dt>
-                <dd>
-				  <a id="jobTypeDd" data-id="<%=model.jobType?model.jobType:''%>" class="current-selected" href="javascript:;"><%=model.jobType?model.jobType:'Select'%></a>
-                </dd>
-              </dl>
-            </div>
-            <div class="clearfix">
-            </div>
-			<div class="attach-container"></div>
-            <div class="clearfix"></div>
-            <div class="cropImages form" style="display:none;">
-              <div class="formTitle">
-                <h3 class="left">Crop Images</h3>
+                    <li>
+                        <a href="javascript:;"
+                           class="">
+                            Personal Information
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="javascript:;">Assignees</a>
+                    </li>
+
+                    <li class="right">
+                        <button class="red hireEmployee">
+                            <span>Hire & Create Employee</span>
+                        </button>
+                        <button class="red refuseEmployee">
+                            <span>Refuse</span>
+                        </button>
+                    </li>
+
+                </ul>
+
                 <div class="clearfix"></div>
-              </div><br />
-              <div class="image_input" style="float: left;margin-right: 20px;"></div>
-              <img class="image_output" />
-              <div class="clearfix"></div>
+
+                <div class="dialog-tabs-items">
+
+                    <div class="dialog-tabs-item active">
+
+                        <div class="left">
+                            <div class="avatar">
+                                <div class="upload">Edit
+                                    <input type="file" value="Edit" id="inputImg">
+                                </div>
+                                <canvas id="avatar"
+                                        width="140"
+                                        height="140">
+                                </canvas>
+                            </div>
+                            <div class="social">
+                                <% if (model.social.FB){%><a class="facebook" href="<%=model.social.FB%>"></a><%}%>
+                                <% if (model.social.LI){%><a class="linkedin" href="<%=model.social.LI%>"></a><%}%>
+                                <% if (model.skype){%><a class="skype" href="skype:<%=model.skype%>?call"></a><%}%>
+                            </div>
+                        </div>
+
+                        <div class="avatarInfoContainer employee">
+                            <div class="half-block left">
+                                <dl class="edit-employee-info">
+                                    <dt>
+                                        <label for="first">First Name</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               class="blueback"
+                                               id="first"
+                                               value="<%=model.name.first%>"
+                                               required maxlength="32"/>
+                                    </dd>
+                                    <dt>
+                                        <label for="last">Last Name</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               class="blueback"
+                                               id="last"
+                                               value="<%=model.name.last%>"
+                                               required maxlength="32"/>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="expectedSalary">Expected Salary</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               id="expectedSalary"
+                                               maxlength="32"
+                                               value="<%=model.expectedSalary%>"/></dd>
+
+                                    <dt>
+                                        <label for="proposedSalary">Proposed Salary</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               id="proposedSalary"
+                                               maxlength="32"
+                                               value="<%=model.proposedSalary%>"/>
+                                    </dd>
+                                    <!--                <dt><label for="tags">Tags</label></dt><dd><input type="text" id="tags" value="<%=model.tags%>" maxlength="32"/></dd>-->
+                                    <dt>
+                                        <label for="dateBirth">Date of Birth</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               name="dateBirth"
+                                               id="dateBirth"
+                                               value="<%=model.dateBirth%>"
+                                               required readonly/>
+                                    </dd>
+                                    <dt>
+                                        <label for="mobile">Personal Mobile</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text"
+                                               name="mobile"
+                                               id="mobile"
+                                               value="<%=model.workPhones.mobile%>"
+                                               maxlength="20"/>
+                                    </dd>
+                                    <dt>
+                                        <label for="personalEmail">Personal Email</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               id="personalEmail"
+                                               value="<%=model.personalEmail%>" required
+                                               maxlength="48"/>
+                                    </dd>
+                                    <dt>
+                                        <label for="skype">Skype</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               id="skype"
+                                               value="<%=model.skype%>"
+                                               maxlength="32"/>
+                                    </dd>
+                                    <dt>
+                                        <label for="LI">LinkedIn</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               id="LI"
+                                               value="<%=model.social.LI%>"
+                                               placeholder="LinkedIn"
+                                               maxlength="32"/>
+                                    </dd>
+                                    <dt>
+                                        <label for="LI">Facebook</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               id="FB"
+                                               value="<%=model.social.FB%>"
+                                               placeholder="Facebook"
+                                               maxlength="32"/>
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <div class="half-block left">
+                                <dl class="edit-employee-info">
+                                    <dt>
+                                        <label for="nextAction">Next Action </label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text"
+                                               id="nextAction"
+                                               maxlength="32"
+                                               value="<%=model.nextAction%>"
+                                               readonly/>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="jobPositionDd">Job position</label></dt>
+                                    <dd>
+                                        <a id="jobPositionDd"
+                                           data-id="<%=model.jobPosition ? model.jobPosition._id:''%>"
+                                           class="current-selected"
+                                           href="javascript:;"><%=model.jobPosition?(model.jobPosition.name):'Select'%></a>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="departmentDd">Department</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="departmentDd"
+                                           data-id="<%=model.department ? model.department._id : ''%>"
+                                           class="current-selected" href="javascript:;"><%=model.department ?
+                                            (model.department.name) : 'Select'%></a>
+                                    </dd>
+                                    <dt>
+                                        <label for="projectManagerDD">Manager</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="projectManagerDD"
+                                           data-id="<%=model.manager ? model.manager._id : ''%>"
+                                           class="current-selected"
+                                           href="javascript:;"><%=model.manager._id ?
+                                            (model.manager.name) : 'Select'%>
+                                        </a>
+                                    </dd>
+                                    <dt>
+                                        <label for="jobTypeDd">Job type</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="jobTypeDd"
+                                           data-id="<%=model.jobType?model.jobType:''%>"
+                                           class="current-selected"
+                                           href="javascript:;"><%=model.jobType?(model.jobType):'Select'%>
+                                        </a>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="sourceDd">Source </label>
+                                    </dt>
+                                    <dd>
+                                        <a id="sourceDd"
+                                           data-id="<%=model.source?model.source:''%>"
+                                           class="current-selected"
+                                           href="javascript:;"><%=model.source?(model.source):'Select'%>
+                                        </a>
+                                        <ul class="newSelectList" style="display: none;">
+                                            <li id="www.rabota.ua">www.rabota.ua</li>
+                                            <li id="www.work.ua">www.work.ua</li>
+                                            <li id="www.ain.net">www.ain.net</li>
+                                            <li id="other">other</li>
+                                        </ul>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="workEmail">Work Email</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text" id="workEmail" value="<%=model.workEmail%>" required
+                                               maxlength="48"/>
+                                    </dd>
+                                    <dt>
+                                        <label for="phone">Work Phone</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text"
+                                               name="phone"
+                                               id="phone"
+                                               value="<%=model.workPhones.phone%>"
+                                               required maxlength="32"/>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="workflowsDd">Stage</label>
+                                    </dt>
+                                    <dd id="selectWorkflow">
+                                        <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
+                                           class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="relatedUsersDd">Related User</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="relatedUsersDd"
+                                           data-id="<%=model.relatedUser?model.relatedUser._id:''%>"
+                                           class="current-selected"
+                                           href="javascript:;"><%=model.relatedUser?(model.relatedUser.login):'Select'%>
+                                        </a>
+                                    </dd>
+
+                                </dl>
+
+                            </div>
+
+                            <div class="clearfix"></div>
+
+                            <div class="clearfix"></div>
+
+                            <div class="cropImages form" style="display:none;">
+                                <div class="formTitle">
+                                    <h3 class="left">Crop Images</h3>
+
+                                    <div class="clearfix"></div>
+                                </div>
+                                <br/>
+
+                                <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                                <img class="image_output"/>
+
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                       <!-- <div class="app-block left bottom">
+                              <textarea id="otherInfo"
+                                        class="edit-app"
+                                        placeholder="Fedback of interviews..."
+                                        maxlength="500">
+                                <%=model.otherInfo%>
+                            </textarea>
+                        </div>-->
+
+                    </div>
+
+
+                    <div class="dialog-tabs-item">
+                        <div>
+                            <div class="formTitle left">
+                                <h3 class="left">Citizenship &amp; Other Info</h3>
+
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="edit-employee-info">
+                                    <dt><label for="nationality">Nationality</label></dt>
+                                    <dd>
+                                        <a id="nationality" data-id="<%=model.nationality?model.nationality:''%>"
+                                           class="current-selected" href="javascript:;"><%=model.nationality?(model.nationality):'Select'%></a>
+                                    </dd>
+                                    <dt><label for="identNo">Identification №</label></dt>
+                                    <dd><input type="text" name="identNo" id="identNo" value="<%=model.identNo%>"
+                                               required maxlength="32"/></dd>
+                                    <dt><label for="passportNo">Passport №</label></dt>
+                                    <dd><input type="text" name="passportNo" id="passportNo"
+                                               value="<%=model.passportNo%>" required maxlength="32"/></dd>
+                                </dl>
+
+                            </div>
+                            <div class="half-block left">
+                                <dl class="edit-employee-info">
+                                    <dt><label for="bankAccountNo">Bank Account №</label></dt>
+                                    <dd>
+                                        <input type="text" id="bankAccountNo" name="bankAccountNo"
+                                               value="<%=model.bankAccountNo?model.bankAccountNo:''%>">
+                                    </dd>
+                                    <dt><label for="otherId">Other Id</label></dt>
+                                    <dd><input type="text" name="otherId" id="otherId" value="<%=model.otherId%>"
+                                               required maxlength="32"/></dd>
+                                </dl>
+                            </div>
+                            <div class="clearfix">
+                            </div>
+                            <div class="formTitle left">
+                                <h3 class="left">Contact Information</h3>
+
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="edit-employee-info">
+                                    <dt>
+                                        <label>Street</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text"
+                                               class="homeAddress"
+                                               name="street"
+                                               value="<%=model.homeAddress.street%>" maxlength="32"/></dd>
+                                    <dt>
+                                        <label>City</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text"
+                                               class="homeAddress"
+                                               name="city"
+                                               value="<%=model.homeAddress.city%>"
+                                               maxlength="32"/>
+                                    </dd>
+                                    <dt>
+                                        <label>State</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               class="homeAddress"
+                                               name="state"
+                                               value="<%=model.homeAddress.state%>"
+                                               maxlength="32"/>
+                                    </dd>
+                                </dl>
+
+                            </div>
+                            <div class="half-block left">
+                                <dl class="edit-employee-info">
+                                    <dt>
+                                        <label>Zip</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text"
+                                               class="homeAddress"
+                                               name="zip"
+                                               value="<%=model.homeAddress.zip%>"
+                                               maxlength="32"/>
+                                    </dd>
+                                    <dt>
+                                        <label>Country</label>
+                                    </dt>
+                                    <dd><input type="text"
+                                               class="homeAddress"
+                                               name="country"
+                                               value="<%=model.homeAddress.country%>"
+                                               maxlength="32"/></dd>
+                                </dl>
+                            </div>
+                            <div class="clearfix">
+                            </div>
+                            <div class="formTitle">
+                                <h3 class="left">Status</h3>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="half-block left withPaddingLeft">
+                                <dl class="edit-employee-info">
+                                    <dt>
+                                        <label for="genderDd">Gender</label>
+                                    <dd>
+                                        <a id="genderDd"
+                                           data-id="<%=model.gender?model.gender:''%>"
+                                           class="current-selected"
+                                           href="javascript:;">
+                                            <%=model.gender?(model.gender):'Select'%>
+                                        </a>
+                                        <ul class="newSelectList">
+                                            <li id="male">male</li>
+                                            <li id="female">female</li>
+                                        </ul>
+                                    </dd>
+                                    </dt>
+                                </dl>
+
+                            </div>
+                            <div class="half-block left withPaddingLeft">
+
+                                <dl class="edit-employee-info">
+                                    <dt>
+                                        <label for="maritalDd">Marital status</label>
+                                    <dd>
+                                        <a id="maritalDd"
+                                           data-id="<%=model.marital?model.marital:''%>"
+                                           class="current-selected"
+                                           href="javascript:;">
+                                            <%=model.marital?(model.marital):'Select'%>
+                                        </a>
+                                        <ul class="newSelectList">
+                                            <li id="married">married</li>
+                                            <li id="unmarried">unmarried</li>
+                                        </ul>
+                                    </dd>
+                                    </dt>
+                                </dl>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="formTitle">
+                                <h3 class="left">HiredFired</h3>
+
+                                <div class="clearfix"></div>
+                            </div>
+
+                            <div class="half-block left withPaddingLeft">
+                                <%_.each(model.hire, function(hire, key){ %>
+                                <dt>
+                                    <label>Hired</label>
+                                </dt>
+                                <dd><input class="hire"
+                                           type="text"
+                                           name="hire"
+                                           id="hire<%=key%>"
+                                           value="<%=model.hire[key]%>"
+                                           required readonly/></dd>
+                                <% }); %>
+                            </div>
+                            <div class="half-block right withPaddingLeft">
+                                <%_.each(model.fire, function(fire, key){ %>
+                                <dt>
+                                    <label>Fired</label>
+                                </dt>
+                                <dd><input class="fire"
+                                           type="text"
+                                           name="fire"
+                                           id="fire<%=key%>"
+                                           value="<%=model.fire[key]%>" required readonly/>
+                                </dd>
+                                <% }); %>
+                            </div>
+
+                            <% if (model.transferred.length > 0) {%>
+                            <div class="clearfix"></div>
+                            <div class="formTitle">
+                                <h3 class="left">Transfer</h3>
+                                <div class="clearfix"></div>
+                            </div>
+
+                            <div class="half-block left withPaddingLeft">
+                                <%_.each(model.transferred, function(obj, key){ %>
+                                <dt>
+                                    <label>Department</label>
+                                </dt>
+                                <dd>
+                                    <input class="dep"
+                                           type="text"
+                                           name="dep"
+                                           id="dep<%=key%>"
+                                           value="<%=obj.department%>" required readonly/>
+                                </dd>
+                                <% }); %>
+                            </div>
+                            <div class="half-block right withPaddingLeft">
+                                <%_.each(model.transferred, function(obj, key){ %>
+                                <dt>
+                                    <label>Date</label>
+                                </dt>
+                                <dd><input class="date"
+                                           type="text"
+                                           name="date"
+                                           id="date<%=key%>"
+                                           value="<%=obj.date%>"
+                                           required readonly/></dd>
+                                <% }); %>
+                            </div>
+                            <% } %>
+
+                            <div class="clearfix"></div>
+                            <div class="formTitle">
+                                <h3 class="left">Resume</h3>
+
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="attach-container">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="dialog-tabs-item">
+                        <div class="assignees-container"></div>
+                    </div>
+
+                </div>
             </div>
-          </div>
-          <div class="dialog-tabs-item">
-			<div class="assignees-container"></div>
-          </div>
-        </div>
-      </div>
-    </fieldset>
-  </form>
+        </fieldset>
+    </form>
 </div>

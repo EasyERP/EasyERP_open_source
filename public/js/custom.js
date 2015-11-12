@@ -7,6 +7,17 @@ define([
 ], function (dateformat, common, CONTENT_TYPES, dataService, moment) {
     'use strict';
 
+    var Store = function() {
+        this.save = function(name, data) {
+            localStorage.setItem(name, JSON.stringify(data));
+        };
+        this.find = function(name) {
+            var store = localStorage.getItem(name);
+
+            return (store && JSON.parse(store)) || null;
+        }
+    };
+
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
             Backbone.history.start({silent: true});
@@ -61,6 +72,8 @@ define([
 
     var getCurrentVT = function (option) {
         var viewType;
+        var savedFilter;
+
         if (option && (option.contentType != App.contentType)) {
             App.ownContentType = false;
         }
@@ -88,12 +101,13 @@ define([
                     case CONTENT_TYPES.SALESORDER:
                     case CONTENT_TYPES.SALESINVOICE:
                     case CONTENT_TYPES.WTRACK:
-                    case CONTENT_TYPES.SALARY:
+                    case CONTENT_TYPES.PAYROLL:
                     case CONTENT_TYPES.MONTHHOURS:
                     case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                     case CONTENT_TYPES.CAPACITY:
+                    case CONTENT_TYPES.JOBSDASHBOARD:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -132,12 +146,13 @@ define([
                     case CONTENT_TYPES.SALESORDER:
                     case CONTENT_TYPES.SALESINVOICE:
                     case CONTENT_TYPES.WTRACK:
-                    case CONTENT_TYPES.SALARY:
+                    case CONTENT_TYPES.PAYROLL:
                     case CONTENT_TYPES.MONTHHOURS:
                     case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                     case CONTENT_TYPES.CAPACITY:
+                    case CONTENT_TYPES.JOBSDASHBOARD:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -158,6 +173,23 @@ define([
         } else {
             viewType = App.currentViewType;
         }
+
+        //for default filter && defaultViewType
+        if (option && option.contentType && App.savedFilters[option.contentType]) {
+            savedFilter = App.savedFilters[option.contentType];
+
+            for (var j = savedFilter.length - 1; j >= 0; j--) {
+                if (savedFilter[j]) {
+                    if (savedFilter[j].byDefault === option.contentType){
+
+                        if (savedFilter[j].viewType){
+                            viewType = savedFilter[j].viewType;
+                        }
+                    }
+                }
+            }
+        }
+
         return viewType;
     };
 
@@ -210,15 +242,16 @@ define([
         chartControl.showDescProject(true, 'n,d');
     };
 
-    function cashToApp(key, data) {
+    function cacheToApp(key, data) {
         App.cashedData = App.cashedData || {};
         App.cashedData[key] = data;
+        App.storage.save(key, data);
     }
 
     function retriveFromCash(key) {
         App.cashedData = App.cashedData || {};
 
-        return App.cashedData[key];
+        return App.cashedData[key] || App.storage.find(key);
     }
 
     var savedFilters = function (contentType, uIFilter) {
@@ -292,8 +325,13 @@ define([
     };
 
     var getFiltersValues = function () {
+        var locationHash = window.location.hash;
+        var filter = locationHash.split('/filter=')[1];//For startDate & endDate in EmployeeFinder for filters in dashVac
+
+        filter = (filter) ? JSON.parse(decodeURIComponent(filter)) : null;
+
         if (!App || !App.filtersValues) {
-            dataService.getData('/filter/getFiltersValues', null, function (response) {
+            dataService.getData('/filter/getFiltersValues', filter, function (response) {
                 if (response && !response.error) {
                     App.filtersValues = response;
                 } else {
@@ -303,51 +341,62 @@ define([
         }
     };
 
-    var getWeeks = function(month, year){
+    var getWeeks = function (month, year) {
         var result = [];
         var startWeek;
         var endWeek;
         var diff;
-        var isoWeeks = moment(year).isoWeeksInYear();
+        var isoWeeks = moment(parseInt(year)).isoWeeksInYear();
         var startDate = moment([year, parseInt(month) - 1]);
-        var endDate = moment([year, parseInt(month), -1 + 1]);
+        var endDate = moment(startDate).endOf('month');
+        var daysCount;
+        var curWeek;
 
         startWeek = moment(startDate).isoWeeks();
         endWeek = moment(endDate).isoWeeks();
 
         diff = endWeek - startWeek;
 
-        if (diff < 0){
+        if (diff < 0) {
             diff = isoWeeks - startWeek;
-
-            for (var i = diff; i >=0; i--){
-                result.push(isoWeeks - i);
-            }
+            endWeek = isoWeeks;
         } else {
-            for (var i = diff; i >=0; i--){
-                result.push(endWeek - i);
-            }
+            endWeek = endWeek;
         }
 
+        for (var i = diff; i >= 0; i--) {
+            curWeek = endWeek - i;
 
+            if (i === diff) {
+                daysCount = moment(startDate).endOf('isoWeek').date();
+            } else if (i === 0) {
+                daysCount = (moment(endDate).date() - moment(endDate).startOf('isoWeek').date() + 1);
+            } else {
+                daysCount = 7;
+            }
+
+            result.push({week: curWeek, daysCount: daysCount});
+        }
 
         return result;
     };
 
+    App.storage = new Store();
+
     return {
-        runApplication: runApplication,
-        changeContentViewType: changeContentViewType,
+        runApplication          : runApplication,
+        changeContentViewType   : changeContentViewType,
         //getCurrentII: getCurrentII,
         //setCurrentII: setCurrentII,
-        getCurrentVT: getCurrentVT,
-        setCurrentVT: setCurrentVT,
-        getCurrentCL: getCurrentCL,
-        setCurrentCL: setCurrentCL,
-        cashToApp: cashToApp,
-        retriveFromCash: retriveFromCash,
-        savedFilters: savedFilters,
+        getCurrentVT            : getCurrentVT,
+        setCurrentVT            : setCurrentVT,
+        getCurrentCL            : getCurrentCL,
+        setCurrentCL            : setCurrentCL,
+        cacheToApp               : cacheToApp,
+        retriveFromCash         : retriveFromCash,
+        savedFilters            : savedFilters,
         getFiltersForContentType: getFiltersForContentType,
-        getFilterById: getFilterById,
-        getWeeks: getWeeks
+        getFilterById           : getFilterById,
+        getWeeks                : getWeeks
     };
 });

@@ -47,8 +47,12 @@ module.exports = (function () {
     require('./monthHours.js');
     require('./holiday.js');
     require('./vacation.js');
+    require('./vacationDashCache.js');
     require('./bonusType.js');
     require('./savedFilters.js');
     require('./hoursCash.js');
     require('./capacity.js');
+    require('./jobs.js');
+    require('./wTrackInvoiceOld.js'); //TODO remove this row
+    require('./payRoll.js');
 })();

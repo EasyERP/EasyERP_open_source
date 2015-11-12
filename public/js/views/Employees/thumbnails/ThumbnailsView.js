@@ -11,16 +11,16 @@
 
     function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, common, AphabeticTemplate) {
         var EmployeesThumbnalView = Backbone.View.extend({
-            el: '#content-holder',
-            countPerPage: 0,
-            template: _.template(thumbnailsItemTemplate),
+            el                : '#content-holder',
+            countPerPage      : 0,
+            template          : _.template(thumbnailsItemTemplate),
             defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            newCollection: null,
+            listLength        : null,
+            filter            : null,
+            newCollection     : null,
             //page: null, //if reload page, and in url is valid page
-            contentType: 'Employees',//needs in view.prototype.changeLocationHash
-            viewType: 'thumbnails',//needs in view.prototype.changeLocationHash
+            contentType       : 'Employees',//needs in view.prototype.changeLocationHash
+            viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
                 this.asyncLoadImgs(this.collection);
@@ -44,18 +44,20 @@
             },
 
             events: {
-                "click #showMore": "showMore",
+                "click #showMore"           : "showMore",
                 "click .thumbnailwithavatar": "gotoEditForm",
-                "click .letter:not(.empty)": "alpabeticalRender",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .letter:not(.empty)" : "alpabeticalRender",
+                "click .saveFilterButton"   : "saveFilter",
+                "click .removeFilterButton" : "removeFilter"
             },
+
+
 
             //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Employees', {
                     currentNumber: currentNumber,
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
@@ -97,7 +99,8 @@
                         selectedLetter = "";
                         this.filter = {};
                     }
-                };
+                }
+                ;
 
                 this.startTime = new Date();
                 this.newCollection = false;
@@ -122,7 +125,7 @@
                 } else {
                     currentEl.html('<h2>No Employees found</h2>');
                 }
-                self.filterView = new filterView({ contentType: self.contentType });
+                self.filterView = new filterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter, self)
@@ -140,8 +143,8 @@
                     self.alphabeticArray = arr;
                     $('#startLetter').remove();
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
-                        alphabeticArray: self.alphabeticArray,
-                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        alphabeticArray   : self.alphabeticArray,
+                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
@@ -177,14 +180,14 @@
                 //    }
                 //}
 
-                if (Object.keys(filter).length === 0){
+                if (Object.keys(filter).length === 0) {
                     this.filter = {};
                 }
                 this.defaultItemsNumber = 0;
                 context.$el.find('.thumbnailwithavatar').remove();
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
-                context.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
+                context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
                 context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
@@ -195,7 +198,8 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
                 //this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 //if (!el.closest('.search-view')) {
                 //    $('.search-content').removeClass('fa-caret-up');
@@ -215,11 +219,11 @@
                     var model = new currentModel({validate: false});
                     model.urlRoot = '/Employees/form';
                     model.fetch({
-                        data: {id: id},
+                        data   : {id: id},
                         success: function (model) {
                             new editView({model: model});
                         },
-                        error: function () {
+                        error  : function () {
                             alert('Please refresh browser');
                         }
                     });
@@ -297,8 +301,8 @@
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
-                        alphabeticArray: self.alphabeticArray,
-                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        alphabeticArray   : self.alphabeticArray,
+                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
@@ -312,6 +316,16 @@
                     }
                 });
 
+            },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                window.location = '/employee/exportToCsv'
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                window.location = '/employee/exportToXlsx'
             }
         });
 

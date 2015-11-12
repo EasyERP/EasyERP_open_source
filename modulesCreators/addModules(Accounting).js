@@ -77,7 +77,6 @@ MongoClient.connect(url, function (err, db) {
 
 
     function profileUpdater(parrent, child, child2, callback) {
-        var i;
         var parrentInsert = {
             "module": parrent._id,
             "access": {
@@ -86,7 +85,6 @@ MongoClient.connect(url, function (err, db) {
                 "read": true
             }
         };
-
         var childInsert = {
             "module": child._id,
             "access": {
@@ -95,7 +93,6 @@ MongoClient.connect(url, function (err, db) {
                 "read": true
             }
         };
-
         var childInsert2 = {
             "module": child2._id,
             "access": {
@@ -104,19 +101,20 @@ MongoClient.connect(url, function (err, db) {
                 "read": true
             }
         };
-
         var q = async.queue(function (profile, callback) {
             if (profile) {
                 console.log('profile = ' + profile._id);
                 profiles.findOneAndUpdate({ _id: profile._id }, { $push: { profileAccess: { $each: [parrentInsert, childInsert, childInsert2] } } }, callback);
             }
         }, 1000);
+        var cursor;
+        var i;
 
         q.drain = function () {
             callback(null, 'done');
-        }
+        };
 
-        var cursor = profiles.find()
+        cursor = profiles.find();
 
 
         cursor.each(function (err, profile) {

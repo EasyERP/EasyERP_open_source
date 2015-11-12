@@ -16,7 +16,7 @@ var BonusType = function (models) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(200).send(bonusType);
+                    res.status(200).send({success:bonusType});
                 });
             } else {
                 res.status(403).send();
@@ -37,7 +37,7 @@ var BonusType = function (models) {
                         var id = data._id;
 
                         delete data._id;
-                        bonusTypeModel.findByIdAndUpdate(id, {$set: data}, cb);
+                        bonusTypeModel.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
                     }, function (err) {
                         if (err) {
                             return next(err);

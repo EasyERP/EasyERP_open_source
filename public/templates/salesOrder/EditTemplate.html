@@ -1,0 +1,149 @@
+<div class="form-holder">
+
+    <form method="post" action="" id="createPersonsForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs" data-class="mainTabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                    <li class="right">
+                        <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
+                        <button class="btn receiveInvoice">
+                            <span>Receive Invoice</span>
+                        </button>
+                        <button class="btn cancelOrder">
+                            <span>Cancel</span>
+                        </button>
+                        <%} else {%>
+                        <button class="btn setDraft">
+                            <span>Set Draft</span>
+                        </button>
+                        <%}%>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="topInputHolder">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label>
+                                        <%if(model.supplier){%>
+                                          <%if (App.weTrack) {%>
+                                            Customer
+                                          <% } else { %>
+                                            Supplier
+                                          <% } %>
+                                        <% } %>
+                                    </label></dt>
+                                    <dd>
+                                        <%if(model.supplier){%>
+                                        <a id="supplierDd" data-id="<%=model.supplier.id%>" href="#easyErp/Companies/form/<%=model.supplier._id%>"><%=model.supplier.name%></a>
+                                        <%}%>
+                                    </dd>
+                                    <%if (App.weTrack) {%>
+                                    <dt><label for="projectDd">Project</label></dt>
+                                    <dd>
+                                        <a id="projectDd" class="" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.projectName%></a>
+                                    </dd>
+                                    <% } %>
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label>Order Date</label></dt>
+                                    <dd>
+                                        <span><%=model.orderDate%></span>
+                                    </dd>
+                                    <dt><label>Deliver To</label></dt>
+                                    <dd>
+                                        <%if(model.deliverTo){%>
+                                        <a id="deliveryDd" href="#easyErp/Companies/form/<%=model.deliverTo._id%>" data-id="<%=model.deliverTo._id%>"><%=model.deliverTo.name%></a>
+                                        <%}%>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <ul class="dialog-tabs" data-class="childTabs">
+                            <li><a class="active" href="javascript:;">Products</a></li>
+                            <!--<li><a href="javascript:;">Bid</a></li>-->
+                            <li><a href="javascript:;">Deliveries & Invoices</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
+                                <div id="productItemsHolder">
+
+                                </div>
+                            </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div class="delivery-invoices-container">
+                                    <div class="half-block left">
+                                        <dl class="quotation-info">
+                                            <dt><label for="expectedDate">Expected Date</label></dt>
+                                            <dd><input id="expectedDate" placeholder="" type="text" value="<%=model.expectedDate%>" readonly/>
+                                            </dd>
+                                            <dt><label for="destination">Destination</label></dt>
+                                            <dd>
+                                                <%if(model.destination){%>
+                                                <a id="destination" class="current-selected"
+                                                   href="javascript:;" data-id="<%=model.destination._id%>"><%=model.destination.name%></a>
+                                                <%} else {%>
+                                                <a id="destination" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <%}%>
+                                            <dt><label for="incoterm">Incoterm</label></dt>
+                                            <dd>
+                                                <%if(model.incoterm){%>
+                                                <a id="incoterm" class="current-selected" href="javascript:;" data-id="<%= model.incoterm._id%>"><%=model.incoterm.name %></a>
+                                                <%} else {%>
+                                                <a id="incoterm" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <%}%>
+                                            </dd>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                    <div class="half-block left">
+                                        <dl class="quotation-info">
+                                            <dt><label for="invoicingControl">Invoicing Control</label></dt>
+                                            <dd>
+                                                <%if(model.invoiceControl){%>
+                                                <a id="invoicingControl" class="current-selected" href="javascript:;" data-id="<%= model.invoiceControl._id %>"><%=model.invoiceControl.name%></a>
+                                                <%} else {%>
+                                                <a id="invoicingControl" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <%}%>
+                                            </dd>
+                                            </dd>
+                                            <!--<dt><label for="invoiceReceived">Invoice Received</label></dt>-->
+                                            <!-- <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>-->
+                                            <dt><label for="paymentTerm">Payment Term</label></dt>
+                                            <dd>
+                                                <%if(model.paymentTerm){%>
+                                                <a id="paymentTerm" class="current-selected"
+                                                   href="javascript:;" data-id="<%= model.paymentTerm._id %>"><%= model.paymentTerm.name %></a>
+                                                <%} else {%>
+                                                <a id="paymentTerm" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <%}%>
+                                            </dd>
+                                            <dt><label for="fiscalPosition">Fiscal Position</label></dt>
+                                            <dd>
+                                                <a id="fiscalPosition" class="current-selected" href="javascript:;">Fiscal Position</a>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="dialog-tabs-item mainTabs">
+                        <div class="assignees-container"></div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+    <div class="clearfix"></div>
+</div>

@@ -100,7 +100,7 @@ var Workflow = function (models, event) {
             var ProjectSchema;
             var ProjectModel;
 
-            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+            if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                 ProjectSchema = mongoose.Schemas['Project'];
                 ProjectModel = models.get(dbName, 'Project', ProjectSchema);
 
@@ -149,7 +149,7 @@ var Workflow = function (models, event) {
                 if (data) {
                     updateSequence(models.get(req.session.lastDb, "workflows", workflowSchema), "sequence", data.sequenceStart, data.sequence, data.wId, false, false, function (sequence) {
                         data.sequence = sequence;
-                        models.get(req.session.lastDb, "workflows", workflowSchema).findByIdAndUpdate(_id, {$set: data}, function (err, res) {
+                        models.get(req.session.lastDb, "workflows", workflowSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, res) {
                             if (err) {
                                 console.log(err);
                                 logWriter.log('WorkFlow.js update workflow.update ' + err);

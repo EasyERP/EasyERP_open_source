@@ -146,8 +146,8 @@ define([
                         validation = false;
                     }
 
-                    var startD = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
-                    var endD = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
+                    var startD =  $(val).find(".startDate input").val() || null;
+                    var endD =  $(val).find(".endDate input").val() || null;
 
                     bonus.push({
                         employeeId: employeeId,
@@ -168,6 +168,7 @@ define([
                     }
 
                 });
+                var budget = this.currentModel.get('budget');
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var health = this.$el.find('#health a').data('value');
                 var _targetEndDate = $.trim(this.$el.find("#EndDateTarget").val());
@@ -195,7 +196,8 @@ define([
                     StartDate: startDate,
                     EndDate: endDate,
                     TargetEndDate:  _targetEndDate,
-                    bonus: bonus
+                    bonus: bonus,
+                    budget: budget
                 };
                 var workflowStart = this.currentModel.get('workflow');
 

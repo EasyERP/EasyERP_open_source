@@ -1,14 +1,26 @@
 <h3><%=contentType%></h3>
 <div id="createBtnHolder">
-    <a href="#home/action-<%=contentType%>/Create" class="icon add left" title="Create" id="top-bar-createBtn">5</a>
-    <a href="#home/action-<%=contentType%>/Edit" class="icon edit left" title="Edit" id="top-bar-editBtn">4</a>
-    <a href="javascript;" class="icon remove left" title="Remove"  id="top-bar-deleteBtn">x</a>
-</div>
+    <a href="#home/action-<%=contentType%>/Create" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
+    <a href="#home/action-<%=contentType%>/Edit" class="fa fa-wrench" title="Edit" id="top-bar-editBtn"></a>
+    <a href="javascript;" class="fa fa-times" title="Remove" id="top-bar-deleteBtn"></a>
+    <a href="javascript;" class="fa fa-download" title="Import" id="top-bar-importBtn"></a>
 
+    <ul>
+        <li><a href="javascript;" title="Export to csv" id="top-bar-exportToCsvBtn">Export to Csv</a></li>
+        <li><a href="javascript;" title="Export to xlsx" id="top-bar-exportToXlsxBtn">Export to Xlsx</a></li>
+    </ul>
+</div>
+<div id="forImport"></div>
 <div id="template-switcher" class="right">
     <ul class="btn-list">
-        <li><a href="javascript;" class="changeContentView icon icon-btn dark <%= (viewType == 'list') ? 'selected' : ''%>" data-view-type="list" id="listBtn">i</a></li>
-        <li><a href="javascript;" class="changeContentView icon icon-btn dark <%= (viewType == 'thumbnails') ? 'selected' : ''%>" data-view-type="thumbnails" id="thumbBtn">k</a></li>
-        <li><a href="javascript;" class="changeContentView icon icon-btn dark <%= (viewType == 'form') ? 'selected' : ''%>" data-view-type="form" id="formBtn">m</a></li>
+        <li><a href="javascript;"
+               class="changeContentView icon icon-btn dark <%= (viewType == 'list') ? 'selected' : ''%>"
+               data-view-type="list" id="listBtn">i</a></li>
+        <li><a href="javascript;"
+               class="changeContentView icon icon-btn dark <%= (viewType == 'thumbnails') ? 'selected' : ''%>"
+               data-view-type="thumbnails" id="thumbBtn">k</a></li>
+        <li><a href="javascript;"
+               class="changeContentView icon icon-btn dark <%= (viewType == 'form') ? 'selected' : ''%>"
+               data-view-type="form" id="formBtn">m</a></li>
     </ul>
 </div>

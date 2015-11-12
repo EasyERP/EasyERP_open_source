@@ -49,17 +49,6 @@
                 "click .removeFilterButton": "removeFilter",
             },
 
-            hideItemsNumber: function (e) {
-                var el = e.target;
-
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find('.search-options').addClass('hidden');
-                };
-            },
-
-
             //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/product/totalCollectionLength', {
@@ -116,6 +105,15 @@
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
+            },
+
+            hideItemsNumber: function (e) {
+                var el = e.target;
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                };
             },
 
             render: function () {
@@ -243,6 +241,7 @@
 
                 this.filterView.renderFilterContent();
             },
+
             //modified for filter Vasya
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
@@ -263,7 +262,19 @@
 
             createItem: function () {
                 new createView();
+            },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                window.location = '/Product/exportToCsv'
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                window.location = '/Product/exportToXlsx'
             }
+
+
         });
 
         return ProductThumbnalView;

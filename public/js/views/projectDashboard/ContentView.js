@@ -88,7 +88,8 @@ define([
                     $("#ProjectPMContent").html(template({
                         collection: this.collection.toJSON(),
                         startNumber: 0,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        weekSplitter: helpers.weekSplitter
                     }));
                     if (this.collection.length == 0) {
                         $(".projectInProgress").hide();
@@ -99,7 +100,7 @@ define([
                 } else {
                     this.collection = new contentCollection({});
 
-                    custom.cashToApp('projectInfo', this.collection);
+                    custom.cacheToApp('projectInfo', this.collection);
                 }
 
                 this.collection.bind('reset', this.renderContent, this);
@@ -108,12 +109,13 @@ define([
             renderContent: function () {
                 var template = _.template(projectTemplate);
 
-                custom.cashToApp('projectInfo', this.collection);
+                custom.cacheToApp('projectInfo', this.collection);
 
                 $("#ProjectPMContent").html(template({
                     collection: this.collection.toJSON(),
                     startNumber: 0,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    weekSplitter: helpers.weekSplitter
                 }));
                 if (this.collection.length == 0) {
                     $(".projectInProgress").hide();
@@ -194,8 +196,8 @@ define([
             render: function () {
                 this.$el.html(this.template());
                 this.renderProjectPM();
-                this.renderProjectStatus();
-                this.renderProjectEnd();
+                //this.renderProjectStatus();
+                //this.renderProjectEnd();
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             }
         });

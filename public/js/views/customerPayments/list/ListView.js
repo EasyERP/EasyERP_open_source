@@ -25,6 +25,7 @@ define([
             modelId                 : null,
             $listTable              : null,
             editCollection          : null,
+            contentCollection: paymentCollection,
             totalCollectionLengthUrl: '/payment/customers/totalCollectionLength',
             changedModels           : {},
             responseObj             : {},
@@ -318,7 +319,7 @@ define([
                 self = this;
                 currentEl = this.$el;
 
-                if (App.currentDb === 'weTrack') {
+                if (App.weTrack) {
                     currentEl.html('');
                     currentEl.append(_.template(ListHeaderForWTrack));
                     currentEl.append(new listItemView({

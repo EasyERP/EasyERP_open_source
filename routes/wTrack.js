@@ -11,8 +11,10 @@ module.exports = function (event, models) {
     router.get('/exportToXlsx',handler.exportToXlsx);
     router.get('/exportToCsv',handler.exportToCsv);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
+    router.get('/dash', handler.getForDashVacation);
     router.get('/:viewType', handler.getByViewType);
     router.post('/', handler.create);
+    router.post('/generateWTrack', handler.generateWTrack);
     router.delete('/:id', handler.remove);
     router.patch('/', handler.putchBulk);
     router.patch('/:id', handler.putchModel);

@@ -133,10 +133,11 @@ define([
                                     patch: true,
                                     wait: true,
                                     success: function(models, data) {
-										var el = self.$el;
+										var formLeftColumn = self.$el.find('.formLeftColumn');
+                                        var noteWrapper=formLeftColumn.find(".noteWrapper");
 
-										el.find('.formLeftColumn').find(".noteWrapper").empty();
-										el.find('.formLeftColumn').append(self.render());
+                                        noteWrapper.empty();
+                                        formLeftColumn.append(self.render());
                                     },
                                     error: function(models, xhr) {
 										self.errorNotification(xhr);						

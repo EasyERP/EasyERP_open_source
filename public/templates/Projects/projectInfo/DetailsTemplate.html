@@ -1,0 +1,179 @@
+<div class="half-block left tableResponsive">
+    <table class="list tableProjects">
+        <colgroup span="11">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+        </colgroup>
+
+        <thead>
+        <tr>
+            <th colspan="7"
+                class="forCaption">
+                Team & Resources
+            </th>
+            <th class="forCaption"
+                colspan="5">
+                <a href="javascript:;"
+                   title="Create Job"
+                   id="createJob" class="btnAdd">
+                    Add Job
+                </a>
+            </th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>Expand</th>
+            <th>Job</th>
+            <th>Status</th>
+            <th>Type</th>
+            <th>Count</th>
+            <th>Hours</th>
+            <th>Cost</th>
+            <th>Revenue</th>
+            <th>Profit</th>
+            <th>Rate</th>
+        </tr>
+        </thead>
+
+        <tbody id="projectTeam">
+        <%var count = 0;%>
+        <%var totalEmp = 0;%>
+        <%var totalHours = 0;%>
+        <%var totalCost = 0;%>
+        <%var totalRevenue = 0;%>
+        <%var totalProfit = 0;%>
+        <%var totalRate = 0;%>
+        <% jobs.forEach(function(element,i){ %>
+        <%if (element.budget) {%>
+        <%var budgetTotal = element.budget.budgetTotal%>
+
+        <tr data-id="<%=element._id%>" id="jobsItem">
+
+            <td class="remove"><a class="fa fa-trash hidden" id="<%=element._id%>"></a></td>
+            <td class="expand">+</td>
+            <td class="editableJobs" id="jobsName"><%=element.name%></td>
+            <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
+            <td class="selects"><a data-id="<%=element.type%>" id="type" class="current-selected"><%=element.type%></a>
+                <ul class="newSelectList" style="display: none;">
+                    <li>Order</li>
+                    <li>Quotation</li>
+                    <li>Invoice</li>
+                    <li>Payment</li>
+                    <li>Empty</li>
+                </ul>
+            </td>
+            <td><%=element.budget.projectTeam.length%></td>
+            <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal ? isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2)) : 0%></td>
+
+        </tr>
+        <% count++ %>
+        <% totalHours += budgetTotal.hoursSum %>
+        <% totalCost += budgetTotal.costSum %>
+        <% totalRevenue += budgetTotal.revenueSum%>
+        <% totalProfit += budgetTotal.profitSum%>
+        <% totalRate += isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : (budgetTotal.revenueSum / budgetTotal.hoursSum) %>
+        <% } %>
+        <% })%>
+
+        </tbody>
+        <tfoot>
+
+        <tr id="total">
+            <td>&nbsp</td>
+            <td>Total</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td id="totalHours" data-value="<%=totalHours%>"><%= currencySplitter(totalHours.toFixed())%></td>
+            <td id="totalCost" data-value="<%=totalCost%>"><%= currencySplitter(totalCost.toFixed())%></td>
+            <td id="totalRevenue" data-value="<%=totalRevenue%>"><%= currencySplitter(totalRevenue.toFixed())%></td>
+            <td id="totalProfit" data-value="<%=totalProfit%>"><%= currencySplitter(totalProfit.toFixed())%></td>
+            <td id="totalRate"><%= currencySplitter(totalRate.toFixed(2))%></td>
+        </tr>
+
+        </tfoot>
+
+
+
+    </table>
+</div>
+
+
+<div class="half-block right">
+    <div>
+        <table class="list tableProjects">
+            <colgroup span="3">
+                <col span="1">
+                <col span="1">
+                <col span="1">
+            </colgroup>
+            <thead>
+            <tr>
+                <th colspan="3" class="forCaption">Bonus for Sales Managers</th>
+            </tr>
+            <tr>
+                <th>Resource</th>
+                <th>Percentage</th>
+                <th>Bonus</th>
+            </tr>
+            </thead>
+            <tbody id="bonus">
+            <% bonus.forEach(function(element){ %>
+            <tr>
+                <td><%=element.resource%></td>
+                <td><%=element.percentage%></td>
+                <td><%=currencySplitter((element.bonus/100).toFixed(2))%></td>
+            </tr>
+            <% })%>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <table class="list tableProjects">
+            <colgroup span="4">
+                <col span="1">
+                <col span="1">
+                <col span="1">
+                <col span="1">
+            </colgroup>
+            <thead>
+            <tr>
+                <th colspan="4" class="forCaption">Project Values</th>
+            </tr>
+            <tr>
+                <th>Revenue</th>
+                <th>Profit</th>
+                <th>MarkUp</th>
+                <th>Pr. Margin</th>
+            </tr>
+            </thead>
+            <tbody id="project">
+            <%if (projectValues) {%>
+            <tr>
+                <td><%=currencySplitter(projectValues.revenue.toFixed())%></td>
+                <td><%=currencySplitter(projectValues.profit.toFixed())%></td>
+                <td class="procent"><%=projectValues.markUp.toFixed() %></td>
+                <td class="procent"><%=projectValues.radio.toFixed()%></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+    <div id="proformRevenueContainer">
+    </div>
+</div>
+

@@ -1,36 +1,40 @@
 
-//@tilte-color: #02A1F2; //for hover
-@tilte-color: #57D0b5; //for hover
+//@tilte-color: #57d0b5; //for hover
+@tilte-color: #66B5D4; //for hover
 @fontColor-2: #4D5A75;
 @mainText-color: #CDCDCD;
-@mainText-color-selected: #57D0b5;
+@overiewText-color: #fff;
+@mainText-color-selected: @tilte-color;
 @mainBlack-color: #808080;
 
 
 /*== Lights =========================*/
-@green-lights-color: @mainText-color-selected;
-@yellow-lights-color: #FFA500;
+@green-lights-color: #008000;
+@yellow-lights-color: #FFEA00;
 
 /*== Borders=========================*/
-@border-color-main: @mainText-color;
+@border-color-main: @list-border-color;
 @border-color: @border-color-main;
 @border-color-selected: @bg-main-menu-selected; //lighten(@border-color-main, 30%);
 
 /*==Main menu==========================*/
 //@bg-main: #1a2227;
 @bg-main: #303031;
-@bg-main-menu: #242b30;
+@bg-main-menu: @bg-main;
 @bg-main-menu-selected: @mainText-color-selected;
 //@bg-main-menu-selected: #b4b4b5;
 @span-color: @bg-main-menu-selected;
 @grey: @mainText-color;
+
+/*== login panel ====================*/
+@login-text: @grey;
 
 /*==Sub MENU, Top-bar =========================*/
 
 @bg-submenu: @bg-main;
 @submenu-text-color: @mainText-color;
 @normal-submenu-text: #D5D5D5;
-@current-submenu-text: #33FFFF;
+@current-submenu-text: @tilte-color;
 @non-active-submenu-text: desaturate(@normal-submenu-text, 19%);
 @creatBtn-color: @mainText-color;
 
@@ -43,6 +47,7 @@
 @bg-hover-drop-down-color-active: lighten(@bg-main, 15%);
 @filter-border-color: @border-color-main;
 @filter-text-color: @grey;
+@filter-border-hover: lighten(@border-color-main, 15%);
 
 /*== Customer ======================*/
 
@@ -60,7 +65,7 @@
 
 @formColum-main-text-color: @mainText-color;
 @formColum-main-subText-color: @submenu-text-color;
-@formColum-customer-info: @bg-main-menu-selected;
+@formColum-customer-info: @mainText-color;
 @input-text-color: #A9A9A9;
 
 
@@ -90,7 +95,7 @@
 @dashBoard-bg-menu-hoverColor: @defaultBgHover-color;
 
 /*== forInfo ======================================*/
-@forInfo-caption-color: #1EBBEA;
+@forInfo-caption-color: @tilte-color;
 @forInfo-caption-color2: @tilte-color;
 
 /*== Revenu ======================================*/
@@ -98,10 +103,24 @@
 @revenue-by-sales: #C46B00;
 @revenueByDepartment: @tilte-color;
 @unpaid-wtrack: #fd0001;
-@unpaid-wtrack: #f13f3f;
+//@unpaid-wtrack: #f13f3f;
 
 /*== Notifikation ===============================*/
 
 @notifikation-error-color: #FE7E86;
 @notifikation-notify-color: #00DB30;
 
+
+/*== Btn Color=====================================*/
+
+@btn-main-color: #f4f4f4;
+
+/*VocationDashBoard =============================*/
+
+@free: #A22A2D;
+@oneWorkDay: #CC5457;
+@littleWork: #F9A203;
+@normalWork: #3E7F42;
+@overWork: darken(@normalWork, 10%);
+@vacation: #3C86E0;
+@inactivate: #515151;

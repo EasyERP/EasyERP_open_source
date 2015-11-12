@@ -1,7 +1,7 @@
 ﻿define([
-    'common', 'Validation'
+    'common', 'Validation','moment'
 ],
-function (common, Validation) {
+function (common, Validation,moment) {
     var ApplicationModel = Backbone.Model.extend({
         idAttribute: "_id",
         initialize: function(){
@@ -12,27 +12,39 @@ function (common, Validation) {
                 }
             });
         },
-        parse: true,
         parse: function (response) {
             if (!response.data) {
             	if(response.creationDate){
-            		response.creationDate = common.utcDateToLocaleDate(response.creationDate);
-            	}
+            		response.creationDate = moment(response.creationDate).format('DD MMM, YYYY');
+             	}
             	if(response.nextAction) {
-            		response.nextAction = common.utcDateToLocaleDate(response.nextAction);
+            		response.nextAction = moment(response.nextAction).format('DD MMM, YYYY');
             	}
 	            if (response.dateBirth)
-	                response.dateBirth = common.utcDateToLocaleDate(response.dateBirth);
+	                response.dateBirth = moment(response.dateBirth).format('DD MMM, YYYY');
             	if (response.createdBy)
-            		response.createdBy.date = common.utcDateToLocaleDateTime(response.createdBy.date);
+            		response.createdBy.date = moment(response.createdBy.date).format('DD MMM, YYYY');
 				
             	if (response.editedBy)
-					response.editedBy.date = common.utcDateToLocaleDateTime(response.editedBy.date);
+					response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY');
 
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
-                        attachment.uploadDate = common.utcDateToLocaleDate(attachment.uploadDate);
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY');
                         return attachment;
+                    });
+                }
+
+                if (response.hire) {
+                    response.hire = _.map(response.hire, function (hire) {
+                        hire = moment(hire).format('DD MMM, YYYY');
+                        return hire;
+                    });
+                }
+                if (response.fire) {
+                    response.fire = _.map(response.fire, function (fire) {
+                        fire = moment(fire).format('DD MMM, YYYY');
+                        return fire;
                     });
                 }
             }

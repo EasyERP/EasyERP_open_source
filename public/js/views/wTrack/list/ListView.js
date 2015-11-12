@@ -21,22 +21,24 @@ define([
 
     function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
         var wTrackListView = listViewBase.extend({
-            createView              : createView,
-            listTemplate            : listTemplate,
-            listItemView            : listItemView,
-            contentCollection       : contentCollection,
-            filterView              : filterView,
-            contentType             : 'wTrack',
-            viewType                : 'list',
-            responseObj             : {},
-            wTrackId                : null, //need for edit rows in listView
+            createView: createView,
+            listTemplate: listTemplate,
+            listItemView: listItemView,
+            contentCollection: contentCollection,
+            filterView: filterView,
+            contentType: 'wTrack',
+            viewType: 'list',
+            responseObj: {},
+            wTrackId: null, //need for edit rows in listView
             totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable              : null, //cashedJqueryEllemnt
-            editCollection          : null,
-            selectedProjectId       : [],
-            genInvoiceEl            : null,
-            copyEl                  : null,
-            changedModels           : {},
+            $listTable: null, //cashedJqueryEllemnt
+            editCollection: null,
+            selectedProjectId: [],
+            genInvoiceEl: null,
+            copyEl: null,
+            changedModels: {},
+            exportToCsvUrl: '/wTrack/exportToCsv',
+            exportToXlsxUrl: '/wTrack/exportToXlsx',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -57,15 +59,15 @@ define([
             },
 
             events: {
-                "click .stageSelect"                                              : "showNewSelect",
+                "click .stageSelect": "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable"                                               : "editRow",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "change .autoCalc"                                                : "autoCalc",
-                "change .editable "                                               : "setEditable",
-                "keydown input.editing "                                          : "keyDown",
-                "change .listCB"                                                  : "setAllTotalVals"
+                "click td.editable": "editRow",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "change .autoCalc": "autoCalc",
+                "change .editable ": "setEditable",
+                "keydown input.editing ": "keyDown",
+                "change .listCB": "setAllTotalVals"
             },
 
             keyDown: function (e) {
@@ -114,18 +116,18 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks : wTracks,
-                            project : project,
+                            wTracks: wTracks,
+                            project: project,
                             assigned: assigned,
                             customer: customer,
-                            total   : total
+                            total: total
                         });
                     }
                 });
             },
 
             hideGenerateCopy: function () {
-                $('#top-bar-generateBtn').hide();
+                //$('#top-bar-generateBtn').hide();
                 $('#top-bar-copyBtn').hide();
             },
 
@@ -147,8 +149,8 @@ define([
                     var _model;
                     var tdsArr;
                     var cid;
-                    var hours = model.get('worked');
-                    var rate = model.get('rate');
+                    var hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                    var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
                     var revenue = parseInt(hours) * parseFloat(rate);
 
                     $(selectedWtrack).attr('checked', false);
@@ -175,11 +177,11 @@ define([
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[20]).find('span').text('Unpaid');
-                    $(tdsArr[20]).find('span').addClass('unDone');
-                    $(tdsArr[24]).text(0);
-                    $(tdsArr[22]).text(0);
-                    $(tdsArr[21]).text(revenue.toFixed(2));
+                    $(tdsArr[21]).find('span').text('Unpaid');
+                    $(tdsArr[21]).find('span').addClass('unDone');
+                    $(tdsArr[25]).text(0);
+                    $(tdsArr[23]).text(0);
+                    $(tdsArr[22]).text(revenue.toFixed(2));
                     $(tdsArr[1]).text(cid);
                 }
             },
@@ -197,7 +199,7 @@ define([
                 var tr = $(e.target).closest('tr');
                 var input = tr.find('input.editing');
                 var days = tr.find('.autoCalc');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var worked = 0;
                 var value;
                 var calcEl;
@@ -283,9 +285,13 @@ define([
                 var editedElementValue;
                 var self = this;
 
+                if (navigator.userAgent.indexOf("Firefox") > -1) {
+                    this.setEditable(editedElement);
+                }
+
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
-                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementRowId = editedElement.closest('tr').attr('data-id');
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
@@ -295,20 +301,19 @@ define([
                         this.changedModels[editedElementRowId] = {};
                     }
 
-
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                    if (editedElementContent === 'month'){
-                        async.parallel([funcForWeek], function(err, result){
-                            if (err){
+                    if (editedElementContent === 'month') {
+                        async.parallel([funcForWeek], function (err, result) {
+                            if (err) {
                                 console.log(err);
                             }
 
                             var weeks = result[0];
-                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0]);
+                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
                             editedCol.text(editedElementValue);
                             editedElement.remove();
 
-                            self.changedModels[editedElementRowId]['week'] = weeks[0];
+                            self.changedModels[editedElementRowId]['week'] = weeks[0].week;
                         });
                     } else {
                         editedCol.text(editedElementValue);
@@ -316,7 +321,7 @@ define([
                     }
 
                 }
-                function funcForWeek(cb){
+                function funcForWeek(cb) {
                     var weeks;
                     var month = editedElementValue;
                     var year = editedElement.closest('tr').find('[data-content="year"]').text();
@@ -328,11 +333,11 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
 
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var colType = el.data('type');
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
@@ -420,7 +425,7 @@ define([
                 costElement = $(e.target).closest('tr').find('[data-content="cost"]');
 
                 if (wTrackId.length < 24) {
-                    employeeId = this.changedModels[wTrackId].employee._id;
+                    employeeId = this.changedModels[wTrackId].employee ? this.changedModels[wTrackId].employee._id : $(e.target).attr("data-id");
 
                     month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
@@ -477,11 +482,11 @@ define([
                 function getBaseSalary(callback) {
                     var employeeSalary;
 
-                    dataService.getData('/salary/getByMonth',
+                    dataService.getData('/payroll/getByMonth',
                         {
                             month: month,
-                            year : year,
-                            _id  : employeeId
+                            year: year,
+                            _id: employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -511,6 +516,7 @@ define([
             },
 
             chooseOption: function (e) {
+                var self = this;
                 var target = $(e.target);
                 var targetElement = target.parents("td");
                 var tr = target.parents("tr");
@@ -524,9 +530,11 @@ define([
                 var employee;
                 var department;
                 var changedAttr;
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var week;
                 var year;
+                var jobs = {};
+
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
@@ -567,6 +575,20 @@ define([
 
                     changedAttr.project = project;
 
+                    dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
+
+                        self.responseObj['#jobs'] = jobs;
+
+                        tr.find('[data-content="jobs"]').addClass('editable');
+                    });
+
+                } else if (elementType === '#jobs') {
+
+                    jobs._id = element._id;
+                    jobs.name = element.name;
+
+                    changedAttr.jobs = jobs;
+
                 } else if (elementType === '#employee') {
                     tr.find('[data-content="department"]').text(element.department.name);
 
@@ -581,6 +603,8 @@ define([
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;
+
+                    targetElement.attr("data-id", employee._id);
 
                     this.calculateCost(e, wTrackId);
 
@@ -630,6 +654,8 @@ define([
                         $('#check_all').prop('checked', false);
                     }
                 }
+
+                this.setAllTotalVals();
             },
 
             saveItem: function () {
@@ -703,8 +729,8 @@ define([
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
+                    collection: this.collection,
+                    page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -722,16 +748,19 @@ define([
                     if (self.collection.length > 0) {
                         checkLength = checkedInputs.length;
 
-                        self.checkProjectId($('#check_all'), checkLength);
-
                         if (checkLength > 0) {
                             $("#top-bar-deleteBtn").show();
 
                             if (checkLength === self.collection.length) {
+                                checkedInputs.each(function (index, element) {
+                                    self.checkProjectId(element, checkLength);
+                                });
+
                                 $('#check_all').prop('checked', true);
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
+                           // self.genInvoiceEl.hide();
                             $('#check_all').prop('checked', false);
                         }
                     }
@@ -780,7 +809,7 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
-                this.genInvoiceEl = $('#top-bar-generateBtn');
+                //this.genInvoiceEl = $('#top-bar-generateBtn');
                 this.copyEl = $('#top-bar-copyBtn');
 
                 return this;
@@ -815,10 +844,10 @@ define([
                 var week = now.getWeek();
                 var rate = 3;
                 var startData = {
-                    year : year,
+                    year: year,
                     month: month,
-                    week : week,
-                    rate : rate
+                    week: week,
+                    rate: rate
                 };
 
                 var model = new currentModel(startData);
@@ -866,14 +895,14 @@ define([
 
             checkProjectId: function (e, checkLength) {
                 var totalCheckLength = $("input.checkbox:checked").length;
-                var ellement = e.target;
-                var checked = ellement ? ellement.checked : true;
-                var targetEl = $(ellement);
+                var element = e.target ? e.target : e;
+                var checked = element ? element.checked : true;
+                var targetEl = $(element);
                 var tr = targetEl.closest('tr');
                 var wTrackId = tr.attr('data-id');
                 var model = this.collection.get(wTrackId);
                 var projectContainer = tr.find('td[data-content="project"]');
-                var projectId = projectContainer.data('id');
+                var projectId = projectContainer.attr('data-id');
 
                 if (checkLength >= 1) {
                     this.copyEl.show();
@@ -883,7 +912,7 @@ define([
 
                 if (!checkLength || !model || model.get('isPaid')) {
                     this.selectedProjectId = [];
-                    this.genInvoiceEl.hide();
+                    //this.genInvoiceEl.hide();
 
                     return false;
                 }
@@ -896,11 +925,11 @@ define([
 
                 this.selectedProjectId = _.uniq(this.selectedProjectId);
 
-                if (this.selectedProjectId.length !== 1) {
-                    this.genInvoiceEl.hide();
-                } else {
-                    this.genInvoiceEl.show();
-                }
+                //if (this.selectedProjectId.length !== 1) {
+                //    this.genInvoiceEl.hide();
+                //} else {
+                //    this.genInvoiceEl.show();
+                //}
             },
 
             getAutoCalcField: function (idTotal, dataRow, money) {
@@ -947,24 +976,28 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter       : this.filter,
+                    filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
+                    context.getTotalLength(null, context.defaultItemsNumber, context.filter);
+                    context.fetchSortCollection({});
+
                 }, this);
-                this.deleteRender(deleteCounter, deletePage, {
-                    filter          : this.filter,
-                    newCollection   : this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
+                //this.deleteRender(deleteCounter, deletePage, {
+                //    filter: this.filter,
+                //    newCollection: this.newCollection,
+                //    parrentContentId: this.parrentContentId
+                //});
+
 
                 holder = this.$el;
 
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection : this.collection,
-                        page       : holder.find("#currentShowPage").val(),
+                        collection: this.collection,
+                        page: holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1024,7 +1057,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait   : true,
+                                    wait: true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -1033,7 +1066,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error  : function (model, res) {
+                                    error: function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }
@@ -1066,7 +1099,7 @@ define([
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
                     var rowNumber = tr.find('[data-content="number"]').text();
-                    var id = tr.data('id');
+                    var id = tr.attr('data-id');
                     var template = _.template(cancelEdit);
                     var model;
 
@@ -1098,7 +1131,7 @@ define([
 
                 if (this.createdCopied) {
                     copiedCreated = this.$el.find('#false');
-                    dataId = copiedCreated.data('id');
+                    dataId = copiedCreated.attr('data-id');
                     this.editCollection.remove(dataId);
                     delete this.changedModels[dataId];
                     copiedCreated.remove();

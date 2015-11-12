@@ -12,9 +12,10 @@ var Products = function (models) {
 
     var fs = require("fs");
 
-    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
-    var exportMap = require('../helpers/csvMap').Products.aliases;
-    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').Products;
+
+    exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'Product', ProductSchema)
     }, exportMap, 'Products');
 
@@ -41,7 +42,7 @@ var Products = function (models) {
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
-        Product.findByIdAndUpdate(id, {$set: data}, function (err, product) {
+        Product.findByIdAndUpdate(id, {$set: data},{new:true}, function (err, product) {
             if (err) {
                 next(err);
             } else {
@@ -150,7 +151,7 @@ var Products = function (models) {
     };
 
     function addAtach(req, res, next, _id, files) {//to be deleted
-        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {upsert: true}, function (err, result) {
+        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {new: true, upsert: true}, function (err, result) {
             if (err) {
                 next(err);
             } else {
@@ -203,11 +204,16 @@ var Products = function (models) {
         var queryObject = {};
         var query = req.query;
 
-        //if (query && query.canBeSold) {
-        //    queryObject.canBeSold = true;
-        //} else {
-        //    queryObject.canBePurchased = true;
-        //}
+        if (query && query.canBeSold) {
+            queryObject.canBeSold = true;
+
+            if (query.service){
+                var key = 'info.productType';
+                queryObject[key] = 'Service';
+            }
+        } else {
+            queryObject.canBePurchased = true;
+        }
 
         Product.find(queryObject, function (err, products) {
             if (err) {
@@ -378,7 +384,7 @@ var Products = function (models) {
                         var query;
                         optionsObject._id = {$in: productsIds};
 
-                        query = Product.find(optionsObject);
+                        query = Product.find(optionsObject).sort(sort);
                         query.exec(waterfallCallback);
                     };
 

@@ -99,7 +99,7 @@ define([
                 var validation = true;
                 var custom = this.$el.find("#customerDd").text();
 
-                customer._id = this.$el.find("#customerDd").data("id");
+                customer._id = this.$el.find("#customerDd").attr("data-id");
                 customer.name = this.$el.find("#customerDd").text();
 
                 var projectmanager = {};
@@ -188,7 +188,7 @@ define([
                             whoCanRW: whoCanRW,
                             health: health,
                             StartDate: startDate,
-                            targetEndDate: targetEndDate,
+                            TargetEndDate: targetEndDate,
                             bonus: bonus
                         },
                         {

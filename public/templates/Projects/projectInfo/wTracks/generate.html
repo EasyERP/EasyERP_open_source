@@ -1,0 +1,121 @@
+<div class="form-holder">
+    <div class="inner">
+        <div class="clearfix"></div>
+        <div class="topInputHolder">
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <dt><label for="project">Project</label></dt>
+                    <dd>
+                        <span id="project"><%= project.projectName %></span>
+                    </dd>
+                </dl>
+                <dl class="person-info">
+                    <dt><label for="jobName">Job Name</label></dt>
+                    <dd>
+                        <% if (jobs && jobs._id) {%>
+                          <input id="jobName" value="<%=jobs.name%>"  readonly/>
+                        <% } else {%>
+                          <input id="jobName"/>
+                        <% } %>
+                    </dd>
+                </dl>
+            </div>
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <div class="miniAvatarCustomer miniAvatar" data-id="<%=(project.customer._id) ? project.customer._id: ''%>">
+                        <img alt="" src="" class="avatar"/>
+                    </div>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="customer">Customer</label></dt>
+                        <dd>
+                            <span id="customer"><%= project.customer.name %></span>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <div class="miniAvatarPM miniAvatar" data-id="<%=(project.projectmanager._id) ? project.projectmanager._id: ''%>">
+                            <img alt="" src="" class="avatar"/>
+                    </div>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="projectManager">Sales Manager</label></dt>
+                        <dd>
+                            <span id="projectManager"><%= project.projectmanager.name %></span>
+                        </dd>
+                    </div>
+                </dl>
+
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="topContentHolder">
+            <div id="wTrackItemsHolder">
+                <table id="rawTable" class="list2">
+                    <thead>
+                    <tr>
+                        <th>
+                            Employee
+                        </th>
+                        <th>
+                            Department
+                        </th>
+                        <th>
+                            Generate&nbspBy
+                        </th>
+                        <th>
+                            Start&nbspDate
+                        </th>
+                        <th>
+                            End&nbspDate / Hours
+                        </th>
+                        <th>
+                            Revenue
+                        </th>
+                        <th>
+                            Mo
+                        </th>
+                        <th>
+                            Tu
+                        </th>
+                        <th>
+                            We
+                        </th>
+                        <th>
+                            Th
+                        </th>
+                        <th>
+                            Fr
+                        </th>
+                        <th>
+                            Sa
+                        </th>
+                        <th>
+                            Su
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="13">
+                                <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="13">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="13">&nbsp;</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+</div>

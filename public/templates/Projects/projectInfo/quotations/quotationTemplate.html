@@ -1,0 +1,30 @@
+<div id="top-bar-quotations" class="projectInfoTopBar">
+    <div id="createBtnHolder">
+        <a href="javascript;" class="fa fa-plus" title="Create" id="createQuotation"></a>
+        <a href="javascript;" class="fa fa-times" title="Remove" id="removeQuotation"></a>
+    </div>
+</div>
+<div id="quotationTable">
+    <table class="list task-list">
+        <thead>
+        <tr>
+            <th><input type="checkbox" id="check_all_quotations" class="check_all"/></th>
+            <th>N</th>
+            <th class="oe_sortable" data-sort="name">Project<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="orderDate">Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="supplier">Customer<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="salesPerson">Sales Person<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable sortDn" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+        </tr>
+        </thead>
+        <tbody id="listTableQuotation"></tbody>
+        <tfoot id="listTotalQuotation"></tfoot>
+    </table>
+</div>

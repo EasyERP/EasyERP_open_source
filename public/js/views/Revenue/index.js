@@ -270,7 +270,7 @@ define([
 
             this.model.set('weeksArr', weeksArr);
 
-            custom.cashToApp('weeksArr', weeksArr);
+            custom.cacheToApp('weeksArr', weeksArr);
         },
 
         fetchBySales: function () {
@@ -934,7 +934,8 @@ define([
                 employees: self.employees,
                 content: 'totalProjectBySales',
                 className: 'totalProject',
-                headName: 'Project by Sales'
+                headName: 'Project by Sales',
+                currencySplitter: helpers.currencySplitter
             }));
 
             targetTotal = $(self.$el.find('[data-content="totalProjectBySales"]'));
@@ -963,7 +964,8 @@ define([
                     employeeContainer.html(self.projectBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -991,7 +993,8 @@ define([
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal,
-                    totalName: 'Projects Total'
+                    totalName: 'Projects Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 return false;
@@ -1042,7 +1045,8 @@ define([
                     employeeContainer.html(self.projectBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -1070,7 +1074,8 @@ define([
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal,
-                    totalName: 'Employee Total'
+                    totalName: 'Employee Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 return false;

@@ -30,9 +30,10 @@ define([
             "easyErp/myProfile": "goToUserPages",
             "easyErp/Workflows": "goToWorkflows",
             "easyErp/Dashboard": "goToDashboard",
-            "easyErp/DashBoardVacation": "dashBoardVacation",
+            "easyErp/DashBoardVacation(/filter=:filter)": "dashBoardVacation",
             "easyErp/HrDashboard": "hrDashboard",
             "easyErp/projectDashboard": "goToProjectDashboard",
+            "easyErp/jobsDashboard": "goToJobsDashboard",
             "easyErp/:contentType": "getList",
 
             "*any": "any"
@@ -96,8 +97,12 @@ define([
             ;
         },
 
-        dashBoardVacation: function () {
+        dashBoardVacation: function (filter) {
             var self = this;
+
+            if (filter) {
+                filter = JSON.parse(filter);
+            }
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -115,6 +120,7 @@ define([
             function renderDash() {
                 var startTime = new Date();
                 var contentViewUrl = "views/vacationDashboard/index";
+                var topBarViewUrl = "views/vacationDashboard/TopBarView";
 
                 if (self.mainView === null) {
                     self.main("DashBoardVacation");
@@ -122,14 +128,21 @@ define([
                     self.mainView.updateMenu("DashBoardVacation");
                 }
 
-                require([contentViewUrl], function (contentView) {
+                require([contentViewUrl, topBarViewUrl], function (contentView, TopBarView) {
                     var contentview;
+                    var topbarView;
 
                     custom.setCurrentVT('list');
 
-                    contentview = new contentView({startTime: startTime});
+                    topbarView = new TopBarView();
+                    contentview = new contentView({
+                        startTime: startTime,
+                        filter: filter
+                    });
+                    topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
-                    self.changeView(contentview, true);
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
                 });
             }
         },
@@ -493,6 +506,40 @@ define([
             }
         },
 
+        goToJobsDashboard: function () {
+            var self = this;
+            this.checkLogin(function (success) {
+                if (success) {
+                    goProjectDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goProjectDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/jobsDashboard/ContentView";
+                var topBarViewUrl = "views/jobsDashboard/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("jobsDashboard");
+                } else {
+                    context.mainView.updateMenu("jobsDashboard");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    custom.setCurrentVT('list');
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
         goToWorkflows: function () {
             var self = this;
             this.checkLogin(function (success) {
@@ -543,6 +590,16 @@ define([
             }
         },
 
+        checkDatabase: function(db){
+            if ((db === "weTrack") || (db === "production") || (db === "development")){
+                App.weTrack = true;
+            } else {
+                App.weTrack = false;
+            }
+
+            App.currentDb = db;
+        },
+
         buildCollectionRoute: function (contentType) {
             if (!contentType) {
                 throw new Error("Error building collection route. ContentType is undefined");
@@ -562,7 +619,7 @@ define([
                     if (!App || !App.currentDb) {
                         dataService.getData('/currentDb', null, function (response) {
                             if (response && !response.error) {
-                                App.currentDb = response;
+                               self.checkDatabase(response);
                             } else {
                                 console.log('can\'t fetch current db');
                             }
@@ -632,7 +689,8 @@ define([
                 }
 
 
-                savedFilter = custom.savedFilters(contentType, filter);
+                //savedFilter = custom.savedFilters(contentType, filter);
+                savedFilter = filter;
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -670,6 +728,9 @@ define([
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
                         topbarView.bind('generateInvoice', contentview.generateInvoice, contentview);
                         topbarView.bind('copyRow', contentview.copyRow, contentview);
+                        topbarView.bind('exportToCsv',contentview.exportToCsv,contentview);
+                        topbarView.bind('exportToXlsx',contentview.exportToXlsx,contentview);
+                        topbarView.bind('importEvent', contentview.importFiles, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);
@@ -683,7 +744,19 @@ define([
             var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goForm(self);
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                self.checkDatabase(response);
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goForm(self);
+                        });
+                    } else {
+                        goForm(self);
+                    }
                 } else {
                     self.redirectTo();
                 }
@@ -811,7 +884,19 @@ define([
             var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goThumbnails(self);
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                self.checkDatabase(response);
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goThumbnails(self);
+                        });
+                    } else {
+                        goThumbnails(self);
+                    }
                 } else {
                     self.redirectTo();
                 }
@@ -819,9 +904,11 @@ define([
 
             function goThumbnails(context) {
                 var currentContentType = context.testContent(contentType);
+                var viewType = custom.getCurrentVT({contentType: contentType}); //for default filter && defaultViewType
+
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
-                    var url = '#easyErp/' + contentType + '/thumbnails';
+                    var url = '#easyErp/' + contentType + '/' + viewType;
                     Backbone.history.navigate(url, {replace: true});
                 }
                 var newCollection = true;
@@ -860,7 +947,7 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-                savedFilter = custom.savedFilters(contentType, filter);
+                //savedFilter = custom.savedFilters(contentType, filter);
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -876,7 +963,7 @@ define([
                         viewType: 'thumbnails',
                         //page: 1,
                         count: count,
-                        filter: savedFilter,
+                        filter: filter,
                         contentType: contentType,
                         newCollection: newCollection
                     })
@@ -886,19 +973,21 @@ define([
                     custom.setCurrentVT('thumbnails');
 
                     function createViews() {
-                        collection.unbind('reset');
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: savedFilter,
+                            filter: filter,
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
+                        collection.unbind('reset');
                         //var url = '#easyErp/' + contentType + '/thumbnails';
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
-
+                        topbarView.bind('exportToCsv',contentview.exportToCsv,contentview);
+                        topbarView.bind('exportToXlsx',contentview.exportToXlsx,contentview);
+                        topbarView.bind('importEvent', contentview.importFiles, contentview);
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         collection.bind('showmoreAlphabet', contentview.showMoreAlphabet, contentview);
 

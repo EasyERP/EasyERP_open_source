@@ -39,11 +39,12 @@ define([
 
         sendToServer: function (event, model, self) {
             var currentModel = this.model;
-            var currentModelId = currentModel["id"];
-            var addFrmAttach = this.$el.find("#addAttachments");
+            var currentModelId = currentModel ? currentModel["id"] : null;
+            var addFrmAttach = $("#addAttachments");
             if (!self){
                 self = this;
             }
+
 
             if (this.isCreate) {
                 currentModel = model;
@@ -65,9 +66,9 @@ define([
                 }
                 addInptAttach = fileArr;
             } else {
-                event.preventDefault();
+               // event.preventDefault();
 
-                var addInptAttach = this.$el.find("#inputAttach")[0].files[0];
+                var addInptAttach = $("#inputAttach")[0].files[0];
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     this.$el.find('#inputAttach').val('');
                     alert('File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay);
@@ -79,8 +80,14 @@ define([
                 $(".input-file-button").off("click");
                 var bar = self.$el.find('.bar');
                 var status = self.$el.find('.status');
+                var formURL;
 
-                var formURL = "http://" + window.location.host + ((self.url) ? self.url : "/uploadFiles");
+                if (self.import){
+                    formURL = "http://" + window.location.host + "/importFile";
+                } else {
+                    formURL = "http://" + window.location.host + ((self.url) ? self.url : "/uploadFiles");
+                }
+
                 e.preventDefault();
                 addFrmAttach.ajaxSubmit({
                     url: formURL,
@@ -91,6 +98,7 @@ define([
 
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("id", currentModelId);
+                        xhr.setRequestHeader("modelname", self.contentType);
                         status.show();
                         var statusVal = '0%';
                         bar.width(statusVal);
@@ -109,7 +117,9 @@ define([
                             self.hideDialog();
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
-
+                        } else if (self.import){
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash, {trigger: true});
                         } else {
                             var attachments = currentModel.get('attachments');
                             attachments.length = 0;

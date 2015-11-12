@@ -1,6 +1,7 @@
 define([
+        'views/listViewBase',
         'text!templates/Capacity/list/listHeader.html',
-        'text!templates/Vacation/list/cancelEdit.html',
+        'text!templates/Capacity/list/cancelEdit.html',
         'text!templates/Vacation/list/ListTotal.html',
         'text!templates/Capacity/list/departmentRows.html',
         'text!templates/Capacity/list/ListTemplate.html',
@@ -8,16 +9,18 @@ define([
         'models/Capacity',
         'collections/Capacity/filterCollection',
         'collections/Capacity/editCollection',
+        'collections/Capacity/departmentCollection',
         'common',
         'dataService',
         'constants',
         'async',
         'moment',
-        'populate'
+        'populate',
+        'custom'
     ],
 
-    function (listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
-        var CapacityListView = Backbone.View.extend({
+    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, departmentCollection, common, dataService, CONSTANTS, async, moment, populate, custom) {
+        var CapacityListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
             listLength        : null,
@@ -35,22 +38,6 @@ define([
             yearElement       : null,
             vacations         : null,
 
-            initialize: function (options) {
-                this.startTime = options.startTime;
-                this.collection = options.collection;
-                _.bind(this.collection.showMore, this.collection);
-                this.filter = options.filter ? options.filter : {};
-                this.sort = options.sort ? options.sort : {};
-                this.defaultItemsNumber = this.collection.namberToShow || 100;
-                this.newCollection = options.newCollection;
-                this.deleteCounter = 0;
-                this.page = options.collection.page;
-                this.render();
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                this.contentCollection = filterCollection;
-                this.daysCount;
-            },
-
             events: {
                 "click .createBtn"                                                : "createItem",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
@@ -58,10 +45,21 @@ define([
                 "click td.editable"                                               : "editRow",
                 "click .current-selected"                                         : "showNewCurrentSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .oe_sortable"                                              : "goSort",
+                "click .oe-sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect",
-                "click .departmentRow"                                            : "showCapacity",
+                "click .departmentRow td"                                         : "capacityClick",
+            },
+
+            initialize: function (options) {
+                this.startTime = options.startTime;
+                this.capacityObject = options.collection.toJSON()[0].capacityObject;
+                this.departmentObject = options.collection.toJSON()[0].departmentObject;
+                _.bind(this.collection.showMore, this.collection);
+                this.render();
+                this.daysCount;
+                this.departmentsCollections = {};
+                this.sortConst = 1;
             },
 
             showNewCurrentSelect: function (e, prev, next) {
@@ -171,7 +169,6 @@ define([
                 var editedElementOldValue;
                 var changedAttr;
                 var tdTotalHours;
-                var tdTotalHoursValue;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -197,13 +194,12 @@ define([
 
                     if (editedElementContent === 'capacityValue') {
                         dayIndex = editedCol.attr('data-dayID');
-                        //dayTotalElement = $('#day' + dayIndex);
 
                         changedAttr = this.changedModels[editedElementRowId];
 
                         editedCol.text(editedElementValue);
 
-                        if (changedAttr && !changedAttr.vacArray) {
+                        if (changedAttr && !changedAttr.capacityArray) {
                             changedAttr.capacityArray = _.clone(editCapacityModel.toJSON().capacityArray);
 
                             if (!changedAttr.capacityMonthTotal) {
@@ -216,47 +212,15 @@ define([
                         }
 
                         changedAttr.capacityArray[dayIndex] = editedElementValue;
+
                         if (editedElementOldValue !== editedElementValue) {
                             changedAttr.capacityMonthTotal = changedAttr.capacityMonthTotal - editedElementOldValue + editedElementValue;
                             tdTotalHours.text(changedAttr.capacityMonthTotal);
                         }
-
-
-
-                        if (!isFinite(editedCol.text())) {
-                            /*if (!this.checkEmptyArray(changedAttr.capacityArray)) {
-                                checkDay(targetElement, element._id);
-                                delete(changedAttr.capacityArray[dayIndex]);
-                                if (this.checkEmptyArray(changedAttr.capacityArray)) {
-                                    this.deleteItem(modelId);
-                                }
-                            }*/
-                        }
                     }
 
-                    //this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     editedElement.remove();
                 }
-            },
-
-            vacationTypeForDD: function (content) {
-                var array = ['&nbsp', 'Vacation', 'Personal', 'Sick', 'Education'];
-                var firstChar;
-
-                array = _.map(array, function (element) {
-                    element = {
-                        name: element
-                    };
-                    firstChar = element.name.charAt(0);
-                    if (firstChar !== '&') {
-                        element._id = firstChar;
-                    } else {
-                        element._id = '';
-                    }
-
-                    return element;
-                });
-                content.responseObj['#vacType'] = array;
             },
 
             monthForDD: function (content) {
@@ -273,7 +237,7 @@ define([
 
             },
 
-            yearForDD : function (content) {
+            yearForDD: function (content) {
                 dataService.getData('/vacation/getYears', {}, function (response, context) {
                     context.responseObj['#yearSelect'] = response;
                 }, content)
@@ -314,7 +278,7 @@ define([
                 var tempContainer;
                 var insertedInput;
 
-                if (capacityId && el.prop('tagName') !== 'INPUT') {
+                if (capacityId && !isInput) {
                     if (this.capacityId) {
                         this.setChangedValueToModel();
                     }
@@ -324,7 +288,7 @@ define([
 
                 if (!isInput && dataContent === 'input') {
                     tempContainer = el.text();
-                    el.html('<input class="editing" type="text" data-value="' + tempContainer + '" value="' + tempContainer + '"  maxLength="2" style="display: block; color: white;" \>');
+                    el.html('<input class="editing" type="text" data-value="' + tempContainer + '" value="' + tempContainer + '"  maxLength="2" style="display: block;" \>');
 
                     insertedInput = el.find('input');
                     insertedInput.focus();
@@ -382,39 +346,70 @@ define([
                 return false;
             },
 
+            renderContent: function () {
+                var currentEl = this.$el;
+                var tBody = currentEl.find('#listTable');
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+                tBody.empty();
+                var itemView = new listItemView({
+                    collection : this.collection,
+                    page       : currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
+                tBody.append(itemView.render());
+
+                var pagenation = this.$el.find('.pagination');
+
+                if (this.collection.length === 0) {
+                    pagenation.hide();
+                } else {
+                    pagenation.show();
+                }
+            },
+
             goSort: function (e) {
+                var self = this;
                 var target$ = $(e.target);
                 var currentParrentSortClass = target$.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
-                var sortConst = 1;
-                var collection;
+                var keys = Object.keys(this.departmentsCollections);
+                var context = {};
+                var currentCollection;
 
-                collection = this.collection.toJSON();
+                keys.forEach(function (key) {
+                    currentCollection = self.departmentsCollections[key];
 
-                if (!sortClass) {
-                    target$.addClass('sortDn');
-                    sortClass = "sortDn";
-                }
-                switch (sortClass) {
-                    case "sortDn":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortDn').addClass('sortUp');
-                        sortConst = -1;
+                    if (!sortClass) {
+                        target$.addClass('sortDn');
+                        sortClass = "sortDn";
                     }
-                        break;
-                    case "sortUp":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortUp').addClass('sortDn');
-                        sortConst = 1;
+
+                    switch (sortClass) {
+                        case "sortDn":
+                        {
+                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                            target$.removeClass('sortDn').addClass('sortUp');
+                            self.sortConst = -1;
+                        }
+                            break;
+                        case "sortUp":
+                        {
+                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                            target$.removeClass('sortUp').addClass('sortDn');
+                            self.sortConst = 1;
+                        }
+                            break;
                     }
-                        break;
-                }
 
-                this.collection.sortByOrder(sortConst);
+                    context.self = self;
+                    context.key = key;
+                    context.currentCollection = currentCollection;
 
-                this.renderTable(collection);
+                    currentCollection.on('sort', self.reRenderCapacity, context);
+
+                    currentCollection.sortByOrder(self.sortConst);
+                })
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
@@ -435,7 +430,7 @@ define([
                 }, this);
             },
 
-            renderdSubHeader: function (currentEl) {
+            renderSubHeader: function (currentEl) {
                 var subHeaderContainer;
 
                 var month;
@@ -447,6 +442,11 @@ define([
                 var dateDay;
                 var daysRow = '';
                 var daysNumRow = '';
+                var columnContainer;
+                var width;
+                var weeks;
+                var weeksRow = '';
+                var curWeek;
 
                 subHeaderContainer = currentEl.find('.subHeaderHolder');
 
@@ -463,14 +463,23 @@ define([
                     dateDay = date.add(1, 'd');
                 }
 
+                weeks = custom.getWeeks(month, year);
+
+                for (var i = 0; i <= weeks.length - 1; i++) {
+                    curWeek = weeks[i];
+                    weeksRow += '<th colspan="' + curWeek.daysCount + '">' + curWeek.week + '</th>';
+                }
+
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
-                daysNumRow = '<tr class="subHeaderHolder borders"><th>Department</th><th class="oe-sortable" data-sort="employee.name">Employee</th>' + daysNumRow + '<th>Total Hours</th></tr>';
+                daysNumRow = '<tr class="subHeaderHolder borders"><th colspan="2">Department</th><th class="oe-sortable" data-sort="employee.name">Employee</th>' + daysNumRow + '<th>Total Hours</th></tr>';
+
+                weeksRow = '<tr class="subHeaderHolder borders">' + weeksRow + '</tr>';
 
                 this.daysCount = daysInMonth;
 
-                var columnContainer = $('#columnForDays');
-                var width = 80 / daysInMonth;
+                columnContainer = $('#columnForDays');
+                width = 80 / daysInMonth;
 
                 columnContainer.html('');
 
@@ -479,8 +488,9 @@ define([
                 }
 
                 $(subHeaderContainer[0]).attr('colspan', daysInMonth - 12);
-                $(subHeaderContainer[1]).replaceWith(daysRow);
-                $(subHeaderContainer[2]).replaceWith(daysNumRow);
+                $(subHeaderContainer[1]).replaceWith(weeksRow);
+                $(subHeaderContainer[2]).replaceWith(daysRow);
+                $(subHeaderContainer[3]).replaceWith(daysNumRow);
             },
 
             nextSelect: function (e) {
@@ -584,7 +594,7 @@ define([
                     }
                     this.startTime = new Date();
                     this.changedDataOptions();
-                    this.renderdSubHeader(this.$el);
+                    this.renderSubHeader(this.$el);
                 }
 
                 if (elementType === '#employee') {
@@ -743,8 +753,17 @@ define([
                 return totalArray;
             },
 
-            renderDepartmentRows: function (departments) {
+            renderDepartmentRows: function () {
                 var listTable = this.$el.find("#listTable");
+                var departments = [];
+
+                var self = this;
+
+                CONSTANTS.DEPARTMENTS_ORDER.forEach(function (element) {
+                    if (self.departmentObject[element]) {
+                        departments.push(self.departmentObject[element]);
+                    }
+                })
 
                 listTable.html('');
                 listTable.append(_.template(departmentListTemplate, {
@@ -753,24 +772,79 @@ define([
                 }));
             },
 
-            showCapacity: function (e) {
-                var target = $(e.target);
-                var row = target.closest("tr");
-                var key = row.attr('data-key');
-                var subKeyClass = "subRows" + key;
+            renderCapacity: function (row, subNameClass, name) {
+                var collection;
+                var status = row.find('.departmentCB').prop("checked");
 
-                var subRows = $('.' + subKeyClass);
-                var collection = this.capacityObject[key];
+                if (!this.departmentsCollections[name]) {
+                    this.departmentsCollections[name] = new departmentCollection(this.capacityObject[name]);
+                }
+
+                this.departmentsCollections[name].sortByOrder(this.sortConst);
+
+                collection = this.departmentsCollections[name].toJSON();
 
                 this.bindingEventsToEditedCollection(this, collection);
 
-                if (subRows.length === 0) {
-                    $(_.template(listTemplate, {collection: collection, subClass: subKeyClass})).insertAfter(row);
-                } else {
+                $(_.template(listTemplate, {
+                    status    : status,
+                    collection: collection,
+                    subClass  : subNameClass,
+                    depName   : name,
+                })).insertAfter(row);
+            },
+
+            reRenderCapacity: function () {
+                var that = this.self;
+                var name = that.departmentObject[this.key].name;
+                var row = that.$el.find('#' + that.departmentObject[this.key]._id);
+                var subNameClass = "subRows" + name;
+                var subRows = that.$el.find('.' + subNameClass);
+                var checkIfVisible = subRows.is(":visible");
+
+                subRows.remove();
+
+                this.currentCollection.off('sort');
+                that.renderCapacity(row, subNameClass, name);
+
+                if (!checkIfVisible) {
+                    subRows = that.$el.find('.' + subNameClass);
                     subRows.toggle();
+
+                    that.$el.find(".false").remove();
+                    that.hideSaveCancelBtns();
+                }
+            },
+
+            capacityClick: function (e) {
+                var target = $(e.target);
+                var checkIfCB = target.hasClass("departmentCB");
+                var row = target.closest("tr");
+
+                var name = row.attr('data-name');
+                var subNameClass = "subRows" + name;
+
+                var subRows = this.$el.find('.' + subNameClass);
+
+                if (subRows.length === 0) {
+                    this.renderCapacity(row, subNameClass, name);
+
+                    row.find(".icon.add").toggle();
+                } else {
+                    if (!checkIfCB) {
+                        row.find(".icon.add").toggle();
+                        subRows.toggle();
+
+                        this.$el.find(".false").remove();
+                        this.hideSaveCancelBtns();
+                    }
                 }
 
-                row.find(".icon.add").toggle();
+                if (this.$el.find("input.checkbox:not('.departmentCB'):checked").length > 0) {
+                    $("#top-bar-deleteBtn").show();
+                } else {
+                    $("#top-bar-deleteBtn").hide();
+                }
             },
 
             render: function () {
@@ -779,7 +853,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var collection;
-                var departments;
 
                 var year = this.startTime.getFullYear();
                 var month = {};
@@ -793,22 +866,11 @@ define([
                 this.monthElement = currentEl.find('#monthSelect');
                 this.yearElement = currentEl.find('#yearSelect');
 
-                this.renderdSubHeader(currentEl);
+                this.renderSubHeader(currentEl);
 
-                collection = this.collection.toJSON();
-                this.capacityObject = collection[0];
+                this.$el.find("#listTable").html('');
 
-                departments = Object.keys(this.capacityObject);
-                departments = _.map(departments, function (department) {
-                    var departmentArray = department.split('_');
-                    return {
-                        key : department,
-                        name: departmentArray[0],
-                        id: departmentArray[1],
-                    }
-                })
-
-                this.renderDepartmentRows(departments);
+                this.renderDepartmentRows(this.departmentObject);
 
                 //listTotalEl = this.$el.find('#listTotal');
 
@@ -835,28 +897,6 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                tBody.empty();
-                var itemView = new listItemView({
-                    collection : this.collection,
-                    page       : currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
-                });
-                tBody.append(itemView.render());
-
-                var pagenation = this.$el.find('.pagination');
-
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
-            },
-
             showFilteredPage: function () {
                 var itemsNumber;
 
@@ -880,19 +920,22 @@ define([
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;
-                var collection = newModels.toJSON();
-                var listTotalEl;
 
-                this.editCollection = new editCollection(collection);
+                this.capacityObject = newModels.toJSON()[0].capacityObject;
+                this.departmentObject = newModels.toJSON()[0].departmentObject;
 
-                this.renderTable(collection);
+                this.$el.find("#listTable").html('');
 
-                listTotalEl = holder.find('#listTotal');
+                this.renderDepartmentRows(this.departmentObject);
 
-                listTotalEl.html('');
-                listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
+                /*listTotalEl = holder.find('#listTotal');
+
+                 listTotalEl.html('');
+                 listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));*/
 
                 this.hideSaveCancelBtns();
+
+                this.$listTable.find(".icon.add").hide();
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -927,17 +970,17 @@ define([
                 var template;
 
                 var startData = {
-                    daysCount : this.daysCount,
-                    employee  : {},
-                    month     : this.monthElement.attr('data-content'),
-                    year      : this.yearElement.text(),
+                    daysCount: this.daysCount,
+                    employee : {},
+                    month    : this.monthElement.attr('data-content'),
+                    year     : this.yearElement.text(),
                 };
 
                 var model;
                 var tr = $(e.target).closest('tr');
 
-                this.department = {
-                    _id: tr.attr('data-id'),
+                startData.department = {
+                    _id : tr.attr('id'),
                     name: tr.attr('data-name'),
                 }
 
@@ -951,6 +994,7 @@ define([
                     template = _.template(createTemplate);
 
                     tr.after(template(startData));
+                    this.createDefValues(this, this.monthElement.attr('data-content'), this.yearElement.text());
                 }
             },
 
@@ -960,52 +1004,66 @@ define([
                 return !!newRow.length;
             },
 
-            deleteItemsRender: function (deleteCounter, deletePage) {
+            deleteItemsRender: function (tr, id) {
 
-                this.renderTable(this.collection.toJSON());
+                tr.remove();
 
-                this.editCollection.reset(this.collection.models);
+                this.editCollection.remove(id);
                 this.hideSaveCancelBtns();
             },
 
             deleteItems: function () {
-                if (this.changed) {
+                var that = this;
+
+                this.collectionLength = this.collection.length;
+
+                if (!this.changed) {
+                    var answer = confirm("Realy DELETE items ?!");
+                    var value;
+                    var tr;
+
+                    if (answer === true) {
+                        $.each(that.$el.find("input:not('.departmentCB'):checked"), function (index, checkbox) {
+                            checkbox = $(checkbox);
+                            value = checkbox.attr('id');
+                            tr = checkbox.closest('tr');
+                            that.deleteItem(tr, value);
+                        });
+                    }
+                } else {
                     this.cancelChanges();
                 }
             },
 
-            deleteItem: function (id) {
+            deleteItem: function (tr, id) {
                 var self = this;
                 var model;
                 var mid = 39;
+                var depName;
 
-                var answer = confirm("Do You want to DELETE item ?!");
-
-                if (answer === true) {
-                    if (id.length < 24) {
-                        this.editCollection.remove(id);
-                        delete this.changedModels[id];
-                        self.deleteItemsRender(1, 1);
-                    } else {
-                        model = this.collection.get(id);
-                        model.destroy({
-                            headers: {
-                                mid: mid
-                            },
-                            wait   : true,
-                            success: function () {
-                                delete self.changedModels[id];
-                                self.deleteItemsRender(1, 1);
-                            },
-                            error  : function (model, res) {
-                                if (res.status === 403 && index === 0) {
-                                    alert("You do not have permission to perform this action");
-                                }
-                                self.deleteItemsRender(1, 1);
-
+                if (id.length < 24) {
+                    this.editCollection.remove(id);
+                    delete this.changedModels[id];
+                    self.deleteItemsRender(tr, id);
+                } else {
+                    depName = tr.attr('data-name');
+                    model = _.findWhere(this.capacityObject[depName], {_id: id});
+                    model = new currentModel(model);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function () {
+                            delete self.changedModels[id];
+                            self.deleteItemsRender(tr, id);
+                        },
+                        error  : function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
                             }
-                        });
-                    }
+                        }
+                    });
                 }
 
             },
@@ -1020,14 +1078,16 @@ define([
             cancelChanges: function () {
                 var self = this;
                 var edited = this.edited;
-                var collection = this.collection;
+                var collection = this.capacityObject;
                 var listTotalEl;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
                     var id = tr.data('id');
+                    var depName = tr.attr('data-name');
                     var template = _.template(cancelEdit);
                     var model;
+                    var subNameClass = "subRows" + depName;
 
                     if (!id) {
                         return cb('Empty id');
@@ -1042,9 +1102,12 @@ define([
                         return cb();
                     }
 
-                    model = collection.get(id);
-                    model = self.getVacDaysCount(model.toJSON());
-                    tr.replaceWith(template({vacation: model}));
+                    model = _.findWhere(collection[depName], {_id: id});
+                    tr.replaceWith(template({
+                        capacity: model,
+                        subClass: subNameClass,
+                        depName : depName,
+                    }));
                     cb();
                 }, function (err) {
                     if (!err) {

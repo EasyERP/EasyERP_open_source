@@ -2,8 +2,9 @@
     <table class="vacation-list">
 
         <colgroup class="borders">
-            <col width="8%">
-            <col width="9%">
+            <col width="2%">
+            <col width="6%">
+            <col width="11%">
         </colgroup>
 
         <colgroup id="columnForDays" class="borders">
@@ -11,7 +12,7 @@
 
         <thead>
         <tr id="caption">
-            <th colspan="2" rowspan="2" class="month">
+            <th colspan="3" rowspan="3" class="month">
                 <a id="monthSelect" data-type="monthSelect" class="current-selected" data-content="<%=options.month.number%>" href="javascript:;"><%=options.month.name%></a>
             </th>
             <th id="legandCaption" class="subHeaderHolder">
@@ -41,9 +42,11 @@
             <th colspan="2">
                 Education
             </th>
-            <th rowspan="2">
+            <th rowspan="3">
                 <a id="yearSelect" class="current-selected" data-content="<%=options.year%>" href="javascript:;"><%=options.year%></a>
             </th>
+        </tr>
+        <tr class="subHeaderHolder">
         </tr>
         <tr class="subHeaderHolder">
         </tr>
