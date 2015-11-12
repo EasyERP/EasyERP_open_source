@@ -39,7 +39,12 @@ define([
                 "change .editable"       : "setEditable",
                 "keydown input.editing " : "keyDown",
                 "click #mainRow td:not(.notForm)": "showRows",
-                "click #expandAll": "expandAll"
+                "click #expandAll": "expandAll",
+                "click": "removeNewSelect"
+            },
+
+            removeNewSelect: function(){
+                $('.newSelectList').remove();
             },
 
             generate: function(){
@@ -599,7 +604,7 @@ define([
                 saveBtnEl.hide();
                 cancelBtnEl.hide();
                 createBtnEl.show();
-                copyBtnEl.show();
+                copyBtnEl.hide();
 
                 return false;
             },
@@ -614,15 +619,19 @@ define([
 
                     if ($("input.checkbox:checked").length > 0) {
                         $('#top-bar-deleteBtn').show();
-                        $('#top-bar-copy').show();
+                        if (checkLength === 1){
+                            $('#top-bar-copy').show();
+                        }
                         if (checkLength == oneTypeInput) {
                             this.$el.find('#' + dataId).prop('checked', true);
-                        }
-                        else {
-                            $('.check_all').prop('checked', false);
+                        } else {
+                            this.$el.find('#' + dataId).prop('checked', false);
+                            $('#top-bar-copy').hide();
                         }
                     } else {
+                        this.$el.find('#' + dataId).prop('checked', false);
                         $('#top-bar-deleteBtn').hide();
+                        $('#top-bar-copy').hide();
                     }
                 }
             },
@@ -726,7 +735,7 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
 
                 var self = this;
                 var target = $(e.target);
@@ -779,6 +788,9 @@ define([
                         }
                     }).removeClass('datapicker');
 
+                    insertedInput = target.find('input');
+                    insertedInput.focus();
+                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                 } else if (!isInput) {
                     tempContainer = target.text();
@@ -823,7 +835,7 @@ define([
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
             },
 
             chooseOption: function (e) {
