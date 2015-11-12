@@ -18,6 +18,24 @@ define([
             contentType: "Invoice",
             template: _.template(EditTemplate),
 
+            events: {
+                "click #saveBtn": "saveItem",
+                "click #cancelBtn": "hideDialog",
+                "click .current-selected": "showNewSelect",
+                "click": "hideNewSelect",
+                'click .dialog-tabs a': 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .newSelectList li.miniStylePagination": "notHide",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click .details": "showDetailsBox",
+                "click .newPayment": "newPayment",
+                "click .cancelInvoice": "cancelInvoice",
+                // "click .refund": "refund",
+                "click .setDraft": "setDraft"
+
+            },
+
             initialize: function (options) {
 
                 _.bindAll(this, "render", "saveItem");
@@ -37,6 +55,7 @@ define([
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
+
                             if ((response === "weTrack") || (response === "production") || (response === "development")){
                                 App.weTrack = true;
                             } else {
@@ -53,24 +72,6 @@ define([
                 }
 
                 /* this.render();*/
-            },
-
-            events: {
-                "click #saveBtn": "saveItem",
-                "click #cancelBtn": "hideDialog",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                'click .dialog-tabs a': 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .details": "showDetailsBox",
-                "click .newPayment": "newPayment",
-                "click .cancelInvoice": "cancelInvoice",
-               // "click .refund": "refund",
-                "click .setDraft": "setDraft"
-
             },
 
             newPayment: function (e) {

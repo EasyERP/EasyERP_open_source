@@ -17,7 +17,8 @@ define([
                 "click #top-bar-editBtn": "editEvent",
                 "click #top-bar-createBtn": "createEvent",
                 "click #top-bar-generate": "generateEvent",
-                "click #top-bar-copy": "copyEvent"
+                "click #top-bar-copy": "copyEvent",
+                "click #topBarPaymentGenerate": "createPayment"
             },
 
             changeContentViewType: function (e) {
@@ -45,15 +46,6 @@ define([
                 this.trigger('copyEvent');
             },
 
-            render: function () {
-                $('title').text(this.contentType);
-                var viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
-
-                Common.displayControlBtnsByActionType('Content', viewType);
-                return this;
-            },
-
             editEvent: function (event) {
                 event.preventDefault();
                 this.trigger('editEvent');
@@ -68,6 +60,24 @@ define([
                 event.preventDefault();
 
                 this.trigger('saveEvent');
+            },
+
+            createPayment: function (event) {
+                event.preventDefault();
+
+                this.trigger('pay');
+            },
+
+            render: function () {
+                var viewType;
+
+                $('title').text(this.contentType);
+
+                viewType = Custom.getCurrentVT();
+                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
+
+                Common.displayControlBtnsByActionType('Content', viewType);
+                return this;
             }
         });
 

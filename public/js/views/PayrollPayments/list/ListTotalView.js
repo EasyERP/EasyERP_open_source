@@ -24,7 +24,7 @@ define([
                         text = text.replace(' ', '');
 
                         result.totalPaid += parseFloat(text);
-                    })
+                    });
 
                     this.element.find('.totalAmount').each(function () {
                         text = $(this).text();
@@ -52,6 +52,7 @@ define([
                 this.cellSpan = options.cellSpan;
                 this.wTrack = options.wTrack;
             },
+
             render: function () {
                 var result = this.getTotal();
 

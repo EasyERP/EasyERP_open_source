@@ -1,12 +1,12 @@
 define([
+        'text!templates/PayrollExpenses/list/ListHeader.html',
+        'text!templates/PayrollExpenses/list/cancelEdit.html',
+        'text!templates/PayrollExpenses/list/ListTotal.html',
         'views/listViewBase',
         'views/Filter/FilterView',
         'views/PayrollExpenses/generate/GenerateView',
-        'text!templates/PayrollExpenses/list/ListHeader.html',
-       // 'text!templates/PayrollExpenses/list/ListTemplate.html',
-        'text!templates/PayrollExpenses/list/cancelEdit.html',
         'views/PayrollExpenses/CreateView',
-        'text!templates/PayrollExpenses/list/ListTotal.html',
+        "views/PayrollPayments/CreateView",
         'collections/PayrollExpenses/editCollection',
         'collections/PayrollExpenses/oneMonthCollection',
         'collections/Employees/employee',
@@ -18,35 +18,35 @@ define([
         'helpers'
     ],
 
-    function (listViewBase, filterView, GenerateView, headerTemplate, /*rowTemplate, */cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+    function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
             el            : '#content-holder',
-            contentType   : 'PayrollExpenses',
-            viewType      : 'list',//needs in view.prototype.changeLocationHash
-            responseObj   : {},
-            whatToSet     : {},
+            contentType: 'PayrollExpenses',
+            viewType   : 'list',//needs in view.prototype.changeLocationHash
+            responseObj: {},
+            whatToSet  : {},
             headerTemplate: _.template(headerTemplate),
             totalTemplate : _.template(totalTemplate),
-           // rowTemplate   : _.template(rowTemplate),
+            // rowTemplate   : _.template(rowTemplate),
             cancelTemplate: _.template(cancelEditTemplate),
             changedModels : {},
 
             events: {
-                "click .checkbox"        : "checked",
-                "click td.editable"      : "editRow",
+                "click .checkbox"                : "checked",
+                "click td.editable": "editRow",
                 "click .newSelectList li": "chooseOption",
                 "change .autoCalc"       : "autoCalc",
                 "change .editable"       : "setEditable",
-                "keydown input.editing " : "keyDown",
+                "keydown input.editing"  : "keyDown",
                 "click #mainRow td:not(.notForm)": "showRows",
-                "click #expandAll": "expandAll"
+                "click #expandAll"               : "expandAll"
             },
 
-            generate: function(){
+            generate: function () {
                 new GenerateView({});
             },
 
-            copy: function(){
+            copy: function () {
                 this.hideGenerateCopy();
 
                 var checkedRows = this.$el.find('input.checkbox:checked');
@@ -92,7 +92,7 @@ define([
                 $('#top-bar-copy').hide();
             },
 
-            expandAll: function(e){
+            expandAll: function (e) {
                 var target = this.$el.find('#expandAll');
                 var subRowCheck = this.$el.find('.jobsDashboard');
                 var icon = this.$el.find('.expand');
@@ -108,7 +108,7 @@ define([
                 }
             },
 
-            showRows: function(e){
+            showRows: function (e) {
                 var target = e.target;
                 var dataKey = $(target).parents("tr").attr("data-id");
                 var subId = dataKey;
@@ -299,10 +299,9 @@ define([
                 var totalDiff;
                 var totalCalc;
                 var diffVal;
-
                 var calc = parseInt(tr.find('.total_calc_salary').attr('data-cash'));
-               totalCalc = tr.find('.total_calc_salary');
 
+                totalCalc = tr.find('.total_calc_salary');
                 totalElement = tr.find('.total_' + calcKey);
 
                 totalDiff = tr.find('.total_diff_onCash');
@@ -312,7 +311,7 @@ define([
                 totalElement.text(prefVal + diff);
                 totalElement.attr('data-cash', prefVal + diff);
 
-                if (calcKey === "calc_onCash"){
+                if (calcKey === "calc_onCash") {
                     totalCalc.text(calc + diff);
                     totalCalc.attr('data-cash', calc + diff);
                 }
@@ -337,20 +336,20 @@ define([
             },
 
             createItem: function () {
-                var newDate =  moment(new Date());
-                var month =newDate.get('month');
+                var newDate = moment(new Date());
+                var month = newDate.get('month');
                 var year = newDate.get('year');
                 var dataKey = parseInt(year) * 100 + parseInt(month);
 
                 var startData = {
-                    dataKey   : dataKey,
-                    type: "",
-                    month     : month,
-                    year      : year,
-                    diff      : 0,
-                    paid      : 0,
-                    calc      : 0,
-                    employee  : {
+                    dataKey : dataKey,
+                    type   : "",
+                    month  : month,
+                    year   : year,
+                    diff   : 0,
+                    paid   : 0,
+                    calc   : 0,
+                    employee: {
                         name: '',
                         _id : null
                     }
@@ -383,7 +382,7 @@ define([
                 modelObject = modelObject.success;
 
                 if (modelObject) {
-                    modelId = modelObject._id
+                    modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
@@ -605,20 +604,25 @@ define([
             },
 
             checked: function (e) {
-                if (this.editCollection.length > 0) {
-                    var checkLength = $("input.checkbox:checked").length;
-                    var target = e.target;
-                    var dataId = $(target).attr('data-id');
+                var checkLength;
+                var target;
+                var dataId;
+                var oneTypeInput;
 
-                    var oneTypeInput = this.$el.find('[data-id=' + dataId +']').length - 1;
+                if (this.editCollection.length > 0) {
+                    checkLength = $("input.checkbox:checked").length;
+                    target = e.target;
+                    dataId = $(target).attr('data-id');
+
+                    oneTypeInput = this.$el.find('[data-id=' + dataId + ']').length - 1;
 
                     if ($("input.checkbox:checked").length > 0) {
                         $('#top-bar-deleteBtn').show();
                         $('#top-bar-copy').show();
+
                         if (checkLength == oneTypeInput) {
                             this.$el.find('#' + dataId).prop('checked', true);
-                        }
-                        else {
+                        } else {
                             $('.check_all').prop('checked', false);
                         }
                     } else {
@@ -649,11 +653,11 @@ define([
                     editedElementRowId = editedElementRow.attr('data-id');
                     editedElementContent = editedCol.data('content');
                     editedElementOldValue = parseInt(editedElement.attr('data-cash'));
-                    if (editedElementContent === "dataKey"){
+                    if (editedElementContent === "dataKey") {
                         var oldStr = editedElement.val();
-                        var newStr = oldStr.slice(0,2) + oldStr.slice(3,7);
-                        var month = parseInt(oldStr.slice(0,2));
-                        var year = parseInt(oldStr.slice(3,7));
+                        var newStr = oldStr.slice(0, 2) + oldStr.slice(3, 7);
+                        var month = parseInt(oldStr.slice(0, 2));
+                        var year = parseInt(oldStr.slice(3, 7));
                         editedElementValue = parseInt(newStr) ? parseInt(newStr) : 0;
                     } else {
                         editedElementValue = parseInt(editedElement.val());
@@ -681,13 +685,13 @@ define([
 
                         changedAttr = this.changedModels[editedElementRowId];
 
-                        if (month || year){
+                        if (month || year) {
                             changedAttr.dataKey = year * 100 + month;
                             changedAttr.month = month;
                             changedAttr.year = year;
                         }
 
-                        if (editedElementContent === "dataKey"){
+                        if (editedElementContent === "dataKey") {
                             editedCol.text(oldStr);
                         } else {
                             editedCol.text(editedElementValue);
@@ -716,7 +720,7 @@ define([
                             }
                         }
                     }
-                    if (editedElementContent === "dataKey"){
+                    if (editedElementContent === "dataKey") {
                         editedCol.text(oldStr);
                     } else {
                         editedCol.text(editedElementValue);
@@ -758,10 +762,10 @@ define([
                     target.html(inputHtml);
 
                     $('.datapicker').datepicker({
-                        dateFormat: "mm/yy",
+                        dateFormat : "mm/yy",
                         changeMonth: true,
-                        changeYear: true,
-                        onSelect: function (text, datPicker) {
+                        changeYear : true,
+                        onSelect   : function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
                             var endDatePicker = td.find('.endDateDP');
@@ -874,7 +878,7 @@ define([
                     this.setEditable(targetElement);
 
                     return false;
-                } else if (elementType === '#paymentType'){
+                } else if (elementType === '#paymentType') {
                     tr.find('[data-content="paymentType"]').text(element.name);
 
                     changedAttr.type = {};
@@ -915,7 +919,7 @@ define([
                 self.filters.render({
                     dataKey: {
                         sort: {
-                            key: '_id',
+                            key  : '_id',
                             order: -1
                         }
                     }
@@ -934,17 +938,11 @@ define([
                 this.total = collectionsObjects.total;
 
                 currentEl.empty();
-
-                //currentEl.append(this.rowTemplate({
-                //    collection      : this.collectionOnMonth.toJSON(),
-                //    currencySplitter: helpers.currencySplitter
-                //}));
-
                 currentEl.append(this.totalTemplate({
                     collection      : this.collectionOnMonth.toJSON(),
-                    total           : this.total,
+                    total     : this.total,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter: helpers.weekSplitter
+                    weekSplitter    : helpers.weekSplitter
                 }));
 
                 $("#top-bar-deleteBtn").hide();
@@ -956,6 +954,14 @@ define([
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            },
+
+            newPayment: function () {
+                var paymentView = new PaymentCreateView({
+                    model     : this.currentModel,
+                    redirect: this.redirect,
+                    collection: this.collection
+                });
             },
 
             render: function () {
@@ -971,9 +977,9 @@ define([
 
                 currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
                     collection      : this.collectionOnMonth.toJSON(),
-                    total           : this.total,
+                    total     : this.total,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter: helpers.weekSplitter
+                    weekSplitter    : helpers.weekSplitter
                 }));
 
                 /*Get data for employee select*/
