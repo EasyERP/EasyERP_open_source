@@ -61,7 +61,7 @@ define([
                         _id: item._id,
                         name: item.name,
                         level: item.nestingLevel,
-                        parentCategory: item.parentCategory,
+                        parent: item.parent,
                         fullName: item.fullName
                     };
                 }));

@@ -171,6 +171,8 @@ define([
             },
 
             deleteItemsRender: function (deleteCounter, deletePage) {
+                var holder = this.$el;
+
                 dataService.getData('/Invoice/totalCollectionLength', {
                     forSales     : this.forSales,
                     filter       : this.filter,
@@ -184,7 +186,7 @@ define([
                     parrentContentId: this.parrentContentId
                 });
                 if (deleteCounter !== this.collectionLength) {
-                    var holder = this.$el;
+
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
                         collection : this.collection,

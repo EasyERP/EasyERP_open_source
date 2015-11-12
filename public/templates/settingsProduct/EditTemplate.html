@@ -13,7 +13,7 @@
                         <dl class="department-info">
                             <dt><label for="parentCategory">Parent Category</label></dt>
                             <dd>
-                                <a id="parentCategory" class="current-selected" href="javascript:;" data-id="<%=(model.parentCategory) ? model.parentCategory._id: ''%>" data-level="<%=model.nestingLevel || ''%>" data-fullname="<%=model.fullName%>"><%=model.name%></a>
+                                <a id="parentCategory" class="current-selected" href="javascript:;" data-id="<%=(model.parent) ? model.parent._id: ''%>" data-level="<%=model.nestingLevel || ''%>" data-fullname="<%=model.fullName%>"><%=model.parent ? model.parent.name : model.name%></a>
                             </dd>
                         </dl>
                     </div>

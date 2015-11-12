@@ -9601,20 +9601,3 @@ textarea#editInput {
 .forInfoWrap {
   overflow: hidden;
 }
-.payRoll-expenses {
-  width: 70% !important;
-  margin: 0 auto;
-  padding-top: 25px !important;
-  overflow: hidden;
-}
-.payRoll-expenses .payRoll-name {
-  float: left;
-  padding-right: 5px;
-}
-.payRoll-expenses .payRoll-edit {
-  float: right;
-}
-.payRoll-expenses .payRoll-edit,
-.payRoll-expenses .payRoll-name {
-  margin-bottom: 15px;
-}

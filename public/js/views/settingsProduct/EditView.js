@@ -7,7 +7,7 @@ define([
     function (EditTemplate, common, Custom, populate) {
         var EditView = Backbone.View.extend({
             el: "#content-holder",
-            contentType: "Departments",
+            contentType: "productSettings",
             template: _.template(EditTemplate),
             initialize: function (options) {
                 _.bindAll(this, "render", "saveItem");
@@ -134,20 +134,30 @@ define([
                 var thisEl = this.$el;
                 var mid = 39;
                 var categoryName = $.trim(thisEl.find("#categoryName").val());
-                var parentCategory = thisEl.find("#parentCategory").data("id") || null;
-                var nestingLevel = thisEl.find("#parentCategory").data('level');
-                var fullName = thisEl.find("#parentCategory").data('fullname') + ' / ' + categoryName;
+                var parentCategory = thisEl.find("#parentCategory").attr("data-id") || null;
+                var nestingLevel = thisEl.find("#parentCategory").attr("data-level");
+                var fullName = thisEl.find("#parentCategory").attr("data-fullname") + ' / ' + categoryName;
                 var res = _.filter(this.responseObj["#parentCategory"], function (item) {
-                    return item.parentCategory === parentCategory;
+                    return (item.parent ? item.parent._id : null) === parentCategory;
                 });
 
-                this.currentModel.set({
-                    name: categoryName,
-                    parentCategory: parentCategory,
-                    nestingLevel: ++nestingLevel,
-                    sequence: res.length,
-                    fullName: fullName
-                });
+                if (parentCategory === this.currentModel.get('_id')){
+                    this.currentModel.set({
+                        name: categoryName,
+                        parent: null,
+                        nestingLevel: 0,
+                        sequence: 0,
+                        fullName: fullName
+                    });
+                } else {
+                    this.currentModel.set({
+                        name: categoryName,
+                        parent: parentCategory,
+                        nestingLevel: ++nestingLevel,
+                        sequence: res.length,
+                        fullName: fullName
+                    });
+                }
 
                 this.currentModel.save({}, {
                     headers: {
@@ -188,7 +198,7 @@ define([
             },
             render: function () {
                 var formString = this.template({
-                    model: this.currentModel.toJSON(),
+                    model: this.currentModel.toJSON()
                 });
 				var self=this;
                 this.$el = $(formString).dialog({
@@ -197,7 +207,7 @@ define([
                     resizable: false,
                     dialogClass: "edit-dialog",
                     width: "950px",
-                    title: "Edit Department",
+                    title: "Edit Category",
                     buttons: [{
 								  text: "Save",
 								  click: function () { self.saveItem(); }

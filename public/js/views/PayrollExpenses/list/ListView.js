@@ -48,7 +48,6 @@ define([
 
             initialize: function (options) {
                 var collectionsObjects;
-                var location = window.location.hash;
 
                 this.collection = options.collection;
                 collectionsObjects = this.collection.toJSON()[0];
@@ -970,7 +969,6 @@ define([
 
             newPayment: function () {
                 var paymentView = new PaymentCreateView({
-                    model     : this.currentModel,
                     redirect: this.redirect,
                     collection: this.collection
                 });
