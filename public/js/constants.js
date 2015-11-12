@@ -391,7 +391,8 @@ define([], function () {
         DASHBOARD_HR      : 'HrDashboard',
         HOURS             : 'Hours',
         CAPACITY          : 'Capacity',
-        JOBSDASHBOARD          : 'jobsDashboard',
+        JOBSDASHBOARD     : 'jobsDashboard',
+        PRODUCTSETTINGS   : "productSettings",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
