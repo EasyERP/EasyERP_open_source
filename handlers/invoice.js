@@ -112,6 +112,7 @@ var Invoice = function (models, event) {
             var company;
             var project;
             var type = "Invoice";
+            var query;
 
             if (parallelResponse && parallelResponse.length) {
                 order = parallelResponse[0];
@@ -145,7 +146,10 @@ var Invoice = function (models, event) {
             invoice.workflow.status = workflow.status;
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
-            invoice.project.name = order.project.projectName;
+            if (forSales === "true"){
+                invoice.project.name = order.project.projectName;
+            }
+
 
             supplier = order['supplier'];
 
@@ -176,7 +180,7 @@ var Invoice = function (models, event) {
                     event.emit('fetchJobsCollection', {project: project});
                 });
             } else {
-                var query = Company.findById(invoice.supplier._id).lean();
+                query = Company.findById(invoice.supplier._id).lean();
 
                 query.populate('salesPurchases.salesPerson', 'name');
 
@@ -650,6 +654,7 @@ var Invoice = function (models, event) {
 
                         function jobsUpdateAndWTracks (){
                             var setData = {};
+                            var array;
 
                             async.each(jobs, function (id) {
                                 setData.editedBy = {
@@ -664,7 +669,9 @@ var Invoice = function (models, event) {
                                         return console.log(err);
                                     }
 
-                                    async.each(result.wTracks, function (id) {
+                                    array = result ? result.wTracks : [];
+
+                                    async.each(array, function (id) {
                                         setData.editedBy = {
                                             user: req.session.uId,
                                             date: new Date().toISOString()
