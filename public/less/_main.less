@@ -6,6 +6,7 @@
 @import "_list";
 @import "_vacationList";
 
+
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
 @body-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
@@ -2166,12 +2167,8 @@ input::-ms-clear {
 .tabs(@marginTop: 0, @marginLeft: -20px) {
   height: 35px;
   border-bottom: @thin-border @border-color-main;
- //margin: @marginTop -20px 0 @marginLeft;
-  //padding: 0 20px;
-
   li {
     float: left;
-
     a {
       border: @thin-border rgba(0, 0, 0, 0);
       display: block;
@@ -2187,7 +2184,6 @@ input::-ms-clear {
       &.active {
         height: 35px;
         line-height: 34px;
-        //border: @thin-border #DDD;
         border-bottom: none;
         background-color: @bg-main-menu-selected;
         color: @whiteText;
@@ -2213,7 +2209,7 @@ input::-ms-clear {
 
 #details,
 #sub-details {
-  > dl {
+  &>dl {
     padding-left: 156px;
   }
 
@@ -3863,16 +3859,8 @@ table#workflows {
     li {
       float: left;
       margin-right: 10px;
-      border: 1px solid @border-color-main;
-      a {
-        display: inline-block;
-        line-height: 18px;
-        width: 100%;
-        padding: 0 5px;
-        margin: 0;
-        &:hover {
-          text-decoration: none;
-        }
+      .btn {
+        padding: .2em 1em;
       }
     }
   }
@@ -5378,7 +5366,7 @@ textarea#editInput {
               font-size: 52px;
               color: #ffffff;
               width: 126px;
-              padding: 20px;
+              padding: 4px;
               text-align: center;
               margin: 0 auto;
 

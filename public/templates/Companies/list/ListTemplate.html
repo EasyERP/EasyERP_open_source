@@ -1,7 +1,7 @@
 <% companiesCollection.forEach(function(company, index){ %>
 <tr data-index="<%=index + startNumber + 1%>" data-id="<%=company._id%>">
-    <td class = "notForm"><input type="checkbox" value="<%=company._id%>" class="checkbox" /></td>
-    <td><%=startNumber + index + 1%></td>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=company._id%>" class="checkbox" /></td>
+    <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=company.name.first%></td>
     <td><%=company.email%></td>
     <td class = "notForm">

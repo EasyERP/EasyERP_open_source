@@ -1,7 +1,7 @@
 <% personsCollection.forEach(function(person, index){ %>
 <tr data-id="<%=person._id%>">
-    <td class = "notForm"><input type="checkbox" value="<%=person._id%>" class="checkbox" /></td>
-    <td><%=startNumber + index + 1%></td>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=person._id%>" class="checkbox" /></td>
+    <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=person.name.first.substr(0,15)%></td>
     <td><%=person.name.last%></td>
     <td><%=person.email%></td>
