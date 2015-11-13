@@ -824,7 +824,9 @@ var requestHandler = function (app, event, mainDb) {
                         });
 
                     }, function(){
-                        event.emit('fetchJobsCollection', {project: projectId});
+                        if (projectId){
+                            event.emit('fetchJobsCollection', {project: projectId});
+                        }
                     })
                 })
             });

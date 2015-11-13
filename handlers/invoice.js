@@ -177,7 +177,9 @@ var Invoice = function (models, event) {
                     });
 
                 }, function(){
-                    event.emit('fetchJobsCollection', {project: project});
+                    if (project){
+                        event.emit('fetchJobsCollection', {project: project});
+                    }
                 });
             } else {
                 query = Company.findById(invoice.supplier._id).lean();
