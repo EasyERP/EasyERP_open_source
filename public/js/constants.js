@@ -338,15 +338,7 @@ define([], function () {
             'Payment Type': {
                 view   : 'type',
                 backend: 'type._id'
-            }, /*
-            'Month'   : {
-                view   : 'month',
-                backend: 'month'
             },
-            'Year'    : {
-                view   : 'year',
-                backend: 'year'
-            },*/
             'Data Key'    : {
                 view   : 'dataKey',
                 backend: 'dataKey'
@@ -405,6 +397,8 @@ define([], function () {
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },
+
+        EXPENSESCAREGORY: "56459202624e48551dfe3b24",
 
         WTRACK_DB_NAME   : 'weTrack',
         FILTERS          : filters,

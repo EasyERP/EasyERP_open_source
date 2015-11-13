@@ -830,7 +830,7 @@ define([
                     content.responseObj['#employee'] = employees;
                 });
 
-                dataService.getData("/paymentType/", null, function (paymentType) {
+                dataService.getData("/category/getExpenses", null, function (paymentType) {
 
                     content.responseObj['#paymentType'] = paymentType;
                 });

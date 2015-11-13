@@ -16,7 +16,7 @@ module.exports = (function () {
         diff      : Number,
 
         type: {
-            _id: {type: ObjectId, ref: "PaymentType", default: null},
+            _id: {type: ObjectId, ref: "ProductCategories", default: null},
             name: String
         }
     }, {collection: 'PayRoll'});

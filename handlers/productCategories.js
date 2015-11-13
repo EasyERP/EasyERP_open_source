@@ -5,15 +5,34 @@ var Categories = function (models, event) {
     var CategorySchema = mongoose.Schemas['ProductCategory'];
     var ProductSchema = mongoose.Schemas['Products'];
     var objectId = mongoose.Types.ObjectId;
+    var MAINCONSTANTS = require('../constants/mainConstants');
 
     var async = require('async');
+
+    this.getExpenses = function(req, res, next){
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+
+        var parentId = MAINCONSTANTS.EXPENSESCAREGORY;
+
+        ProductCategory
+            .find({parent: objectId(parentId)})
+            .sort({fullName: 1, nestingLevel: 1, sequence: 1})
+            .populate('parent')
+            .exec(function (err, categories) {
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send(categories);
+            });
+
+    };
 
     this.getForDd = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
 
         ProductCategory
             .find()
-            .sort({name: 1, nestingLevel: 1, sequence: 1})
+            .sort({fullName: 1, nestingLevel: 1, sequence: 1})
             .populate('parent')
             .exec(function (err, categories) {
                 if (err) {
