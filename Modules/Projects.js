@@ -314,7 +314,11 @@ var Project = function (models, event) {
                                 logWriter.log("Project.js saveProjectToDb _project.save" + err);
                                 res.send(500, {error: 'Project.save BD error'});
                             } else {
-                                event.emit('updateProjectDetails', {req: req, _id: result._id});
+
+                                if (result._id){
+                                    event.emit('updateProjectDetails', {req: req, _id: result._id});
+                                }
+
                                 event.emit('recollectProjectInfo');
                                 res.send(201, {success: 'A new Project crate success', result: result, id: result._id});
                             }
@@ -1206,7 +1210,10 @@ var Project = function (models, event) {
                     InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
                     Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
 
-                    event.emit('updateProjectDetails', {req: req, _id: project._id});
+                    if (project._id){
+                        event.emit('updateProjectDetails', {req: req, _id: project._id});
+                    }
+
                     event.emit('recollectProjectInfo');
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
@@ -1282,7 +1289,9 @@ var Project = function (models, event) {
                     });
 
                 }
-                event.emit('updateProjectDetails', {req: req, _id: projects._id});
+                if (projects._id){
+                    event.emit('updateProjectDetails', {req: req, _id: projects._id});
+                }
                 event.emit('recollectProjectInfo');
                 res.send(200, projects);
             }

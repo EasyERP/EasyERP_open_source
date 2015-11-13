@@ -11,14 +11,12 @@ define([
             changedModels : {},
 
             initialize: function (options) {
-
                 this.editCollection = options.collection;
-
                 this.editCollection.url = 'payment/salary';
 
                 this.render(options);
 
-                this.bodyContainer = this.$el.find('#payRoll-listTable');
+                this.$bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
             events: {
@@ -159,9 +157,6 @@ define([
                         parentKey = 'calc';
                     }
 
-                    /*paid = paidTD.text() ? parseInt(paid) : input.val();
-                     calc = calcTD.text() ? parseInt(calc) : input.val();*/
-
                     if (subValues !== 0) {
 
                         value = paid - calc;
@@ -182,12 +177,6 @@ define([
 
                         changedAttr = this.changedModels[editedElementRowId];
 
-                        if (changedAttr.diff) {
-                            diffObj = _.clone(changedAttr.diff);
-                        } else {
-                            diffObj = _.clone(editModel.get('diff'));
-                        }
-
                         diffObj = totalValue;
 
                         changedAttr['diff'] = diffObj;
@@ -198,7 +187,7 @@ define([
             },
 
             isEditRows: function () {
-                var edited = this.bodyContainer.find('.edited');
+                var edited = this.$bodyContainer.find('.edited');
 
                 this.edited = edited;
 
@@ -374,7 +363,6 @@ define([
             },
 
             pay: function () {
-
                 this.saveItem();
             },
 
