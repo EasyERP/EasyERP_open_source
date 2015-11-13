@@ -5,9 +5,10 @@ define([
         "common",
         "custom",
         "dataService",
-        "populate"
+        "populate",
+        "constants"
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
