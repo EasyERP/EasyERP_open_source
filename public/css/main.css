@@ -993,66 +993,41 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 20px;
 }
 /*== temp files==*/
-table.payRoll-list {
+.payRoll-list {
   width: 100%;
   min-width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
+  table-layout: fixed;
 }
-table.payRoll-list tfoot {
+.payRoll-list th,
+.payRoll-list td {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border: 1px solid white;
+  vertical-align: middle;
+}
+.payRoll-list th {
+  border-color: transparent;
+}
+.payRoll-list tfoot {
   margin-right: 17px;
 }
-table.payRoll-list tbody tr:hover {
+.payRoll-list tbody tr:hover {
   background: none;
 }
-table.payRoll-list #payRoll-Table {
+.payRoll-list #payRoll-Table {
   padding: 0;
 }
-table.payRoll-list #payRoll-Table .scrollit {
+.payRoll-list #payRoll-Table .scrollit {
   display: block;
   height: calc(100vh - 209px);
   overflow-x: hidden;
 }
-table.payRoll-list th,
-table.payRoll-list td {
-  border: 1px solid white;
-  vertical-align: middle;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(1) {
-  width: 2%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(2) {
-  width: 2%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(3) {
-  width: 27%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(4) {
-  width: 7%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(5) {
-  width: 7%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(6) {
-  width: 7%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(7) {
-  width: 7%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(8) {
-  width: 7%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(9) {
-  width: 7%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(10) {
-  width: 7%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(11) {
-  width: 7%;
-}
-table.payRoll-list #payRoll-TableBody td:nth-child(12) {
-  width: 13%;
+.totalContainer {
+  margin-top: 15px;
+  text-align: right;
+  font-size: 17px;
 }
 .borders col {
   border: 1px solid;
