@@ -13,6 +13,8 @@ define([
             initialize: function (options) {
                 this.editCollection = options.collection;
                 this.editCollection.url = 'payment/salary';
+                this.editCollection.on('saved', this.savedNewModel, this);
+                this.editCollection.on('updated', this.updatedOptions, this);
 
                 this.render(options);
 
@@ -24,6 +26,13 @@ define([
                 "change .autoCalc"       : "autoCalc",
                 "change .editable"       : "setEditable",
                 "keydown input.editing"  : "keyDown"
+            },
+
+            savedNewModel: function () {
+                this.removeDialog();
+
+                Backbone.history.fragment = '';
+                Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
             },
 
             editRow: function (e, prev, next) {
@@ -101,7 +110,6 @@ define([
                 var tdForUpdate;
                 var paid;
                 var calc;
-                var diffObj;
                 var parentKey;
 
                 var diffOnCardRealValue;
@@ -282,7 +290,7 @@ define([
                     editedCol = editedElement.closest('td');
                     editedElementRow = editedElement.closest('tr');
                     editedElementRowId = editedElementRow.attr('data-id');
-                    editedElementContent = editedCol.data('content');
+                    //editedElementContent = editedCol.data('content');
                     editedElementOldValue = parseInt(editedElement.attr('data-cash'));
 
                         editedElementValue = parseInt(editedElement.val());

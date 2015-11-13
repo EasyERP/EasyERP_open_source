@@ -52,9 +52,9 @@ define(['./filterCollection'], function (ParentCollection) {
                     modelObject._id = model.id;
                     models.push(modelObject);
                 } else if (model && !model.id){
-                    newModel = model.changed;
-                    newModel._id =  model.id;
-                    Backbone.sync("create", saveObject, options);
+                    model.url = this.url;
+
+                    Backbone.sync("create", model, options);
                 }
             }
 

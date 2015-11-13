@@ -8,7 +8,7 @@ define([
     function (PaymentModel, common) {
         var PaymentCollection = Backbone.Collection.extend({
             model: PaymentModel,
-            url: "/payment/supplier/",
+            url: "/payment/salary/",
             page: null,
             namberToShow: null,
             viewType: null,

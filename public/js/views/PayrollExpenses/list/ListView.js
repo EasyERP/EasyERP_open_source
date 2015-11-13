@@ -8,6 +8,7 @@ define([
         'views/PayrollExpenses/CreateView',
         "views/PayrollPayments/CreateView",
         'collections/PayrollExpenses/editCollection',
+        'collections/PayrollPayments/editCollection',
         'collections/PayrollExpenses/oneMonthCollection',
         'collections/Employees/employee',
         'models/PayRollModel',
@@ -18,7 +19,7 @@ define([
         'helpers'
     ],
 
-    function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+    function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, PaymentCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
             el: '#content-holder',
             contentType: 'PayrollExpenses',
@@ -1115,11 +1116,7 @@ define([
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.allCollection);
-                    self.forPayments = new editCollection();
-
-                    self.forPayments.on('saved', self.savedNewModel, self);
-                    self.editCollection.on('saved', self.savedNewModel, self);
-                    self.editCollection.on('updated', self.updatedOptions, self);
+                    self.forPayments = new PaymentCollection();
                 }, 10);
 
                 return this;

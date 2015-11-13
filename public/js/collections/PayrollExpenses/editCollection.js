@@ -14,6 +14,8 @@ define([
                 var models = [];
                 var modelObject;
                 var newModel;
+                var saveObject;
+                var options;
 
                 var syncObject = {
                     trigger: this.trigger,
@@ -23,19 +25,6 @@ define([
                     }
                 };
 
-                //var saveObject = {
-                //    trigger: this.trigger,
-                //    url    : this.url,
-                //    toJSON : function () {
-                //        return newModel;
-                //    }
-                //};
-                //
-                //var options = {
-                //    success: function (model, resp, xhr) {
-                //        self.trigger('saved', model);
-                //    }
-                //};
                 var updatedOptions = {
                     success: function (model, resp, xhr) {
                         self.trigger('updated');
@@ -50,15 +39,15 @@ define([
                         modelObject._id = model.id;
                         models.push(modelObject);
                     } else if (model && !model.id) {
-                        var saveObject = {
+                        saveObject = {
                             trigger: this.trigger,
-                            url: this.url,
-                            toJSON: function () {
+                            url    : this.url,
+                            toJSON : function () {
                                 return newModel;
                             }
                         };
 
-                        var options = {
+                        options = {
                             success: function (model, resp, xhr) {
                                 self.trigger('saved', model);
                             }
@@ -66,6 +55,7 @@ define([
 
                         newModel = model.changed;
                         newModel._id = model.id;
+
                         Backbone.sync("create", saveObject, options);
                     }
                 }
