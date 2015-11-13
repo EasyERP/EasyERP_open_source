@@ -54,7 +54,7 @@ module.exports = (function () {
             name: String
         },
         period       : {type: ObjectId, ref: 'Destination', default: null},
-        bonus        : {type: Boolean},
+        bonus        : {type: Boolean}
     });
 
     var salaryPaymentSchema = basePaymentSchema.extend({
