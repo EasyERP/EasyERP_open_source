@@ -1,10 +1,21 @@
-table.payRoll-list {
+.payRoll-list {
   width: 100%;
   min-width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
-  //min-height: .01%;
-  //overflow-x: auto;
+  table-layout: fixed;
+
+  th, td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid white;
+    vertical-align: middle;
+  }
+
+  th {
+    border-color: transparent;
+  }
+
   tfoot {
     margin-right: 17px;
   }
@@ -23,53 +34,15 @@ table.payRoll-list {
     }
   }
 
-  th, td {
-    //box-sizing: border-box;
-    border: 1px solid white;
-    //width: 1%;
-    vertical-align: middle;
-  }
-  #payRoll-TableBody {
-    td {
-      &:nth-child(1) {
-        width: 2%;
-      }
-      &:nth-child(2) {
-        width: 2%;
-      }
-      &:nth-child(3) {
-        width: 27%;
-      }
-      &:nth-child(4) {
-        width: 7%;
-      }
-      &:nth-child(5) {
-        width: 7%;
-      }
-      &:nth-child(6) {
-        width: 7%;
-      }
-      &:nth-child(7) {
-        width: 7%;
-      }
-      &:nth-child(8) {
-        width: 7%;
-      }
-      &:nth-child(9) {
-        width: 7%;
-      }
-      &:nth-child(10) {
-        width: 7%;
-      }
-      &:nth-child(11) {
-        width: 7%;
-      }
-      &:nth-child(12) {
-        width: 13%;
-      }
-    }
-  }
 }
+
+.totalContainer {
+  margin-top: 15px;
+  text-align: right;
+
+  font-size: 17px;
+}
+
 .borders {
   col {
     border: 1px solid;
