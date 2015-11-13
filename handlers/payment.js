@@ -12,13 +12,7 @@ function returnModuleId(req) {
     var body = req.body;
     var moduleId;
 
-    /*    var isWtrack = req.session.lastDb === 'weTrack';
-
-     if(isWtrack){
-     moduleId = 61;
-     } else {*/
     moduleId = !!body.forSales ? 61 : 60;
-    /*    }*/
 
     return moduleId;
 }
@@ -30,7 +24,7 @@ var Payment = function (models, event) {
     var wTrackPayOutSchema = mongoose.Schemas['wTrackPayOut'];
     var PaymentSchema = mongoose.Schemas['Payment'];
     var wTrackPaymentSchema = mongoose.Schemas['wTrackPayment'];
-    var InvoiceSchema = mongoose.Schemas['Invoice'];
+    var salaryPaymentSchema = mongoose.Schemas['salaryPayment'];
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
@@ -270,6 +264,32 @@ var Payment = function (models, event) {
             }
         });
 
+    };
+
+    this.salaryPayOut = function (req, res, next) {
+        var body = req.body;
+        var moduleId = 66;
+        var Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
+
+        access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
+            var payment;
+
+            if (access) {
+                payment = new Payment(body);
+
+                payment.save(function (err, payment) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(payment);
+                });
+
+            } else {
+                res.status(403).send();
+            }
+        });
+        res.status(200).send({success: 'All done'});
     };
 
     function caseFilter(filter) {
