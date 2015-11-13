@@ -3,14 +3,6 @@
         <div>
             <h3 class="left">Payroll Payment</h3>
         </div>
-        <div class="totalContainer">
-            <span data-id="value" class="totalName">
-                Total Amount
-            </span>
-            <span data-id="value" class="money">
-                0
-            </span>
-        </div>
     </div>
     <table class="list payRoll-list">
         <colgroup class="borders" span="8">
@@ -25,7 +17,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th><a id="expandAll">Expand All</a></th>
+            <th><a id="expandAll">#</a></th>
             <th></th>
             <th class="oe_sortable_sub" data-sort="employee.name">Complete Name<span
                     class="arrow down">7</span><span
@@ -37,9 +29,9 @@
 
             <th class="oe_sortable_sub" data-sort="calc">Calc<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable_sub" data-sort="paid">Paid<span class="arrow down">7</span><span
+            <th class="oe_sortable_sub" data-sort="paid">Balance<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable_sub" data-sort="diff">Diff<span class="arrow down">7</span><span
+            <th class="oe_sortable_sub" data-sort="diff">Pay<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
         </tr>
         </thead>
@@ -60,6 +52,7 @@
                             <col span="1" width="7%">
                         </colgroup>
                         <tbody id="payRoll-TableBody">
+                        <% var total = 0;%>
                             <% collection.forEach(function(model, index){ %>
                                 <tr data-id="<%=model._id%>">
                                     <td data-content="number"><%=index+1%></td>
@@ -69,27 +62,19 @@
                                         ''%>
                                     </td>
                                     <td><%=model.month + '/' + model.year%></td>
-                                    <td class="editable" data-content="paymentType"><%=model.type.name%></td>
+                                    <td class="editable" data-content="paymentType"><%=model.type ? model.type.name : ''%></td>
 
-                                    <td data-type="input" class="editable autoCalc cash calc money" data-content="onCash"
+                                    <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
                                         data-cash="<%=model.calc%>"><%=currencySplitter(model.calc.toString())%>
                                     </td>
 
-                                    <td data-type="input" data-content="onCash" data-cash="<%=model.paid%>" class="editable autoCalc cash paid
-                                        <% if (model.paid) {%>
-                                            money"><%=currencySplitter(model.paid.toString())%>
-                                                                </td>
-                                                                <%} else {%>
-                                                                "></td>
-                                                                <%}%>
+                                    <td data-content="onCash" class="diff money">0</td>
 
-                                                                <td data-content="onCash" data-cash="<%=model.diff%>" class="diff
-                                        <% if (model.diff < 0) { %>
-                                            negativeMoney"><%=currencySplitter((model.diff * (-1)).toString())%>
+                                    <td data-type="input" data-content="onCash" data-cash="<%=model.diff%>" class="editable autoCalc cash paid money">
+                                        <%=currencySplitter((model.diff * (-1)).toString())%>
                                     </td>
-                                    <%} else {%>
-                                        money"><%=currencySplitter(model.diff.toString())%></td>
-                                    <%}%>
+
+                                    <%total += model.diff;%>
                                 </tr>
                             <% }) %>
                         </tbody>
@@ -99,5 +84,13 @@
         </tr>
         </tbody>
         <tfoot id="payRoll-listTotal"></tfoot>
+        <div class="totalContainer">
+            <span data-id="value" class="totalName">
+                Total Amount
+            </span>
+            <span data-id="value" class="money">
+                <%=currencySplitter((total * (-1)).toFixed(2))%>
+            </span>
+        </div>
     </table>
 </div>

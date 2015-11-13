@@ -41,8 +41,8 @@ define([
                 "click #mainRow td:not(.notForm)": "showRows",
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
-                "click .check_all": "checkAll"
-
+                "click .check_all": "checkAll",
+                "click .diff": "newPayment"
             },
 
 
@@ -62,6 +62,45 @@ define([
                 this.bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
+            newPayment: function (e) {
+                var checkboxes = $("input.checkbox:checked") ? $("input.checkbox:checked") : [];
+                var models = [];
+                var tr;
+                var dataId;
+                var model;
+
+                if (checkboxes.length){
+                    for (var i = checkboxes.length - 1; i >= 0; i--){
+                        dataId = $(checkboxes[i]).attr('id');
+                        model = this.editCollection.get(dataId);
+
+                        if (model.get('diff') < 0){
+                            this.forPayments.add(model);
+                        }
+
+                    }
+                } else if (e.target) {
+                    tr = $(e.target).closest('tr');
+                    dataId = tr.attr('data-id');
+
+                    model = this.editCollection.get(dataId);
+
+                    if (model.get('diff') < 0){
+                        this.forPayments.add(model);
+                    }
+                }
+
+
+                if (this.forPayments.length){
+                    new PaymentCreateView({
+                        redirect: this.redirect,
+                        collection: this.forPayments
+                    });
+                } else {
+                    return alert("Please, check at most one unpaid item.")
+                }
+
+            },
 
             removeNewSelect: function(){
                 $('.newSelectList').remove();
@@ -974,13 +1013,6 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            newPayment: function () {
-                var paymentView = new PaymentCreateView({
-                    redirect: this.redirect,
-                    collection: this.collection
-                });
-            },
-
             checkAll: function(e){
                 var target = e.target;
                 var classTr = $(target).attr('id');
@@ -1042,7 +1074,9 @@ define([
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.allCollection);
+                    self.forPayments = new editCollection();
 
+                    self.forPayments.on('saved', self.savedNewModel, self);
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
                 }, 10);
