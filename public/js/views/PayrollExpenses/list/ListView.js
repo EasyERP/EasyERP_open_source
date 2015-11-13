@@ -579,12 +579,14 @@ define([
                 var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
+                var payBtnEl = $('#topBarPaymentGenerate');
 
                 if (!this.changed) {
                     createBtnEl.hide();
                 }
                 saveBtnEl.show();
                 cancelBtnEl.show();
+                payBtnEl.show();
 
                 return false;
             },
@@ -594,6 +596,7 @@ define([
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var copyBtnEl = $('#top-bar-copy');
+                var paymentBtnEl = $('#topBarPaymentGenerate');
 
                 this.changed = false;
 
@@ -601,6 +604,7 @@ define([
                 cancelBtnEl.hide();
                 createBtnEl.show();
                 copyBtnEl.hide();
+                paymentBtnEl.hide();
 
                 return false;
             },
@@ -620,6 +624,7 @@ define([
 
                     if ($("input.checkbox:checked").length > 0) {
                         $('#top-bar-deleteBtn').show();
+                        $('#topBarPaymentGenerate').show();
                         if (checkLength === 1){
                             $('#top-bar-copy').show();
                         } else {
@@ -633,6 +638,7 @@ define([
                     } else {
                         this.$el.find('#' + dataId).prop('checked', false);
                         $('#top-bar-deleteBtn').hide();
+                        $('#topBarPaymentGenerate').hide();
                         $('#top-bar-copy').hide();
                     }
                 }
@@ -824,7 +830,7 @@ define([
                     content.responseObj['#employee'] = employees;
                 });
 
-                dataService.getData("/paymentType/", null, function (paymentType) {
+                dataService.getData("/category/getExpenses", null, function (paymentType) {
 
                     content.responseObj['#paymentType'] = paymentType;
                 });
@@ -957,6 +963,7 @@ define([
                 }));
 
                 $("#top-bar-deleteBtn").hide();
+                $("#topBarPaymentGenerate").hide();
                 $('#check_all').prop('checked', false);
 
                 if (this.filterView) {
@@ -982,8 +989,10 @@ define([
                 this.$el.find('[data-id=' + classTr + ']').prop('checked', checked);
                 if (this.$el.find("input.checkbox:checked").length > 0) {
                     $("#top-bar-deleteBtn").show();
+                    $("#topBarPaymentGenerate").show();
                 } else {
                     $("#top-bar-deleteBtn").hide();
+                    $("#topBarPaymentGenerate").hide();
                 }
             },
 
@@ -1022,8 +1031,10 @@ define([
                     currentEl.find('[data-id=' + classTr + ']').prop('checked', this.checked);
                     if (self.$el.find("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
+                        $("#topBarPaymentGenerate").show();
                     } else {
                         $("#top-bar-deleteBtn").hide();
+                        $("#topBarPaymentGenerate").hide();
                     }
                 });
 
