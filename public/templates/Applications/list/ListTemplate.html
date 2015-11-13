@@ -1,7 +1,7 @@
     <% applicationsCollection.forEach(function(application, index){ %>
         <tr data-index="<%= index + 1 %>" data-id="<%=application._id%>" class="stage-<%=(application.workflow) ? application.workflow.status.toLowerCase().replace(' ','') : ''%>">
-            <td class = "notForm"><input type="checkbox" value="<%=application._id%>" class="checkbox" /></td>
-            <td><%=startNumber + index + 1 %></td>
+            <td class = "notForm centerCell"><input type="checkbox" value="<%=application._id%>" class="checkbox" /></td>
+            <td class="centerCell"><%=startNumber + index + 1 %></td>
             <!-- <td><%=application.creationDate%></td> -->
             <!--<td><%=application.subject%></td>-->
             <td><%=application.name.first%> <%=application.name.last%></td>

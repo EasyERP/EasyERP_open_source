@@ -1,53 +1,48 @@
 
-<div class="tableProject">
-<table class="list">
+<div class="innerTableProject">
+    <table class="list">
         <thead>
-        <tr>
-            <th>Resource</th>
-            <th>Job Position</th>
-            <th>Department</th>
-            <th>Hours</th>
-            <th>Cost</th>
-            <th>Revenue</th>
-            <th>Profit</th>
-            <th>Rate</th>
-        </tr>
+            <tr>
+                <th>Resource</th>
+                <th>Job Position</th>
+                <th>Department</th>
+                <th>Hours</th>
+                <th>Cost</th>
+                <th>Revenue</th>
+                <th>Profit</th>
+                <th>Rate</th>
+            </tr>
         </thead>
 
-        <tbody id="wTracks">
-        <%var count = 0;%>
-
-        <%var budgetTotal = jobItem.budget.budgetTotal%>
-        <%var projectTeam = jobItem.budget.projectTeam%>
-        <%var budget = jobItem.budget.budget%>
-        <% projectTeam.forEach(function(element,i){ %>
-        <tr data-id="<%=element._id%>" id="projectTeam">
-
-            <td><%=element.name.first + ' ' + element.name.last%></td>
-            <td><%=element.jobPosition.name%></td>
-            <td><%=element.department.name%></td>
-            <td><%=currencySplitter(budget[i].hours.toFixed())%></td>
-            <td><%=currencySplitter(budget[i].cost.toFixed())%></td>
-            <td><%=currencySplitter(budget[i].revenue.toFixed())%></td>
-            <td><%=currencySplitter(budget[i].profit.toFixed())%></td>
-            <td><%= isNaN(budget[i].revenue / budget[i].hours) ? 0 : currencySplitter((budget[i].revenue / budget[i].hours).toFixed(2)) %></td>
-        </tr>
-        <% count++ %>
-        <% })%>
-
+        <tbody id="wTracks" class="enableTableOdd">
+            <%var count = 0;%>
+            <%var budgetTotal = jobItem.budget.budgetTotal%>
+            <%var projectTeam = jobItem.budget.projectTeam%>
+            <%var budget = jobItem.budget.budget%>
+            <% projectTeam.forEach(function(element,i){ %>
+            <tr data-id="<%=element._id%>" id="projectTeam">
+                <td><%=element.name.first + ' ' + element.name.last%></td>
+                <td><%=element.jobPosition.name%></td>
+                <td><%=element.department.name%></td>
+                <td><%=currencySplitter(budget[i].hours.toFixed())%></td>
+                <td><%=currencySplitter(budget[i].cost.toFixed())%></td>
+                <td><%=currencySplitter(budget[i].revenue.toFixed())%></td>
+                <td><%=currencySplitter(budget[i].profit.toFixed())%></td>
+                <td><%= isNaN(budget[i].revenue / budget[i].hours) ? 0 : currencySplitter((budget[i].revenue / budget[i].hours).toFixed(2)) %></td>
+            </tr>
+            <% count++ %>
+            <% })%>
         </tbody>
-
-    <tr>
-        <th colspan="7"></th>
-        <td>
-            <a href="javascript:;" data-id="<%=jobItem._id%>" data-value="<%=jobItem.name%>"
-               id="createItem">
-               add more...
-            </a>
-        </td>
-    </tr>
-        <tfoot>
-
-
-    </table>
-    </div>
+        <tfoot class="innerTableProject-footer">
+            <tr>
+                <td colspan="7"></td>
+                <td>
+                    <a href="javascript:;" data-id="<%=jobItem._id%>" data-value="<%=jobItem.name%>"
+                       id="createItem">
+                        add more...
+                    </a>
+                </td>
+            </tr>
+        </tfoot>
+     </table>
+</div>

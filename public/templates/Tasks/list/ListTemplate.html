@@ -1,7 +1,7 @@
 <% tasksCollection.forEach(function(task, index){ %>
 <tr data-index="<%=index%>" data-id="<%= task._id%>" class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
-    <td><input type="checkbox" value="<%=task._id%>" class="checkbox" /></td>
-    <td><%=startNumber + index + 1%></td>
+    <td class="centerCell"><input type="checkbox" value="<%=task._id%>" class="checkbox" /></td>
+    <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=(task.project) ? task.project.projectShortDesc : ''%><%=task.taskCount%></td>
     <td><%=task.summary%></td>
     <td>
