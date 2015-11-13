@@ -328,6 +328,12 @@ define([
 
             pay: function () {
                 this.saveItem();
+
+                this.removeDialog();
+
+                Backbone.history.fragment = '';
+                Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
+
             },
 
             removeDialog: function(){
