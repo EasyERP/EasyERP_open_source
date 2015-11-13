@@ -70,6 +70,7 @@ define([
                 var model;
                 var jsonModel;
                 var modelPayment;
+                var target = e ? e.target: null;
 
                 if (checkboxes.length) {
                     for (var i = checkboxes.length - 1; i >= 0; i--) {
@@ -100,8 +101,8 @@ define([
                         }
 
                     }
-                } else if (e.target) {
-                    tr = $(e.target).closest('tr');
+                } else if (target) {
+                    tr = $(target).closest('tr');
                     dataId = tr.attr('data-id');
 
                     model = this.editCollection.get(dataId);

@@ -375,7 +375,6 @@ define([
 
             render: function (options) {
                 options.currencySplitter = helpers.currencySplitter;
-                options.collection =  options.collection.toJSON();
                 var formString = this.template(options);
                 var self = this;
 
