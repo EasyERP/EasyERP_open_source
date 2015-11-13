@@ -4,6 +4,7 @@ var Categories = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var CategorySchema = mongoose.Schemas['ProductCategory'];
     var ProductSchema = mongoose.Schemas['Products'];
+    var PayRollSchema = mongoose.Schemas['PayRoll'];
     var objectId = mongoose.Types.ObjectId;
     var MAINCONSTANTS = require('../constants/mainConstants');
 
@@ -122,7 +123,7 @@ var Categories = function (models, event) {
                     end -= 1;
                 }
                 objChange = {};
-                objFind = {"parentDepartment": parentDepartmentStart};
+                objFind = {"parent": parentDepartmentStart};
                 objFind[sequenceField] = {$gte: start, $lte: end};
                 objChange[sequenceField] = inc;
                 query = model.update(objFind, {$inc: objChange}, {multi: true});
@@ -131,13 +132,13 @@ var Categories = function (models, event) {
                 });
             } else {
                 if (isCreate) {
-                    query = model.count({"parentDepartment": parentDepartmentStart}).exec(function (err, res) {
+                    query = model.count({"parent": parentDepartmentStart}).exec(function (err, res) {
                         if (callback) callback(res);
                     });
                 }
                 if (isDelete) {
                     objChange = {};
-                    objFind = {"parentDepartment": parentDepartmentStart};
+                    objFind = {"parent": parentDepartmentStart};
                     objFind[sequenceField] = {$gt: start};
                     objChange[sequenceField] = -1;
                     query = model.update(objFind, {$inc: objChange}, {multi: true});
@@ -148,12 +149,12 @@ var Categories = function (models, event) {
             }
         } else {//between workflow
             objChange = {};
-            objFind = {"parentDepartment": parentDepartmentStart};
+            objFind = {"parent": parentDepartmentStart};
             objFind[sequenceField] = {$gte: start};
             objChange[sequenceField] = -1;
             query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec();
-            objFind = {"parentDepartment": parentDepartmentEnd};
+            objFind = {"parent": parentDepartmentEnd};
             objFind[sequenceField] = {$gte: end};
             objChange[sequenceField] = 1;
             query = model.update(objFind, {$inc: objChange}, {multi: true});
@@ -186,12 +187,12 @@ var Categories = function (models, event) {
                     Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, {new: true}, cb);
                 }
             });
-       // Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, {new: true}, cb);
     };
 
     this.update = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+        var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var data = req.body;
         var _id = req.params.id;
 
@@ -228,6 +229,7 @@ var Categories = function (models, event) {
                             });
 
                             event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
+                            event.emit('updateName', _id, PayRoll, 'type._id', 'type.name', result.name);
                         });
                     }
                 });
@@ -256,6 +258,7 @@ var Categories = function (models, event) {
                 }
 
                 event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
+                event.emit('updateName', _id, PayRoll, 'type._id', 'type.name', result.name);
             });
         }
     };
