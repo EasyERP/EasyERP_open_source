@@ -64,7 +64,6 @@ define([
 
             newPayment: function (e) {
                 var checkboxes = $("input.checkbox:checked") ? $("input.checkbox:checked") : [];
-                var models = [];
                 var tr;
                 var dataId;
                 var model;
