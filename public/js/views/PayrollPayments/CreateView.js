@@ -353,7 +353,7 @@ define([
                     autoOpen     : true,
                     resizable    : true,
                     dialogClass  : "edit-dialog",
-                    title        : "Create Quotation",
+                    title        : "Create Payment",
                     width        : "900px",
                     buttons      : [
                         {
