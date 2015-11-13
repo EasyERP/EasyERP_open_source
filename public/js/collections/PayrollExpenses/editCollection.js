@@ -23,19 +23,19 @@ define([
                     }
                 };
 
-                var saveObject = {
-                    trigger: this.trigger,
-                    url    : this.url,
-                    toJSON : function () {
-                        return newModel;
-                    }
-                };
-
-                var options = {
-                    success: function (model, resp, xhr) {
-                        self.trigger('saved', model);
-                    }
-                };
+                //var saveObject = {
+                //    trigger: this.trigger,
+                //    url    : this.url,
+                //    toJSON : function () {
+                //        return newModel;
+                //    }
+                //};
+                //
+                //var options = {
+                //    success: function (model, resp, xhr) {
+                //        self.trigger('saved', model);
+                //    }
+                //};
                 var updatedOptions = {
                     success: function (model, resp, xhr) {
                         self.trigger('updated');
@@ -50,6 +50,20 @@ define([
                         modelObject._id = model.id;
                         models.push(modelObject);
                     } else if (model && !model.id) {
+                        var saveObject = {
+                            trigger: this.trigger,
+                            url: this.url,
+                            toJSON: function () {
+                                return newModel;
+                            }
+                        };
+
+                        var options = {
+                            success: function (model, resp, xhr) {
+                                self.trigger('saved', model);
+                            }
+                        };
+
                         newModel = model.changed;
                         newModel._id = model.id;
                         Backbone.sync("create", saveObject, options);

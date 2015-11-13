@@ -91,9 +91,9 @@ define([
                 var editModel = this.editCollection.get(editedElementRowId);
                 var changedAttr;
 
-                var diffOnCash = tr.find('.diff[data-content="onCash"]');
-                var diffOnCard = tr.find('.diff[data-content="onCard"]');
-                var diffTotal = tr.find('.diff[data-content="total"]');
+                var diffOnCash = tr.find('.differenceAmount[data-content="onCash"]');
+                var diffOnCard = tr.find('.differenceAmount[data-content="onCard"]');
+                var diffTotal = tr.find('.differenceAmount[data-content="total"]');
 
                 var value;
                 var totalValue;
@@ -124,12 +124,12 @@ define([
                 if ($(td).hasClass('cash')) {
                     calcKey = 'onCash';
                     tdForUpdate = diffOnCash;
-                    paidTD = tr.find('.paid[data-content="onCash"]');
+                    paidTD = tr.find('.paidAmount[data-content="onCash"]');
                     calcTD = tr.find('.calc[data-content="onCash"]');
                 } else if ($(td).hasClass('card')) {
                     calcKey = 'onCard';
                     tdForUpdate = diffOnCard;
-                    paidTD = tr.find('.paid[data-content="onCard"]');
+                    paidTD = tr.find('.paidAmount[data-content="onCard"]');
                     calcTD = tr.find('.calc[data-content="onCard"]');
                 }
 
@@ -162,6 +162,7 @@ define([
                         value = paid - calc;
 
                         paidTD.attr('data-cash', paid);
+                        paidTD.text(paid);
                         calcTD.attr('data-cash', calc);
 
                         tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
@@ -169,17 +170,13 @@ define([
                         diffOnCashRealValue = diffOnCash.attr('data-value');
                         diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
 
-                        diffOnCardRealValue = diffOnCard.attr('data-value');
-                        diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.text();
-
                         totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
                         diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
 
                         changedAttr = this.changedModels[editedElementRowId];
 
-                        diffObj = totalValue;
 
-                        changedAttr['diff'] = diffObj;
+                        changedAttr['differenceAmount'] = paid - calc;
 
                         this.getTotal(subValues, parentKey + '_' + calcKey, tr);
                     }
@@ -274,6 +271,7 @@ define([
                 var editModel;
                 var editedElementOldValue;
                 var changedAttr;
+                var differenceAmount;
 
                 var calc;
                 var paid;
@@ -286,20 +284,13 @@ define([
                     editedElementRowId = editedElementRow.attr('data-id');
                     editedElementContent = editedCol.data('content');
                     editedElementOldValue = parseInt(editedElement.attr('data-cash'));
-                    if (editedElementContent === "dataKey") {
-                        var oldStr = editedElement.val();
-                        var newStr = oldStr.slice(0, 2) + oldStr.slice(3, 7);
-                        var month = parseInt(oldStr.slice(0, 2));
-                        var year = parseInt(oldStr.slice(3, 7));
-                        editedElementValue = parseInt(newStr) ? parseInt(newStr) : 0;
-                    } else {
+
                         editedElementValue = parseInt(editedElement.val());
                         editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
 
                         editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
 
                         differenceBettwenValues = editedElementValue - editedElementOldValue;
-                    }
 
                     if (differenceBettwenValues !== 0) {
 
@@ -313,51 +304,24 @@ define([
                             }
                         }
 
-                        calc = _.clone(editModel.get('calc'));
-                        paid = _.clone(editModel.get('paid'));
+                        differenceAmount = _.clone(editModel.get('differenceAmount'));
+                        paid = _.clone(editModel.get('paidAmount'));
 
                         changedAttr = this.changedModels[editedElementRowId];
 
-                        if (month || year) {
-                            changedAttr.dataKey = year * 100 + month;
-                            changedAttr.month = month;
-                            changedAttr.year = year;
-                        }
-
-                        if (editedElementContent === "dataKey") {
-                            editedCol.text(oldStr);
-                        } else {
-                            editedCol.text(editedElementValue);
-                        }
-
                         if (changedAttr) {
-                            if (editedCol.hasClass('calc')) {
-                                if (editedCol.attr('data-content') === 'salary') {
-                                    changedAttr['baseSalary'] = editedElementValue;
-                                } else {
-                                    if (!changedAttr.calc) {
-                                        changedAttr.calc = calc;
-                                    }
-
-                                    calc = editedElementValue;
-                                    changedAttr['calc'] = calc;
-                                }
-                            } else if (editedCol.hasClass('paid')) {
-                                if (!changedAttr.paid) {
-                                    changedAttr.paid = paid;
+                           if (editedCol.hasClass('paid')) {
+                                if (!changedAttr.paidAmount) {
+                                    changedAttr.paidAmount = paid;
                                 }
 
                                 paid = editedElementValue;
-                                changedAttr['paid'] = paid;
-                                changedAttr['diff'] = paid - calc;
+                                changedAttr['paidAmount'] = paid;
+                                changedAttr['differenceAmount'] = paid - differenceAmount;
                             }
                         }
                     }
-                    if (editedElementContent === "dataKey") {
-                        editedCol.text(oldStr);
-                    } else {
-                        editedCol.text(editedElementValue);
-                    }
+
                     editedElement.remove();
                 }
             },

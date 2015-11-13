@@ -267,7 +267,7 @@ var Payment = function (models, event) {
     };
 
     this.salaryPayOut = function (req, res, next) {
-        var body = req.body;
+        var data = req.body;
         var moduleId = 66;
         var Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
 
@@ -275,14 +275,19 @@ var Payment = function (models, event) {
             var payment;
 
             if (access) {
-                payment = new Payment(body);
 
-                payment.save(function (err, payment) {
-                    if (err) {
-                        return next(err);
-                    }
+                async.each(data, function(body, cb){
+                    payment = new Payment(body);
 
-                    res.status(200).send(payment);
+                    payment.save(function (err, payment) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                       cb();
+                    });
+                }, function(){
+                    res.status(200).send("success");
                 });
 
             } else {
