@@ -20,24 +20,24 @@ define([
 
     function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
-            el            : '#content-holder',
+            el: '#content-holder',
             contentType: 'PayrollExpenses',
-            viewType   : 'list',//needs in view.prototype.changeLocationHash
+            viewType: 'list',//needs in view.prototype.changeLocationHash
             responseObj: {},
-            whatToSet  : {},
+            whatToSet: {},
             headerTemplate: _.template(headerTemplate),
-            totalTemplate : _.template(totalTemplate),
+            totalTemplate: _.template(totalTemplate),
             // rowTemplate   : _.template(rowTemplate),
             cancelTemplate: _.template(cancelEditTemplate),
-            changedModels : {},
+            changedModels: {},
 
             events: {
-                "click .checkbox"                : "checked",
+                "click .checkbox": "checked",
                 "click td.editable": "editRow",
                 "click .newSelectList li": "chooseOption",
-                "change .autoCalc"       : "autoCalc",
-                "change .editable"       : "setEditable",
-                "keydown input.editing"  : "keyDown",
+                "change .autoCalc": "autoCalc",
+                "change .editable": "setEditable",
+                "keydown input.editing": "keyDown",
                 "click #mainRow td:not(.notForm)": "showRows",
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
@@ -63,18 +63,40 @@ define([
             },
 
             newPayment: function (e) {
-                var checkboxes = $("input.checkbox:checked") ? $("input.checkbox:checked") : [];
+                var checkbox = this.$el.find("input.checkbox:checked");
+                var checkboxes = checkbox ? checkbox : [];
                 var tr;
                 var dataId;
                 var model;
+                var jsonModel;
+                var modelPayment;
 
-                if (checkboxes.length){
-                    for (var i = checkboxes.length - 1; i >= 0; i--){
+                if (checkboxes.length) {
+                    for (var i = checkboxes.length - 1; i >= 0; i--) {
                         dataId = $(checkboxes[i]).attr('id');
                         model = this.editCollection.get(dataId);
+                        jsonModel = model.toJSON();
 
-                        if (model.get('diff') < 0){
-                            this.forPayments.add(model);
+                        if (jsonModel.diff < 0) {
+
+                            modelPayment = {
+                                "paidAmount": jsonModel.diff * (-1),
+                                "workflow": "Draft",
+                                "differenceAmount": 0,
+                                "month": jsonModel.month,
+                                "year": jsonModel.year,
+                                "supplier": {
+                                    "_id": jsonModel.employee._id,
+                                    "fullName": jsonModel.employee.name
+                                },
+                                "paymentMethod": {
+                                    "_id": jsonModel.type._id,
+                                    "name": jsonModel.type.name
+                                },
+                                "period": jsonModel.year + '-' + jsonModel.month + '-01'
+                            };
+
+                            this.forPayments.add(modelPayment);
                         }
 
                     }
@@ -83,14 +105,33 @@ define([
                     dataId = tr.attr('data-id');
 
                     model = this.editCollection.get(dataId);
+                    jsonModel = model.toJSON();
 
-                    if (model.get('diff') < 0){
-                        this.forPayments.add(model);
+                    if (jsonModel.diff < 0) {
+
+                        modelPayment = {
+                            "paidAmount": jsonModel.diff * (-1),
+                            "workflow": "Draft",
+                            "differenceAmount": 0,
+                            "month": jsonModel.month,
+                            "year": jsonModel.year,
+                            "supplier": {
+                                "_id": jsonModel.employee._id,
+                                "fullName": jsonModel.employee.name
+                            },
+                            "paymentMethod": {
+                                "_id": jsonModel.type._id,
+                                "name": jsonModel.type.name
+                            },
+                            "period": jsonModel.year + '-' + jsonModel.month + '-01'
+                        };
+
+                        this.forPayments.add(modelPayment);
                     }
                 }
 
 
-                if (this.forPayments.length){
+                if (this.forPayments.length) {
                     new PaymentCreateView({
                         redirect: this.redirect,
                         collection: this.forPayments
@@ -101,7 +142,7 @@ define([
 
             },
 
-            removeNewSelect: function(){
+            removeNewSelect: function () {
                 $('.newSelectList').remove();
             },
 
@@ -382,16 +423,16 @@ define([
                 var dataKey = parseInt(year) * 100 + parseInt(month);
 
                 var startData = {
-                    dataKey : dataKey,
-                    type   : "",
-                    month  : month,
-                    year   : year,
-                    diff   : 0,
-                    paid   : 0,
-                    calc   : 0,
+                    dataKey: dataKey,
+                    type: "",
+                    month: month,
+                    year: year,
+                    diff: 0,
+                    paid: 0,
+                    calc: 0,
                     employee: {
                         name: '',
-                        _id : null
+                        _id: null
                     }
                 };
 
@@ -511,12 +552,12 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait   : true,
+                        wait: true,
                         success: function () {
                             delete self.changedModels[id];
                             self.deleteItemsRender(tr, id);
                         },
-                        error  : function (model, res) {
+                        error: function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -663,7 +704,7 @@ define([
                     if ($("input.checkbox:checked").length > 0) {
                         $('#top-bar-deleteBtn').show();
                         $('#topBarPaymentGenerate').show();
-                        if (checkLength === 1){
+                        if (checkLength === 1) {
                             $('#top-bar-copy').show();
                         } else {
                             $('#top-bar-copy').hide();
@@ -814,10 +855,10 @@ define([
                     target.html(inputHtml);
 
                     $('.datapicker').datepicker({
-                        dateFormat : "mm/yy",
+                        dateFormat: "mm/yy",
                         changeMonth: true,
-                        changeYear : true,
-                        onSelect   : function (text, datPicker) {
+                        changeYear: true,
+                        onSelect: function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
                             var endDatePicker = td.find('.endDateDP');
@@ -842,8 +883,8 @@ define([
                 } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
-                        tempContainer + '" value="' + tempContainer +
-                        '"  maxLength="4" style="display: block;" />';
+                    tempContainer + '" value="' + tempContainer +
+                    '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -974,7 +1015,7 @@ define([
                 self.filters.render({
                     dataKey: {
                         sort: {
-                            key  : '_id',
+                            key: '_id',
                             order: -1
                         }
                     }
@@ -994,10 +1035,10 @@ define([
 
                 currentEl.empty();
                 currentEl.append(this.totalTemplate({
-                    collection      : this.collectionOnMonth.toJSON(),
-                    total     : this.total,
+                    collection: this.collectionOnMonth.toJSON(),
+                    total: this.total,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter    : helpers.weekSplitter
+                    weekSplitter: helpers.weekSplitter
                 }));
 
                 $("#top-bar-deleteBtn").hide();
@@ -1012,7 +1053,7 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            checkAll: function(e){
+            checkAll: function (e) {
                 var target = e.target;
                 var classTr = $(target).attr('id');
                 var checked = $(target).checked;
@@ -1039,10 +1080,10 @@ define([
                 /*Render table template*/
 
                 currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
-                    collection      : this.collectionOnMonth.toJSON(),
-                    total     : this.total,
+                    collection: this.collectionOnMonth.toJSON(),
+                    total: this.total,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter    : helpers.weekSplitter
+                    weekSplitter: helpers.weekSplitter
                 }));
 
                 /*Get data for employee select*/
