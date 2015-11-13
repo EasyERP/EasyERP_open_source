@@ -12,7 +12,15 @@ define([
 
             events: {
                 "click #updateDate": "changeDateRange",
-                "click .dateRange" : "toggleDateRange"
+                "click .dateRange" : "toggleDateRange",
+                "click #cancelBtn" : "cancel"
+            },
+
+            cancel: function(e){
+                var targetEl = $(e.target);
+                var ul = targetEl.closest('ul.frameDetail');
+
+                ul.addClass('hidden');
             },
 
             changeDateRange: function (e) {
@@ -29,7 +37,7 @@ define([
                 startTime.text(startDate);
                 endTime.text(endDate);
 
-                custom.cashToApp('vacationDashDateRange', {
+                custom.cacheToApp('vacationDashDateRange', {
                     startDate  : startDate,
                     endDate    : endDate
                 });
@@ -105,7 +113,7 @@ define([
 
                 this.bindDataPickers(startDate, endDate);
 
-                custom.cashToApp('vacationDashDateRange', {
+                custom.cacheToApp('vacationDashDateRange', {
                     startDate  : startDate,
                     endDate    : endDate
                 });

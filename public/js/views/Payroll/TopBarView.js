@@ -3,7 +3,7 @@ define([
         'custom',
         'common',
         'constants'
-],
+    ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
@@ -49,8 +49,7 @@ define([
 
             deleteEvent: function (event) {
                 event.preventDefault();
-                var answer = confirm("Realy DELETE items ?!");
-                if (answer == true) this.trigger('deleteEvent');
+                this.trigger('deleteEvent');
             },
 
             saveEvent: function (event) {

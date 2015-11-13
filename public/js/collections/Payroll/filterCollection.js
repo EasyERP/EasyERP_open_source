@@ -1,13 +1,10 @@
-/**
- * Created by soundstorm on 15.06.15.
- */
 define([
-        'models/SalaryModel',
+        'models/PayRollModel',
         'common'
     ],
-    function (SalaryModel, common) {
-        var SalaryCollection = Backbone.Collection.extend({
-            model       : SalaryModel,
+    function (PayRollModel, common) {
+        var PayRollCollection = Backbone.Collection.extend({
+            model       : PayRollModel,
             url         : "/payroll/",
             page        : null,
             namberToShow: null,
@@ -16,16 +13,14 @@ define([
 
             showMore: function (options) {
                 var that = this;
-                var filterObject = options || {};
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+
+                //filterObject['page'] = (options && options.page) ? options.page : this.page;
+                //filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
+
                 this.fetch({
-                    data   : filterObject,
+                    data   : options,
                     waite  : true,
                     success: function (models) {
-                        that.page += 1;
                         that.trigger('showmore', models);
                     },
                     error  : function () {
@@ -35,35 +30,44 @@ define([
             },
 
             initialize: function (options) {
+                var filterObject;
+
                 this.startTime = new Date();
-                var that = this;
-                this.namberToShow = options.count;
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;
-                this.count = options.count;
-                this.page = options.page || 1;
+                filterObject = App.filtersValues[this.contentType];
+
+                this.dataKey = _.max(filterObject.dataKey, function (dataKey) {
+                    return dataKey._id;
+                })
+
+                this.dataKey.status = true;
+
+                this.filter = {
+                    'dataKey': {
+                        key  : 'dataKey',
+                        value: [this.dataKey._id]
+                    }
+                };
+
+                if (!options.filter) {
+                    options.filter = this.filter;
+                }
+
                 if (options && options.viewType) {
                     this.url += options.viewType;
                 }
+
                 this.fetch({
                     data   : options,
                     reset  : true,
                     success: function () {
-                        that.page++;
                     },
                     error  : function (models, xhr) {
                         if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
                     }
                 });
-            },
-
-            parse: true,
-            parse: function (response) {
-                if (!response.second) {
-                    return response;
-                }
-                return response.second;
             }
         });
-        return SalaryCollection;
+        return PayRollCollection;
     });

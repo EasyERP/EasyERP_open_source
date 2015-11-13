@@ -104,7 +104,8 @@ define([
             saveNewJobName: function (e) {
                 e.preventDefault();
 
-                var nameRegExp = /^[\w\.@]{3,100}$/;
+               // var nameRegExp = /^[\w\.@]{3,100}$/;
+                var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
                 var self = this;
                 var id = $(e.target).parents("td").closest('tr').attr('data-id');
                 var name = $(e.target).prev('input').val() ? $(e.target).prev('input').val() : $(e.target).val();

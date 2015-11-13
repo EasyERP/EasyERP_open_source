@@ -54,4 +54,5 @@ module.exports = (function () {
     require('./capacity.js');
     require('./jobs.js');
     require('./wTrackInvoiceOld.js'); //TODO remove this row
+    require('./payRoll.js');
 })();

@@ -10,6 +10,7 @@ define(['collections/Dashboard/employeeDashboardData'], function (employeeDashbo
         parse: function(model){
             if(model.employees){
                 model.employees = new employeeDashboardData(model.employees);
+                model.employees = model.employees.toJSON();
             }
 
             return model;

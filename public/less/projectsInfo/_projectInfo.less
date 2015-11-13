@@ -1,0 +1,102 @@
+#forInfo {
+  .tableProjects {
+    width: 99%;
+    margin-bottom: 10px;
+    thead{
+      th {
+        text-align: right;
+
+        &.forCaption {
+          margin-top: 15px;
+          font-size: 12px;
+          line-height: 28px;
+          padding: 0 0  0 10px;
+          color: @overiewText-color;
+          position: relative;
+
+          &:last-child {
+            padding: 0 10px 0 0;
+          }
+          &:first-child {
+            text-align: left;
+            padding: 0 0 0 10px;
+          }
+
+          a {
+            color: @overiewText-color;
+
+          }
+        }
+      }
+    }
+    tbody {
+      td {
+        text-align: right;
+        &:first-child {
+          border-left: 1px solid @list-border-color;
+        }
+      }
+      td.remove {
+        min-width: 10px;
+        border-right: none;
+        border-left: 1px solid @border-color-main;
+      }
+      td.expand {
+        text-align: center;
+        font-size: 14px;
+      }
+    }
+    tr {
+      .procent {
+        position: relative;
+        padding-right: 20px;
+        &::before {
+          content: '%';
+          display: block;
+          width: 5px;
+          height: 5px;
+          position: absolute;
+          right: 13px;
+
+        }
+      }
+    }
+    .subRow {
+      background: none;
+      &:hover {
+        background: none;
+      }
+      &> td {
+        padding-right: 0;
+      }
+      td {
+        &:first-child {
+          border-left: 1px solid transparent !important;
+        }
+        &:last-child {
+          border-right: 1px solid transparent !important;
+        }
+      }
+    }
+    .tableProject {
+      padding: 5px 0px 5px 20px;
+
+      .list {
+        border-top: 1px solid transparent;
+        tbody {
+          tr {
+            border-top: 1px solid transparent;
+          }
+        }
+      }
+    }
+  }
+}
+
+.tableResponsive {
+  min-height: .01%;
+  overflow-x: auto;
+  width: 100%;
+  overflow-y: hidden;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}

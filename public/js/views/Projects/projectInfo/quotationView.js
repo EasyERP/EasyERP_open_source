@@ -21,9 +21,9 @@ define([
         templateList  : _.template(ListTemplate),
 
         events: {
-            "click .checkbox"       : "checked",
-            "click #createQuotation": "createQuotation",
-            "click #removeQuotation": "removeItems",
+            "click .checkbox"                    : "checked",
+            "click #createQuotation"             : "createQuotation",
+            "click #removeQuotation"             : "removeItems",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
             "click .stageSelect"                 : "showNewSelect"
         },
@@ -287,17 +287,16 @@ define([
         createQuotation: function (e) {
             e.preventDefault();
             new quotationCreateView({
-                projectId: this.projectID,
-                customerId: this.customerId,
-                collection: this.collection,
+                projectId     : this.projectID,
+                customerId    : this.customerId,
+                collection    : this.collection,
                 projectManager: this.projectManager
             });
         },
 
-
         render: function () {
             var currentEl = this.$el;
-            var self  = this;
+            var self = this;
 
             currentEl.html('');
             currentEl.prepend(this.templateHeader);

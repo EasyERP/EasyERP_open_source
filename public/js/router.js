@@ -33,6 +33,7 @@ define([
             "easyErp/DashBoardVacation(/filter=:filter)": "dashBoardVacation",
             "easyErp/HrDashboard": "hrDashboard",
             "easyErp/projectDashboard": "goToProjectDashboard",
+            "easyErp/jobsDashboard": "goToJobsDashboard",
             "easyErp/:contentType": "getList",
 
             "*any": "any"
@@ -131,11 +132,12 @@ define([
                     var topbarView;
 
                     custom.setCurrentVT('list');
+
+                    topbarView = new TopBarView();
                     contentview = new contentView({
                         startTime: startTime,
                         filter: filter
                     });
-                    topbarView = new TopBarView();
                     topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
                     self.changeView(contentview);
@@ -489,6 +491,40 @@ define([
                     context.main("projectDashboard");
                 } else {
                     context.mainView.updateMenu("projectDashboard");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    custom.setCurrentVT('list');
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
+        goToJobsDashboard: function () {
+            var self = this;
+            this.checkLogin(function (success) {
+                if (success) {
+                    goProjectDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goProjectDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/jobsDashboard/ContentView";
+                var topBarViewUrl = "views/jobsDashboard/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("jobsDashboard");
+                } else {
+                    context.mainView.updateMenu("jobsDashboard");
                 }
 
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {

@@ -175,7 +175,7 @@ var Categories = function (models, event) {
         if (data.sequenceStart) {
             updateSequence(ProductCategory, "sequence", data.sequenceStart, data.sequence, data.parentCategoryStart, data.parentCategory, false, false, function (sequence) {
                 data.sequence = sequence;
-                ProductCategory.findByIdAndUpdate(_id, data, {new: true}, {new: true}, function (err, result) {
+                ProductCategory.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                     if (err) {
                         next(err);
                     } else {

@@ -275,60 +275,78 @@ define([], function () {
             }
         },
         Quotation       : {
-            'Supplier' : {
+            'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Status'   : {
+            'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        salesQuotation: {
-            'Project': {
+        salesQuotation  : {
+            'Project'      : {
                 view   : 'projectName',
                 backend: 'project._id'
             },
-            'Customer' : {
+            'Customer'     : {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Sales Manager'   : {
+            'Sales Manager': {
                 view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
             },
-            'Status'   : {
+            'Status'       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        salesOrder: {
-            'Project': {
+        salesOrder      : {
+            'Project'      : {
                 view   : 'projectName',
                 backend: 'project._id'
             },
-            'Customer' : {
+            'Customer'     : {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Sales Manager'   : {
+            'Sales Manager': {
                 view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
             },
-            'Status'   : {
+            'Status'       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        Order: {
-            'Supplier' : {
+        Order           : {
+            'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Status'   : {
+            'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
+        },
+        Payroll         : {
+            'Employee': {
+                view   : 'employee',
+                backend: 'employee._id'
+            },/*
+            'Month'   : {
+                view   : 'month',
+                backend: 'month'
+            },
+            'Year'    : {
+                view   : 'year',
+                backend: 'year'
+            },*/
+            'Data Key'    : {
+                view   : 'dataKey',
+                backend: 'dataKey'
+            },
         }
     };
 
@@ -362,7 +380,7 @@ define([], function () {
         SALESINVOICE      : 'salesInvoice',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
-        PAYROLL            : 'Payroll',
+        PAYROLL           : 'Payroll',
         REVENUE           : 'Revenue',
         MONTHHOURS        : 'monthHours',
         BONUSTYPE         : 'bonusType',
@@ -373,6 +391,7 @@ define([], function () {
         DASHBOARD_HR      : 'HrDashboard',
         HOURS             : 'Hours',
         CAPACITY          : 'Capacity',
+        JOBSDASHBOARD          : 'jobsDashboard',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

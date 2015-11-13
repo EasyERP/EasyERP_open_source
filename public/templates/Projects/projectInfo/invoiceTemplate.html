@@ -63,6 +63,7 @@
 <% }) %>
 
         </tbody>
+        <% if (collection.length) {%>
         <tfoot id="listTotal">
         <tr>
             <td colspan="7"></td>
@@ -72,5 +73,6 @@
             <td></td>
         </tr>
         </tfoot>
+        <%}%>
     </table>
 </div>
