@@ -289,7 +289,6 @@ var Payment = function (models, event) {
                 res.status(403).send();
             }
         });
-        res.status(200).send({success: 'All done'});
     };
 
     function caseFilter(filter) {
