@@ -3,8 +3,8 @@
 <%if (order.workflow && order.workflow.status === 'Cancelled') { %>
 class="canceledListItem"
 <%}%>>
-<td class = "notForm"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
-<td><%=startNumber + index + 1%></td>
+<td class = "notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
+<td class="centerCell"><%=startNumber + index + 1%></td>
 <td><%=order.project ? order.project.projectName : '------'%></td>
 <td><%=order.orderDate%></td>
 <td><%=(order.supplier) ? order.supplier.name : '------'%></td>

@@ -76,8 +76,7 @@
 //      }
 //      &.forCaption {
 //        background-color: #1ebbea;
-//        width: 50%;
-//        text-align: right;
+//
 //      }
 //      &:first-of-type {
 //        width: 12px;
@@ -203,12 +202,17 @@
   width: 100%;
 
   td, th {  //main themse for all list
-    color: @mainText-color;
-    line-height: 20px;
     height: 20px;
     padding: 0 6px;
     white-space: nowrap;
     text-overflow: ellipsis;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    color: @mainText-color;
+    line-height: 20px;
+    font-size: 12px;
   }
 
   thead {
@@ -229,9 +233,6 @@
     }
 
     tr {
-      &:nth-child(odd) { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
-        background-color: @defaultBgColorOdd-color;
-      }
       &:hover { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
         background-color: @defaultBgHover-color;
       }
@@ -243,7 +244,28 @@
     }
   }
 
-  .centerCell {//костыль в идеале создать класс и присвоить к нужной td
+  tfoot {
+    td {
+      text-align: right;
+    }
+  }
+  thead, tfoot {
+    tr {
+      background: inherit !important; //hover dont must work in header and footer tr
+    }
+  }
+
+  .enableTableOdd {// class to enabled table odd color (add to tbody)
+    tr {
+      &:nth-child(odd) { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
+        background-color: @defaultBgColorOdd-color;
+      }
+      &:hover { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
+        background-color: @defaultBgHover-color;
+      }
+    }
+  }
+  .centerCell { //выравнивание содержимого ячейки
      text-align: center;
    }
 
@@ -322,113 +344,5 @@
   margin: @arguments;
 }
 
-#forInfo {
-  .tableProjects {
-    width: 99%;
-    margin-bottom: 10px;
-    thead{
-      th {
-        text-align: right;
 
-        &.forCaption {
-          //text-align: left;
-          margin-top: 15px;
-          //background-color: @forInfo-caption-color;
-          font-size: 12px;
-          line-height: 28px;
-          padding: 0 0  0 10px;
-          //width: 41%;
-          color: @overiewText-color;
-          position: relative;
-          //border-right: 1px solid /@forInfo-caption-color;
 
-          &:last-child {
-            padding: 0 10px 0 0;
-          }
-          &:first-child {
-            text-align: left;
-            padding: 0 0 0 10px;
-          }
-
-          a {
-          //  text-align: right;
-            color: @overiewText-color;
-          //  position: absolute;
-          //  right: 10px;
-          //  top: 0;
-          //  display: block;
-          }
-        }
-      }
-      }
-    tbody {
-      td {
-        text-align: right;
-        &:first-child {
-          border-left: 1px solid @list-border-color;
-        }
-      }
-      td.remove {
-        min-width: 10px;
-        border-right: none;
-        border-left: 1px solid @border-color-main;
-      }
-      td.expand {
-        text-align: center;
-        font-size: 14px;
-      }
-    }
-    tr {
-      .procent {
-        position: relative;
-        padding-right: 20px;
-        &::before {
-          content: '%';
-          display: block;
-          width: 5px;
-          height: 5px;
-          position: absolute;
-          right: 13px;
-
-        }
-      }
-    }
-    .subRow {
-      background: none;
-      &:hover {
-        background: none;
-      }
-      &> td {
-        padding-right: 0;
-      }
-      td {
-        &:first-child {
-          border-left: 1px solid transparent !important;
-        }
-        &:last-child {
-          border-right: 1px solid transparent !important;
-        }
-      }
-    }
-    .tableProject {
-      padding: 5px 0px 5px 20px;
-
-      .list {
-        border-top: 1px solid transparent;
-        tbody {
-          tr {
-            border-top: 1px solid transparent;
-          }
-        }
-      }
-    }
-  }
-}
-
-.tableResponsive {
-  min-height: .01%;
-  overflow-x: auto;
-  width: 100%;
-  overflow-y: hidden;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
-}

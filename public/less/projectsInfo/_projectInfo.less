@@ -1,93 +1,78 @@
 #forInfo {
+  overflow: hidden;//??
+  .forInfo-half-block {
+    &.left {
+      width: 65%;
+      margin-right: 1%;
+    }
+    &.right {
+      width: 34%;
+    }
+  }
+
   .tableProjects {
     width: 99%;
     margin-bottom: 10px;
-    thead{
-      th {
-        text-align: right;
 
-        &.forCaption {
-          margin-top: 15px;
-          font-size: 12px;
-          line-height: 28px;
-          padding: 0 0  0 10px;
-          color: @overiewText-color;
-          position: relative;
-
-          &:last-child {
-            padding: 0 10px 0 0;
-          }
-          &:first-child {
-            text-align: left;
-            padding: 0 0 0 10px;
-          }
-
-          a {
-            color: @overiewText-color;
-
-          }
-        }
+    .forCaption {
+      color: @overiewText-color;
+      background-color: #1ebbea;
+      line-height: 28px;
+      &:last-child {
+        padding: 0 10px 0 0;
+      }
+      &:first-child {
+        text-align: left;
+        padding: 0 0 0 10px;
       }
     }
-    tbody {
-      td {
-        text-align: right;
-        &:first-child {
-          border-left: 1px solid @list-border-color;
-        }
-      }
-      td.remove {
-        min-width: 10px;
-        border-right: none;
-        border-left: 1px solid @border-color-main;
-      }
-      td.expand {
-        text-align: center;
-        font-size: 14px;
-      }
-    }
-    tr {
-      .procent {
-        position: relative;
-        padding-right: 20px;
-        &::before {
-          content: '%';
-          display: block;
-          width: 5px;
-          height: 5px;
-          position: absolute;
-          right: 13px;
 
-        }
+    .remove {
+      min-width: 10px;
+      border-left: 1px solid @border-color-main;
+      border-right-width: 0;
+    }
+    .expand {
+      border-left-width: 0;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .procent { //add procent
+      position: relative;
+      padding-right: 20px;
+      &::before {
+        content: '%';
+        display: block;
+        width: 5px;
+        height: 5px;
+        position: absolute;
+        right: 13px;
       }
     }
+
     .subRow {
       background: none;
       &:hover {
         background: none;
       }
-      &> td {
-        padding-right: 0;
-      }
+
       td {
         &:first-child {
-          border-left: 1px solid transparent !important;
+          border-left: 1px solid transparent;
         }
         &:last-child {
-          border-right: 1px solid transparent !important;
+          border-right: 1px solid transparent;
         }
       }
     }
-    .tableProject {
-      padding: 5px 0px 5px 20px;
+  }
 
-      .list {
-        border-top: 1px solid transparent;
-        tbody {
-          tr {
-            border-top: 1px solid transparent;
-          }
-        }
+  .innerTableProject {
+    padding: 5px 0 5px 20px;
+    .innerTableProject-footer { //disable footer border
+      td {
+        border-width: 0;
       }
     }
   }
