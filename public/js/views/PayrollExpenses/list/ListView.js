@@ -59,7 +59,7 @@ define([
 
                 this.render();
 
-                this.bodyContainer = this.$el.find('#payRoll-listTable');
+                this.$bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
             newPayment: function (e) {
@@ -456,7 +456,7 @@ define([
             },
 
             savedNewModel: function (modelObject) {
-                var savedRow = this.bodyContainer.find('#false');
+                var savedRow = this.$bodyContainer.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -505,7 +505,7 @@ define([
             deleteRender: function () {
                 this.resetCollection();
                 this.render();
-                this.bodyContainer = $(this.bodyContainerId);
+                this.$bodyContainer = $(this.bodyContainerId);
                 this.getTotal();
 
                 dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
@@ -625,7 +625,7 @@ define([
             },
 
             isEditRows: function () {
-                var edited = this.bodyContainer.find('.edited');
+                var edited = this.$bodyContainer.find('.edited');
 
                 this.edited = edited;
 
