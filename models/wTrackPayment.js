@@ -141,7 +141,7 @@ module.exports = (function () {
                     return next(err);
                 }
 
-                payment.name += '_' + rate.value.seq;
+                payment.name = payment.year + '/' + payment.month + '_' + rate.value.seq;
 
                 next();
             });
