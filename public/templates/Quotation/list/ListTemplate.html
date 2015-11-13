@@ -3,8 +3,8 @@
 <%if (quotation.workflow && quotation.workflow.status === 'Cancelled') { %>
 class="canceledListItem"
 <%}%>>
-    <td class = "notForm"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
-    <td><%=startNumber + index + 1%></td>
+    <td class = "notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
+    <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=quotation.name%></td>
     <td><%=quotation.orderDate%></td>
     <td><%=(quotation.supplier) ? quotation.supplier.name : ''%></td>
