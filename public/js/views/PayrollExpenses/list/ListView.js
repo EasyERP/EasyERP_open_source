@@ -74,7 +74,10 @@ define([
                         dataId = $(checkboxes[i]).attr('id');
                         model = this.editCollection.get(dataId);
 
-                        this.forPayments.add(model);
+                        if (model.get('diff') < 0){
+                            this.forPayments.add(model);
+                        }
+
                     }
                 } else if (e.target) {
                     tr = $(e.target).closest('tr');
@@ -82,14 +85,21 @@ define([
 
                     model = this.editCollection.get(dataId);
 
-                    this.forPayments.add(model);
+                    if (model.get('diff') < 0){
+                        this.forPayments.add(model);
+                    }
                 }
 
 
-               new PaymentCreateView({
-                    redirect: this.redirect,
-                    collection: this.forPayments
-                });
+                if (this.forPayments.length){
+                    new PaymentCreateView({
+                        redirect: this.redirect,
+                        collection: this.forPayments
+                    });
+                } else {
+                    return alert("Please, check at most one unpaid item.")
+                }
+
             },
 
             removeNewSelect: function(){
