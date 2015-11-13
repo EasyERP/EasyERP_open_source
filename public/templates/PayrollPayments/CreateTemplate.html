@@ -68,7 +68,7 @@
                                         data-cash="<%=model.calc%>"><%=currencySplitter(model.calc.toString())%>
                                     </td>
 
-                                    <td data-content="onCash" class="diff"></td>
+                                    <td data-content="onCash" class="diff money">0</td>
 
                                     <td data-type="input" data-content="onCash" data-cash="<%=model.diff%>" class="editable autoCalc cash paid money">
                                         <%=currencySplitter((model.diff * (-1)).toString())%>

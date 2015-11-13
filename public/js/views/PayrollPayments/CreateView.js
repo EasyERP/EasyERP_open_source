@@ -13,7 +13,7 @@ define([
             initialize: function (options) {
 
                 this.editCollection = options.collection;
-                
+
                 this.editCollection.url = 'payment/salary';
 
                 this.render(options);

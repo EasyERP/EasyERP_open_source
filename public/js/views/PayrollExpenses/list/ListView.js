@@ -10,7 +10,6 @@ define([
         'collections/PayrollExpenses/editCollection',
         'collections/PayrollExpenses/oneMonthCollection',
         'collections/Employees/employee',
-        'collections/PayrollExpenses/payrollCollection',
         'models/PayRollModel',
         'populate',
         'dataService',
@@ -19,7 +18,7 @@ define([
         'helpers'
     ],
 
-    function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, monthCollection, employeesCollection, payrollCollection, currentModel, populate, dataService, async, moment, helpers) {
+    function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
             el            : '#content-holder',
             contentType: 'PayrollExpenses',
@@ -42,7 +41,8 @@ define([
                 "click #mainRow td:not(.notForm)": "showRows",
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
-                "click .check_all": "checkAll"
+                "click .check_all": "checkAll",
+                "click .diff": "newPayment"
             },
 
 
@@ -63,15 +63,28 @@ define([
             },
 
             newPayment: function (e) {
-                var checkboxes = $("input.checkbox:checked");
+                var checkboxes = $("input.checkbox:checked") ? $("input.checkbox:checked") : [];
                 var models = [];
+                var tr;
+                var dataId;
+                var model;
 
-                for (var i = checkboxes.length - 1; i >= 0; i--){
-                    var dataId = $(checkboxes[i]).attr('id');
-                    var model = this.editCollection.get(dataId);
+                if (checkboxes.length){
+                    for (var i = checkboxes.length - 1; i >= 0; i--){
+                        dataId = $(checkboxes[i]).attr('id');
+                        model = this.editCollection.get(dataId);
+
+                        this.forPayments.add(model);
+                    }
+                } else if (e.target) {
+                    tr = $(e.target).closest('tr');
+                    dataId = tr.attr('data-id');
+
+                    model = this.editCollection.get(dataId);
 
                     this.forPayments.add(model);
                 }
+
 
                new PaymentCreateView({
                     redirect: this.redirect,
