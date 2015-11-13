@@ -10,6 +10,7 @@ define([
         'collections/PayrollExpenses/editCollection',
         'collections/PayrollExpenses/oneMonthCollection',
         'collections/Employees/employee',
+        'collections/PayrollExpenses/payrollCollection',
         'models/PayRollModel',
         'populate',
         'dataService',
@@ -18,7 +19,7 @@ define([
         'helpers'
     ],
 
-    function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+    function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, monthCollection, employeesCollection, payrollCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
             el            : '#content-holder',
             contentType: 'PayrollExpenses',
@@ -42,7 +43,6 @@ define([
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
                 "click .check_all": "checkAll"
-
             },
 
 
@@ -62,6 +62,22 @@ define([
                 this.bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
+            newPayment: function (e) {
+                var checkboxes = $("input.checkbox:checked");
+                var models = [];
+
+                for (var i = checkboxes.length - 1; i >= 0; i--){
+                    var dataId = $(checkboxes[i]).attr('id');
+                    var model = this.editCollection.get(dataId);
+
+                    this.forPayments.add(model);
+                }
+
+               new PaymentCreateView({
+                    redirect: this.redirect,
+                    collection: this.forPayments
+                });
+            },
 
             removeNewSelect: function(){
                 $('.newSelectList').remove();
@@ -974,13 +990,6 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            newPayment: function () {
-                var paymentView = new PaymentCreateView({
-                    redirect: this.redirect,
-                    collection: this.collection
-                });
-            },
-
             checkAll: function(e){
                 var target = e.target;
                 var classTr = $(target).attr('id');
@@ -1042,7 +1051,9 @@ define([
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.allCollection);
+                    self.forPayments = new editCollection();
 
+                    self.forPayments.on('saved', self.savedNewModel, self);
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
                 }, 10);

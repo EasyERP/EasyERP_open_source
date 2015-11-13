@@ -363,8 +363,8 @@ var Project = function (models) {
                     totalObj.costSum += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
                     totalObj.profitSum += job.budget.budgetTotal ? job.budget.budgetTotal.profitSum: 0;
                     totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum: 0;
-                    totalObj.minDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate: minDate <= minDate) ? job.budget.budgetTotal.minDate : minDate;
-                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate: maxDate >= maxDate) ? job.budget.budgetTotal.maxDate : maxDate;
+                    totalObj.minDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate: minDate <= minDate) ? minDate : minDate;
+                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate: maxDate >= maxDate) ? maxDate : maxDate;
                     totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
                     totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA: 0;
                 });
