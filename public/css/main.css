@@ -683,12 +683,16 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 td,
 .list2 th {
-  color: #cdcdcd;
-  line-height: 20px;
   height: 20px;
   padding: 0 6px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #cdcdcd;
+  line-height: 20px;
+  font-size: 12px;
 }
 .list2 thead tr {
   border: none;
@@ -701,15 +705,25 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tbody tr {
   border-top: 1px solid #7f7f80;
 }
-.list2 tbody tr:nth-child(odd) {
-  background-color: #3d3d3e;
-}
 .list2 tbody tr:hover {
   background-color: #565658;
 }
 .list2 tbody td {
   border: 1px solid #7f7f80;
   text-align: right;
+}
+.list2 tfoot td {
+  text-align: right;
+}
+.list2 thead tr,
+.list2 tfoot tr {
+  background: inherit !important;
+}
+.list2 .enableTableOdd tr:nth-child(odd) {
+  background-color: #3d3d3e;
+}
+.list2 .enableTableOdd tr:hover {
+  background-color: #565658;
 }
 .list2 .centerCell {
   text-align: center;
@@ -744,12 +758,16 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 td,
 .list2 th {
-  color: #cdcdcd;
-  line-height: 20px;
   height: 20px;
   padding: 0 6px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #cdcdcd;
+  line-height: 20px;
+  font-size: 12px;
 }
 .list2 thead tr {
   border: none;
@@ -762,15 +780,25 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tbody tr {
   border-top: 1px solid #7f7f80;
 }
-.list2 tbody tr:nth-child(odd) {
-  background-color: #3d3d3e;
-}
 .list2 tbody tr:hover {
   background-color: #565658;
 }
 .list2 tbody td {
   border: 1px solid #7f7f80;
   text-align: right;
+}
+.list2 tfoot td {
+  text-align: right;
+}
+.list2 thead tr,
+.list2 tfoot tr {
+  background: inherit !important;
+}
+.list2 .enableTableOdd tr:nth-child(odd) {
+  background-color: #3d3d3e;
+}
+.list2 .enableTableOdd tr:hover {
+  background-color: #565658;
 }
 .list2 .centerCell {
   text-align: center;
@@ -818,89 +846,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: left;
   line-height: 1;
   height: 20px;
-}
-#forInfo .tableProjects {
-  width: 99%;
-  margin-bottom: 10px;
-}
-#forInfo .tableProjects thead th {
-  text-align: right;
-}
-#forInfo .tableProjects thead th.forCaption {
-  margin-top: 15px;
-  font-size: 12px;
-  line-height: 28px;
-  padding: 0 0  0 10px;
-  color: #ffffff;
-  position: relative;
-}
-#forInfo .tableProjects thead th.forCaption:last-child {
-  padding: 0 10px 0 0;
-}
-#forInfo .tableProjects thead th.forCaption:first-child {
-  text-align: left;
-  padding: 0 0 0 10px;
-}
-#forInfo .tableProjects thead th.forCaption a {
-  color: #ffffff;
-}
-#forInfo .tableProjects tbody td {
-  text-align: right;
-}
-#forInfo .tableProjects tbody td:first-child {
-  border-left: 1px solid #7f7f80;
-}
-#forInfo .tableProjects tbody td.remove {
-  min-width: 10px;
-  border-right: none;
-  border-left: 1px solid #7f7f80;
-}
-#forInfo .tableProjects tbody td.expand {
-  text-align: center;
-  font-size: 14px;
-}
-#forInfo .tableProjects tr .procent {
-  position: relative;
-  padding-right: 20px;
-}
-#forInfo .tableProjects tr .procent::before {
-  content: '%';
-  display: block;
-  width: 5px;
-  height: 5px;
-  position: absolute;
-  right: 13px;
-}
-#forInfo .tableProjects .subRow {
-  background: none;
-}
-#forInfo .tableProjects .subRow:hover {
-  background: none;
-}
-#forInfo .tableProjects .subRow > td {
-  padding-right: 0;
-}
-#forInfo .tableProjects .subRow td:first-child {
-  border-left: 1px solid transparent !important;
-}
-#forInfo .tableProjects .subRow td:last-child {
-  border-right: 1px solid transparent !important;
-}
-#forInfo .tableProjects .tableProject {
-  padding: 5px 0px 5px 20px;
-}
-#forInfo .tableProjects .tableProject .list {
-  border-top: 1px solid transparent;
-}
-#forInfo .tableProjects .tableProject .list tbody tr {
-  border-top: 1px solid transparent;
-}
-.tableResponsive {
-  min-height: .01%;
-  overflow-x: auto;
-  width: 100%;
-  overflow-y: hidden;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 .vacation-list {
   font-family: inherit;
@@ -1046,6 +991,152 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: left;
   font-size: 12px;
   line-height: 20px;
+}
+/*== temp files==*/
+table.payRoll-list {
+  width: 100%;
+  min-width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+table.payRoll-list tfoot {
+  margin-right: 17px;
+}
+table.payRoll-list tbody tr:hover {
+  background: none;
+}
+table.payRoll-list #payRoll-Table {
+  padding: 0;
+}
+table.payRoll-list #payRoll-Table .scrollit {
+  display: block;
+  height: calc(100vh - 209px);
+  overflow-x: hidden;
+}
+table.payRoll-list th,
+table.payRoll-list td {
+  border: 1px solid white;
+  vertical-align: middle;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(1) {
+  width: 2%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(2) {
+  width: 2%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(3) {
+  width: 27%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(4) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(5) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(6) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(7) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(8) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(9) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(10) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(11) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(12) {
+  width: 13%;
+}
+.borders col {
+  border: 1px solid;
+}
+#searchContainer.payRoll {
+  margin: 0 0 10px;
+}
+@media (min-width: 1320px) {
+  table.payRoll-list #payRoll-Table .scrollit {
+    height: calc(100vh - 179px);
+  }
+}
+#forInfo {
+  overflow: hidden;
+}
+#forInfo .forInfo-half-block.left {
+  width: 65%;
+  margin-right: 1%;
+}
+#forInfo .forInfo-half-block.right {
+  width: 34%;
+}
+#forInfo .tableProjects {
+  width: 99%;
+  margin-bottom: 10px;
+}
+#forInfo .tableProjects .forCaption {
+  color: #ffffff;
+  background-color: #1ebbea;
+  line-height: 28px;
+}
+#forInfo .tableProjects .forCaption:last-child {
+  padding: 0 10px 0 0;
+}
+#forInfo .tableProjects .forCaption:first-child {
+  text-align: left;
+  padding: 0 0 0 10px;
+}
+#forInfo .tableProjects .remove {
+  min-width: 10px;
+  border-left: 1px solid #7f7f80;
+  border-right-width: 0;
+}
+#forInfo .tableProjects .expand {
+  border-left-width: 0;
+  text-align: center;
+  font-size: 14px;
+}
+#forInfo .tableProjects .procent {
+  position: relative;
+  padding-right: 20px;
+}
+#forInfo .tableProjects .procent::before {
+  content: '%';
+  display: block;
+  width: 5px;
+  height: 5px;
+  position: absolute;
+  right: 13px;
+}
+#forInfo .tableProjects .subRow {
+  background: none;
+}
+#forInfo .tableProjects .subRow:hover {
+  background: none;
+}
+#forInfo .tableProjects .subRow td:first-child {
+  border-left: 1px solid transparent;
+}
+#forInfo .tableProjects .subRow td:last-child {
+  border-right: 1px solid transparent;
+}
+#forInfo .innerTableProject {
+  padding: 5px 0 5px 20px;
+}
+#forInfo .innerTableProject .innerTableProject-footer td {
+  border-width: 0;
+}
+.tableResponsive {
+  min-height: .01%;
+  overflow-x: auto;
+  width: 100%;
+  overflow-y: hidden;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 /*------------------------Constants-----------------------------*/
 .notification {
@@ -1960,7 +2051,7 @@ select:not([type="checkbox"]):focus {
 .current-selected {
   font-size: 12px;
   text-decoration: none;
-  line-height: 26px !important;
+  line-height: 20px !important;
 }
 .newSelectList {
   position: absolute !important;
@@ -2174,9 +2265,6 @@ dl dd span.ui-spinner {
 .form.employee {
   width: 100%;
   max-width: 100%;
-}
-.form #forInfo {
-  overflow: hidden;
 }
 .form .compactList li {
   border-bottom: 1px solid #7f7f80;
@@ -2433,9 +2521,6 @@ dl dd span.ui-spinner {
 .form p select {
   margin-bottom: 2px;
   width: 90%;
-}
-.form span {
-  padding: 3px 8px 3px 0;
 }
 .form span#editSpan a {
   margin-left: 5px;
@@ -2754,9 +2839,6 @@ dl dd span.ui-spinner {
   width: 100%;
   max-width: 100%;
 }
-.formLeftColumn .form #forInfo {
-  overflow: hidden;
-}
 .formLeftColumn .form .compactList li {
   border-bottom: 1px solid #7f7f80;
 }
@@ -3013,9 +3095,6 @@ dl dd span.ui-spinner {
   margin-bottom: 2px;
   width: 90%;
 }
-.formLeftColumn .form span {
-  padding: 3px 8px 3px 0;
-}
 .formLeftColumn .form span#editSpan a {
   margin-left: 5px;
   width: 16px;
@@ -3104,9 +3183,6 @@ dl dd span.ui-spinner {
 .formRightColumn .form.employee {
   width: 100%;
   max-width: 100%;
-}
-.formRightColumn .form #forInfo {
-  overflow: hidden;
 }
 .formRightColumn .form .compactList li {
   border-bottom: 1px solid #7f7f80;
@@ -3363,9 +3439,6 @@ dl dd span.ui-spinner {
 .formRightColumn .form p select {
   margin-bottom: 2px;
   width: 90%;
-}
-.formRightColumn .form span {
-  padding: 3px 8px 3px 0;
 }
 .formRightColumn .form span#editSpan a {
   margin-left: 5px;
@@ -3968,13 +4041,6 @@ dl dd span.ui-spinner {
 }
 .half-block.taskNote #noteArea {
   width: 100%;
-}
-#forInfo .half-block.left {
-  width: 65%;
-  margin-right: 1%;
-}
-#forInfo .half-block.right {
-  width: 34%;
 }
 .funnelIcon {
   display: inline-block;
@@ -5117,6 +5183,18 @@ table#workflows tr td.edit-status {
 #createBtnHolder ul li .btn {
   padding: .2em 1em;
 }
+.createBtnHolder ul li a,
+#createBtnHolder ul li a {
+  display: inline-block;
+  line-height: 18px;
+  width: 100%;
+  padding: 0 5px;
+  margin: 0;
+}
+.createBtnHolder ul li a:hover,
+#createBtnHolder ul li a:hover {
+  text-decoration: none;
+}
 /*----------------------------- Login Form --------------------------------*/
 #loginForm {
   display: block;
@@ -5501,12 +5579,16 @@ ul.dialog-tabs li.right button {
 }
 .list td,
 .list th {
-  color: #cdcdcd;
-  line-height: 20px;
   height: 20px;
   padding: 0 6px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #cdcdcd;
+  line-height: 20px;
+  font-size: 12px;
 }
 .list thead tr {
   border: none;
@@ -5519,15 +5601,25 @@ ul.dialog-tabs li.right button {
 .list tbody tr {
   border-top: 1px solid #7f7f80;
 }
-.list tbody tr:nth-child(odd) {
-  background-color: #3d3d3e;
-}
 .list tbody tr:hover {
   background-color: #565658;
 }
 .list tbody td {
   border: 1px solid #7f7f80;
   text-align: right;
+}
+.list tfoot td {
+  text-align: right;
+}
+.list thead tr,
+.list tfoot tr {
+  background: inherit !important;
+}
+.list .enableTableOdd tr:nth-child(odd) {
+  background-color: #3d3d3e;
+}
+.list .enableTableOdd tr:hover {
+  background-color: #565658;
 }
 .list .centerCell {
   text-align: center;
@@ -7387,9 +7479,6 @@ span.unDone {
 .form-holder form .job-create-info select {
   width: 212px;
 }
-.form-holder form .create-employee-info dt {
-  margin-top: 10px;
-}
 .form-holder form .create-employee-info input {
   max-width: 117px !important;
 }
@@ -8436,7 +8525,7 @@ textarea#editInput {
   font-size: 52px;
   color: #ffffff;
   width: 126px;
-  padding: 4px;
+  padding: 20px;
   text-align: center;
   margin: 0 auto;
   /*for vacationDashboard*/

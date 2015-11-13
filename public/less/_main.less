@@ -6,6 +6,10 @@
 @import "_list";
 @import "_vacationList";
 
+/*== temp files==*/
+@import "tmp/_payRoll";
+@import "projectsInfo/_projectInfo";
+
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
 @body-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
@@ -400,10 +404,6 @@ input::-ms-clear {
     max-width: 100%;
 
   }
-
-  #forInfo {
-    overflow: hidden;
-  }
   .compactList {
     li {
       border-bottom: @thin-border @border-color;
@@ -637,7 +637,7 @@ input::-ms-clear {
   }
 
   span {
-    padding: 3px 8px 3px 0;
+    //padding: 3px 8px 3px 0;
     &#editSpan {
       a {
         margin-left: 5px;
@@ -2419,7 +2419,7 @@ input, textarea, select {
  // color: @tilte-color !important;
   font-size: 12px;
   text-decoration: none;
-  line-height: 26px !important;
+  line-height: 20px !important;
 }
 
 .newSelectList {
@@ -2983,17 +2983,7 @@ dl {
   }
 
 }
-#forInfo {
-  .half-block {
-    &.left {
-      width: 65%;
-      margin-right: 1%;
-    }
-    &.right {
-      width: 34%;
-    }
-  }
-}
+
 .funnelIcon {
   display: inline-block;
   height: 100%;
@@ -3038,7 +3028,6 @@ dl {
   padding-top: 1px;
   text-align: center;
   cursor: pointer;
- //text-shadow: 0 1px 1px white;
 }
 
 .filterButton {
@@ -3849,7 +3838,6 @@ table#workflows {
     text-decoration: none;
     text-align: center;
     &:before {
-      //vertical-align: baseline;
       line-height: 18px;
     }
   }
@@ -3860,7 +3848,9 @@ table#workflows {
     li {
       float: left;
       margin-right: 10px;
-      border: 1px solid @border-color-main;
+      .btn {
+        padding: .2em 1em;
+      }
       a {
         display: inline-block;
         line-height: 18px;
@@ -4558,7 +4548,7 @@ h3.dashboard {
   .create-employee-info {
     //.dl-auto(200px, 40%);
     dt {
-      margin-top: 10px;
+     // margin-top: 10px;
     }
     input {
       max-width: 117px !important;
