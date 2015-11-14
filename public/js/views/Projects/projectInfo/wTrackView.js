@@ -335,7 +335,7 @@ define([
             var table = $("#listTable");
             this.collectionLength = this.collection.length;
 
-            var answer = confirm("Realy DELETE items ?!");
+            var answer = confirm("Really DELETE items ?!");
             var value;
 
             if (answer === true) {

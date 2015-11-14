@@ -126,7 +126,7 @@ define([
                    var model = this.collection.get(id);
                    this.collection.url = "/Workflows";
                    var self = this;
-                   var answer = confirm("Realy DELETE items ?!");
+                   var answer = confirm("Really DELETE items ?!");
                    if (answer == true) {
                        model.destroy({
                            headers: {

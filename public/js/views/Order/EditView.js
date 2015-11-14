@@ -293,7 +293,7 @@ define([
                 var mid = 55;
                 event.preventDefault();
                 var self = this;
-                var answer = confirm("Realy DELETE items ?!");
+                var answer = confirm("Really DELETE items ?!");
                 if (answer == true) {
                     this.currentModel.destroy({
                         headers: {

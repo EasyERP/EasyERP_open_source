@@ -713,7 +713,7 @@ define([
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {
-                    var answer = confirm("Realy DELETE items ?!");
+                    var answer = confirm("Really DELETE items ?!");
                     var value;
 
                     $.each(checkboxes$, function (index, checkbox) {
