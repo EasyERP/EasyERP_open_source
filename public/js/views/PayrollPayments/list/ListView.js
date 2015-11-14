@@ -17,18 +17,18 @@ define([
     function (paginationTemplate, listTemplate, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async) {
         var PaymentListView = Backbone.View.extend({
             el                 : '#content-holder',
-            defaultItemsNumber: null,
+           /* defaultItemsNumber: null,
             listLength        : null,
             filter            : null,
             sort              : null,
             newCollection     : null,
-            page              : null, //if reload page, and in url is valid page
+            page              : null,*/ //if reload page, and in url is valid page
             contentType       : 'PayrollPayments',//needs in view.prototype.changeLocationHash
             viewType          : 'list',//needs in view.prototype.changeLocationHash
-            modelId           : null,
+     /*       modelId           : null,
             $listTable        : null,
-            editCollection    : null,
-            collectionLengthUrl: '/payment/payroll/totalCollectionLength',
+            editCollection    : null,*/
+            collectionLengthUrl: '/payment/salary/totalCollectionLength',
             changedModels      : {},
             responseObj        : {},
 
@@ -769,7 +769,7 @@ define([
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {
-                    var answer = confirm("Realy DELETE items ?!");
+                    var answer = confirm("Really DELETE items ?!");
                     var value;
 
                     if (answer === true) {

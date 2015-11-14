@@ -40,7 +40,7 @@ define([
                                     return note;
                                 }
                             });
-                            if (confirm("You realy want to remove note? ")) {
+                            if (confirm("You really want to remove note? ")) {
                                 currentModel.save({ 'notes': newNotes },
                                     {
                                         headers: {

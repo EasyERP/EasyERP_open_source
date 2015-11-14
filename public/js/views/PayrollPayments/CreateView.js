@@ -295,10 +295,6 @@ define([
                 this.saveItem();
 
                 this.removeDialog();
-
-                Backbone.history.fragment = '';
-                Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
-
             },
 
             removeDialog: function () {
@@ -328,7 +324,7 @@ define([
                 this.collectionLength = this.editCollection.length;
 
                 if (!this.changed) {
-                    var answer = confirm("Realy DELETE items ?!");
+                    var answer = confirm("Really DELETE items ?!");
                     var value;
                     var tr;
 

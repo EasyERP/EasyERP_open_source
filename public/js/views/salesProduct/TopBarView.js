@@ -79,7 +79,7 @@ define([
                     return alert("You do not have permission to delete this product");
                 }
 
-            	var answer=confirm("Realy DELETE items ?!");
+            	var answer=confirm("Really DELETE items ?!");
             	if (answer==true) this.trigger('deleteEvent');
             },
             

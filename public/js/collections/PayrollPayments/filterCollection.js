@@ -1,6 +1,3 @@
-/**
- * Created by soundstorm on 21.05.15.
- */
 define([
         'models/PaymentModel',
         'common'
@@ -9,10 +6,6 @@ define([
         var PaymentCollection = Backbone.Collection.extend({
             model: PaymentModel,
             url: "/payment/salary/",
-            page: null,
-            namberToShow: null,
-            viewType: null,
-            contentType: null,
 
             showMore: function (options) {
                 var that = this;
@@ -49,6 +42,9 @@ define([
                     this.url += options.viewType;
                 }
 
+                delete options.viewType;
+                delete options.contentType;
+
                 this.fetch({
                     data: options,
                     reset: true,
@@ -56,7 +52,9 @@ define([
                         that.page++;
                     },
                     error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                        if (xhr.status === 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
