@@ -1024,11 +1024,8 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   height: calc(100vh - 209px);
   overflow-x: hidden;
 }
-.createBtnHolder_payRoll .createBtnHolder {
-  margin-top: 0;
-}
-.createBtnHolder_payRoll .createBtnHolder a {
-  color: #66b5d4;
+.payRollHolder {
+  margin-top: 0 !important;
 }
 .totalContainer {
   margin-top: 15px;
