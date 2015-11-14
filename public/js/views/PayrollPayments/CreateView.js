@@ -6,9 +6,9 @@ define([
         "use strict";
 
         var CreateView = Backbone.View.extend({
-            el      : '#content-holder',
+            el: '#content-holder',
             template: _.template(CreateTemplate),
-            changedModels : {},
+            changedModels: {},
 
             initialize: function (options) {
                 this.editCollection = options.collection;
@@ -22,10 +22,12 @@ define([
             },
 
             events: {
+                "click .checkbox": "checked",
                 "click td.editable": "editRow",
-                "change .autoCalc"       : "autoCalc",
-                "change .editable"       : "setEditable",
-                "keydown input.editing"  : "keyDown"
+                "change .autoCalc": "autoCalc",
+                "change .editable": "setEditable",
+                "keydown input.editing": "keyDown",
+                "click #deleteBtn": "deleteItems"
             },
 
             savedNewModel: function () {
@@ -99,23 +101,17 @@ define([
                 var editedElementRowId = tr.attr('data-id');
                 var editModel = this.editCollection.get(editedElementRowId);
                 var changedAttr;
-
+                var total;
+                var newTotal;
+                var totalEl = this.$el.find('#total');
+                var payOld = editModel.changed.paidAmount ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
+                var diffOld = editModel.changed.differenceAmount ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
                 var diffOnCash = tr.find('.differenceAmount[data-content="onCash"]');
-                var diffOnCard = tr.find('.differenceAmount[data-content="onCard"]');
-                var diffTotal = tr.find('.differenceAmount[data-content="total"]');
-
                 var value;
-                var totalValue;
-                var calcKey;
                 var tdForUpdate;
-                var paid;
+                var pay;
                 var calc;
-                var parentKey;
-
-                var diffOnCardRealValue;
-                var diffOnCashRealValue;
-
-                var paidTD;
+                var payTD;
                 var calcTD;
 
                 var newValue;
@@ -130,31 +126,24 @@ define([
                 }
 
                 if ($(td).hasClass('cash')) {
-                    calcKey = 'onCash';
                     tdForUpdate = diffOnCash;
-                    paidTD = tr.find('.paidAmount[data-content="onCash"]');
+                    payTD = tr.find('.paidAmount[data-content="onCash"]');
                     calcTD = tr.find('.calc[data-content="onCash"]');
-                } else if ($(td).hasClass('card')) {
-                    calcKey = 'onCard';
-                    tdForUpdate = diffOnCard;
-                    paidTD = tr.find('.paidAmount[data-content="onCard"]');
-                    calcTD = tr.find('.calc[data-content="onCard"]');
                 }
 
                 if (tdForUpdate) {
-                    paid = paidTD.attr('data-cash');
+                    pay = payTD.attr('data-cash');
                     calc = calcTD.attr('data-cash');
 
-                    paid = paid ? parseInt(paid) : 0;
+                    pay = pay ? parseInt(pay) : 0;
                     calc = calc ? parseInt(calc) : 0;
                     newValue = parseInt(input.val());
 
-                    if (paidTD.text()) {
-                        paid = paid;
+                    if (payTD.text()) {
+                        pay = pay;
                     } else {
-                        subValues = newValue - paid;
-                        paid = newValue;
-                        parentKey = 'paid';
+                        subValues = newValue - pay;
+                        pay = newValue;
                     }
 
                     if (calcTD.text()) {
@@ -162,31 +151,29 @@ define([
                     } else {
                         subValues = newValue - calc;
                         calc = newValue;
-                        parentKey = 'calc';
                     }
+
+                    total = parseFloat(totalEl.attr('data-cash'));
+
+                    newTotal = total - payOld + newValue - diffOld;
+
+                    totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
+                    totalEl.attr('data-cash', newTotal);
 
                     if (subValues !== 0) {
 
-                        value = paid - calc;
+                        value = pay - calc;
 
-                        paidTD.attr('data-cash', paid);
-                        paidTD.text(paid);
+                        payTD.attr('data-cash', pay);
+                        payTD.text(pay);
                         calcTD.attr('data-cash', calc);
 
                         tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
 
-                        diffOnCashRealValue = diffOnCash.attr('data-value');
-                        diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
-
-                        totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
-                        diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
-
                         changedAttr = this.changedModels[editedElementRowId];
 
+                        changedAttr['differenceAmount'] = pay - calc;
 
-                        changedAttr['differenceAmount'] = paid - calc;
-
-                        this.getTotal(subValues, parentKey + '_' + calcKey, tr);
                     }
                 }
             },
@@ -197,35 +184,6 @@ define([
                 this.edited = edited;
 
                 return !!edited.length;
-            },
-
-            getTotal: function (diff, calcKey, tr) {
-                var totalElement;
-                var prefVal;
-                var totalDiff;
-                var totalCalc;
-                var diffVal;
-                var calc = parseInt(tr.find('.total_calc_salary').attr('data-cash'));
-
-                totalCalc = tr.find('.total_calc_salary');
-                totalElement = tr.find('.total_' + calcKey);
-
-                totalDiff = tr.find('.total_diff_onCash');
-
-                prefVal = parseInt(totalElement.attr('data-cash'));
-
-                totalElement.text(prefVal + diff);
-                totalElement.attr('data-cash', prefVal + diff);
-
-                if (calcKey === "calc_onCash") {
-                    totalCalc.text(calc + diff);
-                    totalCalc.attr('data-cash', calc + diff);
-                }
-
-                diffVal = (prefVal ? prefVal : 0) + diff - calc;
-
-                totalDiff.text(diffVal);
-                totalDiff.attr('data-cash', diffVal);
             },
 
             checkMoneyTd: function (td, value) {
@@ -281,8 +239,7 @@ define([
                 var changedAttr;
                 var differenceAmount;
 
-                var calc;
-                var paid;
+                var pay;
 
                 var differenceBettwenValues;
 
@@ -293,12 +250,12 @@ define([
                     //editedElementContent = editedCol.data('content');
                     editedElementOldValue = parseInt(editedElement.attr('data-cash'));
 
-                        editedElementValue = parseInt(editedElement.val());
-                        editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
+                    editedElementValue = parseInt(editedElement.val());
+                    editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
 
-                        editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
+                    editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
 
-                        differenceBettwenValues = editedElementValue - editedElementOldValue;
+                    differenceBettwenValues = editedElementValue - editedElementOldValue;
 
                     if (differenceBettwenValues !== 0) {
 
@@ -313,19 +270,19 @@ define([
                         }
 
                         differenceAmount = _.clone(editModel.get('differenceAmount'));
-                        paid = _.clone(editModel.get('paidAmount'));
+                        pay = _.clone(editModel.get('paidAmount'));
 
                         changedAttr = this.changedModels[editedElementRowId];
 
                         if (changedAttr) {
-                           if (editedCol.hasClass('paid')) {
+                            if (editedCol.hasClass('pay')) {
                                 if (!changedAttr.paidAmount) {
-                                    changedAttr.paidAmount = paid;
+                                    changedAttr.paidAmount = pay;
                                 }
 
-                                paid = editedElementValue;
-                                changedAttr['paidAmount'] = paid;
-                                changedAttr['differenceAmount'] = paid - differenceAmount;
+                                pay = editedElementValue;
+                                changedAttr['paidAmount'] = pay;
+                                changedAttr['differenceAmount'] = pay - differenceAmount;
                             }
                         }
                     }
@@ -344,11 +301,88 @@ define([
 
             },
 
-            removeDialog: function(){
+            removeDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
+            },
+
+            checked: function (e) {
+
+                if (this.editCollection.length > 0) {
+
+                    if (this.$el.find("input.checkbox:checked").length > 0) {
+                        this.$el.find('#deleteBtn').show();
+
+                    } else {
+                        this.$el.find('#deleteBtn').hide();
+                    }
+                }
+            },
+
+            deleteItems: function (e) {
+                e.preventDefault();
+                var that = this;
+
+                this.collectionLength = this.editCollection.length;
+
+                if (!this.changed) {
+                    var answer = confirm("Realy DELETE items ?!");
+                    var value;
+                    var tr;
+
+                    if (answer === true) {
+                        $.each(that.$el.find("input:checked"), function (index, checkbox) {
+                            checkbox = $(checkbox);
+                            value = checkbox.attr('id');
+                            tr = checkbox.closest('tr');
+                            that.deleteItem(tr, value);
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            deleteItem: function (tr, id) {
+                var self = this;
+                var model;
+                var mid = 66;
+
+                model = this.editCollection.get(id);
+                model.destroy({
+                    headers: {
+                        mid: mid
+                    },
+                    wait: true,
+                    success: function () {
+                        delete self.changedModels[id];
+                        self.deleteItemsRender(tr, id);
+                    },
+                    error: function (model, res) {
+                        if (res.status === 403 && index === 0) {
+                            alert("You do not have permission to perform this action");
+                        }
+                    }
+                });
+            },
+
+            deleteItemsRender: function (tr, id) {
+                tr.remove();
+
+                this.editCollection.remove(id);
+                this.hideSaveCancelBtns();
+            },
+
+            hideSaveCancelBtns: function () {
+                var cancelBtnEl = $('#deleteBtn');
+
+                this.changed = false;
+
+                cancelBtnEl.hide();
+
+                return false;
             },
 
             render: function (options) {
@@ -358,14 +392,14 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen     : true,
-                    resizable    : true,
-                    dialogClass  : "edit-dialog",
-                    title        : "Create Payment",
-                    width        : "900px",
-                    buttons      : [
+                    autoOpen: true,
+                    resizable: true,
+                    dialogClass: "edit-dialog",
+                    title: "Create Payment",
+                    width: "900px",
+                    buttons: [
                         {
-                            id   : "payButton",
+                            id: "payButton",
                             text: "Pay",
                             click: function () {
                                 self.pay();
@@ -373,13 +407,15 @@ define([
                         },
 
                         {
-                            text : "Cancel",
+                            text: "Cancel",
                             click: function () {
                                 self.removeDialog();
                             }
                         }]
 
                 });
+
+                this.$el.find('#deleteBtn').hide();
 
                 this.delegateEvents(this.events);
 

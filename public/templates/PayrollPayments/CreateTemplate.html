@@ -4,6 +4,7 @@
             <h3 class="left">Payroll Payment</h3>
         </div>
     </div>
+    <a href="javascript;" class="fa fa-times" title="Remove" id="deleteBtn"></a>
     <table class="list payRoll-list">
         <colgroup class="borders" span="8">
             <col span="1" width="2%">
@@ -91,7 +92,7 @@
             <span data-id="value" class="totalName">
                 Total Amount
             </span>
-            <span data-id="value" class="money">
+            <span data-id="value" class="money" id="total" data-cash="<%=total%>">
                 <%=currencySplitter(total.toFixed(2))%>
             </span>
     </div>
