@@ -33,6 +33,7 @@ define([
 
                 generateItems: function () {
                     var self = this;
+                    var data = {};
                     var url;
                     var filter;
                     var key;
@@ -52,9 +53,6 @@ define([
                             value: [key]
                         }
                     };
-
-
-                    var data = {};
 
                     data.month = this.month;
                     data.year = this.year;

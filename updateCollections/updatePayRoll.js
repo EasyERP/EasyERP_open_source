@@ -45,7 +45,7 @@ mongoose.Schemas['PayRollOld'] = payRollSchema;
 var PayRollSchema =  mongoose.Schemas['PayRoll'];
 var PayRollSchemaOld =  mongoose.Schemas['PayRollOld'];
 
-var dbObject = mongoose.createConnection('localhost', 'production');
+var dbObject = mongoose.createConnection('78.46.185.131', 'development');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to weTrack is success");
@@ -70,7 +70,7 @@ query.exec(function (error, _res) {
         if (rayRoll) {
             objectToSave = {
                 type: {
-                    _id: "564219842ddf27015008f04b",
+                    _id: "564592fbabb1c35728ad7d0f",
                     name: "Salary Cash"
                 },
                 calc: rayRoll.calc.onCash,
@@ -81,7 +81,7 @@ query.exec(function (error, _res) {
             delete newPayRoll._id;
             delete newPayRoll.baseSalary;
             newPayRoll.type = {};
-            newPayRoll.type._id =  "564219892ddf27015008f04c";
+            newPayRoll.type._id =  "56459308abb1c35728ad7d10";
             newPayRoll.type.name = "Salary Card";
             newPayRoll.calc = rayRoll.calc.onCard;
             newPayRoll.paid = rayRoll.paid ? rayRoll.paid.onCard : 0;
