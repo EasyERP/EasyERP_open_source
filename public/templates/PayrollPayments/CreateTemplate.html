@@ -4,7 +4,10 @@
             <h3 class="left">Payroll Payment</h3>
         </div>
     </div>
-    <a href="javascript;" class="fa fa-times" title="Remove" id="deleteBtn"></a>
+    <div class="createBtnHolder_payRoll">
+        <a href="javascript;" class="fa fa-times" title="Remove" id="deleteBtn"></a>
+    </div>
+
     <table class="list payRoll-list">
         <colgroup class="borders" span="8">
             <col span="1" width="2%">
@@ -41,7 +44,7 @@
         <tr>
             <td id="payRoll-Table" colspan="8">
                 <div class="scrollit">
-                    <table class="list" id="payRoll-listTable">
+                    <table class="list enable_hover" id="payRoll-listTable">
                         <colgroup class="borders" span="8">
                             <col span="1" width="2%">
                             <col span="1" width="2%">
@@ -59,8 +62,8 @@
                         <%model = model.toJSON();%>
 
                                 <tr data-id="<%=cid%>">
-                                    <td data-content="number"><%=index+1%></td>
-                                    <td class="notForm"><input id="<%=cid%>" type="checkbox" value="<%=cid%>"
+                                    <td data-content="number" class="centerCell"><%=index+1%></td>
+                                    <td class="notForm centerCell"><input id="<%=cid%>" type="checkbox" value="<%=cid%>"
                                                                class="checkbox"/></td>
                                     <td class="editable" data-content="supplier"><%=model.supplier ? model.supplier.fullName : ''%></td>
                                     <td><%=model.month + '/' + model.year%></td>

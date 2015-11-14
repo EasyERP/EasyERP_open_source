@@ -3,8 +3,8 @@
 <% var key = Object.keys(el)[0];%>
 <% var totalObj = el[key]; %>
 <tr id="mainRow" data-id="<%=key%>">
-    <td class="expand">+</td>
-    <td class = "notForm"><input type="checkbox" id="<%=key%>" class="check_all" /></td>
+    <td class="expand centerCell">+</td>
+    <td class = "notForm centerCell"><input type="checkbox" id="<%=key%>" class="check_all" /></td>
     <td >Employees</td>
     <td><%=collection[0][key][0].month + "/" + collection[0][key][0].year%></td>
     <td>Salary</td>
@@ -29,7 +29,7 @@ negativeMoney"><%=currencySplitter((totalObj.diff.onCash * (-1)).toString())%>
 <% payroll.forEach(function(model, index){ %>
 <tr data-id="<%=model._id%>" class="<%=key%> jobsDashboard" style="display: none;">
     <td data-content="number"><%=index+1%></td>
-    <td class="notForm"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox" data-id="<%=key%>"/></td>
+    <td class="notForm centerCell"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox" data-id="<%=key%>"/></td>
     <td class="editable" data-content="employee"><%=model.employee ? model.employee.name : ''%></td>
     <td data-content="dataKey" ><%=model.month + '/' + model.year%></td>
     <td class="editable" data-content="paymentType"><%=model.type.name%></td>

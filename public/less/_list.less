@@ -232,12 +232,6 @@
       border-top: @thin-border @defaultBorderColor;
     }
 
-    tr {
-      &:hover { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
-        background-color: @defaultBgHover-color;
-      }
-    }
-
     td {
       border: @thin-border @defaultBorderColor;
       text-align: right;
@@ -251,23 +245,9 @@
   }
   thead, tfoot {
     tr {
-      background: inherit !important; //hover dont must work in header and footer tr
+      background: inherit !important; //hover should not work in a hover and footer tr
     }
   }
-
-  .enableTableOdd {// class to enabled table odd color (add to tbody)
-    tr {
-      &:nth-child(odd) { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
-        background-color: @defaultBgColorOdd-color;
-      }
-      &:hover { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
-        background-color: @defaultBgHover-color;
-      }
-    }
-  }
-  .centerCell { //выравнивание содержимого ячейки
-     text-align: center;
-   }
 
   .notForm {
     input{
@@ -301,7 +281,35 @@
     }
 
   }
+
+  .enableTableOdd { // class to enabled table odd color (add to tbody)
+    tr {
+      &:nth-child(odd) {
+        background-color: @defaultBgColorOdd-color;
+      }
+      &:hover {
+        background-color: @defaultBgHover-color;
+      }
+    }
+  }
+
+  .centerCell { //выравнивание содержимого ячейки (add to td)
+    text-align: center;
+  }
+
+  &.enable_hover { // enable hover in table (add to table)
+    tbody {
+      tr {
+        &:hover {
+          background-color: @defaultBgHover-color;
+        }
+      }
+    }
+  }
+
 }
+
+
 
 
 .salary-list {
