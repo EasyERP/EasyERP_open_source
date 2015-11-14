@@ -9,7 +9,7 @@ define(['./filterCollection'], function (ParentCollection) {
             var self = this;
             var model;
             var models = [];
-            var newModel;
+            var newModels = [];
             var modelObject;
             var options;
             var saveObject;
@@ -28,7 +28,7 @@ define(['./filterCollection'], function (ParentCollection) {
                 trigger: this.trigger,
                 url: this.url,
                 toJSON: function () {
-                    return newModel;
+                    return newModels;
                 }
             };
 
@@ -52,10 +52,12 @@ define(['./filterCollection'], function (ParentCollection) {
                     modelObject._id = model.id;
                     models.push(modelObject);
                 } else if (model && !model.id){
-                    model.url = this.url;
-
-                    Backbone.sync("create", model, options);
+                    newModels.push(model.toJSON());
                 }
+            }
+
+            if(newModels.length){
+                Backbone.sync("create", saveObject, options);
             }
 
             if(models.length) {

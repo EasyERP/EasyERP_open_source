@@ -82,20 +82,21 @@ define([
                         if (jsonModel.diff < 0) {
 
                             modelPayment = {
-                                "paidAmount": jsonModel.diff * (-1),
-                                "workflow": "Draft",
-                                "differenceAmount": 0,
-                                "month": jsonModel.month,
-                                "year": jsonModel.year,
-                                "supplier": {
-                                    "_id": jsonModel.employee._id,
-                                    "fullName": jsonModel.employee.name
+                                paidAmount: jsonModel.diff * (-1),
+                                workflow: "Draft",
+                                differenceAmount: 0,
+                                month: jsonModel.month,
+                                year: jsonModel.year,
+                                supplier: {
+                                    _id: jsonModel.employee._id,
+                                    fullName: jsonModel.employee.name
                                 },
-                                "paymentMethod": {
-                                    "_id": jsonModel.type._id,
-                                    "name": jsonModel.type.name
+                                paymentMethod: {
+                                    _id: jsonModel.type._id,
+                                    name: jsonModel.type.name
                                 },
-                                "period": jsonModel.year + '-' + jsonModel.month + '-01'
+                                period: jsonModel.year + '-' + jsonModel.month + '-01',
+                                paymentRef: dataId
                             };
 
                             this.forPayments.add(modelPayment);
@@ -1070,6 +1071,13 @@ define([
                 }
             },
 
+            savedPayments: function () {
+                this.removeDialog();
+
+                Backbone.history.fragment = '';
+                Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
+            },
+
             render: function () {
                 var self = this;
                 var currentEl = this.$el;
@@ -1117,6 +1125,7 @@ define([
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.allCollection);
                     self.forPayments = new PaymentCollection();
+                    //self.forPayments.on('saved', self.savedPayments, self);
                 }, 10);
 
                 return this;

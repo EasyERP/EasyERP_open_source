@@ -57,20 +57,6 @@ define([
                         }
                     }
                 });
-            },
-
-
-            parse: function (payments) {
-                /*_.map(quotations, function (quotation) {
-                    quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
-                    if(quotation.expectedDate){
-                        quotation.expectedDate = common.utcDateToLocaleDate(quotation.expectedDate);
-                    }
-
-                    return quotation;
-                });*/
-
-                return payments;
             }
         });
         return PaymentCollection;

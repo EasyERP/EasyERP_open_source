@@ -13,8 +13,7 @@ module.exports = function (models, event) {
     router.post('/supplier', handler.createPayOut);
     router.post('/salary', handler.salaryPayOut);
     router.delete('/:id', handler.remove);
-    router.patch('/customers', handler.putchBulk);
-    router.patch('/supplier', handler.putchBulk);
+    router.patch('/:contentType', handler.putchBulk);
 
     return router;
 };

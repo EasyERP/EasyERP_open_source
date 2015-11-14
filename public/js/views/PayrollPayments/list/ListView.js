@@ -15,19 +15,12 @@ define([
         'async'
     ],
     function (paginationTemplate, listTemplate, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async) {
+        "use strict";
+
         var PaymentListView = Backbone.View.extend({
             el                 : '#content-holder',
-           /* defaultItemsNumber: null,
-            listLength        : null,
-            filter            : null,
-            sort              : null,
-            newCollection     : null,
-            page              : null,*/ //if reload page, and in url is valid page
-            contentType       : 'PayrollPayments',//needs in view.prototype.changeLocationHash
-            viewType          : 'list',//needs in view.prototype.changeLocationHash
-     /*       modelId           : null,
-            $listTable        : null,
-            editCollection    : null,*/
+            contentType: 'PayrollPayments',//needs in view.prototype.changeLocationHash
+            viewType   : 'list',//needs in view.prototype.changeLocationHash
             collectionLengthUrl: '/payment/salary/totalCollectionLength',
             changedModels      : {},
             responseObj        : {},
@@ -86,20 +79,13 @@ define([
             chooseOption: function (e) {
                 var target = $(e.target);
                 var targetElement = target.parents("td");
-                var targetW = targetElement.find("a");
+                var targetLink = targetElement.find("a");
                 var tr = target.parents("tr");
                 var modelId = tr.attr('data-id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.attr("data-content");
-                var elementType = '#' + attr;
-                var workflow;
                 var changedAttr;
-                var supplier;
                 var editModel;
-
-                var element = _.find(this.responseObj[elementType], function (el) {
-                    return el._id === id;
-                });
 
                 if (modelId) {
                     editModel = this.editCollection.get(modelId);
@@ -115,29 +101,15 @@ define([
                     changedAttr = this.changedModels[modelId];
                 }
 
-                if (elementType === '#employee') {
+                targetLink.attr("class", "currentSelected");
+                changedAttr.workflow = target.text();
 
-                    tr.find('[data-content="employee"]').text(element.name);
-
-                    supplier = _.clone(editModel.get('supplier'));
-
-                    supplier._id = element._id;
-                    supplier.fullName = target.text();
-
-                    changedAttr.supplier = supplier;
-                } else if (elementType === '#bonusType') {
-                    tr.find('[data-content="bonusType"]').text(element.name);
-                    changedAttr.paymentRef = target.text();
-                } else if (elementType === '#workflow') {
-                    targetW.attr("class", "currentSelected");
-                    changedAttr.workflow = target.text();
-                    if (target.attr('data-id') === 'Paid') {
-                        targetW.addClass('done');
-                    } else {
-                        targetW.addClass('new');
-                    }
+                if (target.attr('data-id') === 'Paid') {
+                    targetLink.addClass('done');
+                } else {
+                    targetLink.addClass('new');
                 }
-                targetW.text(target.text());
+                targetLink.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
@@ -155,13 +127,16 @@ define([
                 return !!newRow.length;
             },
 
+            clearNewSelects: function(){
+                this.$el.find('ul.newSelectList').remove();
+            },
+
             editRow: function (e, prev, next) {
                 var self = this;
-
                 var ul;
                 var el = $(e.target);
-                var tr = $(e.target).closest('tr');
-                var td = $(e.target).closest('td');
+                var tr = el.closest('tr');
+                var td = el.closest('td');
                 var modelId = tr.attr('data-id');
                 var colType = el.attr('data-type');
                 var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT' && el.data('content') === 'date';
@@ -189,6 +164,8 @@ define([
                         onChanged  : self.setChangedValue()
                     }).addClass('datepicker');
                 } else if (isWorkflow) {
+                    this.clearNewSelects();
+
                     ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
                     el.append(ul);
                 } else if (isSelect) {

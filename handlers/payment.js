@@ -7,6 +7,7 @@ var CONSTANTS = require('../constants/modules');
 var MAINCONSTANTS = require('../constants/mainConstants');
 
 var Payment = function (models, event) {
+    "use strict";
     var access = require("../Modules/additions/access.js")(models);
 
     var EmployeeSchema = mongoose.Schemas['Employee'];
@@ -14,6 +15,7 @@ var Payment = function (models, event) {
     var PaymentSchema = mongoose.Schemas['Payment'];
     var wTrackPaymentSchema = mongoose.Schemas['wTrackPayment'];
     var salaryPaymentSchema = mongoose.Schemas['salaryPayment'];
+    var payrollSchema = mongoose.Schemas['PayRoll'];
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
@@ -26,16 +28,16 @@ var Payment = function (models, event) {
         var validDbs = ["weTrack", "production", "development"];
 
         return validDbs.indexOf(db) !== -1;
-    }
+    };
 
     function returnModuleId(req) {
         var body = req.body;
         var moduleId;
 
-        moduleId = !!body.forSales ? 61 : !!body.salary ? 79: 60;
+        moduleId = !!body.forSales ? 61 : !!body.salary ? 79 : 60;
 
         return moduleId;
-    }
+    };
 
     function returnModel(req, options) {
         var Payment;
@@ -55,45 +57,80 @@ var Payment = function (models, event) {
         }
 
         return Payment;
-    }
-
-    this.getAll = function (req, res, next) {
-        //this temporary unused
-        var isWtrack = checkDb(req.session.lastDb);
-        var Payment;
-
-        if (isWtrack) {
-            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
-        } else {
-            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-        }
-
-        var query = {};
-
-        Payment.find(query, function (err, payments) {
-            if (err) {
-                return next(err);
-            }
-            res.status(200).send({success: payments});
-        });
     };
 
-    this.getForView = function (req, res, next) {
-        var viewType = req.params.viewType;
-        var type = req.params.byType;
-        var forSale = type === 'customers';
-        var bonus = type === 'supplier';
-        var salary = type === 'salary';
-        var options = {
-            forSale: forSale,
-            bonus: bonus,
-            salary: salary
-        };
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
 
-        switch (viewType) {
-            case "list":
-                getPaymentFilter(req, res, next, options);
-                break;
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'] ? filter[filterName]['value'] : [];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'assigned':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'name':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'paymentMethod':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSale':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = condition;
+                    resArray.push(filtrElement);
+                    break;
+                case 'paymentRef':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'year':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'month':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+        ;
+
+        return resArray;
+    };
+
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
         }
     };
 
@@ -147,7 +184,7 @@ var Payment = function (models, event) {
                         }
                     }
 
-                    if(!salary) {
+                    if (!salary) {
                         optionsObject.$and.push({forSale: forSale});
                     } else {
                         optionsObject.$and.push({isExpense: true});
@@ -231,8 +268,8 @@ var Payment = function (models, event) {
                             }
 
                             Employee.populate(result, {
-                                path: 'invoice.salesPerson',
-                                select: '_id name',
+                                path   : 'invoice.salesPerson',
+                                select : '_id name',
                                 options: {lean: true}
                             }, function () {
                                 waterfallCallback(null, result);
@@ -255,6 +292,46 @@ var Payment = function (models, event) {
 
         } else {
             res.send(401);
+        }
+    };
+
+    this.getAll = function (req, res, next) {
+        //this temporary unused
+        var isWtrack = checkDb(req.session.lastDb);
+        var Payment;
+
+        if (isWtrack) {
+            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
+
+        var query = {};
+
+        Payment.find(query, function (err, payments) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: payments});
+        });
+    };
+
+    this.getForView = function (req, res, next) {
+        var viewType = req.params.viewType;
+        var type = req.params.byType;
+        var forSale = type === 'customers';
+        var bonus = type === 'supplier';
+        var salary = type === 'salary';
+        var options = {
+            forSale: forSale,
+            bonus  : bonus,
+            salary : salary
+        };
+
+        switch (viewType) {
+            case "list":
+                getPaymentFilter(req, res, next, options);
+                break;
         }
     };
 
@@ -295,100 +372,37 @@ var Payment = function (models, event) {
         var body = req.body;
         var moduleId = 66;
         var Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
+        var Payroll = models.get(req.session.lastDb, 'PayRoll', payrollSchema);
+
+        function payrollExpensUpdater(_payment, cb) {
+            Payroll.findByIdAndUpdate(_payment.paymentRef, {$inc: {diff: _payment.paidAmount, paid: _payment.paidAmount}}, cb);
+        };
 
         access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
-            var payment;
-
             if (access) {
 
-                payment = new Payment(body);
+                async.each(body, function (_payment, cb) {
+                    var payment;
 
-                payment.save(function (err, payment) {
+                    payment = new Payment(_payment);
+
+                    payment.save(function(err, _payment_){
+                        if(err){
+                            return cb(err);
+                        }
+                        payrollExpensUpdater(_payment, cb);
+                    });
+                }, function (err) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(200).send("success");
-                });
 
+                    res.status(201).send({success: 'success'})
+                });
             } else {
                 res.status(403).send();
             }
         });
-    };
-
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        for (var filterName in filter) {
-            condition = filter[filterName]['value'] ? filter[filterName]['value'] : [];
-            key = filter[filterName]['key'];
-
-            switch (filterName) {
-                case 'assigned':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'name':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'paymentMethod':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'forSale':
-                    condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = condition;
-                    resArray.push(filtrElement);
-                    break;
-                case 'paymentRef':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'year':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'month':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        }
-        ;
-
-        return resArray;
-    };
-
-    function ConvertType(array, type) {
-        if (type === 'integer') {
-            for (var i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i]);
-            }
-        } else if (type === 'boolean') {
-            for (var i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
     };
 
     this.create = function (req, res, next) {
@@ -452,9 +466,9 @@ var Payment = function (models, event) {
             }
             //  var wId = ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ? 'Sales Invoice' : 'Purchase Invoice';
             var request = {
-                query: {
-                    wId: wId,
-                    source: 'purchase',
+                query  : {
+                    wId         : wId,
+                    source      : 'purchase',
                     targetSource: 'invoice'
                 },
                 session: req.session
@@ -479,8 +493,8 @@ var Payment = function (models, event) {
                 }
 
                 invoice.workflow = {
-                    _id: workflow._id,
-                    name: workflow.name,
+                    _id   : workflow._id,
+                    name  : workflow.name,
                     status: workflow.status
                 };
                 invoice.paymentInfo.balance = (totalToPay - paid) / 100;
@@ -631,9 +645,9 @@ var Payment = function (models, event) {
 
         var isWtrack = checkDb(req.session.lastDb);
         var options = {
-            forSale: forSale,
-            bonus: bonus,
-            salary: salary,
+            forSale : forSale,
+            bonus   : bonus,
+            salary  : salary,
             isWtrack: isWtrack
         };
         var Payment;
@@ -654,7 +668,7 @@ var Payment = function (models, event) {
             }
         }
 
-        if(!salary) {
+        if (!salary) {
             queryObject.$and.push({forSale: forSale});
         } else {
             queryObject.$and.push({isExpense: true});
@@ -742,9 +756,23 @@ var Payment = function (models, event) {
 
     this.putchBulk = function (req, res, next) {
         var body = req.body;
+        var contentType = req.params.contentType;
         var uId;
 
-        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        //var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        var forSale = contentType === 'customers';
+        var bonus = contentType === 'supplier';
+        var salary = contentType === 'salary';
+        var isWtrack = checkDb(req.session.lastDb);
+        var options = {
+            forSale : forSale,
+            bonus   : bonus,
+            salary  : salary,
+            isWtrack: isWtrack
+        };
+        var Payment;
+
+        Payment = returnModel(req, options);
 
         var moduleId = returnModuleId(req);
 

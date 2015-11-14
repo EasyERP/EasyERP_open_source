@@ -53,6 +53,10 @@ define(['Validation', 'common'], function (Validation, common, helpers) {
                 model.date = common.utcDateToLocaleDate(model.date);
             }
 
+            if (model.period) {
+                model.period = common.utcDateToLocaleDate(model.period);
+            }
+
 
             return model;
         }

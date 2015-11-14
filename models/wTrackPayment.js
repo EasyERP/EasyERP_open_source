@@ -20,7 +20,6 @@ module.exports = (function () {
         paidAmount      : {type: Number, default: 0, set: setPrice},
         date            : {type: Date, default: Date.now},
         name            : {type: String, default: '', unique: true},
-        paymentRef      : {type: String, default: ''},
         workflow        : {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
         differenceAmount: {type: Number, default: 0, set: setPrice},
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
@@ -45,6 +44,7 @@ module.exports = (function () {
 
     var weTrackPaymentSchema = basePaymentSchema.extend({
         forSale      : {type: Boolean, default: true},
+        paymentRef   : {type: String, default: ''},
         supplier     : {
             _id     : {type: ObjectId, ref: 'Customers', default: null},
             fullName: String
@@ -67,6 +67,7 @@ module.exports = (function () {
             _id : {type: ObjectId, ref: 'ProductCategory', default: null},
             name: String
         },
+        paymentRef   : {type: ObjectId, ref: 'PayRoll', default: null},//ref to PayRoll
         period       : {type: Date, default: null}
     });
 

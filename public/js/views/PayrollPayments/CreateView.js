@@ -14,7 +14,6 @@ define([
                 this.editCollection = options.collection;
                 this.editCollection.url = 'payment/salary';
                 this.editCollection.on('saved', this.savedNewModel, this);
-                this.editCollection.on('updated', this.updatedOptions, this);
 
                 this.render(options);
 
@@ -294,7 +293,7 @@ define([
             pay: function () {
                 this.saveItem();
 
-                this.removeDialog();
+                //this.removeDialog();
             },
 
             removeDialog: function () {
