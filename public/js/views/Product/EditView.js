@@ -202,7 +202,7 @@ define([
                 var mid = 58;
                 var id = this.currentModel.get('_id');
                 var self = this;
-                var answer = confirm("Realy DELETE items ?!");
+                var answer = confirm("Really DELETE items ?!");
 
                 event.preventDefault();
 

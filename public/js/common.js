@@ -45,7 +45,7 @@
 
         var deleteEvent = function (e, that) {
             e.preventDefault();
-            var answer = confirm("Realy DELETE item ?!");
+            var answer = confirm("Really DELETE item ?!");
             if (answer == true) {
                 that.trigger('deleteEvent');
             }

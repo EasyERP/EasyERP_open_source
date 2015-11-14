@@ -60,7 +60,7 @@ define([
             deleteEvent: function(event)
             {
             	event.preventDefault();
-            	var answer=confirm("Realy DELETE item(s) ?!");
+            	var answer=confirm("Really DELETE item(s) ?!");
             	if (answer==true) this.trigger('deleteEvent');
             },
 

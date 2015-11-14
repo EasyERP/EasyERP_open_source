@@ -46,7 +46,7 @@ function (ListTemplate, CreateView, currentModel, ListItemView, EditView) {
             var mid = 39;
             e.preventDefault();
             var self = this;
-            var answer = confirm("Realy DELETE items ?!");
+            var answer = confirm("Really DELETE items ?!");
             if (answer == true) {
                 myModel.destroy({
                     headers: {
