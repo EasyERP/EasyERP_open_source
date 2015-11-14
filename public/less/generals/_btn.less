@@ -11,11 +11,14 @@
   background: @bg-main;
   span, a {
     padding: 0 !important;
-    color: @tilte-color;
+    color: @mainText-color;
   }
   &:hover {
     cursor: pointer;
     background-position: 0;
-    background: @bg-butt-color - #131313;
+    background: @btn-main-color;
+    span, a {
+      color: @btn-color-hover;
+    }
   }
 }

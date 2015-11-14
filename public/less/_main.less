@@ -6,6 +6,10 @@
 @import "_list";
 @import "_vacationList";
 
+/*== temp files==*/
+@import "tmp/_payRoll";
+@import "projectsInfo/_projectInfo";
+
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
 @body-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
@@ -118,6 +122,7 @@ figcaption,
 figure,
 footer,
 header,
+hgroup,
 nav,
 section {
   display: block;
@@ -399,10 +404,6 @@ input::-ms-clear {
     max-width: 100%;
 
   }
-
-  #forInfo {
-    overflow: hidden;
-  }
   .compactList {
     li {
       border-bottom: @thin-border @border-color;
@@ -636,7 +637,7 @@ input::-ms-clear {
   }
 
   span {
-    padding: 3px 8px 3px 0;
+    //padding: 3px 8px 3px 0;
     &#editSpan {
       a {
         margin-left: 5px;
@@ -673,7 +674,7 @@ input::-ms-clear {
         font-family: Icons;
       }
     }
-  }
+}
   #cancelSpan, #saveSpan, #editSpan {
     a {
       color: @formColum-customer-info;
@@ -1073,7 +1074,7 @@ input::-ms-clear {
   display: block;
   background: @background !important;
   border: @thin-border @border-color-main;
-  // border-bottom-color: rgba(0, 0, 0, 0.3);
+ // border-bottom-color: rgba(0, 0, 0, 0.3);
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: @width;
   min-height: 130px;
@@ -1943,11 +1944,11 @@ input::-ms-clear {
     padding: 0 2px;
     color: @mainText-color;
 
-    &:focus {
-      .box-shadow(0, 0, 5px, @border-color-selected);
-      outline: medium none;
-      border: @thin-border @border-color-selected !important;
-    }
+      &:focus {
+        .box-shadow(0, 0, 5px, @border-color-selected);
+        outline: medium none;
+        border: @thin-border @border-color-selected !important;
+      }
 
     &#summary {
       width: 100%;
@@ -2165,9 +2166,6 @@ input::-ms-clear {
 .tabs(@marginTop: 0, @marginLeft: -20px) {
   height: 35px;
   border-bottom: @thin-border @border-color-main;
-  //margin: @marginTop -20px 0 @marginLeft;
-  //padding: 0 20px;
-
   li {
     float: left;
 
@@ -2418,6 +2416,7 @@ input, textarea, select {
 }
 
 .current-selected {
+ // color: @tilte-color !important;
   font-size: 12px;
   text-decoration: none;
   line-height: 20px !important;
@@ -2764,10 +2763,10 @@ dl {
           border: @thin-border @border-color-main;
           padding: 5px 15px;
           font-size: 11px;
-          &:hover {
-            text-decoration: none;
-            border: @thin-border @bg-main-menu-selected;
-          }
+            &:hover {
+              text-decoration: none;
+              border: @thin-border @bg-main-menu-selected;
+            }
         }
       }
 
@@ -2814,12 +2813,12 @@ dl {
       }
 
       .noteTitle {
-        word-break: break-all;
+        word-break: break-word;
         //
       }
 
       .noteText {
-        word-break: break-all;
+        word-break: break-word;
       }
 
       .right {
@@ -2863,7 +2862,7 @@ dl {
 #wrapper {
   .fullsize;
   min-width: 100%;
-  height: 100vh;
+  height: 100hv;
   position: absolute;
   clear: both;
 
@@ -2984,17 +2983,7 @@ dl {
   }
 
 }
-#forInfo {
-  .half-block {
-    &.left {
-      width: 65%;
-      margin-right: 1%;
-    }
-    &.right {
-      width: 34%;
-    }
-  }
-}
+
 .funnelIcon {
   display: inline-block;
   height: 100%;
@@ -3039,7 +3028,6 @@ dl {
   padding-top: 1px;
   text-align: center;
   cursor: pointer;
-  //text-shadow: 0 1px 1px white;
 }
 
 .filterButton {
@@ -3335,9 +3323,9 @@ button.red, a.red {
       display: block;
       line-height: 30px;
       color: @login-text;
-      &:hover {
-        color: #fff;
-      }
+        &:hover {
+          color: #fff;
+        }
     }
 
     &:hover {
@@ -3850,7 +3838,6 @@ table#workflows {
     text-decoration: none;
     text-align: center;
     &:before {
-      //vertical-align: baseline;
       line-height: 18px;
     }
   }
@@ -3861,7 +3848,9 @@ table#workflows {
     li {
       float: left;
       margin-right: 10px;
-      border: 1px solid @border-color-main;
+      .btn {
+        padding: .2em 1em;
+      }
       a {
         display: inline-block;
         line-height: 18px;
@@ -3907,11 +3896,11 @@ ul.dialog-tabs {
   clear: both;
   text-align: center;
 
-  #showMore {
-    color: @mainText-color;
-    margin-top: 20px;
-    margin-bottom: 5px;
-  }
+    #showMore {
+      color: @mainText-color;
+      margin-top: 20px;
+      margin-bottom: 5px;
+    }
 }
 
 #modulesAccessTable {
@@ -4272,7 +4261,7 @@ h3.dashboard {
 
 .leadChart, .chart {
   text {
-    fill: @mainText-color;
+      fill: @mainText-color;
 
   }
 }
@@ -4559,7 +4548,7 @@ h3.dashboard {
   .create-employee-info {
     //.dl-auto(200px, 40%);
     dt {
-      margin-top: 10px;
+     // margin-top: 10px;
     }
     input {
       max-width: 117px !important;
@@ -4653,7 +4642,7 @@ h3.dashboard {
           padding-right: 5px;
         }
       }
-      div.status {
+      div.status, {
         width: 90px;
       }
     }
@@ -4926,7 +4915,7 @@ textarea#editInput {
   border-bottom: 1px solid @border-color-main;
   background-color: @bg-main;
   tr {
-    color: @captionsColor;
+  color: @captionsColor;
     th span {
       padding-right: 6px;
       text-align: right;
@@ -5199,13 +5188,13 @@ textarea#editInput {
         border-right: 1px solid @border-color-main;
       }
     }
-    /* tr.head-row {
-       td {
-         span {
-           color: @captionsColor;
-         }
-       }
-     }*/
+   /* tr.head-row {
+      td {
+        span {
+          color: @captionsColor;
+        }
+      }
+    }*/
     &.group {
       /*color: black;*/
       color: @mainText-color;
@@ -5324,9 +5313,9 @@ textarea#editInput {
 
       #currentEmployee, #currentStatus, #currentTime {
         color: @mainText-color;
-        option {
-          background-color: @bg-main;
-        }
+          option {
+            background-color: @bg-main;
+          }
       }
 
       &.pull-left {
@@ -5729,8 +5718,8 @@ textarea#editInput {
       background-color: #91ce50
     }
     &.subRow {
-      padding: 15px;
-    }
+     padding: 15px;
+  }
     .rowChecked {
       font-size: 15px;
       font-weight: 600;
@@ -6326,13 +6315,13 @@ textarea#editInput {
     margin-bottom: 2px;
     overflow: hidden;
     text-overflow: ellipsis;
-    &:hover {
-      color: white;
-      background-color: @bg-hover-drop-down-color;
-    }
+      &:hover {
+        color: white;
+        background-color: @bg-hover-drop-down-color;
+      }
 
   }
-  .checkedValue {
+   .checkedValue {
     background-color: @bg-hover-drop-down-color;
   }
 
@@ -6363,6 +6352,27 @@ textarea#editInput {
 .forInfoWrap {
   overflow: hidden;
 }
+
+.payRoll-expenses { //для позиционирования label в ui-dialog
+  width: 70% !important;
+  margin: 0 auto;
+  padding-top: 25px !important;
+  overflow: hidden;
+
+  .payRoll-name {
+    float: left;
+    padding-right: 5px;
+  }
+
+  .payRoll-edit {
+    float: right;
+  }
+
+  .payRoll-edit, .payRoll-name {
+    margin-bottom: 15px;
+  }
+}
+
 
 //------ Import files ------
 //.list2 {

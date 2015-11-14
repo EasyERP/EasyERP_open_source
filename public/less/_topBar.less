@@ -1,4 +1,4 @@
-.top-bar(@defaultHeight: 30px, @defaultBackground: @bg-main, @defaultBorderColor: @border-color-main, @defaultH3Color: @creatBtn-color, @defaultMargin: 6px 0 0 0, @defaultPadding: 0 10px) {
+.top-bar(@defaultHeight: 30px, @defaultMargin: 6px 0 0 0, @defaultPadding: 0 10px) {
   display: block;
   height: @defaultHeight;
   clear: both;
@@ -7,7 +7,7 @@
   h3 {
     margin: @defaultMargin;
     padding: @defaultPadding;
-    color: @defaultH3Color !important;
+    color: @creatBtn-color !important;
     font-family: @title-font;
     font-weight: normal;
     float: left;
@@ -38,17 +38,16 @@
         #startTime, #endTime {
           line-height: 28px;
         }
-
-        .frameDetail {
-          label {
-            display: inline-block;
-            min-width: 15%;
-            margin-right: 2%;
-            text-align: left;
-          }
-          input {
-            width: 75%;
-          }
+      }
+      .frameDetail {
+        label {
+          display: inline-block;
+          min-width: 15%;
+          margin-right: 2%;
+          text-align: left;
+        }
+        input {
+          width: 75%;
         }
       }
       .customTime {

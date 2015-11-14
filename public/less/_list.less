@@ -1,214 +1,306 @@
-.list(@defaultColor: @list-color-text, @font-size: 12px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
+//.list(@font-size: 12px, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
+//
+//  color: @defaultColor !important;
+//  font-family: @lucida-font;
+//  width: 100%;
+//  .anotherColor {
+//    background-color: @forInfo-caption-color2;
+//  }
+//  tfoot {
+//    tr {
+//      border-bottom: 1px solid @defaultBorderColor;
+//      background: inherit !important;
+//      vertical-align: middle;
+//    }
+//    td {
+//      padding: 3px 6px;
+//      line-height: 18px;
+//      font-size: @font-size;
+//      text-align: right;
+//      span {
+//        padding-right: 0;
+//      }
+//    }
+//  }
+//
+//  thead {
+//    tr {                               //cheked
+//      border-top: 0;                   //cheked
+//      background: inherit !important;  //cheked
+//      vertical-align: top;             //cheked
+//    }                                  //checked
+//
+//    .subSalaryHead {
+//      border-top: none;
+//    }
+//
+//    th {
+//      padding: 2px 6px;         //checked
+//      line-height: 18px;        //checked
+//      font-size: @font-size;    //checked
+//      text-align: right;        //checked
+//
+//      &:nth-child(1), &:nth-child(2) { //ToDo #1
+//        text-align: center;
+//      }
+//
+//      input[type="checkbox"] {
+//        margin-top: 2.5px;
+//      }
+//      &.oe_sortable, &.oe_sortable_sub {
+//        cursor: pointer;                  //checked
+//        .arrow {                          //checked
+//          display: none;                  //checked
+//          padding: 0 0 0 5px;             //checked
+//          margin: 0;                      //checked
+//          text-align: center;             //checked
+//          width: 5px;                     //checked
+//          height: 5px;                    //checked
+//          font-weight: 100 !important;    //checked
+//          cursor: pointer;                //checked
+//          font-family: Icons;             //checked
+//          text-decoration: none;          //checked
+//          line-height: 23px;              //checked
+//          background: none;               //checked
+//        }
+//        &.sortUp {                        //checked
+//          .up {                           //checked
+//            display: inline-block;        //checked
+//          }                               //checked
+//        }                                 //checked
+//        &.sortDn {                        //checked
+//          .down {                         //checked
+//            display: inline-block;        //checked
+//          }                               //checked
+//        }                                 //checked
+//      }
+//      &.forCaption {
+//        background-color: #1ebbea;
+//
+//      }
+//      &:first-of-type {
+//        width: 12px;
+//
+//        input {
+//          cursor: pointer;
+//        }
+//      }
+//    }
+//  }
+//
+//  tbody {
+//
+//    tr {
+//      &.greenAlarm {
+//        border: 2px solid #90ee90;
+//      }
+//      &.canceledListItem {
+//        color: grey;
+//        .newSelectList {
+//          color: #000;
+//        }
+//      }
+//      border-top: @thin-border @defaultBorderColor;
+//
+//      &:last-child {
+//        border-bottom: @thin-border @defaultBorderColor;
+//      }
+//      &.stage-cancelled,
+//      &.stage-refused,
+//      &.stage-contractend,
+//      &.stage-lost {
+//        text-decoration: line-through;
+//      }
+//      td {
+//        .text-overflow;
+//        cursor: pointer;
+//        padding: 0 6px;
+//        font-size: @font-size;
+//        text-align: right;
+//        border-right: @thin-border @defaultBorderColor;
+//        border-bottom: @thin-border @defaultBorderColor;
+//        color: @list-caption-color;
+//        line-height: 20px;
+//        &.red-border {
+//          color: red;
+//        }
+//
+//
+//        &:nth-child(1), &:nth-child(2) {
+//          text-align: center;
+//        }
+//
+//        &.withSelect {
+//          position: relative;
+//        }
+//
+//        &[data-content="workflow"] {
+//          position: relative;
+//          padding: 0 15px;
+//          overflow: visible;
+//
+//          .newSelectList {
+//            top: 5px;
+//            right: 15px;
+//          }
+//        }
+//
+//        progress {
+//          width: 100%;
+//        }
+//
+//        a {
+//          color: @mainText-color;
+//          display: inline-block;
+//        }
+//
+//        a.stageSelect {
+//          color: @mainText-color;
+//        }
+//        a.done {
+//          color: #00c60b !important;
+//        }
+//
+//        progress {
+//          background-color: @defaultProgressColor;
+//        }
+//
+//        progress::-webkit-progress-bar {
+//          background-color: @defaultProgressColor;
+//        }
+//
+//        progress::-webkit-progress-value {
+//          background-color: #57B5E3;
+//        }
+//
+//        &:first-of-type {
+//          padding-left: 7px;
+//          line-height: 20px;
+//
+//          input {
+//            cursor: pointer;
+//          }
+//        }
+//      }
+//      .icon {
+//        line-height: 20px;
+//      }
+//    }
+//  }
+//
+//  tr:nth-child(odd) {
+//    background-color: @defaultBgColorOdd-color;
+//  }
+//
+//  tr:hover {
+//    background-color: @defaultBgHover-color;
+//  }
+//}
 
-  color: @defaultColor !important;
+.list(@font-size: 12px, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
   font-family: @lucida-font;
   width: 100%;
-  .anotherColor {
-    background-color: @forInfo-caption-color2;
+
+  td, th {  //main themse for all list
+    height: 20px;
+    padding: 0 6px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    color: @mainText-color;
+    line-height: 20px;
+    font-size: 12px;
   }
+
   thead {
     tr {
-      border-top: 0;
-      background: inherit !important;
+      border: none;
       vertical-align: top;
     }
 
-    .subSalaryHead {
-      border-top: none;
-    }
-
     th {
-      padding: 2px 6px;
-      line-height: 18px;
       font-size: @font-size;
       text-align: right;
-
-      &:nth-child(1), &:nth-child(2) {
-        text-align: center;
-      }
-
-      input[type="checkbox"] {
-        margin-top: 2.5px;
-      }
-      &.oe_sortable, &.oe_sortable_sub {
-        cursor: pointer;
-        .arrow {
-          display: none;
-          padding: 0 0 0 5px;
-          margin: 0;
-          text-align: center;
-          width: 5px;
-          height: 5px;
-          font-weight: 100 !important;
-          cursor: pointer;
-          font-family: Icons;
-          text-decoration: none;
-          line-height: 23px;
-          background: none;
-        }
-        &.sortUp {
-          .up {
-            display: inline-block;
-          }
-        }
-        &.sortDn {
-          .down {
-            display: inline-block;
-          }
-        }
-      }
-      &.forCaption {
-        background-color: #1ebbea;
-        width: 50%;
-        text-align: right;
-      }
-      &:first-of-type {
-        width: 12px;
-
-        input {
-          cursor: pointer;
-        }
-      }
     }
   }
 
   tbody {
+    tr {
+      border-top: @thin-border @defaultBorderColor;
+    }
 
     tr {
-      &.greenAlarm {
-        border: 2px solid #90ee90;
+      &:hover { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
+        background-color: @defaultBgHover-color;
       }
-      &.canceledListItem {
-        color: grey;
-        .newSelectList {
-          color: #000;
-        }
-      }
-      border-top: @thin-border @defaultBorderColor;
+    }
 
-      &:last-child {
-        border-bottom: @thin-border @defaultBorderColor;
-      }
-      &.stage-cancelled,
-      &.stage-refused,
-      &.stage-contractend,
-      &.stage-lost {
-        text-decoration: line-through;
-      }
-      td {
-        .text-overflow;
-        cursor: pointer;
-        padding: 0 6px;
-        font-size: @font-size;
-        text-align: right;
-        border-right: @thin-border @defaultBorderColor;
-        border-bottom: @thin-border @defaultBorderColor;
-        color: @list-caption-color;
-        line-height: 20px;
-        &.red-border {
-          color: red;
-        }
-
-
-        &:nth-child(1), &:nth-child(2) {
-          text-align: center;
-        }
-
-        &.withSelect {
-          position: relative;
-        }
-
-        &[data-content="workflow"] {
-          position: relative;
-          padding: 0 15px;
-          overflow: visible;
-
-          .newSelectList {
-            top: 5px;
-            right: 15px;
-          }
-        }
-
-        progress {
-          width: 100%;
-        }
-
-        a {
-          color: @mainText-color;
-          display: inline-block;
-        }
-
-        a.stageSelect {
-          color: @mainText-color;
-        }
-        a.done {
-          color: #00c60b !important;
-        }
-
-        progress {
-          background-color: @defaultProgressColor;
-        }
-
-        progress::-webkit-progress-bar {
-          background-color: @defaultProgressColor;
-        }
-
-        progress::-webkit-progress-value {
-          background-color: #57B5E3;
-        }
-
-        &:first-of-type {
-          padding-left: 7px;
-          line-height: 20px;
-
-          input {
-            cursor: pointer;
-          }
-        }
-      }
-      .icon {
-        line-height: 20px;
-      }
-      &.jobsDashboard {
-        background-color: @defaultBgColorOdd;
-        td {
-          &:nth-child(2) {
-            text-align: right;
-            padding-right: 15px;
-          }
-        }
-        &:hover {
-          background-color: @defaultBgColorHover;
-        }
-      }
+    td {
+      border: @thin-border @defaultBorderColor;
+      text-align: right;
     }
   }
 
   tfoot {
-    tr {
-      border-bottom: 1px solid @defaultBorderColor;
-      background: inherit !important;
-      vertical-align: middle;
-    }
     td {
-      padding: 0 6px;
-      line-height: 20px;
-      font-size: @font-size;
       text-align: right;
-      span {
-        padding-right: 0;
+    }
+  }
+  thead, tfoot {
+    tr {
+      background: inherit !important; //hover dont must work in header and footer tr
+    }
+  }
+
+  .enableTableOdd {// class to enabled table odd color (add to tbody)
+    tr {
+      &:nth-child(odd) { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
+        background-color: @defaultBgColorOdd-color;
+      }
+      &:hover { // в идеале сделать класс и добавлять только к таблицам в которых они действительно нужны
+        background-color: @defaultBgHover-color;
       }
     }
   }
+  .centerCell { //выравнивание содержимого ячейки
+     text-align: center;
+   }
 
-  tr:nth-child(odd) {
-    //background-color: @defaultBgColorOdd;
+  .notForm {
+    input{
+      margin-top: 2px;
+      cursor: pointer;
+    }
   }
 
-  tr:hover {
-    background-color: @defaultBgColorHover;
-  }
+  .oe_sortable, .oe_sortable_sub { //style for sort arrows in thead
+    cursor: pointer;
+    position: relative;
+    padding-right: 15px;
+    .arrow {
+      display: none;
+      text-align: center;
+      cursor: pointer;
+      font-family: Icons;
+      position: absolute;
+      top: 2px;
+      right: 3px;
+    }
+    &.sortUp {
+      .up {
+        display: inline-block;
+      }
+    }
+    &.sortDn {
+      .down {
+        display: inline-block;
+      }
+    }
 
+  }
 }
 
 
@@ -252,113 +344,5 @@
   margin: @arguments;
 }
 
-#forInfo {
-  .tableProjects {
-    width: 99%;
-    margin-bottom: 10px;
-    thead{
-      th {
-        text-align: right;
 
-        &.forCaption {
-          //text-align: left;
-          margin-top: 15px;
-          //background-color: @forInfo-caption-color;
-          font-size: 12px;
-          line-height: 28px;
-          padding: 0 0  0 10px;
-          //width: 41%;
-          color: @overiewText-color;
-          position: relative;
-          //border-right: 1px solid /@forInfo-caption-color;
 
-          &:last-child {
-            padding: 0 10px 0 0;
-          }
-          &:first-child {
-            text-align: left;
-            padding: 0 0 0 10px;
-          }
-
-          a {
-          //  text-align: right;
-            color: @overiewText-color;
-          //  position: absolute;
-          //  right: 10px;
-          //  top: 0;
-          //  display: block;
-          }
-        }
-      }
-      }
-    tbody {
-      td {
-        text-align: right;
-        &:first-child {
-          border-left: 1px solid @list-border-color;
-        }
-      }
-      td.remove {
-        min-width: 10px;
-        border-right: none;
-        border-left: 1px solid @border-color-main;
-      }
-      td.expand {
-        text-align: center;
-        font-size: 14px;
-      }
-    }
-    tr {
-      .procent {
-        position: relative;
-        padding-right: 20px;
-        &::before {
-          content: '%';
-          display: block;
-          width: 5px;
-          height: 5px;
-          position: absolute;
-          right: 13px;
-
-        }
-      }
-    }
-    .subRow {
-      background: none;
-      &:hover {
-        background: none;
-      }
-      &> td {
-        padding-right: 0;
-      }
-      td {
-        &:first-child {
-          border-left: 1px solid transparent !important;
-        }
-        &:last-child {
-          border-right: 1px solid transparent !important;
-        }
-      }
-    }
-    .tableProject {
-      padding: 5px 0px 5px 20px;
-
-      .list {
-        border-top: 1px solid transparent;
-        tbody {
-          tr {
-            border-top: 1px solid transparent;
-          }
-        }
-      }
-    }
-  }
-}
-
-.tableResponsive {
-  min-height: .01%;
-  overflow-x: auto;
-  width: 100%;
-  overflow-y: hidden;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
-}

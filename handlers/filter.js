@@ -93,7 +93,7 @@ var Filters = function (models) {
                 salesQuotation  : getSalesQuotation,
                 salesOrder      : getSalesOrders,
                 Order           : getOrdersFiltersValues,
-                Payroll         : getPayRollFiltersValues,
+                PayrollExpenses : getPayRollFiltersValues,
                 DashVacation    : getDashVacationFiltersValues
             },
             function (err, result) {
@@ -956,6 +956,12 @@ var Filters = function (models) {
                                 name: '$dataKey'
                             }
                         },
+                        'type': {
+                            $addToSet: {
+                                _id : '$type._id',
+                                name: '$type.name'
+                            }
+                        }
                     }
                 }
             ], function (err, result) {

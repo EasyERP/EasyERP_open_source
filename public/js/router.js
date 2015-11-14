@@ -11,40 +11,43 @@ define([
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
-        mainView: null,
-        topBarView: null,
-        view: null,
+        mainView   : null,
+        topBarView : null,
+        view       : null,
 
         routes: {
-            "home": "any",
-            "login": "login",
-            "easyErp/:contentType/kanban(/:parrentContentId)": "goToKanban",
-            "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)": "goToThumbnails",
-            "easyErp/:contentType/form(/:modelId)": "goToForm", //FixMe chenge to required Id after test
+            "home"                                                                                          : "any",
+            "login"                                                                                         : "login",
+            "easyErp/:contentType/kanban(/:parrentContentId)"                                               : "goToKanban",
+            "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)"                            : "goToThumbnails",
+            "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
-            "easyErp/Revenue": "revenue",
-            "easyErp/Hours": "hours",
-            "easyErp/Attendance": "attendance",
-            "easyErp/Profiles": "goToProfiles",
-            "easyErp/productSettings": "productSettings",
-            "easyErp/myProfile": "goToUserPages",
-            "easyErp/Workflows": "goToWorkflows",
-            "easyErp/Dashboard": "goToDashboard",
-            "easyErp/DashBoardVacation(/filter=:filter)": "dashBoardVacation",
-            "easyErp/HrDashboard": "hrDashboard",
-            "easyErp/projectDashboard": "goToProjectDashboard",
-            "easyErp/jobsDashboard": "goToJobsDashboard",
-            "easyErp/:contentType": "getList",
+            "easyErp/Revenue"                                                                               : "revenue",
+            "easyErp/Hours"                                                                                 : "hours",
+            "easyErp/Attendance"                                                                            : "attendance",
+            "easyErp/Profiles"                                                                              : "goToProfiles",
+            "easyErp/productSettings"                                                                       : "productSettings",
+            "easyErp/myProfile"                                                                             : "goToUserPages",
+            "easyErp/Workflows"                                                                             : "goToWorkflows",
+            "easyErp/Dashboard"                                                                             : "goToDashboard",
+            "easyErp/DashBoardVacation(/filter=:filter)"                                                    : "dashBoardVacation",
+            "easyErp/HrDashboard"                                                                           : "hrDashboard",
+            "easyErp/projectDashboard"                                                                      : "goToProjectDashboard",
+            "easyErp/jobsDashboard"                                                                         : "goToJobsDashboard",
+            "easyErp/:contentType"                                                                          : "getList",
 
             "*any": "any"
         },
 
 
         initialize: function () {
+            var self = this;
+
             this.on('all', function () {
                 $(".ui-dialog").remove();
                 $("#ui-datepicker-div").hide().remove();
             });
+
             $(document).on("keydown", ".ui-dialog", function (e) {
                 if ($(e.target).get(0).tagName.toLowerCase() == "textarea") {
                     return;
@@ -74,8 +77,6 @@ define([
                 return false;
             });
 
-            var self = this;
-
             $(document).on("click", function () {
                 var currentContentType = self.contentType ? self.contentType.toUpperCase() : '';
                 var contentTypes = {QUOTATION: 'Quotation', ORDER: 'Order', INVOICE: 'Invoice'};
@@ -83,6 +84,7 @@ define([
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }
             });
+
             if (!App || !App.currentUser) {
                 dataService.getData('/currentUser', null, function (response) {
                     if (response && !response.error) {
@@ -136,7 +138,7 @@ define([
                     topbarView = new TopBarView();
                     contentview = new contentView({
                         startTime: startTime,
-                        filter: filter
+                        filter   : filter
                     });
                     topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
@@ -188,6 +190,7 @@ define([
             if (App.requestedURL === null) {
                 App.requestedURL = Backbone.history.fragment;
             }
+
             Backbone.history.fragment = "";
             Backbone.history.navigate("login", {trigger: true});
         },
@@ -301,6 +304,7 @@ define([
 
         goToProfiles: function () {
             var self = this;
+
             this.checkLogin(function (success) {
                 if (success) {
                     goProfile(self);
@@ -589,8 +593,8 @@ define([
             }
         },
 
-        checkDatabase: function(db){
-            if ((db === "weTrack") || (db === "production") || (db === "development")){
+        checkDatabase: function (db) {
+            if ((db === "weTrack") || (db === "production") || (db === "development")) {
                 App.weTrack = true;
             } else {
                 App.weTrack = false;
@@ -618,7 +622,7 @@ define([
                     if (!App || !App.currentDb) {
                         dataService.getData('/currentDb', null, function (response) {
                             if (response && !response.error) {
-                               self.checkDatabase(response);
+                                self.checkDatabase(response);
                             } else {
                                 console.log('can\'t fetch current db');
                             }
@@ -665,18 +669,18 @@ define([
                     if (contentType === 'salesProduct') {
                         filter = {
                             'canBeSold': {
-                                key: 'canBeSold',
+                                key  : 'canBeSold',
                                 value: ['true']
                             }
 
                         };
 
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location +  '/filter=' + encodeURI(JSON.stringify(filter)));
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
-                                key: 'canBePurchased',
+                                key  : 'canBePurchased',
                                 value: ['true']
                             }
                         };
@@ -698,13 +702,13 @@ define([
                 }
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection = new contentCollection({
-                        viewType: 'list',
-                        page: navigatePage,
-                        count: count,
-                        filter: savedFilter,
+                        viewType        : 'list',
+                        page            : navigatePage,
+                        count           : count,
+                        filter          : savedFilter,
                         parrentContentId: parrentContentId,
-                        contentType: contentType,
-                        newCollection: newCollection
+                        contentType     : contentType,
+                        newCollection   : newCollection
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
@@ -715,21 +719,24 @@ define([
 
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
                         var contentview = new contentView({
-                            collection: collection,
-                            startTime: startTime,
-                            filter: savedFilter,
+                            collection   : collection,
+                            startTime    : startTime,
+                            filter       : savedFilter,
                             newCollection: newCollection
                         });
 
+                        topbarView.bind('copyEvent', contentview.copy, contentview);
+                        topbarView.bind('generateEvent', contentview.generate, contentview);
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editItem, contentview);
                         topbarView.bind('saveEvent', contentview.saveItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
                         topbarView.bind('generateInvoice', contentview.generateInvoice, contentview);
                         topbarView.bind('copyRow', contentview.copyRow, contentview);
-                        topbarView.bind('exportToCsv',contentview.exportToCsv,contentview);
-                        topbarView.bind('exportToXlsx',contentview.exportToXlsx,contentview);
+                        topbarView.bind('exportToCsv', contentview.exportToCsv, contentview);
+                        topbarView.bind('exportToXlsx', contentview.exportToXlsx, contentview);
                         topbarView.bind('importEvent', contentview.importFiles, contentview);
+                        topbarView.bind('pay', contentview.newPayment, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);
@@ -797,7 +804,7 @@ define([
 
                     getModel.urlRoot = '/' + contentType + '/form';
                     getModel.fetch({
-                        data: {id: modelId},
+                        data   : {id: modelId},
                         success: function (model) {
                             var topbarView = new topBarView({actionType: "Content"});
                             var contentView = new contentFormView({model: model, startTime: startTime});
@@ -810,7 +817,7 @@ define([
                             self.changeView(contentView);
                             self.changeTopBarView(topbarView);
                         },
-                        error: function (model, response) {
+                        error  : function (model, response) {
                             if (response.status === 401) Backbone.history.navigate('#login', {trigger: true});
                         }
                     });
@@ -855,8 +862,8 @@ define([
                     function createViews() {
                         var contentview = new contentView({
                             workflowCollection: collection,
-                            startTime: startTime,
-                            parrentContentId: parrentContentId
+                            startTime         : startTime,
+                            parrentContentId  : parrentContentId
                         });
                         var topbarView = new topBarView({actionType: "Content"});
 
@@ -926,7 +933,7 @@ define([
                     if (contentType === 'salesProduct') {
                         filter = {
                             'canBeSold': {
-                                key: 'canBeSold',
+                                key  : 'canBeSold',
                                 value: ['true']
                             }
                         };
@@ -935,7 +942,7 @@ define([
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
-                                key: 'canBePurchased',
+                                key  : 'canBePurchased',
                                 value: ['true']
                             }
                         };
@@ -959,11 +966,11 @@ define([
 
                     var collection = (contentType !== 'Calendar') && (contentType !== 'Workflows')
                         ? new contentCollection({
-                        viewType: 'thumbnails',
+                        viewType     : 'thumbnails',
                         //page: 1,
-                        count: count,
-                        filter: filter,
-                        contentType: contentType,
+                        count        : count,
+                        filter       : filter,
+                        contentType  : contentType,
                         newCollection: newCollection
                     })
                         : new contentCollection();
@@ -973,9 +980,9 @@ define([
 
                     function createViews() {
                         var contentview = new contentView({
-                            collection: collection,
-                            startTime: startTime,
-                            filter: filter,
+                            collection   : collection,
+                            startTime    : startTime,
+                            filter       : filter,
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
@@ -984,8 +991,8 @@ define([
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
-                        topbarView.bind('exportToCsv',contentview.exportToCsv,contentview);
-                        topbarView.bind('exportToXlsx',contentview.exportToXlsx,contentview);
+                        topbarView.bind('exportToCsv', contentview.exportToCsv, contentview);
+                        topbarView.bind('exportToXlsx', contentview.exportToXlsx, contentview);
                         topbarView.bind('importEvent', contentview.importFiles, contentview);
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         collection.bind('showmoreAlphabet', contentview.showMoreAlphabet, contentview);
@@ -1000,16 +1007,21 @@ define([
         },
 
         testContent: function (contentType) {
-            if (!CONTENT_TYPES[contentType.toUpperCase()])
+            if (!CONTENT_TYPES[contentType.toUpperCase()]) {
                 contentType = CONTENT_TYPES.PERSONS;
+            }
+
             return contentType;
         },
 
         getList: function (contentType) {
+            var viewType;
+
             this.contentType = contentType;
 
             contentType = this.testContent(contentType);
-            var viewType = custom.getCurrentVT({contentType: contentType});
+            viewType = custom.getCurrentVT({contentType: contentType});
+
             Backbone.history.navigate('#easyErp/' + contentType + '/' + viewType, {trigger: true, replace: true});
         },
 
@@ -1058,12 +1070,12 @@ define([
             this.mainView = null;
 
             $.ajax({
-                url: url,
-                type: "GET",
+                url    : url,
+                type   : "GET",
                 success: function (response) {
                     self.changeWrapperView(new loginView({dbs: response.dbsNames}));
                 },
-                error: function () {
+                error  : function () {
                     self.changeWrapperView(new loginView());
                 }
             });

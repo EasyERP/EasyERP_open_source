@@ -116,7 +116,9 @@ var Jobs = function (models, event) {
                         });
                     }, function () {
                         console.log('wTracks removed');
-                        event.emit('updateProjectDetails', {req: req, _id: projectId});
+                        if (projectId){
+                            event.emit('updateProjectDetails', {req: req, _id: projectId});
+                        }
                     });
 
 
@@ -129,6 +131,7 @@ var Jobs = function (models, event) {
         this.update = function (req, res, next) {
             var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
             var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+            var project;
 
             var data = req.body;
             var id = data._id;
@@ -170,7 +173,7 @@ var Jobs = function (models, event) {
             } else if (data.products && data.products.length) {
                 var products = JSON.parse(data.products);
                 var type = data.type;
-                var project;
+
 
                 async.each(products, function (product, cb) {
 
@@ -186,7 +189,9 @@ var Jobs = function (models, event) {
                     });
 
                 }, function(){
-                    event.emit('fetchJobsCollection', {project: project});
+                    if (project){
+                        event.emit('fetchJobsCollection', {project: project});
+                    }
                 });
 
             }

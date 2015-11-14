@@ -349,24 +349,24 @@ var Project = function (models) {
                     if (job.workflow.name === "In Progress"){
                         totalInPr += job.budget.budgetTotal.costSum;
                     } else if (job.workflow.name === "New"){
-                        totalNew += job.budget.budgetTotal.costSum;
+                        totalNew += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
                     } else if (job.workflow.name === "Finished"){
                         totalFinished += job.budget.budgetTotal.costSum;
                     }
 
-                   total += job.budget.budgetTotal.costSum;
+                   total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
 
                     minDate = totalObj.minDate;
                     maxDate = totalObj.maxDate;
 
-                    totalObj.revenueSum += job.budget.budgetTotal.revenueSum;
-                    totalObj.costSum += job.budget.budgetTotal.costSum;
-                    totalObj.profitSum += job.budget.budgetTotal.profitSum;
-                    totalObj.hoursSum += job.budget.budgetTotal.hoursSum;
-                    totalObj.minDate = (job.budget.budgetTotal.minDate <= minDate) ? job.budget.budgetTotal.minDate : minDate;
-                    totalObj.maxDate = (job.budget.budgetTotal.maxDate >= maxDate) ? job.budget.budgetTotal.maxDate : maxDate;
-                    totalObj.rateSum.byDev += job.budget.budgetTotal.rateSum.byDev;
-                    totalObj.rateSum.byQA += job.budget.budgetTotal.rateSum.byQA;
+                    totalObj.revenueSum += job.budget.budgetTotal ? job.budget.budgetTotal.revenueSum : 0;
+                    totalObj.costSum += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                    totalObj.profitSum += job.budget.budgetTotal ? job.budget.budgetTotal.profitSum: 0;
+                    totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum: 0;
+                    totalObj.minDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate: minDate <= minDate) ? minDate : minDate;
+                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate: maxDate >= maxDate) ? maxDate : maxDate;
+                    totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
+                    totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA: 0;
                 });
 
                 totalObj.totalInPr = totalInPr;

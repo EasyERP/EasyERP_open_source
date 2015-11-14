@@ -23,6 +23,7 @@ define([
 
             events: {
                 "mouseover .search-content"            : 'showSearchContent',
+                "mouseleave .drop-down-filter"            : 'showSearchContent',
                 "click .search-content"                : 'showSearchContent',
                 "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'                   : 'applyFilter',

@@ -55,12 +55,12 @@ define([], function () {
                 backend: 'services'
             }
         },
-        DashVacation         : {
-            'Employee'   : {
+        DashVacation    : {
+            'Employee'  : {
                 view   : 'name',
                 backend: 'employee'
             },
-            'Department'  : {
+            'Department': {
                 view   : 'department',
                 backend: 'department._id'
             }
@@ -184,7 +184,7 @@ define([], function () {
             'Type'       : {
                 view   : 'type',
                 backend: 'type'
-            },
+            }
         },
         customerPayments: {
             'Assigned'   : {
@@ -199,7 +199,7 @@ define([], function () {
                 view   : 'paymentMethod',
                 backend: 'paymentMethod._id'
             },
-            'Name'     : {
+            'Name'       : {
                 view   : 'name',
                 backend: '_id'
             },
@@ -330,23 +330,19 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
-        Payroll         : {
-            'Employee': {
+        PayrollExpenses : {
+            'Employee'    : {
                 view   : 'employee',
                 backend: 'employee._id'
-            },/*
-            'Month'   : {
-                view   : 'month',
-                backend: 'month'
             },
-            'Year'    : {
-                view   : 'year',
-                backend: 'year'
-            },*/
+            'Payment Type': {
+                view   : 'type',
+                backend: 'type._id'
+            },
             'Data Key'    : {
                 view   : 'dataKey',
                 backend: 'dataKey'
-            },
+            }
         }
     };
 
@@ -380,7 +376,7 @@ define([], function () {
         SALESINVOICE      : 'salesInvoice',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
-        PAYROLL           : 'Payroll',
+        PAYROLLEXPENSES   : 'PayrollExpenses',
         REVENUE           : 'Revenue',
         MONTHHOURS        : 'monthHours',
         BONUSTYPE         : 'bonusType',
@@ -391,7 +387,9 @@ define([], function () {
         DASHBOARD_HR      : 'HrDashboard',
         HOURS             : 'Hours',
         CAPACITY          : 'Capacity',
-        JOBSDASHBOARD          : 'jobsDashboard',
+        JOBSDASHBOARD     : 'jobsDashboard',
+        PAYROLLPAYMENTS   : 'PayrollPayments',
+        PRODUCTSETTINGS   : "productSettings",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -399,6 +397,8 @@ define([], function () {
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },
+
+        EXPENSESCAREGORY: "56459202624e48551dfe3b24",
 
         WTRACK_DB_NAME   : 'weTrack',
         FILTERS          : filters,
@@ -411,6 +411,6 @@ define([], function () {
             'QA',
             'Design',
             'PM'
-        ],
+        ]
     }
 });

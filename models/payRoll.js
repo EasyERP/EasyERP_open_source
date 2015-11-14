@@ -11,20 +11,13 @@ module.exports = (function () {
         year      : Number,
         month     : Number,
         dataKey   : Number,
-        baseSalary: Number,
-        calc      : {
-            salary: Number,
-            onCash: Number,
-            onCard: Number
-        },
-        paid      : {
-            onCash: Number,
-            onCard: Number
-        },
-        diff      : {
-            onCash: Number,
-            onCard: Number,
-            total : Number
+        calc      : Number,
+        paid      : Number,
+        diff      : Number,
+
+        type: {
+            _id: {type: ObjectId, ref: "ProductCategories", default: null},
+            name: String
         }
     }, {collection: 'PayRoll'});
 

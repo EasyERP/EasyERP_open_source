@@ -8,10 +8,10 @@
                     <li class="right">
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                             <%if(model.workflow.status === 'New'){%>
-                                <button class="red newPayment">
+                                <button class="btn newPayment">
                                     <span>Pay</span>
                                 </button>
-                                <button class="red cancelInvoice">
+                                <button class="btn cancelInvoice">
                                     <span>Cancel</span>
                                 </button>
                             <%} else if(model.workflow.status === 'Done'){%>

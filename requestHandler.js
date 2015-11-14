@@ -322,12 +322,13 @@ var requestHandler = function (app, event, mainDb) {
 
     event.on('updateProjectDetails', function (options) {
         var updateProject = _.debounce(updateProjectDet, 500);
+        var pId = options._id;
 
         updateProject();
 
         function updateProjectDet() {
             var req = options.req;
-            var pId = options._id;
+
             var jobId = options.jobId;
             var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
             var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
@@ -604,6 +605,7 @@ var requestHandler = function (app, event, mainDb) {
     event.on('updateJobBudget', function(options) {
         var req = options.req;
         var pId = options.pId;
+        var projectId;
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
@@ -808,7 +810,6 @@ var requestHandler = function (app, event, mainDb) {
                     if (err) {
                         return console.log(err);
                     }
-                    var projectId;
 
                     async.each(result, function(res, cb){
 
@@ -823,7 +824,9 @@ var requestHandler = function (app, event, mainDb) {
                         });
 
                     }, function(){
-                        event.emit('fetchJobsCollection', {project: projectId});
+                        if (projectId){
+                            event.emit('fetchJobsCollection', {project: projectId});
+                        }
                     })
                 })
             });

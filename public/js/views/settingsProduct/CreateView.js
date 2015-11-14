@@ -144,11 +144,16 @@ define([
                     return item.parentCategory === parentCategory;
                 });
 
-                fullName += ' / ' + categoryName
+                if (fullName){
+                    fullName += ' / ' + categoryName;
+                } else {
+                    fullName = categoryName;
+                }
+
 
                 this.model.save({
                         name: categoryName,
-                        parentCategory: parentCategory,
+                        parent: parentCategory,
                         nestingLevel: ++nestingLevel,
                         sequence: res.length,
                         fullName: fullName
