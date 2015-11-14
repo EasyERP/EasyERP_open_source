@@ -6,15 +6,6 @@ var _ = require('lodash');
 var CONSTANTS = require('../constants/modules');
 var MAINCONSTANTS = require('../constants/mainConstants');
 
-function returnModuleId(req) {
-    var body = req.body;
-    var moduleId;
-
-    moduleId = !!body.forSales ? 61 : 60;
-
-    return moduleId;
-}
-
 var Payment = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
 
@@ -35,6 +26,35 @@ var Payment = function (models, event) {
         var validDbs = ["weTrack", "production", "development"];
 
         return validDbs.indexOf(db) !== -1;
+    }
+
+    function returnModuleId(req) {
+        var body = req.body;
+        var moduleId;
+
+        moduleId = !!body.forSales ? 61 : !!body.salary ? 79: 60;
+
+        return moduleId;
+    }
+
+    function returnModel(req, options) {
+        var Payment;
+
+        options = options || {};
+
+        if (options.isWtrack) {
+            if (options.forSales === 61) {
+                Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+            } else if (options.salary) {
+                Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
+            } else {
+                Payment = models.get(req.session.lastDb, 'wTrackPayOut', wTrackPayOutSchema);
+            }
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
+
+        return Payment;
     }
 
     this.getAll = function (req, res, next) {
@@ -60,33 +80,35 @@ var Payment = function (models, event) {
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
-        var forSale = req.params.byType === 'customers';
-        var bonus = req.params.byType === 'supplier';
+        var type = req.params.byType;
+        var forSale = type === 'customers';
+        var bonus = type === 'supplier';
+        var salary = type === 'salary';
+        var options = {
+            forSale: forSale,
+            bonus: bonus,
+            salary: salary
+        };
 
         switch (viewType) {
             case "list":
-                getPaymentFilter(req, res, next, forSale, bonus);
+                getPaymentFilter(req, res, next, options);
                 break;
         }
     };
 
-    function getPaymentFilter(req, res, next, forSale, bonus) {
+    function getPaymentFilter(req, res, next, options) {
         var isWtrack = checkDb(req.session.lastDb);
-        var Payment;
+        var moduleId = returnModuleId(req);
         var data = req.query;
         var filter = data.filter;
+        var forSale = options ? !!options.forSale : false;
+        var bonus = options ? !!options.bonus : false;
+        var salary = options ? !!options.salary : false;
+        var Payment;
 
-        var moduleId = returnModuleId(req);
-
-        if (isWtrack) {
-            if (moduleId === 61) {
-                Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
-            } else {
-                Payment = models.get(req.session.lastDb, 'wTrackPayOut', wTrackPayOutSchema);
-            }
-        } else {
-            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-        }
+        options.isWtrack = isWtrack;
+        Payment = returnModel(req, options);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
@@ -124,7 +146,12 @@ var Payment = function (models, event) {
                             optionsObject['$and'] = caseFilter(filter);
                         }
                     }
-                    optionsObject.$and.push({forSale: forSale});
+
+                    if(!salary) {
+                        optionsObject.$and.push({forSale: forSale});
+                    } else {
+                        optionsObject.$and.push({isExpense: true});
+                    }
 
                     departmentSearcher = function (waterfallCallback) {
                         models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -588,8 +615,10 @@ var Payment = function (models, event) {
     };
 
     this.totalCollectionLength = function (req, res, next) {
-        var forSale = req.params.byType === 'customers';
-        var bonus = req.params.byType === 'supplier';
+        var type = req.params.byType;
+        var forSale = type === 'customers';
+        var bonus = type === 'supplier';
+        var salary = type === 'salary';
 
         var queryObject = {};
         var filter = req.query.filter;
@@ -601,13 +630,15 @@ var Payment = function (models, event) {
         var waterfallTasks;
 
         var isWtrack = checkDb(req.session.lastDb);
+        var options = {
+            forSale: forSale,
+            bonus: bonus,
+            salary: salary,
+            isWtrack: isWtrack
+        };
         var Payment;
 
-        if (isWtrack) {
-            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
-        } else {
-            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-        }
+        Payment = returnModel(req, options);
 
         queryObject.$and = [];
 
@@ -623,7 +654,11 @@ var Payment = function (models, event) {
             }
         }
 
-        queryObject.$and.push({forSale: forSale});
+        if(!salary) {
+            queryObject.$and.push({forSale: forSale});
+        } else {
+            queryObject.$and.push({isExpense: true});
+        }
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
