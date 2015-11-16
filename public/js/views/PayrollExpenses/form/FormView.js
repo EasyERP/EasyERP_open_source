@@ -339,6 +339,10 @@ define([
                 var editedElementRowId = tr.attr('data-id');
                 var editModel = this.editCollection.get(editedElementRowId);
                 var changedAttr;
+                var totalEl = this.$el.find('#total');
+                var calcOld = editModel.changed.calc ? parseFloat(editModel.changed.calc) : parseFloat(editModel.get('calc'));
+                var total;
+                var newTotal;
 
                 var diffOnCash = tr.find('.diff[data-content="onCash"]');
 
@@ -378,19 +382,21 @@ define([
                     calc = calc ? parseInt(calc) : 0;
                     newValue = parseInt(input.val());
 
-                    //if (paidTD.text()) {
-                    //    paid = paid;
-                    //} else {
-                    //    subValues = newValue - paid;
-                    //    paid = newValue;
-                    //}
-
                     if (calcTD.text()) {
                         calc = calc;
                     } else {
                         subValues = newValue - calc;
                         calc = newValue;
                     }
+
+                    total = parseFloat(totalEl.attr('data-cash'));
+
+                    calcOld = calcOld ? calcOld : 0;
+
+                    newTotal = total - calcOld + newValue;
+
+                    totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
+                    totalEl.attr('data-cash', newTotal);
 
                     if (subValues !== 0) {
 

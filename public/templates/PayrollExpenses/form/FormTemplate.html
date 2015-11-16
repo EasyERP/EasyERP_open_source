@@ -98,7 +98,7 @@
             <span data-id="value" class="totalName">
                 Total Amount
             </span>
-            <span data-id="value" class="money" id="total" data-cash="<%=total%>">
+            <span data-id="value" class="money" id="total" data-cash="<%=total * (-1)%>">
                 <%=currencySplitter((total * (-1)).toFixed(2))%>
             </span>
     </div>
