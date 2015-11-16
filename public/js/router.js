@@ -818,6 +818,7 @@ define([
                             var topbarView = new topBarView({actionType: "Content"});
                             var contentView = new contentFormView({model: model, startTime: startTime});
 
+                            topbarView.bind('pay', contentView.newPayment, contentView);
                             topbarView.bind('deleteEvent', contentView.deleteItems, contentView);
                             topbarView.bind('editEvent', contentView.editItem, contentView);
                             topbarView.bind('saveEvent', contentView.saveItem, contentView);

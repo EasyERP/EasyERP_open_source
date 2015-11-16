@@ -87,7 +87,6 @@ define([
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var copyBtnEl = $('#top-bar-copy');
-                var generate = $('#topBarPaymentGenerate');
                 var generateOnMonth = $('#top-bar-generate');
 
                 this.changed = false;
@@ -96,7 +95,6 @@ define([
                 cancelBtnEl.hide();
                 createBtnEl.show();
                 copyBtnEl.hide();
-                generate.hide();
                 generateOnMonth.hide();
 
                 return false;

@@ -13,7 +13,8 @@
         <thead>
         <tr>
             <th><a id="expandAll">#</a></th>
-            <th></th>
+            <th class = "notForm centerCell"><input type="checkbox" class="check_all" /></th>
+
             <th class="oe_sortable_sub" data-sort="employee.name">Complete Name<span
                     class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -101,9 +102,5 @@
             <span data-id="value" class="money" id="total" data-cash="<%=total * (-1)%>">
                 <%=currencySplitter((total * (-1)).toFixed(2))%>
             </span>
-    </div>
-
-    <div>
-        <button id="topBarPaymentGenerate"><span>Create Payment</span></button>
     </div>
 </div>

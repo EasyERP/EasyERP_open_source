@@ -4,7 +4,9 @@
 define([
         'text!templates/PayrollExpenses/form/FormTemplate.html',
         'collections/PayrollExpenses/editCollection',
+        'collections/PayrollPayments/editCollection',
         'models/PayRollModel',
+        "views/PayrollPayments/CreateView",
         'views/PayrollExpenses/CreateView',
         "helpers",
         "moment",
@@ -12,7 +14,7 @@ define([
         "dataService"
     ],
 
-    function (PayrollTemplate, editCollection, currentModel, createView, helpers, moment, populate, dataService) {
+    function (PayrollTemplate, editCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService) {
         var PayrollExpanses = Backbone.View.extend({
 
             el: '#content-holder',
@@ -33,13 +35,95 @@ define([
                 "click #mainRow td:not(.notForm)": "gotoForm",
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
-                "click .check_all": "checkAll",
                 "click .diff": "newPayment"
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").remove();
             },
+
+            newPayment: function (e) {
+                var checkbox = this.$el.find("input.checkbox:checked");
+                var checkboxes = checkbox ? checkbox : [];
+                var tr;
+                var dataId;
+                var model;
+                var jsonModel;
+                var modelPayment;
+                var target = e ? e.target: null;
+
+                if (checkboxes.length) {
+                    for (var i = checkboxes.length - 1; i >= 0; i--) {
+                        dataId = $(checkboxes[i]).attr('id');
+                        model = this.editCollection.get(dataId);
+                        jsonModel = model.toJSON();
+
+                        if (jsonModel.diff < 0) {
+
+                            modelPayment = {
+                                paidAmount: jsonModel.diff * (-1),
+                                workflow: "Draft",
+                                differenceAmount: 0,
+                                month: jsonModel.month,
+                                year: jsonModel.year,
+                                supplier: {
+                                    _id: jsonModel.employee._id,
+                                    fullName: jsonModel.employee.name
+                                },
+                                paymentMethod: {
+                                    _id: jsonModel.type._id,
+                                    name: jsonModel.type.name
+                                },
+                                period: jsonModel.year + '-' + jsonModel.month + '-01',
+                                paymentRef: dataId
+                            };
+
+                            this.forPayments.add(modelPayment);
+                        }
+
+                    }
+                } else if (target) {
+                    tr = $(target).closest('tr');
+                    dataId = tr.attr('data-id');
+
+                    model = this.editCollection.get(dataId);
+                    jsonModel = model.toJSON();
+
+                    if (jsonModel.diff < 0) {
+
+                        modelPayment = {
+                            "paidAmount": jsonModel.diff * (-1),
+                            "workflow": "Draft",
+                            "differenceAmount": 0,
+                            "month": jsonModel.month,
+                            "year": jsonModel.year,
+                            "supplier": {
+                                "_id": jsonModel.employee._id,
+                                "fullName": jsonModel.employee.name
+                            },
+                            "paymentMethod": {
+                                "_id": jsonModel.type._id,
+                                "name": jsonModel.type.name
+                            },
+                            "period": jsonModel.year + '-' + jsonModel.month + '-01'
+                        };
+
+                        this.forPayments.add(modelPayment);
+                    }
+                }
+
+
+                if (this.forPayments.length) {
+                    new paymentCreateView({
+                        redirect: this.redirect,
+                        collection: this.forPayments
+                    });
+                } else {
+                    return alert("Please, check at most one unpaid item.")
+                }
+
+            },
+
 
             showMoreContent: function (newCollection) {
                 var collectionsObjects;
@@ -148,10 +232,6 @@ define([
 
                 Backbone.history.fragment = '';
                 Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
-            },
-
-            newPayment: function (e) {
-
             },
 
             isNewRow: function () {
@@ -288,21 +368,6 @@ define([
                         editedCol.text(editedElementValue);
                     }
                     editedElement.remove();
-                }
-            },
-
-            checkAll: function (e) {
-                var target = e.target;
-                var classTr = $(target).attr('id');
-                var checked = $(target).checked;
-
-                this.$el.find('[data-id=' + classTr + ']').prop('checked', checked);
-                if (this.$el.find("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                    $("#topBarPaymentGenerate").show();
-                } else {
-                    $("#top-bar-deleteBtn").hide();
-                    $("#topBarPaymentGenerate").hide();
                 }
             },
 
@@ -472,6 +537,19 @@ define([
                 return false;
             },
 
+            checkAll: function (e) {
+                var target = e.target;
+                var checked = $(target).checked;
+
+                this.$el.find('.check_all').prop('checked', checked);
+                if (this.$el.find("input.checkbox:checked").length > 0) {
+                    $("#top-bar-deleteBtn").show();
+                    $("#topBarPaymentGenerate").show();
+                } else {
+                    $("#top-bar-deleteBtn").hide();
+                    $("#topBarPaymentGenerate").hide();
+                }
+            },
 
             chooseOption: function (e) {
                 e.preventDefault();
@@ -624,14 +702,11 @@ define([
                 var checkLength;
                 var target;
                 var dataId;
-                var oneTypeInput;
 
                 if (this.editCollection.length > 0) {
                     checkLength = $("input.checkbox:checked").length;
                     target = e.target;
-                    dataId = $(target).attr('data-id');
 
-                    oneTypeInput = this.$el.find('[data-id=' + dataId + ']').length - 1;
 
                     if ($("input.checkbox:checked").length > 0) {
                         $('#top-bar-deleteBtn').show();
@@ -641,13 +716,13 @@ define([
                         } else {
                             $('#top-bar-copy').hide();
                         }
-                        if (checkLength == oneTypeInput) {
-                            this.$el.find('#' + dataId).prop('checked', true);
+                        if (checkLength == this.collection.length) {
+                            this.$el.find(".check_all").prop('checked', true);
                         } else {
-                            this.$el.find('#' + dataId).prop('checked', false);
+                            this.$el.find(".check_all").prop('checked', false);
                         }
                     } else {
-                        this.$el.find('#' + dataId).prop('checked', false);
+                        this.$el.find(".check_all").prop('checked', false);
                         $('#top-bar-deleteBtn').hide();
                         $('#topBarPaymentGenerate').hide();
                         $('#top-bar-copy').hide();
@@ -655,13 +730,59 @@ define([
                 }
             },
 
+            copy: function () {
+                this.hideCopy();
+
+                var checkedRows = this.$el.find('input.checkbox:checked');
+                var selectedRow = checkedRows[0];
+                var self = this;
+                var target = $(selectedRow);
+                var id = target.val();
+                var row = target.closest('tr');
+                var model = self.editCollection.get(id);
+                var _model;
+                var tdsArr;
+                var cid;
+                var calc = (model.changed && model.changed.calc) ? model.changed.calc : model.get('calc');
+
+                $(selectedRow).attr('checked', false);
+
+                model.set({"paid": 0});
+                model.set({"diff": calc * (-1)});
+                model = model.toJSON();
+
+                delete model._id;
+                _model = new currentModel(model);
+
+                this.showSaveCancelBtns();
+                this.editCollection.add(_model);
+
+                cid = _model.cid;
+
+                if (!this.changedModels[cid]) {
+                    this.changedModels[cid] = model;
+                }
+
+                this.$el.find('#payRoll-listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
+
+                row = this.$el.find('#false');
+
+                tdsArr = row.find('td');
+                $(tdsArr[0]).text(1);
+                $(tdsArr[3]).addClass('editable');
+            },
+
+            hideCopy: function () {
+                $('#top-bar-copy').hide();
+            },
+
             hideSaveCancelBtns: function () {
                 var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var copyBtnEl = $('#top-bar-copy');
-                var generate = $('#topBarPaymentGenerate');
-                var generateOnMonth = $('#top-bar-generate');
+                var generate = $('#top-bar-generate');
+                var paymentBtnEl = $('#topBarPaymentGenerate');
 
                 this.changed = false;
 
@@ -669,8 +790,8 @@ define([
                 cancelBtnEl.hide();
                 createBtnEl.show();
                 copyBtnEl.hide();
+                paymentBtnEl.hide();
                 generate.hide();
-                generateOnMonth.hide();
 
                 return false;
             },
@@ -708,6 +829,9 @@ define([
                 var savedRow = this.$bodyContainer.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
+                var totalEl = this.$el.find('#total');
+                var total = totalEl.attr('data-cash');
+                var newTotal;
 
                 modelObject = modelObject.success;
 
@@ -717,6 +841,12 @@ define([
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
                 }
+
+                newTotal = total + newValue * (-1);
+
+                totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
+                totalEl.attr('data-cash', newTotal);
+
 
                 this.hideSaveCancelBtns();
                 this.resetCollection(modelObject);
@@ -769,8 +899,23 @@ define([
 
                 this.filterEmployeesForDD(this);
 
+                $('.check_all').click(function (e) {
+
+                    self.$el.find('.checkbox').prop('checked', this.checked);
+                    if (self.$el.find("input.checkbox:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        $("#topBarPaymentGenerate").show();
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                        $("#topBarPaymentGenerate").hide();
+                    }
+                });
+
+
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.models);
+
+                    self.forPayments = new PaymentCollection();
                 }, 10);
 
 
