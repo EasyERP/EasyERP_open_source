@@ -1553,8 +1553,8 @@ var wTrack = function (event, models) {
                                             }
                                         }
 
-                                        obj.weekValues[6] = parseInt(opt['6']);
-                                        obj.weekValues[7] = parseInt(opt['7']);
+                                        obj.weekValues[6] = 0;
+                                        obj.weekValues[7] = 0;
                                         objNext.weekValues[6] = parseInt(opt['6']);
                                         objNext.weekValues[7] = parseInt(opt['7']);
                                         total += parseInt(opt['6']);
