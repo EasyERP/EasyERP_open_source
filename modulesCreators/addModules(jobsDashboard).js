@@ -4,7 +4,7 @@
 
 // JavaScript source code
 var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/production';
+var url = 'mongodb://localhost:27017/development';
 //var url = 'mongodb://localhost:27017/EasyERP';
 //var url = 'mongodb://localhost:27017/testCrm';
 var async = require('async');
