@@ -116,6 +116,8 @@ define([
                 this.hideSaveCancelBtns();
 
                 $('#top-bar-deleteBtn').hide();
+                $('#top-bar-createBtn').hide();
+                $('#topBarPaymentGenerate').hide();
 
                 return this;
             }
