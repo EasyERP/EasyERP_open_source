@@ -11,30 +11,30 @@ define([
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
-        mainView   : null,
-        topBarView : null,
-        view       : null,
+        mainView: null,
+        topBarView: null,
+        view: null,
 
         routes: {
-            "home"                                                                                          : "any",
-            "login"                                                                                         : "login",
-            "easyErp/:contentType/kanban(/:parrentContentId)"                                               : "goToKanban",
-            "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)"                            : "goToThumbnails",
-            "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
+            "home": "any",
+            "login": "login",
+            "easyErp/:contentType/kanban(/:parrentContentId)": "goToKanban",
+            "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)": "goToThumbnails",
+            "easyErp/:contentType/form(/:modelId)": "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
-            "easyErp/Revenue"                                                                               : "revenue",
-            "easyErp/Hours"                                                                                 : "hours",
-            "easyErp/Attendance"                                                                            : "attendance",
-            "easyErp/Profiles"                                                                              : "goToProfiles",
-            "easyErp/productSettings"                                                                       : "productSettings",
-            "easyErp/myProfile"                                                                             : "goToUserPages",
-            "easyErp/Workflows"                                                                             : "goToWorkflows",
-            "easyErp/Dashboard"                                                                             : "goToDashboard",
-            "easyErp/DashBoardVacation(/filter=:filter)"                                                    : "dashBoardVacation",
-            "easyErp/HrDashboard"                                                                           : "hrDashboard",
-            "easyErp/projectDashboard"                                                                      : "goToProjectDashboard",
-            "easyErp/jobsDashboard"                                                                         : "goToJobsDashboard",
-            "easyErp/:contentType"                                                                          : "getList",
+            "easyErp/Revenue": "revenue",
+            "easyErp/Hours": "hours",
+            "easyErp/Attendance": "attendance",
+            "easyErp/Profiles": "goToProfiles",
+            "easyErp/productSettings": "productSettings",
+            "easyErp/myProfile": "goToUserPages",
+            "easyErp/Workflows": "goToWorkflows",
+            "easyErp/Dashboard": "goToDashboard",
+            "easyErp/DashBoardVacation(/filter=:filter)": "dashBoardVacation",
+            "easyErp/HrDashboard": "hrDashboard",
+            "easyErp/projectDashboard": "goToProjectDashboard",
+            "easyErp/jobsDashboard": "goToJobsDashboard",
+            "easyErp/:contentType": "getList",
 
             "*any": "any"
         },
@@ -138,7 +138,7 @@ define([
                     topbarView = new TopBarView();
                     contentview = new contentView({
                         startTime: startTime,
-                        filter   : filter
+                        filter: filter
                     });
                     topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
@@ -669,7 +669,7 @@ define([
                     if (contentType === 'salesProduct') {
                         filter = {
                             'canBeSold': {
-                                key  : 'canBeSold',
+                                key: 'canBeSold',
                                 value: ['true']
                             }
 
@@ -680,7 +680,7 @@ define([
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
-                                key  : 'canBePurchased',
+                                key: 'canBePurchased',
                                 value: ['true']
                             }
                         };
@@ -702,13 +702,13 @@ define([
                 }
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection = new contentCollection({
-                        viewType        : 'list',
-                        page            : navigatePage,
-                        count           : count,
-                        filter          : savedFilter,
+                        viewType: 'list',
+                        page: navigatePage,
+                        count: count,
+                        filter: savedFilter,
                         parrentContentId: parrentContentId,
-                        contentType     : contentType,
-                        newCollection   : newCollection
+                        contentType: contentType,
+                        newCollection: newCollection
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
@@ -719,9 +719,9 @@ define([
 
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
                         var contentview = new contentView({
-                            collection   : collection,
-                            startTime    : startTime,
-                            filter       : savedFilter,
+                            collection: collection,
+                            startTime: startTime,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
 
@@ -788,7 +788,11 @@ define([
                     context.mainView.updateMenu(contentType);
                 }
 
-                if (contentType !== 'ownCompanies') {
+                if (contentType === 'PayrollExpenses') {
+                    contentFormModelUrl = "collections/PayrollExpenses/monthCollection";
+                    contentFormViewUrl = "views/" + contentType + "/form/FormView";
+                    topBarViewUrl = "views/" + contentType + "/TopBarView";
+                } else if (contentType !== 'ownCompanies') {
                     contentFormModelUrl = "models/" + contentType + "Model";
                     contentFormViewUrl = "views/" + contentType + "/form/FormView";
                     topBarViewUrl = "views/" + contentType + "/TopBarView";
@@ -798,13 +802,18 @@ define([
                     topBarViewUrl = "views/" + contentType + "/TopBarView";
                 }
 
+
                 custom.setCurrentVT('form');
                 require([contentFormModelUrl, contentFormViewUrl, topBarViewUrl], function (contentFormModel, contentFormView, topBarView) {
                     var getModel = new contentFormModel();
 
+                    if (contentType === 'PayrollExpenses'){
+                        getModel.url = '/payroll/form';
+                    }
+
                     getModel.urlRoot = '/' + contentType + '/form';
                     getModel.fetch({
-                        data   : {id: modelId},
+                        data: {id: modelId},
                         success: function (model) {
                             var topbarView = new topBarView({actionType: "Content"});
                             var contentView = new contentFormView({model: model, startTime: startTime});
@@ -812,12 +821,15 @@ define([
                             topbarView.bind('deleteEvent', contentView.deleteItems, contentView);
                             topbarView.bind('editEvent', contentView.editItem, contentView);
                             topbarView.bind('saveEvent', contentView.saveItem, contentView);
+                            topbarView.bind('copyEvent', contentView.copy, contentView);
+                            topbarView.bind('generateEvent', contentView.generate, contentView);
+                            topbarView.bind('createEvent', contentView.createItem, contentView);
 
                             contentView.render();
                             self.changeView(contentView);
                             self.changeTopBarView(topbarView);
                         },
-                        error  : function (model, response) {
+                        error: function (model, response) {
                             if (response.status === 401) Backbone.history.navigate('#login', {trigger: true});
                         }
                     });
@@ -862,8 +874,8 @@ define([
                     function createViews() {
                         var contentview = new contentView({
                             workflowCollection: collection,
-                            startTime         : startTime,
-                            parrentContentId  : parrentContentId
+                            startTime: startTime,
+                            parrentContentId: parrentContentId
                         });
                         var topbarView = new topBarView({actionType: "Content"});
 
@@ -933,7 +945,7 @@ define([
                     if (contentType === 'salesProduct') {
                         filter = {
                             'canBeSold': {
-                                key  : 'canBeSold',
+                                key: 'canBeSold',
                                 value: ['true']
                             }
                         };
@@ -942,7 +954,7 @@ define([
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
-                                key  : 'canBePurchased',
+                                key: 'canBePurchased',
                                 value: ['true']
                             }
                         };
@@ -966,11 +978,11 @@ define([
 
                     var collection = (contentType !== 'Calendar') && (contentType !== 'Workflows')
                         ? new contentCollection({
-                        viewType     : 'thumbnails',
+                        viewType: 'thumbnails',
                         //page: 1,
-                        count        : count,
-                        filter       : filter,
-                        contentType  : contentType,
+                        count: count,
+                        filter: filter,
+                        contentType: contentType,
                         newCollection: newCollection
                     })
                         : new contentCollection();
@@ -980,9 +992,9 @@ define([
 
                     function createViews() {
                         var contentview = new contentView({
-                            collection   : collection,
-                            startTime    : startTime,
-                            filter       : filter,
+                            collection: collection,
+                            startTime: startTime,
+                            filter: filter,
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
@@ -1070,12 +1082,12 @@ define([
             this.mainView = null;
 
             $.ajax({
-                url    : url,
-                type   : "GET",
+                url: url,
+                type: "GET",
                 success: function (response) {
                     self.changeWrapperView(new loginView({dbs: response.dbsNames}));
                 },
-                error  : function () {
+                error: function () {
                     self.changeWrapperView(new loginView());
                 }
             });

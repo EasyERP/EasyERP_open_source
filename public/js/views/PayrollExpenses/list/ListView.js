@@ -26,7 +26,7 @@ define([
             viewType: 'list',//needs in view.prototype.changeLocationHash
             responseObj: {},
             whatToSet: {},
-            formUrl                 : "#easyErp/Employees/form/",
+            formUrl                 : "#easyErp/PayrollExpenses/form/",
             headerTemplate: _.template(headerTemplate),
             totalTemplate: _.template(totalTemplate),
             // rowTemplate   : _.template(rowTemplate),
@@ -40,7 +40,7 @@ define([
                 "change .autoCalc": "autoCalc",
                 "change .editable": "setEditable",
                 "keydown input.editing": "keyDown",
-                "click #mainRow td:not(.notForm)": "showRows",
+                "click #mainRow td:not(.notForm)": "gotoForm",
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
                 "click .check_all": "checkAll",
@@ -70,7 +70,7 @@ define([
                 }
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").attr("data-id");
-                window.location.hash = this.formUrl;
+                window.location.hash = this.formUrl + id;
             },
 
             newPayment: function (e) {
