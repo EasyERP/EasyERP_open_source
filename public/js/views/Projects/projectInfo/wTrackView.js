@@ -410,7 +410,7 @@ define([
                 var checkLength = el.find("input.checkbox:checked").length;
 
                 if (el.find("input.checkbox:checked").length > 0) {
-                    // $("#top-bar-deleteBtn").show();
+                     $("#deletewTrack").show();
                     el.find('#check_all').prop('checked', false);
 
                     if (checkLength === this.collection.length) {
@@ -418,7 +418,7 @@ define([
                     }
                 }
                 else {
-                    // $("#top-bar-deleteBtn").hide();
+                     $("#deletewTrack").hide();
                     el.find('#check_all').prop('checked', false);
                 }
             }
