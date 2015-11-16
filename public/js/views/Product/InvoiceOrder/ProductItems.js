@@ -39,6 +39,11 @@ define([
 
                 self.responseObj['#jobs'] = jobs;
 
+                if (!jobs.length){
+                    $("#jobs").text("Select");
+                    $("#jobs").attr("data-id", null);
+                }
+
                 populate.showSelect(e, prev, next, self);
             });
 

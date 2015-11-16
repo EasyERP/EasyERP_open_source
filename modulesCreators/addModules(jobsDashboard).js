@@ -4,7 +4,7 @@
 
 // JavaScript source code
 var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/production';
+var url = 'mongodb://localhost:27017/development';
 //var url = 'mongodb://localhost:27017/EasyERP';
 //var url = 'mongodb://localhost:27017/testCrm';
 var async = require('async');
@@ -22,7 +22,7 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(callback) {
         var module = {
-            _id: 81,
+            _id: 80,
             mname: 'Jobs Dashboard',
             href: 'jobsDashboard',
             sequence: 54,
