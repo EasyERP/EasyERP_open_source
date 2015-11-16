@@ -26,6 +26,7 @@ define([
             viewType: 'list',//needs in view.prototype.changeLocationHash
             responseObj: {},
             whatToSet: {},
+            formUrl                 : "#easyErp/Employees/form/",
             headerTemplate: _.template(headerTemplate),
             totalTemplate: _.template(totalTemplate),
             // rowTemplate   : _.template(rowTemplate),
@@ -61,6 +62,15 @@ define([
                 this.render();
 
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');
+            },
+
+            gotoForm: function (e) {
+                if (!this.formUrl) {
+                    return;
+                }
+                App.ownContentType = true;
+                var id = $(e.target).closest("tr").attr("data-id");
+                window.location.hash = this.formUrl;
             },
 
             newPayment: function (e) {
