@@ -22,7 +22,7 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(callback) {
         var module = {
-            _id: 78,
+            _id: 80,
             mname: 'Jobs Dashboard',
             href: 'jobsDashboard',
             sequence: 54,
