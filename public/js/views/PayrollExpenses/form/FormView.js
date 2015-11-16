@@ -41,6 +41,115 @@ define([
                 $(".newSelectList").remove();
             },
 
+            showMoreContent: function (newCollection) {
+                var collectionsObjects;
+
+                var holder = this.$el;
+                var currentEl = holder.find("#payRoll-TableBody");
+
+                this.collection = newCollection;
+                collectionsObjects = this.collection.toJSON()[0];
+                this.total = collectionsObjects.total;
+
+                currentEl.empty();
+                currentEl.append(this.totalTemplate({
+                    collection: this.collection.toJSON(),
+                    total: this.total,
+                    currencySplitter: helpers.currencySplitter,
+                    weekSplitter: helpers.weekSplitter
+                }));
+
+                $("#top-bar-deleteBtn").hide();
+                $("#topBarPaymentGenerate").hide();
+                $('#check_all').prop('checked', false);
+
+                if (this.filterView) {
+                    this.filterView.renderFilterContent();
+                }
+
+                holder.find('#timeRecivingDataFromServer').remove();
+                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            },
+
+
+            deleteRender: function () {
+                this.resetCollection();
+                this.render();
+                this.$bodyContainer = $(this.bodyContainerId);
+                this.getTotal();
+
+                dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
+                    context.listLength = response.count || 0;
+                }, this);
+            },
+
+            deleteItems: function () {
+                var that = this;
+
+                if (!this.changed) {
+                    var answer = confirm("Really DELETE items ?!");
+                    var value;
+                    var tr;
+
+                    if (answer === true) {
+                        $.each(that.$el.find("input:checked"), function (index, checkbox) {
+                            checkbox = $(checkbox);
+                            value = checkbox.attr('id');
+                            tr = checkbox.closest('tr');
+                            that.deleteItem(tr, value);
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            deleteItem: function (tr, id) {
+                var self = this;
+                var model;
+                var mid = 39;
+
+                if (id.length < 24) {
+                    this.editCollection.remove(id);
+                    delete this.changedModels[id];
+                    self.deleteItemsRender(tr, id);
+                } else {
+                    model = this.editCollection.get(id);
+
+                    model.urlRoot = "/payroll/";
+
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        success: function () {
+                            delete self.changedModels[id];
+                            self.deleteItemsRender(tr, id);
+                        },
+                        error: function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
+                            }
+                        }
+                    });
+                }
+            },
+
+            deleteItemsRender: function (tr, id) {
+                tr.remove();
+
+                this.editCollection.remove(id);
+                this.hideSaveCancelBtns();
+            },
+
+            savedPayments: function () {
+                this.removeDialog();
+
+                Backbone.history.fragment = '';
+                Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
+            },
+
             newPayment: function (e) {
 
             },
