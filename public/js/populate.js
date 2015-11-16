@@ -188,11 +188,11 @@ define([
             }
 
             if (newSel.length && newSel.is(":visible") && !prev && !next) {
-                newSel.hide();
+                newSel.remove();
                 return;
             }
 
-            $(".newSelectList").hide();
+            $(".newSelectList").remove();
 
             if ((prev || next) && newSel.length) {
                 currentPage = newSel.data("page");

@@ -211,7 +211,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (wTrackId && !isInput) {
                         this.wTrackId = wTrackId;
-                        this.setChangedValueToModel(e);
+                        this.setChangedValueToModel();
                     }
 
                     if (!isInput) {
@@ -224,7 +224,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         insertedInput[0].setSelectionRange(0, insertedInput.val().length);
                     }
 
-                    this.setChangedValueToModel(e);
+                   // this.setChangedValueToModel(e);
 
                     return false;
                 },
@@ -282,10 +282,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
 
-                        if (!elem) {
+                       // if (!elem) {
                             editedCol.not('.endDateTD').text(editedElementValue);
                             editedElement.not('.endDateInput').remove();
-                        }
+                       // }
                     }
                 },
 

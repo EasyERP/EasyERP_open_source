@@ -131,7 +131,7 @@ define([
             },
 
             setChangedValueToModel: function () {
-                var editedElement = this.$listTable.find('.editing');
+                var editedElement = this.$el.find('#listTable').find('.editing');
                 var editedCol;
                 var editedElementRowId;
                 var editedElementContent;
