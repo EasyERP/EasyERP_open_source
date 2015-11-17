@@ -161,6 +161,8 @@ define([
 
             self.hideNewSelect();
 
+            $('#top-bar-saveBtn').show();
+
             return false;
         },
 
@@ -195,8 +197,8 @@ define([
             var self = this;
             var selectedStart = '#' + name + 'StartDate';
             var selectedEnd = '#' + name + 'EndDate';
-            var startDate = $(selectedStart);
-            var endDate = $(selectedEnd);
+            var startDate = this.$el.find(selectedStart);
+            var endDate = this.$el.find(selectedEnd);
 
             startDate.datepicker({
                 dateFormat: "d M, yy",
@@ -211,6 +213,8 @@ define([
                     $(self.$el).find(selectedEnd).datepicker('option', 'minDate', startDate);
                     parrent.find('div').html(value).show();
                     $(selectedStart).hide();
+
+                    $('#top-bar-saveBtn').show();
                 }
             });
 
@@ -227,6 +231,8 @@ define([
                     $(self.$el).find(selectedStart).datepicker('option', 'maxDate', endDate);
                     parrent.find('div').html(value).show();
                     $(selectedEnd).hide();
+
+                    $('#top-bar-saveBtn').show();
                 }
             });
 
