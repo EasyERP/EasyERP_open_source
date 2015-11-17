@@ -6,10 +6,6 @@ define([
         var PayRollCollection = Backbone.Collection.extend({
             model       : PayRollModel,
             url         : "/payroll/",
-            page        : null,
-            namberToShow: null,
-            viewType    : null,
-            contentType : null,
 
             showMore: function (options) {
                 var that = this;
@@ -24,7 +20,10 @@ define([
                         that.trigger('showmore', models);
                     },
                     error  : function () {
-                        alert('Some Error');
+                        App.render({
+                            type: 'error',
+                            message: 'Some error during fetching data'
+                        });
                     }
                 });
             },
