@@ -10,10 +10,10 @@
                         <dt><label for="supplierDD">Supplier</label></dt>
                         <dd>
                             <%if(invoice && invoice.supplier && invoice.supplier._id){%>
-                            <a id="supplierDd" class="current-selected" href="javascript:;"
+                            <a id="supplierDd" class="" href="javascript:;"
                                data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name%></a>
                             <%} else {%>
-                            <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                            <a id="supplierDd" class="" href="javascript:;">Select</a>
                             <%}%>
                         </dd>
                         <dt>
