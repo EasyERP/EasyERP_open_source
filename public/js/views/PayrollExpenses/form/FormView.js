@@ -249,7 +249,10 @@ define([
 
                 var startData = {
                     dataKey: dataKey,
-                    type: "",
+                    type: {
+                        _id: null,
+                        name: ""
+                    },
                     month: month,
                     year: year,
                     diff: 0,
@@ -846,9 +849,6 @@ define([
                 var savedRow = this.$bodyContainer.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
-                var totalEl = this.$el.find('#total');
-                var total = totalEl.attr('data-cash');
-                var newTotal;
 
                 modelObject = modelObject.success;
 
@@ -858,12 +858,6 @@ define([
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
                 }
-
-                newTotal = total + newValue * (-1);
-
-                totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
-                totalEl.attr('data-cash', newTotal);
-
 
                 this.hideSaveCancelBtns();
                 this.resetCollection(modelObject);

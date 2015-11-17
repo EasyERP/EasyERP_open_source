@@ -1,5 +1,5 @@
 <% invoiceCollection.forEach(function(invoice, index){ %>
-<tr data-id="<%=invoice._id%>">
+<tr data-id="<%=invoice._id%>"
 <%if (invoice.workflow && invoice.workflow.status === 'Cancelled') { %>
 class="canceledListItem"
 <%}%>>
