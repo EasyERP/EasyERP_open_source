@@ -532,28 +532,14 @@ define([
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var payBtnEl = $('#topBarPaymentGenerate');
 
-                if (!this.changed) {
-                    createBtnEl.hide();
-                }
+
+                createBtnEl.hide();
+
                 saveBtnEl.show();
-                cancelBtnEl.show();
-                payBtnEl.show();
+                //cancelBtnEl.show();
+                //payBtnEl.show();
 
                 return false;
-            },
-
-            checkAll: function (e) {
-                var target = e.target;
-                var checked = $(target).checked;
-
-                this.$el.find('.check_all').prop('checked', checked);
-                if (this.$el.find("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                    $("#topBarPaymentGenerate").show();
-                } else {
-                    $("#top-bar-deleteBtn").hide();
-                    $("#topBarPaymentGenerate").hide();
-                }
             },
 
             chooseOption: function (e) {
