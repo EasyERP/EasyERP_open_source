@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 20.05.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -13,7 +10,7 @@ module.exports = (function () {
             _id     : {type: ObjectId, ref: 'Invoice', default: null},
             name    : String,
             assigned: {
-                _id : String,
+                _id : {type: ObjectId, ref: 'Employee', default: null},
                 name: String
             }
         },
@@ -60,9 +57,9 @@ module.exports = (function () {
     var salaryPaymentSchema = basePaymentSchema.extend({
         isExpense    : {type: Boolean, default: true},
         supplier     : [{
-            _id     : {type: ObjectId, ref: 'Employees', default: null},
-            fullName: String,
-            paidAmount: Number,
+            _id             : {type: ObjectId, ref: 'Employees', default: null},
+            fullName        : String,
+            paidAmount      : Number,
             differenceAmount: {type: Number, default: 0, set: setPrice},
         }],
         paymentMethod: {

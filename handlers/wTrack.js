@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var wTrack = function (event, models) {
     var access = require("../Modules/additions/access.js")(models);
+    var rewriteAccess = require('../helpers/rewriteAccess');
     var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
@@ -270,37 +271,9 @@ var wTrack = function (event, models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-            var userId = req.session.uId;
-            var everyOne = {
-                whoCanRW: "everyOne"
-            };
-            var owner = {
-                $and: [
-                    {
-                        whoCanRW: 'owner'
-                    },
-                    {
-                        'groups.owner': objectId(userId)
-                    }
-                ]
-            };
-            var group = {
-                $or: [
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.users': objectId(userId)}
-                        ]
-                    },
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.group': {$in: arrOfObjectId}}
-                        ]
-                    }
-                ]
-            };
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
@@ -310,7 +283,6 @@ var wTrack = function (event, models) {
                     }
                 ]
             };
-
             WTrack.aggregate(
                 {
                     $match: matchQuery

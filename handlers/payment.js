@@ -9,7 +9,7 @@ var MAINCONSTANTS = require('../constants/mainConstants');
 var Payment = function (models, event) {
     "use strict";
     var access = require("../Modules/additions/access.js")(models);
-
+    var rewriteAccess = require('../helpers/rewriteAccess');
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var wTrackPayOutSchema = mongoose.Schemas['wTrackPayOut'];
     var PaymentSchema = mongoose.Schemas['Payment'];
@@ -175,7 +175,6 @@ var Payment = function (models, event) {
 
                     optionsObject.$and = [];
 
-
                     if (filter && typeof filter === 'object') {
                         if (filter.condition === 'or') {
                             optionsObject['$or'] = caseFilter(filter);
@@ -205,42 +204,22 @@ var Payment = function (models, event) {
                     };
 
                     contentIdsSearcher = function (deps, waterfallCallback) {
-                        var arrOfObjectId = deps.objectID();
+                        var everyOne = rewriteAccess.everyOne();
+                        var owner = rewriteAccess.owner(req.session.uId);
+                        var group = rewriteAccess.group(req.session.uId, deps);
+                        var whoCanRw = [everyOne, owner, group];
+                        var matchQuery = {
+                            $and: [
+                                optionsObject,
+                                {
+                                    $or: whoCanRw
+                                }
+                            ]
+                        };
 
                         Payment.aggregate(
                             {
-                                $match: {
-                                    $and: [
-                                        optionsObject,
-                                        {
-                                            $or: [
-                                                {
-                                                    $or: [
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.users': objectId(req.session.uId)}
-                                                            ]
-                                                        },
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.group': {$in: arrOfObjectId}}
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'owner'},
-                                                        {'groups.owner': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {whoCanRW: "everyOne"}
-                                            ]
-                                        }
-                                    ]
-                                }
+                                $match: matchQuery
                             },
                             {
                                 $project: {
@@ -295,7 +274,7 @@ var Payment = function (models, event) {
         }
     };
 
-    this.getById = function(req, res, next){
+    this.getById = function (req, res, next) {
         var id = req.params.id;
         var isWtrack = checkDb(req.session.lastDb);
         var Payment;
@@ -575,7 +554,6 @@ var Payment = function (models, event) {
             });
         };
 
-
         function updateWtrack(invoice, payment, waterfallCallback) {
             var paid = payment.paidAmount || 0;
             var wTrackIds = _.pluck(invoice.products, 'product');
@@ -648,7 +626,6 @@ var Payment = function (models, event) {
 
                 waterfallCallback(null, payment);
             });
-
 
         };
 
@@ -882,7 +859,6 @@ var Payment = function (models, event) {
                 res.send(403);
             }
         });
-
 
     };
 
