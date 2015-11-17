@@ -59,10 +59,12 @@ module.exports = (function () {
 
     var salaryPaymentSchema = basePaymentSchema.extend({
         isExpense    : {type: Boolean, default: true},
-        supplier     : {
+        supplier     : [{
             _id     : {type: ObjectId, ref: 'Employees', default: null},
-            fullName: String
-        },
+            fullName: String,
+            paidAmount: Number,
+            differenceAmount: {type: Number, default: 0, set: setPrice},
+        }],
         paymentMethod: {
             _id : {type: ObjectId, ref: 'ProductCategory', default: null},
             name: String

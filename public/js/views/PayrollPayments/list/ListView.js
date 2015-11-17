@@ -5,6 +5,7 @@ define([
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/PayrollPayments/list/ListHeader.html',
         'views/Filter/FilterView',
+        'views/PayrollPayments/DialogView',
         'models/PaymentModel',
         'views/PayrollPayments/list/ListItemView',
         'views/PayrollPayments/list/ListTotalView',
@@ -14,7 +15,7 @@ define([
         'populate',
         'async'
     ],
-    function (paginationTemplate, listTemplate, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async) {
+    function (paginationTemplate, listTemplate, filterView, DialogView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async) {
         "use strict";
 
         var PaymentListView = Backbone.View.extend({
@@ -42,8 +43,8 @@ define([
                 "click .oe_sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "focusout .editing"                                               : "onChangeInput"
-                //"keyup .editing": "onKeyUpInput"
+                "focusout .editing"                                               : "onChangeInput",
+                "click td:not(.notForm)"                                          : "showDialog"
             },
 
             initialize: function (options) {
@@ -127,7 +128,7 @@ define([
                 return !!newRow.length;
             },
 
-            clearNewSelects: function(){
+            clearNewSelects: function () {
                 this.$el.find('ul.newSelectList').remove();
             },
 
@@ -738,16 +739,18 @@ define([
 
             deleteItems: function () {
                 var currentEl = this.$el;
-                var that = this,
-                    mid = 60,
-                    model;
+                var that = this;
+                var mid = 60;
+                var model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
+                var answer;
+                var value;
+
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {
-                    var answer = confirm("Really DELETE items ?!");
-                    var value;
+                    answer = confirm("Really DELETE items ?!");
 
                     if (answer === true) {
                         $.each($("#listTable input:checked"), function (index, checkbox) {
@@ -900,7 +903,6 @@ define([
                 }
             },
 
-
             savedNewModel: function (modelObject) {
                 var savedRow = this.$listTable.find('#false');
                 var modelId;
@@ -923,6 +925,24 @@ define([
                 editedEl.remove();
                 this.changedModels = {};
                 this.resetCollection(modelObject);
+            },
+
+            showDialog: function(e){
+                var targetEl = $(e.target);
+                var tr = targetEl.closest('tr');
+                var id = tr.attr('data-id');
+                var requestedUrl = 'payment/' + id;
+
+                dataService.getData(requestedUrl, null, function(response){
+                    if(!response.error){
+                        return new DialogView(response.success);
+                    } else {
+                        App.render({
+                            type: 'error',
+                            message: 'Something went wrong'
+                        });
+                    }
+                });
             }
         });
 
