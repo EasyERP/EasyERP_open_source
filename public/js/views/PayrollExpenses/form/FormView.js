@@ -166,7 +166,7 @@ define([
                 }, this);
             },
 
-            deleteItems: function () {
+            deleteItems: function (e) {
                 var that = this;
 
                 if (!this.changed) {
@@ -194,6 +194,13 @@ define([
                 var self = this;
                 var model;
                 var mid = 39;
+                var totalNew;
+                var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
+                var id = tr.attr('data-id');
+                var elDiff = parseFloat(this.editCollection.get(id).get("diff"));
+
+
+                totalNew = totalOld + elDiff;
 
                 if (id.length < 24) {
                     this.editCollection.remove(id);
@@ -220,6 +227,9 @@ define([
                         }
                     });
                 }
+
+                this.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                this.$el.find('#total').attr('data-cash', totalNew);
             },
 
             deleteItemsRender: function (tr, id) {
@@ -228,13 +238,6 @@ define([
                 this.editCollection.remove(id);
                 this.hideSaveCancelBtns();
             },
-
-            /*savedPayments: function () {
-                this.removeDialog();
-
-                Backbone.history.fragment = '';
-                Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
-            },*/
 
             isNewRow: function () {
                 var newRow = $('#false');
@@ -409,10 +412,6 @@ define([
                 var editedElementRowId = tr.attr('data-id');
                 var editModel = this.editCollection.get(editedElementRowId);
                 var changedAttr;
-                var totalEl = this.$el.find('#total');
-                var calcOld = editModel.changed.calc ? parseFloat(editModel.changed.calc) : parseFloat(editModel.get('calc'));
-                var total;
-                var newTotal;
 
                 var diffOnCash = tr.find('.diff[data-content="onCash"]');
 
@@ -458,15 +457,6 @@ define([
                         subValues = newValue - calc;
                         calc = newValue;
                     }
-
-                    total = parseFloat(totalEl.attr('data-cash'));
-
-                    calcOld = calcOld ? calcOld : 0;
-
-                    newTotal = total - calcOld + newValue;
-
-                    totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
-                    totalEl.attr('data-cash', newTotal);
 
                     if (subValues !== 0) {
 
@@ -842,6 +832,7 @@ define([
                     modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
+                    checkbox.attr("id", modelId);
                     savedRow.removeAttr('id');
                 }
 
