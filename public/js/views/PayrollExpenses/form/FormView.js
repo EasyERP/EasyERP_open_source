@@ -576,6 +576,8 @@ define([
 
                     changedAttr.employee = employee;
 
+                    tr.find('[data-content="employee"]').removeClass('errorContent');
+
                     this.hideNewSelect();
                     this.setEditable(targetElement);
 
@@ -586,6 +588,8 @@ define([
                     changedAttr.type = {};
                     changedAttr.type._id = element._id;
                     changedAttr.type.name = element.name;
+
+                    tr.find('[data-content="paymentType"]').removeClass('errorContent');
 
                     this.hideNewSelect();
                     this.setEditable(targetElement);
@@ -848,8 +852,14 @@ define([
             saveItem: function () {
                 var model;
 
+                var errors = this.$el.find('.errorContent');
+
                 this.editCollection.on('saved', this.savedNewModel, this);
                 this.editCollection.on('updated', this.updatedOptions, this);
+
+                if (errors.length) {
+                    return
+                }
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
