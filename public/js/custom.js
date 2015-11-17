@@ -7,11 +7,11 @@ define([
 ], function (dateformat, common, CONTENT_TYPES, dataService, moment) {
     'use strict';
 
-    var Store = function() {
-        this.save = function(name, data) {
+    var Store = function () {
+        this.save = function (name, data) {
             localStorage.setItem(name, JSON.stringify(data));
         };
-        this.find = function(name) {
+        this.find = function (name) {
             var store = localStorage.getItem(name);
 
             return (store && JSON.parse(store)) || null;
@@ -39,18 +39,24 @@ define([
     };
 
     var changeContentViewType = function (event, contentType, collection) {
-
         event.preventDefault();
+        var windowLocation = window.location.hash;
+        var windowLocHash = windowLocation.split('/')[3];
+        var browserFilter = windowLocation.split('/filter=')[1];
+        var id;
+        var viewtype;
+        var url;
+
         if (contentType) {
             this.contentType = contentType;
         }
-        var windowLocHash = window.location.hash.split('/')[3];
-        var id;
+
         if (typeof windowLocHash != "undefined" && windowLocHash.length == 24) {
             id = windowLocHash;
         }
-        var viewtype = $(event.target).attr('data-view-type'),
-            url = "#easyErp/" + this.contentType + "/" + viewtype;
+
+        viewtype = $(event.target).attr('data-view-type');
+        url = "#easyErp/" + this.contentType + "/" + viewtype + (browserFilter ? '/filter=' + browserFilter : '');
 
         if (id) {
             if (viewtype != "list" && (viewtype != "thumbnails")) {
@@ -182,9 +188,9 @@ define([
 
             for (var j = savedFilter.length - 1; j >= 0; j--) {
                 if (savedFilter[j]) {
-                    if (savedFilter[j].byDefault === option.contentType){
+                    if (savedFilter[j].byDefault === option.contentType) {
 
-                        if (savedFilter[j].viewType){
+                        if (savedFilter[j].viewType) {
                             viewType = savedFilter[j].viewType;
                         }
                     }
@@ -394,7 +400,7 @@ define([
         setCurrentVT            : setCurrentVT,
         getCurrentCL            : getCurrentCL,
         setCurrentCL            : setCurrentCL,
-        cacheToApp               : cacheToApp,
+        cacheToApp              : cacheToApp,
         retriveFromCash         : retriveFromCash,
         savedFilters            : savedFilters,
         getFiltersForContentType: getFiltersForContentType,

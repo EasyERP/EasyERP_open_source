@@ -492,7 +492,6 @@ define([
 
             },
 
-
             clickSearchResult: function (e) {
                 var currentElement = e.target ? $(e.target).closest("li") : e;
 
