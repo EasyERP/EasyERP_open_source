@@ -308,36 +308,37 @@ define([
             },
 
             goSort: function (e) {
-                var target$ = $(e.target);
-                var currentParrentSortClass = target$.attr('class');
+                var target = $(e.target);
+                var currentParrentSortClass = target.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
+                var dataSort = target.attr('data-sort').split('.');
                 var sortConst = 1;
                 var collection;
 
                 collection = this.collection.toJSON();
 
                 if (!sortClass) {
-                    target$.addClass('sortDn');
+                    target.addClass('sortDn');
                     sortClass = "sortDn";
                 }
                 switch (sortClass) {
                     case "sortDn":
                     {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortDn').addClass('sortUp');
+                        target.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target.removeClass('sortDn').addClass('sortUp');
                         sortConst = -1;
                     }
                         break;
                     case "sortUp":
                     {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortUp').addClass('sortDn');
+                        target.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target.removeClass('sortUp').addClass('sortDn');
                         sortConst = 1;
                     }
                         break;
                 }
 
-                this.collection.sortByOrder(sortConst);
+                this.collection.sortByOrder(dataSort[0], dataSort[1], sortConst);
 
                 this.renderTable(collection);
             },
@@ -406,7 +407,8 @@ define([
 
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
-                daysNumRow = '<tr class="subHeaderHolder borders"><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
+                daysNumRow = '<tr class="subHeaderHolder borders"><th class="oe_sortable" data-sort="employee.name">Employee Name</th>' +
+                    '<th class="oe_sortable" data-sort="department.name">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
 
                 this.daysCount = daysInMonth;
 
