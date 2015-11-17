@@ -420,6 +420,8 @@ var Payment = function (models, event) {
                     var supplierObject = _payment.supplier;
 
                     supplierObject.paidAmount = _payment.paidAmount;
+                    supplierObject.differenceAmount = _payment.differenceAmount;
+
                     totalAmount += _payment.paidAmount;
                     suppliers.push(supplierObject);
 

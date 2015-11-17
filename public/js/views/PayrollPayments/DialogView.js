@@ -11,8 +11,6 @@ define([
             changedModels: {},
 
             initialize: function (options) {
-                this.editCollection = options.collection;
-
                 this.render(options);
 
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');

@@ -935,7 +935,7 @@ define([
 
                 dataService.getData(requestedUrl, null, function(response){
                     if(!response.error){
-                        return new DialogView(response);
+                        return new DialogView(response.success);
                     } else {
                         App.render({
                             type: 'error',
