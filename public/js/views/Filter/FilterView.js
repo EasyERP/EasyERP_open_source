@@ -15,15 +15,15 @@ define([
         var FilterView;
         FilterView = Backbone.View.extend({
             el                 : '#searchContainer',
-            contentType: "Filter",
-            savedFilters: {},
-            filterIcons : {},
-            template    : _.template(ContentFilterTemplate),
+            contentType        : "Filter",
+            savedFilters       : {},
+            filterIcons        : {},
+            template           : _.template(ContentFilterTemplate),
             searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
                 "mouseover .search-content"            : 'showSearchContent',
-                "mouseleave .drop-down-filter"            : 'showSearchContent',
+                "mouseleave .drop-down-filter"         : 'showSearchContent',
                 "click .search-content"                : 'showSearchContent',
                 "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'                   : 'applyFilter',
@@ -178,8 +178,8 @@ define([
                             headers : {
                                 mid: mid
                             },
-                            wait   : true,
-                            patch  : true,
+                            wait    : true,
+                            patch   : true,
                             validate: false,
                             success : function (model) {
                                 updatedInfo = model.get('success');
@@ -230,8 +230,8 @@ define([
                         headers : {
                             mid: mid
                         },
-                        wait   : true,
-                        patch  : true,
+                        wait    : true,
+                        patch   : true,
                         validate: false,
                         success : function (model) {
                         },
@@ -451,7 +451,7 @@ define([
                 mapData = _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
                     return {
                         category       : key,
-                        categoryView: filterView,
+                        categoryView   : filterView,
                         categoryBackend: filterBackend,
                         label          : dataItem.name,
                         value          : dataItem.name,
@@ -476,7 +476,7 @@ define([
                     groupName        : key,
                     groupViewName    : filterView,
                     currentCollection: this.currentCollection[filterView],
-                    sortOptions          : sortOptions
+                    sortOptions      : sortOptions
                 });
 
                 container.html('');
@@ -493,7 +493,7 @@ define([
             },
 
             clickSearchResult: function (e) {
-                var currentElement = $(e.target).closest("li");
+                var currentElement = e.target ? $(e.target).closest("li") : e;
 
                 var container = currentElement.closest('.ui-autocomplete');
                 var checkOnGroup = currentElement.hasClass('ui-autocomplete-category');
@@ -528,6 +528,7 @@ define([
                 var searchInput;
                 var filterName = this.parentContentType + '.filter';
                 var filters = custom.retriveFromCash(filterName) || App.filter;
+                var allResults;
 
                 currentEl.html(this.template({filterCollection: this.constantsObject}));
 
@@ -585,6 +586,18 @@ define([
                 });
 
                 searchInput = currentEl.find("#searchInput");
+
+                searchInput.keydown(function (e) {
+                    if (e.which === 13) {
+                        allResults = searchInput.next().find('.ui-autocomplete-category');
+
+                        allResults.each(function () {
+                            var element = $(this);
+
+                            self.clickSearchResult(element);
+                        })
+                    }
+                });
 
                 searchInput.catcomplete({
                     source  : this.searchRessult,

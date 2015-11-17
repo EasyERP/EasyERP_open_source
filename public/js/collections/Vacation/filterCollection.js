@@ -5,20 +5,25 @@ define([
     'models/VacationModel'
 ], function (VacationModel) {
     var VacationCollection = Backbone.Collection.extend({
-        model: VacationModel,
-        url: "/vacation/",
-        viewType: null,
+        model      : VacationModel,
+        url        : "/vacation/",
+        viewType   : null,
         contentType: null,
 
         comparator: function (modelA, modelB) {
-            var nameA = getEmployeeName(modelA);
-            var nameB = getEmployeeName(modelB);
+            var self = this;
+            var nameA = getSortName(modelA);
+            var nameB = getSortName(modelB);
 
-            function getEmployeeName(model) {
-                var employeeAttr = model.get('employee');
+            function getSortName(model) {
+                var sortAttr = self.sortKey ? model.get(self.sortKey) : model.get('employee');
 
-                if (employeeAttr) {
-                    return model.get('employee').name;
+                if (sortAttr) {
+                    if (self.sortSubKey) {
+                        return sortAttr[self.sortSubKey];
+                    } else {
+                        return sortAttr['name'];
+                    }
                 }
 
                 return false;
@@ -26,17 +31,19 @@ define([
 
             if (nameA && nameB) {
                 if (nameA > nameB) {
-                    return this.sortOrder;
+                    return self.sortOrder;
                 } else if (nameA < nameB) {
-                    return this.sortOrder * (-1);
+                    return self.sortOrder * (-1);
                 } else {
                     return 0;
                 }
             }
         },
 
-        sortByOrder: function(order) {
+        sortByOrder: function (key, subKey, order) {
             this.sortOrder = order;
+            this.sortKey = key;
+            this.sortSubKey = subKey;
             this.sort();
         },
 
@@ -46,12 +53,12 @@ define([
             filterObject['month'] = (options && options.month) ? options.month.toString() : this.month.toString();
             filterObject['year'] = (options && options.year) ? options.year : this.year;
             this.fetch({
-                data: filterObject,
-                waite: true,
+                data   : filterObject,
+                waite  : true,
                 success: function (models) {
                     that.trigger('showmore', models);
                 },
-                error: function () {
+                error  : function () {
                     alert('Some Error');
                 }
             });
@@ -81,11 +88,11 @@ define([
             }
 
             this.fetch({
-                data: options,
-                reset: true,
+                data   : options,
+                reset  : true,
                 success: function () {
                 },
-                error: function (models, xhr) {
+                error  : function (models, xhr) {
                     if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
                 }
             });
