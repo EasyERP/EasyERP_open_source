@@ -295,6 +295,33 @@ var Payment = function (models, event) {
         }
     };
 
+    this.getById = function(req, res, next){
+        var id = req.params.id;
+        var isWtrack = checkDb(req.session.lastDb);
+        var Payment;
+        var moduleId = returnModuleId(req);
+
+        if (isWtrack) {
+            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
+
+        access.getReadAccess(req, req.session.uId, moduleId, function (access) {
+            if (access) {
+
+                Payment.findById(id, function (err, payment) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: payment});
+                });
+            } else {
+                res.status(403).send();
+            }
+        });
+    };
+
     this.getAll = function (req, res, next) {
         //this temporary unused
         var isWtrack = checkDb(req.session.lastDb);
@@ -370,34 +397,50 @@ var Payment = function (models, event) {
 
     this.salaryPayOut = function (req, res, next) {
         var body = req.body;
+        var salaryPayment = body[0];
+        var totalAmount = 0;
+        var suppliers = [];
         var moduleId = 66;
         var Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
         var Payroll = models.get(req.session.lastDb, 'PayRoll', payrollSchema);
 
         function payrollExpensUpdater(_payment, cb) {
-            Payroll.findByIdAndUpdate(_payment.paymentRef, {$inc: {diff: _payment.paidAmount, paid: _payment.paidAmount}}, cb);
+            Payroll.findByIdAndUpdate(_payment.paymentRef, {
+                $inc: {
+                    diff: _payment.paidAmount,
+                    paid: _payment.paidAmount
+                }
+            }, cb);
         };
 
         access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
 
                 async.each(body, function (_payment, cb) {
+                    var supplierObject = _payment.supplier;
+
+                    supplierObject.paidAmount = _payment.paidAmount;
+                    totalAmount += _payment.paidAmount;
+                    suppliers.push(supplierObject);
+
+                    payrollExpensUpdater(_payment, cb);
+                }, function (err) {
                     var payment;
 
-                    payment = new Payment(_payment);
-
-                    payment.save(function(err, _payment_){
-                        if(err){
-                            return cb(err);
-                        }
-                        payrollExpensUpdater(_payment, cb);
-                    });
-                }, function (err) {
                     if (err) {
                         return next(err);
                     }
 
-                    res.status(201).send({success: 'success'})
+                    salaryPayment.supplier = suppliers;
+                    salaryPayment.paidAmount = totalAmount;
+
+                    payment = new Payment(salaryPayment);
+                    payment.save(function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(201).send({success: 'success'});
+                    });
                 });
             } else {
                 res.status(403).send();

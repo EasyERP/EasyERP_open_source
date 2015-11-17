@@ -21,17 +21,17 @@ define([
 
     function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, PaymentCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
-            el: '#content-holder',
+            el            : '#content-holder',
             contentType: 'PayrollExpenses',
-            viewType: 'list',//needs in view.prototype.changeLocationHash
+            viewType   : 'list',//needs in view.prototype.changeLocationHash
             responseObj: {},
-            whatToSet: {},
-            formUrl                 : "#easyErp/PayrollExpenses/form/",
+            whatToSet  : {},
+            formUrl    : "#easyErp/PayrollExpenses/form/",
             headerTemplate: _.template(headerTemplate),
-            totalTemplate: _.template(totalTemplate),
+            totalTemplate : _.template(totalTemplate),
             // rowTemplate   : _.template(rowTemplate),
             cancelTemplate: _.template(cancelEditTemplate),
-            changedModels: {},
+            changedModels : {},
 
             events: {
                 "click #mainRow td:not(.notForm)": "gotoForm"
@@ -75,7 +75,7 @@ define([
                 self.filters.render({
                     dataKey: {
                         sort: {
-                            key: '_id',
+                            key  : '_id',
                             order: -1
                         }
                     }
@@ -108,9 +108,9 @@ define([
                 currentEl.append(headerTemplate);
 
                 currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
-                    total: this.total,
+                    total           : this.total,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter: helpers.weekSplitter
+                    weekSplitter    : helpers.weekSplitter
                 }));
 
                 this.hideSaveCancelBtns();

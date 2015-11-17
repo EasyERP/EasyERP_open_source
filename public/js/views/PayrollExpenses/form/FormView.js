@@ -32,7 +32,6 @@ define([
                 "change .autoCalc": "autoCalc",
                 "change .editable": "setEditable",
                 "keydown input.editing": "keyDown",
-                "click #mainRow td:not(.notForm)": "gotoForm",
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
                 "click .diff": "newPayment"
@@ -227,12 +226,12 @@ define([
                 this.hideSaveCancelBtns();
             },
 
-            savedPayments: function () {
+            /*savedPayments: function () {
                 this.removeDialog();
 
                 Backbone.history.fragment = '';
                 Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
-            },
+            },*/
 
             isNewRow: function () {
                 var newRow = $('#false');
