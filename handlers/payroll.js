@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
-var redisStore = require('../helpers/redisClient');
 
 var PayRoll = function (models) {
+    "use strict";
     var access = require("../Modules/additions/access.js")(models);
     var PayRollSchema = mongoose.Schemas['PayRoll'];
     var _ = require('lodash');
@@ -11,6 +11,8 @@ var PayRoll = function (models) {
     var mapObject = require('../helpers/bodyMaper');
     var objectId = mongoose.Types.ObjectId;
     var mid = 66;
+
+    var composeExpensesAndCache = require('../helpers/expenses')(models);
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -98,6 +100,7 @@ var PayRoll = function (models) {
                     }
 
                     res.status(200).send(payRoll);
+                    composeExpensesAndCache(req);
                 });
             });
         } else {
@@ -165,6 +168,7 @@ var PayRoll = function (models) {
                     }
 
                     res.status(200).send({success: 'updated'});
+                    composeExpensesAndCache(req);
                 });
 
             });
@@ -211,6 +215,7 @@ var PayRoll = function (models) {
                     }
 
                     res.status(200).send({success: 'updated'});
+                    composeExpensesAndCache(req);
                 });
             });
         } else {
@@ -218,7 +223,7 @@ var PayRoll = function (models) {
         }
     };
 
-     function getByDataKey(req, res, next) {
+    function getByDataKey(req, res, next) {
         var id = req.query.id;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
@@ -251,7 +256,7 @@ var PayRoll = function (models) {
         }
     };
 
-    function getForView(req, res, next){
+    function getForView(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, mid, function (access) {
                 if (!access) {
@@ -261,86 +266,14 @@ var PayRoll = function (models) {
                     next(error);
                 }
 
-                var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
-                var query = req.query;
-                var filter = query.filter;
-                var queryObject = {};
-                var key = 'payrollExpenses' + filter;
-                var waterfallTasks = [checkFilter, getResult, calcTotal];
-
-                function checkFilter(callback) {
-                    callback(null, filter)
-                }
-
-                function getResult(filter, callback) {
-                    if (filter && typeof filter === 'object') {
-                        if (filter.condition && filter.condition === 'or') {
-                            queryObject['$or'] = caseFilter(filter);
-                        } else {
-                            queryObject['$and'] = caseFilter(filter);
-                        }
-                    }
-
-                    query = PayRoll.find(queryObject);
-
-                    query.exec(function (err, result) {
-                        if (err) {
-                            return callback(err);
-                        }
-
-                        callback(null, result);
-                    });
-                };
-
-                function calcTotal(result, callback) {
-
-                    function sum(numbers) {
-                        return _.reduce(numbers, function (result, current) {
-                            return result + parseFloat(current ? current : 0);
-                        }, 0);
-                    }
-
-                    var total = _.chain(result)
-                        .groupBy(function (model) {
-                            return model.get('dataKey');
-                        })
-                        .map(function (value, key) {
-                            var obj = {};
-
-                            obj[key] = {
-                                calc: {
-                                    onCash: sum(_.pluck(value, "calc"))
-                                },
-                                paid: {
-                                    onCash: sum(_.pluck(value, "paid"))
-                                },
-                                diff: {
-                                    onCash: sum(_.pluck(value, "diff"))
-                                }
-                            };
-
-                            return obj;
-                        })
-                        .value();
-
-                    var newResult = _.groupBy(result, function (model) {
-                        return model.get('dataKey');
-                    });
-
-                    callback(null, {total: total, collection: newResult, allCollection: result});
-                }
-
-                async.waterfall(waterfallTasks, function (err, result) {
+                composeExpensesAndCache(req, function (err, result) {
                     if (err) {
                         return next(err);
                     }
 
                     res.status(200).send(result);
-
-                    redisStore.writeToStorage('payrollExpenses', key, JSON.stringify(result));
                 });
             });
-
         } else {
             error = new Error();
             error.status = 401;
@@ -352,7 +285,7 @@ var PayRoll = function (models) {
     this.getForView = function (req, res, next) {
         var query = req.query;
 
-        if (query.id){
+        if (query.id) {
             getByDataKey(req, res, next);
         } else {
             getForView(req, res, next);
@@ -383,7 +316,13 @@ var PayRoll = function (models) {
                 return next(err);
             }
 
-            res.status(200).send("ok");
+            composeExpensesAndCache(req, function (err, results) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send("ok");
+            });
         });
 
         function getEmployees(callback) {
@@ -452,7 +391,7 @@ var PayRoll = function (models) {
 
                         var PRoll = new Payroll(dataToSave);
 
-                        if (dataToSave.type.name === "Salary Cash"){
+                        if (dataToSave.type.name === "Salary Cash") {
                             defObj = dataToSave;
                         }
 
@@ -464,8 +403,8 @@ var PayRoll = function (models) {
                     }, function () {
                         difference = _.difference(ids, createdIds);
 
-                        async.each(difference, function(id, callB){
-                            var empl = _.find(employees, function(el){
+                        async.each(difference, function (id, callB) {
+                            var empl = _.find(employees, function (el) {
                                 return el._id.toString() === id;
                             });
 
@@ -486,7 +425,7 @@ var PayRoll = function (models) {
                             PRoll.save(function (err, result) {
                                 callB();
                             });
-                        }, function(){
+                        }, function () {
                             callback();
                         });
                     });
