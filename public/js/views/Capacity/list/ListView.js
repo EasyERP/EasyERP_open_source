@@ -837,6 +837,8 @@ define([
 
                         this.$el.find(".false").remove();
                         this.hideSaveCancelBtns();
+                    } else {
+                        subRows.find('.checkbox').prop('checked', target.prop('checked'));
                     }
                 }
 
