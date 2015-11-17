@@ -54,6 +54,10 @@ define([
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
+            generate: function () {
+                new GenerateView({});
+            },
+
             gotoForm: function (e) {
                 if (!this.formUrl) {
                     return;
@@ -87,7 +91,6 @@ define([
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var copyBtnEl = $('#top-bar-copy');
-                var generateOnMonth = $('#top-bar-generate');
 
                 this.changed = false;
 
@@ -95,7 +98,6 @@ define([
                 cancelBtnEl.hide();
                 createBtnEl.show();
                 copyBtnEl.hide();
-                generateOnMonth.hide();
 
                 return false;
             },

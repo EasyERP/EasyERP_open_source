@@ -166,7 +166,7 @@ define([
                 }, this);
             },
 
-            deleteItems: function () {
+            deleteItems: function (e) {
                 var that = this;
 
                 if (!this.changed) {
@@ -179,7 +179,10 @@ define([
                             checkbox = $(checkbox);
                             value = checkbox.attr('id');
                             tr = checkbox.closest('tr');
-                            that.deleteItem(tr, value);
+
+                            if (value){
+                                that.deleteItem(tr, value);
+                            }
                         });
                     }
                 } else {
@@ -191,6 +194,13 @@ define([
                 var self = this;
                 var model;
                 var mid = 39;
+                var totalNew;
+                var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
+                var id = tr.attr('data-id');
+                var elDiff = parseFloat(this.editCollection.get(id).get("diff"));
+
+
+                totalNew = totalOld + elDiff;
 
                 if (id.length < 24) {
                     this.editCollection.remove(id);
@@ -217,6 +227,9 @@ define([
                         }
                     });
                 }
+
+                this.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                this.$el.find('#total').attr('data-cash', totalNew);
             },
 
             deleteItemsRender: function (tr, id) {
@@ -225,13 +238,6 @@ define([
                 this.editCollection.remove(id);
                 this.hideSaveCancelBtns();
             },
-
-            /*savedPayments: function () {
-                this.removeDialog();
-
-                Backbone.history.fragment = '';
-                Backbone.history.navigate("#easyErp/PayrollPayments/list", {trigger: true});
-            },*/
 
             isNewRow: function () {
                 var newRow = $('#false');
@@ -246,7 +252,10 @@ define([
 
                 var startData = {
                     dataKey: dataKey,
-                    type: "",
+                    type: {
+                        _id: null,
+                        name: ""
+                    },
                     month: month,
                     year: year,
                     diff: 0,
@@ -403,10 +412,6 @@ define([
                 var editedElementRowId = tr.attr('data-id');
                 var editModel = this.editCollection.get(editedElementRowId);
                 var changedAttr;
-                var totalEl = this.$el.find('#total');
-                var calcOld = editModel.changed.calc ? parseFloat(editModel.changed.calc) : parseFloat(editModel.get('calc'));
-                var total;
-                var newTotal;
 
                 var diffOnCash = tr.find('.diff[data-content="onCash"]');
 
@@ -452,15 +457,6 @@ define([
                         subValues = newValue - calc;
                         calc = newValue;
                     }
-
-                    total = parseFloat(totalEl.attr('data-cash'));
-
-                    calcOld = calcOld ? calcOld : 0;
-
-                    newTotal = total - calcOld + newValue;
-
-                    totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
-                    totalEl.attr('data-cash', newTotal);
 
                     if (subValues !== 0) {
 
@@ -526,28 +522,14 @@ define([
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var payBtnEl = $('#topBarPaymentGenerate');
 
-                if (!this.changed) {
-                    createBtnEl.hide();
-                }
+
+                createBtnEl.hide();
+
                 saveBtnEl.show();
-                cancelBtnEl.show();
-                payBtnEl.show();
+                //cancelBtnEl.show();
+                //payBtnEl.show();
 
                 return false;
-            },
-
-            checkAll: function (e) {
-                var target = e.target;
-                var checked = $(target).checked;
-
-                this.$el.find('.check_all').prop('checked', checked);
-                if (this.$el.find("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                    $("#topBarPaymentGenerate").show();
-                } else {
-                    $("#top-bar-deleteBtn").hide();
-                    $("#topBarPaymentGenerate").hide();
-                }
             },
 
             chooseOption: function (e) {
@@ -594,6 +576,8 @@ define([
 
                     changedAttr.employee = employee;
 
+                    tr.find('[data-content="employee"]').removeClass('errorContent');
+
                     this.hideNewSelect();
                     this.setEditable(targetElement);
 
@@ -604,6 +588,8 @@ define([
                     changedAttr.type = {};
                     changedAttr.type._id = element._id;
                     changedAttr.type.name = element.name;
+
+                    tr.find('[data-content="paymentType"]').removeClass('errorContent');
 
                     this.hideNewSelect();
                     this.setEditable(targetElement);
@@ -699,12 +685,24 @@ define([
 
             checked: function (e) {
                 var checkLength;
-                var target;
-                var dataId;
+                var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
+                var totalNew;
+                var target = $(e.target);
+                var id = target.attr('id');
+                var elDiff = parseFloat(this.editCollection.get(id).get("diff")) * (-1);
+
+                if (!target.prop('checked')){
+                    elDiff = elDiff * (-1);
+                }
+
+                totalNew = totalOld + elDiff;
+
 
                 if (this.editCollection.length > 0) {
                     checkLength = $("input.checkbox:checked").length;
-                    target = e.target;
+
+                    this.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                    this.$el.find('#total').attr('data-cash', totalNew);
 
 
                     if ($("input.checkbox:checked").length > 0) {
@@ -712,8 +710,10 @@ define([
                         $('#topBarPaymentGenerate').show();
                         if (checkLength === 1) {
                             $('#top-bar-copy').show();
+                            $('#top-bar-createBtn').hide();
                         } else {
                             $('#top-bar-copy').hide();
+                            $('#top-bar-createBtn').show();
                         }
                         if (checkLength == this.collection.length) {
                             this.$el.find(".check_all").prop('checked', true);
@@ -725,6 +725,7 @@ define([
                         $('#top-bar-deleteBtn').hide();
                         $('#topBarPaymentGenerate').hide();
                         $('#top-bar-copy').hide();
+                        $('#top-bar-createBtn').show();
                     }
                 }
             },
@@ -828,9 +829,6 @@ define([
                 var savedRow = this.$bodyContainer.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
-                var totalEl = this.$el.find('#total');
-                var total = totalEl.attr('data-cash');
-                var newTotal;
 
                 modelObject = modelObject.success;
 
@@ -838,14 +836,9 @@ define([
                     modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
+                    checkbox.attr("id", modelId);
                     savedRow.removeAttr('id');
                 }
-
-                newTotal = total + newValue * (-1);
-
-                totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
-                totalEl.attr('data-cash', newTotal);
-
 
                 this.hideSaveCancelBtns();
                 this.resetCollection(modelObject);
@@ -859,8 +852,14 @@ define([
             saveItem: function () {
                 var model;
 
+                var errors = this.$el.find('.errorContent');
+
                 this.editCollection.on('saved', this.savedNewModel, this);
                 this.editCollection.on('updated', this.updatedOptions, this);
+
+                if (errors.length) {
+                    return
+                }
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
@@ -899,14 +898,42 @@ define([
                 this.filterEmployeesForDD(this);
 
                 $('.check_all').click(function (e) {
+                    var totalOld = 0;
+                    var totalNew = 0;
+
+                    var checkboxes = self.$el.find('.checkbox');
 
                     self.$el.find('.checkbox').prop('checked', this.checked);
+
+                    $.each(checkboxes, function(){
+                        var target = $(this);
+                        var id = target.attr('id');
+                        var elDiff = parseFloat(self.editCollection.get(id).get("diff")) * (-1);
+
+                        if (!target.prop('checked')){
+                            elDiff = elDiff * (-1);
+                        }
+
+                        totalNew += totalOld + elDiff;
+
+                    });
+
                     if (self.$el.find("input.checkbox:checked").length > 0) {
+
+                        self.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                        self.$el.find('#total').attr('data-cash', totalNew);
+
                         $("#top-bar-deleteBtn").show();
                         $("#topBarPaymentGenerate").show();
+                        $('#top-bar-createBtn').hide();
                     } else {
+
+                        self.$el.find('#total').text(0);
+                        self.$el.find('#total').attr('data-cash', 0);
+
                         $("#top-bar-deleteBtn").hide();
                         $("#topBarPaymentGenerate").hide();
+                        $('#top-bar-createBtn').show();
                     }
                 });
 
