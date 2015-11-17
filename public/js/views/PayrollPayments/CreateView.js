@@ -59,7 +59,7 @@ define([
 
 
                 if (!isInput) {
-                    tempContainer = target.text();
+                    tempContainer =  (target.text()).trim();
                     inputHtml = '<input class="editing" type="text" data-value="' +
                     tempContainer + '" value="' + tempContainer +
                     '"  maxLength="4" style="display: block;" />';
@@ -287,6 +287,7 @@ define([
                     }
 
                     editedElement.remove();
+                    editedCol.text(editedElementValue);
                 }
             },
 
@@ -301,6 +302,8 @@ define([
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
+
+                this.editCollection.reset();
             },
 
             checked: function (e) {
