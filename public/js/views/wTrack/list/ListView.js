@@ -673,7 +673,11 @@ define([
                     return
                 }
                 this.editCollection.save();
-                this.changedModels = {};
+
+                for (var id in this.changedModels) {
+                   delete this.changedModels[id];
+                }
+                
                 this.editCollection.remove(id);
             },
 
