@@ -980,7 +980,7 @@ var Filters = function (models) {
                 }
 
                 result.dataKey = _.map(result.dataKey, function (element) {
-                    element.name = element.name.toString();
+                    element.name = element.name ? element.name.toString() : "";
 
                     return {
                         _id : element._id,

@@ -3,10 +3,10 @@
 <% var key = Object.keys(el)[0];%>
 <% var totalObj = el[key]; %>
 <tr id="mainRow" data-id="<%=key%>">
-    <td class="expand centerCell">+</td>
-    <td class = "notForm centerCell"><input type="checkbox" id="<%=key%>" class="check_all" /></td>
+    <td class="expand centerCell"><%=count + 1%></td>
+    <!--<td class = "notForm centerCell"><input type="checkbox" id="<%=key%>" class="check_all" /></td>-->
     <td >Employees</td>
-    <td><%=collection[0][key][0].month + "/" + collection[0][key][0].year%></td>
+    <td><%=weekSplitter(key)%></td>
     <td>Salary</td>
     <td data-cash="<%=totalObj.calc.onCash%>" class="total_calc_salary money">
         <%=currencySplitter(totalObj.calc.onCash.toString())%>
@@ -23,36 +23,4 @@ negativeMoney"><%=currencySplitter((totalObj.diff.onCash * (-1)).toString())%>
     money"><%=currencySplitter(totalObj.diff.onCash.toString())%></td>
     <%}%>
 </tr>
-
-
-<% var payroll = collection[0][key];%>
-<% payroll.forEach(function(model, index){ %>
-<tr data-id="<%=model._id%>" class="<%=key%> jobsDashboard" style="display: none;">
-    <td data-content="number"><%=index+1%></td>
-    <td class="notForm centerCell"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox" data-id="<%=key%>"/></td>
-    <td class="editable" data-content="employee"><%=model.employee ? model.employee.name : ''%></td>
-    <td data-content="dataKey" ><%=model.month + '/' + model.year%></td>
-    <td class="editable" data-content="paymentType"><%=model.type.name%></td>
-
-    <td data-type="input" class="editable autoCalc cash calc money" data-content="onCash" data-cash="<%=model.calc%>">
-        <%=currencySplitter(model.calc.toString())%>
-    </td>
-
-    <td data-type="input" data-content="onCash" data-cash="<%=model.paid%>" class="autoCalc cash paid
-<% if (model.paid) {%>
-money"><%=currencySplitter(model.paid.toString())%>
-    </td>
-    <%} else {%>
-    "></td>
-    <%}%>
-
-    <td data-content="onCash" data-cash="<%=model.diff%>" class="diff
-<% if (model.diff < 0) { %>
-negativeMoney"><%=currencySplitter((model.diff * (-1)).toString())%>
-    </td>
-    <%} else {%>
-    money"><%=currencySplitter(model.diff.toString())%></td>
-    <%}%>
-</tr>
-<% }) %>
 <% }) %>

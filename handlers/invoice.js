@@ -285,21 +285,29 @@ var Invoice = function (models, event) {
 
             switch (filterName) {
                 case 'project':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
+                    if (condition){
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    }
                 case 'salesPerson':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
+                    if (condition){
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    }
                 case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
+                    if (condition){
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    }
                 case 'workflow':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
+                    if (condition){
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    }
                 case 'forSales':
                     condition = ConvertType(condition, 'boolean');
                     filtrElement[key] = condition;

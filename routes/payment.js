@@ -6,6 +6,7 @@ var PaymentHandler = require('../handlers/payment');
 module.exports = function (models, event) {
     var handler = new PaymentHandler(models, event);
 
+    router.get('/:id', handler.getById);
     router.get('/getForProject', handler.getForProject);
     router.get('/:byType/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:byType/:viewType', handler.getForView);

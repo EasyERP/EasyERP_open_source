@@ -6,7 +6,6 @@ module.exports = function (models) {
     var handler = new PayRollHandler(models);
 
     router.get('/:viewType', handler.getForView);
-    router.get('/form/:id', handler.getById);
     router.post('/', handler.create);
     router.post('/generate', handler.generate);
     router.patch('/', handler.putchBulk);

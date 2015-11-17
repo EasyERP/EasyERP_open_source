@@ -217,11 +217,11 @@ var PayRoll = function (models) {
         }
     };
 
-    this.getById = function (req, res, next) {
-        var id = req.params.id;
+     function getByDataKey(req, res, next) {
+        var id = req.query.id;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
-        var queryObject = {_id: id};
+        var queryObject = {dataKey: parseInt(id)};
         var query;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -233,7 +233,7 @@ var PayRoll = function (models) {
                     next(error);
                 }
 
-                query = Salary.findOne(queryObject);
+                query = PayRoll.find(queryObject);
 
                 query.exec(function (err, result) {
                     if (err) {
@@ -250,7 +250,7 @@ var PayRoll = function (models) {
         }
     };
 
-    this.getForView = function (req, res, next) {
+    function getForView(req, res, next){
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, mid, function (access) {
                 if (!access) {
@@ -268,25 +268,6 @@ var PayRoll = function (models) {
                 var waterfallTasks = [checkFilter, getResult, calcTotal];
 
                 function checkFilter(callback) {
-                    //if (filter && filter.dataKey) {
-                    //    return callback(null, filter);
-                    //}
-
-                    //dataKeyQuery.exec(function (err, model) {
-                    //    if (err) {
-                    //        return callback(err);
-                    //    }
-                    //
-                    //    filter = {};
-                    //
-                    //    filter.dataKey = {
-                    //        key  : 'dataKey',
-                    //        value: [model.toJSON().dataKey]
-                    //    }
-                    //
-                    //    return callback(null, filter);
-                    //})
-
                     callback(null, filter)
                 }
 
@@ -355,20 +336,6 @@ var PayRoll = function (models) {
 
                     res.status(200).send(result);
                 });
-
-
-                /*if (query) {
-                 if (query.employee) {
-                 queryObject['employee._id'] = objectId(query.employee);
-                 }
-                 if (query.year) {
-                 queryObject.year = query.year;
-                 }
-                 if (query.month) {
-                 queryObject.month = query.month;
-                 }
-                 }*/
-
             });
 
         } else {
@@ -376,6 +343,16 @@ var PayRoll = function (models) {
             error.status = 401;
 
             next(error);
+        }
+    }
+
+    this.getForView = function (req, res, next) {
+        var query = req.query;
+
+        if (query.id){
+            getByDataKey(req, res, next);
+        } else {
+            getForView(req, res, next);
         }
     };
 
