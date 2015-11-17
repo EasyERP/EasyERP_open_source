@@ -179,7 +179,10 @@ define([
                             checkbox = $(checkbox);
                             value = checkbox.attr('id');
                             tr = checkbox.closest('tr');
-                            that.deleteItem(tr, value);
+
+                            if (value){
+                                that.deleteItem(tr, value);
+                            }
                         });
                     }
                 } else {
@@ -699,12 +702,24 @@ define([
 
             checked: function (e) {
                 var checkLength;
-                var target;
-                var dataId;
+                var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
+                var totalNew;
+                var target = $(e.target);
+                var id = target.attr('id');
+                var elDiff = parseFloat(this.editCollection.get(id).get("diff")) * (-1);
+
+                if (!target.prop('checked')){
+                    elDiff = elDiff * (-1);
+                }
+
+                totalNew = totalOld + elDiff;
+
 
                 if (this.editCollection.length > 0) {
                     checkLength = $("input.checkbox:checked").length;
-                    target = e.target;
+
+                    this.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                    this.$el.find('#total').attr('data-cash', totalNew);
 
 
                     if ($("input.checkbox:checked").length > 0) {
@@ -712,8 +727,10 @@ define([
                         $('#topBarPaymentGenerate').show();
                         if (checkLength === 1) {
                             $('#top-bar-copy').show();
+                            $('#top-bar-createBtn').hide();
                         } else {
                             $('#top-bar-copy').hide();
+                            $('#top-bar-createBtn').show();
                         }
                         if (checkLength == this.collection.length) {
                             this.$el.find(".check_all").prop('checked', true);
@@ -725,6 +742,7 @@ define([
                         $('#top-bar-deleteBtn').hide();
                         $('#topBarPaymentGenerate').hide();
                         $('#top-bar-copy').hide();
+                        $('#top-bar-createBtn').show();
                     }
                 }
             },
@@ -904,9 +922,11 @@ define([
                     if (self.$el.find("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                         $("#topBarPaymentGenerate").show();
+                        $('#top-bar-createBtn').hide();
                     } else {
                         $("#top-bar-deleteBtn").hide();
                         $("#topBarPaymentGenerate").hide();
+                        $('#top-bar-createBtn').show();
                     }
                 });
 
