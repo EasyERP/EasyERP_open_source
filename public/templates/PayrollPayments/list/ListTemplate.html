@@ -8,8 +8,8 @@
 <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
 <td class="total"><%=(payment.paidAmount) ? payment.paidAmount : '0.00'%></td>
 <td><%=(payment.differenceAmount) ? payment.differenceAmount : '0.00'%></td>
-<td id='<%=payment._id%>' data-content="workflow" class="editable">
+<!--<td id='<%=payment._id%>' data-content="workflow" class="editable">
     <a href="javascript:;" class="currentSelected <%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow ? payment.workflow: 'Draft'%></a>
-</td>
+</td>-->
 </tr>
 <% }) %>

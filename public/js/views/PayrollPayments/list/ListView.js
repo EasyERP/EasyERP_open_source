@@ -44,7 +44,7 @@ define([
                 "change .editable "                                               : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "focusout .editing"                                               : "onChangeInput",
-                "click td:not(.notForm)"                                          : "showDialog"
+                "click td:not(.notForm )"                                          : "showDialog"
             },
 
             initialize: function (options) {
