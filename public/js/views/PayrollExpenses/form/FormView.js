@@ -917,13 +917,39 @@ define([
                 this.filterEmployeesForDD(this);
 
                 $('.check_all').click(function (e) {
+                    var totalOld = 0;
+                    var totalNew = 0;
+
+                    var checkboxes = self.$el.find('.checkbox');
 
                     self.$el.find('.checkbox').prop('checked', this.checked);
+
+                    $.each(checkboxes, function(){
+                        var target = $(this);
+                        var id = target.attr('id');
+                        var elDiff = parseFloat(self.editCollection.get(id).get("diff")) * (-1);
+
+                        if (!target.prop('checked')){
+                            elDiff = elDiff * (-1);
+                        }
+
+                        totalNew += totalOld + elDiff;
+
+                    });
+
                     if (self.$el.find("input.checkbox:checked").length > 0) {
+
+                        self.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                        self.$el.find('#total').attr('data-cash', totalNew);
+
                         $("#top-bar-deleteBtn").show();
                         $("#topBarPaymentGenerate").show();
                         $('#top-bar-createBtn').hide();
                     } else {
+
+                        self.$el.find('#total').text(0);
+                        self.$el.find('#total').attr('data-cash', 0);
+
                         $("#top-bar-deleteBtn").hide();
                         $("#topBarPaymentGenerate").hide();
                         $('#top-bar-createBtn').show();
