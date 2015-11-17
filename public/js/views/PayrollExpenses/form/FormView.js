@@ -295,6 +295,11 @@ define([
                 var calc;
                 var paid;
 
+                var oldStr;
+                var newStr;
+                var month;
+                var year;
+
                 var differenceBettwenValues;
 
                 if (editedElement.length) {
@@ -304,10 +309,11 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementOldValue = parseInt(editedElement.attr('data-cash'));
                     if (editedElementContent === "dataKey") {
-                        var oldStr = editedElement.val();
-                        var newStr = oldStr.slice(0, 2) + oldStr.slice(3, 7);
-                        var month = parseInt(oldStr.slice(0, 2));
-                        var year = parseInt(oldStr.slice(3, 7));
+                        oldStr = editedElement.val();
+                        newStr = oldStr.slice(0, 2) + oldStr.slice(3, 7);
+                        month = parseInt(oldStr.slice(0, 2));
+                        year = parseInt(oldStr.slice(3, 7));
+
                         editedElementValue = parseInt(newStr) ? parseInt(newStr) : 0;
                     } else {
                         editedElementValue = parseInt(editedElement.val());

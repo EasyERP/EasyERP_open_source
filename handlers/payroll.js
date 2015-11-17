@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
+var redisStore = require('../helpers/redisClient');
+
 var PayRoll = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var PayRollSchema = mongoose.Schemas['PayRoll'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
     var _ = require('lodash');
 
     var async = require('async');
@@ -264,7 +265,7 @@ var PayRoll = function (models) {
                 var query = req.query;
                 var filter = query.filter;
                 var queryObject = {};
-                var dataKeyQuery = PayRoll.findOne({$query: {}, $orderby: {dataKey: -1}});
+                var key = 'payrollExpenses' + filter;
                 var waterfallTasks = [checkFilter, getResult, calcTotal];
 
                 function checkFilter(callback) {
@@ -335,6 +336,8 @@ var PayRoll = function (models) {
                     }
 
                     res.status(200).send(result);
+
+                    redisStore.writeToStorage('payrollExpenses', key, JSON.stringify(result));
                 });
             });
 
