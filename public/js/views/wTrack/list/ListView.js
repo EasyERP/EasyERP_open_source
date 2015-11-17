@@ -754,6 +754,7 @@ define([
 
                         if (checkLength > 0) {
                             $("#top-bar-deleteBtn").show();
+                            $("#top-bar-copyBtn").show();
 
                             if (checkLength === self.collection.length) {
                                 checkedInputs.each(function (index, element) {
@@ -765,12 +766,12 @@ define([
                         } else {
                             $("#top-bar-deleteBtn").hide();
                            // self.genInvoiceEl.hide();
+                            self.copyEl.hide();
                             $('#check_all').prop('checked', false);
                         }
                     }
 
                     self.setAllTotalVals();
-                    self.copyEl.hide();
                 });
 
                 dataService.getData("/project/getForWtrack", null, function (projects) {
