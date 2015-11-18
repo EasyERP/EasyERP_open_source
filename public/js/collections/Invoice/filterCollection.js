@@ -21,15 +21,23 @@
 
                 this.filter = options.filter;
 
-                if (regex.test(this.contentType)) {
-                    options['forSales'] = true;
-                }
-
                 if (options && options.contentType && !(options.filter))
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
-                        options.filter.forSales = true;
+                        options.filter = {
+                            'forSales': {
+                                key: 'forSales',
+                                value: ['true']
+                            }
+                        }
+                    } else {
+                        options.filter = {
+                            'forSales': {
+                                key: 'forSales',
+                                value: ['false']
+                            }
+                        }
                     }
                 }
 

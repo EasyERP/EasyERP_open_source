@@ -48,7 +48,7 @@ define([
                 "click .oe-sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect",
-                "click .departmentRow td"                                         : "capacityClick",
+                "click .departmentRow td"                                         : "capacityClick"
             },
 
             initialize: function (options) {
