@@ -722,53 +722,55 @@ define([
                     var answer = confirm("Really DELETE items ?!");
                     var value;
 
-                    $.each(checkboxes$, function (index, checkbox) {
-                        value = checkbox.value;
+                    if (answer){
+                        $.each(checkboxes$, function (index, checkbox) {
+                            value = checkbox.value;
 
-                        if (!isObjectId(value)) {
+                            if (!isObjectId(value)) {
 
-                            that.listLength--;
-                            localCounter++;
+                                that.listLength--;
+                                localCounter++;
 
-                            that.createBtnEl.show();
-                            that.saveBtnEl.hide();
+                                that.createBtnEl.show();
+                                that.saveBtnEl.hide();
 
-                            if (index === count - 1) {
-                                that.triggerDeleteItemsRender(localCounter);
-                            }
+                                if (index === count - 1) {
+                                    that.triggerDeleteItemsRender(localCounter);
+                                }
 
-                        } else {
+                            } else {
 
-                            model = that.collection.get(value);
-                            model.destroy({
-                                headers: {
-                                    mid: mid
-                                },
-                                wait   : true,
-                                success: function () {
-                                    that.listLength--;
-                                    localCounter++;
+                                model = that.collection.get(value);
+                                model.destroy({
+                                    headers: {
+                                        mid: mid
+                                    },
+                                    wait   : true,
+                                    success: function () {
+                                        that.listLength--;
+                                        localCounter++;
 
-                                    if (index === count - 1) {
-                                        that.triggerDeleteItemsRender(localCounter);
-                                    }
-                                },
-                                error  : function (model, res) {
-                                    if (res.status === 403 && index === 0) {
-                                        alert("You do not have permission to perform this action");
-                                    }
-                                    that.listLength--;
-                                    localCounter++;
-                                    if (index == count - 1) {
                                         if (index === count - 1) {
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
-                                    }
+                                    },
+                                    error  : function (model, res) {
+                                        if (res.status === 403 && index === 0) {
+                                            alert("You do not have permission to perform this action");
+                                        }
+                                        that.listLength--;
+                                        localCounter++;
+                                        if (index == count - 1) {
+                                            if (index === count - 1) {
+                                                that.triggerDeleteItemsRender(localCounter);
+                                            }
+                                        }
 
-                                }
-                            });
-                        }
-                    });
+                                    }
+                                });
+                            }
+                        });
+                    }
 
                 } else {
                     this.cancelChanges();
