@@ -49,6 +49,7 @@ define([
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect",
                 "click .departmentRow td"                                         : "capacityClick",
+                "click .checkbox"                                                 : "checked"
             },
 
             initialize: function (options) {
@@ -790,7 +791,7 @@ define([
                     status    : status,
                     collection: collection,
                     subClass  : subNameClass,
-                    depName   : name,
+                    depName   : name
                 })).insertAfter(row);
             },
 
@@ -837,6 +838,8 @@ define([
 
                         this.$el.find(".false").remove();
                         this.hideSaveCancelBtns();
+                    } else {
+                        subRows.find('.checkbox').prop('checked', target.prop('checked'));
                     }
                 }
 
@@ -844,6 +847,31 @@ define([
                     $("#top-bar-deleteBtn").show();
                 } else {
                     $("#top-bar-deleteBtn").hide();
+                }
+            },
+
+            checked: function(e) {
+                var target = $(e.target);
+                var tr = target.closest('tr');
+                var dataName = tr.attr('data-name');
+                var subRowsCheckboxes = this.$el.find('.subRows' + dataName).find('.checkbox:checked');
+                var length = this.departmentsCollections[dataName] ? this.departmentsCollections[dataName].length : 0;
+                var depRow = this.$el.find('.departmentRow[data-name="'+ dataName +'"]');
+                var checkDepartment = depRow.find('.departmentCB');
+
+                if (length > 0) {
+                    if (subRowsCheckboxes.length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        checkDepartment.prop('checked', false);
+
+                        if (subRowsCheckboxes.length === length) {
+                            checkDepartment.prop('checked', true);
+                        }
+                    }
+                    else {
+                        $("#top-bar-deleteBtn").hide();
+                        checkDepartment.prop('checked', false);
+                    }
                 }
             },
 
@@ -973,7 +1001,7 @@ define([
                     daysCount: this.daysCount,
                     employee : {},
                     month    : this.monthElement.attr('data-content'),
-                    year     : this.yearElement.text(),
+                    year     : this.yearElement.text()
                 };
 
                 var model;
@@ -981,7 +1009,7 @@ define([
 
                 startData.department = {
                     _id : tr.attr('id'),
-                    name: tr.attr('data-name'),
+                    name: tr.attr('data-name')
                 }
 
                 model = new currentModel(startData);
@@ -1106,7 +1134,7 @@ define([
                     tr.replaceWith(template({
                         capacity: model,
                         subClass: subNameClass,
-                        depName : depName,
+                        depName : depName
                     }));
                     cb();
                 }, function (err) {

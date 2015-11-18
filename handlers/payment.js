@@ -9,6 +9,8 @@ var MAINCONSTANTS = require('../constants/mainConstants');
 var Payment = function (models, event) {
     "use strict";
     var access = require("../Modules/additions/access.js")(models);
+    var composeExpensesAndCache = require('../helpers/expenses')(models);
+
     var rewriteAccess = require('../helpers/rewriteAccess');
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var wTrackPayOutSchema = mongoose.Schemas['wTrackPayOut'];
@@ -421,6 +423,7 @@ var Payment = function (models, event) {
                             return next(err);
                         }
                         res.status(201).send({success: 'success'});
+                        composeExpensesAndCache(req);
                     });
                 });
             } else {
