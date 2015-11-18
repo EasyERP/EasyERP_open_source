@@ -103,7 +103,9 @@ define([
                             text : "Generate",
                             class: "btn",
                             id   : "generateBtn",
-                            click: self.generateItems
+                            click: function(){
+                                self.generateItems()
+                            }
                         },
                         cancel: {
                             text : "Cancel",
