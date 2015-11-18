@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Quotation = function (models) {
     var access = require("../Modules/additions/access.js")(models);
+    var rewriteAccess = require('../helpers/rewriteAccess');
     var QuotationSchema = mongoose.Schemas['Quotation'];
     var CustomerSchema = mongoose.Schemas['Customer'];
     var WorkflowSchema = mongoose.Schemas['workflow'];
@@ -139,12 +140,12 @@ var Quotation = function (models) {
 
         if (isOrder) {
             filter.isOrder = {
-                key: 'isOrder',
+                key  : 'isOrder',
                 value: ['true']
             }
         } else {
             filter.isOrder = {
-                key: 'isOrder',
+                key  : 'isOrder',
                 value: ['false']
             }
         }
@@ -175,42 +176,22 @@ var Quotation = function (models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    optionsObject,
+                    {
+                        $or: whoCanRw
+                    }
+                ]
+            };
 
             Quotation.aggregate(
                 {
-                    $match: {
-                        $and: [
-                            optionsObject,
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
-                    }
+                    $match: matchQuery
                 },
                 {
                     $project: {
@@ -230,7 +211,6 @@ var Quotation = function (models) {
             queryObject.$and.push({_id: {$in: quotationsIds}});
             //queryObject.$and.push({isOrder: isOrder});
 
-
             query = Quotation.count(queryObject);
             query.count(waterfallCallback);
         };
@@ -245,7 +225,6 @@ var Quotation = function (models) {
             res.status(200).send({count: result});
         });
     };
-
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -311,7 +290,8 @@ var Quotation = function (models) {
                     resArray.push(filtrElement);
                     break;
             }
-        };
+        }
+        ;
 
         return resArray;
     };
@@ -335,14 +315,14 @@ var Quotation = function (models) {
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var filter = query.filter || {};
 
-        if (isOrder){
+        if (isOrder) {
             filter.isOrder = {
-                key: 'isOrder',
+                key  : 'isOrder',
                 value: ['true']
             }
         } else {
             filter.isOrder = {
-                key: 'isOrder',
+                key  : 'isOrder',
                 value: ['false']
             }
         }
@@ -377,42 +357,23 @@ var Quotation = function (models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-
-            models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
-                {
-                    $match: {
-                        $and: [
-                            queryObject,
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    optionsObject,
+                    {
+                        $or: whoCanRw
                     }
+                ]
+            };
+            var Model = models.get(req.session.lastDb, "Quotation", QuotationSchema);
+
+            Model.aggregate(
+                {
+                    $match: matchQuery
                 },
                 {
                     $project: {
@@ -489,41 +450,23 @@ var Quotation = function (models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-
-            models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
-                {
-                    $match: {
-                        $and: [
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    optionsObject,
+                    {
+                        $or: whoCanRw
                     }
+                ]
+            };
+            var Model = models.get(req.session.lastDb, "Quotation", QuotationSchema);
+
+            Model.aggregate(
+                {
+                    $match: matchQuery
                 },
                 {
                     $project: {
@@ -541,7 +484,7 @@ var Quotation = function (models) {
             queryObject.isOrder = isOrder;
             query = Quotation.findOne(queryObject);
 
-           // query.populate('supplier', '_id name fullName');
+            // query.populate('supplier', '_id name fullName');
             query.populate('destination');
             query.populate('incoterm');
             query.populate('invoiceControl');
@@ -585,7 +528,6 @@ var Quotation = function (models) {
         var CustomersSchema = mongoose.Schemas['Customers'];
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var Customers = models.get(req.session.lastDb, 'Customers', CustomersSchema);
-
 
         async.waterfall([
             function (cb) {

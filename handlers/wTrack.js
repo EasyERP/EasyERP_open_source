@@ -381,48 +381,18 @@ var wTrack = function (event, models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-            var userId = req.session.uId;
-            var everyOne = {
-                whoCanRW: "everyOne"
-            };
-            var owner = {
-                $and: [
-                    {
-                        whoCanRW: 'owner'
-                    },
-                    {
-                        'groups.owner': objectId(userId)
-                    }
-                ]
-            };
-            var group = {
-                $or: [
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.users': objectId(userId)}
-                        ]
-                    },
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.group': {$in: arrOfObjectId}}
-                        ]
-                    }
-                ]
-            };
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-
                     queryObject,
                     {
                         $or: whoCanRw
                     }
                 ]
             };
-
             WTrack.aggregate(
                 {
                     $match: matchQuery
@@ -465,127 +435,133 @@ var wTrack = function (event, models) {
         });
     };
 
-    this.getById = function (req, res, next) {
-        var id = req.params.id;
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        /* var queryParams = {};
-         for (var i in req.query) {
-         queryParams[i] = req.query[i];
-         }*/
+    // region Not used ?
 
-        var departmentSearcher;
-        var contentIdsSearcher;
-        var contentSearcher;
-        var waterfallTasks;
+    //todo Check it
 
-        var contentType = req.query.contentType;
-        var isOrder = !!(contentType === 'Order');
+    //this.getById = function (req, res, next) {
+    //    var id = req.params.id;
+    //    var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+    //    /* var queryParams = {};
+    //     for (var i in req.query) {
+    //     queryParams[i] = req.query[i];
+    //     }*/
+    //
+    //    var departmentSearcher;
+    //    var contentIdsSearcher;
+    //    var contentSearcher;
+    //    var waterfallTasks;
+    //
+    //    var contentType = req.query.contentType;
+    //    var isOrder = !!(contentType === 'Order');
+    //
+    //    /* var data = {};
+    //     for (var i in req.query) {
+    //     data[i] = req.query[i];
+    //     }*/
+    //
+    //    departmentSearcher = function (waterfallCallback) {
+    //        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+    //            {
+    //                $match: {
+    //                    users: objectId(req.session.uId)
+    //                }
+    //            }, {
+    //                $project: {
+    //                    _id: 1
+    //                }
+    //            },
+    //
+    //            waterfallCallback);
+    //    };
+    //
+    //    contentIdsSearcher = function (deps, waterfallCallback) {
+    //        var arrOfObjectId = deps.objectID();
+    //
+    //        models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
+    //            {
+    //                $match: {
+    //                    $and: [
+    //                        /*optionsObject,*/
+    //                        {
+    //                            $or: [
+    //                                {
+    //                                    $or: [
+    //                                        {
+    //                                            $and: [
+    //                                                {whoCanRW: 'group'},
+    //                                                {'groups.users': objectId(req.session.uId)}
+    //                                            ]
+    //                                        },
+    //                                        {
+    //                                            $and: [
+    //                                                {whoCanRW: 'group'},
+    //                                                {'groups.group': {$in: arrOfObjectId}}
+    //                                            ]
+    //                                        }
+    //                                    ]
+    //                                },
+    //                                {
+    //                                    $and: [
+    //                                        {whoCanRW: 'owner'},
+    //                                        {'groups.owner': objectId(req.session.uId)}
+    //                                    ]
+    //                                },
+    //                                {whoCanRW: "everyOne"}
+    //                            ]
+    //                        }
+    //                    ]
+    //                }
+    //            },
+    //            {
+    //                $project: {
+    //                    _id: 1
+    //                }
+    //            },
+    //            waterfallCallback
+    //        );
+    //    };
+    //
+    //    contentSearcher = function (quotationsIds, waterfallCallback) {
+    //        var queryObject = {_id: id};
+    //        var query;
+    //
+    //        queryObject.isOrder = isOrder;
+    //        query = Quotation.findOne(queryObject);
+    //
+    //        query.populate('supplier', '_id name fullName');
+    //        query.populate('destination');
+    //        query.populate('incoterm');
+    //        query.populate('invoiceControl');
+    //        query.populate('paymentTerm');
+    //        query.populate('products.product', '_id, name');
+    //        query.populate('groups.users');
+    //        query.populate('groups.group');
+    //        query.populate('groups.owner', '_id login');
+    //        query.populate('workflow', '-sequence');
+    //        query.populate('deliverTo', '_id, name');
+    //
+    //        query.exec(waterfallCallback);
+    //    };
+    //
+    //    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+    //
+    //    access.getReadAccess(req, req.session.uId, 75, function (access) {
+    //        if (!access) {
+    //            return res.status(403).send();
+    //        }
+    //
+    //        async.waterfall(waterfallTasks, function (err, result) {
+    //            if (err) {
+    //                return next(err);
+    //            }
+    //
+    //            res.status(200).send(result);
+    //        });
+    //    });
+    //};
 
-        /* var data = {};
-         for (var i in req.query) {
-         data[i] = req.query[i];
-         }*/
-
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
-        };
-
-        contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-
-            models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
-                {
-                    $match: {
-                        $and: [
-                            /*optionsObject,*/
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                waterfallCallback
-            );
-        };
-
-        contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {_id: id};
-            var query;
-
-            queryObject.isOrder = isOrder;
-            query = Quotation.findOne(queryObject);
-
-            query.populate('supplier', '_id name fullName');
-            query.populate('destination');
-            query.populate('incoterm');
-            query.populate('invoiceControl');
-            query.populate('paymentTerm');
-            query.populate('products.product', '_id, name');
-            query.populate('groups.users');
-            query.populate('groups.group');
-            query.populate('groups.owner', '_id login');
-            query.populate('workflow', '-sequence');
-            query.populate('deliverTo', '_id, name');
-
-            query.exec(waterfallCallback);
-        };
-
-        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-        access.getReadAccess(req, req.session.uId, 75, function (access) {
-            if (!access) {
-                return res.status(403).send();
-            }
-
-            async.waterfall(waterfallTasks, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
-            });
-        });
-    };
+    //endregion
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
@@ -685,48 +661,18 @@ var wTrack = function (event, models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-            var userId = req.session.uId;
-            var everyOne = {
-                whoCanRW: "everyOne"
-            };
-            var owner = {
-                $and: [
-                    {
-                        whoCanRW: 'owner'
-                    },
-                    {
-                        'groups.owner': objectId(userId)
-                    }
-                ]
-            };
-            var group = {
-                $or: [
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.users': objectId(userId)}
-                        ]
-                    },
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.group': {$in: arrOfObjectId}}
-                        ]
-                    }
-                ]
-            };
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-
                     queryObject,
                     {
                         $or: whoCanRw
                     }
                 ]
             };
-
             WTrack.aggregate(
                 {
                     $match: matchQuery
