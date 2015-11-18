@@ -791,7 +791,7 @@ define([
                     status    : status,
                     collection: collection,
                     subClass  : subNameClass,
-                    depName   : name,
+                    depName   : name
                 })).insertAfter(row);
             },
 
@@ -1001,7 +1001,7 @@ define([
                     daysCount: this.daysCount,
                     employee : {},
                     month    : this.monthElement.attr('data-content'),
-                    year     : this.yearElement.text(),
+                    year     : this.yearElement.text()
                 };
 
                 var model;
@@ -1009,7 +1009,7 @@ define([
 
                 startData.department = {
                     _id : tr.attr('id'),
-                    name: tr.attr('data-name'),
+                    name: tr.attr('data-name')
                 }
 
                 model = new currentModel(startData);
@@ -1134,7 +1134,7 @@ define([
                     tr.replaceWith(template({
                         capacity: model,
                         subClass: subNameClass,
-                        depName : depName,
+                        depName : depName
                     }));
                     cb();
                 }, function (err) {
