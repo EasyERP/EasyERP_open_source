@@ -9,119 +9,118 @@ define([
     function (GenetareTemplate, moment, populate) {
         "use strict";
         var CreateView = Backbone.View.extend({
-                template: _.template(GenetareTemplate),
+            template: _.template(GenetareTemplate),
 
-                events: {
-                },
+            events: {},
 
-                initialize: function (options) {
+            initialize: function (options) {
 
-                    this.render();
-                },
+                this.render();
+            },
 
-                setChangedValue: function(){
-                    var editedElement = $('.edit');
-                    var self = this;
+            setChangedValue: function () {
+                var editedElement = $('.edit');
+                var self = this;
 
-                    if (editedElement.length) {
+                if (editedElement.length) {
 
-                        self.month = $('#month').val();
-                        self.year = $('#year').val();
+                    self.month = $('#month').val();
+                    self.year = $('#year').val();
 
+                }
+            },
+
+            generateItems: function () {
+                var self = this;
+                var data = {};
+                var url;
+                var filter;
+                var key;
+
+                var editedElement = $('.edit');
+
+                if (editedElement.length) {
+                    self.month = $('#month').val();
+                    self.year = $('#year').val();
+                }
+
+                key = parseInt(self.year) * 100 + parseInt(self.month);
+
+                filter = {
+                    "dataKey": {
+                        key  : "dataKey",
+                        value: [key]
                     }
-                },
+                };
 
-                generateItems: function () {
-                    var self = this;
-                    var data = {};
-                    var url;
-                    var filter;
-                    var key;
+                data.month = this.month;
+                data.year = this.year;
 
-                    var editedElement = $('.edit');
+                $.ajax({
+                    type       : 'POST',
+                    url : '/payroll/generate/',
+                    contentType: "application/json",
+                    data       : JSON.stringify(data),
 
-                    if (editedElement.length) {
-                        self.month = $('#month').val();
-                        self.year = $('#year').val();
+                    success: function () {
+                        $('.edit-dialog').remove();
+
+                        url = window.location.hash;
+
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(url, {trigger: true});
+
+                    },
+                    error  : function () {
+                        alert('error');
                     }
+                });
+            },
 
-                    key = parseInt(self.year) * 100 + parseInt(self.month);
-
-                    filter = {
-                        "dataKey": {
-                            key: "dataKey",
-                            value: [key]
-                        }
-                    };
-
-                    data.month = this.month;
-                    data.year = this.year;
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '/payroll/generate/',
-                        contentType: "application/json",
-                        data: JSON.stringify(data),
-
-                        success: function () {
-                            $('.edit-dialog').remove();
-
-                            url = window.location.hash;
-
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(url, {trigger: true});
-
-                        },
-                        error: function () {
-                            alert('error');
-                        }
-                    });
-                },
-
-            hideDialog: function(){
+            hideDialog: function () {
                 $('.edit-dialog').remove();
             },
 
-                render: function () {
-                    var self = this;
-                    var month = moment(new Date()).get('month');
-                    var year = moment(new Date()).get('year');
-                    var newDialog;
+            render: function () {
+                var self = this;
+                var month = moment(new Date()).get('month');
+                var year = moment(new Date()).get('year');
+                var newDialog;
 
-                    var newDate = moment([month + 1, year]);
+                var newDate = moment([month + 1, year]);
 
-                    var dialog = this.template({
-                        month: newDate.get('month'),
-                        year: year
-                    });
+                var dialog = this.template({
+                    month: newDate.get('month'),
+                    year : year
+                });
 
-                    newDialog = $(dialog);
+                newDialog = $(dialog);
 
-                    this.$el = newDialog.dialog({
-                        dialogClass: "edit-dialog",
-                        width: 300,
-                        title: "Generate Payroll Expenses",
-                        buttons: {
-                            save: {
-                                text: "Generate",
-                                class: "btn",
-                                id: "generateBtn",
-                                click: self.generateItems
-                            },
-                            cancel: {
-                                text: "Cancel",
-                                class: "btn",
-                                click: function () {
-                                    self.hideDialog();
-                                }
+                this.$el = newDialog.dialog({
+                    dialogClass: "edit-dialog",
+                    width      : 300,
+                    title      : "Generate Payroll Expenses",
+                    buttons    : {
+                        save  : {
+                            text : "Generate",
+                            class: "btn",
+                            id   : "generateBtn",
+                            click: self.generateItems
+                        },
+                        cancel: {
+                            text : "Cancel",
+                            class: "btn",
+                            click: function () {
+                                self.hideDialog();
                             }
                         }
-                    });
+                    }
+                });
 
 
-                    return this;
-                }
-            });
+                return this;
+            }
+        });
         return CreateView;
     })
 ;

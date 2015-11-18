@@ -78,13 +78,13 @@ var Filters = function (models) {
 
         async.parallel({
                 wTrack          : getWtrackFiltersValues,
-                Persons: getPersonFiltersValues,
-                Companies: getCompaniesFiltersValues,
-                Employees: getEmployeeFiltersValues,
-                Applications: getApplicationFiltersValues,
-                Projects    : getProjectFiltersValues,
-                Tasks       : getTasksFiltersValues,
-                salesInvoice: getSalesInvoiceFiltersValues,
+                Persons         : getPersonFiltersValues,
+                Companies       : getCompaniesFiltersValues,
+                Employees       : getEmployeeFiltersValues,
+                Applications    : getApplicationFiltersValues,
+                Projects        : getProjectFiltersValues,
+                Tasks           : getTasksFiltersValues,
+                salesInvoice    : getSalesInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
@@ -109,7 +109,7 @@ var Filters = function (models) {
                 {
                     $group: {
                         _id             : null,
-                        'jobs': {
+                        'jobs'          : {
                             $addToSet: {
                                 _id : '$jobs._id',
                                 name: '$jobs.name'
@@ -423,7 +423,7 @@ var Filters = function (models) {
                     }, {
                         $and: [{isEmployee: false}, {
                             lastFire: {
-                                $ne: null,
+                                $ne : null,
                                 $gte: startDate
                             }
                         } /*{firedCount: {$gt: 0}}*/]
@@ -437,14 +437,14 @@ var Filters = function (models) {
                 },
                 {
                     $group: {
-                        _id          : null,
-                        'name'       : {
+                        _id         : null,
+                        'name'      : {
                             $addToSet: {
                                 _id : '$_id',
                                 name: {$concat: ['$name.first', ' ', '$name.last']}
                             }
                         },
-                        'department' : {
+                        'department': {
                             $addToSet: {
                                 _id : '$department._id',
                                 name: {'$ifNull': ['$department.name', 'None']}
@@ -595,7 +595,7 @@ var Filters = function (models) {
                                 name: {'$ifNull': ['$workflow', 'None']}
                             }
                         },
-                        'name'     : {
+                        'name'         : {
                             $addToSet: {
                                 _id : '$_id',
                                 name: {'$ifNull': ['$name', 'None']}
@@ -618,7 +618,8 @@ var Filters = function (models) {
             customerPayments.aggregate([
                 {
                     $match: {
-                        forSale: false
+                        forSale: false,
+                        bonus  : true
                     }
                 },
                 {
@@ -769,7 +770,6 @@ var Filters = function (models) {
                 } else {
                     callback(null, []);
                 }
-
 
             });
         };
@@ -956,7 +956,7 @@ var Filters = function (models) {
                                 name: '$dataKey'
                             }
                         },
-                        'type': {
+                        'type'    : {
                             $addToSet: {
                                 _id : '$type._id',
                                 name: '$type.name'

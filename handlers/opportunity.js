@@ -3,6 +3,7 @@ var Opportunity = function (models) {
 
     var access = require("../Modules/additions/access.js")(models);
     var _ = require('../node_modules/underscore');
+    var rewriteAccess = require('../helpers/rewriteAccess');
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
@@ -94,7 +95,7 @@ var Opportunity = function (models) {
                 callback(null, result);
             })
 
-        };
+        }
 
         function createLead(result, callback) {
             var saveObject;
@@ -104,7 +105,7 @@ var Opportunity = function (models) {
             var contactName = {
                 first: name,
                 last : ''
-            }
+            };
 
             var messageString = 'message:' + message;
             var utm_termString = '\nutm_term: ' + utm_term;
@@ -139,7 +140,7 @@ var Opportunity = function (models) {
                 source        : source,
                 internalNotes : internalNotes,
                 isOpportunitie: false
-            }
+            };
 
             leadModel = new Opportunitie(saveObject);
 
@@ -150,7 +151,7 @@ var Opportunity = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         if (isEmailValid) {
             async.waterfall(waterfallTasks, function (err, result) {
@@ -171,7 +172,7 @@ var Opportunity = function (models) {
                 array[i] = parseInt(array[i]);
             }
         }
-    };
+    }
 
     function caseFilter(filter, content) {
         var condition;
@@ -195,7 +196,9 @@ var Opportunity = function (models) {
                     });
                     break;
                 case 'Next action':
-                    if (!condition.length) condition = [''];
+                    if (!condition.length) {
+                        condition = [''];
+                    }
                     content.push({'nextAction.desc': {$in: condition}});
                     break;
                 case 'Expected revenue':
@@ -204,7 +207,7 @@ var Opportunity = function (models) {
                     break;
             }
         }
-    };
+    }
 
     this.getByViewType = function (req, res, next) {
         var viewType = req.params.viewType;
@@ -447,37 +450,9 @@ var Opportunity = function (models) {
                 waterfallCallback);
         };
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-            var userId = req.session.uId;
-            var everyOne = {
-                whoCanRW: "everyOne"
-            };
-            var owner = {
-                $and: [
-                    {
-                        whoCanRW: 'owner'
-                    },
-                    {
-                        'groups.owner': objectId(userId)
-                    }
-                ]
-            };
-            var group = {
-                $or: [
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.users': objectId(userId)}
-                        ]
-                    },
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.group': {$in: arrOfObjectId}}
-                        ]
-                    }
-                ]
-            };
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
@@ -550,7 +525,7 @@ var Opportunity = function (models) {
                 res.status(200).send({data: result});
             });
         });
-    };
+    }
 
     this.getFilterValues = function (req, res, next) {
         var opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
@@ -648,37 +623,9 @@ var Opportunity = function (models) {
                 waterfallCallback);
         };
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-            var userId = req.session.uId;
-            var everyOne = {
-                whoCanRW: "everyOne"
-            };
-            var owner = {
-                $and: [
-                    {
-                        whoCanRW: 'owner'
-                    },
-                    {
-                        'groups.owner': objectId(userId)
-                    }
-                ]
-            };
-            var group = {
-                $or: [
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.users': objectId(userId)}
-                        ]
-                    },
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.group': {$in: arrOfObjectId}}
-                        ]
-                    }
-                ]
-            };
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
@@ -735,7 +682,7 @@ var Opportunity = function (models) {
                 });
             });
         });
-    };
+    }
 
     function getById(req, res, next) {
         var id = req.query.id;
@@ -762,41 +709,17 @@ var Opportunity = function (models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $or: whoCanRw
+            };
 
             Opportunities.aggregate(
                 {
-                    $match: {
-                        $and: [
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
-                    }
+                    $match: matchQuery
                 },
                 {
                     $project: {
@@ -832,7 +755,8 @@ var Opportunity = function (models) {
 
             res.status(200).send(result);
         });
-    };
+    }
+
     /**
      * @module Leads
      */

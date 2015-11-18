@@ -1112,8 +1112,13 @@ var Employee = function (event, models) {
                             data.sequence -= 1;
                         }
 
+                        if (data.fire && data.fire.length){
+                            updateObject.lastFire = moment(data.fire[data.fire.length - 1]).year() * 100 + moment(data.fire[data.fire.length - 1]).isoWeek();
+                        }
+
                         if (data.fired) {
                             dataObj = {'fire': new Date()};
+                            dataObj.lastFire = moment(new Date()).year() * 100 + moment(new Date()).isoWeek();
                         } else if (data.hired) {
                             dataObj = {'hire': new Date()};
                         }
@@ -1170,6 +1175,10 @@ var Employee = function (event, models) {
                         date      : new Date()
                     }
                 };
+            }
+
+            if (data.fire && data.fire.length){
+                updateObject.lastFire = moment(data.fire[data.fire.length - 1]).year() * 100 + moment(data.fire[data.fire.length - 1]).isoWeek();
             }
 
             if (dataObj.hire || dataObj.fire) {

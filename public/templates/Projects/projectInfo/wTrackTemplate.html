@@ -5,7 +5,7 @@
             <td data-content="number"><%=startNumber + index + 1%></td>
             <td data-content="jobs" data-id="<%=wTrack.jobs._id%>"><%=wTrack.jobs.name%></td>
             <td data-content="assigned"><%=wTrack.project && wTrack.project.projectmanager ? wTrack.project.projectmanager.name : ''%></td>
-            <td class="editable" data-content="project" data-id="<%= wTrack.project._id%>"><%=wTrack.project ? wTrack.project.projectName : ''%></td>
+            <td data-content="project" data-id="<%= wTrack.project._id%>"><%=wTrack.project ? wTrack.project.projectName : ''%></td>
             <td data-content="workflow" data-id="<%=wTrack.project && wTrack.project.workflow ? wTrack.project.workflow._id : ''%>"><%=wTrack.project && wTrack.project.workflow? wTrack.project.workflow.name : ''%></td>
             <td data-content="customer" data-id="<%=wTrack.project && wTrack.project.customer? wTrack.project.customer.name : ''%>"><%=wTrack.project && wTrack.project.customer? wTrack.project.customer.name : ''%></td>
             <td class="editable" data-content="employee"><%=wTrack.employee ? wTrack.employee.name : ''%></td>
