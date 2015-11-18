@@ -9,6 +9,7 @@ var getEveryOneOption = function () {
 
 var getOwnerOption = function (ownerId) {
     var owner = objectId(ownerId);
+
     return {
         $and: [
             {
@@ -24,6 +25,7 @@ var getOwnerOption = function (ownerId) {
 var getGroupOption = function (userId, groupsId) {
     var groups = groupsId.objectID();
     var user = objectId(userId);
+
     return {
         $or: [
             {

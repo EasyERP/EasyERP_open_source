@@ -20,17 +20,13 @@ define([
                 this.groupViewName = options.groupViewName;
                 this.collection = options.currentCollection;
                 this.elementToShow = options.elementToShow || (CONSTANTS.FILTERVALUESCOUNT > this.collectionLength) ? this.collectionLength : CONSTANTS.FILTERVALUESCOUNT;
-
-                this.start;
-                this.end;
-
                 this.$el = $(options.element);
 
                 this.filteredCollection = new filterCollection(this.collection.toJSON(), sortOptions);
                 this.filteredCollection.on('reset', this.renderContent);
 
                 this.collectionLength = this.filteredCollection.length;
-                this.paginationBool = (this.collectionLength > this.elementToShow) ? true : false;
+                this.paginationBool = this.collectionLength > this.elementToShow;
 
                 this.allPages = Math.ceil(this.collectionLength / this.elementToShow);
 
@@ -41,14 +37,14 @@ define([
                         var newFilteredCollection;
 
                         if (!value) {
+                            this.$el.find('.miniStylePagination').show();
                             return this.filteredCollection.reset(this.collection.toJSON());
                         }
 
                         newFilteredCollection = this.filterCollection(value);
-
+                        this.$el.find('.miniStylePagination').toggle(!!newFilteredCollection.length);
                         this.filteredCollection.reset(newFilteredCollection);
                     }, 500);
-
 
                 _.bindAll(this, "inputEvent");
             },
@@ -86,7 +82,7 @@ define([
                 var element;
 
                 this.collectionLength = this.filteredCollection.length;
-                this.paginationBool = (this.collectionLength > this.elementToShow) ? true : false;
+                this.paginationBool = this.collectionLength > this.elementToShow;
 
                 this.allPages = Math.ceil(this.collectionLength / this.elementToShow);
 
@@ -144,10 +140,10 @@ define([
                 var currentEl = this.$el;
 
                 currentEl.append(_.template(valuesTemplate, {
-                    groupStatus: this.groupStatus,
-                    groupViewName: this.groupViewName,
-                    status: this.status,
-                    groupName: this.groupName,
+                    groupStatus   : this.groupStatus,
+                    groupViewName : this.groupViewName,
+                    status        : this.status,
+                    groupName     : this.groupName,
                     paginationBool: this.paginationBool
                 }));
 
