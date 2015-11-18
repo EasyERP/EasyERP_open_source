@@ -306,10 +306,12 @@ var Invoice = function (models, event) {
                         break;
                     }
                 case 'forSales':
-                    condition = ConvertType(condition[0], 'boolean');
-                    filtrElement[key] = condition;
-                    resArray.push(filtrElement);
-                    break;
+                    if (condition){
+                        condition = ConvertType(condition[0], 'boolean');
+                        filtrElement[key] = condition;
+                        resArray.push(filtrElement);
+                        break;
+                    }
             }
         }
         ;
