@@ -55,11 +55,13 @@ define([
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
                 var id = targetElement.attr("id");
+                var status = target$.attr("data-status");
                 var model = this.collection.get(id);
 
                 model.save({workflow: {
                     _id: target$.attr("id"),
-                    name: target$.text()
+                    name: target$.text(),
+                    status: status
                 }}, {
                     headers : {
                         mid: 55

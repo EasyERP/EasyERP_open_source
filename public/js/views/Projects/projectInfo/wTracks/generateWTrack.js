@@ -24,7 +24,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click a.generateType": "generateType",
                     "click td.editable": "editRow",
                     "change .editable ": "setEditable",
-                    "click": "hideNewSelect",
+                    //"click": "hideNewSelect",
                     'keydown input.editing': 'keyDown'
                 },
 
@@ -83,7 +83,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     ul.show();
 
-                    this.stopDefaultEvents(e);
+                   // this.stopDefaultEvents(e);
                 },
 
                 addNewEmployeeRow: function (e) {
@@ -282,10 +282,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
 
-                       // if (!elem) {
+                        if (!elem) {
                             editedCol.not('.endDateTD').text(editedElementValue);
                             editedElement.not('.endDateInput').remove();
-                       // }
+                        }
                     }
                 },
 

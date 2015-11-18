@@ -306,7 +306,7 @@ var Invoice = function (models, event) {
                         break;
                     }
                 case 'forSales':
-                    condition = ConvertType(condition, 'boolean');
+                    condition = ConvertType(condition[0], 'boolean');
                     filtrElement[key] = condition;
                     resArray.push(filtrElement);
                     break;
@@ -320,7 +320,6 @@ var Invoice = function (models, event) {
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
         var moduleId = 56;
-        var forSales = req.query.forSales;
 
         if (checkDb(db)) {
             moduleId = 64
@@ -396,7 +395,6 @@ var Invoice = function (models, event) {
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
                         optionsObject.$and = [];
-                        optionsObject.$and.push({_id: {$in: invoicesIds}});
 
                         if (filter && typeof filter === 'object') {
                             if (filter.condition === 'or') {
@@ -406,28 +404,22 @@ var Invoice = function (models, event) {
                             }
                         }
 
-                        if (forSales) {
-                            optionsObject['$and'].push({forSales: true});
-                        } else {
-                            optionsObject['$and'].push({forSales: false});
-
-                        }
+                        optionsObject.$and.push({_id: {$in: invoicesIds}});
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query
-                            //.populate('supplier', 'name _id').
-                            //populate('salesPerson', 'name _id').
-                            .populate('department', '_id departmentName').
-                            populate('createdBy.user').
-                            populate('editedBy.user').
-                            populate('groups.users').
-                            populate('groups.group').
-                            populate('groups.owner', '_id login').
-                            populate('products.jobs');
-                        /*.
-                         //populate('project', '_id projectName').
-                         populate('workflow._id', '-sequence');*/
+                            //.populate('supplier', 'name _id')
+                            //.populate('salesPerson', 'name _id')
+                            .populate('department', '_id departmentName')
+                            .populate('createdBy.user')
+                            .populate('editedBy.user')
+                            .populate('groups.users')
+                            .populate('groups.group')
+                            .populate('groups.owner', '_id login')
+                            .populate('products.jobs');
+                            /*.populate('project', '_id projectName').
+                            populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
