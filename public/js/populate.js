@@ -192,7 +192,7 @@ define([
                 return;
             }
 
-            $(".newSelectList").remove();
+            $(".newSelectList").hide(); //fixed by Liliya for generateWTracks
 
             if ((prev || next) && newSel.length) {
                 currentPage = newSel.data("page");
