@@ -344,7 +344,7 @@ define([
                 filterValues.empty();
 
                 filterIc.addClass('active');
-                filterValues.append('<span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
+                filterValues.append('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
 
 
             },
