@@ -49,7 +49,7 @@ var Quotation = function (models) {
                     function (callback) {
                         Workflow.populate(_quotation, {
                             path  : 'workflow._id',
-                            select: '-sequence',
+                            select: '-sequence'
                         }, function (err, resp) {
                             if (err) {
                                 return callback(err);
@@ -58,7 +58,7 @@ var Quotation = function (models) {
                             callback(null, resp);
                         });
                     }
-                ], function (err, results) {
+                ], function (err) {
                     if (err) {
                         return next(err);
                     }
@@ -82,7 +82,7 @@ var Quotation = function (models) {
             }
         });
 
-    };
+    }
 
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
@@ -203,11 +203,10 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var data = req.query;
             var query;
             var queryObject = {};
-            queryObject['$and'] = [];
 
+            queryObject['$and'] = [];
             queryObject.$and.push({_id: {$in: quotationsIds}});
             //queryObject.$and.push({isOrder: isOrder});
 
@@ -242,7 +241,7 @@ var Quotation = function (models) {
                 }
             }
         }
-    };
+    }
 
     function caseFilter(filter) {
         var condition;
@@ -291,10 +290,9 @@ var Quotation = function (models) {
                     break;
             }
         }
-        ;
 
         return resArray;
-    };
+    }
 
     this.getByViewType = function (req, res, next) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
@@ -363,7 +361,7 @@ var Quotation = function (models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    optionsObject,
+                    queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -455,13 +453,9 @@ var Quotation = function (models) {
             var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
-                $and: [
-                    optionsObject,
-                    {
-                        $or: whoCanRw
-                    }
-                ]
+                $or: whoCanRw
             };
+
             var Model = models.get(req.session.lastDb, "Quotation", QuotationSchema);
 
             Model.aggregate(

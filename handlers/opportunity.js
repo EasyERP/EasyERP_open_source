@@ -95,7 +95,7 @@ var Opportunity = function (models) {
                 callback(null, result);
             })
 
-        };
+        }
 
         function createLead(result, callback) {
             var saveObject;
@@ -105,7 +105,7 @@ var Opportunity = function (models) {
             var contactName = {
                 first: name,
                 last : ''
-            }
+            };
 
             var messageString = 'message:' + message;
             var utm_termString = '\nutm_term: ' + utm_term;
@@ -140,7 +140,7 @@ var Opportunity = function (models) {
                 source        : source,
                 internalNotes : internalNotes,
                 isOpportunitie: false
-            }
+            };
 
             leadModel = new Opportunitie(saveObject);
 
@@ -151,7 +151,7 @@ var Opportunity = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         if (isEmailValid) {
             async.waterfall(waterfallTasks, function (err, result) {
@@ -172,7 +172,7 @@ var Opportunity = function (models) {
                 array[i] = parseInt(array[i]);
             }
         }
-    };
+    }
 
     function caseFilter(filter, content) {
         var condition;
@@ -207,7 +207,7 @@ var Opportunity = function (models) {
                     break;
             }
         }
-    };
+    }
 
     this.getByViewType = function (req, res, next) {
         var viewType = req.params.viewType;
@@ -525,7 +525,7 @@ var Opportunity = function (models) {
                 res.status(200).send({data: result});
             });
         });
-    };
+    }
 
     this.getFilterValues = function (req, res, next) {
         var opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
@@ -682,7 +682,7 @@ var Opportunity = function (models) {
                 });
             });
         });
-    };
+    }
 
     function getById(req, res, next) {
         var id = req.query.id;
@@ -755,7 +755,8 @@ var Opportunity = function (models) {
 
             res.status(200).send(result);
         });
-    };
+    }
+
     /**
      * @module Leads
      */

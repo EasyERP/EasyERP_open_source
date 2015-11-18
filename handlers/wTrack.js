@@ -91,7 +91,7 @@ var wTrack = function (event, models) {
                         data.revenue *= 100;
                     }
 
-                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
+                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err) {
                         if (err) {
                             return next(err);
                         }
@@ -232,10 +232,10 @@ var wTrack = function (event, models) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
             }
-        };
+        }
 
         return resArray;
-    };
+    }
 
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -629,7 +629,7 @@ var wTrack = function (event, models) {
 
         var count = query.count ? query.count : 100;
         var page = query.page ? query.page : 1;
-        ;
+
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
@@ -761,7 +761,7 @@ var wTrack = function (event, models) {
             jobId = objectId(jobId);
         }
 
-        var createJob = (req.headers.createjob === 'true') ? true : false;
+        var createJob =req.headers.createjob === 'true';
         var jobName = req.headers.jobname;
         var project = req.headers.project;
 
@@ -928,7 +928,8 @@ var wTrack = function (event, models) {
                                             }
 
                                         });
-                                    };
+                                    }
+
                                     async.waterfall(waterfallTasks, function (err, result) {
                                         var baseSalary = result;
                                         var fixedExpense;
@@ -1079,6 +1080,13 @@ var wTrack = function (event, models) {
 
                                     function generateAddWeeks(addHours, lastWeek, savedwTrack) {
                                         // if (dateByWeek === (lastWeek.year * 100 + lastWeek.week)) {
+                                        var dateByMonth;
+                                        var dateByWeek;
+                                        var newMonth;
+                                        var newYear;
+                                        var newWeek;
+                                        var newObj;
+                                        var hours;
                                         var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
                                         var lastwTrack;
                                         var total = 0;
@@ -1096,8 +1104,8 @@ var wTrack = function (event, models) {
                                         });
 
                                         if (lastwTrack) {
-                                            var hours = 0;
-                                            var newObj = _.clone(lastwTrack);
+                                            hours = 0;
+                                            newObj = _.clone(lastwTrack);
 
                                             for (var i = 7; i > 0; i--) {
                                                 hours += parseInt(opt[i]);
@@ -1106,15 +1114,15 @@ var wTrack = function (event, models) {
                                             var weekCount = addHours / hours;
 
                                             for (var i = Math.round(weekCount) - 1; i > 0; i--) {
-                                                var newWeek = lastwTrack.week + i;
-                                                var newYear = newObj.year;
+                                                newWeek = lastwTrack.week + i;
+                                                newYear = newObj.year;
                                                 if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
                                                     newYear++;
                                                 }
-                                                var newMonth = moment().isoWeek(newWeek).get('month') + 1;
+                                                newMonth = moment().isoWeek(newWeek).get('month') + 1;
 
-                                                var dateByWeek = newYear * 100 + newWeek;
-                                                var dateByMonth = newYear * 100 + newMonth;
+                                                dateByWeek = newYear * 100 + newWeek;
+                                                dateByMonth = newYear * 100 + newMonth;
 
                                                 newObj.month = newMonth;
                                                 newObj.worked = hours;
@@ -1138,15 +1146,15 @@ var wTrack = function (event, models) {
                                                 var h = total / (Math.round(weekCount) - 1);
 
                                                 if ((diff <= h) || (diff <= globalTotal)) {
-                                                    var newWeek = lastwTrack.week + 1;
-                                                    var newYear = newObj.year;
+                                                    newWeek = lastwTrack.week + 1;
+                                                    newYear = newObj.year;
                                                     if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
                                                         newYear++;
                                                     }
-                                                    var newMonth = moment().isoWeek(newWeek).get('month') + 1;
+                                                    newMonth = moment().isoWeek(newWeek).get('month') + 1;
 
-                                                    var dateByWeek = newYear * 100 + newWeek;
-                                                    var dateByMonth = newYear * 100 + newMonth;
+                                                    dateByWeek = newYear * 100 + newWeek;
+                                                    dateByMonth = newYear * 100 + newMonth;
 
                                                     newObj.month = newMonth;
                                                     newObj.week = newWeek;
@@ -1189,15 +1197,15 @@ var wTrack = function (event, models) {
                                                     });
                                                 } else {
                                                     for (var i = 2; i >= 1; i--) {
-                                                        var newWeek = lastwTrack.week + i;
-                                                        var newYear = newObj.year;
+                                                        newWeek = lastwTrack.week + i;
+                                                        newYear = newObj.year;
                                                         if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
                                                             newYear++;
                                                         }
-                                                        var newMonth = moment().isoWeek(newWeek).get('month') + 1;
+                                                        newMonth = moment().isoWeek(newWeek).get('month') + 1;
 
-                                                        var dateByWeek = newYear * 100 + newWeek;
-                                                        var dateByMonth = newYear * 100 + newMonth;
+                                                        dateByWeek = newYear * 100 + newWeek;
+                                                        dateByMonth = newYear * 100 + newMonth;
 
                                                         newObj.month = newMonth;
                                                         newObj.worked = hours;

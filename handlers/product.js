@@ -49,7 +49,7 @@ var Products = function (models) {
             }
         });
 
-    };
+    }
 
     this.productsUpdateOnlySelectedFields = function (req, res, next) {
         var id = req.params._id;
@@ -70,7 +70,7 @@ var Products = function (models) {
         } else {
             res.status(401).send();
         }
-    }
+    };
 
     this.getProductsImages = function (req, res, next) {
         var data = {};
@@ -101,8 +101,7 @@ var Products = function (models) {
                     res.status(200).send({data: response});
                 }
             });
-
-    };
+    }
 
     this.uploadProductFiles = function (req, res, next) {
         var os = require("os");
@@ -179,7 +178,7 @@ var Products = function (models) {
         } else {
             res.status(401).send();
         }
-    };
+    }
 
     function remove(req, res, next, id) {
         models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: id}, function (err, product) {
@@ -189,7 +188,7 @@ var Products = function (models) {
                 res.status(200).send({success: product});
             }
         });
-    };
+    }
 
     this.removeProduct = function (req, res, next) {
         var id = req.params._id;
@@ -270,10 +269,9 @@ var Products = function (models) {
                     break;
             }
         }
-        ;
 
         return resArray;
-    };
+    }
 
     function ConvertType(array, type) {
         var result = [];
@@ -293,7 +291,7 @@ var Products = function (models) {
             }
         }
         return result;
-    };
+    }
 
     function getProductsFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -305,7 +303,7 @@ var Products = function (models) {
                     var sort = {};
                     var count = query.count ? query.count : 100;
                     var page = req.query.page;
-                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+                    //var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     var departmentSearcher;
                     var contentIdsSearcher;
@@ -394,7 +392,7 @@ var Products = function (models) {
         } else {
             res.send(401);
         }
-    };
+    }
 
     function getProductsById(req, res, next) {
         var id = req.query.id;
@@ -470,7 +468,7 @@ var Products = function (models) {
 
             res.status(200).send(result);
         });
-    };
+    }
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
@@ -503,7 +501,7 @@ var Products = function (models) {
                 response.status(200).send(res);
             }
         });
-    };
+    }
 
     this.getProductsTypeForDd = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -514,7 +512,6 @@ var Products = function (models) {
     };
 
     function getProductsAlphabet(req, response, next) {
-        var options = req.query;
         var queryObject = {};
         var query;
 
@@ -528,7 +525,7 @@ var Products = function (models) {
                 response.status(200).send(res);
             }
         });
-    };
+    }
 
     this.getProductsAlphabet = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
