@@ -16,10 +16,10 @@ define([
 ], function (wTrackTemplate, wTrackTopBar, paginationTemplate, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
     var wTrackView = listView.extend({
 
-        el: '#weTracks',
+        el                      : '#weTracks',
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-        templateHeader: _.template(wTrackTopBar),
-        listItemView: listItemView,
+        templateHeader          : _.template(wTrackTopBar),
+        listItemView            : listItemView,
 
         initialize: function (options) {
             this.collection = options.model;
@@ -28,7 +28,7 @@ define([
 
             this.startNumber = options.startNumber;
 
-            if(this.startNumber < 50){
+            if (this.startNumber < 50) {
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             }
 
@@ -60,11 +60,9 @@ define([
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
-
             //this.collection.unbind('reset');
             //this.collection.unbind('showmore');
         },
-
 
         goSort: function (e) {
             var target$;
@@ -130,7 +128,7 @@ define([
                 if (itemsNumber * (page - 1) > length) {
                     context.page = page = Math.ceil(length / itemsNumber);
                     context.fetchSortCollection(context.sort);
-                   // context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                    // context.changeLocationHash(page, context.defaultItemsNumber, filter);
                 }
 
                 context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
@@ -140,22 +138,23 @@ define([
         template: _.template(wTrackTemplate),
 
         events: {
-            "mouseover .currentPageList"  : "showPagesPopup",
-            "click .itemsNumber"          : "switchPageCounter",
-            "click .showPage"             : "showPage",
-            "change #currentShowPage"     : "showPage",
-            "click #previousPage"         : "previousPage",
-            "click #nextPage"             : "nextPage",
-            "click #firstShowPage"        : "firstPage",
-            "click #lastShowPage"         : "lastPage",
+            "mouseover .currentPageList"                             : "showPagesPopup",
+            "click .itemsNumber"                                     : "switchPageCounter",
+            "click .showPage"                                        : "showPage",
+            "change #currentShowPage"                                : "showPage",
+            "click #previousPage"                                    : "previousPage",
+            "click #nextPage"                                        : "nextPage",
+            "click #firstShowPage"                                   : "firstPage",
+            "click #lastShowPage"                                    : "lastPage",
             //"click .stageSelect"                                              : "showNewSelect",
             //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .checkbox": "checked",
-            "change .listCB": "setAllTotalVals",
-            "click #top-bar-copyBtn": "copyRow",
-            "click #savewTrack": "saveItem",
-            "click #deletewTrack": "deleteItems"
+            "click .checkbox"                                        : "checked",
+            "change .listCB"                                         : "setAllTotalVals",
+            "click #top-bar-copyBtn"                                 : "copyRow",
+            "click #savewTrack"                                      : "saveItem",
+            "click #deletewTrack"                                    : "deleteItems",
+            "click .oe_sortable :not(span.arrow.down, span.arrow.up)": "goSort"
         },
 
         rerenderContent: function () {
@@ -163,11 +162,10 @@ define([
 
             var wTracks = self.collection.toJSON();
 
-                $('#listContent').html(self.template({
-                    wTracks: wTracks,
-                    startNumber: parseInt($('#grid-start'))
-                }));
-
+            $('#listContent').html(self.template({
+                wTracks    : wTracks,
+                startNumber: parseInt($('#grid-start'))
+            }));
 
         },
 
@@ -193,7 +191,11 @@ define([
             this.collection.unbind('showmore');
 
             event.preventDefault();
-            this.showPProject(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort}, true, this);
+            this.showPProject(event, {
+                filter       : this.filter,
+                newCollection: this.newCollection,
+                sort         : this.sort
+            }, true, this);
         },
 
         previousPage: function (event) {
@@ -224,7 +226,6 @@ define([
             this.collection.unbind('showmore');
 
             event.preventDefault();
-
 
             $('#check_all').prop('checked', false);
 
@@ -347,7 +348,7 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function (model) {
                             var id = model.get('_id');
 
@@ -359,7 +360,7 @@ define([
                             that.genInvoiceEl.hide();
 
                         },
-                        error: function (model, res) {
+                        error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -402,7 +403,6 @@ define([
             this.editCollection.remove(id);
         },
 
-
         checked: function (e) {
             var el = this.$el;
 
@@ -410,7 +410,7 @@ define([
                 var checkLength = el.find("input.checkbox:checked").length;
 
                 if (el.find("input.checkbox:checked").length > 0) {
-                     $("#deletewTrack").show();
+                    $("#deletewTrack").show();
                     el.find('#check_all').prop('checked', false);
 
                     if (checkLength === this.collection.length) {
@@ -418,7 +418,7 @@ define([
                     }
                 }
                 else {
-                     $("#deletewTrack").hide();
+                    $("#deletewTrack").hide();
                     el.find('#check_all').prop('checked', false);
                 }
             }
@@ -556,7 +556,6 @@ define([
         //    }
         //},
 
-
         render: function () {
             var self = this;
             var currentEl = this.$el;
@@ -564,17 +563,17 @@ define([
             var allInputs;
             var checkedInputs;
 
-            if(this.startNumber < 50) {
+            if (this.startNumber < 50) {
                 currentEl.html('');
                 currentEl.prepend(this.templateHeader);
             }
 
             currentEl.find('#listTable').html(this.template({
-                wTracks: wTracks,
+                wTracks    : wTracks,
                 startNumber: self.startNumber - 1
             }));
 
-            if(this.startNumber < 50) {
+            if (this.startNumber < 50) {
                 this.renderPagination(self.$el, self);
             }
 
@@ -585,7 +584,6 @@ define([
 
             $('#savewTrack').hide();
             $('#deletewTrack').hide();
-
 
             $('#check_all').click(function () {
                 var checkLength;
@@ -648,12 +646,10 @@ define([
                 self.responseObj['#department'] = departments;
             });
 
-
             setTimeout(function () {
                 self.bindingEventsToEditedCollection(self);
                 self.$listTable = $('#listTable');
             }, 10);
-
 
             return this;
         }
