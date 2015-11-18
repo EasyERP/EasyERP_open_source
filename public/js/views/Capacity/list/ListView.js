@@ -49,7 +49,7 @@ define([
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect",
                 "click .departmentRow td"                                         : "capacityClick",
-                "click .checkbox": "checked"
+                "click .checkbox"                                                 : "checked"
             },
 
             initialize: function (options) {
