@@ -9,33 +9,30 @@ var multipartMiddleware = multipart();
 var async = require('async');
 var logWriter = require('../helpers/logWriter.js');
 var payrollSchema = mongoose.Schemas['PayRoll'];
+var employeeSchema = mongoose.Schemas['Employee'];
 
 module.exports = function (models) {
-    var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
-
     function getExtension(filename) {
         var i = filename.lastIndexOf('.');
         return (i < 0) ? '' : filename.substr(i);
     }
 
     function importFileToDb(req, res, next) {
+        var PayRoll = models.get(req.session.lastDb, 'PayRoll', payrollSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var headers = req.headers;
         var files = req.files;
         var modelName = 'PayRoll';
         var filePath;
         var error;
-        var task;
         var rows = 0;
-        var collection, schema, Model;
-        var keysAliases = [];
-        var expertedKey = [];
+        var notImportedEmployees = [];
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
 
             if (headers && files && files.attachfile) {
 
                 filePath = files.attachfile.path;
-                modelName = headers.modelname;
 
                 if (!modelName || !filePath) {
                     error = new Error((!modelName) ? 'Model name empty' : 'File path empty');
@@ -45,25 +42,6 @@ module.exports = function (models) {
 
                     return;
                 }
-                task = importMap[modelName];
-
-                if (!task) {
-                    error = new Error('Model name\"' + modelName + '\" is not valid');
-                    error.status = 400;
-                    logWriter.log("importFile.js importFileToDb " + error);
-                    next(error);
-
-                    return;
-                }
-               /* aliases = task.aliases;
-                collection = task.collection;
-                schema = mongoose.Schemas[task.schema];
-                Model = models.get(req.session.lastDb, collection, schema);*/
-
-               /* for (var key in aliases) {
-                    keysAliases.push(key);
-                    expertedKey.push(aliases[key]);
-                }*/
 
                 switch (getExtension(filePath)) {
                     case '.xlsx':
@@ -85,6 +63,43 @@ module.exports = function (models) {
             res.status(401).send('Unauthorized');
         }
 
+        function dateObjectComposer(periodArray) {
+            "use strict";
+            var month;
+            var year = 2000 + parseInt(periodArray[1]);
+
+            switch (periodArray[0]) {
+                case 'April':
+                    month = 4;
+                    break;
+            }
+
+            return {
+                year : year,
+                month: month
+            }
+        };
+
+        function typeComposer(typeString) {
+            "use strict";
+            var typeObject = {};
+
+            typeString = typeString.toLowerCase();
+
+            switch (typeString) {
+                case 'salarycard':
+                    typeObject._id = '56459308abb1c35728ad7d10';
+                    typeObject.name = 'Salary Card';
+                    break;
+                case 'salarycash':
+                    typeObject._id = '564592fbabb1c35728ad7d0f';
+                    typeObject.name = 'Salary Cash';
+                    break;
+            }
+
+            return typeObject;
+        }
+
         function importXlsxToDb(res, next) {
             var obj = xlsx.parse(filePath);
             var sheet;
@@ -100,41 +115,56 @@ module.exports = function (models) {
 
             if (sheet && sheet.data) {
                 async.eachLimit(sheet.data, 100, function (data, cb) {
-                        var error;
+                        var fullName = data[0];
+                        var period = data[1];
+                        var type = data[2];
+                        var salary = data[3];
+                        var dataKey;
 
-                        if (!headers) {
-                            headers = data;
+                        var namesArray = fullName.split(/(?=[A-Z])/);
+                        var periodArray = period.split('/');
 
-                            if (headers.length !== expertedKey.length) {
-                                error = new Error('Different lengths headers');
-                                error.status = 400;
-                                logWriter.log("importFile.js importXlsxToDb " + error);
-                                cb(error);
+                        var saveObject = dateObjectComposer(periodArray);
+
+                        dataKey = saveObject.year * 100 + saveObject.month;
+
+                        saveObject.type = typeComposer(type);
+                        saveObject.dataKey = dataKey;
+                        saveObject.calc = salary;
+                        saveObject.paid = 0;
+                        saveObject.diff = (-1) * salary;
+                        saveObject.employee = {};
+
+                        Employee.findOne({
+                            'name.first': namesArray[0],
+                            'name.last' : namesArray[1]
+                        }, function (err, employee) {
+                            "use strict";
+                            if (err) {
+                                return cb(err);
                             }
+                            if (!employee) {
+                                notImportedEmployees.push(fullName);
+                                cb(null, 'empty');
+                            } else {
+                                saveObject.employee._id = employee._id;
+                                saveObject.employee.name = employee.name;
 
-                            for (var i = expertedKey.length - 1; i >= 0; i--) {
-
-                                if (headers[i] !== expertedKey[i]) {
-                                    error = new Error('Field \"' + headers[i] + '\" not valid. Need \"' + expertedKey[i] + '\"');
-                                    error.status = 400;
-                                    logWriter.log("importFile.js importXlsxToDb " + error);
-                                    cb(error);
-                                }
+                                saveToDbOrUpdate(saveObject, cb);
                             }
-                            cb();
-                        } else {
-                            saveToDbOrUpdate(data, cb);
-                        }
-                    },
-                    function (err) {
-                        var obj = {};
+                        });
+                    }, function (err) {
+                        var response = 'all imported';
 
                         if (err) {
                             logWriter.log("importFile.js importXlsxToDb " + err);
                             next(err);
                         } else {
-                            obj.countRows = rows;
-                            res.status(200).send(obj);
+                            if(notImportedEmployees.length) {
+                                logWriter.log("unsaved " + notImportedEmployees.toString());
+                                response = notImportedEmployees;
+                            }
+                            res.status(200).send(response);
                         }
                     }
                 );
@@ -145,31 +175,9 @@ module.exports = function (models) {
         }
 
         function saveToDbOrUpdate(objectToDb, callback) {
-            var id = objectToDb.ID;
-            var objectForSave;
+            var payroll = new PayRoll(objectToDb);
 
-            if (id) {
-                Model.update({ID: id}, objectToDb, {upsert: true}, function (err) {
-
-                    if (err) {
-                        logWriter.log("importFile.js saveToDbOrUpdate " + err);
-                        callback(err);
-                    } else {
-                        callback();
-                    }
-
-                });
-            } else {
-                objectForSave = new Model(objectToDb);
-                objectForSave.save(function (err) {
-                    if (err) {
-                        logWriter.log("importFile.js saveToDbOrUpdate " + err);
-                        callback(err);
-                    } else {
-                        callback();
-                    }
-                })
-            }
+            payroll.save(callback);
         }
     }
 
