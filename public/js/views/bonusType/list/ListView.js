@@ -15,10 +15,11 @@ define([
         'dataService',
         'populate',
         'async',
-        'constants'
+        'constants',
+        'helpers/keyCodeHelper'
     ],
 
-    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
+    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants, keyCodes) {
         var bonusTypeListView = Backbone.View.extend({
             el                 : '#content-holder',
             defaultItemsNumber : null,
@@ -145,7 +146,7 @@ define([
                 var Ids = tr.data('id');
                 var colType = el.data('type');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-                var tempContainer;
+                var prevValue;
                 var width;
 
                 if (Ids && el.prop('tagName') !== 'INPUT') {
@@ -162,9 +163,14 @@ define([
                         "<li data-id='PM'>PM</li>" + "<li data-id='Developer'>Developer</li></ul>";
                     el.append(ul);
                 } else {
-                    tempContainer = el.text();
+                    prevValue = el.text();
                     width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"   style="width:' + width + 'px">');
+                    el.html('<input class="editing" type="text" value="' + prevValue + '"   style="width:' + width + 'px">');
+                    el.find('.editing').on('keydown', function (e) {
+                        if (!keyCodes.isDigit(e.keyCode) && !keyCodes.isBackspace(e.keyCode)) {
+                            e.preventDefault();
+                        }
+                    })
                 }
 
                 return false;
@@ -730,8 +736,6 @@ define([
                             if (index === count - 1) {
                                 that.triggerDeleteItemsRender(localCounter);
                             }
-
-
 
                         } else {
 
