@@ -148,7 +148,7 @@ module.exports = function (models) {
                                 cb(null, 'empty');
                             } else {
                                 saveObject.employee._id = employee._id;
-                                saveObject.employee.name = employee.name;
+                                saveObject.employee.name = employee.name.first + ' ' + employee.name.last;
 
                                 saveToDbOrUpdate(saveObject, cb);
                             }

@@ -30,7 +30,7 @@ var payRollSchema = new mongoose.Schema({
         onCard: Number,
         total : Number
     }
-}, {collection: 'PayRoll'});
+}, {collection: 'Salary'});
 
 payRollSchema.set('toJSON', {virtuals: true});
 
@@ -42,8 +42,8 @@ if (!mongoose.Schemas) {
 
 mongoose.Schemas['PayRollOld'] = payRollSchema;
 
-var PayRollSchema =  mongoose.Schemas['PayRoll'];
-var PayRollSchemaOld =  mongoose.Schemas['PayRollOld'];
+var PayRollSchema = mongoose.Schemas['PayRoll'];
+var PayRollSchemaOld = mongoose.Schemas['PayRollOld'];
 
 var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
@@ -52,7 +52,7 @@ dbObject.once('open', function callback() {
 });
 
 var PayRoll = dbObject.model("PayRoll", PayRollSchema);
-var PayRollOld = dbObject.model("PayRollNew", PayRollSchemaOld);
+var PayRollOld = dbObject.model("PayRollOld", PayRollSchemaOld);
 
 var query = PayRollOld.find().lean();
 
@@ -69,37 +69,39 @@ query.exec(function (error, _res) {
 
         if (rayRoll) {
             objectToSave = {
-                type: {
-                    _id: "564592fbabb1c35728ad7d0f",
+                type   : {
+                    _id : "564592fbabb1c35728ad7d0f",
                     name: "Salary Cash"
                 },
-                calc: rayRoll.calc.onCash,
-                paid: rayRoll.paid ? rayRoll.paid.onCash : 0,
-                diff: rayRoll.diff.onCash
+                calc   : rayRoll.calc.onCash,
+                paid   : rayRoll.paid ? rayRoll.paid.onCash : 0,
+                diff   : rayRoll.diff.onCash,
+                dataKey: rayRoll.year * 100 + rayRoll.month
             };
 
             delete newPayRoll._id;
             delete newPayRoll.baseSalary;
             newPayRoll.type = {};
-            newPayRoll.type._id =  "56459308abb1c35728ad7d10";
+            newPayRoll.type._id = "56459308abb1c35728ad7d10";
             newPayRoll.type.name = "Salary Card";
             newPayRoll.calc = rayRoll.calc.onCard;
             newPayRoll.paid = rayRoll.paid ? rayRoll.paid.onCard : 0;
             newPayRoll.diff = rayRoll.diff.onCard;
+            newPayRoll.dataKey = rayRoll.year * 100 + rayRoll.month;
         }
 
-        if (newPayRoll.calc){
+        if (newPayRoll.calc) {
             newModel = new PayRoll(newPayRoll);
 
-            newModel.save(function(err, result){
-                if (err){
+            newModel.save(function (err, result) {
+                if (err) {
                     console.log(err);
                 }
             });
         }
 
-        PayRoll.findByIdAndUpdate(_id, objectToSave, {new: true}, function(err, result){
-            if (err){
+        PayRoll.findByIdAndUpdate(_id, objectToSave, {new: true}, function (err, result) {
+            if (err) {
                 console.log(err);
             }
             callback();

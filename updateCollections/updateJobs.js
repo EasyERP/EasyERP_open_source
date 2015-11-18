@@ -90,7 +90,7 @@ dbObject.once('open', function callback() {
 
                 empKeys.forEach(function (empId) {
                     wTRack.forEach(function (wTrack) {
-                        var emp = (wTrack.employee._id).toString();
+                        var emp = wTrack.employee._id ? (wTrack.employee._id).toString() : null;
 
                         nextDate = wTrack.dateByWeek;
                         nextMaxDate = wTrack.dateByWeek;
