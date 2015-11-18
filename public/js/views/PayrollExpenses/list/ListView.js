@@ -55,7 +55,15 @@ define([
             },
 
             generate: function () {
-                new GenerateView({});
+                var keys = [];
+
+                this.total.forEach(function(el){
+                    var key = Object.keys(el)[0];
+
+                    keys.push(key);
+                });
+
+                new GenerateView({keys: keys});
             },
 
             gotoForm: function (e) {
