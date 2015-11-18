@@ -72,6 +72,15 @@ module.exports = function (models) {
                 case 'April':
                     month = 4;
                     break;
+                case 'May':
+                    month = 5;
+                    break;
+                case 'Jun':
+                    month = 6;
+                    break;
+                case 'July':
+                    month = 7;
+                    break;
             }
 
             return {
