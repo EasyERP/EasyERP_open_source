@@ -45,7 +45,7 @@ mongoose.Schemas['PayRollOld'] = payRollSchema;
 var PayRollSchema =  mongoose.Schemas['PayRoll'];
 var PayRollSchemaOld =  mongoose.Schemas['PayRollOld'];
 
-var dbObject = mongoose.createConnection('78.46.185.131', 'development');
+var dbObject = mongoose.createConnection('78.46.185.131', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to weTrack is success");
