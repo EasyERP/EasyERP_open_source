@@ -32,6 +32,10 @@ define([
                 }
             },
 
+            generate: function(){
+              this.generateItems();
+            },
+
             generateItems: function () {
                 var self = this;
                 var data = {};
@@ -47,8 +51,8 @@ define([
 
                 key = parseInt(self.year) * 100 + parseInt(self.month);
 
-                if (key.toString() in this.keys){
-                    return alert("Please, choose new month!");
+                if (this.keys.indexOf(key.toString()) > -1){
+                    return alert("Please, choose empty month!");
                 }
 
                 data.month = this.month;
@@ -104,7 +108,8 @@ define([
                             class: "btn",
                             id   : "generateBtn",
                             click: function(){
-                                self.generateItems()
+                               // self.generateItems()
+                                self.generate()
                             }
                         },
                         cancel: {
