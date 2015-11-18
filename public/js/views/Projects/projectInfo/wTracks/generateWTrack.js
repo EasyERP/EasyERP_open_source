@@ -437,6 +437,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         editWtrackModel.employee = employee;
                         editWtrackModel.department = department;
 
+                    } else if (elementType === '#department'){
+                        departmentContainer = tr.find('[data-content="department"]');
+                        departmentContainer.find('a.current-selected').text(element.name);
+                        departmentContainer.removeClass('errorContent');
+
+                        department = {
+                            _id: element._id,
+                            departmentName: element.name
+                        };
+
+                        editWtrackModel.department = department;
                     } else {
                         targetElement.find('a').text(target.text());
                         endDateTD = tr.find('.endDateTD');
