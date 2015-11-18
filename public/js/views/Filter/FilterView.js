@@ -33,7 +33,14 @@ define([
                 "click .filters"                       : "useFilter",
                 "click #saveFilterButton"              : "saveFilter",
                 "click .removeSavedFilter"             : "removeFilterFromDB",
-                "click .removeValues"                  : "removeFilter"
+                "click .removeValues"                  : "removeFilter",
+                "keydown": "keyDown"
+            },
+
+            keyDown: function(e){
+                if (e.which === 13) {
+                   this.saveFilter();
+                }
             },
 
             initialize: function (options) {
