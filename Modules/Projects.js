@@ -1542,7 +1542,11 @@ var Project = function (models, event) {
 
                     if (data.estimated) {
                         _task.remaining = data.estimated - data.logged;
-                        _task.progress = Math.round((data.logged / data.estimated) * 100);
+                        if (data.estimated !== 0) {
+                            _task.progress = Math.round((data.logged / data.estimated) * 100);
+                        } else {
+                            _task.progress = 0;
+                        }
                         _task.estimated = data.estimated;
 
                         var StartDate = (data.StartDate) ? new Date(data.StartDate) : new Date();
