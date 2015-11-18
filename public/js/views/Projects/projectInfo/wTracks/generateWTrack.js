@@ -174,6 +174,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                             endContainer.datepicker('option', 'minDate', endDate);
 
+                            targetInput.parent().removeClass('errorContent');
+
                             self.setChangedValueToModel(targetInput);
 
                             return false;
@@ -186,6 +188,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         changeYear: true,
                         onSelect: function (text, datPicker) {
                             var targetInput = $(this);
+
+                            targetInput.parent().removeClass('errorContent');
 
                             self.setChangedValueToModel(targetInput);
 
@@ -315,7 +319,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.stopDefaultEvents(e);
 
                     if (errors.length) {
-                        return
+                        return alert("Please, enter all information first.");
                     }
 
                     if (nameRegExp.test(jobName)){
