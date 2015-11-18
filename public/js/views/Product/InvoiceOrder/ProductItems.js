@@ -215,6 +215,10 @@ define([
                 inputEl = parent.find('textarea');
             var val = inputEl.val();
 
+            if (!val.length){
+                val = 0;
+            }
+
             parent.removeClass('quickEdit').html('<span>' + val + '</span>');
 
             if (inputEl.hasClass('datepicker')) {
