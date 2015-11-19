@@ -941,7 +941,7 @@ define([
                 var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
 
                 new wTrackView({
-                    model: self.wCollection,
+                    model: this.wCollection,
                     filter: filter,
                     startNumber: startNumber
                 }).render();

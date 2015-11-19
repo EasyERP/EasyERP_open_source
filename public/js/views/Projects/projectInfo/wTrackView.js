@@ -54,6 +54,11 @@ define([
             this.render();
         },
 
+        stopDefaultEvents: function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        },
+
         showMoreContent: function (newModels) {
             var holder = this.$el;
             var itemView;
@@ -132,7 +137,7 @@ define([
 
         fetchSortCollection: function (sortObject) {
             this.sort = sortObject;
-            this.collection = new this.contentCollection({
+            this.collection = new wTrackCollection({
                 viewType        : 'list',
                 sort            : sortObject,
                 page            : this.page,
