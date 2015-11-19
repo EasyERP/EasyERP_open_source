@@ -30,7 +30,7 @@ var Payment = function (models, event) {
         var validDbs = ["weTrack", "production", "development"];
 
         return validDbs.indexOf(db) !== -1;
-    };
+    }
 
     function returnModuleId(req) {
         var body = req.body;
@@ -39,7 +39,7 @@ var Payment = function (models, event) {
         moduleId = !!body.forSales ? 61 : !!body.salary ? 79 : 60;
 
         return moduleId;
-    };
+    }
 
     function returnModel(req, options) {
         var Payment;
@@ -113,10 +113,9 @@ var Payment = function (models, event) {
                     break;
             }
         }
-        ;
 
         return resArray;
-    };
+    }
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -134,7 +133,7 @@ var Payment = function (models, event) {
                 }
             }
         }
-    };
+    }
 
     function getPaymentFilter(req, res, next, options) {
         var isWtrack = checkDb(req.session.lastDb);
@@ -274,7 +273,7 @@ var Payment = function (models, event) {
         } else {
             res.send(401);
         }
-    };
+    }
 
     this.getById = function (req, res, next) {
         var id = req.params.id;
@@ -392,7 +391,7 @@ var Payment = function (models, event) {
                     paid: _payment.paidAmount
                 }
             }, cb);
-        };
+        }
 
         access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
@@ -459,7 +458,7 @@ var Payment = function (models, event) {
 
         function fetchInvoice(waterfallCallback) {
             Invoice.findById(invoiceId, waterfallCallback);
-        };
+        }
 
         function savePayment(invoice, waterfallCallback) {
             var payment = new Payment(data);
@@ -477,7 +476,7 @@ var Payment = function (models, event) {
                 }
                 waterfallCallback(null, invoice, payment);
             });
-        };
+        }
 
         function invoiceUpdater(invoice, payment, waterfallCallback) {
             var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
@@ -555,7 +554,7 @@ var Payment = function (models, event) {
                     waterfallCallback(null, invoice, payment);
                 });
             });
-        };
+        }
 
         function updateWtrack(invoice, payment, waterfallCallback) {
             var paid = payment.paidAmount || 0;
@@ -571,7 +570,7 @@ var Payment = function (models, event) {
                         }
                         innerWaterfallCb(null, wTrackDoc);
                     });
-                };
+                }
 
                 function wTrackUpdater(wTrackDoc, innerWaterfallCb) {
                     var wTrackAmount;
@@ -613,10 +612,10 @@ var Payment = function (models, event) {
                     } else {
                         innerWaterfallCb(null, payment);
                     }
-                };
+                }
 
                 async.waterfall([wTrackFinder, wTrackUpdater], cb);
-            };
+            }
 
             if (!paid) {
                 return waterfallCallback(null, payment);
@@ -630,7 +629,7 @@ var Payment = function (models, event) {
                 waterfallCallback(null, payment);
             });
 
-        };
+        }
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
