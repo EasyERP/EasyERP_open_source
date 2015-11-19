@@ -14,14 +14,14 @@
 
     function (thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
-            el: '#content-holder',
-            countPerPage: 0,
-            template: _.template(thumbnailsItemTemplate),
-            newCollection: true,
-            filter: null,
+            el                : '#content-holder',
+            countPerPage      : 0,
+            template          : _.template(thumbnailsItemTemplate),
+            newCollection     : true,
+            filter            : null,
             defaultItemsNumber: null,
-            contentType: 'Projects',//needs in view.prototype.changeLocationHash
-            viewType: 'thumbnails',//needs in view.prototype.changeLocationHash
+            contentType       : 'Projects',//needs in view.prototype.changeLocationHash
+            viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
                 $(document).off("click");
@@ -44,12 +44,13 @@
             },
 
             events: {
-                "click #showMore": "showMore",
-                "click .thumbnail": "gotoEditForm",
-                "click .dropDown": "dropDown",
-                "click .filterButton": "showfilter",
+                "click #showMore"                        : "showMore",
+                "click .thumbnail"                       : "gotoEditForm",
+                "click .dropDown"                        : "dropDown",
+                "click .filterButton"                    : "showfilter",
                 "click .health-wrapper .health-container": "showHealthDd",
                 "click .health-wrapper ul li div": "chooseHealthDd",
+                "click .tasksByProject": "dropDown",
                 "click .stageSelect": "showNewSelect",
                 "click .newSelectList li": "chooseOption",
                 "click": "hideHealth",
@@ -72,7 +73,7 @@
                     this.hideHealth();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
                 }
             },
@@ -85,16 +86,17 @@
                 var filter;
 
                 model.save({'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text()}, {
-                    headers: {
+                    headers : {
                         mid: 39
                     },
-                    patch: true,
+                    patch   : true,
                     validate: false,
-                    success: function () {
+                    success : function () {
                         var filter = window.location.hash.split('filter=')[1];
                         var url = "#easyErp/Projects/thumbnails";
-                        if (filter)
+                        if (filter) {
                             url += '/filter=' + filter;
+                        }
                         Backbone.history.fragment = "";
                         Backbone.history.navigate(url, {trigger: true});
                     }
@@ -115,12 +117,12 @@
                 target.find(".health-container a").attr("class", target$.attr("class")).attr("data-value", currTargHelth);
 
                 model.save({health: helth}, {
-                    headers: {
+                    headers : {
                         mid: 39
                     },
-                    patch: true,
+                    patch   : true,
                     validate: false,
-                    success: function () {
+                    success : function () {
                         $(".health-wrapper ul").hide();
                     }
                 });
@@ -149,7 +151,6 @@
                         this.showFilteredPage();
                     }
                 }
-
             },
 
             showFilteredPage: function (filter) {
@@ -159,7 +160,7 @@
 
                 this.filter = filter;
 
-                if (Object.keys(filter).length === 0){
+                if (Object.keys(filter).length === 0) {
                     this.filter = {};
                 }
 
@@ -167,11 +168,10 @@
                 this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
             },
 
-
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Projects', {
                     currentNumber: currentNumber,
-                    filter: filter,
+                    filter       : filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
@@ -209,7 +209,8 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
             },
 
             render: function () {
@@ -245,10 +246,11 @@
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0)
+                    if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                    else
+                    } else {
                         $("#top-bar-deleteBtn").hide();
+                    }
                 });
 
                 $(document).on("click", function (e) {
@@ -303,6 +305,7 @@
 
                 if (this.newCollection) {
                     this.defaultItemsNumber = 100;
+                    this.newCollection = false;
                 } else {
                     this.defaultItemsNumber += newModels.length;
 

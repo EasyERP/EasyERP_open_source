@@ -48,6 +48,8 @@ define([
                 this.viewType = options.viewType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
 
+                this.enable = true;
+
                 //App.filter = {};
 
                 this.currentCollection = {};
@@ -337,12 +339,12 @@ define([
             },
 
             showFilterName: function (filterName) {
-                var filterIc = this.$el.find('.filter-icons');
-                var filterValues = this.$el.find('.search-field .oe_searchview_input');
+                var filterIc = this.$el.find('.fa.fa-filter');
+                var filterValues = this.$el.find('.forFilterIcons');
                 filterValues.empty();
 
                 filterIc.addClass('active');
-                filterValues.append('<div class="forFilterIcons"><span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span></div>');
+                filterValues.append('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
 
 
             },
@@ -428,7 +430,10 @@ define([
                     });
                 }
 
-                this.showFilterIcons(App.filter);
+                if (App.filter && this.enable){
+                    this.showFilterIcons(App.filter);
+                }
+
             },
 
             renderGroup: function (key, filterView, filterBackend, groupStatus, groupOptions) {
@@ -629,6 +634,7 @@ define([
                 var filterId;
                 var filterByDefault;
                 var viewType;
+                var savedID;
 
                 this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
 
@@ -652,12 +658,17 @@ define([
 
                                 self.trigger('filter', App.filter, viewType);
                                 self.renderFilterContent();
-                                self.showFilterName(keys[0]);
-                                filterId = this.savedFilters[j]['_id']['_id'];
 
-                                if (typeof (filterId) === 'object') {
-                                    filterByDefault = filterId._id;
+                                savedID = this.savedFilters[j]['_id']['_id'];
+
+                                if (typeof (savedID) === 'object') {
+                                    filterByDefault = savedID._id;
                                 }
+
+                                self.showFilterName(keys[0]);
+
+                                this.enable = false;
+
                             }
 
                             filterId = this.savedFilters[j]['_id']['_id'];
@@ -671,7 +682,7 @@ define([
                 }
 
                 this.$el.find('#favoritesContent').append(content);
-                self.selectedFilter(filterId);
+                self.selectedFilter(savedID);
             },
 
             selectedFilter: function (filterId) {

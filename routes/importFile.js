@@ -182,7 +182,7 @@ module.exports = function (models) {
                         if (!headers) {
                             headers = data;
 
-                            if (headers.length != expertedKey.length) {
+                            if (headers.length !== expertedKey.length) {
                                 error = new Error('Different lengths headers');
                                 error.status = 400;
                                 logWriter.log("importFile.js importXlsxToDb " + error);

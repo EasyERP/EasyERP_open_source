@@ -3,7 +3,10 @@
  */
 define([
         'text!templates/PayrollExpenses/form/FormTemplate.html',
+        'text!templates/PayrollExpenses/form/sortTemplate.html',
+        'text!templates/PayrollExpenses/form/cancelEdit.html',
         'collections/PayrollExpenses/editCollection',
+        'collections/PayrollExpenses/sortCollection',
         'collections/PayrollPayments/editCollection',
         'models/PayRollModel',
         "views/PayrollPayments/CreateView",
@@ -11,10 +14,11 @@ define([
         "helpers",
         "moment",
         "populate",
-        "dataService"
+        "dataService",
+        "async"
     ],
 
-    function (PayrollTemplate, editCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService) {
+    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
         var PayrollExpanses = Backbone.View.extend({
 
             el: '#content-holder',
@@ -23,6 +27,8 @@ define([
 
             initialize: function (options) {
                 this.collection = options.model;
+
+                this.dataKey = this.collection.toJSON()[0].dataKey;
             },
 
             events:{
@@ -34,11 +40,137 @@ define([
                 "keydown input.editing": "keyDown",
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
-                "click .diff": "newPayment"
+                "click .diff": "newPayment",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click .oe_sortable"          : "goSort"
+            },
+
+            cancelChanges: function(e){
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+                var editedCollectin = this.editCollection;
+                var copiedCreated;
+                var dataId;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.attr('data-id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    } else if (id.length < 24) {
+                        tr.remove();
+                        model = self.changedModels;
+
+                        if (model) {
+                            delete model[id];
+                        }
+
+                        return cb();
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.startNumber = rowNumber;
+                    tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter, weekSplitter: helpers.weekSplitter}));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        self.bindingEventsToEditedCollection(self);
+                        self.hideSaveCancelBtns();
+                    }
+                });
+            },
+
+            goSort: function (e) {
+                var target$;
+                var currentParrentSortClass;
+                var sortClass;
+                var sortConst;
+                var sortBy;
+                var sortObject;
+
+                this.collection.unbind('reset');
+                this.collection.unbind('showmore');
+
+                target$ = $(e.target).closest('th');
+                currentParrentSortClass = target$.attr('class');
+                sortClass = currentParrentSortClass.split(' ')[1];
+                sortConst = 1;
+                sortBy = target$.data('sort');
+                sortObject = {};
+
+                if (!sortClass) {
+                    target$.addClass('sortDn');
+                    sortClass = "sortDn";
+                }
+                switch (sortClass) {
+                    case "sortDn":
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortDn').addClass('sortUp');
+                        sortConst = 1;
+                    }
+                        break;
+                    case "sortUp":
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortUp').addClass('sortDn');
+                        sortConst = -1;
+                    }
+                        break;
+                }
+                sortObject[sortBy] = sortConst;
+
+                this.fetchSortCollection(sortObject);
+            },
+
+            fetchSortCollection: function (sortObject) {
+                var self = this;
+
+                this.sort = sortObject;
+                this.collection = new sortCollection({
+                    viewType        : 'list',
+                    sort            : sortObject,
+                    dataKey: self.dataKey
+                });
+                this.collection.bind('reset', this.renderContent, this);
+            },
+
+            renderContent: function () {
+                var currentEl = this.$el;
+                var tBody = currentEl.find('#payRoll-TableBody');
+
+                tBody.empty();
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                if (this.collection.length > 0) {
+                    tBody.append(_.template(sortTemplate, {collection: this.collection.toJSON(), currencySplitter: helpers.currencySplitter}));
+                }
+            },
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
+
+                return false;
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").remove();
+            },
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
             },
 
             newPayment: function (e) {
@@ -532,6 +664,7 @@ define([
                 createBtnEl.hide();
 
                 saveBtnEl.show();
+                cancelBtnEl.show();
                 //cancelBtnEl.show();
                 //payBtnEl.show();
 
