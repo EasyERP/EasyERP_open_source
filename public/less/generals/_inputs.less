@@ -44,7 +44,6 @@
 }
 
 .disable_input_style { //disable all visual effects for input (add to parent input)
-  position: relative;
   //box-sizing: border-box;//bad for projects -> Bonus
   //height: 26px !important;
   //line-height: 26px;
@@ -53,17 +52,18 @@
   text-align: right;
 
   input {
-    display: none;
+    //display: none;
     height: 19px;
     margin: 0;
-    border: none;
+    border: none !important;
     width: 100%;
-    min-width: 100% !important;
+    min-width: 100%;
 
-    &:focus {
-      outline: none;
+
+    &:focus { // must be working on ui-dialog
+      outline: none ;
       box-shadow: none ;
-      border: none;
+      border: none ;
     }
   }
 }

@@ -628,22 +628,20 @@ th {
   color: #99e8ff;
 }
 .disable_input_style {
-  position: relative;
   cursor: pointer;
   text-align: right;
 }
 .disable_input_style input {
-  display: none;
   height: 19px;
   margin: 0;
-  border: none;
+  border: none !important;
   width: 100%;
-  min-width: 100% !important;
+  min-width: 100%;
 }
 .disable_input_style input:focus {
-  outline: none;
+  outline: none ;
   box-shadow: none ;
-  border: none;
+  border: none ;
 }
 /*== End Input type number =============*/
 /************* Main Colors *************/
@@ -6285,7 +6283,7 @@ ul.dialog-tabs li.right button {
   -moz-box-shadow: 0 0 5px #66b5d4;
   -webkit-box-shadow: 0 0 5px #66b5d4;
   outline: medium none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #66b5d4;
 }
 .ui-dialog input#summary {
   width: 100%;
@@ -7663,24 +7661,26 @@ span.unDone {
 }
 .form-holder form .startDate,
 .form-holder form .endDate {
-  position: relative;
   cursor: pointer;
   text-align: right;
 }
 .form-holder form .startDate input,
 .form-holder form .endDate input {
-  display: none;
   height: 19px;
   margin: 0;
-  border: none;
+  border: none !important;
   width: 100%;
-  min-width: 100% !important;
+  min-width: 100%;
 }
 .form-holder form .startDate input:focus,
 .form-holder form .endDate input:focus {
-  outline: none;
+  outline: none ;
   box-shadow: none ;
-  border: none;
+  border: none ;
+}
+.form-holder form .startDate input,
+.form-holder form .endDate input {
+  display: none;
 }
 #workflows {
   width: 603px;

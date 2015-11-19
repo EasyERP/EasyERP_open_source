@@ -1948,7 +1948,7 @@ input::-ms-clear {
       &:focus {
         .box-shadow(0, 0, 5px, @border-color-selected);
         outline: medium none;
-        border: @thin-border @border-color-selected !important;
+        border: @thin-border @border-color-selected;
       }
 
     &#summary {
@@ -4590,7 +4590,10 @@ h3.dashboard {
 
   .startDate, .endDate {
     .disable_input_style;
-  }
+      input {
+        display: none;
+      }
+   }
 
 }
 
