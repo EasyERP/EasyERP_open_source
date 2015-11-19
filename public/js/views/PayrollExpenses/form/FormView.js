@@ -4,6 +4,7 @@
 define([
         'text!templates/PayrollExpenses/form/FormTemplate.html',
         'text!templates/PayrollExpenses/form/sortTemplate.html',
+        'text!templates/PayrollExpenses/form/cancelEdit.html',
         'collections/PayrollExpenses/editCollection',
         'collections/PayrollExpenses/sortCollection',
         'collections/PayrollPayments/editCollection',
@@ -13,10 +14,11 @@ define([
         "helpers",
         "moment",
         "populate",
-        "dataService"
+        "dataService",
+        "async"
     ],
 
-    function (PayrollTemplate, sortTemplate, editCollection, sortCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService) {
+    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
         var PayrollExpanses = Backbone.View.extend({
 
             el: '#content-holder',
@@ -42,6 +44,47 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .oe_sortable"          : "goSort"
+            },
+
+            cancelChanges: function(e){
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+                var editedCollectin = this.editCollection;
+                var copiedCreated;
+                var dataId;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.attr('data-id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    } else if (id.length < 24) {
+                        tr.remove();
+                        model = self.changedModels;
+
+                        if (model) {
+                            delete model[id];
+                        }
+
+                        return cb();
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.startNumber = rowNumber;
+                    tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter, weekSplitter: helpers.weekSplitter}));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        self.bindingEventsToEditedCollection(self);
+                        self.hideSaveCancelBtns();
+                    }
+                });
             },
 
             goSort: function (e) {
@@ -85,8 +128,6 @@ define([
                 sortObject[sortBy] = sortConst;
 
                 this.fetchSortCollection(sortObject);
-                //this.changeLocationHash(1, this.defaultItemsNumber);
-               // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
             fetchSortCollection: function (sortObject) {
@@ -99,7 +140,6 @@ define([
                     dataKey: self.dataKey
                 });
                 this.collection.bind('reset', this.renderContent, this);
-                //this.collection.bind('showmore', this.showMoreContent, this);
             },
 
             renderContent: function () {
@@ -624,6 +664,7 @@ define([
                 createBtnEl.hide();
 
                 saveBtnEl.show();
+                cancelBtnEl.show();
                 //cancelBtnEl.show();
                 //payBtnEl.show();
 
