@@ -8,5 +8,23 @@ define([], function () {
         return keyCode === 8;
     };
 
-    return {isDigit: isDigit, isBackspace: isBackspace};
+    var isEnter = function (keyCode) {
+        return keyCode === 13;
+    };
+
+    var isDecimalDot = function (keyCode) {
+        return keyCode === 190;
+    };
+
+    var isDigitOrDecimalDot = function (keyCode) {
+        return isDigit(keyCode) || isDecimalDot(keyCode);
+    };
+
+    return {
+        isDigit            : isDigit,
+        isBackspace        : isBackspace,
+        isEnter            : isEnter,
+        isDecimalDot       : isDecimalDot,
+        isDigitOrDecimalDot: isDigitOrDecimalDot
+    };
 });
