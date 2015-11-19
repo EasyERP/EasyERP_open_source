@@ -1,10 +1,11 @@
 /**
  * Created by lilya on 16/11/15.
  */
-define([],
+define(
     function () {
         var PayRollCollection = Backbone.Collection.extend({
 
         });
+
         return PayRollCollection;
-});
+    });

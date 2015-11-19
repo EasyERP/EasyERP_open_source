@@ -3,7 +3,9 @@
  */
 define([
         'text!templates/PayrollExpenses/form/FormTemplate.html',
+        'text!templates/PayrollExpenses/form/sortTemplate.html',
         'collections/PayrollExpenses/editCollection',
+        'collections/PayrollExpenses/sortCollection',
         'collections/PayrollPayments/editCollection',
         'models/PayRollModel',
         "views/PayrollPayments/CreateView",
@@ -14,7 +16,7 @@ define([
         "dataService"
     ],
 
-    function (PayrollTemplate, editCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService) {
+    function (PayrollTemplate, sortTemplate, editCollection, sortCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService) {
         var PayrollExpanses = Backbone.View.extend({
 
             el: '#content-holder',
@@ -23,6 +25,8 @@ define([
 
             initialize: function (options) {
                 this.collection = options.model;
+
+                this.dataKey = this.collection.toJSON()[0].dataKey;
             },
 
             events:{
@@ -36,7 +40,79 @@ define([
                 "click": "removeNewSelect",
                 "click .diff": "newPayment",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click .oe_sortable"          : "goSort"
+            },
+
+            goSort: function (e) {
+                var target$;
+                var currentParrentSortClass;
+                var sortClass;
+                var sortConst;
+                var sortBy;
+                var sortObject;
+
+                this.collection.unbind('reset');
+                this.collection.unbind('showmore');
+
+                target$ = $(e.target).closest('th');
+                currentParrentSortClass = target$.attr('class');
+                sortClass = currentParrentSortClass.split(' ')[1];
+                sortConst = 1;
+                sortBy = target$.data('sort');
+                sortObject = {};
+
+                if (!sortClass) {
+                    target$.addClass('sortDn');
+                    sortClass = "sortDn";
+                }
+                switch (sortClass) {
+                    case "sortDn":
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortDn').addClass('sortUp');
+                        sortConst = 1;
+                    }
+                        break;
+                    case "sortUp":
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortUp').addClass('sortDn');
+                        sortConst = -1;
+                    }
+                        break;
+                }
+                sortObject[sortBy] = sortConst;
+
+                this.fetchSortCollection(sortObject);
+                //this.changeLocationHash(1, this.defaultItemsNumber);
+               // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            },
+
+            fetchSortCollection: function (sortObject) {
+                var self = this;
+
+                this.sort = sortObject;
+                this.collection = new sortCollection({
+                    viewType        : 'list',
+                    sort            : sortObject,
+                    dataKey: self.dataKey
+                });
+                this.collection.bind('reset', this.renderContent, this);
+                //this.collection.bind('showmore', this.showMoreContent, this);
+            },
+
+            renderContent: function () {
+                var currentEl = this.$el;
+                var tBody = currentEl.find('#payRoll-TableBody');
+
+                tBody.empty();
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                if (this.collection.length > 0) {
+                    tBody.append(_.template(sortTemplate, {collection: this.collection.toJSON(), currencySplitter: helpers.currencySplitter}));
+                }
             },
 
             showNewSelect: function (e, prev, next) {
