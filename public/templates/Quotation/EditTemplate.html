@@ -7,7 +7,7 @@
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
-                        <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
+                        <%if(model.workflow && model.workflow.name !== 'Canceled'){%>
                         <button class="confirmOrder">
                             <span>Confirm Order</span>
                         </button>
