@@ -563,6 +563,7 @@ require(['app'], function (app) {
             this.changeLocationHash(page, itemsNumber);
         }
 
+        context.collection.unbind();
         context.collection.bind('reset', context.renderContent, context);
         context.collection.bind('showmore', context.showMoreContent, context);
 

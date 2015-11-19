@@ -83,7 +83,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     ul.show();
 
-                   // this.stopDefaultEvents(e);
+                    this.stopDefaultEvents(e);
                 },
 
                 addNewEmployeeRow: function (e) {
@@ -179,6 +179,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             self.setChangedValueToModel(targetInput);
 
                             return false;
+                        },
+                        onChangeMonthYear : function(year, month, inst){
+                            return false;
                         }
                     }).removeClass('datapicker');
 
@@ -193,6 +196,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                             self.setChangedValueToModel(targetInput);
 
+                            return false;
+                        },
+                        onChangeMonthYear : function(year, month, inst){
                             return false;
                         }
                     }).removeClass('datapicker');

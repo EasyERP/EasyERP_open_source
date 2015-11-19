@@ -288,6 +288,9 @@ define([
             },
 
             createJob: function () {
+                this.wCollection.unbind();
+                this.wCollection.bind('reset', this.renderContent, this);
+                this.wCollection.bind('showmore', this.showMoreContent, this);
                 new GenerateWTrack({
                     model: this.formModel,
                     wTrackCollection: this.wCollection,
@@ -930,7 +933,7 @@ define([
                     startNumber: startNumber
                 }).render();
 
-                this.wCollection.bind('reset', createView);
+                this.wCollection.bind('reset', this.createView);
             },
 
             createView: function () {
@@ -938,7 +941,7 @@ define([
                 var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
 
                 new wTrackView({
-                    model: self.wCollection,
+                    model: this.wCollection,
                     filter: filter,
                     startNumber: startNumber
                 }).render();
