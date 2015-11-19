@@ -278,9 +278,13 @@ define([
                 var jobs = {};
 
                 jobs._id = $(e.target).attr('data-id');
-                jobs.name = $(e.target).attr('data-value');
+                jobs.name = $(e.target).attr('data-value');f
 
-                new GenerateWTrack({
+                if (this.generatedView){
+                    this.generatedView.undelegateEvents();
+                }
+
+                this.generatedView =  new GenerateWTrack({
                     model: this.formModel,
                     wTrackCollection: this.wCollection,
                     jobs: jobs
@@ -291,6 +295,11 @@ define([
                 this.wCollection.unbind();
                 this.wCollection.bind('reset', this.renderContent, this);
                 this.wCollection.bind('showmore', this.showMoreContent, this);
+
+                if (this.generatedView){
+                    this.generatedView.undelegateEvents();
+                }
+
                 new GenerateWTrack({
                     model: this.formModel,
                     wTrackCollection: this.wCollection,
@@ -899,7 +908,11 @@ define([
 
                     var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
 
-                    new wTrackView({
+                    if (self.wTrackView){
+                        self.wTrackView.undelegateEvents();
+                    }
+
+                    this.wTrackView = new wTrackView({
                         model: self.wCollection,
                         filter: filter,
                         startNumber: startNumber
@@ -927,7 +940,11 @@ define([
                     }
                 };
 
-                new wTrackView({
+                if (self.wTrackView){
+                    self.wTrackView.undelegateEvents();
+                }
+
+                this.wTrackView = new wTrackView({
                     model: self.wCollection,
                     filter: filter,
                     startNumber: startNumber
@@ -940,7 +957,11 @@ define([
 
                 var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
 
-                new wTrackView({
+                if (this.wTrackView){
+                    this.wTrackView.undelegateEvents();
+                }
+
+                this.wTrackView = new wTrackView({
                     model: this.wCollection,
                     filter: filter,
                     startNumber: startNumber

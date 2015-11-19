@@ -345,6 +345,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             success: function () {
                                 self.hideDialog();
 
+                                if (self.wTrackCollection.wTrackView){
+                                    self.wTrackCollection.wTrackView.undelegateEvents();
+                                }
+
                                 self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
 
                                 tabs = $(".chart-tabs");
