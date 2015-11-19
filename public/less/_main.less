@@ -1948,7 +1948,7 @@ input::-ms-clear {
       &:focus {
         .box-shadow(0, 0, 5px, @border-color-selected);
         outline: medium none;
-        border: @thin-border @border-color-selected !important;
+        border: @thin-border @border-color-selected;
       }
 
     &#summary {
@@ -2123,7 +2123,7 @@ input::-ms-clear {
     &:focus {
       .box-shadow(0, 0, 5px, @border-color-selected);
       outline: medium none;
-      border: @thin-border @border-color-selected !important;
+      border: @thin-border @border-color-selected;
     }
   }
 
@@ -2411,7 +2411,7 @@ input, textarea, select {
     &:focus {
       .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
       outline: none;
-      border: @thin-border @border-color-selected !important;
+      border: @thin-border @border-color-selected;
     }
   }
 }
@@ -2800,8 +2800,9 @@ dl {
 
   #noteBody {
     .noteContainer {
-      padding: 10px 0;
-      border-bottom: @thin-border #EEE;
+      padding: 10px;
+      border: @thin-border @border-color-main;
+      margin-bottom: 15px;
 
       .name {
         margin-right: 15px;
@@ -2815,11 +2816,12 @@ dl {
 
       .noteTitle {
         word-break: break-word;
-        //
       }
 
       .noteText {
         word-break: break-word;
+        color: @mainText-color;
+        margin-bottom: 10px;
       }
 
       .right {
@@ -2835,8 +2837,7 @@ dl {
       }
 
       &:hover {
-        background-color: #FAFAFA;
-
+        background-color: @bg-hover-drop-down-color;
         .right {
           display: block;
 
@@ -3789,30 +3790,10 @@ table#workflows {
   padding: 0 !important;
 }
 
-.startDate, .endDate {
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  height: 26px !important;
-  line-height: 26px;
-  padding: 2px 4px !important;
-  border: transparent !important;
-  text-align: center;
-
-  input {
-    display: none;
-    position: absolute;
-    top: 5px;
-    left: 0;
-    margin: 0;
-    max-width: 100%;
-  }
-}
-
 .createBtnHolder, #createBtnHolder {
   float: left;
   margin-top: 6px;
-  margin-left: 5px;
+  margin-left: 10px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -4607,7 +4588,15 @@ h3.dashboard {
     margin-top: 5px;
   }
 
+  .startDate, .endDate {
+    .disable_input_style;
+      input {
+        display: none;
+      }
+   }
+
 }
+
 
 #workflows {
   width: 603px;
@@ -5363,10 +5352,10 @@ textarea#editInput {
               color: @mainText-color;
             }
             .countDays {
-              font-size: 52px;
+              font-size: 40px;
               color: #ffffff;
               width: 126px;
-              padding: 20px;
+              padding: 10px;
               text-align: center;
               margin: 0 auto;
 
@@ -6131,9 +6120,11 @@ textarea#editInput {
       &.activeGroup {
         .groupName {
           border-bottom: 1px solid @border-color-main;
-          &:after {
-            transform: rotate(-45deg);
-            top: 18px;
+          &>span {
+            &:after {
+              transform: rotate(-45deg);
+              top: 9px;
+            }
           }
         }
 
@@ -6148,20 +6139,25 @@ textarea#editInput {
         font-size: 13px;
         padding: 10px;
         color: @mainText-color;
-        position: relative;
-        &:after {
-          //content: '\2335';
-          content: '';
-          border-style: solid;
-          border-width: 1px 1px 0 0;
-          border-color: #cdcdcd;
-          display: block;
-          height: 5px;
-          right: 110px;
-          top: 15px;
-          position: absolute;
-          width: 5px;
-          transform: rotate(135deg);
+        //position: relative;
+        &>span {
+          display: inline-block;
+          min-width: 120px;
+          padding: 0 10px;
+          position: relative;
+          &:after {
+            content: '';
+            border-style: solid;
+            border-width: 1px 1px 0 0;
+            border-color: #cdcdcd;
+            display: block;
+            height: 5px;
+            right: 10%;
+            top: 5px;
+            position: absolute;
+            width: 5px;
+            transform: rotate(135deg);
+          }
         }
       }
     }

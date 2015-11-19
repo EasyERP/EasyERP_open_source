@@ -627,6 +627,22 @@ th {
   text-decoration: none;
   color: #99e8ff;
 }
+.disable_input_style {
+  cursor: pointer;
+  text-align: right;
+}
+.disable_input_style input {
+  height: 19px;
+  margin: 0;
+  border: none !important;
+  width: 100%;
+  min-width: 100%;
+}
+.disable_input_style input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
 /*== End Input type number =============*/
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -1028,9 +1044,8 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   margin-top: 0 !important;
 }
 .totalContainer {
-  margin: 15px 20px 0 0;
+  margin-top: 15px;
   text-align: right;
-  color: #cdcdcd;
   font-size: 17px;
 }
 .borders col {
@@ -1109,13 +1124,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 #forInfo .innerTableProject .innerTableProject-footer td {
   border-width: 0;
-}
-.tableResponsive {
-  min-height: .01%;
-  overflow-x: auto;
-  width: 100%;
-  overflow-y: hidden;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 /*------------------------Constants-----------------------------*/
 .notification {
@@ -2025,7 +2033,7 @@ select:not([type="checkbox"]):focus {
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   outline: none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #66b5d4;
 }
 .current-selected {
   font-size: 12px;
@@ -3615,8 +3623,9 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .noteWrapper #noteBody .noteContainer {
-  padding: 10px 0;
-  border-bottom: 1px solid #eeeeee;
+  padding: 10px;
+  border: 1px solid #7f7f80;
+  margin-bottom: 15px;
 }
 .noteWrapper #noteBody .noteContainer .name {
   margin-right: 15px;
@@ -3631,6 +3640,8 @@ dl dd span.ui-spinner {
 }
 .noteWrapper #noteBody .noteContainer .noteText {
   word-break: break-word;
+  color: #cdcdcd;
+  margin-bottom: 10px;
 }
 .noteWrapper #noteBody .noteContainer .right {
   float: right;
@@ -3643,7 +3654,7 @@ dl dd span.ui-spinner {
   color: #CCC;
 }
 .noteWrapper #noteBody .noteContainer:hover {
-  background-color: #FAFAFA;
+  background-color: #3d3d3e;
 }
 .noteWrapper #noteBody .noteContainer:hover .right {
   display: block;
@@ -5089,31 +5100,11 @@ table#workflows tr td.edit-status {
 .noPadding {
   padding: 0 !important;
 }
-.startDate,
-.endDate {
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  height: 26px !important;
-  line-height: 26px;
-  padding: 2px 4px !important;
-  border: transparent !important;
-  text-align: center;
-}
-.startDate input,
-.endDate input {
-  display: none;
-  position: absolute;
-  top: 5px;
-  left: 0;
-  margin: 0;
-  max-width: 100%;
-}
 .createBtnHolder,
 #createBtnHolder {
   float: left;
   margin-top: 6px;
-  margin-left: 5px;
+  margin-left: 10px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -6285,7 +6276,7 @@ ul.dialog-tabs li.right button {
   -moz-box-shadow: 0 0 5px #66b5d4;
   -webkit-box-shadow: 0 0 5px #66b5d4;
   outline: medium none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #66b5d4;
 }
 .ui-dialog input#summary {
   width: 100%;
@@ -6487,7 +6478,7 @@ ul.dialog-tabs li.right button {
   -moz-box-shadow: 0 0 5px #66b5d4;
   -webkit-box-shadow: 0 0 5px #66b5d4;
   outline: medium none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #66b5d4;
 }
 .form-holder form .mainInfo {
   width: auto;
@@ -7661,6 +7652,29 @@ span.unDone {
   height: 235px;
   margin-top: 5px;
 }
+.form-holder form .startDate,
+.form-holder form .endDate {
+  cursor: pointer;
+  text-align: right;
+}
+.form-holder form .startDate input,
+.form-holder form .endDate input {
+  height: 19px;
+  margin: 0;
+  border: none !important;
+  width: 100%;
+  min-width: 100%;
+}
+.form-holder form .startDate input:focus,
+.form-holder form .endDate input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.form-holder form .startDate input,
+.form-holder form .endDate input {
+  display: none;
+}
 #workflows {
   width: 603px;
 }
@@ -8501,10 +8515,10 @@ textarea#editInput {
   color: #cdcdcd;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
-  font-size: 52px;
+  font-size: 40px;
   color: #ffffff;
   width: 126px;
-  padding: 20px;
+  padding: 10px;
   text-align: center;
   margin: 0 auto;
   /*for vacationDashboard*/
@@ -9155,9 +9169,9 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName {
   border-bottom: 1px solid #7f7f80;
 }
-.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName:after {
+.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName > span:after {
   transform: rotate(-45deg);
-  top: 18px;
+  top: 9px;
 }
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
@@ -9169,17 +9183,22 @@ textarea#editInput {
   font-size: 13px;
   padding: 10px;
   color: #cdcdcd;
+}
+.drop-down-filter #filtersContent .filterGroup .groupName > span {
+  display: inline-block;
+  min-width: 120px;
+  padding: 0 10px;
   position: relative;
 }
-.drop-down-filter #filtersContent .filterGroup .groupName:after {
+.drop-down-filter #filtersContent .filterGroup .groupName > span:after {
   content: '';
   border-style: solid;
   border-width: 1px 1px 0 0;
   border-color: #cdcdcd;
   display: block;
   height: 5px;
-  right: 110px;
-  top: 15px;
+  right: 10%;
+  top: 5px;
   position: absolute;
   width: 5px;
   transform: rotate(135deg);
