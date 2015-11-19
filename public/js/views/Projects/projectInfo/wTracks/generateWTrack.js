@@ -83,7 +83,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     ul.show();
 
-                   // this.stopDefaultEvents(e);
+                    this.stopDefaultEvents(e);
                 },
 
                 addNewEmployeeRow: function (e) {
