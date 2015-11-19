@@ -1044,8 +1044,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   margin-top: 0 !important;
 }
 .totalContainer {
-  margin-top: 15px;
+  margin: 15px 20px 0 0;
   text-align: right;
+  color: #cdcdcd;
   font-size: 17px;
 }
 .borders col {
