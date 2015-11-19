@@ -346,7 +346,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                                 self.hideDialog();
 
                                 if (self.wTrackCollection.wTrackView){
-                                    self.wTrackCollection.wTrackView.undelegateEvents();
+                                    self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
                                 }
 
                                 self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
