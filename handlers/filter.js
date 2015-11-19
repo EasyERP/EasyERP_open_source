@@ -229,6 +229,14 @@ var Filters = function (models) {
                     ]
                 }
 
+                if (!result.country) {
+                    return callback(null, result);
+                }
+
+                result.country = _.reject(result.country, function(element) {
+                    return (element.name == '' || element.name == 'None');
+                });
+
                 callback(null, result);
             });
         };
@@ -274,6 +282,14 @@ var Filters = function (models) {
                         }
                     ]
                 }
+
+                if (!result.country) {
+                    return callback(null, result);
+                }
+
+                result.country = _.reject(result.country, function(element) {
+                    return (element.name == '' || element.name == 'None');
+                });
 
                 callback(null, result);
             });
