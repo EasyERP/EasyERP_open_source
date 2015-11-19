@@ -33,6 +33,22 @@ var Filters = function (models) {
         var endDate;
         var dateRangeObject;
 
+        //made by R.Katsala block
+        function validNames(result) {
+            for (modelName in result) {
+                for (filterName in result[modelName]) {
+                    if (_.isArray(result[modelName][filterName])) {
+                        result[modelName][filterName] = _.reject(result[modelName][filterName], function (element) {
+                            return (element.name == '' || element.name == 'None');
+                        });
+                    }
+                }
+            }
+
+            return result;
+        }
+        //end R.Katsala block
+
         function dateRange() {
             "use strict";
             var weeksArr = [];
@@ -100,6 +116,10 @@ var Filters = function (models) {
                 if (err) {
                     return next(err);
                 }
+
+                //made by R.Katsala block
+                result = validNames(result);
+                //end R.Katsala block
 
                 res.status(200).send(result);
             });
@@ -229,14 +249,6 @@ var Filters = function (models) {
                     ]
                 }
 
-                if (!result.country) {
-                    return callback(null, result);
-                }
-
-                result.country = _.reject(result.country, function(element) {
-                    return (element.name == '' || element.name == 'None');
-                });
-
                 callback(null, result);
             });
         };
@@ -282,14 +294,6 @@ var Filters = function (models) {
                         }
                     ]
                 }
-
-                if (!result.country) {
-                    return callback(null, result);
-                }
-
-                result.country = _.reject(result.country, function(element) {
-                    return (element.name == '' || element.name == 'None');
-                });
 
                 callback(null, result);
             });
