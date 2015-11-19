@@ -34,11 +34,27 @@ define([
                 "keydown input.editing": "keyDown",
                 "click #expandAll": "expandAll",
                 "click": "removeNewSelect",
-                "click .diff": "newPayment"
+                "click .diff": "newPayment",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+            },
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
+
+                return false;
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").remove();
+            },
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
             },
 
             newPayment: function (e) {
