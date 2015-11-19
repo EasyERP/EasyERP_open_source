@@ -639,9 +639,9 @@ th {
   min-width: 100%;
 }
 .disable_input_style input:focus {
-  outline: none ;
-  box-shadow: none ;
-  border: none ;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 /*== End Input type number =============*/
 /************* Main Colors *************/
@@ -1124,13 +1124,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 #forInfo .innerTableProject .innerTableProject-footer td {
   border-width: 0;
-}
-.tableResponsive {
-  min-height: .01%;
-  overflow-x: auto;
-  width: 100%;
-  overflow-y: hidden;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 /*------------------------Constants-----------------------------*/
 .notification {
@@ -5111,7 +5104,7 @@ table#workflows tr td.edit-status {
 #createBtnHolder {
   float: left;
   margin-top: 6px;
-  margin-left: 5px;
+  margin-left: 10px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -7674,9 +7667,9 @@ span.unDone {
 }
 .form-holder form .startDate input:focus,
 .form-holder form .endDate input:focus {
-  outline: none ;
-  box-shadow: none ;
-  border: none ;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 .form-holder form .startDate input,
 .form-holder form .endDate input {
@@ -8522,10 +8515,10 @@ textarea#editInput {
   color: #cdcdcd;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
-  font-size: 52px;
+  font-size: 40px;
   color: #ffffff;
   width: 126px;
-  padding: 20px;
+  padding: 10px;
   text-align: center;
   margin: 0 auto;
   /*for vacationDashboard*/
