@@ -5,10 +5,18 @@
     </div>
 </div>
 <table class="list task-list">
+    <colgroup>
+        <col width="2%"/>
+        <col width="2%"/>
+        <col width="28%"/>
+        <col width="28%"/>
+        <col width="20%"/>
+        <col width="20%"/>
+    </colgroup>
     <thead>
     <tr>
-        <th><input type="checkbox" id="check_all_bonus"/></th>
-        <th>N</th>
+        <th class="centerCell"><input type="checkbox" id="check_all_bonus"/></th>
+        <th class="centerCell">N</th>
         <th>Bonus Name</th>
         <th>Employee</th>
         <th>Start Date</th>
@@ -19,8 +27,8 @@
 
     <%bonus.forEach(function(bonus, index){ %>
         <tr data-index="<%= index %>" data-id="<%=bonus._id%>">
-            <td><input type="checkbox" value="<%=bonus._id%>" class="bonus-checkbox" /></td>
-            <td><%=index + 1 %></td>
+            <td class="centerCell"><input type="checkbox" value="<%=bonus._id%>" class="bonus-checkbox" /></td>
+            <td class="centerCell"><%=index + 1 %></td>
             <td data-content="bonus" class="choseType" data-id="<%=bonus.bonusId._id%>">
                 <%=bonus.bonusId.name%>
             </td>

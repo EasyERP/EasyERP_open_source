@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var PayRollHandler = require('../handlers/payroll');
-var redisStore = require('../helpers/redisClient');
+//var redisStore = require('../helpers/redisClient');
 
 module.exports = function (models) {
     "use strict";
@@ -23,7 +23,7 @@ module.exports = function (models) {
             res.status(200).send(expenses);
         });
     };
-
+    router.get('/', handler.getSorted);
     router.get('/:viewType', cacheRetriver, handler.getForView);
     router.post('/', handler.create);
     router.post('/generate', handler.generate);
