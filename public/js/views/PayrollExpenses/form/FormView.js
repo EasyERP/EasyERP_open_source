@@ -664,6 +664,7 @@ define([
                 createBtnEl.hide();
 
                 saveBtnEl.show();
+                cancelBtnEl.show();
                 //cancelBtnEl.show();
                 //payBtnEl.show();
 
