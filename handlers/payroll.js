@@ -225,6 +225,8 @@ var PayRoll = function (models) {
 
     function getByDataKey(req, res, next) {
         var id = req.query.id;
+        var data = req.query;
+        var sort = data.sort ? data.sort : {"employee.name": 1};
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         var queryObject = {dataKey: parseInt(id)};
@@ -239,7 +241,7 @@ var PayRoll = function (models) {
                     next(error);
                 }
 
-                query = PayRoll.find(queryObject);
+                query = PayRoll.find(queryObject).sort(sort);
 
                 query.exec(function (err, result) {
                     if (err) {
@@ -254,6 +256,25 @@ var PayRoll = function (models) {
 
             next(error);
         }
+    };
+
+    this.getSorted = function(req, res, next){
+        var data = req.query;
+        var db = req.session.lastDb;
+        var dataKey = data.dataKey;
+        var queryObject = {dataKey: parseInt(dataKey)};
+        var sort = data.sort ? data.sort : {"employee.name": 1};
+        var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+
+        var query = Payroll.find(queryObject).sort(sort).lean();
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
     };
 
     function getForView(req, res, next) {

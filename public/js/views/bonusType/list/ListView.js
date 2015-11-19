@@ -15,10 +15,11 @@ define([
         'dataService',
         'populate',
         'async',
-        'constants'
+        'constants',
+        'helpers/keyCodeHelper'
     ],
 
-    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
+    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants, keyCodes) {
         var bonusTypeListView = Backbone.View.extend({
             el                 : '#content-holder',
             defaultItemsNumber : null,
@@ -67,15 +68,9 @@ define([
                 "click #lastShowPage"                                             : "lastPage",
                 "click .oe_sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
-                'keydown input.editing'                                           : 'keyDown',
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
             },
 
-            keyDown: function (e) {
-                if (e.which === 13) {
-                    this.setChangedValueToModel();
-                }
-            },
 
             setChangedValueToModel: function () {
                 var editedElement = this.$listTable.find('.editing');
@@ -145,8 +140,9 @@ define([
                 var Ids = tr.data('id');
                 var colType = el.data('type');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-                var tempContainer;
+                var prevValue;
                 var width;
+                var self = this;
 
                 if (Ids && el.prop('tagName') !== 'INPUT') {
                     if (this.Ids) {
@@ -162,9 +158,18 @@ define([
                         "<li data-id='PM'>PM</li>" + "<li data-id='Developer'>Developer</li></ul>";
                     el.append(ul);
                 } else {
-                    tempContainer = el.text();
+                    prevValue = el.text();
                     width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"   style="width:' + width + 'px">');
+                    el.html('<input class="editing" type="text" value="' + prevValue + '"   style="width:' + width + 'px">');
+                    el.find('.editing').on('keydown', function (e) {
+                        var code = e.keyCode;
+
+                        if (keyCodes.isEnter(code)) {
+                            self.setChangedValueToModel();
+                        } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBackspace(code)) {
+                            e.preventDefault();
+                        }
+                    })
                 }
 
                 return false;
@@ -308,7 +313,7 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                 }
-                ;
+
             },
 
             showNewSelect: function (e, prev, next) {
@@ -716,55 +721,55 @@ define([
                     var answer = confirm("Really DELETE items ?!");
                     var value;
 
-                    $.each(checkboxes$, function (index, checkbox) {
-                        value = checkbox.value;
+                    if (answer){
+                        $.each(checkboxes$, function (index, checkbox) {
+                            value = checkbox.value;
 
-                        if (!isObjectId(value)) {
+                            if (!isObjectId(value)) {
 
-                            that.listLength--;
-                            localCounter++;
+                                that.listLength--;
+                                localCounter++;
 
-                            that.createBtnEl.show();
-                            that.saveBtnEl.hide();
+                                that.createBtnEl.show();
+                                that.saveBtnEl.hide();
 
-                            if (index === count - 1) {
-                                that.triggerDeleteItemsRender(localCounter);
-                            }
+                                if (index === count - 1) {
+                                    that.triggerDeleteItemsRender(localCounter);
+                                }
 
+                            } else {
 
+                                model = that.collection.get(value);
+                                model.destroy({
+                                    headers: {
+                                        mid: mid
+                                    },
+                                    wait   : true,
+                                    success: function () {
+                                        that.listLength--;
+                                        localCounter++;
 
-                        } else {
-
-                            model = that.collection.get(value);
-                            model.destroy({
-                                headers: {
-                                    mid: mid
-                                },
-                                wait   : true,
-                                success: function () {
-                                    that.listLength--;
-                                    localCounter++;
-
-                                    if (index === count - 1) {
-                                        that.triggerDeleteItemsRender(localCounter);
-                                    }
-                                },
-                                error  : function (model, res) {
-                                    if (res.status === 403 && index === 0) {
-                                        alert("You do not have permission to perform this action");
-                                    }
-                                    that.listLength--;
-                                    localCounter++;
-                                    if (index == count - 1) {
                                         if (index === count - 1) {
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
-                                    }
+                                    },
+                                    error  : function (model, res) {
+                                        if (res.status === 403 && index === 0) {
+                                            alert("You do not have permission to perform this action");
+                                        }
+                                        that.listLength--;
+                                        localCounter++;
+                                        if (index == count - 1) {
+                                            if (index === count - 1) {
+                                                that.triggerDeleteItemsRender(localCounter);
+                                            }
+                                        }
 
-                                }
-                            });
-                        }
-                    });
+                                    }
+                                });
+                            }
+                        });
+                    }
 
                 } else {
                     this.cancelChanges();

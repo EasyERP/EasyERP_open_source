@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var wTrack = function (event, models) {
     var access = require("../Modules/additions/access.js")(models);
+    var rewriteAccess = require('../helpers/rewriteAccess');
     var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
@@ -90,7 +91,7 @@ var wTrack = function (event, models) {
                         data.revenue *= 100;
                     }
 
-                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
+                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err) {
                         if (err) {
                             return next(err);
                         }
@@ -231,10 +232,10 @@ var wTrack = function (event, models) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
             }
-        };
+        }
 
         return resArray;
-    };
+    }
 
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -270,37 +271,9 @@ var wTrack = function (event, models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-            var userId = req.session.uId;
-            var everyOne = {
-                whoCanRW: "everyOne"
-            };
-            var owner = {
-                $and: [
-                    {
-                        whoCanRW: 'owner'
-                    },
-                    {
-                        'groups.owner': objectId(userId)
-                    }
-                ]
-            };
-            var group = {
-                $or: [
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.users': objectId(userId)}
-                        ]
-                    },
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.group': {$in: arrOfObjectId}}
-                        ]
-                    }
-                ]
-            };
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
@@ -310,7 +283,6 @@ var wTrack = function (event, models) {
                     }
                 ]
             };
-
             WTrack.aggregate(
                 {
                     $match: matchQuery
@@ -409,48 +381,18 @@ var wTrack = function (event, models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-            var userId = req.session.uId;
-            var everyOne = {
-                whoCanRW: "everyOne"
-            };
-            var owner = {
-                $and: [
-                    {
-                        whoCanRW: 'owner'
-                    },
-                    {
-                        'groups.owner': objectId(userId)
-                    }
-                ]
-            };
-            var group = {
-                $or: [
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.users': objectId(userId)}
-                        ]
-                    },
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.group': {$in: arrOfObjectId}}
-                        ]
-                    }
-                ]
-            };
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-
                     queryObject,
                     {
                         $or: whoCanRw
                     }
                 ]
             };
-
             WTrack.aggregate(
                 {
                     $match: matchQuery
@@ -493,127 +435,133 @@ var wTrack = function (event, models) {
         });
     };
 
-    this.getById = function (req, res, next) {
-        var id = req.params.id;
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        /* var queryParams = {};
-         for (var i in req.query) {
-         queryParams[i] = req.query[i];
-         }*/
+    // region Not used ?
 
-        var departmentSearcher;
-        var contentIdsSearcher;
-        var contentSearcher;
-        var waterfallTasks;
+    //todo Check it
 
-        var contentType = req.query.contentType;
-        var isOrder = !!(contentType === 'Order');
+    //this.getById = function (req, res, next) {
+    //    var id = req.params.id;
+    //    var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+    //    /* var queryParams = {};
+    //     for (var i in req.query) {
+    //     queryParams[i] = req.query[i];
+    //     }*/
+    //
+    //    var departmentSearcher;
+    //    var contentIdsSearcher;
+    //    var contentSearcher;
+    //    var waterfallTasks;
+    //
+    //    var contentType = req.query.contentType;
+    //    var isOrder = !!(contentType === 'Order');
+    //
+    //    /* var data = {};
+    //     for (var i in req.query) {
+    //     data[i] = req.query[i];
+    //     }*/
+    //
+    //    departmentSearcher = function (waterfallCallback) {
+    //        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+    //            {
+    //                $match: {
+    //                    users: objectId(req.session.uId)
+    //                }
+    //            }, {
+    //                $project: {
+    //                    _id: 1
+    //                }
+    //            },
+    //
+    //            waterfallCallback);
+    //    };
+    //
+    //    contentIdsSearcher = function (deps, waterfallCallback) {
+    //        var arrOfObjectId = deps.objectID();
+    //
+    //        models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
+    //            {
+    //                $match: {
+    //                    $and: [
+    //                        /*optionsObject,*/
+    //                        {
+    //                            $or: [
+    //                                {
+    //                                    $or: [
+    //                                        {
+    //                                            $and: [
+    //                                                {whoCanRW: 'group'},
+    //                                                {'groups.users': objectId(req.session.uId)}
+    //                                            ]
+    //                                        },
+    //                                        {
+    //                                            $and: [
+    //                                                {whoCanRW: 'group'},
+    //                                                {'groups.group': {$in: arrOfObjectId}}
+    //                                            ]
+    //                                        }
+    //                                    ]
+    //                                },
+    //                                {
+    //                                    $and: [
+    //                                        {whoCanRW: 'owner'},
+    //                                        {'groups.owner': objectId(req.session.uId)}
+    //                                    ]
+    //                                },
+    //                                {whoCanRW: "everyOne"}
+    //                            ]
+    //                        }
+    //                    ]
+    //                }
+    //            },
+    //            {
+    //                $project: {
+    //                    _id: 1
+    //                }
+    //            },
+    //            waterfallCallback
+    //        );
+    //    };
+    //
+    //    contentSearcher = function (quotationsIds, waterfallCallback) {
+    //        var queryObject = {_id: id};
+    //        var query;
+    //
+    //        queryObject.isOrder = isOrder;
+    //        query = Quotation.findOne(queryObject);
+    //
+    //        query.populate('supplier', '_id name fullName');
+    //        query.populate('destination');
+    //        query.populate('incoterm');
+    //        query.populate('invoiceControl');
+    //        query.populate('paymentTerm');
+    //        query.populate('products.product', '_id, name');
+    //        query.populate('groups.users');
+    //        query.populate('groups.group');
+    //        query.populate('groups.owner', '_id login');
+    //        query.populate('workflow', '-sequence');
+    //        query.populate('deliverTo', '_id, name');
+    //
+    //        query.exec(waterfallCallback);
+    //    };
+    //
+    //    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+    //
+    //    access.getReadAccess(req, req.session.uId, 75, function (access) {
+    //        if (!access) {
+    //            return res.status(403).send();
+    //        }
+    //
+    //        async.waterfall(waterfallTasks, function (err, result) {
+    //            if (err) {
+    //                return next(err);
+    //            }
+    //
+    //            res.status(200).send(result);
+    //        });
+    //    });
+    //};
 
-        /* var data = {};
-         for (var i in req.query) {
-         data[i] = req.query[i];
-         }*/
-
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
-        };
-
-        contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-
-            models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
-                {
-                    $match: {
-                        $and: [
-                            /*optionsObject,*/
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                waterfallCallback
-            );
-        };
-
-        contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {_id: id};
-            var query;
-
-            queryObject.isOrder = isOrder;
-            query = Quotation.findOne(queryObject);
-
-            query.populate('supplier', '_id name fullName');
-            query.populate('destination');
-            query.populate('incoterm');
-            query.populate('invoiceControl');
-            query.populate('paymentTerm');
-            query.populate('products.product', '_id, name');
-            query.populate('groups.users');
-            query.populate('groups.group');
-            query.populate('groups.owner', '_id login');
-            query.populate('workflow', '-sequence');
-            query.populate('deliverTo', '_id, name');
-
-            query.exec(waterfallCallback);
-        };
-
-        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-        access.getReadAccess(req, req.session.uId, 75, function (access) {
-            if (!access) {
-                return res.status(403).send();
-            }
-
-            async.waterfall(waterfallTasks, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
-            });
-        });
-    };
+    //endregion
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
@@ -681,7 +629,7 @@ var wTrack = function (event, models) {
 
         var count = query.count ? query.count : 100;
         var page = query.page ? query.page : 1;
-        ;
+
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
@@ -713,48 +661,18 @@ var wTrack = function (event, models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-            var userId = req.session.uId;
-            var everyOne = {
-                whoCanRW: "everyOne"
-            };
-            var owner = {
-                $and: [
-                    {
-                        whoCanRW: 'owner'
-                    },
-                    {
-                        'groups.owner': objectId(userId)
-                    }
-                ]
-            };
-            var group = {
-                $or: [
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.users': objectId(userId)}
-                        ]
-                    },
-                    {
-                        $and: [
-                            {whoCanRW: 'group'},
-                            {'groups.group': {$in: arrOfObjectId}}
-                        ]
-                    }
-                ]
-            };
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-
                     queryObject,
                     {
                         $or: whoCanRw
                     }
                 ]
             };
-
             WTrack.aggregate(
                 {
                     $match: matchQuery
@@ -843,7 +761,7 @@ var wTrack = function (event, models) {
             jobId = objectId(jobId);
         }
 
-        var createJob = (req.headers.createjob === 'true') ? true : false;
+        var createJob =req.headers.createjob === 'true';
         var jobName = req.headers.jobname;
         var project = req.headers.project;
 
@@ -1010,7 +928,8 @@ var wTrack = function (event, models) {
                                             }
 
                                         });
-                                    };
+                                    }
+
                                     async.waterfall(waterfallTasks, function (err, result) {
                                         var baseSalary = result;
                                         var fixedExpense;
@@ -1161,6 +1080,13 @@ var wTrack = function (event, models) {
 
                                     function generateAddWeeks(addHours, lastWeek, savedwTrack) {
                                         // if (dateByWeek === (lastWeek.year * 100 + lastWeek.week)) {
+                                        var dateByMonth;
+                                        var dateByWeek;
+                                        var newMonth;
+                                        var newYear;
+                                        var newWeek;
+                                        var newObj;
+                                        var hours;
                                         var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
                                         var lastwTrack;
                                         var total = 0;
@@ -1178,8 +1104,8 @@ var wTrack = function (event, models) {
                                         });
 
                                         if (lastwTrack) {
-                                            var hours = 0;
-                                            var newObj = _.clone(lastwTrack);
+                                            hours = 0;
+                                            newObj = _.clone(lastwTrack);
 
                                             for (var i = 7; i > 0; i--) {
                                                 hours += parseInt(opt[i]);
@@ -1188,15 +1114,15 @@ var wTrack = function (event, models) {
                                             var weekCount = addHours / hours;
 
                                             for (var i = Math.round(weekCount) - 1; i > 0; i--) {
-                                                var newWeek = lastwTrack.week + i;
-                                                var newYear = newObj.year;
+                                                newWeek = lastwTrack.week + i;
+                                                newYear = newObj.year;
                                                 if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
                                                     newYear++;
                                                 }
-                                                var newMonth = moment().isoWeek(newWeek).get('month') + 1;
+                                                newMonth = moment().isoWeek(newWeek).get('month') + 1;
 
-                                                var dateByWeek = newYear * 100 + newWeek;
-                                                var dateByMonth = newYear * 100 + newMonth;
+                                                dateByWeek = newYear * 100 + newWeek;
+                                                dateByMonth = newYear * 100 + newMonth;
 
                                                 newObj.month = newMonth;
                                                 newObj.worked = hours;
@@ -1220,15 +1146,15 @@ var wTrack = function (event, models) {
                                                 var h = total / (Math.round(weekCount) - 1);
 
                                                 if ((diff <= h) || (diff <= globalTotal)) {
-                                                    var newWeek = lastwTrack.week + 1;
-                                                    var newYear = newObj.year;
+                                                    newWeek = lastwTrack.week + 1;
+                                                    newYear = newObj.year;
                                                     if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
                                                         newYear++;
                                                     }
-                                                    var newMonth = moment().isoWeek(newWeek).get('month') + 1;
+                                                    newMonth = moment().isoWeek(newWeek).get('month') + 1;
 
-                                                    var dateByWeek = newYear * 100 + newWeek;
-                                                    var dateByMonth = newYear * 100 + newMonth;
+                                                    dateByWeek = newYear * 100 + newWeek;
+                                                    dateByMonth = newYear * 100 + newMonth;
 
                                                     newObj.month = newMonth;
                                                     newObj.week = newWeek;
@@ -1271,15 +1197,15 @@ var wTrack = function (event, models) {
                                                     });
                                                 } else {
                                                     for (var i = 2; i >= 1; i--) {
-                                                        var newWeek = lastwTrack.week + i;
-                                                        var newYear = newObj.year;
+                                                        newWeek = lastwTrack.week + i;
+                                                        newYear = newObj.year;
                                                         if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
                                                             newYear++;
                                                         }
-                                                        var newMonth = moment().isoWeek(newWeek).get('month') + 1;
+                                                        newMonth = moment().isoWeek(newWeek).get('month') + 1;
 
-                                                        var dateByWeek = newYear * 100 + newWeek;
-                                                        var dateByMonth = newYear * 100 + newMonth;
+                                                        dateByWeek = newYear * 100 + newWeek;
+                                                        dateByMonth = newYear * 100 + newMonth;
 
                                                         newObj.month = newMonth;
                                                         newObj.worked = hours;

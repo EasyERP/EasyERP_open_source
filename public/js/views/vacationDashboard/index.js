@@ -153,6 +153,7 @@ define([
             var _hiredDate;
             var _firedDate;
             var _lastHiredDate = moment(hiredArr[hiredArr.length - 1], 'YYYY-MM-DD');
+            var _lastFiredDate = moment(firedArr[firedArr.length - 1], 'YYYY-MM-DD');
 
             date = moment().set('year', year).set('week', _week);
 
@@ -166,7 +167,7 @@ define([
                     _hiredDate = moment(hiredArr[i]).format('YYYY-MM-DD');
                     _firedDate = moment(firedArr[i]).format('YYYY-MM-DD');
 
-                    if (date.isBetween(_hiredDate, _firedDate) || date > _lastHiredDate) {
+                    if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && date < _lastFiredDate)) {
                         return true;
                     }
                 }

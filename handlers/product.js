@@ -1,8 +1,7 @@
-
-
 var mongoose = require('mongoose');
 var Products = function (models) {
     var access = require("../Modules/additions/access.js")(models);
+    var rewriteAccess = require('../helpers/rewriteAccess');
     var ProductSchema = mongoose.Schemas['Products'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
@@ -42,7 +41,7 @@ var Products = function (models) {
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
-        Product.findByIdAndUpdate(id, {$set: data},{new:true}, function (err, product) {
+        Product.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, product) {
             if (err) {
                 next(err);
             } else {
@@ -50,7 +49,7 @@ var Products = function (models) {
             }
         });
 
-    };
+    }
 
     this.productsUpdateOnlySelectedFields = function (req, res, next) {
         var id = req.params._id;
@@ -71,7 +70,7 @@ var Products = function (models) {
         } else {
             res.status(401).send();
         }
-    }
+    };
 
     this.getProductsImages = function (req, res, next) {
         var data = {};
@@ -98,10 +97,11 @@ var Products = function (models) {
             exec(function (error, response) {
                 if (error) {
                     next(error);
-                } else res.status(200).send({data: response});
+                } else {
+                    res.status(200).send({data: response});
+                }
             });
-
-    };
+    }
 
     this.uploadProductFiles = function (req, res, next) {
         var os = require("os");
@@ -121,13 +121,15 @@ var Products = function (models) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 uploadProductFile(req, res, next, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -135,10 +137,11 @@ var Products = function (models) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     uploadProductFile(req, res, next, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -151,7 +154,10 @@ var Products = function (models) {
     };
 
     function addAtach(req, res, next, _id, files) {//to be deleted
-        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {new: true, upsert: true}, function (err, result) {
+        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {
+            new   : true,
+            upsert: true
+        }, function (err, result) {
             if (err) {
                 next(err);
             } else {
@@ -172,7 +178,7 @@ var Products = function (models) {
         } else {
             res.status(401).send();
         }
-    };
+    }
 
     function remove(req, res, next, id) {
         models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: id}, function (err, product) {
@@ -182,7 +188,7 @@ var Products = function (models) {
                 res.status(200).send({success: product});
             }
         });
-    };
+    }
 
     this.removeProduct = function (req, res, next) {
         var id = req.params._id;
@@ -207,7 +213,7 @@ var Products = function (models) {
         if (query && query.canBeSold) {
             queryObject.canBeSold = true;
 
-            if (query.service){
+            if (query.service) {
                 var key = 'info.productType';
                 queryObject[key] = 'Service';
             }
@@ -229,7 +235,7 @@ var Products = function (models) {
         var filtrElement = {};
         var key;
 
-        for (var filterName in filter){
+        for (var filterName in filter) {
             condition = filter[filterName]['value'];
             key = filter[filterName]['key'];
 
@@ -262,10 +268,10 @@ var Products = function (models) {
                     resArray.push(filtrElement);
                     break;
             }
-        };
+        }
 
         return resArray;
-    };
+    }
 
     function ConvertType(array, type) {
         var result = [];
@@ -285,7 +291,7 @@ var Products = function (models) {
             }
         }
         return result;
-    };
+    }
 
     function getProductsFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -297,7 +303,7 @@ var Products = function (models) {
                     var sort = {};
                     var count = query.count ? query.count : 100;
                     var page = req.query.page;
-                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+                    //var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     var departmentSearcher;
                     var contentIdsSearcher;
@@ -334,42 +340,23 @@ var Products = function (models) {
                     };
 
                     contentIdsSearcher = function (deps, waterfallCallback) {
-                        var arrOfObjectId = deps.objectID();
-
-                        models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
-                            {
-                                $match: {
-                                    $and: [
-                                        optionsObject,
-                                        {
-                                            $or: [
-                                                {
-                                                    $or: [
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.users': objectId(req.session.uId)}
-                                                            ]
-                                                        },
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.group': {$in: arrOfObjectId}}
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'owner'},
-                                                        {'groups.owner': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {whoCanRW: "everyOne"}
-                                            ]
-                                        }
-                                    ]
+                        var everyOne = rewriteAccess.everyOne();
+                        var owner = rewriteAccess.owner(req.session.uId);
+                        var group = rewriteAccess.group(req.session.uId, deps);
+                        var whoCanRw = [everyOne, owner, group];
+                        var matchQuery = {
+                            $and: [
+                                optionsObject,
+                                {
+                                    $or: whoCanRw
                                 }
+                            ]
+                        };
+                        var Model = models.get(req.session.lastDb, "Product", ProductSchema);
+
+                        Model.aggregate(
+                            {
+                                $match: matchQuery
                             },
                             {
                                 $project: {
@@ -405,7 +392,7 @@ var Products = function (models) {
         } else {
             res.send(401);
         }
-    };
+    }
 
     function getProductsById(req, res, next) {
         var id = req.query.id;
@@ -434,42 +421,18 @@ var Products = function (models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $or: whoCanRw
+            };
+            var Model = models.get(req.session.lastDb, "Product", ProductSchema);
 
-            models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
+            Model.aggregate(
                 {
-                    $match: {
-                        $and: [
-                            /*optionsObject,*/
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
-                    }
+                    $match: matchQuery
                 },
                 {
                     $project: {
@@ -505,7 +468,7 @@ var Products = function (models) {
 
             res.status(200).send(result);
         });
-    };
+    }
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
@@ -538,7 +501,7 @@ var Products = function (models) {
                 response.status(200).send(res);
             }
         });
-    };
+    }
 
     this.getProductsTypeForDd = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -549,7 +512,6 @@ var Products = function (models) {
     };
 
     function getProductsAlphabet(req, response, next) {
-        var options = req.query;
         var queryObject = {};
         var query;
 
@@ -563,7 +525,7 @@ var Products = function (models) {
                 response.status(200).send(res);
             }
         });
-    };
+    }
 
     this.getProductsAlphabet = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -612,42 +574,23 @@ var Products = function (models) {
         };
 
         contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-
-            models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
-                {
-                    $match: {
-                        $and: [
-                            optionsObject,
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    optionsObject,
+                    {
+                        $or: whoCanRw
                     }
+                ]
+            };
+            var Model = models.get(req.session.lastDb, "Product", ProductSchema);
+
+            Model.aggregate(
+                {
+                    $match: matchQuery
                 },
                 {
                     $project: {

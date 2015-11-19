@@ -15,45 +15,46 @@ define([
         'collections/supplierPayments/editCollection',
         'dataService',
         'populate',
-        'async'
+        'async',
+        'helpers/keyCodeHelper'
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes) {
         var PaymentListView = Backbone.View.extend({
-            el: '#content-holder',
-            defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            sort: null,
-            newCollection: null,
-            page: null, //if reload page, and in url is valid page
-            contentType: 'supplierPayments',//needs in view.prototype.changeLocationHash
-            viewType: 'list',//needs in view.prototype.changeLocationHash
-            modelId: null,
-            $listTable: null,
-            editCollection: null,
+            el                 : '#content-holder',
+            defaultItemsNumber : null,
+            listLength         : null,
+            filter             : null,
+            sort               : null,
+            newCollection      : null,
+            page               : null, //if reload page, and in url is valid page
+            contentType        : 'supplierPayments',//needs in view.prototype.changeLocationHash
+            viewType           : 'list',//needs in view.prototype.changeLocationHash
+            modelId            : null,
+            $listTable         : null,
+            editCollection     : null,
             collectionLengthUrl: '/payment/supplier/totalCollectionLength',
-            changedModels: {},
-            responseObj: {},
+            changedModels      : {},
+            responseObj        : {},
 
             events: {
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .checkbox": "checked",
-                "click td.editable": "editRow",
-                "mouseover .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "focusout .editing": "onChangeInput"
-                //"keyup .editing": "onKeyUpInput"
+                "click .itemsNumber"                                              : "switchPageCounter",
+                "click .showPage"                                                 : "showPage",
+                "change #currentShowPage"                                         : "showPage",
+                "click #previousPage"                                             : "previousPage",
+                "click #nextPage"                                                 : "nextPage",
+                "click .checkbox"                                                 : "checked",
+                "click td.editable"                                               : "editRow",
+                "mouseover .currentPageList"                                      : "itemsNumber",
+                "click"                                                           : "hideItemsNumber",
+                "click #firstShowPage"                                            : "firstPage",
+                "click #lastShowPage"                                             : "lastPage",
+                "click .oe_sortable"                                              : "goSort",
+                "change .editable "                                               : "setEditable",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "focusout .editing"                                               : "onChangeInput",
+                "keydown .editing"                                                : "onKeyDownInput"
             },
 
             initialize: function (options) {
@@ -185,10 +186,10 @@ define([
                     tempContainer = (el.text()).trim();
                     el.html('<input class="editing" type="text" value="' + tempContainer + '">');
                     el.find('.editing').datepicker({
-                        dateFormat: "d M, yy",
+                        dateFormat : "d M, yy",
                         changeMonth: true,
-                        changeYear: true,
-                        onChanged: self.setChangedValue()
+                        changeYear : true,
+                        onChanged  : self.setChangedValue()
                     }).addClass('datepicker');
                 } else if (isWorkflow) {
                     ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
@@ -205,27 +206,24 @@ define([
 
                     if (dataContent === 'month') {
                         editingEl.attr({
-                            "min": 1,
-                            "max": 12,
+                            "min"      : 1,
+                            "max"      : 12,
                             "maxLength": 2
                         });
                     } else if (dataContent === 'year') {
                         editingEl.attr({
-                            "min": 1980,
+                            "min"      : 1980,
                             "maxLength": 4
                         });
                     }
                 }
 
-
                 return false;
             },
 
-            onKeyUpInput: function (e) {
-                var element = e.target;
-
-                if (element.maxLength && element.value.length > element.maxLength) {
-                    element.value = element.value.slice(0, element.maxLength);
+            onKeyDownInput: function (e) {
+                if (keyCodes.isEnter(e.keyCode)) {
+                    this.setChangedValueToModel();
                 }
             },
 
@@ -303,7 +301,7 @@ define([
                 var year = now.getFullYear();
                 var month = now.getMonth() + 1;
                 var startData = {
-                    year: year,
+                    year : year,
                     month: month
                 };
 
@@ -420,9 +418,9 @@ define([
                 this.defaultItemsNumber = itemsNumber;
                 this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
+                    count        : itemsNumber,
+                    page         : 1,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 this.page = 1;
@@ -436,16 +434,16 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    sort            : this.sort,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
                 dataService.getData('/supplierPayments/totalCollectionLength', {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId,
-                    contentType: this.contentType
+                    contentType     : this.contentType
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -456,17 +454,17 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    sort            : this.sort,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
 
                 });
 
                 dataService.getData('/supplierPayments/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    contentType     : this.contentType,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -478,13 +476,13 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
+                    sort         : this.sort,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData('/supplierPayments/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
+                    contentType  : this.contentType,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -496,13 +494,13 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
+                    sort         : this.sort,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData('/supplierPayments/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
+                    contentType  : this.contentType,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -540,7 +538,8 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
             },
 
             goSort: function (e) {
@@ -583,14 +582,14 @@ define([
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
                 this.collection = new paymentCollection({
-                    viewType: 'list',
-                    sort: sortObject,
-                    page: this.page,
-                    count: this.defaultItemsNumber,
-                    filter: this.filter,
+                    viewType        : 'list',
+                    sort            : sortObject,
+                    page            : this.page,
+                    count           : this.defaultItemsNumber,
+                    filter          : this.filter,
                     parrentContentId: this.parrentContentId,
-                    contentType: this.contentType,
-                    newCollection: this.newCollection
+                    contentType     : this.contentType,
+                    newCollection   : this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
                 this.collection.bind('showmore', this.showMoreContent, this);
@@ -598,9 +597,9 @@ define([
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData(this.collectionLengthUrl, {
-                    contentType: this.contentType,
+                    contentType  : this.contentType,
                     currentNumber: currentNumber,
-                    filter: filter,
+                    filter       : filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var page;
@@ -627,8 +626,8 @@ define([
 
                 holder.find("#listTable").empty();
                 itemView = new listItemView({
-                    collection: newModels,
-                    page: holder.find("#currentShowPage").val(),
+                    collection : newModels,
+                    page       : holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });//added two parameters page and items number
 
@@ -662,8 +661,8 @@ define([
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
-                    collection: this.collection,
-                    page: currentEl.find("#currentShowPage").val(),
+                    collection : this.collection,
+                    page       : currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
@@ -688,15 +687,15 @@ define([
                     currentEl.html('');
                     currentEl.append(_.template(ListHeaderForWTrack));
                     currentEl.append(new listItemView({
-                        collection: this.collection,
-                        page: this.page,
+                        collection : this.collection,
+                        page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
 
                     currentEl.append(new listTotalView({
-                        element: this.$el.find("#listTable"),
+                        element : this.$el.find("#listTable"),
                         cellSpan: 7,
-                        wTrack: true
+                        wTrack  : true
                     }).render());
 
                     self.filterView = new filterView({
@@ -716,21 +715,21 @@ define([
                     currentEl.html('');
                     currentEl.append(_.template(listTemplate));
                     currentEl.append(new listItemView({
-                        collection: this.collection,
-                        page: this.page,
+                        collection : this.collection,
+                        page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
 
                     currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
                 }
 
-
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0)
+                    if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                    else
+                    } else {
                         $("#top-bar-deleteBtn").hide();
+                    }
                 });
 
                 currentEl.append(_.template(paginationTemplate));
@@ -822,7 +821,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait: true,
+                                    wait   : true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -831,7 +830,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error: function (model, res) {
+                                    error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }
@@ -858,14 +857,14 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
                 this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
 
@@ -874,8 +873,8 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -950,7 +949,6 @@ define([
                     this.createdItem = false;
                 }
             },
-
 
             savedNewModel: function (modelObject) {
                 var savedRow = this.$listTable.find('#false');

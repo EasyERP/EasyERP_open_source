@@ -15,6 +15,8 @@ define([
 
             initialize: function (options) {
 
+                this.keys = options.keys;
+
                 this.render();
             },
 
@@ -30,11 +32,14 @@ define([
                 }
             },
 
+            generate: function(){
+              this.generateItems();
+            },
+
             generateItems: function () {
                 var self = this;
                 var data = {};
                 var url;
-                var filter;
                 var key;
 
                 var editedElement = $('.edit');
@@ -46,12 +51,9 @@ define([
 
                 key = parseInt(self.year) * 100 + parseInt(self.month);
 
-                filter = {
-                    "dataKey": {
-                        key  : "dataKey",
-                        value: [key]
-                    }
-                };
+                if (this.keys.indexOf(key.toString()) > -1){
+                    return alert("Please, choose empty month!");
+                }
 
                 data.month = this.month;
                 data.year = this.year;
@@ -105,7 +107,10 @@ define([
                             text : "Generate",
                             class: "btn",
                             id   : "generateBtn",
-                            click: self.generateItems
+                            click: function(){
+                               // self.generateItems()
+                                self.generate()
+                            }
                         },
                         cancel: {
                             text : "Cancel",
@@ -116,7 +121,6 @@ define([
                         }
                     }
                 });
-
 
                 return this;
             }
