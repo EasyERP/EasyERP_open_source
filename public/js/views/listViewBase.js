@@ -386,12 +386,13 @@ define([
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var itemView;
+                var page = holder.find("#currentShowPage").val();
 
                 holder.find("#listTable").empty();
 
                 itemView = new this.listItemView({
                     collection : newModels,
-                    page       : holder.find("#currentShowPage").val(),
+                    page       : page,
                     itemsNumber: this.defaultItemsNumber
                 });
 
@@ -608,16 +609,14 @@ define([
                 return file.size < App.File.MAXSIZE;
             },
 
-
             importFiles: function (context) {
                 new attachView({
                     modelName: context.contentType,
-                    import: true
+                    import   : true
                 });
             }
 
         });
-
 
         ListViewBase.extend = function (child) {
             var view = Backbone.View.extend.apply(this, arguments);
