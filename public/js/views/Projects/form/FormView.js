@@ -257,6 +257,7 @@ define([
                         '<td colspan="11" id="subRow-holder' + jobId + '"></td>' +
                         '</tr>').insertAfter(jobContainer);
                     $('#subRow-holder' + jobId).append(template({
+                        jobStatus: job.type,
                         jobItem: job,
                         currencySplitter: helpers.currencySplitter
                     }));
