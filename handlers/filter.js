@@ -35,6 +35,9 @@ var Filters = function (models) {
 
         //made by R.Katsala block
         function validNames(result) {
+            var modelName;
+            var filterName;
+
             for (modelName in result) {
                 for (filterName in result[modelName]) {
                     if (_.isArray(result[modelName][filterName])) {
