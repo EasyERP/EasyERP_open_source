@@ -4,11 +4,11 @@
     function (ParentCollection) {
         var EditableColection = ParentCollection.extend({
 
-            initialize: function(){
-                this.on( "change", this.change, this);
+            initialize: function () {
+                this.on("change", this.change, this);
             },
 
-            save: function(changedValues){
+            save: function (changedValues) {
                 var self = this;
                 var model;
                 var models = [];
@@ -16,16 +16,16 @@
                 var newModel;
                 var syncObject = {
                     trigger: this.trigger,
-                    url: this.url,
-                    toJSON: function () {
+                    url    : this.url,
+                    toJSON : function () {
                         return models;
                     }
                 };
 
                 var saveObject = {
                     trigger: this.trigger,
-                    url: this.url,
-                    toJSON: function () {
+                    url    : this.url,
+                    toJSON : function () {
                         return newModel;
                     }
                 };
@@ -41,21 +41,21 @@
                     }
                 };
 
-                for (var i = this.models.length - 1; i >=0; i--){
+                for (var i = this.models.length - 1; i >= 0; i--) {
                     model = this.models[i];
 
-                    if(model && model.id && model.hasChanged()){
+                    if (model && model.id && model.hasChanged()) {
                         modelObject = model.changed;
                         modelObject._id = model.id;
                         models.push(modelObject);
                     } else if (model && !model.id) {
                         newModel = model.changed;
-                        newModel._id =  model.id;
+                        newModel._id = model.id;
                         Backbone.sync("create", saveObject, options);
                     }
                 }
 
-                if(models.length) {
+                if (models.length) {
                     Backbone.sync("patch", syncObject, updatedOptions);
                 }
             }
