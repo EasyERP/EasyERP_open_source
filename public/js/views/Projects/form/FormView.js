@@ -278,7 +278,7 @@ define([
                 var jobs = {};
 
                 jobs._id = $(e.target).attr('data-id');
-                jobs.name = $(e.target).attr('data-value');f
+                jobs.name = $(e.target).attr('data-value');
 
                 if (this.generatedView){
                     this.generatedView.undelegateEvents();
