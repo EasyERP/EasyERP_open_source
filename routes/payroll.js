@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var PayRollHandler = require('../handlers/payroll');
-var redisStore = require('../helpers/redisClient');
+//var redisStore = require('../helpers/redisClient');
 
 module.exports = function (models) {
     "use strict";
