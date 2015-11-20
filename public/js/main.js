@@ -962,7 +962,7 @@ require(['app'], function (app) {
             }
 
             if(! disableChangeHash){
-                this.collection.unbind();
+                //this.collection.unbind();
                 this.changeLocationHash(page, itemsNumber);
             }
 
