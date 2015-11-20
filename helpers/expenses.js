@@ -56,6 +56,8 @@ module.exports = function(models){
                     var obj = {};
 
                     obj[key] = {
+                        date: value.date,
+                        status: value.status,
                         calc: {
                             onCash: sum(_.pluck(value, "calc"))
                         },
