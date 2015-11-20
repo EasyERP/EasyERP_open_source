@@ -42,6 +42,7 @@ module.exports = (function () {
     require('./workflow.js');
     require('./wTrack.js');
     require('./wTrackInvoice.js');
+    require('./wTrackInvoiceOld.js');
     require('./wTrackPayment.js');
     require('./wTrackPayOut.js');
     require('./monthHours.js');

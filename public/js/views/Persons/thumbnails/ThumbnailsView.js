@@ -11,15 +11,15 @@
 
     function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
         var PersonsThumbnalView = Backbone.View.extend({
-            el: '#content-holder',
-            countPerPage: 0,
-            template: _.template(ThumbnailsItemTemplate),
+            el                : '#content-holder',
+            countPerPage      : 0,
+            template          : _.template(ThumbnailsItemTemplate),
             defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            newCollection: null,
-            contentType: 'Persons',//needs in view.prototype.changeLocationHash
-            viewType: 'thumbnails',//needs in view.prototype.changeLocationHash
+            listLength        : null,
+            filter            : null,
+            newCollection     : null,
+            contentType       : 'Persons',//needs in view.prototype.changeLocationHash
+            viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
                 this.asyncLoadImgs(this.collection);
@@ -41,15 +41,19 @@
                 this.filterView;
             },
 
-            events: {
-                "click #showMore": "showMore",
+            events        : {
+                "click #showMore"          : "showMore",
                 "click .letter:not(.empty)": "alpabeticalRender",
-                "click .gotoForm": "gotoForm",
-                "click .company": "gotoCompanyForm"
+                "click .gotoForm"          : "gotoForm",
+                "click .company"           : "gotoCompanyForm"
             },
 //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Persons', { currentNumber: currentNumber, filter: this.filter, newCollection: this.newCollection }, function (response, context) {
+                dataService.getData('/totalCollectionLength/Persons', {
+                    currentNumber: currentNumber,
+                    filter       : this.filter,
+                    newCollection: this.newCollection
+                }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
                         if (showMore.length === 0) {
@@ -64,7 +68,7 @@
                 }, this);
             },
 
-            asyncLoadImgs: function (collection) {
+            asyncLoadImgs    : function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
@@ -101,7 +105,7 @@
                 this.defaultItemsNumber = 0;
 
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
@@ -136,14 +140,14 @@
                 //    }
                 //}
 
-                if (Object.keys(filter).length === 0){
+                if (Object.keys(filter).length === 0) {
                     this.filter = {};
                 }
 
                 context.$el.find('.thumbnailwithavatar').remove();
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
-                context.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
+                context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
                 context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
@@ -155,7 +159,7 @@
                 currentEl.html('');
 
                 if (this.collection.length > 0) {
-                    currentEl.append(this.template({ collection: this.collection.toJSON() }));
+                    currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
                     currentEl.html('<h2>No persons found</h2>');
                 }
@@ -164,8 +168,8 @@
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
-                        alphabeticArray: self.alphabeticArray,
-                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        alphabeticArray   : self.alphabeticArray,
+                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
                     var currentLetter = (self.filter) ? self.filter.letter : null
@@ -179,7 +183,7 @@
                     }
                 });
 
-                self.filterView = new filterView({ contentType: self.contentType });
+                self.filterView = new filterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter, self)
@@ -205,16 +209,17 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+
                 //this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 //if (!el.closest('.search-view')) {
                 //    $('.search-content').removeClass('fa-caret-up');
                 //};
             },
 
-            showMore: function (event) {
+            showMore       : function (event) {
                 //event.preventDefault();
-                this.collection.showMore({ filter: this.filter, newCollection: this.newCollection });
+                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
             //modified for filter Vasya
             showMoreContent: function (newModels) {
@@ -226,12 +231,12 @@
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
-                    showMore.before(this.template({ collection: this.collection.toJSON() }));
+                    showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
-
+                    showMore.hide();
                     showMore.after(created);
                 } else {
-                    content.html(this.template({ collection: this.collection.toJSON() }));
+                    content.html(this.template({collection: this.collection.toJSON()}));
 
                 }
                 this.asyncLoadImgs(newModels);
@@ -249,7 +254,7 @@
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-                holder.append(this.template({ collection: newModels.toJSON() }));
+                holder.append(this.template({collection: newModels.toJSON()}));
                 holder.append(created);
                 created.before(showMore);
                 this.asyncLoadImgs(newModels);
@@ -262,7 +267,7 @@
 
             editItem: function () {
                 //create editView in dialog here
-                new editView({ collection: this.collection });
+                new editView({collection: this.collection});
             },
 
             deleteItems: function () {
@@ -282,8 +287,8 @@
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
-                        alphabeticArray: self.alphabeticArray,
-                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        alphabeticArray   : self.alphabeticArray,
+                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
                     var currentLetter = (self.filter) ? self.filter.letter : null

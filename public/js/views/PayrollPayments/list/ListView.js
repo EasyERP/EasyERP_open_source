@@ -611,7 +611,7 @@ define([
 
                 holder.append(itemView.render());
 
-                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 7}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 6}).render());
 
                 itemView.undelegateEvents();
 
@@ -645,7 +645,7 @@ define([
                 });
                 tBody.append(itemView.render());
 
-                currentEl.append(new listTotalView({element: tBody, cellSpan: 7}).render());
+                currentEl.append(new listTotalView({element: tBody, cellSpan: 6}).render());
 
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -670,7 +670,7 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());
 
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
 
                 $('#check_all').click(function () {
