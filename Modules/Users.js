@@ -45,30 +45,18 @@ var Users = function (mainDb, models) {
         });
     };
 
-    function checkIfUserLoginUnique(req,login, cb) {
+    function checkIfUserLoginUnique(req, login, cb) {
         models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
-            try {
-                if (error) {
-                    cb({error: error});
-                    //logWriter.log('User.js create User.find' + error);
-                    //result.send(500, {error: 'User.create find error'});
+            if (error) {
+                cb({error: error});
+            } else if (doc.length > 0) {
+                if (doc[0].login === login) {
+                    cb({unique: false});
                 }
-                if (doc.length > 0) {
-                    if (doc[0].login === login) {
-                        cb({unique: false});
-                        //result.send(400, {error: "An user with the same Login already exists"});
-                    }
-                }
-                else if (doc.length === 0) {
-                    cb({unique: true});
-                }
+            } else if (doc.length === 0) {
+                cb({unique: true});
             }
 
-            catch (error) {
-                cb({error: error});
-                //logWriter.log("User.js. create Account.find " + error);
-                //result.send(500, {error: 'User.create find error'});
-            }
         });
     }
 
@@ -101,7 +89,7 @@ var Users = function (mainDb, models) {
                 logWriter.log('Person.create Incorrect Incoming Data');
                 result.send(400, {error: 'User.create Incorrect Incoming Data'});
             } else {
-                checkIfUserLoginUnique(req,data.login, function (res) {
+                checkIfUserLoginUnique(req, data.login, function (res) {
                     if (res.unique) {
                         savetoBd(data);
                     }
@@ -470,7 +458,7 @@ var Users = function (mainDb, models) {
 
                 function updateThisUser(_id, query) {
 
-                    checkIfUserLoginUnique(req,query.login, function (resp) {
+                    checkIfUserLoginUnique(req, query.$set.login, function (resp) {
                         if (resp.unique) {
                             models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                                 if (err) {
@@ -485,9 +473,9 @@ var Users = function (mainDb, models) {
                             });
                         } else if (resp.error) {
                             logWriter.log("User.js. create Account.find " + error);
-                            result.send(500, {error: 'User.create find error'});
+                            res.send(500, {error: 'User.create find error'});
                         } else {
-                            result.send(400, {error: "An user with the same Login already exists"});
+                            res.send(400, {error: "An user with the same Login already exists"});
                         }
 
                     })
