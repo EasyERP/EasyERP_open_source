@@ -3679,6 +3679,7 @@ dl dd span.ui-spinner {
   height: 100hv;
   position: absolute;
   clear: both;
+  box-sizing: border-box;
 }
 #wrapper #content-holder {
   height: auto;
@@ -3686,6 +3687,7 @@ dl dd span.ui-spinner {
   background: inherit;
   clear: both;
   position: relative;
+  padding: 0 5px;
 }
 #startLetter {
   margin: 0;
