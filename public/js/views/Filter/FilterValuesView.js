@@ -41,6 +41,8 @@ define([
                             return this.filteredCollection.reset(this.collection.toJSON());
                         }
 
+                        this.currentPage = 1;
+
                         newFilteredCollection = this.filterCollection(value);
                         this.$el.find('.miniStylePagination').toggle(!!newFilteredCollection.length);
                         this.filteredCollection.reset(newFilteredCollection);
