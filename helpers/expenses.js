@@ -55,9 +55,11 @@ module.exports = function(models){
                 .map(function (value, key) {
                     var obj = {};
 
+                    console.dir(value);
+
                     obj[key] = {
-                        date: value.date,
-                        status: value.status,
+                        date: _.pluck(value, "date")[0],
+                        status: _.pluck(value, "status")[0],
                         calc: {
                             onCash: sum(_.pluck(value, "calc"))
                         },

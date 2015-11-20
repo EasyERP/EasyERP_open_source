@@ -110,7 +110,6 @@ define([
                 return false;
             },
 
-
             render: function () {
                 var currentEl = this.$el;
 
