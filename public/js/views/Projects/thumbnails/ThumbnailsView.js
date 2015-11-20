@@ -219,12 +219,7 @@
                 var createdInTag;
 
                 currentEl.html('');
-
-                if (this.collection.length > 0) {
-                    currentEl.append(this.template({collection: this.collection.toJSON()}));
-                } else {
-                    currentEl.html('<h2>No projects found</h2>');
-                }
+                currentEl.append(this.template({collection: this.collection.toJSON()}));
 
                 this.bind('incomingStages', this.pushStages, this);
 
