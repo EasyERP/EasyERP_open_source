@@ -18,6 +18,7 @@ require.config({
         ajaxForm     : './libs/jquery.form',
         imageCrop    : './libs/jquery.Jcrop.min',
         jqueryui     : './libs/jquery-ui.min',
+        spinJs       : './libs/spin.min',
         Underscore   : './libs/underscore-min.map.1.6.0',
         Backbone     : './libs/backbone-min.map.1.1.2',
         less         : './libs/less.min',
@@ -36,6 +37,7 @@ require.config({
         'jqueryui'  : ['jQuery'],
         'ajaxForm'  : ['jQuery'],
         'imageCrop' : ['jQuery'],
+        'spinJs'    : ['jQuery'],
         'Backbone'  : ['Underscore', 'jQuery'],
         'app'       : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop'],
         'd3'        : {
@@ -715,7 +717,7 @@ require(['app'], function (app) {
             _.extend(serchObject, dataObject);
         }
 
-        if (!disableChangeHash){
+        if (!disableChangeHash) {
             this.changeLocationHash(page, itemsNumber);
         }
 
@@ -764,7 +766,7 @@ require(['app'], function (app) {
             _.extend(serchObject, dataObject);
         }
 
-        if (!disableChangeHash){
+        if (!disableChangeHash) {
             this.changeLocationHash(page, itemsNumber);
         }
 
@@ -862,7 +864,7 @@ require(['app'], function (app) {
                 _.extend(serchObject, dataObject);
             }
 
-            if(! disableChangeHash){
+            if (!disableChangeHash) {
                 this.collection.unbind();
                 this.changeLocationHash(page, itemsNumber);
             }
@@ -961,7 +963,7 @@ require(['app'], function (app) {
                 _.extend(serchObject, dataObject);
             }
 
-            if(! disableChangeHash){
+            if (!disableChangeHash) {
                 //this.collection.unbind();
                 this.changeLocationHash(page, itemsNumber);
             }

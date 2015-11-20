@@ -425,6 +425,8 @@ var PayRoll = function (models) {
                         difference = _.difference(ids, createdIds);
 
                         async.each(difference, function (id, callB) {
+                            var PRoll;
+                            var defObj = {};
                             var empl = _.find(employees, function (el) {
                                 return el._id.toString() === id;
                             });
@@ -441,7 +443,7 @@ var PayRoll = function (models) {
                             defObj.employee.name = empl.name.first + ' ' + empl.name.last;
 
 
-                            var PRoll = new Payroll(defObj);
+                            PRoll = new Payroll(defObj);
 
                             PRoll.save(function (err, result) {
                                 callB();
