@@ -4465,6 +4465,10 @@ a.red:hover {
 .miniPaginationPersons > div:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
+.miniPagination > div:hover span,
+.miniPaginationPersons > div:hover span {
+  color: #ffffff;
+}
 .miniPagination > div.not-active,
 .miniPaginationPersons > div.not-active {
   color: silver;
@@ -4474,6 +4478,14 @@ a.red:hover {
 .miniPagination > div.not-active:hover,
 .miniPaginationPersons > div.not-active:hover {
   background: none;
+}
+.miniPagination > div.not-active:hover span,
+.miniPaginationPersons > div.not-active:hover span {
+  color: #cdcdcd;
+}
+.miniPagination > div span,
+.miniPaginationPersons > div span {
+  color: #cdcdcd;
 }
 .miniPagination .last,
 .miniPaginationPersons .last,

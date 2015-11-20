@@ -3367,6 +3367,10 @@ button.red, a.red {
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.1);
+
+      span {
+        color: @overiewText-color;
+      }
     }
 
     &.not-active {
@@ -3376,7 +3380,14 @@ button.red, a.red {
 
       &:hover {
         background: none;
+
+        span {
+          color: @mainText-color;
+        }
       }
+    }
+    span {
+      color: @mainText-color;
     }
   }
 
