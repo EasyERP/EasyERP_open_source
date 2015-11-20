@@ -29,7 +29,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = {key:'forSales',value:true};
+                this.filter.forSales = {key: 'forSales', value: true};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -110,11 +110,7 @@ define([
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
-                            if ((response === "weTrack") || (response === "production") || (response === "development")){
-                                App.weTrack = true;
-                            } else {
-                                App.weTrack = false;
-                            }
+                            App.weTrack = response === "weTrack" || response === "production" || response === "development";
                         }
 
                         currentEllistRenderer(self);
@@ -125,6 +121,10 @@ define([
                     //currentEl.append(itemView.render());
                 }
 
+                self.renderCheckboxes();
+                self.renderPagination(currentEl, self);
+                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: true}});
+
                 dataService.getData("/workflow/fetch", {
                     wId         : 'Sales Invoice',
                     source      : 'purchase',
@@ -132,12 +132,6 @@ define([
                 }, function (stages) {
                     self.stages = stages;
                 });
-
-                this.renderCheckboxes();
-
-                this.renderFilter(self, {name: 'forSales', value: {key:'forSales',value:true}});
-
-                this.renderPagination(currentEl, this);
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -148,7 +142,7 @@ define([
                         page       : self.page,
                         itemsNumber: self.collection.namberToShow
                     });
-                    itemView.bind('incomingStages', this.pushStages, this);
+                    itemView.bind('incomingStages', self.pushStages, self);
 
                     currentEl.append(itemView.render());
 
@@ -175,7 +169,7 @@ define([
                         currentDb: App.currentDb
                     },
                     success: function (model) {
-                       // var isWtrack = App.weTrack;
+                        // var isWtrack = App.weTrack;
 
                         new editView({model: model});
                     },
