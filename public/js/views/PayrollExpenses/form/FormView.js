@@ -223,20 +223,21 @@ define([
                     if (jsonModel.diff < 0) {
 
                         modelPayment = {
-                            "paidAmount": jsonModel.diff * (-1),
-                            "workflow": "Draft",
-                            "differenceAmount": 0,
-                            "month": jsonModel.month,
-                            "year": jsonModel.year,
-                            "supplier": {
-                                "_id": jsonModel.employee._id,
-                                "fullName": jsonModel.employee.name
+                            paidAmount: jsonModel.diff * (-1),
+                            workflow: "Draft",
+                            differenceAmount: 0,
+                            month: jsonModel.month,
+                            year: jsonModel.year,
+                            supplier: {
+                                _id: jsonModel.employee._id,
+                                fullName: jsonModel.employee.name
                             },
-                            "paymentMethod": {
-                                "_id": jsonModel.type._id,
-                                "name": jsonModel.type.name
+                            paymentMethod: {
+                                _id: jsonModel.type._id,
+                                name: jsonModel.type.name
                             },
-                            "period": jsonModel.year + '-' + jsonModel.month + '-01'
+                            period: jsonModel.year + '-' + jsonModel.month + '-01',
+                            paymentRef: dataId
                         };
 
                         this.forPayments.add(modelPayment);
