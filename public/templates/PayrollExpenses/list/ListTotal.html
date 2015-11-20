@@ -21,7 +21,7 @@ negativeMoney"><%=currencySplitter((totalObj.diff.onCash * (-1)).toString())%>
     money"><%=currencySplitter(totalObj.diff.onCash.toString())%></td>
     <%}%>
 
-    <td class="notForm"><input type="checkbox" class="checkbox" <%=totalObj.status ? 'checked' : ''%>/></td>
-    <td class="notForm"><%=totalObj.date ? totalObj.date : ''%></td>
+    <td class="notForm statusCheckbox"><input type="checkbox" class="checkbox" <%=totalObj.status ? 'checked' : ''%>/></td>
+    <td class="datePicker"><input type="text" disabled value="<%=totalObj.date ? totalObj.date : ''%>" /></td>
 </tr>
 <% }) %>

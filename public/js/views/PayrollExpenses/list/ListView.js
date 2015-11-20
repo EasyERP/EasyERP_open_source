@@ -22,21 +22,23 @@ define([
     function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, PaymentCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = Backbone.View.extend({
             el            : '#content-holder',
-            contentType: 'PayrollExpenses',
-            viewType   : 'list',//needs in view.prototype.changeLocationHash
-            responseObj: {},
-            whatToSet  : {},
-            formUrl    : "#easyErp/PayrollExpenses/form/",
+            contentType   : 'PayrollExpenses',
+            viewType      : 'list',//needs in view.prototype.changeLocationHash
+            responseObj   : {},
+            whatToSet     : {},
+            formUrl       : "#easyErp/PayrollExpenses/form/",
             headerTemplate: _.template(headerTemplate),
             totalTemplate : _.template(totalTemplate),
             // rowTemplate   : _.template(rowTemplate),
             cancelTemplate: _.template(cancelEditTemplate),
-            changedModels : {},
+            changedPeriods: {},
+            changesCount  : 0,
 
             events: {
-                "click tr.mainRow": "gotoForm"
+                "click .statusCheckbox"  : "statusCheck",
+                "click tr.mainRow"       : "gotoForm",
+                "click .datePicker"      : "datePickerChange",
             },
-
 
             initialize: function (options) {
                 var collectionsObjects;
@@ -54,10 +56,60 @@ define([
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
+            datePickerChange: function (e) {
+                e.stopPropagation();
+
+                var $input = $(e.target).closest('input');
+
+                $input.prop('disabled', false);
+            },
+
+            showHideCreateCancelBtns: function (option) {
+                var $btnHolder = $('.createBtnHolder');
+                var $saveBtn = $btnHolder.find('#top-bar-saveBtn');
+                var $deleteBtn = $btnHolder.find('#top-bar-deleteBtn');
+
+                if (option) {
+                    option.save ? $saveBtn.show() : $saveBtn.hide();
+                    option.delete ? $deleteBtn.show() : $deleteBtn.hide();
+                }
+            },
+
+            statusCheck: function (e) {
+                e.stopPropagation();
+
+                var $target = $(e.target);
+                var $checkbox = $target.find('.checkbox');
+                var state = $checkbox.prop('checked');
+                var $tr = $target.closest('tr');
+                var dataKey = $tr.attr('data-id');
+
+                $checkbox.prop('checked', !state);
+
+                if (!this.changedPeriods[dataKey]) {
+                    this.changedPeriods[dataKey] = {};
+                }
+
+                if (!this.changedPeriods[dataKey].hasOwnProperty('status')) {
+                    this.changedPeriods[dataKey].status = state;
+                    this.changesCount++;
+                } else {
+                    delete this.changedPeriods[dataKey].status;
+                    this.changesCount--;
+                }
+
+                if (this.changesCount !== 0) {
+                    this.showHideCreateCancelBtns({save: true, delete: true});
+                } else {
+                    this.showHideCreateCancelBtns({save: false, delete: false});
+                }
+
+            },
+
             generate: function () {
                 var keys = [];
 
-                this.total.forEach(function(el){
+                this.total.forEach(function (el) {
                     var key = Object.keys(el)[0];
 
                     keys.push(key);
@@ -127,6 +179,16 @@ define([
                 $('#top-bar-deleteBtn').hide();
                 $('#top-bar-createBtn').hide();
                 $('#topBarPaymentGenerate').hide();
+
+                currentEl.find('.datePicker input').datepicker({
+                    dateFormat : "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear : true
+                }).keyup(function(e) {
+                    if(e.keyCode == 8 || e.keyCode == 46) {
+                        $.datepicker._clearDate(this);
+                    }
+                });;
 
                 return this;
             }
