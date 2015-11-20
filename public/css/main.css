@@ -863,6 +863,11 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 1;
   height: 20px;
 }
+.tableFixed {
+  table-layout: fixed;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
@@ -1029,6 +1034,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .payRoll-list tfoot {
   margin-right: 17px;
 }
+.payRoll-list tfoot td {
+  border-color: transparent;
+  padding-right: 20px;
+}
 .payRoll-list tbody tr:hover {
   background: none;
 }
@@ -1057,7 +1066,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 @media (min-width: 1320px) {
   table.payRoll-list #payRoll-Table .scrollit {
-    height: calc(100vh - 179px);
+    height: calc(100vh - 155px);
   }
 }
 #forInfo {

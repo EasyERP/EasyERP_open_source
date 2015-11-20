@@ -1343,6 +1343,7 @@ var wTrack = function (event, models) {
                         var hours = parseInt(data.hours);
                         var resultArray = [];
                         var diff;
+                        var diffYear;
                         var endYear;
                         var endMonth;
                         var endWeek;
@@ -1426,6 +1427,7 @@ var wTrack = function (event, models) {
                             }
 
                             diff = endWeek - startWeek;
+                            diffYear = endYear - startYear;
 
                             if (diff < 0) {
                                 diff = isoWeeks - startWeek;
@@ -1438,11 +1440,20 @@ var wTrack = function (event, models) {
                                 });
                             } else if (diff === 0 && (startDate == endDate)){
                                 fCb(null, []);
-                            } else {
+                            } else if ((diff > 0) && (diffYear === 0)) {
                                 parallelTasks = [thirdPart];
 
                                 async.parallel(parallelTasks, function (err, result) {
                                     resultArray = result[0];
+
+                                    fCb(null, resultArray);
+                                });
+                            } else if ((diff > 0) && (diffYear > 0)){
+                                diff = isoWeeks - startWeek;
+                                parallelTasks = [firstPart, secondPart];
+
+                                async.parallel(parallelTasks, function (err, result) {
+                                    resultArray = result[0].concat(result[1]);
 
                                     fCb(null, resultArray);
                                 });

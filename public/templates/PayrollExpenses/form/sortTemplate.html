@@ -1,4 +1,3 @@
-<% var total = 0;%>
 <% collection.forEach(function(model, index){ %>
 
 <tr data-id="<%=model._id%>">
@@ -31,8 +30,6 @@
     <%} else {%>
     money"><%=currencySplitter(model.diff.toString())%></td>
     <%}%>
-
-    <%total += model.diff;%>
 </tr>
 
 <% }) %>

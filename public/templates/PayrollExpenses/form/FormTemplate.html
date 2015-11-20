@@ -1,14 +1,14 @@
 <div>
-    <table class="list payRoll-list">
+    <table class="list payRoll-list tableFixed">
         <colgroup class="borders" span="8">
-            <col span="1" width="2%">
-            <col span="1" width="2%">
-            <col span="1" width="27%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
+            <col span="1" width="5%">
+            <col span="1" width="5%">
+            <col span="1" width="25%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
         </colgroup>
         <thead>
         <tr>
@@ -35,16 +35,16 @@
         <tr>
             <td id="payRoll-Table" colspan="8">
                 <div class="scrollit">
-                    <table class="list enable_hover" id="payRoll-listTable">
+                    <table class="list enable_hover tableFixed" id="payRoll-listTable">
                         <colgroup class="borders" span="8">
-                            <col span="1" width="2%">
-                            <col span="1" width="2%">
-                            <col span="1" width="27%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
+                            <col span="1" width="5%">
+                            <col span="1" width="5%">
+                            <col span="1" width="25%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
                         </colgroup>
                         <tbody id="payRoll-TableBody">
                         <% var total = 0;%>
@@ -81,7 +81,6 @@
                             money"><%=currencySplitter(model.diff.toString())%></td>
                             <%}%>
 
-                            <%total += model.diff;%>
                         </tr>
 
                         <% }) %>
@@ -90,18 +89,22 @@
                 </div>
             </td>
         </tr>
-        <tfoot id="payRoll-listTotal"></tfoot>
-
+        <tfoot id="payRoll-listTotal">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><span data-id="value" class="money" id="totalCalc" data-cash="0">0</span></td>
+                <td><span data-id="value" class="money" id="totalPaid" data-cash="0">0</span></td>
+                <td><span data-id="value" class="money" id="totalDiff" data-cash="0">0</span>  </td>
+                <!--<span data-id="value" class="money" id="totalCalc" data-cash="0">0</span>-->
+                <!--<span data-id="value" class="money" id="totalPaid" data-cash="0">0</span>-->
+                <!--<span data-id="value" class="money" id="totalDiff" data-cash="0">0</span>-->
+            </tr>
+        </tfoot>
     </table>
-    <div class="totalContainer">
-        <span data-id="value" class="money" id="totalCalc" data-cash="0">
-                0
-            </span>
-          <span data-id="value" class="money" id="totalPaid" data-cash="0">
-                0
-            </span>
-            <span data-id="value" class="money" id="totalDiff" data-cash="0">
-                0
-            </span>
-    </div>
 </div>
+
+
