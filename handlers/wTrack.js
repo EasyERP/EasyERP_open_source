@@ -1448,12 +1448,23 @@ var wTrack = function (event, models) {
 
                                     fCb(null, resultArray);
                                 });
-                            } else if ((diff > 0) && (diffYear > 0)){
+                            } else if ((diff > 0) && (diffYear === 1)){
                                 diff = isoWeeks - startWeek;
                                 parallelTasks = [firstPart, secondPart];
 
                                 async.parallel(parallelTasks, function (err, result) {
                                     resultArray = result[0].concat(result[1]);
+
+                                    fCb(null, resultArray);
+                                });
+                            } else if ((diff > 0) && (diffYear === 2)){
+                                diff = moment(startYear).isoWeeksInYear() - startWeek;
+                                parallelTasks = [firstPart, secondYear, thirdYear];
+
+                                async.parallel(parallelTasks, function (err, result) {
+                                    resultArray = result[0].concat(result[1]);
+
+                                    resultArray.concat(result[2]);
 
                                     fCb(null, resultArray);
                                 });
@@ -1470,6 +1481,16 @@ var wTrack = function (event, models) {
 
                             function thirdPart(parallelCb) {
                                 setObj(parallelCb, diff, endWeek, startDate, startYear)
+                            }
+
+                            function secondYear(parallelCb){
+                                diff = moment(startYear + 1).isoWeeksInYear();
+                                setObj(parallelCb, diff, endWeek, endDate, startYear + 1)
+                            }
+
+                            function thirdYear(parallelCb){
+                                diff = endWeek;
+                                setObj(parallelCb, diff, endWeek, endDate, startYear + 2)
                             }
 
                             function setObj(parallelCb, diff, endWeek, date, year) {
