@@ -81,6 +81,18 @@ module.exports = function (models) {
                 case 'July':
                     month = 7;
                     break;
+                case 'Aug':
+                    month = 8;
+                    break;
+                case 'Sep':
+                    month = 9;
+                    break;
+                case 'Oct':
+                    month = 10;
+                    break;
+                case 'Nov':
+                    month = 11;
+                    break;
             }
 
             return {
@@ -169,7 +181,7 @@ module.exports = function (models) {
                             logWriter.log("importFile.js importXlsxToDb " + err);
                             next(err);
                         } else {
-                            if(notImportedEmployees.length) {
+                            if (notImportedEmployees.length) {
                                 logWriter.log("unsaved " + notImportedEmployees.toString());
                                 response = notImportedEmployees;
                             }
