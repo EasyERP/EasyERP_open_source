@@ -51,6 +51,8 @@ define([
                         var id = model.get('_id');
 
                         that.$listTable.find('[data-id="' + id + '"]').remove();
+
+                        $("#removePayment").hide();
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {

@@ -218,13 +218,17 @@ define([
                 var description;
                 var taxes;
                 var amount;
-                var workflow = this.currentModel.workflow ? this.currentModel.workflow : null;
+
+                var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
+                var salesPerson = this.currentModel.salesPerson ? this.currentModel.salesPerson : this.currentModel.get('salesPerson');
+                var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
 
                 var invoiceDate = this.$el.find("#invoice_date").val();
                 var dueDate = this.$el.find("#due_date").val();
 
-                var supplier = this.$el.find('#supplier').data("id");
-                supplier = (supplier) ? supplier : null;
+                var supplier = {};
+                supplier._id = this.$el.find('#supplier').data("id");
+                supplier.name = this.$el.find('#supplier').text();
 
                 var total = parseFloat(this.$("#totalAmount").text());
                 var unTaxed = parseFloat(this.$("#totalUntaxes").text());
@@ -276,7 +280,6 @@ define([
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
                 var data = {
-
                     supplier: supplier,
                     fiscalPosition: null,
                     sourceDocument: $.trim(this.$el.find('#source_document').val()),
@@ -287,10 +290,10 @@ define([
                     account: null,
                     journal: null,
 
-                    salesPerson: salesPersonId,
+                    salesPerson: salesPerson,
                     paymentTerms: paymentTermId,
 
-                    products: products,
+                    products: this.redirect ? productsOld : products,
                     paymentInfo: payments,
 
                     groups: {
@@ -312,10 +315,15 @@ define([
                         wait: true,
                         patch: true,
                         success: function () {
+                            var url = window.location.hash;
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             self.hideDialog();
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                            if (self.redirect){
+                                Backbone.history.navigate(url, {trigger: true});
+                            } else {
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                            }
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
