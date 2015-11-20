@@ -83,7 +83,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     ul.show();
 
-                   // this.stopDefaultEvents(e);
+                    this.stopDefaultEvents(e);
                 },
 
                 addNewEmployeeRow: function (e) {
@@ -157,11 +157,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var dataPickerStartContainers = $('.datapicker.startDate');
                     var dataPickerEndContainers = $('.endDateDP.datapicker');
                     var self = this;
+                    var currntYear = parseInt(moment(new Date()).get('year'));
+                    var yearRange = (currntYear - 1).toString() + ":" + (currntYear + 1).toString();
 
                     dataPickerStartContainers.datepicker({
                         dateFormat: "d M, yy",
                         changeMonth: true,
                         changeYear: true,
+                        yearRange: yearRange,
                         onSelect: function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
@@ -179,6 +182,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             self.setChangedValueToModel(targetInput);
 
                             return false;
+                        },
+                        onChangeMonthYear : function(year, month, inst){
+                            return false;
                         }
                     }).removeClass('datapicker');
 
@@ -186,6 +192,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         dateFormat: "d M, yy",
                         changeMonth: true,
                         changeYear: true,
+                        yearRange: yearRange,
                         onSelect: function (text, datPicker) {
                             var targetInput = $(this);
 
@@ -193,6 +200,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                             self.setChangedValueToModel(targetInput);
 
+                            return false;
+                        },
+                        onChangeMonthYear : function(year, month, inst){
                             return false;
                         }
                     }).removeClass('datapicker');
@@ -284,6 +294,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
 
+                        if (editedElementValue){
+                            editedCol.removeClass('errorContent');
+                        }
+
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
 
                         if (!elem) {
@@ -339,6 +353,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             success: function () {
                                 self.hideDialog();
 
+                                if (self.wTrackCollection.wTrackView){
+                                    self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
+                                }
+
                                 self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
 
                                 tabs = $(".chart-tabs");
@@ -356,7 +374,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             }
                         });
                     } else {
-                        alert("Please, enter Job name!");
+                        alert("Please, enter correct Job name!");
                     }
 
                 },

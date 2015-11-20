@@ -563,6 +563,7 @@ require(['app'], function (app) {
             this.changeLocationHash(page, itemsNumber);
         }
 
+        context.collection.unbind();
         context.collection.bind('reset', context.renderContent, context);
         context.collection.bind('showmore', context.showMoreContent, context);
 
@@ -961,7 +962,7 @@ require(['app'], function (app) {
             }
 
             if(! disableChangeHash){
-                this.collection.unbind();
+                //this.collection.unbind();
                 this.changeLocationHash(page, itemsNumber);
             }
 

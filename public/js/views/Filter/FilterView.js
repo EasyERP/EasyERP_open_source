@@ -34,12 +34,12 @@ define([
                 "click #saveFilterButton"              : "saveFilter",
                 "click .removeSavedFilter"             : "removeFilterFromDB",
                 "click .removeValues"                  : "removeFilter",
-                "keydown": "keyDown"
+                "keydown #forFilterName"               : "keyDown"
             },
 
-            keyDown: function(e){
+            keyDown: function (e) {
                 if (e.which === 13) {
-                   this.saveFilter();
+                    this.saveFilter();
                 }
             },
 
@@ -430,7 +430,7 @@ define([
                     });
                 }
 
-                if (App.filter && this.enable){
+                if (App.filter && this.enable) {
                     this.showFilterIcons(App.filter);
                 }
 
