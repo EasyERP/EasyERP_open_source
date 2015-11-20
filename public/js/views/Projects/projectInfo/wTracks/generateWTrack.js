@@ -366,7 +366,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             }
                         });
                     } else {
-                        alert("Please, enter Job name!");
+                        alert("Please, enter correct Job name!");
                     }
 
                 },
