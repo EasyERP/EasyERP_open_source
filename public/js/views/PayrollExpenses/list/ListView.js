@@ -20,7 +20,7 @@ define([
     ],
 
     function (headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, PaymentCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
-        var payRollListView = listViewBase.extend({
+        var payRollListView = Backbone.View.extend({
             el            : '#content-holder',
             contentType: 'PayrollExpenses',
             viewType   : 'list',//needs in view.prototype.changeLocationHash
@@ -34,7 +34,7 @@ define([
             changedModels : {},
 
             events: {
-                "click #mainRow td:not(.notForm)": "gotoForm"
+                "click tr.mainRow": "gotoForm"
             },
 
 

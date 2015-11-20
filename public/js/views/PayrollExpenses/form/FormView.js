@@ -327,12 +327,20 @@ define([
                 var model;
                 var mid = 39;
                 var totalNew;
-                var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
+                var totalNewCalc;
+                var totalNewPaid;
+                var totalDiffOld = parseFloat(this.$el.find('#totalDiff').attr('data-cash'));
+                var totalCalcOld = parseFloat(this.$el.find('#totalCalc').attr('data-cash'));
+                var totalPaidOld = parseFloat(this.$el.find('#totalPaid').attr('data-cash'));
                 var id = tr.attr('data-id');
                 var elDiff = parseFloat(this.editCollection.get(id).get("diff"));
+                var elCalc = parseFloat(this.editCollection.get(id).get("calc"));
+                var elPaid = parseFloat(this.editCollection.get(id).get("paid"));
 
 
-                totalNew = totalOld + elDiff;
+                totalNew = totalDiffOld + elDiff;
+                totalNewCalc = totalCalcOld + elCalc;
+                totalNewPaid = totalPaidOld + elPaid;
 
                 if (id.length < 24) {
                     this.editCollection.remove(id);
@@ -360,8 +368,14 @@ define([
                     });
                 }
 
-                this.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
-                this.$el.find('#total').attr('data-cash', totalNew);
+                this.$el.find('#totalDiff').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                this.$el.find('#totalDiff').attr('data-cash', totalNew);
+
+                this.$el.find('#totalCalc').text(helpers.currencySplitter(totalNewCalc.toFixed(2)));
+                this.$el.find('#totalCalc').attr('data-cash', totalNewCalc);
+
+                this.$el.find('#totalPaid').text(helpers.currencySplitter(totalNewPaid.toFixed(2)));
+                this.$el.find('#totalPaid').attr('data-cash', totalNewPaid);
             },
 
             deleteItemsRender: function (tr, id) {
@@ -825,24 +839,40 @@ define([
             checked: function (e) {
                 var checkLength;
                 var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
-                var totalNew;
                 var target = $(e.target);
                 var id = target.attr('id');
-                var elDiff = parseFloat(this.editCollection.get(id).get("diff")) * (-1);
+                var totalNew;
+                var totalNewCalc;
+                var totalNewPaid;
+                var totalDiffOld = parseFloat(this.$el.find('#totalDiff').attr('data-cash'));
+                var totalCalcOld = parseFloat(this.$el.find('#totalCalc').attr('data-cash'));
+                var totalPaidOld = parseFloat(this.$el.find('#totalPaid').attr('data-cash'));
+                var elDiff = parseFloat(this.editCollection.get(id).get("diff"));
+                var elCalc = parseFloat(this.editCollection.get(id).get("calc"));
+                var elPaid = parseFloat(this.editCollection.get(id).get("paid"));
 
                 if (!target.prop('checked')){
                     elDiff = elDiff * (-1);
+                    elCalc = elCalc * (-1);
+                    elPaid = elPaid * (-1);
                 }
 
-                totalNew = totalOld + elDiff;
+                totalNew = totalDiffOld + elDiff;
+                totalNewCalc = totalCalcOld + elCalc;
+                totalNewPaid = totalPaidOld + elPaid;
 
 
                 if (this.editCollection.length > 0) {
                     checkLength = $("input.checkbox:checked").length;
 
-                    this.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
-                    this.$el.find('#total').attr('data-cash', totalNew);
+                    this.$el.find('#totalDiff').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                    this.$el.find('#totalDiff').attr('data-cash', totalNew);
 
+                    this.$el.find('#totalCalc').text(helpers.currencySplitter(totalNewCalc.toFixed(2)));
+                    this.$el.find('#totalCalc').attr('data-cash', totalNewCalc);
+
+                    this.$el.find('#totalPaid').text(helpers.currencySplitter(totalNewPaid.toFixed(2)));
+                    this.$el.find('#totalPaid').attr('data-cash', totalNewPaid);
 
                     if ($("input.checkbox:checked").length > 0) {
                         $('#top-bar-deleteBtn').show();
@@ -1039,6 +1069,8 @@ define([
                 $('.check_all').click(function (e) {
                     var totalOld = 0;
                     var totalNew = 0;
+                    var totalCalc = 0;
+                    var totalPaid = 0;
 
                     var checkboxes = self.$el.find('.checkbox');
 
@@ -1047,28 +1079,44 @@ define([
                     $.each(checkboxes, function(){
                         var target = $(this);
                         var id = target.attr('id');
-                        var elDiff = parseFloat(self.editCollection.get(id).get("diff")) * (-1);
+                        var elDiff = parseFloat(self.editCollection.get(id).get("diff"));
+                        var elCalc = parseFloat(self.editCollection.get(id).get("calc"));
+                        var elPaid = parseFloat(self.editCollection.get(id).get("paid"));
 
                         if (!target.prop('checked')){
                             elDiff = elDiff * (-1);
                         }
 
                         totalNew += totalOld + elDiff;
+                        totalCalc += totalOld + elCalc;
+                        totalPaid += totalOld + elPaid;
 
                     });
 
                     if (self.$el.find("input.checkbox:checked").length > 0) {
 
-                        self.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
-                        self.$el.find('#total').attr('data-cash', totalNew);
+                        self.$el.find('#totalDiff').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                        self.$el.find('#totalDiff').attr('data-cash', totalNew);
+
+                        self.$el.find('#totalCalc').text(helpers.currencySplitter(totalCalc.toFixed(2)));
+                        self.$el.find('#totalCalc').attr('data-cash', totalCalc);
+
+                        self.$el.find('#totalPaid').text(helpers.currencySplitter(totalPaid.toFixed(2)));
+                        self.$el.find('#totalPaid').attr('data-cash', totalPaid);
 
                         $("#top-bar-deleteBtn").show();
                         $("#topBarPaymentGenerate").show();
                         $('#top-bar-createBtn').hide();
                     } else {
 
-                        self.$el.find('#total').text(0);
-                        self.$el.find('#total').attr('data-cash', 0);
+                        self.$el.find('#totalDiff').text(0);
+                        self.$el.find('#totalDiff').attr('data-cash', 0);
+
+                        self.$el.find('#totalCalc').text(0);
+                        self.$el.find('#totalCalc').attr('data-cash', 0);
+
+                        self.$el.find('#totalPaid').text(0);
+                        self.$el.find('#totalPaid').attr('data-cash', 0);
 
                         $("#top-bar-deleteBtn").hide();
                         $("#topBarPaymentGenerate").hide();
