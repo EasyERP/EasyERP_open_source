@@ -75,52 +75,32 @@ module.exports = function (models) {
             switch (periodArray[0]) {
                 case 'April':
                     month = 4;
-                    if (!notImportedEmployees[4]){
-                        notImportedEmployees[4] = [];
-                    }
                     break;
                 case 'May':
                     month = 5;
-                    if (!notImportedEmployees[5]){
-                        notImportedEmployees[5] = [];
-                    }
                     break;
                 case 'Jun':
                     month = 6;
-                    if (!notImportedEmployees[6]){
-                        notImportedEmployees[6] = [];
-                    }
                     break;
                 case 'July':
                     month = 7;
-                    if (!notImportedEmployees[7]){
-                        notImportedEmployees[7] = [];
-                    }
                     break;
                 case 'Aug':
                     month = 8;
-                    if (!notImportedEmployees[8]){
-                        notImportedEmployees[8] = [];
-                    }
                     break;
                 case 'Sep':
                     month = 9;
-                    if (!notImportedEmployees[9]){
-                        notImportedEmployees[9] = [];
-                    }
                     break;
                 case 'Oct':
                     month = 10;
-                    if (!notImportedEmployees[10]){
-                        notImportedEmployees[10] = [];
-                    }
                     break;
                 case 'Nov':
                     month = 11;
-                    if (!notImportedEmployees[11]){
-                        notImportedEmployees[11] = [];
-                    }
                     break;
+            }
+
+            if (!notImportedEmployees[month]){
+                notImportedEmployees[month] = [];
             }
 
             return {

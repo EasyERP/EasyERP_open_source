@@ -29,7 +29,7 @@ var Jobs = function (models, event) {
 
             return resArray;
         }
-    }
+    };
 
     this.getData = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
@@ -57,150 +57,148 @@ var Jobs = function (models, event) {
         }
 
         query = JobsModel.find(queryObject);
-
         query
-            .populate('project');
+            .populate('project')
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-        query.exec(function (err, result) {
+                res.status(200).send(result)
+            })
+
+    };
+
+    this.getForDD = function (req, res, next) {
+        var pId = req.query.projectId;
+        var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
+
+        query.find({type: "Empty", project: objectId(pId)}, {
+            name                           : 1,
+            _id                            : 1,
+            "budget.budgetTotal.revenueSum": 1
+        }, function (err, jobs) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(jobs);
+
+        });
+    };
+
+    this.remove = function (req, res, next) {
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        var data = req.body;
+        var id = data._id;
+
+        JobsModel.findByIdAndRemove(id, function (err, result) {
+            var jobId;
+            var projectId;
+
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(result)
-        })
+            jobId = result.get('_id');
+            projectId = result.get('project');
 
-    },
-
-        this.getForDD = function (req, res, next) {
-            var pId = req.query.projectId;
-            var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
-
-            query.find({type: "Empty", project: objectId(pId)}, {
-                name                           : 1,
-                _id                            : 1,
-                "budget.budgetTotal.revenueSum": 1
-            }, function (err, jobs) {
+            wTrack.find({"jobs._id": jobId}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send(jobs);
+
+                async.each(result, function (wTrackEl, cb) {
+                    var _id = wTrackEl.get('_id');
+
+                    wTrack.findByIdAndRemove(_id, function (err, r) {
+                        cb();
+                    });
+                }, function () {
+                    console.log('wTracks removed');
+                    if (projectId) {
+                        event.emit('updateProjectDetails', {req: req, _id: projectId});
+                    }
+                });
+
 
             });
-        },
 
-        this.remove = function (req, res, next) {
-            var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-            var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+            res.status(200).send(result)
+        })
+    };
 
-            var data = req.body;
-            var id = data._id;
+    this.update = function (req, res, next) {
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var project;
 
-            JobsModel.findByIdAndRemove(id, function (err, result) {
+        var data = req.body;
+        var id = data._id;
+        var query;
+        var updatewTracks;
+        var products;
+        var type;
+
+        if (id) {
+            if (data.workflowId) {
+                query = {workflow: {_id: data.workflowId, name: data.workflowName}};
+            } else if (data.name) {
+                query = {name: data.name};
+                updatewTracks = true;
+            } else if (data.type) {
+                query = {type: data.type};
+            }
+
+            delete data._id;
+
+            JobsModel.findByIdAndUpdate(id, query, {new: true}, function (err, result) {
                 var jobId;
-                var projectId;
+                var jobName;
 
                 if (err) {
                     return next(err);
                 }
 
                 jobId = result.get('_id');
-                projectId = result.get('project');
+                jobName = result.get('name');
 
-                wTrack.find({"jobs._id": jobId}, function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    async.each(result, function (wTrackEl, cb) {
-                        var _id = wTrackEl.get('_id');
-
-                        wTrack.findByIdAndRemove(_id, function (err, r) {
-                            cb();
-                        });
-                    }, function () {
-                        console.log('wTracks removed');
-                        if (projectId) {
-                            event.emit('updateProjectDetails', {req: req, _id: projectId});
-                        }
-                    });
-
-
-                });
-
-                res.status(200).send(result)
-            })
-        },
-
-        this.update = function (req, res, next) {
-            var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-            var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-            var project;
-
-            var data = req.body;
-            var id = data._id;
-            var query;
-            var updatewTracks = false;
-            var products;
-            var type;
-
-            if (id) {
-                if (data.workflowId) {
-                    query = {workflow: {_id: data.workflowId, name: data.workflowName}};
-                } else if (data.name) {
-                    query = {name: data.name};
-                    updatewTracks = true;
-                } else if (data.type) {
-                    query = {type: data.type};
-                }
-
-                delete data._id;
-
-                JobsModel.findByIdAndUpdate(id, query, {new: true}, function (err, result) {
-                    var jobId;
-                    var jobName;
-
-                    if (err) {
-                        return next(err);
-                    }
-
-                    jobId = result.get('_id');
-                    jobName = result.get('name');
-
-                    if (updatewTracks) {
-                        wTrack.update({"jobs._id": jobId}, {$set: {"jobs.name": jobName}}, {multi: true}, function (err, result) {
-                            if (err) {
-                                return next(err);
-                            }
-
-                            console.log('updated wTracks');
-                        })
-                    }
-
-                    res.status(200).send(result)
-                });
-            } else if (data.products && data.products.length) {
-                products = JSON.parse(data.products);
-                type = data.type;
-
-                async.each(products, function (product, cb) {
-
-                    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                if (updatewTracks) {
+                    wTrack.update({"jobs._id": jobId}, {$set: {"jobs.name": jobName}}, {multi: true}, function (err, result) {
                         if (err) {
                             return next(err);
                         }
 
-                        project = result.get('project');
+                        console.log('updated wTracks');
+                    })
+                }
 
-                        cb();
-                    });
+                res.status(200).send(result)
+            });
+        } else if (data.products && data.products.length) {
+            products = JSON.parse(data.products);
+            type = data.type;
 
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
+            async.each(products, function (product, cb) {
+
+                JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                    if (err) {
+                        return next(err);
                     }
+
+                    project = result.get('project');
+
+                    cb();
                 });
-            }
+
+            }, function () {
+                if (project) {
+                    event.emit('fetchJobsCollection', {project: project});
+                }
+            });
         }
+    }
 };
 
 module.exports = Jobs;
