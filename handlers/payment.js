@@ -528,6 +528,8 @@ var Payment = function (models, event) {
                 // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
                 invoice.payments.push(payment._id);
 
+                invoice.paymentDate = new Date();
+
                 Invoice.findByIdAndUpdate(invoiceId, invoice, {new: true}, function (err, invoice) {
                     if (err) {
                         return waterfallCallback(err);
