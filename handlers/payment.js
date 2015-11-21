@@ -875,7 +875,7 @@ var Payment = function (models, event) {
                             session: req.session
                         };
 
-                        isNotFullPaid = paid < paymentInfo.total;
+                        isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
 
                         if (isNotFullPaid) {
                             request.query.status = 'In Progress';

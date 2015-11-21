@@ -612,6 +612,7 @@ var Invoice = function (models, event) {
         var paymentIds = [];
         var jobs = [];
         var wTrackIds = [];
+        var project;
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
@@ -654,19 +655,18 @@ var Invoice = function (models, event) {
                             var setData = {};
                             var array;
 
-                            async.each(jobs, function (id) {
+                            async.each(jobs, function (id, cb) {
                                 setData.editedBy = {
                                     user: req.session.uId,
                                     date: new Date().toISOString()
                                 };
 
-                                setData.type = "Order";
-
-                                JobsModel.findByIdAndUpdate(id, setData, {new: true}, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, {type: "Order"}, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
 
+                                    project = result ? result.project : null;
                                     array = result ? result.wTracks : [];
 
                                     async.each(array, function (id) {
@@ -682,33 +682,17 @@ var Invoice = function (models, event) {
                                             if (err) {
                                                 return console.log(err);
                                             }
-                                            //  console.log('success');
+
                                         });
                                     });
+                                    cb();
                                 });
+                            }, function(){
+                                if (project) {
+                                    event.emit('fetchJobsCollection', {project: project});
+                                }
                             });
                         };
-
-                        //function wTrackUpdate (){
-                        //    var setData = {};
-                        //
-                        //    async.each(wTrackIds, function (id) {
-                        //        setData.editedBy = {
-                        //            user: req.session.uId,
-                        //            date: new Date().toISOString()
-                        //        };
-                        //
-                        //        setData.isPaid = false;
-                        //        setData.amount = 0;
-                        //
-                        //        wTrack.findByIdAndUpdate(id, setData, function (err, result) {
-                        //            if (err) {
-                        //                return console.log(err);
-                        //            }
-                        //          //  console.log('success');
-                        //        });
-                        //    });
-                        //};
 
                         async.parallel([paymentsRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
