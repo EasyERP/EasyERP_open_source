@@ -9,9 +9,6 @@ define([
     var initialize = function () {
         var appRouter = new Router();
 
-        appRouter.checkLogin = Communication.checkLogin;
-        Communication.checkLogin(Custom.runApplication);
-
         var opts = {
             lines: 17 // The number of lines to draw
             , length: 56 // The length of each line
@@ -43,6 +40,9 @@ define([
         $(document).ajaxComplete(function(){
             $(target).fadeOut();
         });
+
+        appRouter.checkLogin = Communication.checkLogin;
+        Communication.checkLogin(Custom.runApplication);
     };
 
     var applyDefaults = function () {
