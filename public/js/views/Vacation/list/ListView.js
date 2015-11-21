@@ -17,21 +17,21 @@ define([
 
     function (listTemplate, cancelEdit, listTotal, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
         var VacationListView = Backbone.View.extend({
-            el: '#content-holder',
+            el                : '#content-holder',
             defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            sort: null,
-            newCollection: null,
-            page: null, //if reload page, and in url is valid page
-            contentType: CONSTANTS.VACATION,//needs in view.prototype.changeLocationHash
-            viewType: 'list',//needs in view.prototype.changeLocationHash
-            changedModels: {},
-            holidayId: null,
-            editCollection: null,
-            responseObj: {},
-            monthElement: null,
-            yearElement: null,
+            listLength        : null,
+            filter            : null,
+            sort              : null,
+            newCollection     : null,
+            page              : null, //if reload page, and in url is valid page
+            contentType       : CONSTANTS.VACATION,//needs in view.prototype.changeLocationHash
+            viewType          : 'list',//needs in view.prototype.changeLocationHash
+            changedModels     : {},
+            holidayId         : null,
+            editCollection    : null,
+            responseObj       : {},
+            monthElement      : null,
+            yearElement       : null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -52,13 +52,13 @@ define([
             events: {
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "blur td.editable input": "hideInput",
-                "click td.editable": "editRow",
-                "click .current-selected": "showNewCurrentSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable",
-                "click": "hideNewSelect"
+                "blur td.editable input"                                          : "hideInput",
+                "click td.editable"                                               : "editRow",
+                "click .current-selected"                                         : "showNewCurrentSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .oe_sortable"                                              : "goSort",
+                "change .editable "                                               : "setEditable",
+                "click"                                                           : "hideNewSelect"
             },
 
             showNewCurrentSelect: function (e, prev, next) {
@@ -76,6 +76,9 @@ define([
                 modelObject = modelObject.success;
 
                 if (modelObject) {
+                    this.responseObj['#employee'] = this.responseObj['#employee'].filter(function (item) {
+                        return item.name !== modelObject.employee.name
+                    });
                     modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
                     savedRow.removeAttr('id');
@@ -209,7 +212,7 @@ define([
 
                 for (var i = 0; i < 12; i++) {
                     array.push({
-                        _id: moment().month(i).format('M'),
+                        _id : moment().month(i).format('M'),
                         name: moment().month(i).format('MMMM')
                     });
                 }
@@ -217,26 +220,33 @@ define([
                 content.responseObj['#monthSelect'] = array;
 
             },
-            yearForDD: function (content) {
+            yearForDD : function (content) {
                 dataService.getData('/vacation/getYears', {}, function (response, context) {
                     context.responseObj['#yearSelect'] = response;
                 }, content)
             },
 
-
             filterEmployeesForDD: function (content) {
-                dataService.getData("/employee/getForDD", null, function (employees) {
-                    employees = _.map(employees.data, function (employee) {
-                        employee.name = employee.name.first + ' ' + employee.name.last;
+                var currentNames = [];
+                this.collection.forEach(function (element) {
+                    var employee = element.attributes.employee;
+                    currentNames.push(employee.name);
+                });
 
-                        return employee
+                dataService.getData("/employee/getForDD", null, function (data) {
+                    var employees = [];
+                    _.each(data.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+                        if (!~currentNames.indexOf(employee.name)) {
+                            employees.push(employee);
+                        }
                     });
 
                     content.responseObj['#employee'] = employees;
                 });
             },
 
-            hideInput: function(e) {
+            hideInput: function (e) {
                 var target = $(e.target);
 
                 target.hide();
@@ -343,7 +353,7 @@ define([
                 this.renderTable(collection);
             },
 
-            renderTable: function(collection) {
+            renderTable: function (collection) {
                 var self = this;
                 var itemView;
 
@@ -361,9 +371,9 @@ define([
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/holiday/totalCollectionLength', {
-                    contentType: this.contentType,
+                    contentType  : this.contentType,
                     currentNumber: currentNumber,
-                    filter: filter,
+                    filter       : filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var page = context.page || 1;
@@ -447,7 +457,7 @@ define([
 
                 var searchObject = {
                     month: month,
-                    year: year
+                    year : year
                 };
 
                 this.changedModels = {};
@@ -456,14 +466,9 @@ define([
             },
 
             checkEmptyArray: function (array) {
-
                 array = _.compact(array);
 
-                if (array.length) {
-                    return false;
-                }
-
-                return true;
+                return !array.length;
             },
 
             chooseOption: function (e) {
@@ -519,17 +524,17 @@ define([
                 }
 
                 if (elementType === '#employee') {
-                    findEmployee = self.collection.filter(function(model) {
-                        return model.get('employee')._id === element._id;
-                    });
-
-                    if (findEmployee.length > 0) {
-                        tr.remove();
-                        self.hideSaveCancelBtns();
-                        self.changedModels[modelId]
-                        alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
-                        return false;
-                    }
+                    //findEmployee = self.collection.filter(function (model) {
+                    //    return model.get('employee')._id === element._id;
+                    //});
+                    //
+                    //if (findEmployee.length > 0) {
+                    //    tr.remove();
+                    //    self.hideSaveCancelBtns();
+                    //    self.changedModels[modelId]
+                    //    alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
+                    //    return false;
+                    //}
 
                     tr.find('[data-content="employee"]').text(element.name);
                     tr.find('.department').text(element.department.name);
@@ -628,7 +633,7 @@ define([
 
                 async.each(collection, function (document) {
 
-                    for (var i = self.daysCount-1; i >= 0; i--) {
+                    for (var i = self.daysCount - 1; i >= 0; i--) {
                         if (document.vacArray[i]) {
                             totalArray[i] = totalArray[i] ? totalArray[i] += 1 : 1;
                         }
@@ -696,8 +701,8 @@ define([
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
-                    collection: this.collection,
-                    page: currentEl.find("#currentShowPage").val(),
+                    collection : this.collection,
+                    page       : currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
@@ -746,6 +751,7 @@ define([
                 listTotalEl.html('');
                 listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
 
+                this.filterEmployeesForDD(this);
                 this.hideSaveCancelBtns();
 
                 holder.find('#timeRecivingDataFromServer').remove();
@@ -754,11 +760,11 @@ define([
 
             createItem: function () {
                 var startData = {
-                    daysCount: this.daysCount,
-                    employee: {},
+                    daysCount : this.daysCount,
+                    employee  : {},
                     department: {},
-                    month: this.monthElement.attr('data-content'),
-                    year: this.yearElement.text()
+                    month     : this.monthElement.attr('data-content'),
+                    year      : this.yearElement.text()
                 };
 
                 var model = new vacationModel(startData);
@@ -811,12 +817,12 @@ define([
                             headers: {
                                 mid: mid
                             },
-                            wait: true,
+                            wait   : true,
                             success: function () {
                                 delete self.changedModels[id];
                                 self.deleteItemsRender(1, 1);
                             },
-                            error: function (model, res) {
+                            error  : function (model, res) {
                                 if (res.status === 403 && index === 0) {
                                     alert("You do not have permission to perform this action");
                                 }
@@ -829,7 +835,7 @@ define([
 
             },
 
-            getVacDaysCount: function(model) {
+            getVacDaysCount: function (model) {
                 var array = _.compact(model.vacArray);
 
                 model.countVacationDays = array.length;
@@ -854,7 +860,7 @@ define([
                         tr.remove();
                         model = self.changedModels;
 
-                        if(model) {
+                        if (model) {
                             delete model[id];
                         }
 

@@ -215,11 +215,26 @@ var Invoice = function (models, event) {
     };
 
     this.updateOnlySelected = function (req, res, next) {
+        var db = req.session.lastDb;
         var id = req.params.id;
         var data = req.body;
+        var moduleId;
+        var isWtrack;
+        var Invoice;
+
+        if (checkDb(db)) {
+            moduleId = 64
+            isWtrack = true;
+        }
+
+        if (isWtrack) {
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 56, function (access) {
+            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
                     data.editedBy = {
@@ -227,7 +242,7 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    //var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
 
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
@@ -307,7 +322,7 @@ var Invoice = function (models, event) {
                     }
                 case 'forSales':
                     if (condition){
-                        condition = ConvertType(condition[0], 'boolean');
+                        condition = ConvertType(condition, 'boolean');
                         filtrElement[key] = condition;
                         resArray.push(filtrElement);
                         break;
@@ -721,15 +736,24 @@ var Invoice = function (models, event) {
     this.updateInvoice = function (req, res, _id, data, next) {
         var db = req.session.lastDb;
         var moduleId = 56;
+        var isWtrack;
+        var Invoice;
 
         if (checkDb(db)) {
             moduleId = 64
+            isWtrack = true;
+        }
+
+        if (isWtrack) {
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         }
 
         if (req.session && req.session.loggedIn && db) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    var Invoice = models.get(db, 'Invoice', InvoiceSchema);
+                    //Invoice = models.get(db, 'Invoice', InvoiceSchema);
                     //data.editedBy = {
                     //    user: req.session.uId,
                     //    date: new Date().toISOString()

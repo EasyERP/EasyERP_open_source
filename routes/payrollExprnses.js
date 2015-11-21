@@ -26,7 +26,10 @@ module.exports = function (models) {
         var filePath;
         var error;
         var rows = 0;
-        var notImportedEmployees = [];
+        var notImportedEmployees = {
+
+        };
+
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
 
@@ -68,6 +71,7 @@ module.exports = function (models) {
             var month;
             var year = 2000 + parseInt(periodArray[1]);
 
+
             switch (periodArray[0]) {
                 case 'April':
                     month = 4;
@@ -93,6 +97,10 @@ module.exports = function (models) {
                 case 'Nov':
                     month = 11;
                     break;
+            }
+
+            if (!notImportedEmployees[month]){
+                notImportedEmployees[month] = [];
             }
 
             return {
@@ -165,7 +173,7 @@ module.exports = function (models) {
                                 return cb(err);
                             }
                             if (!employee) {
-                                notImportedEmployees.push(fullName);
+                                notImportedEmployees[saveObject.month].push(fullName);
                                 cb(null, 'empty');
                             } else {
                                 saveObject.employee._id = employee._id;
@@ -181,7 +189,7 @@ module.exports = function (models) {
                             logWriter.log("importFile.js importXlsxToDb " + err);
                             next(err);
                         } else {
-                            if (notImportedEmployees.length) {
+                            if (Object.keys(notImportedEmployees).length) {
                                 logWriter.log("unsaved " + notImportedEmployees.toString());
                                 response = notImportedEmployees;
                             }

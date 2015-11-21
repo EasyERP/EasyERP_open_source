@@ -5,15 +5,14 @@
 @import "_topBar";
 @import "_list";
 @import "_vacationList";
-
 /*== temp files==*/
 @import "tmp/_payRoll";
 @import "projectsInfo/_projectInfo";
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
-@body-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
-@lucida-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
+@body-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+@lucida-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
 @icon-font: Icons;
 @title-font: Title;
 
@@ -69,6 +68,7 @@ html, body {
   margin: 0;
   padding: 0;
 }
+
 body {
   background-color: @bg-main;
 }
@@ -91,7 +91,6 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, cod
   line-height: 1;
   font-family: inherit;
 }
-
 
 table {
   border-collapse: collapse;
@@ -378,7 +377,7 @@ input::-ms-clear {
       line-height: @line-height;
     }
     span {
-      &.ui-spinner{
+      &.ui-spinner {
         width: 96%;
       }
     }
@@ -675,7 +674,7 @@ input::-ms-clear {
         font-family: Icons;
       }
     }
-}
+  }
   #cancelSpan, #saveSpan, #editSpan {
     a {
       color: @formColum-customer-info;
@@ -804,8 +803,6 @@ input::-ms-clear {
     }
   }
 }
-
-
 
 .submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
   display: block;
@@ -1075,7 +1072,7 @@ input::-ms-clear {
   display: block;
   background: @background !important;
   border: @thin-border @border-color-main;
- // border-bottom-color: rgba(0, 0, 0, 0.3);
+  // border-bottom-color: rgba(0, 0, 0, 0.3);
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: @width;
   min-height: 130px;
@@ -1209,11 +1206,7 @@ input::-ms-clear {
 }
 
 .cell-bg {
-  background: linear-gradient(45deg,fade(@border-color-main, 0) 48%
-  ,fade(@border-color-main, 20%) 50%,fade(@border-color-main, 0) 52%)
-  ,linear-gradient(-45deg,fade(@border-color-main, 0) 48%
-          ,fade(@border-color-main, 20%) 50%
-          ,fade(@border-color-main, 0) 52%);
+  background: linear-gradient(45deg, fade(@border-color-main, 0) 48%, fade(@border-color-main, 20%) 50%, fade(@border-color-main, 0) 52%), linear-gradient(-45deg, fade(@border-color-main, 0) 48%, fade(@border-color-main, 20%) 50%, fade(@border-color-main, 0) 52%);
   background-size: 16px 16px;
   background-color: darken(@bg-main, 2%);
 }
@@ -1665,7 +1658,7 @@ input::-ms-clear {
     .box-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
   }
 
-  .email,.company {
+  .email, .company {
     color: @link-color;
   }
 }
@@ -1945,11 +1938,11 @@ input::-ms-clear {
     padding: 0 2px;
     color: @mainText-color;
 
-      &:focus {
-        .box-shadow(0, 0, 5px, @border-color-selected);
-        outline: medium none;
-        border: @thin-border @border-color-selected;
-      }
+    &:focus {
+      .box-shadow(0, 0, 5px, @border-color-selected);
+      outline: medium none;
+      border: @thin-border @border-color-selected;
+    }
 
     &#summary {
       width: 100%;
@@ -2417,7 +2410,7 @@ input, textarea, select {
 }
 
 .current-selected {
- // color: @tilte-color !important;
+  // color: @tilte-color !important;
   font-size: 12px;
   text-decoration: none;
   line-height: 20px !important;
@@ -2764,10 +2757,10 @@ dl {
           border: @thin-border @border-color-main;
           padding: 5px 15px;
           font-size: 11px;
-            &:hover {
-              text-decoration: none;
-              border: @thin-border @bg-main-menu-selected;
-            }
+          &:hover {
+            text-decoration: none;
+            border: @thin-border @bg-main-menu-selected;
+          }
         }
       }
 
@@ -2864,9 +2857,10 @@ dl {
 #wrapper {
   .fullsize;
   min-width: 100%;
-  height: 100hv;
+  height: 100 hv;
   position: absolute;
   clear: both;
+  box-sizing: border-box;
 
   #content-holder {
     height: auto;
@@ -2874,6 +2868,7 @@ dl {
     background: inherit;
     clear: both;
     position: relative;
+    padding: 0 5px;
   }
 }
 
@@ -2947,6 +2942,7 @@ dl {
     max-width: 190px !important;
   }
 }
+
 .half-block {
   width: 50%;
   &.withPaddingRightProject {
@@ -3108,8 +3104,6 @@ dl {
     margin: 5px 1px 4px 1px !important;
   }
 }
-
-
 
 button {
   .btn;
@@ -3325,9 +3319,9 @@ button.red, a.red {
       display: block;
       line-height: 30px;
       color: @login-text;
-        &:hover {
-          color: #fff;
-        }
+      &:hover {
+        color: #fff;
+      }
     }
 
     &:hover {
@@ -3367,6 +3361,10 @@ button.red, a.red {
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.1);
+
+      span {
+        color: @overiewText-color;
+      }
     }
 
     &.not-active {
@@ -3376,7 +3374,14 @@ button.red, a.red {
 
       &:hover {
         background: none;
+
+        span {
+          color: @mainText-color;
+        }
       }
+    }
+    span {
+      color: @mainText-color;
     }
   }
 
@@ -3786,6 +3791,7 @@ table#workflows {
   .top-bar;
   margin-left: 0;
 }
+
 .noPadding {
   padding: 0 !important;
 }
@@ -3878,11 +3884,11 @@ ul.dialog-tabs {
   clear: both;
   text-align: center;
 
-    #showMore {
-      color: @mainText-color;
-      margin-top: 20px;
-      margin-bottom: 5px;
-    }
+  #showMore {
+    color: @mainText-color;
+    margin-top: 20px;
+    margin-bottom: 5px;
+  }
 }
 
 #modulesAccessTable {
@@ -4243,7 +4249,7 @@ h3.dashboard {
 
 .leadChart, .chart {
   text {
-      fill: @mainText-color;
+    fill: @mainText-color;
 
   }
 }
@@ -4530,7 +4536,7 @@ h3.dashboard {
   .create-employee-info {
     //.dl-auto(200px, 40%);
     dt {
-     // margin-top: 10px;
+      // margin-top: 10px;
     }
     input {
       max-width: 117px !important;
@@ -4590,13 +4596,12 @@ h3.dashboard {
 
   .startDate, .endDate {
     .disable_input_style;
-      input {
-        display: none;
-      }
-   }
+    input {
+      display: none;
+    }
+  }
 
 }
-
 
 #workflows {
   width: 603px;
@@ -4725,8 +4730,6 @@ h3.dashboard {
   }
 }
 
-
-
 .blue {
   color: @mainText-color-selected;
 }
@@ -4826,7 +4829,7 @@ input::-webkit-inner-spin-button {
       width: 100%;
       overflow: hidden;
 
-      &> div {
+      & > div {
         vertical-align: middle;
         display: table-cell;
       }
@@ -4845,7 +4848,7 @@ input::-webkit-inner-spin-button {
       .miniAvatar {
         //float: left;
         width: 20%;
-        .avatar{
+        .avatar {
           width: 50px;
           height: 50px;
           margin: 0;
@@ -4860,7 +4863,6 @@ input::-webkit-inner-spin-button {
     }
   }
 }
-
 
 .form .productEdit {
   padding: 0;
@@ -4897,15 +4899,13 @@ textarea#editInput {
   }
 }
 
-
-
 .grid {
   min-width: 100%;
   font-size: 11px;
   border-bottom: 1px solid @border-color-main;
   background-color: @bg-main;
   tr {
-  color: @captionsColor;
+    color: @captionsColor;
     th span {
       padding-right: 6px;
       text-align: right;
@@ -5178,13 +5178,13 @@ textarea#editInput {
         border-right: 1px solid @border-color-main;
       }
     }
-   /* tr.head-row {
-      td {
-        span {
-          color: @captionsColor;
-        }
-      }
-    }*/
+    /* tr.head-row {
+       td {
+         span {
+           color: @captionsColor;
+         }
+       }
+     }*/
     &.group {
       /*color: black;*/
       color: @mainText-color;
@@ -5303,9 +5303,9 @@ textarea#editInput {
 
       #currentEmployee, #currentStatus, #currentTime {
         color: @mainText-color;
-          option {
-            background-color: @bg-main;
-          }
+        option {
+          background-color: @bg-main;
+        }
       }
 
       &.pull-left {
@@ -5377,7 +5377,7 @@ textarea#editInput {
 
               /*for vacationDashboard*/
               &.free {
-                background-color:@free ;
+                background-color: @free;
               }
               &.almostFree {
                 background-color: @oneWorkDay;
@@ -5708,8 +5708,8 @@ textarea#editInput {
       background-color: #91ce50
     }
     &.subRow {
-     padding: 15px;
-  }
+      padding: 15px;
+    }
     .rowChecked {
       font-size: 15px;
       font-weight: 600;
@@ -6011,6 +6011,7 @@ textarea#editInput {
     top: calc(100% - 1px);
   }
 }
+
 /**- **/
 .btn-filter {
   position: relative;
@@ -6021,6 +6022,7 @@ textarea#editInput {
   position: relative;
   float: left;
 }
+
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
@@ -6105,7 +6107,7 @@ textarea#editInput {
         width: 100%;
       }
       &:not(.activeGroup) .groupName {
-        &.checkedGroup{
+        &.checkedGroup {
           color: @mainText-color;
           background-color: @bg-hover-drop-down-color-active;
           span:before {
@@ -6115,12 +6117,13 @@ textarea#editInput {
             border-radius: 50%;
             background-color: @fontColor-2;
           }
-        };
+        }
+      ;
       }
       &.activeGroup {
         .groupName {
           border-bottom: 1px solid @border-color-main;
-          &>span {
+          & > span {
             &:after {
               transform: rotate(-45deg);
               top: 9px;
@@ -6140,7 +6143,7 @@ textarea#editInput {
         padding: 10px;
         color: @mainText-color;
         //position: relative;
-        &>span {
+        & > span {
           display: inline-block;
           min-width: 120px;
           padding: 0 10px;
@@ -6263,7 +6266,6 @@ textarea#editInput {
   margin-left: 50px;
 }
 
-
 #favoritesContent {
   padding-top: 5px;
   #forFilterName {
@@ -6312,13 +6314,13 @@ textarea#editInput {
     margin-bottom: 2px;
     overflow: hidden;
     text-overflow: ellipsis;
-      &:hover {
-        color: white;
-        background-color: @bg-hover-drop-down-color;
-      }
+    &:hover {
+      color: white;
+      background-color: @bg-hover-drop-down-color;
+    }
 
   }
-   .checkedValue {
+  .checkedValue {
     background-color: @bg-hover-drop-down-color;
   }
 
@@ -6369,7 +6371,6 @@ textarea#editInput {
     margin-bottom: 15px;
   }
 }
-
 
 //------ Import files ------
 //.list2 {

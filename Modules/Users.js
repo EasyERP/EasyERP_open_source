@@ -92,8 +92,7 @@ var Users = function (mainDb, models) {
                 checkIfUserLoginUnique(req, data.login, function (res) {
                     if (res.unique) {
                         savetoBd(data);
-                    }
-                    else if (res.error) {
+                    } else if (res.error) {
                         logWriter.log("User.js. create Account.find " + error);
                         result.send(500, {error: 'User.create find error'});
                     } else {
