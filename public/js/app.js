@@ -31,7 +31,7 @@ define([
             hwaccel  : false, // Whether to use hardware acceleration
             position : 'absolute' // Element positioning
         };
-        var target = $('#loading');
+        var target = document.getElementById('loading');
         var spinner = new Spinner(opts).spin(target);
 
         $(document).ajaxStart(function () {
