@@ -19,6 +19,7 @@ define([
         contentCollection: paymentCollection,
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
 
@@ -32,7 +33,6 @@ define([
             "click #savePayment": "saveItem",
             "click #removePayment": "deleteItems"
         },
-
 
         deleteItems: function (e) {
             e.preventDefault();
@@ -246,7 +246,6 @@ define([
             return false;
         },
 
-
         showSaveCancelBtns: function () {
             var saveBtnEl = $('#savePayment');
             var cancelBtnEl = $('#removePayment');
@@ -308,13 +307,11 @@ define([
                 }
             });
 
-            this.$listTable = $('#paymentsTable');
-
             setTimeout(function () {
                 self.editCollection = new editCollection(self.collection.toJSON());
                 self.editCollection.on('updated', self.updatedOptions, self);
 
-                self.$listTable = $('#listTable');
+                self.$listTable = $('#paymentsTable');
             }, 10);
 
             return this;
