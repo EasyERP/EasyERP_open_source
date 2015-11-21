@@ -20,10 +20,9 @@ define([
         contentCollection: invoiceCollection,
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
-
-            this.render();
         },
 
         template: _.template(invoiceTemplate),
@@ -113,7 +112,6 @@ define([
                 pagenation.show();
             }
         },
-
 
         goSort: function (e) {
             var target$;
