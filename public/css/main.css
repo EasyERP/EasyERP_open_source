@@ -1044,6 +1044,15 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .payRoll-list #payRoll-Table {
   padding: 0;
 }
+.payRoll-list #payRoll-Table .datePicker {
+  padding: 0px;
+}
+.payRoll-list #payRoll-Table .datePicker input:not([disabled]) {
+  outline: 1px solid #66b5d4 !important;
+}
+.payRoll-list #payRoll-Table .datePicker input:focus {
+  outline: 1px solid #66b5d4 !important;
+}
 .payRoll-list #payRoll-Table .scrollit {
   display: block;
   height: calc(100vh - 209px);
