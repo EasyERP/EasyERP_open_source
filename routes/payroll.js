@@ -29,6 +29,7 @@ module.exports = function (models) {
     router.post('/generate', handler.generate);
     router.patch('/', handler.putchBulk);
     router.patch('/:id', handler.putchModel);
+    router.patch('/byDataKey', handler.patchByDataKey);
     router.delete('/:id', handler.remove);
 
     return router;

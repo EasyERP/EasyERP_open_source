@@ -27,5 +27,4 @@ define(function () {
         getData: getData,
         postData: postData
     }
-
 });

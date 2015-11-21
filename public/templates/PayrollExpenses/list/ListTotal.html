@@ -20,5 +20,8 @@ negativeMoney"><%=currencySplitter((totalObj.diff.onCash * (-1)).toString())%>
     <%} else {%>
     money"><%=currencySplitter(totalObj.diff.onCash.toString())%></td>
     <%}%>
+
+    <td class="centerCell notForm statusCheckbox"><input type="checkbox" class="checkbox" <%=totalObj.status ? 'checked' : ''%>/></td>
+    <td class="datePicker disable_input_style" data-val="<%=totalObj.date ? totalObj.date : null%>"><input type="text" disabled value="<%=totalObj.date ? totalObj.date : ''%>" /></td>
 </tr>
 <% }) %>
