@@ -322,7 +322,7 @@ var Invoice = function (models, event) {
                     }
                 case 'forSales':
                     if (condition){
-                        condition = ConvertType(condition, 'boolean');
+                        condition = ConvertType(condition[0], 'boolean');
                         filtrElement[key] = condition;
                         resArray.push(filtrElement);
                         break;

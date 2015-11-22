@@ -29,7 +29,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = {key: 'forSales', value: true};
+                this.filter.forSales = {key: 'forSales', value: [true]};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -123,7 +123,7 @@ define([
 
                 self.renderCheckboxes();
                 self.renderPagination(currentEl, self);
-                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: true}});
+                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
                 dataService.getData("/workflow/fetch", {
                     wId         : 'Sales Invoice',
