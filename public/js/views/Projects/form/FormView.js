@@ -986,10 +986,14 @@ define([
                     filter: filter
                 });
 
+                var callback = _.once(cb);
+
                         function createView() {
                             var payments = [];
 
-                            cb();
+                            callback();
+
+                            App.invoiceCollection = self.iCollection;
 
                             new InvoiceView({
                                 model: self.iCollection,

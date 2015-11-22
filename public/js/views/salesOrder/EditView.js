@@ -7,9 +7,10 @@ define([
         "common",
         "custom",
         "dataService",
-        "populate"
+        "populate",
+        "constants"
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
@@ -26,6 +27,8 @@ define([
 
                 this.forSales = true;
                 this.redirect = options.redirect;
+
+                this.projectManager = options.projectManager;
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
@@ -231,7 +234,16 @@ define([
                 var quantity;
                 var price;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
+                var supplier = {};
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+                var project = {};
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
+
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
@@ -246,6 +258,7 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
+                var jobs;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -265,11 +278,13 @@ define([
                         productId = targetEl.data('id');
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
+                        jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
 
                         products.push({
                             product  : productId,
                             unitPrice: price,
-                            quantity : quantity
+                            quantity : quantity,
+                            jobs: jobs
                         });
                     }
                 }
@@ -286,6 +301,7 @@ define([
                     invoiceControl   : invoiceControl ? invoiceControl : null,
                     paymentTerm      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
+                    project       : project,
                     paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed

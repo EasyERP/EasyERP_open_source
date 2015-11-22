@@ -8,7 +8,7 @@
         <%}%>
     </td>
     <% if (forSales) {%>
-       <td data-name="jobs" data-content="jobs">
+       <td data-name="jobs" data-content="<%=product.jobs._id%>">
            <a class="current-selected" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
        </td>
     <% } else {%>

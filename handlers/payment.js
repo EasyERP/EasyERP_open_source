@@ -550,6 +550,7 @@ var Payment = function (models, event) {
                     }, function () {
                         if (project) {
                             event.emit('fetchJobsCollection', {project: project});
+                            event.emit('fetchInvoiceCollection', {project: project});
                         }
                     });
 
@@ -925,6 +926,7 @@ var Payment = function (models, event) {
                                 }, function () {
                                     if (project) {
                                         event.emit('fetchJobsCollection', {project: project});
+                                        event.emit('fetchInvoiceCollection', {project: project});
                                     }
 
                                     res.status(200).send({success: removed});
