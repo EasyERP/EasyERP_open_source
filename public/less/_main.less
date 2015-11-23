@@ -21,6 +21,10 @@
 @bold-border: 3px solid;
 @thin-border: 1px solid;
 
+.spinner {
+  background-color: yellow;
+}
+
 .notification {
   z-index: 20000;
   position: fixed;
@@ -638,40 +642,37 @@ input::-ms-clear {
 
   span {
     //padding: 3px 8px 3px 0;
-    &#editSpan {
+    //&#editSpan {
+    //  a {
+    //    margin-left: 5px;
+    //    width: 16px;
+    //    height: 25px;
+    //    line-height: 16px;
+    //    font-size: 16px;
+    //    background: no-repeat 0 50%;
+    //    margin-right: 5px;
+    //    font-family: Icons;
+    //  }
+    //}
+    &#saveSpan, &#cancelSpan, &#editSpan {
       a {
         margin-left: 5px;
         width: 16px;
-        height: 25px;
-        line-height: 15px;
+        height: 20px;
+        //line-height: 20px;
         font-size: 16px;
         background: no-repeat 0 50%;
         margin-right: 5px;
         font-family: Icons;
       }
-    }
-    &#saveSpan {
-      a {
-        margin-left: 5px;
-        width: 16px;
-        height: 25px;
-        line-height: 27px;
+
+      i {
+        margin: 0 5px;
+        //width: 16px;
+        //height: 20px;
+        line-height: 20px;
         font-size: 16px;
-        background: no-repeat 0 50%;
-        margin-right: 5px;
-        font-family: Icons;
-      }
-    }
-    &#cancelSpan {
-      a {
-        margin-left: 5px;
-        width: 16px;
-        height: 25px;
-        line-height: 27px;
-        font-size: 16px;
-        background: no-repeat 0 50%;
-        margin-right: 5px;
-        font-family: Icons;
+        cursor: pointer;
       }
     }
   }
@@ -2111,6 +2112,9 @@ input::-ms-clear {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     padding: 0 4px;
+    margin-top: 1px;//need for Project-Project-Order
+    margin-bottom: 1px;//need for Project-Project-Order
+    box-sizing: border-box;
     color: @mainText-color;
 
     &:focus {
@@ -4819,7 +4823,7 @@ input::-webkit-inner-spin-button {
 .topInputHolder {
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: @thin-border #DDD;
+  border-bottom: @thin-border @border-color-main;
 
   .thirdPartBlock {
     width: 33.33%;
