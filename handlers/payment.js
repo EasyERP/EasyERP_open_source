@@ -441,7 +441,7 @@ var Payment = function (models, event) {
         var mid = body.mid;
         var data = body;
         var project;
-        var type = "Payment";
+        var type = "Payed";
 
         delete  data.mid;
 
@@ -836,7 +836,7 @@ var Payment = function (models, event) {
         var project;
         var moduleId = req.headers.mId || returnModuleId(req);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var type = "Invoice";
+        var type = "Invoiced";
 
         if (isWtrack) {
             Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
