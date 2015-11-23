@@ -2,7 +2,6 @@
 <tr data-id="<%=payment._id%>">
 <td class = "notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
 <td class="centerCell"><%=startNumber + index + 1%></td>
-<td><%=payment.date%></td>
 <td><%=(payment.number) ? payment.number : ''%></td>
 <td><%=payment.paymentRef%></td>
 <td><%=payment.supplier.name%></td>
@@ -11,5 +10,6 @@
 <td id='<%=payment._id%>'>
     <a href="javascript:;" class="stageSelect"><%=payment.workflow ? payment.workflow.name: 'Undefinded'%></a>
 </td>
+    <td><%=payment.date%></td>
 </tr>
 <% }) %>

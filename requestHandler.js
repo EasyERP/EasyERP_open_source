@@ -929,6 +929,10 @@ var requestHandler = function (app, event, mainDb) {
         io.emit('fetchJobsCollection', options);
     });
 
+    event.on('fetchInvoiceCollection', function (options) {
+        io.emit('fetchInvoiceCollection', options);
+    });
+
 
     Array.prototype.objectID = function () {
 

@@ -38,6 +38,7 @@ define([
         },
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.collection;
             this.projectID = options.projectId;
             this.customerId = options.customerId;
@@ -57,6 +58,7 @@ define([
         goToEditDialog: function (e) {
             e.preventDefault();
 
+            var self = this;
             var id = $(e.target).closest('tr').data("id");
             var model = new orderModel({validate: false});
 
@@ -64,7 +66,7 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true});
+                    new editView({model: model, redirect: true,  projectManager: self.projectManager});
                 },
                 error  : function () {
                     alert('Please refresh browser');

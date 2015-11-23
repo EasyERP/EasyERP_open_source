@@ -41,6 +41,7 @@ define([
         },
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.model;
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};

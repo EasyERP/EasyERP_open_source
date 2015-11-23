@@ -3,8 +3,8 @@ var express = require('express');
 var router = express.Router();
 var QuotationHandler = require('../handlers/quotation');
 
-module.exports = function (models) {
-    var handler = new QuotationHandler(models);
+module.exports = function (models, event) {
+    var handler = new QuotationHandler(models, event);
 
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getFilterValues', handler.getFilterValues);

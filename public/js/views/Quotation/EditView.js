@@ -158,7 +158,7 @@ define([
                                     //Backbone.history.fragment = '';
                                     //Backbone.history.navigate(url, {trigger: true});
 
-                                    var data ={products: JSON.stringify(products), type: "Order"};
+                                    var data ={products: JSON.stringify(products), type: "Ordered"};
 
                                     dataService.postData("/jobs/update", data,  function(err, result){
                                         if (err){
@@ -322,6 +322,8 @@ define([
                 var description;
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
                 var subTotal;
+                var jobs;
+                var scheduledDate;
 
                 var usersId = [];
                 var groupsId = [];
@@ -354,6 +356,7 @@ define([
                             scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
+                            jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
                             subTotal = targetEl.find('.subtotal').text();
 
                             products.push({
@@ -363,7 +366,8 @@ define([
                                 scheduledDate: scheduledDate,
                                 taxes: taxes,
                                 description: description,
-                                subTotal: subTotal
+                                subTotal: subTotal,
+                                jobs: jobs
                             });
                         }
                     }

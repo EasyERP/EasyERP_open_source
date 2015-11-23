@@ -17,7 +17,7 @@ module.exports = (function () {
         paidAmount      : {type: Number, default: 0, set: setPrice},
         date            : {type: Date, default: Date.now},
         name            : {type: String, default: '', unique: true},
-        workflow        : {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
+        workflow        : {type: String, enum: ['Draft', 'Paid'], default: 'Paid'},
         differenceAmount: {type: Number, default: 0, set: setPrice},
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         month           : {type: Number},
