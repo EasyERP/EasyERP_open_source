@@ -794,7 +794,7 @@ var wTrack = function (event, models) {
                         _id: objectId("56337c705d49d8d6537832eb"),
                         name: "In Progress"
                     },
-                    type: "notQuoted",
+                    type: "Not Quoted",
                     wTracks: [],
                     project: objectId(project)
                 };
