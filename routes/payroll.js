@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var PayRollHandler = require('../handlers/payroll');
-//var redisStore = require('../helpers/redisClient');
+var redisStore = require('../helpers/redisClient');
 
 module.exports = function (models) {
     "use strict";
@@ -29,6 +29,7 @@ module.exports = function (models) {
     router.post('/generate', handler.generate);
     router.patch('/', handler.putchBulk);
     router.patch('/:id', handler.putchModel);
+    //router.patch('/byDataKey', handler.patchByDataKey);
     router.delete('/:id', handler.remove);
 
     return router;

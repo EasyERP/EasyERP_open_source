@@ -1,7 +1,4 @@
 /**
- * Created by liliya on 23.10.15.
- */
-/**
  * Created by liliya on 29.09.15.
  */
 var mongoose = require('mongoose');

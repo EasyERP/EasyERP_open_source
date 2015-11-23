@@ -6,7 +6,6 @@ class="canceledListItem"
     <td class = "notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=quotation.name%></td>
-    <td><%=quotation.orderDate%></td>
     <td><%=(quotation.supplier) ? quotation.supplier.name : ''%></td>
     <td><%=quotation.expectedDate%></td>
     <td class="unTaxed"><%=(quotation.paymentInfo) ? quotation.paymentInfo.unTaxed.toFixed(2) : '0'%></td>
@@ -14,5 +13,6 @@ class="canceledListItem"
     <td id='<%=quotation._id%>'>
         <a href="javascript:;" class="stageSelect"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
     </td>
+    <td><%=quotation.orderDate%></td>
 </tr>
 <% }) %>

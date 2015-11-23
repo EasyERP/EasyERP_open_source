@@ -33,6 +33,9 @@
             <% count++ %>
             <% })%>
         </tbody>
+<%debugger;%>
+        <% if (jobStatus === "notQuoted"){ %>
+
         <tfoot class="innerTableProject-footer">
             <tr>
                 <td colspan="7"></td>
@@ -44,5 +47,6 @@
                 </td>
             </tr>
         </tfoot>
+        <% } %>
      </table>
 </div>
