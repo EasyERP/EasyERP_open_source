@@ -29,7 +29,7 @@ dbObject.once('open', function callback() {
                 jobId = job._id;
 
                 if (job.type === "Empty"){
-                    updateObj.type = "notQuoted"
+                    updateObj.type = "Not Quoted"
                 } else if (job.type === "Quotation"){
                     updateObj.type = "Quoted"
                 } else if (job.type === "Order"){
