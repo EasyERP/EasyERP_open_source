@@ -1,9 +1,10 @@
 ﻿define([
         "text!templates/Users/EditTemplate.html",
         "common",
-        "populate"
+        "populate",
+        "Validation"
     ],
-    function (EditTemplate, common, populate) {
+    function (EditTemplate, common, populate, Validation) {
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Users",
@@ -26,7 +27,8 @@
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click"                                                           : "hideNewSelect"
+                "click"                                                           : "hideNewSelect",
+                "keypress #login"                                                 : "checkLoginInputKey"
             },
             notHide      : function () {
                 return false;
@@ -65,6 +67,14 @@
                     display: "block"
                 }, 250);
 
+            },
+
+            checkLoginInputKey: function (e) {
+                var char = String.fromCharCode(e.charCode);
+
+                if (Validation.loginCharNotValid(char)) {
+                    e.preventDefault();
+                }
             },
 
             saveItem  : function () {
