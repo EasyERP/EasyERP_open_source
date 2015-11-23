@@ -213,7 +213,7 @@ define([
 
                 var products = model.get('products');
 
-                var data ={products: JSON.stringify(products), type: "Quotation"};
+                var data ={products: JSON.stringify(products), type: "Quoted"};
 
                 dataService.postData("/jobs/update", data,  function(err, result){
                     if (err){

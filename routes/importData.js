@@ -86,7 +86,7 @@ module.exports = function (models) {
         var WorkflowSchema = mongoose.Schemas['workflow'];
         var WTrackSchema = mongoose.Schemas[wTrackCollection];
         var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
-        var PaymentSchema = mongoose.Schemas['wTrackPayment'];
+        var PaymentSchema = mongoose.Schemas['Payment'];
         var BonusTypeSchema = mongoose.Schemas[bonusTypeCollection];
         var PayOutSchema = mongoose.Schemas[payOutCollection];
 
@@ -98,7 +98,7 @@ module.exports = function (models) {
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
         var Wtrack = models.get(req.session.lastDb, wTrackCollection, WTrackSchema);
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
-        var Payment = models.get(req.session.lastDb, 'wTrackPayment', PaymentSchema);
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var BonusType = models.get(req.session.lastDb, bonusTypeCollection, BonusTypeSchema);
         var PayOut = models.get(req.session.lastDb, payOutCollection, PayOutSchema);
 

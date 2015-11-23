@@ -235,14 +235,7 @@ define([
                 var price;
 
                 var supplier = {};
-                supplier._id = thisEl.find('#supplierDd').attr('data-id');
-                supplier.name = thisEl.find('#supplierDd').text();
-
                 var project = {};
-                project._id = thisEl.find('#projectDd').attr('data-id');
-                project.projectName = thisEl.find('#projectDd').text();
-                project.projectmanager = this.projectManager;
-
 
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
@@ -271,6 +264,14 @@ define([
                 });
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {

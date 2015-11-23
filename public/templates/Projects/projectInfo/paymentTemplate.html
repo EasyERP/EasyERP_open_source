@@ -17,8 +17,7 @@
             </th>
             <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+
             <th class="oe_sortable" data-sort="paymentMethod.name">Payment Way<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paidAmount">Invoiced<span class="arrow down">7</span><span
@@ -26,6 +25,8 @@
             <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
         </tr>
         </thead>
@@ -39,13 +40,13 @@
             <td><%=(payment.invoice && payment.invoice.assigned) ? payment.invoice.assigned.name: ''%></td>
             <td><%=payment.supplier.fullName%></td>
             <td><%=payment.invoice ? payment.invoice.name : ''%></td>
-            <td data-type="dtPicker" class="editable date" data-content="date">
-                <%=utcDateToLocaleDate(payment.date)%>
-            </td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
             <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=(parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)).toFixed(2)%></td>
             <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=payment.paidAmount%></td>
             <td data-content="workflow" class="editable"><a href="javascript:;" class="currentSelected <%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow%></a></td>
+            <td data-type="dtPicker" class="editable date" data-content="date">
+                <%=utcDateToLocaleDate(payment.date)%>
+            </td>
             <%total += parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)%>
             <%totalPaidAmount += parseFloat(payment.paidAmount)%>
         </tr>
@@ -53,7 +54,7 @@
         <% if (paymentCollection.length) {%>
         <tfoot id="listTotal">
              <tr>
-                 <td colspan="7"></td>
+                 <td colspan="6"></td>
                  <td><span id="total" class="money"><%=currencySplitter(total.toFixed(2))%></span></td>
                  <td><span id="totalPaidAmount" class="money"><%=currencySplitter(totalPaidAmount.toFixed(2))%></span></td>
                  <td></td>
