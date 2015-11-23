@@ -3,22 +3,24 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var payRollSchema = new mongoose.Schema({
-        ID        : Number,
-        employee  : {
+        ID      : Number,
+        employee: {
             _id : {type: ObjectId, ref: 'Employees', default: null},
             name: String
         },
-        year      : Number,
-        month     : Number,
-        dataKey   : Number,
-        calc      : Number,
-        paid      : Number,
-        diff      : Number,
+        year    : Number,
+        month   : Number,
+        dataKey : Number,
+        calc    : Number,
+        paid    : Number,
+        diff    : Number,
 
-        type: {
-            _id: {type: ObjectId, ref: "ProductCategories", default: null},
+        type  : {
+            _id : {type: ObjectId, ref: "ProductCategories", default: null},
             name: String
-        }
+        },
+        date  : {type: Date, default: null},
+        status: {type: Boolean, default: false}
     }, {collection: 'PayRoll'});
 
     payRollSchema.set('toJSON', {virtuals: true});

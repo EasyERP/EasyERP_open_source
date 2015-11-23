@@ -863,6 +863,11 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 1;
   height: 20px;
 }
+.tableFixed {
+  table-layout: fixed;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
@@ -1029,11 +1034,24 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .payRoll-list tfoot {
   margin-right: 17px;
 }
+.payRoll-list tfoot td {
+  border-color: transparent;
+  padding-right: 20px;
+}
 .payRoll-list tbody tr:hover {
   background: none;
 }
 .payRoll-list #payRoll-Table {
   padding: 0;
+}
+.payRoll-list #payRoll-Table .datePicker {
+  padding: 0px;
+}
+.payRoll-list #payRoll-Table .datePicker input:not([disabled]) {
+  outline: 1px solid #66b5d4 !important;
+}
+.payRoll-list #payRoll-Table .datePicker input:focus {
+  outline: 1px solid #66b5d4 !important;
 }
 .payRoll-list #payRoll-Table .scrollit {
   display: block;
@@ -1057,7 +1075,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 @media (min-width: 1320px) {
   table.payRoll-list #payRoll-Table .scrollit {
-    height: calc(100vh - 179px);
+    height: calc(100vh - 155px);
   }
 }
 #forInfo {
@@ -3676,9 +3694,10 @@ dl dd span.ui-spinner {
   width: 100%;
   height: 100%;
   min-width: 100%;
-  height: 100hv;
+  height: 100 hv;
   position: absolute;
   clear: both;
+  box-sizing: border-box;
 }
 #wrapper #content-holder {
   height: auto;
@@ -3686,6 +3705,7 @@ dl dd span.ui-spinner {
   background: inherit;
   clear: both;
   position: relative;
+  padding: 0 5px;
 }
 #startLetter {
   margin: 0;
@@ -4465,6 +4485,10 @@ a.red:hover {
 .miniPaginationPersons > div:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
+.miniPagination > div:hover span,
+.miniPaginationPersons > div:hover span {
+  color: #ffffff;
+}
 .miniPagination > div.not-active,
 .miniPaginationPersons > div.not-active {
   color: silver;
@@ -4474,6 +4498,14 @@ a.red:hover {
 .miniPagination > div.not-active:hover,
 .miniPaginationPersons > div.not-active:hover {
   background: none;
+}
+.miniPagination > div.not-active:hover span,
+.miniPaginationPersons > div.not-active:hover span {
+  color: #cdcdcd;
+}
+.miniPagination > div span,
+.miniPaginationPersons > div span {
+  color: #cdcdcd;
 }
 .miniPagination .last,
 .miniPaginationPersons .last,
@@ -8140,12 +8172,12 @@ textarea#editInput {
 .grid tr {
   color: #cdcdcd;
   /* tr.head-row {
-      td {
-        span {
-          color: @captionsColor;
-        }
-      }
-    }*/
+       td {
+         span {
+           color: @captionsColor;
+         }
+       }
+     }*/
 }
 .grid tr th span {
   padding-right: 6px;

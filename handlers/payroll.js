@@ -180,6 +180,49 @@ var PayRoll = function (models) {
         }
     };
 
+    this.patchByDataKey = function (req, res, next) {
+        var body = req.body;
+        var uId;
+        var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, mid, function (access) {
+                if (!access) {
+                    error = new Error();
+                    error.status = 403;
+
+                    next(error);
+                }
+
+                async.each(body, function (data, cb) {
+                    var id = data._id;
+
+                    data.editedBy = {
+                        user: uId,
+                        date: new Date().toISOString()
+                    };
+                    delete data._id;
+
+                    if (data.type) {
+                        data.type._id = objectId(data.type._id);
+                    }
+
+                    PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
+                }, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({success: 'updated'});
+                    composeExpensesAndCache(req);
+                });
+            });
+        } else {
+            res.status(401).send();
+        }
+    };
+
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var uId;
@@ -425,6 +468,8 @@ var PayRoll = function (models) {
                         difference = _.difference(ids, createdIds);
 
                         async.each(difference, function (id, callB) {
+                            var PRoll;
+                            var defObj = {};
                             var empl = _.find(employees, function (el) {
                                 return el._id.toString() === id;
                             });
@@ -441,7 +486,7 @@ var PayRoll = function (models) {
                             defObj.employee.name = empl.name.first + ' ' + empl.name.last;
 
 
-                            var PRoll = new Payroll(defObj);
+                            PRoll = new Payroll(defObj);
 
                             PRoll.save(function (err, result) {
                                 callB();

@@ -257,6 +257,7 @@ define([
                         '<td colspan="11" id="subRow-holder' + jobId + '"></td>' +
                         '</tr>').insertAfter(jobContainer);
                     $('#subRow-holder' + jobId).append(template({
+                        jobStatus: job.type,
                         jobItem: job,
                         currencySplitter: helpers.currencySplitter
                     }));
@@ -278,7 +279,7 @@ define([
                 var jobs = {};
 
                 jobs._id = $(e.target).attr('data-id');
-                jobs.name = $(e.target).attr('data-value');f
+                jobs.name = $(e.target).attr('data-value');
 
                 if (this.generatedView){
                     this.generatedView.undelegateEvents();
@@ -985,10 +986,14 @@ define([
                     filter: filter
                 });
 
+                var callback = _.once(cb);
+
                         function createView() {
                             var payments = [];
 
-                            cb();
+                            callback();
+
+                            App.invoiceCollection = self.iCollection;
 
                             new InvoiceView({
                                 model: self.iCollection,

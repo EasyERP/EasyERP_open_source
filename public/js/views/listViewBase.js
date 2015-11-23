@@ -32,6 +32,14 @@ define([
                 "click .oe_sortable"          : "goSort"
             },
 
+            //to remove zombies was needed for event after recieveInvoice on projectInfo
+            remove: function() {
+                this.$el.empty().off();
+                this.stopListening();
+
+                return this;
+            },
+
             //<editor-fold desc="Logic">
 
             fetchSortCollection: function (sortObject) {

@@ -20,17 +20,47 @@ define([
         contentCollection: invoiceCollection,
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
-
-            this.render();
         },
 
         template: _.template(invoiceTemplate),
 
         events: {
             "click .checkbox": "checked",
-            "click  .list td:not(.notForm)": "goToEditDialog"
+            "click  .list td:not(.notForm)": "goToEditDialog",
+            "click #removeInvoice": "deleteItems"
+        },
+
+        deleteItems: function (e) {
+            e.preventDefault();
+
+            var that = this;
+            var model;
+            var listTableCheckedInput;
+            var table = this.$el.find('#listTable');
+            listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
+
+            this.collectionLength = this.collection.length;
+            $.each(listTableCheckedInput, function (index, checkbox) {
+                model = that.collection.get(checkbox.value);
+                model.destroy({
+                    wait   : true,
+                    success: function (model) {
+                        var id = model.get('_id');
+
+                        table.find('[data-id="' + id + '"]').remove();
+
+                        $("#removeInvoice").hide();
+                    },
+                    error  : function (model, res) {
+                        if (res.status === 403 && index === 0) {
+                            alert("You do not have permission to perform this action");
+                        }
+                    }
+                });
+            });
         },
 
         goToEditDialog: function (e) {
@@ -83,7 +113,6 @@ define([
             }
         },
 
-
         goSort: function (e) {
             var target$;
             var currentParrentSortClass;
@@ -132,10 +161,12 @@ define([
             if (this.collection.length > 0) {
                 var el = this.$el;
                 var checkLength = el.find("input.checkbox:checked").length;
-                var checkAll$=el.find('#check_all_payments');
+                var checkAll$=el.find('#check_all_invoice');
+                var removeBtnEl = $('#removeInvoice');
 
                 if (checkLength > 0) {
                     checkAll$.prop('checked', false);
+                    removeBtnEl.show();
 
                     if (checkLength == this.collection.length) {
 
@@ -143,6 +174,7 @@ define([
                     }
                 }
                 else {
+                    removeBtnEl.hide();
                     checkAll$.prop('checked', false);
                 }
             }
@@ -188,12 +220,14 @@ define([
                 currencySplitter: helpers.currencySplitter
             }));
 
+            this.$el.find("#removeInvoice").hide();
+
             $('#check_all_invoice').click(function () {
                 self.$el.find(':checkbox').prop('checked', this.checked);
                 if (self.$el.find("input.checkbox:checked").length > 0) {
-                    self.$el.find("#removeOrder").show();
+                    self.$el.find("#removeInvoice").show();
                 } else {
-                    self.$el.find("#removeOrder").hide();
+                    self.$el.find("#removeInvoice").hide();
                 }
             });
 

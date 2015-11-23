@@ -29,6 +29,7 @@ define([
         },
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.collection;
             this.projectID = options.projectId;
             this.customerId = options.customerId;
@@ -226,7 +227,7 @@ define([
             var localCounter = 0;
             var listTableCheckedInput;
             var count;
-            var table = $("#quotationTable")
+            var table = $("#quotationTable");
 
             listTableCheckedInput = table.find("input:not('#check_all_quotations'):checked");
             count = listTableCheckedInput.length;

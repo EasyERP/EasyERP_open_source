@@ -16,28 +16,29 @@ define([
 ], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
     var orderView = listView.extend({
 
-        el: '#orders',
+        el                      : '#orders',
         totalCollectionLengthUrl: '/quotation/totalCollectionLength',
-        contentCollection: quotationCollection,
-        templateList: _.template(ListTemplate),
-        templateHeader: _.template(lisHeader),
+        contentCollection       : quotationCollection,
+        templateList            : _.template(ListTemplate),
+        templateHeader          : _.template(lisHeader),
 
         events: {
-            "click .checkbox": "checked",
-            "click #removeOrder": "removeItems",
+            "click .checkbox"                    : "checked",
+            "click #removeOrder"                 : "removeItems",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click .stageSelect": "showNewSelect",
-            "mouseover .currentPageList"  : "showPagesPopup",
-            "click .itemsNumber"          : "switchPageCounter",
-            "click .showPage"             : "showPage",
-            "change #currentShowPage"     : "showPage",
-            "click #previousPage"         : "previousPage",
-            "click #nextPage"             : "nextPage",
-            "click #firstShowPage"        : "firstPage",
-            "click #lastShowPage"         : "lastPage"
+            "click .stageSelect"                 : "showNewSelect",
+            "mouseover .currentPageList"         : "showPagesPopup",
+            "click .itemsNumber"                 : "switchPageCounter",
+            "click .showPage"                    : "showPage",
+            "change #currentShowPage"            : "showPage",
+            "click #previousPage"                : "previousPage",
+            "click #nextPage"                    : "nextPage",
+            "click #firstShowPage"               : "firstPage",
+            "click #lastShowPage"                : "lastPage"
         },
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.collection;
             this.projectID = options.projectId;
             this.customerId = options.customerId;
@@ -47,7 +48,7 @@ define([
             this.page = options.page ? options.page : 1;
             this.startNumber = options.startNumber ? options.startNumber : 1;
 
-            if(this.startNumber < 50){
+            if (this.startNumber < 50) {
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             }
 
@@ -57,16 +58,17 @@ define([
         goToEditDialog: function (e) {
             e.preventDefault();
 
+            var self = this;
             var id = $(e.target).closest('tr').data("id");
-            var model = new orderModel({ validate: false });
+            var model = new orderModel({validate: false});
 
             model.urlRoot = '/Order/form/' + id;
             model.fetch({
-                data: {contentType: this.contentType},
+                data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({ model: model , redirect: true});
+                    new editView({model: model, redirect: true,  projectManager: self.projectManager});
                 },
-                error: function () {
+                error  : function () {
                     alert('Please refresh browser');
                 }
             });
@@ -164,9 +166,10 @@ define([
 
             model.save({
                 workflow: {
-                    _id: target$.attr("id"),
-                    name:target$.text()
-                }}, {
+                    _id : target$.attr("id"),
+                    name: target$.text()
+                }
+            }, {
                 headers : {
                     mid: 55
                 },
@@ -373,17 +376,17 @@ define([
 
         render: function (options) {
             var currentEl = this.$el;
-            var self  = this;
+            var self = this;
             var tabs;
             var dialogHolder;
             var n;
             var target;
 
-            if (options && options.activeTab){
+            if (options && options.activeTab) {
                 self.hideDialog();
 
                 tabs = $(".chart-tabs");
-                target =  tabs.find('#ordersTab');
+                target = tabs.find('#ordersTab');
 
                 target.closest(".chart-tabs").find("a.active").removeClass("active");
                 target.addClass("active");
@@ -397,9 +400,9 @@ define([
             currentEl.prepend(this.templateHeader);
 
             currentEl.find('#orderTable').html(this.templateList({
-                orderCollection : this.collection.toJSON(),
-                startNumber: 0,
-                dateToLocal: common.utcDateToLocaleDate
+                orderCollection: this.collection.toJSON(),
+                startNumber    : 0,
+                dateToLocal    : common.utcDateToLocaleDate
             }));
 
             //this.renderPagination(currentEl, this);
@@ -416,13 +419,12 @@ define([
             });
 
             dataService.getData("/workflow/fetch", {
-                wId: 'Sales Order',
-                source: 'purchase',
+                wId         : 'Sales Order',
+                source      : 'purchase',
                 targetSource: 'order'
             }, function (stages) {
                 self.stages = stages;
             });
-
 
 
         }
