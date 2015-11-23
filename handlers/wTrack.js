@@ -791,10 +791,10 @@ var wTrack = function (event, models) {
                 job = {
                     name: jobName,
                     workflow: {
-                        _id: objectId("562a03e3c64f817e10071643"),
-                        name: "New"
+                        _id: objectId("56337c705d49d8d6537832eb"),
+                        name: "In Progress"
                     },
-                    type: "Empty",
+                    type: "notQuoted",
                     wTracks: [],
                     project: objectId(project)
                 };

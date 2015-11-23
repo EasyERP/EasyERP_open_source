@@ -110,7 +110,7 @@ var Invoice = function (models, event) {
             var supplier;
             var company;
             var project;
-            var type = "Invoice";
+            var type = "Invoiced";
             var query;
 
             if (parallelResponse && parallelResponse.length) {
@@ -661,7 +661,7 @@ var Invoice = function (models, event) {
                                     date: new Date().toISOString()
                                 };
 
-                                JobsModel.findByIdAndUpdate(id, {type: "Order"}, {new: true}, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, {type: "Ordered"}, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
