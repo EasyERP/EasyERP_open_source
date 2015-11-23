@@ -28,8 +28,9 @@ module.exports = function (models) {
     router.post('/', handler.create);
     router.post('/generate', handler.generate);
     router.patch('/', handler.putchBulk);
+    router.patch('/byDataKey', handler.patchByDataKey);
     router.patch('/:id', handler.putchModel);
-    //router.patch('/byDataKey', handler.patchByDataKey);
+    router.delete('/byDataKey', handler.removeByDataKey);
     router.delete('/:id', handler.remove);
 
     return router;

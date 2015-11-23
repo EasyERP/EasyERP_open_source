@@ -39,6 +39,7 @@ define([
                 "click tr.mainRow"     : "gotoForm",
                 "click .datePicker"    : "datePickerClick",
                 "change .datePicker"   : "datePickerChange",
+                "click .totalRowCB"    : "dataKeyCbCheck"
             },
 
             initialize: function (options) {
@@ -55,6 +56,18 @@ define([
                 this.render();
 
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');
+            },
+
+            dataKeyCbCheck: function (e) {
+                e.stopPropagation();
+
+                var checkedCB = this.$el.find('.totalRowCB');
+
+                if (checkedCB.length) {
+                    this.showHideSaveCancelBtns({delete: true});
+                } else {
+                    this.showHideSaveCancelBtns({delete: false});
+                }
             },
 
             datePickerClick: function (e) {
@@ -77,7 +90,7 @@ define([
                 var $td = $input.closest('td');
 
                 var $tr = $td.closest('tr');
-                var dataKey = $tr.attr('data-id');
+                var dataKey = $tr.attr('id');
 
                 var defVal = $td.attr('data-val');
 
@@ -99,30 +112,87 @@ define([
                 this.showHideSaveCancelBtns();
             },
 
-            showHideSaveCancelBtns: function () {
-                var option;
+            showHideSaveCancelBtns: function (options) {
                 var $btnHolder = $('.createBtnHolder');
                 var $saveBtn = $btnHolder.find('#top-bar-saveBtn');
                 var $deleteBtn = $btnHolder.find('#top-bar-deleteBtn');
 
-                if (this.changesCount !== 0) {
-                    option = {save: true, delete: true};
-                } else {
-                    option = {save: false, delete: false};
+                if (!options) {
+                    if (this.changesCount) {
+                        options = {save: true, delete: true};
+                    } else {
+                        options = {save: false, delete: false};
+                    }
                 }
 
-                option.save ? $saveBtn.show() : $saveBtn.hide();
-                option.delete ? $deleteBtn.show() : $deleteBtn.hide();
+                options.save ? $saveBtn.show() : $saveBtn.hide();
+                options.delete ? $deleteBtn.show() : $deleteBtn.hide();
             },
 
-            saveItem: function() {
-                /*var self = this;
+            saveItem: function () {
+                var self = this;
 
-                dataService.patchData("/payroll/byDataKey", self.changedPeriods, function (err, result) {
+                dataService.patchData("/payroll/byDataKey", JSON.stringify(self.changedPeriods), function (err, result) {
                     if (err) {
                         return console.log(err);
                     }
-                });*/
+
+                    self.changesCount = 0;
+                    self.changedPeriods = {};
+
+                    self.showHideSaveCancelBtns();
+                });
+            },
+
+            deleteItems: function () {
+                var self = this;
+                var checkboxes;
+                var checkboxesValues = [];
+                var keys;
+                var $tr;
+                var $statusCb;
+                var $dateTd;
+
+                var curDataKey;
+
+                if (this.changesCount) {
+                    keys = Object.keys(this.changedPeriods);
+
+                    for (var i = keys.length - 1; i >= 0; i--) {
+                        $tr = $('#' + keys[i]);
+
+                        $statusCb = $tr.find('.statusCheckbox .checkbox');
+                        $dateTd = $tr.find('.datePicker');
+
+                        $statusCb.find('.checkbox').prop('checked', !$statusCb.prop('checked'));
+                        $dateTd.find('input').datepicker('setDate', new Date($dateTd.attr('data-val')));
+                    }
+                } else {
+                    checkboxes = this.$el.find('.totalRowCB:checked');
+
+                    $.each(checkboxes, function () {
+                        checkboxesValues.push($(this).attr('data-id'));
+                    })
+
+                    dataService.deleteData("/payroll/byDataKey", JSON.stringify({dataKeys: checkboxesValues}), function (err, result) {
+                        if (err) {
+                            return console.log(err);
+                        }
+
+                        for (var i = checkboxes.length - 1; i >= 0; i--) {
+
+                            curDataKey = $(checkboxes[i]).attr('data-id');
+
+                            checkboxes[i].closest('tr').remove();
+
+                            self.total = _.reject(self.total, function (el) {
+                                return Object.keys(el)[0] === curDataKey;
+                            });
+                        }
+                    });
+                }
+
+                self.showHideSaveCancelBtns({save: false, delete: false});
             },
 
             statusCheck: function (e) {
@@ -133,7 +203,7 @@ define([
                 var $checkbox = isCheckBox ? $target : $target.find('.checkbox');
                 var state = $checkbox.prop('checked');
                 var $tr = $target.closest('tr');
-                var dataKey = $tr.attr('data-id');
+                var dataKey = $tr.attr('id');
 
                 if (!isCheckBox) {
                     $checkbox.prop('checked', !state);
@@ -171,7 +241,7 @@ define([
                     return;
                 }
                 App.ownContentType = true;
-                var id = $(e.target).closest("tr").attr("data-id");
+                var id = $(e.target).closest("tr").attr("id");
                 window.location.hash = this.formUrl + id;
             },
 
@@ -219,7 +289,8 @@ define([
                 currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
                     total           : this.total,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter    : helpers.weekSplitter
+                    weekSplitter    : helpers.weekSplitter,
+                    moment          : moment,
                 }));
 
                 this.hideSaveCancelBtns();

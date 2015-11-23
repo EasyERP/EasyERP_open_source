@@ -1094,7 +1094,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 #forInfo .tableProjects .forCaption {
   color: #ffffff;
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   line-height: 28px;
 }
 #forInfo .tableProjects .forCaption:last-child {
@@ -1145,6 +1145,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   border-width: 0;
 }
 /*------------------------Constants-----------------------------*/
+.spinner {
+  background-color: yellow;
+}
 .notification {
   z-index: 20000;
   position: fixed;
@@ -2528,35 +2531,24 @@ dl dd span.ui-spinner {
   margin-bottom: 2px;
   width: 90%;
 }
+.form span#saveSpan a,
+.form span#cancelSpan a,
 .form span#editSpan a {
   margin-left: 5px;
   width: 16px;
-  height: 25px;
-  line-height: 15px;
+  height: 20px;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
 }
-.form span#saveSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
+.form span#saveSpan i,
+.form span#cancelSpan i,
+.form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
   font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.form span#cancelSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
+  cursor: pointer;
 }
 .form #cancelSpan a,
 .form #saveSpan a,
@@ -3101,35 +3093,24 @@ dl dd span.ui-spinner {
   margin-bottom: 2px;
   width: 90%;
 }
+.formLeftColumn .form span#saveSpan a,
+.formLeftColumn .form span#cancelSpan a,
 .formLeftColumn .form span#editSpan a {
   margin-left: 5px;
   width: 16px;
-  height: 25px;
-  line-height: 15px;
+  height: 20px;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
 }
-.formLeftColumn .form span#saveSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
+.formLeftColumn .form span#saveSpan i,
+.formLeftColumn .form span#cancelSpan i,
+.formLeftColumn .form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
   font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.formLeftColumn .form span#cancelSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
+  cursor: pointer;
 }
 .formLeftColumn .form #cancelSpan a,
 .formLeftColumn .form #saveSpan a,
@@ -3446,35 +3427,24 @@ dl dd span.ui-spinner {
   margin-bottom: 2px;
   width: 90%;
 }
+.formRightColumn .form span#saveSpan a,
+.formRightColumn .form span#cancelSpan a,
 .formRightColumn .form span#editSpan a {
   margin-left: 5px;
   width: 16px;
-  height: 25px;
-  line-height: 15px;
+  height: 20px;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
 }
-.formRightColumn .form span#saveSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
+.formRightColumn .form span#saveSpan i,
+.formRightColumn .form span#cancelSpan i,
+.formRightColumn .form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
   font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.formRightColumn .form span#cancelSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
+  cursor: pointer;
 }
 .formRightColumn .form #cancelSpan a,
 .formRightColumn .form #saveSpan a,
@@ -6504,6 +6474,9 @@ ul.dialog-tabs li.right button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   padding: 0 4px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  box-sizing: border-box;
   color: #cdcdcd;
 }
 .form-holder form input:not([type=checkbox]):focus {
@@ -8099,7 +8072,7 @@ input::-webkit-inner-spin-button {
 .topInputHolder {
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #7f7f80;
 }
 .topInputHolder .thirdPartBlock {
   width: 33.33%;

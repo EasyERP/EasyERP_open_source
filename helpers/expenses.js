@@ -10,6 +10,7 @@ module.exports = function(models){
         var key = 'payrollExpenses' + filter;
         var redisStore = require('../helpers/redisClient');
 
+        var moment = require('../public/js/libs/moment/moment');
         var async = require('async');
         var _ = require('lodash');
 

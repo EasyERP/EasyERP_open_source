@@ -41,10 +41,8 @@ module.exports = (function () {
     require('./invoice.js');
     require('./workflow.js');
     require('./wTrack.js');
-    require('./wTrackInvoice.js');
-    require('./wTrackInvoiceOld.js');
-    require('./wTrackPayment.js');
-    require('./wTrackPayOut.js');
+    //require('./wTrackPayment.js');
+    //require('./wTrackPayOut.js');
     require('./monthHours.js');
     require('./holiday.js');
     require('./vacation.js');
@@ -54,7 +52,6 @@ module.exports = (function () {
     require('./hoursCash.js');
     require('./capacity.js');
     require('./jobs.js');
-   // require('./wTrackInvoiceOld.js'); //TODO remove this row
     require('./payRoll.js');
     require('./paymentType.js');
 })();
