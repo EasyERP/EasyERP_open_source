@@ -5437,7 +5437,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar h4 {
   color: #66b5d4;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
@@ -5455,7 +5455,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .title {
   color: #66b5d4;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
@@ -5484,7 +5484,7 @@ ul.dialog-tabs li.right button {
 .thumbnailwithavatar .inner .info P {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 200 !important;
   line-height: 16px;
   text-align: center;
