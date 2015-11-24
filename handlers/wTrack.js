@@ -1450,7 +1450,7 @@ var wTrack = function (event, models) {
                                 });
                             } else if (diff === 0 && (startDate == endDate)) {
                                 fCb(null, []);
-                            } else if ((diff > 0) && (diffYear === 0)) {
+                            } else if ((diff >= 0) && (diffYear === 0)) {
                                 parallelTasks = [thirdPart];
 
                                 async.parallel(parallelTasks, function (err, result) {
