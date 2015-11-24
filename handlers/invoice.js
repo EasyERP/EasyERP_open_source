@@ -449,7 +449,7 @@ var Invoice = function (models, event) {
                             .populate('groups.group')
                             .populate('groups.owner', '_id login')
                             .populate('products.jobs')
-                        //.populate('sourceDocument');
+                            .populate('sourceDocument');
                         /*.populate('project', '_id projectName').
                          populate('workflow._id', '-sequence');*/
 
@@ -597,7 +597,8 @@ var Invoice = function (models, event) {
                             .populate('editedBy.user')
                             .populate('groups.users')
                             .populate('groups.group')
-                            .populate('groups.owner', '_id login');
+                            .populate('groups.owner', '_id login')
+                            .populate('sourceDocument');
 
                         query.lean().exec(waterfallCallback);
                     };
