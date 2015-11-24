@@ -37,8 +37,7 @@ var workflows = function (models) {
 
         query = {
             wId: wId,
-            status: status,
-            visible: true
+            status: status
         };
 
         if (source) {

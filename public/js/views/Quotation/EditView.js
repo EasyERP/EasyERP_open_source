@@ -126,8 +126,8 @@ define([
                 populate.fetchWorkflow({
                     wId: wId,
                     source: 'purchase',
-                    status: 'In Progress',
-                    targetSource: 'order'
+                    status: 'New'
+                    //targetSource: 'order'
                 }, function (workflow) {
                     var products;
 
