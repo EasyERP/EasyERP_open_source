@@ -137,7 +137,7 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
-           // invoice.sourceDocument = order.name;
+            // invoice.sourceDocument = order.name;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
             invoice.workflow = {};
@@ -147,7 +147,7 @@ var Invoice = function (models, event) {
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
             if (forSales === "true") {
-                if (!invoice.project){
+                if (!invoice.project) {
                     invoice.project = {};
                 }
                 invoice.project.name = order.project ? order.project.projectName : "";
@@ -214,7 +214,7 @@ var Invoice = function (models, event) {
                 return next(err)
             }
 
-            Order.findByIdAndUpdate(id, {$set: {type: "Invoiced"}}, {new: true}, function(err, result){
+            Order.findByIdAndUpdate(id, {$set: {type: "Invoiced"}}, {new: true}, function (err, result) {
                 if (err) {
                     return next(err)
                 }
@@ -333,7 +333,7 @@ var Invoice = function (models, event) {
                         break;
                     }
                 case 'forSales':
-                    if (condition){
+                    if (condition) {
                         condition = ConvertType(condition[0], 'boolean');
                         filtrElement[key] = condition;
                         resArray.push(filtrElement);
@@ -434,6 +434,8 @@ var Invoice = function (models, event) {
                         }
 
                         optionsObject.$and.push({_id: {$in: invoicesIds}});
+                        optionsObject.$and.push({expense: {$exists: false}});
+
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
@@ -447,9 +449,9 @@ var Invoice = function (models, event) {
                             .populate('groups.group')
                             .populate('groups.owner', '_id login')
                             .populate('products.jobs')
-                            //.populate('sourceDocument');
-                            /*.populate('project', '_id projectName').
-                            populate('workflow._id', '-sequence');*/
+                        //.populate('sourceDocument');
+                        /*.populate('project', '_id projectName').
+                         populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -650,7 +652,7 @@ var Invoice = function (models, event) {
 
                         orderId = invoiceDeleted.sourceDocument;
 
-                        Order.findByIdAndUpdate(objectId(orderId), {$set: {type: "Not Invoiced"}}, {new: true}, function(err, result){
+                        Order.findByIdAndUpdate(objectId(orderId), {$set: {type: "Not Invoiced"}}, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err)
                             }
@@ -710,7 +712,7 @@ var Invoice = function (models, event) {
                                     });
                                     cb();
                                 });
-                            }, function(){
+                            }, function () {
                                 if (project) {
                                     event.emit('fetchJobsCollection', {project: project});
                                 }

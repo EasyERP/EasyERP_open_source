@@ -215,7 +215,7 @@ define([
                                     name: jsonModel.type.name
                                 },
                                 period          : jsonModel.year + '-' + jsonModel.month + '-01',
-                                _id             : dataId
+                                paymentRef      : dataId
                             };
 
                             this.forPayments.add(modelPayment);
@@ -246,7 +246,7 @@ define([
                                 name: jsonModel.type.name
                             },
                             period          : jsonModel.year + '-' + jsonModel.month + '-01',
-                            _id             : dataId
+                            paymentRef      : dataId
                         };
 
                         this.forPayments.add(modelPayment);
@@ -1010,7 +1010,7 @@ define([
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
-                modelObject = modelObject.success;
+                //modelObject = modelObject.success;
 
                 if (modelObject) {
                     modelId = modelObject._id;
