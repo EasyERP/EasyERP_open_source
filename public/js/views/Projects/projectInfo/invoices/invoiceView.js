@@ -57,6 +57,7 @@ define([
 
                         tr.find('.type').text("Not Invoiced");
 
+                        tr.removeClass('notEditable');
 
                         $("#removeInvoice").hide();
                     },

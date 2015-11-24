@@ -2,7 +2,9 @@
 <tr data-id="<%=order._id%>"
 <%if (order.workflow && order.workflow.status === 'Cancelled') { %>
 class="canceledListItem"
-<%}%>>
+<%} else if (order.type !== "Not Invoiced"){ %>
+class="notEditable"
+<% } %>>
 <td class = "notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
 <td class="centerCell"><%=startNumber + index + 1%></td>
 <td><%=order.project ? order.project.projectName : '------'%></td>

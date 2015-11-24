@@ -59,8 +59,14 @@ define([
             e.preventDefault();
 
             var self = this;
-            var id = $(e.target).closest('tr').data("id");
+            var tr = $(e.target).closest('tr');
+            var id = tr.data("id");
+            var notEditable = tr.hasClass('notEditable');
             var model = new orderModel({validate: false});
+
+            if (notEditable){
+                return false;
+            }
 
             model.urlRoot = '/Order/form/' + id;
             model.fetch({

@@ -160,6 +160,8 @@ define([
 
                             var tr = $("[data-id=" + orderId + "]");
 
+                            tr.addClass('notEditable');
+
                             tr.find('.type').text("Invoiced");
 
                             var filter = {
