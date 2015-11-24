@@ -137,7 +137,8 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
-            invoice.sourceDocument = order.name;
+           // invoice.sourceDocument = order.name;
+            invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
             invoice.workflow = {};
             invoice.workflow._id = workflow._id;
@@ -212,6 +213,13 @@ var Invoice = function (models, event) {
             if (err) {
                 return next(err)
             }
+
+            Order.findByIdAndUpdate(id, {$set: {type: "Invoiced"}}, {new: true}, function(err, result){
+                if (err) {
+                    return next(err)
+                }
+            });
+
 
             res.status(201).send(result);
         });
@@ -438,7 +446,8 @@ var Invoice = function (models, event) {
                             .populate('groups.users')
                             .populate('groups.group')
                             .populate('groups.owner', '_id login')
-                            .populate('products.jobs');
+                            .populate('products.jobs')
+                            //.populate('sourceDocument');
                             /*.populate('project', '_id projectName').
                             populate('workflow._id', '-sequence');*/
 
@@ -617,9 +626,11 @@ var Invoice = function (models, event) {
         var jobs = [];
         var wTrackIds = [];
         var project;
+        var orderId;
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
+        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
         if (checkDb(db)) {
@@ -636,6 +647,14 @@ var Invoice = function (models, event) {
                         }
 
                         invoiceDeleted = result.toJSON();
+
+                        orderId = invoiceDeleted.sourceDocument;
+
+                        Order.findByIdAndUpdate(objectId(orderId), {$set: {type: "Not Invoiced"}}, {new: true}, function(err, result){
+                            if (err) {
+                                return next(err)
+                            }
+                        });
 
                         async.each(invoiceDeleted.products, function (product) {
                             jobs.push(product.jobs);

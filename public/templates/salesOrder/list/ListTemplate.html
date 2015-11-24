@@ -9,6 +9,7 @@ class="canceledListItem"
     <td><%=(order.supplier) ? order.supplier.fullName : ''%></td>
     <td><%=(order.salesPerson) ? order.salesPerson.fullName : ''%></td>
     <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
+    <td><%=order.type%></td>
     <td id='<%=order._id%>'>
         <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
     </td>

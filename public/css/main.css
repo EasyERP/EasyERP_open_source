@@ -644,6 +644,13 @@ th {
   border: none !important;
 }
 /*== End Input type number =============*/
+.tableResponsive {
+  min-height: .01%;
+  overflow-x: auto;
+  width: 100%;
+  overflow-y: hidden;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
