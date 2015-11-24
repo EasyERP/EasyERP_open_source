@@ -198,7 +198,10 @@ define([
 
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
-                    new ProductItemView({canBeSold: true, service: 'Service'}).render().el
+                    new ProductItemView({
+                        canBeSold: true,
+                        service: 'Service'
+                    }).render().el
                 );
 
             },
