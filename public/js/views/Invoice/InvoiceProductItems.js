@@ -140,8 +140,8 @@ define([
 
             this.prevQuickEdit = parent;
 
-            parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
-            parent.append('<span id="cancelSpan" class="productEdit"><a href="javascript:;">x</a></span>');
+            parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');
+            parent.append('<span id="cancelSpan" class="productEdit"><i class="fa fa-times"></i></span>');
             parent.find("#editInput").width(parent.find("#editInput").width() - 50);
         },
 

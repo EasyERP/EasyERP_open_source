@@ -122,7 +122,7 @@ define([
             if (trId.find("#editSpan").length === 0) {
                 tdId.append('<span id="editSpan" class=""><a href="javascript:;">e</a></span>');
                 if (tdId.width() - 30 < tdId.find(".no-long").width()) {
-                    tdId.find(".no-long").width(tdId.width() - 30);
+                    tdId.find(".no-long").width(tdId.width() - 40);
                 }
             }
         },
@@ -195,8 +195,8 @@ define([
             this.prevQuickEdit = parent;
 
             if (textarea.length) {
-                parent.append('<span id="cancelSpan" class="productEdit right"><a href="javascript:;">x</a></span>');
-                parent.append('<span id="saveSpan" class="productEdit right"><a href="javascript:;">c</a></span>');
+                parent.append('<span id="cancelSpan" class="productEdit right"><i class="fa fa-times"></i></span>');
+                parent.append('<span id="saveSpan" class="productEdit right"><i class="fa fa-check"></i></span>');
 
             } else {
                 parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');
