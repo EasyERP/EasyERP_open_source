@@ -114,6 +114,7 @@ define([
                 // var nameRegExp = /^[\w\.@]{3,100}$/;
                 var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
                 var id = $(e.target).parents("td").closest('tr').attr('data-id');
                 var name = $(e.target).prev('input').val() ? $(e.target).prev('input').val() : $(e.target).val();
 
@@ -134,7 +135,7 @@ define([
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
-                                value: [self.id]
+                                value: [_id]
                             }
                         };
 
@@ -187,6 +188,7 @@ define([
 
             removeJobAndWTracks: function (e) {
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
                 var id = $(e.target).attr('id');
                 var tr = $(e.target).closest('tr');
 
@@ -210,7 +212,7 @@ define([
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
-                                value: [self.id]
+                                value: [_id]
                             }
                         };
 
@@ -622,16 +624,19 @@ define([
                         contentType     : self.contentType
                     })
                 );
+
+                this.renderProformRevenue();
             },
 
             getWTrack: function (cb) {
                 //var _id = this.formModel.id;
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
 
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [this.id]
+                        value: [_id]
                     }
                 };
 
@@ -671,13 +676,14 @@ define([
 
             showMoreContent: function (newModels) {
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
 
                 var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
 
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [this.id]
+                        value: [_id]
                     }
                 };
 
@@ -780,13 +786,13 @@ define([
             },
 
             getQuotations: function (cb) {
-                //var _id = this.formModel.id;
+                var _id = window.location.hash.split('form/')[1];
                 var self = this;
 
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [this.id]
+                        value: [_id]
                     }
                 };
 
@@ -802,7 +808,7 @@ define([
                     cb();
                     new QuotationView({
                         collection    : self.qCollection,
-                        projectId : self.id,
+                        projectId : _id,
                         customerId: self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
                         filter        : filter
@@ -818,11 +824,12 @@ define([
 
             getOrders: function (cb) {
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
 
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [this.id]
+                        value: [_id]
                     },
                     'isOrder'    : {
                         key  : 'isOrder',
@@ -841,7 +848,7 @@ define([
                     cb();
                     new oredrView({
                         collection    : self.ordersCollection,
-                        projectId : self.id,
+                        projectId : _id,
                         customerId: self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
                         filter        : filter
@@ -869,11 +876,15 @@ define([
                 var orderSum = 0;
 
                 ordersCollectionJSON.forEach(function (element) {
-                    orderSum += element.paymentInfo.total;
+                    if (element.paymentInfo){
+                        orderSum += element.paymentInfo.total;
+                    }
                 });
 
                 qCollectionJSON.forEach(function (element) {
-                    sum += element.paymentInfo.total;
+                    if (element.paymentInfo){
+                        sum += element.paymentInfo.total;
+                    }
                 });
 
                 this.proformValues.quotations = {

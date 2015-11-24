@@ -20,16 +20,15 @@ define(function () {
         sendData(url, data, 'PUT', callback);
     };
 
-    var patchData = function (url, data, contentType, callback) {
-        sendData(url, data, 'PATCH', contentType, callback);
+    var patchData = function (url, data, callback, contentType) {
+        sendData(url, data, 'PATCH', callback, contentType);
     };
 
-    var deleteData = function (url, data, contentType, callback) {
-        sendData(url, data, 'DELETE', contentType, callback);
+    var deleteData = function (url, data, callback, contentType) {
+        sendData(url, data, 'DELETE', callback, contentType);
     };
 
-
-    var sendData = function (url, data, method, contentType, callback) {
+    var sendData = function (url, data, method, callback, contentType) {
         method = method.toUpperCase() || 'POST';
         contentType = contentType ? contentType : false;
 
