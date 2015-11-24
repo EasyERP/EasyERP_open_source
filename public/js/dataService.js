@@ -43,7 +43,7 @@ define(function () {
             error      : function (jxhr) {
                 callback(jxhr)
             }
-        }
+        };
 
         if (contentType) {
             ajaxObject.contentType = contentType;
