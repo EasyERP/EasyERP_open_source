@@ -45,7 +45,7 @@ query.exec(function (error, _res) {
         async.each(_res, function (workflow, callback) {
             var objectToSave = {};
 
-            if ((workflow.wId === "Sales Order") && ((workflow.status === "In Progress") || (workflow.status === "Cancelled"))){
+            if ((workflow.wName === "order") && ((workflow.status === "In Progress") || (workflow.status === "Cancelled"))){
                 objectToSave.visible = false;
             } else {
                 objectToSave.visible = true;
