@@ -30,14 +30,14 @@ define([
 
             events: {
                 'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click #projectDd"                                                : "showNewSelect",
-                "click a.current-selected:not(#projectDd, #jobs)"                       : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
+                'click .dialog-tabs a': 'changeTab',
+                "click #projectDd"    : "showNewSelect",
+                "click a.current-selected:not(#projectDd,.jobs)": "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .newSelectList li.miniStylePagination"      : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click"                                                           : "hideNewSelect"
             },
 
             showNewSelect: function (e, prev, next) {
@@ -62,7 +62,7 @@ define([
                     return el._id === id;
                 });
 
-                if (type === 'emptyProject'){
+                if (type === 'emptyProject') {
                     this.projectManager = element.projectmanager;
 
                     this.$el.find('#supplierDd').text(element.customer.name);
@@ -184,19 +184,19 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
                             jobs = targetEl.find('#jobs').attr('data-id');
 
-                            if(!jobs && this.forSales){
+                            if (!jobs && this.forSales) {
                                 return alert("Job field can't be empty. Please, choose or create one.");
                             }
 
                             products.push({
                                 product      : productId,
-                                unitPrice    : price,
-                                quantity     : quantity,
+                                unitPrice: price,
+                                quantity : quantity,
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
                                 description  : description,
                                 subTotal     : subTotal,
-                                jobs: jobs
+                                jobs         : jobs
                             });
                         } else {
                             return alert("Products can't be empty.");
@@ -207,14 +207,14 @@ define([
 
                 data = {
                     forSales      : forSales,
-                    supplier      : supplier,
-                    project       : project,
-                    deliverTo     : deliverTo,
-                    products      : products,
-                    orderDate     : orderDate,
-                    expectedDate  : expectedDate,
-                    destination   : destination,
-                    incoterm      : incoterm,
+                    supplier: supplier,
+                    project : project,
+                    deliverTo: deliverTo,
+                    products : products,
+                    orderDate: orderDate,
+                    expectedDate: expectedDate,
+                    destination : destination,
+                    incoterm    : incoterm,
                     invoiceControl: invoiceControl,
                     paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
@@ -295,7 +295,7 @@ define([
                     buttons      : [
                         {
                             id   : "create-person-dialog",
-                            text : "Create",
+                            text: "Create",
                             click: function () {
                                 self.saveItem();
                             }
@@ -325,7 +325,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
 
-                if (App.weTrack && this.forSales){
+                if (App.weTrack && this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
@@ -345,7 +345,7 @@ define([
 
                 populate.fetchWorkflow({
                     wId         : 'Purchase Order',
-                    source      : 'purchase',
+                    source: 'purchase',
                     targetSource: 'quotation'
                 }, function (response) {
                     if (!response.error) {

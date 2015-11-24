@@ -16,7 +16,7 @@ define([
 
         var CreateView = createView.extend({
 
-            el         : "#content-holder",
+            el            : "#content-holder",
             contentType: "Quotation",
             template   : _.template(CreateTemplate),
             templateNewRow: _.template(newRow),
@@ -31,6 +31,7 @@ define([
                 if (options.collection) {
                     this.collection = options.collection;
                 }
+
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
                 this.responseObj = {};
@@ -113,21 +114,21 @@ define([
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = targetEl.find('.subtotal').text();
-                            jobs = targetEl.find('#jobs').attr('data-id');
+                            jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
-                            if(!jobs){
+                            if (!jobs) {
                                 return alert("Job field can't be empty. Please, choose or create one.");
                             }
 
                             products.push({
                                 product      : productId,
-                                unitPrice    : price,
-                                quantity     : quantity,
+                                unitPrice: price,
+                                quantity : quantity,
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
                                 description  : description,
                                 subTotal     : subTotal,
-                                jobs: jobs
+                                jobs         : jobs
                             });
                         } else {
                             return alert("Products can't be empty.");
@@ -138,14 +139,14 @@ define([
 
                 data = {
                     forSales      : forSales,
-                    supplier      : supplier,
-                    project       : project,
-                    deliverTo     : deliverTo,
-                    products      : products,
-                    orderDate     : orderDate,
-                    expectedDate  : expectedDate,
-                    destination   : destination,
-                    incoterm      : incoterm,
+                    supplier: supplier,
+                    project : project,
+                    deliverTo: deliverTo,
+                    products : products,
+                    orderDate: orderDate,
+                    expectedDate: expectedDate,
+                    destination : destination,
+                    incoterm    : incoterm,
                     invoiceControl: invoiceControl,
                     paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
@@ -200,7 +201,7 @@ define([
                 productItemContainer.append(
                     new ProductItemView({
                         canBeSold: true,
-                        service: 'Service'
+                        service  : 'Service'
                     }).render().el
                 );
 
@@ -210,16 +211,16 @@ define([
                 var currentEl = $('#listTableQuotation');
                 var number = currentEl.find('.countNumber');
                 var numberLength = number.length ? number.length : 0;
-                var lastNumber = number.length ? $(number[numberLength-1]).html() : 0;
+                var lastNumber = number.length ? $(number[numberLength - 1]).html() : 0;
 
                 var currentNumber = parseInt(lastNumber) + 1;
 
                 var products = model.get('products');
 
-                var data ={products: JSON.stringify(products), type: "Quoted"};
+                var data = {products: JSON.stringify(products), type: "Quoted"};
 
-                dataService.postData("/jobs/update", data,  function(err, result){
-                    if (err){
+                dataService.postData("/jobs/update", data, function (err, result) {
+                    if (err) {
                         return console.log(err);
                     }
 
@@ -230,7 +231,7 @@ define([
                 this.collection.add(model);
 
                 currentEl.append(this.templateNewRow({
-                    quotation: model.toJSON(),
+                    quotation  : model.toJSON(),
                     startNumber: currentNumber,
                     dateToLocal: common.utcDateToLocaleDate
                 }));

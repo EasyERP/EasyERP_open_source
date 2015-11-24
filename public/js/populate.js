@@ -38,7 +38,7 @@ define([
                 }
                 content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                     return {
-                        _id: item._id,
+                        _id             : item._id,
                         name: item.departmentName,
                         level: item.nestingLevel,
                         parentDepartment: item.parentDepartment
@@ -58,7 +58,7 @@ define([
                 }
                 content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                     return {
-                        _id: item._id,
+                        _id     : item._id,
                         name: item.name,
                         level: item.nestingLevel,
                         parent: item.parent,
@@ -152,7 +152,7 @@ define([
             e.stopPropagation();
 
             var targetEl = $(e.target);
-            var attr = targetEl.attr("id") || targetEl.closest('td').data("content");
+            var attr = targetEl.attr("id") || targetEl.attr("data-id") || targetEl.closest('td').data("content");
             var data = context.responseObj["#" + attr];
             var elementVisible;
             var targetParent = $(e.target).parent();
@@ -209,20 +209,24 @@ define([
                 currentPage++;
             }
 
-            s = "<ul class='newSelectList' data-page='" + currentPage + "'>";
+            s = "<ul class='newSelectList' data-page='1'><li id='false'>Generate</li>";
             start = (currentPage - 1) * elementVisible;
             end = Math.min(currentPage * elementVisible, data.length);
             allPages = Math.ceil(data.length / elementVisible);
 
-            parent.append(_.template(selectTemplate, {
-                collection: data.slice(start, end),
-                currentPage: currentPage,
-                allPages: allPages,
-                start: start,
-                end: end,
-                dataLength: data.length,
-                elementVisible: elementVisible
-            }));
+            if (data && data.length) {
+                parent.append(_.template(selectTemplate, {
+                    collection    : data.slice(start, end),
+                    currentPage: currentPage,
+                    allPages   : allPages,
+                    start      : start,
+                    end        : end,
+                    dataLength : data.length,
+                    elementVisible: elementVisible
+                }));
+            } else if(attr === 'jobs'){
+                parent.append(s);
+            }
 
             return false;
         };
@@ -245,7 +249,7 @@ define([
             var end;
             var allPages;
 
-            if (!e){
+            if (!e) {
                 return;
             }
 
@@ -306,12 +310,12 @@ define([
             allPages = Math.ceil(data.length / elementVisible);
 
             parent.append(_.template(selectTemplate, {
-                collection: data.slice(start, end),
+                collection    : data.slice(start, end),
                 currentPage: currentPage,
-                allPages: allPages,
-                start: start,
-                end: end,
-                dataLength: data.length,
+                allPages   : allPages,
+                start      : start,
+                end        : end,
+                dataLength : data.length,
                 elementVisible: elementVisible
             }));
 
@@ -349,12 +353,12 @@ define([
             var allPages = Math.ceil(data.length / elementVisible);
 
             parent.append(_.template(selectTemplate, {
-                collection: data.slice(start, end),
+                collection    : data.slice(start, end),
                 currentPage: currentPage,
-                allPages: allPages,
-                start: start,
-                end: end,
-                dataLength: data.length,
+                allPages   : allPages,
+                start      : start,
+                end        : end,
+                dataLength : data.length,
                 elementVisible: elementVisible,
             }));
         };
@@ -389,14 +393,14 @@ define([
             var end = Math.min(currentPage * elementVisible, data.length);
             var allPages = Math.ceil(data.length / elementVisible);
             parent.append(_.template(selectTemplate, {
-                collection: data.slice(start, end),
+                collection    : data.slice(start, end),
                 currentPage: currentPage,
-                allPages: allPages,
-                start: start,
-                end: end,
-                dataLength: data.length,
+                allPages   : allPages,
+                start      : start,
+                end        : end,
+                dataLength : data.length,
                 elementVisible: elementVisible,
-                level: data.level
+                level         : data.level
             }));
         };
 
@@ -410,16 +414,16 @@ define([
         };
 
         return {
-            get: get,
+            get                 : get,
             get2name: get2name,
             getPriority: getPriority,
             getWorkflow: getWorkflow,
-            showSelect: showSelect,
+            showSelect : showSelect,
             getParrentDepartment: getParrentDepartment,
-            getParrentCategory: getParrentCategory,
-            getCompanies: getCompanies,
-            showSelectPriority: showSelectPriority,
-            showProductsSelect: showProductsSelect,
-            fetchWorkflow: fetchWorkflow
+            getParrentCategory  : getParrentCategory,
+            getCompanies        : getCompanies,
+            showSelectPriority  : showSelectPriority,
+            showProductsSelect  : showProductsSelect,
+            fetchWorkflow       : fetchWorkflow
         };
     });
