@@ -30,12 +30,12 @@ define(function () {
 
 
     var sendData = function (url, data, method, contentType, callback) {
-        method = method.toUpperCase() || 'POST';
-        contentType = contentType ? contentType : false;
+        var ajaxObject;
 
-        $.ajax({
+        method = method.toUpperCase() || 'POST';
+
+        ajaxObject = {
             url        : url,
-            contentType: contentType,
             data       : data,
             type       : method,
             success    : function (response) {
@@ -44,7 +44,13 @@ define(function () {
             error      : function (jxhr) {
                 callback(jxhr)
             }
-        });
+        }
+
+        if (contentType) {
+            ajaxObject.contentType = contentType;
+        }
+
+        $.ajax(ajaxObject);
     };
     return {
         getData   : getData,

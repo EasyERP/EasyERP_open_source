@@ -87,7 +87,8 @@ module.exports = (function () {
         products: [{
             _id: false,
             product: productForPayRolls,
-            payRolls: {type: ObjectId, ref: "PayRoll", default: null},
+            paid: Number,
+            diff: Number
         }]
     });
 
@@ -108,9 +109,11 @@ module.exports = (function () {
     };
 
     jobsInvoiceSchema.set('toJSON', {getters: true});
+    payRollInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
 
     mongoose.model('wTrackInvoice', jobsInvoiceSchema);
+    mongoose.model('payRollInvoice', payRollInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
 
     if(!mongoose.Schemas) {
@@ -118,5 +121,6 @@ module.exports = (function () {
     }
 
     mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
+    mongoose.Schemas['payRollInvoice'] = payRollInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
 })();
