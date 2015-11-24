@@ -190,8 +190,7 @@ define([
                     $('.editing').datepicker({
                         dateFormat: "d M, yy",
                         changeMonth: true,
-                        changeYear: true,
-                        onChanged: self.setChangedValue()
+                        changeYear: true
                     }).addClass('datepicker');
                 } else {
                     tempContainer = el.text();
@@ -214,6 +213,7 @@ define([
                 td.addClass('edited');
 
                 if (this.isEditRows()) {
+                    this.setChangedValueToModel();
                     this.setChangedValue();
                 }
 
