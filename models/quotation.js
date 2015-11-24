@@ -30,6 +30,7 @@ module.exports = (function () {
 
     var quotationSchema = new Schema({
         forSales      : {type: Boolean, default: true},
+        type          : {type: String, default: 'Not Ordered', enum: ['Not Ordered', 'Ordered', 'Not Invoiced', 'Invoiced']},
         isOrder       : {type: Boolean, default: false},
         supplier      : {
             _id: {type: ObjectId, ref: 'Customers', default: null},

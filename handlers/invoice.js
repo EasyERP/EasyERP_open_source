@@ -28,10 +28,11 @@ var Invoice = function (models, event) {
     this.create = function (req, res, next) {
         var isWtrack = checkDb(req.session.lastDb);
         var body = req.body;
+        var forSales = body.forSales;
         var Invoice;
         var invoice;
 
-        if (isWtrack) {
+        if (isWtrack && forSales) {
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
