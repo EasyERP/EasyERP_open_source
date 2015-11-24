@@ -642,6 +642,8 @@ define([
                         contentType: self.contentType
                     })
                 );
+
+                this.renderProformRevenue();
             },
 
             render: function () {
@@ -905,8 +907,6 @@ define([
 
 
                 function createView() {
-                    callback();
-
                     var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
 
                     if (self.wTrackView){
@@ -918,6 +918,8 @@ define([
                         filter: filter,
                         startNumber: startNumber
                     }).render();
+
+                    callback();
                 };
 
                 function showMoreContent(newModels) {
@@ -991,8 +993,6 @@ define([
                         function createView() {
                             var payments = [];
 
-                            callback();
-
                             App.invoiceCollection = self.iCollection;
 
                             new InvoiceView({
@@ -1023,6 +1023,8 @@ define([
 
                             self.pCollection.unbind();
                             self.pCollection.bind('reset', createPayment);
+
+                            callback();
 
                             function createPayment(){
                                 new PaymentView({
@@ -1058,7 +1060,6 @@ define([
 
                 function createView() {
 
-                    cb();
                     new QuotationView({
                         collection: self.qCollection,
                         projectId: self.id,
@@ -1067,7 +1068,7 @@ define([
                         filter: filter
                     }).render();
 
-
+                    cb();
                     // self.renderProformRevenue();
                 };
                 this.qCollection.bind('reset', createView);
@@ -1097,7 +1098,6 @@ define([
                 });
 
                 function createView() {
-                    cb();
                     new oredrView({
                         collection: self.ordersCollection,
                         projectId: self.id,
@@ -1106,6 +1106,7 @@ define([
                         filter: filter
                     }).render();
 
+                    cb();
                 };
 
                 function showMoreContent(newModels) {
@@ -1114,6 +1115,7 @@ define([
 
                 this.ordersCollection.bind('reset', createView);
                 this.ordersCollection.bind('add', self.renderProformRevenue);
+                this.ordersCollection.bind('remove', self.renderProformRevenue);
                 this.ordersCollection.bind('showmore', showMoreContent);
             },
 
