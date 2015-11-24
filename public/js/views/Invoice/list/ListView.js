@@ -26,6 +26,7 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
+                this.collection.unbind();
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};

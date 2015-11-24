@@ -359,15 +359,15 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                                 self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
 
-                                tabs = $(".chart-tabs");
-                                activeTab = tabs.find('.active');
-
-                                activeTab.removeClass('active');
-                                tabs.find('#wTrackTab').addClass("active");
-
-                                dialogHolder = $(".dialog-tabs-items");
-                                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                                dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
+                                //tabs = $(".chart-tabs");
+                                //activeTab = tabs.find('.active');
+                                //
+                                //activeTab.removeClass('active');
+                                //tabs.find('#wTrackTab').addClass("active");
+                                //
+                                //dialogHolder = $(".dialog-tabs-items");
+                                //dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                                //dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
                             },
                             error: function () {
                                 alert('error');

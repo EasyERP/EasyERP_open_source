@@ -169,7 +169,7 @@ var Workflow = function (models, event) {
         getWorkflowsForDd: function (req, data, response) {
             var res = {};
             res['data'] = [];
-            var query = models.get(req.session.lastDb, "workflows", workflowSchema).find({wId: data.type.id});
+            var query = models.get(req.session.lastDb, "workflows", workflowSchema).find({wId: data.type.id, visible: true});
             query.select('name wName');
             query.sort({'sequence': -1, "editedBy.date": -1});
             query.exec(function (err, result) {
@@ -189,7 +189,7 @@ var Workflow = function (models, event) {
                 var res = {};
                 res['data'] = [];
                 if (data) {
-                    var query = (data.id) ? {wId: data.id} : {};
+                    var query = (data.id) ? {wId: data.id, visible: true} : {visible: true};
                     if (data.name) query['name'] = data.name
                     var query2 = models.get(req.session.lastDb, "workflows", workflowSchema).find(query);
                     query2.sort({'sequence': -1, "editedBy.date": -1});
@@ -217,7 +217,7 @@ var Workflow = function (models, event) {
                 var res = {};
                 res['data'] = [];
                 if (data) {
-                    var query = (data.id) ? {wId: data.id} : {};
+                    var query = (data.id) ? {wId: data.id, visible: true} : {visible: true};
                     if (data.name) query['name'] = data.name
                     var query2 = models.get(req.session.lastDb, "workflows", workflowSchema).find(query);
                     query2.sort({'sequence': 1});

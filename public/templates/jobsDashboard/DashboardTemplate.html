@@ -21,14 +21,14 @@
     <td>&nbsp</td>
     <td>&nbsp</td>
     <!--<td>&nbsp</td>-->
-    <!--<% } else if (job.workflow.name === "New") { %>-->
-    <!--<td>&nbsp</td>-->
-    <!--<td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>-->
-    <!--<td>&nbsp</td>-->
-    <!--<td>&nbsp</td>-->
-    <% } else if (job.workflow.name === "Finished") {%>
-    <!--<td>&nbsp</td>-->
+    <% } else if (job.workflow.name === "New") { %>
     <td>&nbsp</td>
+    <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
+    <td>&nbsp</td>
+    <td>&nbsp</td>
+    <% } else if (job.workflow.name === "Finished") {%>
+    <td>&nbsp</td>
+    <!--<td>&nbsp</td>-->
     <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
     <td>&nbsp</td>
     <% } %>
