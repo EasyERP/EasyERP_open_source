@@ -100,13 +100,13 @@ module.exports = (function () {
     jobsInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
 
-    mongoose.model('wTrackInvoice', invoiceSchema);
+    mongoose.model('wTrackInvoice', jobsInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
 
     if(!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['wTrackInvoice'] = invoiceSchema;
+    mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
 })();

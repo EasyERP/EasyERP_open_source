@@ -1382,7 +1382,7 @@ var wTrack = function (event, models) {
                                 }
 
                                 if (moment(startDate).day() === 0 || moment(startDate).day() === 6){
-                                    startDate = moment(startDate).isoWeek(startWeek).day(1);
+                                    startDate = moment(startDate).day(1);
                                 }
 
                                 endYear = moment(endDate).year();
@@ -1448,7 +1448,7 @@ var wTrack = function (event, models) {
 
                             if ((day === 0) || (day === 6) /*&& (diffYear > 0)*/){
                                 endWeek += 1;
-                                addedWeek = false;
+                                //addedWeek = false;
                             }
 
                             if (diff < 0) {
@@ -1644,7 +1644,12 @@ var wTrack = function (event, models) {
                                                 }
                                             }
 
-                                            obj.month = moment(newDate).month() + 1;
+                                            if (weekValidate && !(diffYear > 0)){
+                                                obj.month = moment(newDate).month();
+                                            } else {
+                                                obj.month = moment(newDate).month() + 1;
+                                            }
+
                                             obj.year = year;
 
                                             result.push(obj);
@@ -1656,9 +1661,9 @@ var wTrack = function (event, models) {
                                         obj.week = endWeek - y;
 
                                         if (addedWeek){
-                                            weekValidate = obj.week > startWeek ;
-                                        } else {
                                             weekValidate = obj.week >= startWeek ;
+                                        } else {
+                                            weekValidate = obj.week > startWeek ;
                                         }
 
                                             newDate = moment(startDate).isoWeek(obj.week);
@@ -1671,7 +1676,7 @@ var wTrack = function (event, models) {
 
                                                 var endOfMonth = moment(newDate).endOf('month').date();
 
-                                                if ((addedWeek /*|| weekValidate*/)  /*(obj.week === startWeek)*/ || (diff === 1)) {
+                                                if ((addedWeek && weekValidate)  /*(obj.week === startWeek)*/ || (diff === 1)) {
 
                                                     if ((moment(newDate).date() + 7 > endOfMonth) && (moment(newDate).date() < moment(endDate).date())) {
                                                         day = moment(date).day();

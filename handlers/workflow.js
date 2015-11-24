@@ -86,7 +86,8 @@ var workflows = function (models) {
         }
 
         query = {
-            wId: wId
+            wId: wId,
+            visible: true
         };
 
         if (source) {
