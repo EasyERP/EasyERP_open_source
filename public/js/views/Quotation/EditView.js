@@ -143,7 +143,8 @@ define([
                             workflow: {
                                 _id: workflow._id,
                                 name: workflow.name
-                            }
+                            },
+                            type: "Not Invoiced"
                         }, {
                             headers: {
                                 mid: 57

@@ -34,7 +34,7 @@ define(function () {
 
         $.ajax({
             url        : url,
-            contentType: contentType,
+            //contentType: contentType,
             data       : data,
             type       : method,
             success    : function (response) {

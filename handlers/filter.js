@@ -773,6 +773,12 @@ var Filters = function (models) {
                                 name: '$supplier.name'
                             }
                         },
+                        'type': {
+                            $addToSet: {
+                                _id : '$type',
+                                name: '$type'
+                            }
+                        },
                         'workflow': {
                             $addToSet: {
                                 _id : '$workflow._id',
@@ -824,6 +830,12 @@ var Filters = function (models) {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
+                            }
+                        },
+                        'type': {
+                            $addToSet: {
+                                _id : '$type',
+                                name: '$type'
                             }
                         },
                         'workflow'      : {
@@ -878,6 +890,12 @@ var Filters = function (models) {
                                 name: '$project.projectmanager.name'
                             }
                         },
+                        'type': {
+                            $addToSet: {
+                                _id : '$type',
+                                name: '$type'
+                            }
+                        },
                         'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
@@ -928,6 +946,12 @@ var Filters = function (models) {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
+                            }
+                        },
+                        'type': {
+                            $addToSet: {
+                                _id : '$type',
+                                name: '$type'
                             }
                         },
                         'workflow'      : {

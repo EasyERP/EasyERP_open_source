@@ -22,7 +22,7 @@ module.exports = (function () {
             _id: {type: ObjectId, ref: 'Customers', default: null},
             name: String
         },
-        sourceDocument: { type: String, default: null },//should be order in invoice case
+        sourceDocument: { type: ObjectId, ref: 'Quotation', default: null },//should be order in invoice case
         paymentReference: { type: String, default: 'free' },
 
         invoiceDate: { type: Date, default: Date.now },

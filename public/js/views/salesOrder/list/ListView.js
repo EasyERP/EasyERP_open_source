@@ -148,7 +148,7 @@ define([
                     }).render());
                 }
                 //added two parameters page and items number
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
+                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
 
                 this.renderCheckboxes();
                 this.renderPagination(currentEl, this);
