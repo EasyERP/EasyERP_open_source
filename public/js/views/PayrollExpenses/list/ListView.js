@@ -132,7 +132,7 @@ define([
             saveItem: function () {
                 var self = this;
 
-                dataService.patchData("/payroll/byDataKey", JSON.stringify(self.changedPeriods), function (err, result) {
+                dataService.patchData("/payroll/byDataKey", JSON.stringify(self.changedPeriods), 'application/json', function (err, result) {
                     if (err) {
                         return console.log(err);
                     }
@@ -174,7 +174,7 @@ define([
                         checkboxesValues.push($(this).attr('data-id'));
                     })
 
-                    dataService.deleteData("/payroll/byDataKey", JSON.stringify({dataKeys: checkboxesValues}), function (err, result) {
+                    dataService.deleteData("/payroll/byDataKey", JSON.stringify({dataKeys: checkboxesValues}), 'application/json', function (err, result) {
                         if (err) {
                             return console.log(err);
                         }

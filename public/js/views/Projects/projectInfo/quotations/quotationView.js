@@ -30,6 +30,7 @@ define([
 
         initialize: function (options) {
             this.remove();
+
             this.collection = options.collection;
             this.projectID = options.projectId;
             this.customerId = options.customerId;
@@ -64,6 +65,7 @@ define([
             });
 
             this.hideNewSelect();
+
             return false;
         },
 

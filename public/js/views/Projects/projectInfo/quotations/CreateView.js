@@ -40,11 +40,9 @@ define([
                 this.render();
                 this.getForDd(this.projectId, this.customerId);
                 this.forSales = true;
-                this.populate = true;
             },
 
             saveItem: function () {
-
                 var self = this;
                 var mid = 55;
                 var thisEl = this.$el;
@@ -58,13 +56,15 @@ define([
                 var price;
                 var scheduledDate;
 
-                var forSales = (this.forSales) ? true : false;
+                var forSales = this.forSales ? true : false;
 
                 var supplier = {};
+                var project = {};
+
                 supplier._id = thisEl.find('#supplierDd').attr('data-id');
                 supplier.name = thisEl.find('#supplierDd').text();
 
-                var project = {};
+
                 project._id = thisEl.find('#projectDd').attr('data-id');
                 project.projectName = thisEl.find('#projectDd').text();
                 project.projectmanager = this.projectManager;
@@ -149,7 +149,7 @@ define([
                     invoiceControl: invoiceControl,
                     paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
-                    populate      : true,
+                    populate      : true, //Need Populate data from server
                     paymentInfo   : {
                         total  : total,
                         unTaxed: unTaxed,

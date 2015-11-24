@@ -17,7 +17,7 @@ module.exports = (function () {
     var baseSchema = new mongoose.Schema({
         ID: Number,
         name: {type: String, default: ''},
-        invoiceType: {type: String, default: 'sales', enum: ['sales', 'purchases', 'jobs']},
+        forSales: {type: Boolean, default: true},
         supplier: {
             _id: {type: ObjectId, ref: 'Customers', default: null},
             name: String
@@ -65,6 +65,7 @@ module.exports = (function () {
     }, { collection: 'Invoice' });
 
     var jobsInvoiceSchema = baseSchema.extend({
+        forSales: {type: Boolean, default: true},
         products: [ {
             _id: false,
             quantity: {type: Number, default: 1},
@@ -100,13 +101,13 @@ module.exports = (function () {
     jobsInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
 
-    mongoose.model('wTrackInvoice', invoiceSchema);
+    mongoose.model('wTrackInvoice', jobsInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
 
     if(!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['wTrackInvoice'] = invoiceSchema;
+    mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
 })();

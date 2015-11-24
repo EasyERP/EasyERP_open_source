@@ -18,13 +18,19 @@ define([
     function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
         var QuotationListView = listViewBase.extend({
             createView              : createView,
-            listTemplate            : listTemplate,
-            listItemView            : listItemView,
-            contentCollection       : contentCollection,
-            contentType             : CONSTANTS.SALESQUOTATION, //needs in view.prototype.changeLocationHash
-            viewType                : 'list',//needs in view.prototype.changeLocationHash
+            listTemplate: listTemplate,
+            listItemView: listItemView,
+            contentCollection: contentCollection,
+            contentType      : CONSTANTS.SALESQUOTATION, //needs in view.prototype.changeLocationHash
+            viewType         : 'list',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/quotation/totalCollectionLength',
             filterView              : filterView,
+
+            events: {
+                "click .stageSelect"                 : "showNewSelect",
+                "click  .list tbody td:not(.notForm)": "goToEditDialog",
+                "click .newSelectList li"            : "chooseOption"
+            },
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -33,9 +39,9 @@ define([
                 this.filter = options.filter ? options.filter : {};
                 //this.filter.forSales = true;
                 this.filter.forSales = {
-                        key: 'forSales',
-                        value: ['true']
-                    };
+                    key  : 'forSales',
+                    value: ['true']
+                };
 
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -48,12 +54,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-            },
-
-            events: {
-                "click .stageSelect"                 : "showNewSelect",
-                "click  .list tbody td:not(.notForm)": "goToEditDialog",
-                "click .newSelectList li"            : "chooseOption"
             },
 
             showFilteredPage: function (filter, context) {
@@ -75,7 +75,7 @@ define([
                 this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
                 this.filter.forSales = {
-                    key: 'forSales',
+                    key  : 'forSales',
                     value: ['true']
                 };
 
@@ -91,16 +91,18 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: {
-                    _id: target$.attr("id"),
-                    name:target$.text()
-                }}, {
+                model.save({
+                    workflow: {
+                        _id : target$.attr("id"),
+                        name: target$.text()
+                    }
+                }, {
                     headers : {
                         mid: 55
                     },
-                    patch   : true,
+                    patch  : true,
                     validate: false,
-                    waite: true,
+                    waite   : true,
                     success : function () {
                         self.showFilteredPage({}, self);
                     }
@@ -137,12 +139,12 @@ define([
 
                 currentEl.html('');
 
-                if (App.weTrack){
+                if (App.weTrack) {
                     templ = _.template(listForWTrack);
                     currentEl.append(templ);
                     currentEl.append(new listItemView({
                         collection : this.collection,
-                        page       : this.page,
+                        page      : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());//added two parameters page and items number
 
@@ -151,7 +153,7 @@ define([
                     currentEl.append(_.template(listTemplate));
                     currentEl.append(new listItemView({
                         collection : this.collection,
-                        page       : this.page,
+                        page      : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());//added two parameters page and items number
 
@@ -167,7 +169,7 @@ define([
 
                 dataService.getData("/workflow/fetch", {
                     wId         : 'Sales Order',
-                    source      : 'purchase',
+                    source: 'purchase',
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;

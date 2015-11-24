@@ -28,10 +28,11 @@ var Invoice = function (models, event) {
     this.create = function (req, res, next) {
         var isWtrack = checkDb(req.session.lastDb);
         var body = req.body;
+        var forSales = body.forSales;
         var Invoice;
         var invoice;
 
-        if (isWtrack) {
+        if (isWtrack && forSales) {
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -145,7 +146,10 @@ var Invoice = function (models, event) {
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
             if (forSales === "true") {
-                invoice.project.name = order.project.projectName;
+                if (!invoice.project){
+                    invoice.project = {};
+                }
+                invoice.project.name = order.project ? order.project.projectName : "";
             }
 
             supplier = order['supplier'];
