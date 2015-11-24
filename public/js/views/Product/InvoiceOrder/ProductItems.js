@@ -195,8 +195,8 @@ define([
             this.prevQuickEdit = parent;
 
             if (textarea.length) {
-                parent.append('<span id="cancelSpan" class="productEdit right"><a href="javascript:;">x</a></span>');
-                parent.append('<span id="saveSpan" class="productEdit right"><a href="javascript:;">c</a></span>');
+                parent.append('<span id="cancelSpan" class="productEdit right"><i class="fa fa-times"></i></span>');
+                parent.append('<span id="saveSpan" class="productEdit right"><i class="fa fa-check"></i></span>');
 
             } else {
                 parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');

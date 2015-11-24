@@ -382,7 +382,7 @@ input::-ms-clear {
     }
     span {
       &.ui-spinner {
-        width: 96%;
+        width: 100%%;
       }
     }
   }
@@ -2401,7 +2401,7 @@ input::-ms-clear {
 
 input, textarea, select {
   &:not([type="checkbox"]) {
-    padding: 2px 4px;
+    padding: 0 4px; //big cells in BonusType
     border: 1px solid @border-color-main;
     background-color: inherit;
     color: @mainText-color;
@@ -5413,6 +5413,7 @@ textarea#editInput {
     &.stick {
       position: fixed;
       bottom: 0;
+      left: 0;
       width: 100%;
       background-color: @bg-main;
       padding-top: 10px;
@@ -5733,15 +5734,16 @@ textarea#editInput {
   .divCell {
     float: left;
     display: table-column;
-    width: 5.5%;
+    width: 5.4%;
     height: 22px;
     padding: 0 5px;
     box-sizing: border-box;
     text-align: right;
     line-height: 22px;
     &.left-cell {
-      width: 10%;
+      width: 11%;
       text-align: left;
+      white-space: nowrap;
     }
     &.trend {
       width: 7.5%;
@@ -6109,6 +6111,7 @@ textarea#editInput {
       .filterValues {
         text-align: left;
         width: 100%;
+        min-height: 155px;
       }
       &:not(.activeGroup) .groupName {
         &.checkedGroup {
@@ -6272,17 +6275,23 @@ textarea#editInput {
 
 #favoritesContent {
   padding-top: 5px;
+
+  .filter_name_wrapper {
+    font-size: 0;
+  }
   #forFilterName {
-    height: 22px;
+    height: 29px;
     width: 80%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
     border-right: none;
+    box-sizing: border-box;
     color: @filter-text-color;
+    vertical-align: top;
+    font-size: 12px;
   }
   #saveFilterButton {
     border: 1px solid @border-color-main;
-    margin-left: -3px;
     box-sizing: border-box;
     border-radius: 0 5px 5px 0;
     line-height: 14px;
@@ -6290,7 +6299,7 @@ textarea#editInput {
     background-color: @bg-main;
     color: @kanab-text-color;
     width: 14%;
-    height: 28px;
+    height: 29px; //28
   }
   .removeSavedFilter {
     float: right;
