@@ -19,6 +19,7 @@ var Payment = function (models, event) {
     var payrollSchema = mongoose.Schemas['PayRoll'];
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+    var payRollInvoiceSchema = mongoose.Schemas['payRollInvoice'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
@@ -239,9 +240,9 @@ var Payment = function (models, event) {
 
                         query = Payment.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                       /* query
-                            .populate('invoice._id', '_id name');
-                        /!*.populate('paymentMethod', '_id name');*!/*/
+                        /* query
+                         .populate('invoice._id', '_id name');
+                         /!*.populate('paymentMethod', '_id name');*!/*/
 
                         query.exec(function (err, result) {
                             if (err) {
@@ -249,11 +250,11 @@ var Payment = function (models, event) {
                             }
 
                             /*Employee.populate(result, {
-                                path   : 'invoice.salesPerson',
-                                select : '_id name',
-                                options: {lean: true}
-                            }, function () {*/
-                                waterfallCallback(null, result);
+                             path   : 'invoice.salesPerson',
+                             select : '_id name',
+                             options: {lean: true}
+                             }, function () {*/
+                            waterfallCallback(null, result);
                             /*});*/
                         });
                     };
@@ -366,56 +367,149 @@ var Payment = function (models, event) {
 
     };
 
+    function payrollExpensUpdater(db, _payment, mulParram, cb) {
+        var Payroll = models.get(db, 'PayRoll', payrollSchema);
+
+        Payroll.findByIdAndUpdate(_payment._id, {
+            $inc: {
+                diff: mulParram * _payment.paidAmount,
+                paid: mulParram * _payment.paidAmount
+            }
+        }, cb);
+    }
+
     this.salaryPayOut = function (req, res, next) {
+        var db = req.session.lastDb;
         var body = req.body;
-        var salaryPayment = body[0];
-        var totalAmount = 0;
-        var suppliers = [];
+        //var salaryPayment = body[0];
         var moduleId = 66;
         var Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
-        var Payroll = models.get(req.session.lastDb, 'PayRoll', payrollSchema);
-
-        function payrollExpensUpdater(_payment, cb) {
-            Payroll.findByIdAndUpdate(_payment.paymentRef, {
-                $inc: {
-                    diff: _payment.paidAmount,
-                    paid: _payment.paidAmount
-                }
-            }, cb);
-        }
+        var Invoice = models.get(req.session.lastDb, 'payRollInvoice', payRollInvoiceSchema);
 
         access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
+                var mapBody = function (cb) {
+                    var totalAmount = 0;
+                    var suppliers = [];
+                    var products = [];
+                    var resultObject = {};
 
-                async.each(body, function (_payment, cb) {
-                    var supplierObject = _payment.supplier;
+                    _.map(body, function (_payment) {
+                        var supplierObject = _payment.supplier;
+                        var productObject = {};
 
-                    supplierObject.paidAmount = _payment.paidAmount;
-                    supplierObject.differenceAmount = _payment.differenceAmount;
+                        productObject.product = _payment._id;
+                        productObject.paid = _payment.paidAmount;
+                        productObject.diff = _payment.diff;
 
-                    totalAmount += _payment.paidAmount;
-                    suppliers.push(supplierObject);
+                        supplierObject.paidAmount = _payment.paidAmount;
+                        supplierObject.differenceAmount = _payment.differenceAmount;
 
-                    payrollExpensUpdater(_payment, cb);
-                }, function (err) {
+                        totalAmount += _payment.paidAmount;
+                        suppliers.push(supplierObject);
+                        products.push(productObject);
+
+                        return true;
+                    })
+
+                    resultObject.suppliers = suppliers;
+                    resultObject.products = products;
+                    resultObject.totalAmount = totalAmount;
+
+                    cb(null, resultObject);
+                };
+
+                var createInvoice = function (params, cb) {
+                    var invoice = new Invoice({products: params.products});
+
+                    invoice.save(function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        params.invoice = result;
+                        cb(null, params);
+                    });
+                };
+
+                var createPayment = function (params, cb) {
+                    var paymentObject = body[0];
                     var payment;
 
+                    paymentObject.invoice._id = params.invoice._id;
+
+                    paymentObject.supplier = params.suppliers;
+                    paymentObject.paidAmount = params.totalAmount;
+
+                    payment = new Payment(paymentObject);
+                    payment.save(function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+                };
+
+                var updatePayRolls = function (params, cb) {
+                    async.each(body, function (_payment, eachCb) {
+                        payrollExpensUpdater(db, _payment, 1, eachCb);
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, 'Done');
+                    })
+                };
+
+                var waterFallTasks = [mapBody, createInvoice, createPayment, updatePayRolls];
+
+                async.waterfall(waterFallTasks, function (err, result) {
                     if (err) {
                         return next(err);
                     }
 
-                    salaryPayment.supplier = suppliers;
-                    salaryPayment.paidAmount = totalAmount;
-
-                    payment = new Payment(salaryPayment);
-                    payment.save(function (err) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(201).send({success: 'success'});
-                        composeExpensesAndCache(req);
-                    });
+                    res.status(201).send({success: 'success'});
+                    composeExpensesAndCache(req);
                 });
+
+
+                /*async.each(body, function (_payment, cb) {
+                 var supplierObject = _payment.supplier;
+                 var productObject = {};
+
+                 productObject.product = _payment._id;
+                 productObject.paid = _payment.paidAmount;
+                 productObject.diff = _payment.diff;
+
+                 supplierObject.paidAmount = _payment.paidAmount;
+                 supplierObject.differenceAmount = _payment.differenceAmount;
+
+                 totalAmount += _payment.paidAmount;
+                 suppliers.push(supplierObject);
+                 products.push(productObject);
+
+                 payrollExpensUpdater(_payment, cb);
+                 }, function (err) {
+                 var payment;
+
+                 if (err) {
+                 return next(err);
+                 }
+
+                 salaryPayment.supplier = suppliers;
+                 salaryPayment.paidAmount = totalAmount;
+
+                 payment = new Payment(salaryPayment);
+                 payment.save(function (err) {
+                 if (err) {
+                 return next(err);
+                 }
+                 res.status(201).send({success: 'success'});
+                 composeExpensesAndCache(req);
+                 });
+                 });*/
             } else {
                 res.status(403).send();
             }
@@ -806,6 +900,7 @@ var Payment = function (models, event) {
     };
 
     this.remove = function (req, res, next) {
+        var db = req.session.lastDb;
         var id = req.params.id;
         var isWtrack = checkDb(req.session.lastDb);
         var workflowHandler = new WorkflowHandler(models);
@@ -825,12 +920,6 @@ var Payment = function (models, event) {
 
         Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
-        if (isWtrack) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-        }
-
         access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
                 Payment.findByIdAndRemove(id, function (err, removed) {
@@ -839,87 +928,121 @@ var Payment = function (models, event) {
                     }
 
                     var isNotFullPaid;
+
                     invoiceId = removed.get('invoice._id');
                     paid = removed.get('paidAmount');
 
-                    Invoice.findById({_id: invoiceId}, function(err, invoice){
-                        if (err){
-                            return next(err);
-                        }
+                    if (removed._type !== 'salaryPayment') {
 
-                        paymentInfo = invoice.get('paymentInfo');
-
-                        if (invoice.invoiceType === 'wTrack') {
-                            wId = 'Sales Invoice';
+                        if (isWtrack) {
+                            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
                         } else {
-                            wId = 'Purchase Invoice';
+                            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
                         }
 
-                        request = {
-                            query  : {
-                                wId         : wId,
-                                source      : 'purchase',
-                                targetSource: 'invoice'
-                            },
-                            session: req.session
-                        };
-
-                        isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
-
-                        if (isNotFullPaid) {
-                            request.query.status = 'In Progress';
-                            request.query.order = 1;
-                        } else {
-                            request.query.status = 'New';
-                            request.query.order = 1;
-                        }
-
-                        workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                        Invoice.findById({_id: invoiceId}, function (err, invoice) {
                             if (err) {
                                 return next(err);
                             }
 
-                            workflowObj = {
-                                _id: workflow._id,
-                                name: workflow.name,
-                                status: workflow.status
+                            paymentInfo = invoice.get('paymentInfo');
+
+                            if (invoice.invoiceType === 'wTrack') {
+                                wId = 'Sales Invoice';
+                            } else {
+                                wId = 'Purchase Invoice';
+                            }
+
+                            request = {
+                                query  : {
+                                    wId         : wId,
+                                    source      : 'purchase',
+                                    targetSource: 'invoice'
+                                },
+                                session: req.session
                             };
 
-                            paymentInfoNew.total = paymentInfo.total;
-                            paymentInfoNew.taxes = paymentInfo.taxes;
-                            paymentInfoNew.unTaxed = paymentInfoNew.total;
-                            paymentInfoNew.balance = paymentInfo.balance + paid;
+                            isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
 
-                            Invoice.findByIdAndUpdate(invoiceId, {$set: {workflow: workflowObj, paymentInfo: paymentInfoNew}}, {new: true}, function(err, result){
+                            if (isNotFullPaid) {
+                                request.query.status = 'In Progress';
+                                request.query.order = 1;
+                            } else {
+                                request.query.status = 'New';
+                                request.query.order = 1;
+                            }
+
+                            workflowHandler.getFirstForConvert(request, function (err, workflow) {
                                 if (err) {
                                     return next(err);
                                 }
 
-                                var products = result.get('products');
+                                workflowObj = {
+                                    _id   : workflow._id,
+                                    name  : workflow.name,
+                                    status: workflow.status
+                                };
 
-                                async.each(products, function (product, cb) {
+                                paymentInfoNew.total = paymentInfo.total;
+                                paymentInfoNew.taxes = paymentInfo.taxes;
+                                paymentInfoNew.unTaxed = paymentInfoNew.total;
+                                paymentInfoNew.balance = paymentInfo.balance + paid;
 
-                                    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
-                                        if (err) {
-                                            return next(err);
-                                        }
-
-                                        project = result ? result.get('project') : null;
-
-                                        cb();
-                                    });
-
-                                }, function () {
-                                    if (project) {
-                                        event.emit('fetchJobsCollection', {project: project});
-                                        event.emit('fetchInvoiceCollection', {project: project});
+                                Invoice.findByIdAndUpdate(invoiceId, {
+                                    $set: {
+                                        workflow   : workflowObj,
+                                        paymentInfo: paymentInfoNew
+                                    }
+                                }, {new: true}, function (err, result) {
+                                    if (err) {
+                                        return next(err);
                                     }
 
-                                    res.status(200).send({success: removed});
+                                    var products = result.get('products');
+
+                                    async.each(products, function (product, cb) {
+
+                                        JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                                            if (err) {
+                                                return next(err);
+                                            }
+
+                                            project = result ? result.get('project') : null;
+
+                                            cb();
+                                        });
+
+                                    }, function () {
+                                        if (project) {
+                                            event.emit('fetchJobsCollection', {project: project});
+                                            event.emit('fetchInvoiceCollection', {project: project});
+                                        }
+
+                                        res.status(200).send({success: removed});
+                                    });
                                 });
                             });
                         });
-                    });
+                    } else {
+                        Invoice = models.get(req.session.lastDb, 'payRollInvoice', payRollInvoiceSchema);
+
+                        Invoice.findById(invoiceId, function (err, invoice) {
+                            if (err) {
+                                return next(err);
+                            }
+
+
+                            async.each(invoice.products, function (_payment, eachCb) {
+                                payrollExpensUpdater(db, _payment, -1, eachCb);
+                            }, function (err) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.status(200).send({success: 'Done'});
+                            })
+                        })
+                    }
                 });
             } else {
                 res.send(403);

@@ -132,7 +132,7 @@ define([
             saveItem: function () {
                 var self = this;
 
-                dataService.patchData("/payroll/byDataKey", JSON.stringify(self.changedPeriods), 'application/json', function (err, result) {
+                dataService.patchData("/payroll/byDataKey", JSON.stringify(self.changedPeriods), function (err, result) {
                     if (err) {
                         return console.log(err);
                     }
@@ -141,7 +141,7 @@ define([
                     self.changedPeriods = {};
 
                     self.showHideSaveCancelBtns();
-                });
+                }, 'application/json');
             },
 
             deleteItems: function () {
@@ -174,7 +174,7 @@ define([
                         checkboxesValues.push($(this).attr('data-id'));
                     })
 
-                    dataService.deleteData("/payroll/byDataKey", JSON.stringify({dataKeys: checkboxesValues}), 'application/json', function (err, result) {
+                    dataService.deleteData("/payroll/byDataKey", JSON.stringify({dataKeys: checkboxesValues}), function (err, result) {
                         if (err) {
                             return console.log(err);
                         }
@@ -189,7 +189,7 @@ define([
                                 return Object.keys(el)[0] === curDataKey;
                             });
                         }
-                    });
+                    }, 'application/json');
                 }
 
                 self.showHideSaveCancelBtns({save: false, delete: false});

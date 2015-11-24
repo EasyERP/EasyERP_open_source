@@ -28,13 +28,13 @@ define(function () {
         sendData(url, data, 'DELETE', callback, contentType);
     };
 
-    var sendData = function (url, data, method, callback, contentType) {
-        method = method.toUpperCase() || 'POST';
-        contentType = contentType ? contentType : false;
 
-        $.ajax({
+    var sendData = function (url, data, method, callback, contentType) {
+        var ajaxObject;
+        method = method.toUpperCase() || 'POST';
+
+        ajaxObject = {
             url        : url,
-            //contentType: contentType,
             data       : data,
             type       : method,
             success    : function (response) {
@@ -43,7 +43,13 @@ define(function () {
             error      : function (jxhr) {
                 callback(jxhr)
             }
-        });
+        }
+
+        if (contentType) {
+            ajaxObject.contentType = contentType;
+        }
+
+        $.ajax(ajaxObject);
     };
     return {
         getData   : getData,
