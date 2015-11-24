@@ -20,20 +20,22 @@ define(function () {
         sendData(url, data, 'PUT', callback);
     };
 
-    var patchData = function (url, data, callback) {
-        sendData(url, data, 'PATCH', callback);
+    var patchData = function (url, data, contentType, callback) {
+        sendData(url, data, 'PATCH', contentType, callback);
     };
 
-    var deleteData = function (url, data, callback) {
-        sendData(url, data, 'DELETE', callback);
+    var deleteData = function (url, data, contentType, callback) {
+        sendData(url, data, 'DELETE', contentType, callback);
     };
 
 
-    var sendData = function (url, data, method, callback) {
+    var sendData = function (url, data, method, contentType, callback) {
         method = method.toUpperCase() || 'POST';
+        contentType = contentType ? contentType : false;
+
         $.ajax({
             url        : url,
-            contentType: 'application/json',
+            contentType: contentType,
             data       : data,
             type       : method,
             success    : function (response) {
