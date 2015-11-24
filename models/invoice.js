@@ -12,6 +12,7 @@ module.exports = (function () {
     };
 
     var productForJobs = {type: ObjectId, ref: 'Product', default: null};
+    var productForPayRolls = {type: ObjectId, ref: 'PayRoll', default: null};
     var product = {type: ObjectId, ref: 'Product', default: null};
 
     var baseSchema = new mongoose.Schema({
@@ -79,6 +80,14 @@ module.exports = (function () {
             _id: {type: ObjectId, ref: 'Project', default: null},
             name: String
         }
+    });
+
+    var payRollInvoiceSchema = baseSchema.extend({
+        products: [{
+            _id: false,
+            product: productForPayRolls,
+            payRolls: {type: ObjectId, ref: "PayRoll", default: null},
+        }]
     });
 
     var invoiceSchema = baseSchema.extend({

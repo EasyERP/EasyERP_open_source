@@ -374,6 +374,7 @@ var Payment = function (models, event) {
         var moduleId = 66;
         var Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
         var Payroll = models.get(req.session.lastDb, 'PayRoll', payrollSchema);
+        var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
 
         function payrollExpensUpdater(_payment, cb) {
             Payroll.findByIdAndUpdate(_payment.paymentRef, {
@@ -825,12 +826,6 @@ var Payment = function (models, event) {
 
         Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
-        if (isWtrack) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-        }
-
         access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
                 Payment.findByIdAndRemove(id, function (err, removed) {
@@ -839,87 +834,104 @@ var Payment = function (models, event) {
                     }
 
                     var isNotFullPaid;
-                    invoiceId = removed.get('invoice._id');
-                    paid = removed.get('paidAmount');
 
-                    Invoice.findById({_id: invoiceId}, function(err, invoice){
-                        if (err){
-                            return next(err);
-                        }
+                    if (removed._type !== 'salaryPayment') {
 
-                        paymentInfo = invoice.get('paymentInfo');
-
-                        if (invoice.invoiceType === 'wTrack') {
-                            wId = 'Sales Invoice';
+                        if (isWtrack) {
+                            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
                         } else {
-                            wId = 'Purchase Invoice';
+                            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
                         }
 
-                        request = {
-                            query  : {
-                                wId         : wId,
-                                source      : 'purchase',
-                                targetSource: 'invoice'
-                            },
-                            session: req.session
-                        };
+                        invoiceId = removed.get('invoice._id');
+                        paid = removed.get('paidAmount');
 
-                        isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
-
-                        if (isNotFullPaid) {
-                            request.query.status = 'In Progress';
-                            request.query.order = 1;
-                        } else {
-                            request.query.status = 'New';
-                            request.query.order = 1;
-                        }
-
-                        workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                        Invoice.findById({_id: invoiceId}, function (err, invoice) {
                             if (err) {
                                 return next(err);
                             }
 
-                            workflowObj = {
-                                _id: workflow._id,
-                                name: workflow.name,
-                                status: workflow.status
+                            paymentInfo = invoice.get('paymentInfo');
+
+                            if (invoice.invoiceType === 'wTrack') {
+                                wId = 'Sales Invoice';
+                            } else {
+                                wId = 'Purchase Invoice';
+                            }
+
+                            request = {
+                                query  : {
+                                    wId         : wId,
+                                    source      : 'purchase',
+                                    targetSource: 'invoice'
+                                },
+                                session: req.session
                             };
 
-                            paymentInfoNew.total = paymentInfo.total;
-                            paymentInfoNew.taxes = paymentInfo.taxes;
-                            paymentInfoNew.unTaxed = paymentInfoNew.total;
-                            paymentInfoNew.balance = paymentInfo.balance + paid;
+                            isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
 
-                            Invoice.findByIdAndUpdate(invoiceId, {$set: {workflow: workflowObj, paymentInfo: paymentInfoNew}}, {new: true}, function(err, result){
+                            if (isNotFullPaid) {
+                                request.query.status = 'In Progress';
+                                request.query.order = 1;
+                            } else {
+                                request.query.status = 'New';
+                                request.query.order = 1;
+                            }
+
+                            workflowHandler.getFirstForConvert(request, function (err, workflow) {
                                 if (err) {
                                     return next(err);
                                 }
 
-                                var products = result.get('products');
+                                workflowObj = {
+                                    _id   : workflow._id,
+                                    name  : workflow.name,
+                                    status: workflow.status
+                                };
 
-                                async.each(products, function (product, cb) {
+                                paymentInfoNew.total = paymentInfo.total;
+                                paymentInfoNew.taxes = paymentInfo.taxes;
+                                paymentInfoNew.unTaxed = paymentInfoNew.total;
+                                paymentInfoNew.balance = paymentInfo.balance + paid;
 
-                                    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
-                                        if (err) {
-                                            return next(err);
-                                        }
-
-                                        project = result ? result.get('project') : null;
-
-                                        cb();
-                                    });
-
-                                }, function () {
-                                    if (project) {
-                                        event.emit('fetchJobsCollection', {project: project});
-                                        event.emit('fetchInvoiceCollection', {project: project});
+                                Invoice.findByIdAndUpdate(invoiceId, {
+                                    $set: {
+                                        workflow   : workflowObj,
+                                        paymentInfo: paymentInfoNew
+                                    }
+                                }, {new: true}, function (err, result) {
+                                    if (err) {
+                                        return next(err);
                                     }
 
-                                    res.status(200).send({success: removed});
+                                    var products = result.get('products');
+
+                                    async.each(products, function (product, cb) {
+
+                                        JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                                            if (err) {
+                                                return next(err);
+                                            }
+
+                                            project = result ? result.get('project') : null;
+
+                                            cb();
+                                        });
+
+                                    }, function () {
+                                        if (project) {
+                                            event.emit('fetchJobsCollection', {project: project});
+                                            event.emit('fetchInvoiceCollection', {project: project});
+                                        }
+
+                                        res.status(200).send({success: removed});
+                                    });
                                 });
                             });
                         });
-                    });
+                    } else {
+
+                    }
                 });
             } else {
                 res.send(403);
