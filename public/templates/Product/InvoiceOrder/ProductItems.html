@@ -1,38 +1,36 @@
 <table class="list2">
-    <thead>
-    <tr class="productListItemsColumns">
-        <th class="width20" data-sort="Product">
-            Product
-        </th>
-        <% if (forSales) {%>
-           <th class="width25" data-sort="jobs">
-              Job
-           </th>
-        <% } else {%>
-           <th class="width20" data-sort="description">
-              Description
-           </th>
-        <% } %>
-        <th class="width25" data-sort="scheduledDate">
-            Scheduled Date
-        </th>
-        <th class="width20" data-sort="quantity">
-            Quantity
-        </th>
-        <th class="width20" data-sort="unitPrice">
-            Unit Price
-        </th>
-        <th class="width20" data-sort="taxes">
-            Taxes
-        </th>
-        <th class="width20" data-sort="subtotal">
-            Subtotal
-        </th>
-    </tr>
+
+     <thead>
+        <tr class="productListItemsColumns">
+            <th class="width20" data-sort="Product">
+                Product
+            </th>
+            <% if (forSales) {%>
+               <th class="width25" data-sort="jobs">
+                  Job
+               </th>
+            <% } else {%>
+               <th class="width20" data-sort="description">
+                  Description
+               </th>
+            <% } %>
+            <th class="width25" data-sort="scheduledDate">
+                Scheduled Date
+            </th>
+            <th class="width20" data-sort="quantity">
+                Quantity
+            </th>
+            <th class="width20" data-sort="unitPrice">
+                Unit Price
+            </th>
+            <th class="width20" data-sort="taxes">
+                Taxes
+            </th>
+            <th class="width20" data-sort="subtotal">
+                Subtotal
+            </th>
+        </tr>
     </thead>
-    <tfoot>
-    <tr></tr>
-    </tfoot>
     <tbody>
     <tr>
         <td colspan="7" class="addProductItem">

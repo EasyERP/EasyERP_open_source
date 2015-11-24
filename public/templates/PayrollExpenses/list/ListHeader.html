@@ -7,7 +7,8 @@
     <table class="list payRoll-list">
         <colgroup class="borders" span="8">
             <col span="1" width="5%">
-            <col span="1" width="20%">
+            <col span="1" width="5%">
+            <col span="1" width="15%">
             <col span="1" width="20%">
             <col span="1" width="20%">
             <col span="1" width="20%">
@@ -16,12 +17,13 @@
         </colgroup>
         <thead>
             <tr>
-                <th><a id="expandAll">#</a></th>
+                <th class="centerCell"><a id="expandAll">#</a></th>
+                <th class="centerCell"><input type="checkbox" id="check_all" /></th>
                 <th>Month</th>
                 <th>Calc</th>
                 <th>Paid</th>
                 <th>Diff</th>
-                <th>Status</th>
+                <th class="centerCell">Status</th>
                 <th>Date</th>
             </tr>
         </thead>
@@ -33,7 +35,8 @@
                         <table class="list enable_hover" id="payRoll-listTable">
                             <colgroup class="borders" span="8">
                                 <col span="1" width="5%">
-                                <col span="1" width="20%">
+                                <col span="1" width="5%">
+                                <col span="1" width="15%">
                                 <col span="1" width="20%">
                                 <col span="1" width="20%">
                                 <col span="1" width="20%">

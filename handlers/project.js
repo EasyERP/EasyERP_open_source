@@ -318,7 +318,7 @@ var Project = function (models) {
 
             collection.forEach(function(project){
                 var totalInPr = 0;
-                var totalNew = 0;
+               // var totalNew = 0;
                 var totalFinished = 0;
                 var total = 0;
                 var totalObj = {};
@@ -347,9 +347,9 @@ var Project = function (models) {
 
                 jobs.forEach(function(job){
                     if (job.workflow.name === "In Progress"){
-                        totalInPr += job.budget.budgetTotal.costSum;
-                    } else if (job.workflow.name === "New"){
-                        totalNew += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                        totalInPr +=  job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                    //} else if (job.workflow.name === "New"){
+                    //    totalNew += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
                     } else if (job.workflow.name === "Finished"){
                         totalFinished += job.budget.budgetTotal.costSum;
                     }
@@ -370,7 +370,7 @@ var Project = function (models) {
                 });
 
                 totalObj.totalInPr = totalInPr;
-                totalObj.totalNew = totalNew;
+               // totalObj.totalNew = totalNew;
                 totalObj.totalFinished = totalFinished;
                 totalObj.total = total;
 

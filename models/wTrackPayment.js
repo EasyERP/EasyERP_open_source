@@ -39,7 +39,7 @@ module.exports = (function () {
         }
     }, {collection: 'Payment', discriminatorKey: '_type'});
 
-    var weTrackPaymentSchema = basePaymentSchema.extend({
+    var PaymentSchema = basePaymentSchema.extend({
         forSale      : {type: Boolean, default: true},
         paymentRef   : {type: String, default: ''},
         supplier     : {
@@ -60,7 +60,7 @@ module.exports = (function () {
             _id             : {type: ObjectId, ref: 'Employees', default: null},
             fullName        : String,
             paidAmount      : Number,
-            differenceAmount: {type: Number, default: 0, set: setPrice},
+            differenceAmount: {type: Number, default: 0, set: setPrice}
         }],
         paymentMethod: {
             _id : {type: ObjectId, ref: 'ProductCategory', default: null},
@@ -70,10 +70,25 @@ module.exports = (function () {
         period       : {type: Date, default: null}
     });
 
-    mongoose.model('wTrackPayment', weTrackPaymentSchema);
-    mongoose.model('salaryPayment', salaryPaymentSchema);
+    var payOutSchema = basePaymentSchema.extend({
+        forSale         : {type: Boolean, default: false},
+        supplier     : [{
+            _id             : {type: ObjectId, ref: 'Employees', default: null},
+            fullName        : String
+        }],
+        paymentMethod: {
+            _id : {type: ObjectId, ref: 'ProductCategory', default: null},
+            name: String
+        },
+        paymentRef   : {type: String, default: ''},
+        period       : {type: Date, default: null}
+    });
 
-    weTrackPaymentSchema.pre('save', function (next) {
+    //mongoose.model('Payment', PaymentSchema);
+    //mongoose.model('salaryPayment', salaryPaymentSchema);
+    //mongoose.model('wTrackPayOut', payOutSchema);
+
+    PaymentSchema.pre('save', function (next) {
         var payment = this;
         var db = payment.db.db;
 
@@ -99,7 +114,7 @@ module.exports = (function () {
                 next();
             });
     });
-    weTrackPaymentSchema.post('save', function (doc) {
+    PaymentSchema.post('save', function (doc) {
         var payment = this;
         var db = payment.db.db;
 
@@ -167,6 +182,13 @@ module.exports = (function () {
             });
     });
 
+    payOutSchema.pre('save', function (next) {
+        var payment = this;
+
+        payment.name = new Date().valueOf();
+        next();
+    });
+
     function setPrice(num) {
         return num * 100;
     }
@@ -175,6 +197,7 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['wTrackPayment'] = weTrackPaymentSchema;
+    mongoose.Schemas['Payment'] = PaymentSchema;
     mongoose.Schemas['salaryPayment'] = salaryPaymentSchema;
+    mongoose.Schemas['wTrackPayOut'] = salaryPaymentSchema;
 })();

@@ -1,60 +1,46 @@
-/**
- * Created by ANDREY on 29.04.2015.
- */
-
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
+    var extend = require('mongoose-schema-extend');
 
     var payments = {
-        _id    : false,
-        total  : {type: Number, default: 0, set: setPrice},
+        _id: false,
+        total: {type: Number, default: 0, set: setPrice},
         balance: {type: Number, default: 0, set: setPrice},
         unTaxed: {type: Number, default: 0, set: setPrice},
-        taxes  : {type: Number, default: 0, set: setPrice}
+        taxes: {type: Number, default: 0, set: setPrice}
     };
 
-    var products = {
-        _id        : false,
-        quantity   : {type: Number, default: 1},
-        unitPrice  : Number,
-        product    : {type: ObjectId, ref: 'Product', default: null},
-        description: {type: String, default: ''},
-        taxes      : Number,
-        subTotal   : Number
-    };
+    var productForJobs = {type: ObjectId, ref: 'Product', default: null};
+    var product = {type: ObjectId, ref: 'Product', default: null};
 
-    var invoiceSchema = new mongoose.Schema({
-        ID                   : Number,
-        forSales             : {type: Boolean, default: true},
-        supplier             : {
-            _id : {type: ObjectId, ref: 'Customers', default: null},
+    var baseSchema = new mongoose.Schema({
+        ID: Number,
+        name: {type: String, default: ''},
+        invoiceType: {type: String, default: 'sales', enum: ['sales', 'purchases', 'jobs']},
+        supplier: {
+            _id: {type: ObjectId, ref: 'Customers', default: null},
             name: String
         },
-        /*fiscalPosition: { type: String, default: null },*/
-        sourceDocument       : {type: String, default: null},
-        supplierInvoiceNumber: {type: String, default: null},
-        paymentReference     : {type: String, default: 'free'},
+        sourceDocument: { type: String, default: null },//should be order in invoice case
+        paymentReference: { type: String, default: 'free' },
 
-        invoiceDate: {type: Date, default: Date.now},
-        dueDate    : Date,
+        invoiceDate: { type: Date, default: Date.now },
+        dueDate: Date,
         paymentDate: Date,
-        account    : {type: String, default: null},
-        journal    : {type: String, default: null},
 
-        salesPerson : {
-            _id : {type: ObjectId, ref: 'Employees', default: null},
+        salesPerson: {
+            _id: {type: ObjectId, ref: 'Employees', default: null},
             name: String
         },
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
         paymentInfo: payments,
-        payments   : [{type: ObjectId, ref: 'Payment', default: null}],
-        products   : [products],
+        payments: [{type: ObjectId, ref: 'Payment', default: null}],
 
         workflow: {
-            _id   : {type: ObjectId, ref: 'workflows', default: null},
-            name  : String,
+            _id: {type: ObjectId, ref: 'workflows', default: null},
+            name: String,
             status: String
         },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
@@ -66,7 +52,7 @@ module.exports = (function () {
         },
 
         creationDate: {type: Date, default: Date.now},
-        createdBy   : {
+        createdBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
@@ -76,17 +62,51 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         }
 
-    }, {collection: 'Invoice'});
+    }, { collection: 'Invoice' });
 
-    mongoose.model('Invoice', invoiceSchema);
+    var jobsInvoiceSchema = baseSchema.extend({
+        products: [ {
+            _id: false,
+            quantity: {type: Number, default: 1},
+            unitPrice: Number,
+            product: productForJobs,
+            description  : {type: String, default: ''},
+            jobs: {type: ObjectId, ref: "jobs", default: null},
+            taxes: {type: Number, default: 0},
+            subTotal: Number
+        }],
+        project: {
+            _id: {type: ObjectId, ref: 'Project', default: null},
+            name: String
+        }
+    });
 
-    if (!mongoose.Schemas) {
-        mongoose.Schemas = {};
-    }
+    var invoiceSchema = baseSchema.extend({
+        products: [ {
+            _id: false,
+            quantity: {type: Number, default: 1},
+            unitPrice: Number,
+            product: product,
+            description  : {type: String, default: ''},
+            taxes: {type: Number, default: 0},
+            subTotal: Number
+        }]
+    });
 
     function setPrice(num) {
         return num * 100;
+    };
+
+    jobsInvoiceSchema.set('toJSON', {getters: true});
+    invoiceSchema.set('toJSON', {getters: true});
+
+    mongoose.model('wTrackInvoice', invoiceSchema);
+    mongoose.model('Invoice', invoiceSchema);
+
+    if(!mongoose.Schemas) {
+        mongoose.Schemas = {};
     }
 
+    mongoose.Schemas['wTrackInvoice'] = invoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
 })();

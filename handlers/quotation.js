@@ -510,7 +510,7 @@ var Quotation = function (models, event) {
     this.remove = function (req, res, next) {
         var id = req.params.id;
         var project;
-        var type = "notQuoted";
+        var type = "Not Quoted";
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 

@@ -6,7 +6,7 @@
     <td class="expand"><%= projectTeam.length ? '+' : '&nbsp' %></td>
     <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
     <td><%= project.total.totalInPr ? currencySplitter(project.total.totalInPr.toFixed(2)) : '&nbsp'%></td>
-    <td><%= project.total.totalNew ? currencySplitter(project.total.totalNew.toFixed(2)) : '&nbsp'%></td>
+    <!--<td><%= project.total.totalNew ? currencySplitter(project.total.totalNew.toFixed(2)) : '&nbsp'%></td>-->
     <td><%= project.total.totalFinished ? currencySplitter(project.total.totalFinished.toFixed(2)) : '&nbsp'%></td>
     <td><%= project.total.total ? currencySplitter(project.total.total.toFixed(2)) : '&nbsp'%></td>
   </tr>
@@ -20,14 +20,14 @@
     <td><%=currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
     <td>&nbsp</td>
     <td>&nbsp</td>
-    <td>&nbsp</td>
-    <% } else if (job.workflow.name === "New") { %>
-    <td>&nbsp</td>
-    <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
-    <td>&nbsp</td>
-    <td>&nbsp</td>
+    <!--<td>&nbsp</td>-->
+    <!--<% } else if (job.workflow.name === "New") { %>-->
+    <!--<td>&nbsp</td>-->
+    <!--<td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>-->
+    <!--<td>&nbsp</td>-->
+    <!--<td>&nbsp</td>-->
     <% } else if (job.workflow.name === "Finished") {%>
-    <td>&nbsp</td>
+    <!--<td>&nbsp</td>-->
     <td>&nbsp</td>
     <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
     <td>&nbsp</td>

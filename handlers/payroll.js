@@ -139,6 +139,47 @@ var PayRoll = function (models) {
         }
     };
 
+    this.removeByDataKey = function (req, res, next) {
+        var body = req.body;
+        var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
+        var dataKeys = body && body.dataKeys ? body.dataKeys : null;
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getDeleteAccess(req, req.session.uId, mid, function (access) {
+                if (!access) {
+                    error = new Error();
+                    error.status = 403;
+
+                    return next(error);
+                }
+
+                if (dataKeys && dataKeys.length) {
+                    async.each(dataKeys, function (dataKey, cb) {
+                        PayRoll.remove({'dataKey': parseInt(dataKey)}, cb);
+                    }, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+                    })
+                }
+
+                composeExpensesAndCache(req, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+                });
+
+                res.status(200).send('Done');
+
+            });
+        } else {
+            error = new Error();
+            error.status = 401;
+
+            next(error);
+        }
+    };
+
     this.putchModel = function (req, res, next) {
         var data = mapObject(req.body);
         var id = req.params.id;
@@ -185,6 +226,8 @@ var PayRoll = function (models) {
         var uId;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
+        var keys = body ? Object.keys(body) : null;
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
             access.getEditWritAccess(req, req.session.uId, mid, function (access) {
@@ -195,28 +238,31 @@ var PayRoll = function (models) {
                     next(error);
                 }
 
-                async.each(body, function (data, cb) {
-                    var id = data._id;
+                if (keys.length) {
+                    async.each(keys, function (key, cb) {
+                        var data = body[key];
 
-                    data.editedBy = {
-                        user: uId,
-                        date: new Date().toISOString()
-                    };
-                    delete data._id;
+                        data.editedBy = {
+                            user: uId,
+                            date: new Date().toISOString()
+                        };
 
-                    if (data.type) {
-                        data.type._id = objectId(data.type._id);
-                    }
+                        PayRoll.update({'dataKey': key}, {$set: data}, {multi: true, new: true}, cb);
+                    }, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+                    })
+                }
 
-                    PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
-                }, function (err) {
+                composeExpensesAndCache(req, function (err, result) {
                     if (err) {
                         return next(err);
                     }
-
-                    res.status(200).send({success: 'updated'});
-                    composeExpensesAndCache(req);
                 });
+
+                res.status(200).send({done: 'success'});
+
             });
         } else {
             res.status(401).send();
@@ -301,7 +347,7 @@ var PayRoll = function (models) {
         }
     };
 
-    this.getSorted = function(req, res, next){
+    this.getSorted = function (req, res, next) {
         var data = req.query;
         var db = req.session.lastDb;
         var dataKey = data.dataKey;
@@ -446,6 +492,8 @@ var PayRoll = function (models) {
 
                         delete dataToSave._id;
                         delete dataToSave.ID;
+                        delete dataToSave.data;
+                        dataToSave.status = false;
 
                         dataToSave.dataKey = dateKey;
                         dataToSave.month = month;
