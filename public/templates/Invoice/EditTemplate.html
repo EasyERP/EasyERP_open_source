@@ -54,7 +54,7 @@
 
                                     <dt><label for="source_document">Source Document</label></dt>
                                     <dd>
-                                        <input type="text" id="source_document" value="<%=(model.sourceDocument) ? model.sourceDocument : ''%>" placeholder="Source Document"  maxlength="32"/>
+                                        <input type="text" id="source_document" value="<%=(model.sourceDocument) ? model.sourceDocument.name : ''%>" placeholder="Source Document"  maxlength="32" readonly/>
                                     </dd>
 
                                     <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>

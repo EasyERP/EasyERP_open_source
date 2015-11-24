@@ -161,7 +161,7 @@ module.exports = (function () {
                 next();
             });
     });
-    salaryPaymentSchema.post('save', function (doc) {
+    /*salaryPaymentSchema.post('save', function (doc) {
         var payment = this;
         var db = payment.db.db;
 
@@ -180,7 +180,7 @@ module.exports = (function () {
 
                 console.log('Invoice %s was updated success', doc.invoice);
             });
-    });
+    });*/
 
     payOutSchema.pre('save', function (next) {
         var payment = this;

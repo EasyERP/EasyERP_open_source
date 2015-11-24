@@ -2,14 +2,17 @@
   <tr data-id="<%=order._id%>"
   <%if (order.workflow && order.workflow.status === 'Cancelled') { %>
    class="canceledListItem"
-  <%}%>>
+  <%} else if (order.type !== "Not Invoiced"){ %>
+    class="notEditable"
+<% } %>>
   <td class = "notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
   <td class="centerCell"><%=startNumber + index + 1%></td>
   <td><%=order.project ? order.project.projectName : '------'%></td>
   <td><%=(order.supplier) ? order.supplier.name : '------'%></td>
   <td><%=(order.project) ? order.project.projectmanager.name : '------'%></td>
   <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
-  <td id='<%=order._id%>'>
+  <td class="type"><%=order.type%></td>
+<td id='<%=order._id%>'>
     <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
   </td>
 <td><%=order.orderDate%></td>

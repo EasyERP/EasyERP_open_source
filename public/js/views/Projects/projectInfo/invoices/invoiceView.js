@@ -38,6 +38,7 @@ define([
 
             var that = this;
             var model;
+            var orderId;
             var listTableCheckedInput;
             var table = this.$el.find('#listTable');
             listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
@@ -45,12 +46,19 @@ define([
             this.collectionLength = this.collection.length;
             $.each(listTableCheckedInput, function (index, checkbox) {
                 model = that.collection.get(checkbox.value);
+                orderId = model.get("sourceDocument");
+                orderId = orderId._id ? orderId._id : orderId;
                 model.destroy({
                     wait   : true,
                     success: function (model) {
                         var id = model.get('_id');
+                        var tr = $("[data-id=" + orderId + "]");
 
                         table.find('[data-id="' + id + '"]').remove();
+
+                        tr.find('.type').text("Not Invoiced");
+
+                        tr.removeClass('notEditable');
 
                         $("#removeInvoice").hide();
                     },

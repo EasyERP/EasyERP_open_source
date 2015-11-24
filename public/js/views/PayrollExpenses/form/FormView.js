@@ -1010,7 +1010,7 @@ define([
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
-                modelObject = modelObject.success;
+                //modelObject = modelObject.success;
 
                 if (modelObject) {
                     modelId = modelObject._id;

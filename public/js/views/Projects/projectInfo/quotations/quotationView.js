@@ -115,21 +115,17 @@ define([
 
         renderContent: function () {
             var currentEl = this.$el;
-            var tBody = currentEl.find('#listTableQuotation');
-            var itemView;
             var pagenation;
 
-            tBody.empty();
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
             if (this.collection.length > 0) {
-                itemView = new this.listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                });
-                tBody.append(itemView.render({thisEl: tBody}));
+                currentEl.find('#listTableQuotation').html(this.templateList({
+                    quotations : this.collection.toJSON(),
+                    startNumber: 0,
+                    dateToLocal: common.utcDateToLocaleDate
+                }));
             }
 
             pagenation = this.$el.find('.pagination');

@@ -4,43 +4,44 @@ module.exports = (function () {
     var extend = require('mongoose-schema-extend');
 
     var payments = {
-        _id: false,
-        total: {type: Number, default: 0, set: setPrice},
+        _id    : false,
+        total  : {type: Number, default: 0, set: setPrice},
         balance: {type: Number, default: 0, set: setPrice},
         unTaxed: {type: Number, default: 0, set: setPrice},
-        taxes: {type: Number, default: 0, set: setPrice}
+        taxes  : {type: Number, default: 0, set: setPrice}
     };
 
     var productForJobs = {type: ObjectId, ref: 'Product', default: null};
+    var productForPayRolls = {type: ObjectId, ref: 'PayRoll', default: null};
     var product = {type: ObjectId, ref: 'Product', default: null};
 
     var baseSchema = new mongoose.Schema({
-        ID: Number,
-        name: {type: String, default: ''},
-        forSales: {type: Boolean, default: true},
-        supplier: {
-            _id: {type: ObjectId, ref: 'Customers', default: null},
+        ID              : Number,
+        name            : {type: String, default: ''},
+        forSales        : {type: Boolean, default: true},
+        supplier        : {
+            _id : {type: ObjectId, ref: 'Customers', default: null},
             name: String
         },
-        sourceDocument: { type: String, default: null },//should be order in invoice case
-        paymentReference: { type: String, default: 'free' },
+        sourceDocument  : {type: ObjectId, ref: 'Quotation', default: null},//should be order in invoice case
+        paymentReference: {type: String, default: 'free'},
 
-        invoiceDate: { type: Date, default: Date.now },
-        dueDate: Date,
+        invoiceDate: {type: Date, default: Date.now},
+        dueDate    : Date,
         paymentDate: Date,
 
-        salesPerson: {
-            _id: {type: ObjectId, ref: 'Employees', default: null},
+        salesPerson : {
+            _id : {type: ObjectId, ref: 'Employees', default: null},
             name: String
         },
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
         paymentInfo: payments,
-        payments: [{type: ObjectId, ref: 'Payment', default: null}],
+        payments   : [{type: ObjectId, ref: 'Payment', default: null}],
 
         workflow: {
-            _id: {type: ObjectId, ref: 'workflows', default: null},
-            name: String,
+            _id   : {type: ObjectId, ref: 'workflows', default: null},
+            name  : String,
             status: String
         },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
@@ -52,7 +53,7 @@ module.exports = (function () {
         },
 
         creationDate: {type: Date, default: Date.now},
-        createdBy: {
+        createdBy   : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
@@ -62,35 +63,45 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         }
 
-    }, { collection: 'Invoice' });
+    }, {collection: 'Invoice'});
 
     var jobsInvoiceSchema = baseSchema.extend({
         forSales: {type: Boolean, default: true},
-        products: [ {
-            _id: false,
-            quantity: {type: Number, default: 1},
-            unitPrice: Number,
-            product: productForJobs,
-            description  : {type: String, default: ''},
-            jobs: {type: ObjectId, ref: "jobs", default: null},
-            taxes: {type: Number, default: 0},
-            subTotal: Number
+        products: [{
+            _id        : false,
+            quantity   : {type: Number, default: 1},
+            unitPrice  : Number,
+            product    : productForJobs,
+            description: {type: String, default: ''},
+            jobs       : {type: ObjectId, ref: "jobs", default: null},
+            taxes      : {type: Number, default: 0},
+            subTotal   : Number
         }],
-        project: {
-            _id: {type: ObjectId, ref: 'Project', default: null},
+        project : {
+            _id : {type: ObjectId, ref: 'Project', default: null},
             name: String
         }
     });
 
+    var payRollInvoiceSchema = baseSchema.extend({
+        expense : {type: Boolean, default: true},
+        products: [{
+            _id    : false,
+            product: productForPayRolls,
+            paid   : Number,
+            diff   : Number
+        }]
+    });
+
     var invoiceSchema = baseSchema.extend({
-        products: [ {
-            _id: false,
-            quantity: {type: Number, default: 1},
-            unitPrice: Number,
-            product: product,
-            description  : {type: String, default: ''},
-            taxes: {type: Number, default: 0},
-            subTotal: Number
+        products: [{
+            _id        : false,
+            quantity   : {type: Number, default: 1},
+            unitPrice  : Number,
+            product    : product,
+            description: {type: String, default: ''},
+            taxes      : {type: Number, default: 0},
+            subTotal   : Number
         }]
     });
 
@@ -99,15 +110,18 @@ module.exports = (function () {
     };
 
     jobsInvoiceSchema.set('toJSON', {getters: true});
+    payRollInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
 
     mongoose.model('wTrackInvoice', jobsInvoiceSchema);
+    mongoose.model('payRollInvoice', payRollInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
 
-    if(!mongoose.Schemas) {
+    if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
     mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
+    mongoose.Schemas['payRollInvoice'] = payRollInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
 })();

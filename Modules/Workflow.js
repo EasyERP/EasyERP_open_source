@@ -190,7 +190,7 @@ var Workflow = function (models, event) {
                 res['data'] = [];
                 if (data) {
                     var query = (data.id) ? {wId: data.id, visible: true} : {visible: true};
-                    if (data.name) query['name'] = data.name
+                    if (data.name) query['name'] = data.name;
                     var query2 = models.get(req.session.lastDb, "workflows", workflowSchema).find(query);
                     query2.sort({'sequence': -1, "editedBy.date": -1});
                     query2.exec(query, function (err, result) {
