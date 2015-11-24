@@ -153,11 +153,6 @@ define([
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                                 if (self.redirect){
-                                    //var url = window.location.hash;
-                                    //
-                                    //Backbone.history.fragment = '';
-                                    //Backbone.history.navigate(url, {trigger: true});
-
                                     var data ={products: JSON.stringify(products), type: "Ordered"};
 
                                     dataService.postData("/jobs/update", data,  function(err, result){
