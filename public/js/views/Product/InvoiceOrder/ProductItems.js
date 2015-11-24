@@ -122,7 +122,7 @@ define([
             if (trId.find("#editSpan").length === 0) {
                 tdId.append('<span id="editSpan" class=""><a href="javascript:;">e</a></span>');
                 if (tdId.width() - 30 < tdId.find(".no-long").width()) {
-                    tdId.find(".no-long").width(tdId.width() - 30);
+                    tdId.find(".no-long").width(tdId.width() - 40);
                 }
             }
         },
