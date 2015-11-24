@@ -47,6 +47,7 @@ define([
             $.each(listTableCheckedInput, function (index, checkbox) {
                 model = that.collection.get(checkbox.value);
                 orderId = model.get("sourceDocument");
+                orderId = orderId._id ? orderId._id : orderId;
                 model.destroy({
                     wait   : true,
                     success: function (model) {
