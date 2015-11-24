@@ -2,7 +2,7 @@ define([
         "text!templates/salesOrder/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        "views/Projects/projectInfo/invoiceView",
+        "views/Projects/projectInfo/invoices/invoiceView",
         'collections/salesInvoice/filterCollection',
         "common",
         "custom",

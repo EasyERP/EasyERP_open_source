@@ -2,7 +2,7 @@ define([
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        'views/Projects/projectInfo/orderView',
+        'views/Projects/projectInfo/orders/orderView',
         'collections/Quotation/filterCollection',
         "common",
         "custom",
