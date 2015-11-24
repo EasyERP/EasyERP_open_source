@@ -456,28 +456,34 @@ var Users = function (mainDb, models) {
                 updateThisUser(_id, query);
 
                 function updateThisUser(_id, query) {
+                    var saveChanges = function () {
+                        models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                            if (err) {
+                                return console.log(err);
+                            }
+                            req.session.kanbanSettings = result.kanbanSettings;
+                            if (data.profile && (result._id == req.session.uId)) {
+                                res.status(200).send({success: result, logout: true});
+                            } else {
+                                res.status(200).send({success: result});
+                            }
+                        });
+                    };
 
-                    checkIfUserLoginUnique(req, query.$set.login, function (resp) {
-                        if (resp.unique) {
-                            models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
-                                if (err) {
-                                    return console.log(err);
-                                }
-                                req.session.kanbanSettings = result.kanbanSettings;
-                                if (data.profile && (result._id == req.session.uId)) {
-                                    res.status(200).send({success: result, logout: true});
-                                } else {
-                                    res.status(200).send({success: result});
-                                }
-                            });
-                        } else if (resp.error) {
-                            logWriter.log("User.js. create Account.find " + error);
-                            res.send(500, {error: 'User.create find error'});
-                        } else {
-                            res.send(400, {error: "An user with the same Login already exists"});
-                        }
-
-                    })
+                    if (query.$set && query.$set.login) {
+                        checkIfUserLoginUnique(req, query.$set.login, function (resp) {
+                            if (resp.unique) {
+                                saveChanges();
+                            } else if (resp.error) {
+                                logWriter.log("User.js. create Account.find " + error);
+                                res.send(500, {error: 'User.create find error'});
+                            } else {
+                                res.send(400, {error: "An user with the same Login already exists"});
+                            }
+                        });
+                    } else {
+                        saveChanges();
+                    }
 
                 }
 
