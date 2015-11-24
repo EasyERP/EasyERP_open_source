@@ -484,8 +484,6 @@ define([
                         data = {_id: id, type: $(e.target).text()};
                     }
 
-
-
                     dataService.postData("/jobs/update", data, function (err, result) {
                         if (err) {
                             return console.log(err);

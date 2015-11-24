@@ -145,7 +145,10 @@ var Invoice = function (models, event) {
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
             if (forSales === "true") {
-                invoice.project.name = order.project.projectName;
+                if (!invoice.project){
+                    invoice.project = {};
+                }
+                invoice.project.name = order.project ? order.project.projectName : "";
             }
 
             supplier = order['supplier'];
