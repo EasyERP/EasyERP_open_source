@@ -215,7 +215,7 @@ define([
                                     name: jsonModel.type.name
                                 },
                                 period          : jsonModel.year + '-' + jsonModel.month + '-01',
-                                _id             : dataId
+                                paymentRef      : dataId
                             };
 
                             this.forPayments.add(modelPayment);
@@ -246,7 +246,7 @@ define([
                                 name: jsonModel.type.name
                             },
                             period          : jsonModel.year + '-' + jsonModel.month + '-01',
-                            _id             : dataId
+                            paymentRef      : dataId
                         };
 
                         this.forPayments.add(modelPayment);

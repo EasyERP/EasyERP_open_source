@@ -369,11 +369,15 @@ var Payment = function (models, event) {
 
     function payrollExpensUpdater(db, _payment, mulParram, cb) {
         var Payroll = models.get(db, 'PayRoll', payrollSchema);
+        var id = _payment.paymentRef ? _payment.paymentRef : _payment.product;
+        var paid = _payment.paidAmount ? _payment.paidAmount : _payment.paid;
 
-        Payroll.findByIdAndUpdate(_payment._id, {
+        paid = paid * mulParram;
+
+        Payroll.findByIdAndUpdate(id, {
             $inc: {
-                diff: mulParram * _payment.paidAmount,
-                paid: mulParram * _payment.paidAmount
+                diff: paid,
+                paid: paid
             }
         }, cb);
     }
@@ -398,7 +402,7 @@ var Payment = function (models, event) {
                         var supplierObject = _payment.supplier;
                         var productObject = {};
 
-                        productObject.product = _payment._id;
+                        productObject.product = _payment.paymentRef;
                         productObject.paid = _payment.paidAmount;
                         productObject.diff = _payment.diff;
 
@@ -433,10 +437,11 @@ var Payment = function (models, event) {
                 };
 
                 var createPayment = function (params, cb) {
-                    var paymentObject = body[0];
+                    var paymentObject = _.clone(body[0]);
                     var payment;
 
-                    paymentObject.invoice._id = params.invoice._id;
+                    paymentObject.invoice = {};
+                    paymentObject.invoice._id = params.invoice.get('_id');
 
                     paymentObject.supplier = params.suppliers;
                     paymentObject.paidAmount = params.totalAmount;
