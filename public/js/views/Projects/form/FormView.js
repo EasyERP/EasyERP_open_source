@@ -1131,11 +1131,16 @@ define([
                 var orderSum = 0;
 
                 ordersCollectionJSON.forEach(function (element) {
-                    orderSum += element.paymentInfo.total;
+                    if (element.paymentInfo){
+                        orderSum += element.paymentInfo.total;
+
+                    }
                 });
 
                 qCollectionJSON.forEach(function (element) {
-                    sum += element.paymentInfo.total;
+                    if (element.paymentInfo){
+                        sum += element.paymentInfo.total;
+                    }
                 });
 
                 this.proformValues.quotations = {
