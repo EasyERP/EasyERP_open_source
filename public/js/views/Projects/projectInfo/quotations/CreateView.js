@@ -206,8 +206,8 @@ define([
                     new ProductItemView({
                         canBeSold       : true,
                         service  : 'Service',
-                        projectModel: this.projectModel.toJSON(),
-                        wTrackCollection: this.wTrackCollection.toJSON()
+                        projectModel: this.projectModel,
+                        wTrackCollection: this.wTrackCollection
                     }).render().el
                 );
 
