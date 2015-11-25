@@ -1065,7 +1065,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .payRoll-list #payRoll-Table .scrollit {
   display: block;
-  height: calc(100vh - 209px);
+  height: calc(100vh - 2010px);
   overflow-x: hidden;
 }
 .payRollHolder {
@@ -1085,7 +1085,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 @media (min-width: 1320px) {
   table.payRoll-list #payRoll-Table .scrollit {
-    height: calc(100vh - 155px);
+    height: calc(100vh - 190px);
   }
 }
 #forInfo {
@@ -2814,6 +2814,7 @@ dl dd span.ui-spinner {
 }
 .form .assignees-info .current-selected {
   line-height: 27px !important;
+  color: #66b5d4;
 }
 .hidden {
   display: none !important;
@@ -4859,6 +4860,13 @@ table#workflows tr td.edit-status {
 .addUserAndGroup {
   margin-top: 8px;
 }
+.addUserAndGroup .addUser,
+.addUserAndGroup .addGroup {
+  color: #66b5d4;
+}
+.addUserAndGroup span {
+  color: #cdcdcd;
+}
 #allUsers,
 .buttons,
 #targetUsers {
@@ -5117,7 +5125,7 @@ table#workflows tr td.edit-status {
 #createBtnHolder {
   float: left;
   margin-top: 6px;
-  margin-left: 10px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -5488,7 +5496,7 @@ ul.dialog-tabs li.right button {
   text-overflow: ellipsis;
   text-align: center;
 }
-.thumbnailwithavatar .inner .info P {
+.thumbnailwithavatar .inner .info p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000;
   font-size: 12px;
@@ -5496,7 +5504,7 @@ ul.dialog-tabs li.right button {
   line-height: 16px;
   text-align: center;
 }
-.thumbnailwithavatar .inner .info P a {
+.thumbnailwithavatar .inner .info p a {
   word-break: break-all;
   word-wrap: break-word;
 }
@@ -7135,21 +7143,31 @@ h3.dashboard {
   color: #cdcdcd;
 }
 .stageSelect.pending,
-span.pending {
+span.pending,
+a.pending {
   color: red;
 }
 .stageSelect.inprogress,
-span.inprogress {
+span.inprogress,
+a.inprogress {
   color: #66b5d4;
 }
 .stageSelect.closed,
 span.closed,
+a.closed,
 .stageSelect.done,
 span.done,
+a.done,
 .stageSelect.unDone,
-span.unDone {
+span.unDone,
+a.unDone,
+.stageSelect.new,
+span.new,
+a.new,
+.stageSelect.cancelled,
+span.cancelled,
+a.cancelled {
   display: block;
-  color: #00db30;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -7158,9 +7176,9 @@ span.unDone {
   line-height: 16px;
 }
 .stageSelect.projectClosed,
-span.projectClosed {
+span.projectClosed,
+a.projectClosed {
   display: block;
-  color: #00db30;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -7170,8 +7188,19 @@ span.projectClosed {
   background-color: inherit;
 }
 .stageSelect.unDone,
-span.unDone {
+span.unDone,
+a.unDone {
   color: #fd0001;
+}
+.stageSelect.done,
+span.done,
+a.done {
+  color: #00db30;
+}
+.stageSelect.cancelled,
+span.cancelled,
+a.cancelled {
+  text-decoration: line-through;
 }
 .form-holder form .task-info {
   clear: both;
@@ -7976,6 +8005,7 @@ span.unDone {
 }
 .form .assignees-info .current-selected {
   line-height: 27px !important;
+  color: #66b5d4;
 }
 .full-width {
   width: 100%;
@@ -8521,20 +8551,17 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td:last-child {
   border: none;
 }
-.grid-conatiner .statisticsAtten table tr td .item {
-  padding: 0 0 10px 0;
-}
 .grid-conatiner .statisticsAtten table tr td .item .title {
   text-align: center;
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 14px;
+  margin-bottom: 5px;
   color: #cdcdcd;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
-  font-size: 40px;
+  font-size: 20px;
   color: #ffffff;
   width: 126px;
-  padding: 10px;
+  padding: 5px;
   text-align: center;
   margin: 0 auto;
   /*for vacationDashboard*/
