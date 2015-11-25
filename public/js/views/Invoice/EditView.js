@@ -293,8 +293,8 @@ define([
                     salesPerson: salesPerson,
                     paymentTerms: paymentTermId,
 
-                    products: this.redirect ? productsOld : products,
-                    paymentInfo: payments,
+                    //products: this.redirect ? productsOld : products,
+                    //paymentInfo: payments,
 
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
