@@ -18,6 +18,7 @@ var Invoice = function (models, event) {
     var workflowHandler = new WorkflowHandler(models);
     var moment = require('../public/js/libs/moment/moment');
     var _ = require('../node_modules/underscore');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
@@ -653,7 +654,7 @@ var Invoice = function (models, event) {
 
                         orderId = invoiceDeleted.sourceDocument;
 
-                        Order.findByIdAndUpdate(objectId(orderId), {$set: {type: "Not Invoiced"}}, {new: true}, function (err, result) {
+                        Order.findByIdAndUpdate(objectId(orderId), {$set: {type: "Not Invoiced"}, workflow: {name: "Draft", _id: CONSTANTS.ORDERDRAFT}}, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err)
                             }

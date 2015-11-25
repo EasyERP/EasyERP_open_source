@@ -80,7 +80,7 @@ define([
             $.each(listTableCheckedInput, function (index, checkbox) {
                 model = that.collection.get(checkbox.value);
                 orderId = model.get("sourceDocument");
-                orderId = orderId._id ? orderId._id : orderId;
+                orderId = orderId && orderId._id ? orderId._id : orderId;
                 model.destroy({
                     wait   : true,
                     success: function (model) {
@@ -90,6 +90,8 @@ define([
                         table.find('[data-id="' + id + '"]').remove();
 
                         tr.find('.type').text("Not Invoiced");
+                        
+                        tr.find('.workflow').html('<a href="javascript:;" class="stageSelect">Draft</a>');
 
                         tr.removeClass('notEditable');
 
