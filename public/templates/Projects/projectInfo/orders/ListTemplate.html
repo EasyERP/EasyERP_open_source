@@ -13,7 +13,11 @@
   <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
   <td class="type"><%=order.type%></td>
 <td id='<%=order._id%>'>
+  <%if(order.workflow.name !== 'Done'){%>
     <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
+  <% } else {%>
+  <span class="done"><%=order.workflow.name%></span>
+  <%}%>
   </td>
 <td><%=order.orderDate%></td>
   </tr>
