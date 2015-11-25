@@ -282,7 +282,7 @@ define([
                 var data = {
                     supplier: supplier,
                     fiscalPosition: null,
-                    sourceDocument: $.trim(this.$el.find('#source_document').val()),
+                    //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                     paymentReference: $.trim(this.$el.find('#payment_reference').val()),
                     invoiceDate: invoiceDate,

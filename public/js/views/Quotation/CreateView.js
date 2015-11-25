@@ -33,11 +33,11 @@ define([
                 'click .dialog-tabs a': 'changeTab',
                 "click #projectDd"    : "showNewSelect",
                 "click a.current-selected:not(#projectDd,.jobs)": "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"      : "notHide",
+                "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
+                "click .newSelectList li.miniStylePagination"                    : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click"                                                           : "hideNewSelect"
+                //"click :not(#generateJobs)"                                                           : "hideNewSelect"
             },
 
             showNewSelect: function (e, prev, next) {
@@ -182,7 +182,7 @@ define([
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = targetEl.find('.subtotal').text();
-                            jobs = targetEl.find('#jobs').attr('data-id');
+                            jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
                             if (!jobs && this.forSales) {
                                 return alert("Job field can't be empty. Please, choose or create one.");

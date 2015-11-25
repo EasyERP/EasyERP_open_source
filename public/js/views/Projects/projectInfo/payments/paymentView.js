@@ -251,7 +251,7 @@ define([
             var cancelBtnEl = $('#removePayment');
 
             saveBtnEl.show();
-            cancelBtnEl.show();
+            //cancelBtnEl.show();
 
             return false;
         },

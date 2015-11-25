@@ -43,10 +43,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.model = options.model;
                     this.wTrackCollection = options.wTrackCollection;
                     this.asyncLoadImgs(this.model);
+                    this.forQuotationGenerate = !!options.forQuotationGenerate;
 
                     _.bindAll(this, 'generateItems');
 
-                    this.modelJSON = this.model.toJSON();
+                    this.modelJSON = this.model.id ? this.model.toJSON() : this.model;
 
                     this.resultArray = [];
 
@@ -54,13 +55,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     this.jobsCollection = options.jobsCollection;
 
-                    this.createJob = options.createJob;
+                    this.createJob = options.createJob ? options.createJob : true;
+                    this.quotationDialog = options.quotationDialog;
 
                     this.render();
                 },
 
                 asyncLoadImgs: function (model) {
-                    var currentModel = model.toJSON();
+                    var currentModel = model.id ? model.toJSON() : model;
                     var id = currentModel._id;
 
                     common.getImagesPM([currentModel.projectmanager._id], "/getEmployeesImages", "#" + id, function (result) {
@@ -308,7 +310,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 generateItems: function (e) {
-
                     this.setChangedValueToModel(); // add for setChanges by Hours
 
                     var errors = this.$el.find('.errorContent');
@@ -322,6 +323,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var _id = window.location.hash.split('form/')[1];
                     //var nameRegExp = /^[\w\.@]{3,100}$/;
                     var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
+                    //var quotationDialog = $('.edit-dialog');
 
                     var filter = {
                         'projectName': {
@@ -353,11 +355,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             success: function () {
                                 self.hideDialog();
 
-                                if (self.wTrackCollection.wTrackView){
+                                if (self.wTrackCollection && self.wTrackCollection.wTrackView){
                                     self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
                                 }
 
-                                self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                if (self.wTrackCollection){
+                                    self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                }
+
+                                if(self.quotationDialog){
+                                    return self.quotationDialog.generatedWtracks();
+                                }
 
                                 tabs = $(".chart-tabs");
                                 activeTab = tabs.find('.active');
@@ -380,7 +388,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 hideDialog: function () {
-                    $(".edit-dialog").remove();
+                    $(".wTrackDialog").remove();
                 },
 
                 showNewSelect: function (e, prev, next) {
@@ -505,7 +513,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 render: function () {
                     var thisEl = this.$el;
                     var self = this;
-                    var project = this.model.toJSON();
+                    var project = this.model.id ? this.model.toJSON() : this.model;
                     var dialog = this.template({
                         project: project,
                         jobs:  self.jobs,
@@ -513,7 +521,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     });
 
                     this.$el = $(dialog).dialog({
-                        dialogClass: "edit-dialog",
+                        dialogClass: "wTrackDialog",
                         width: 1200,
                         title: "Generate weTrack",
                         buttons: {

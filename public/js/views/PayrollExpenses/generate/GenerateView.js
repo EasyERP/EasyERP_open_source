@@ -11,13 +11,71 @@ define([
         var CreateView = Backbone.View.extend({
             template: _.template(GenetareTemplate),
 
-            events: {},
+            events: {
+                "click input"   : "setAttr",
+                "keyup input"   : "onKeyUpInput",
+                "focusout input": "onChangeInput",
+                "keydown input" : "onKeyDownInput"
+            },
 
             initialize: function (options) {
 
                 this.keys = options.keys;
 
                 this.render();
+            },
+
+            setAttr       : function (e) {
+                var input = $(e.target);
+                var id = input.attr('id');
+
+                if (id === 'month') {
+                    input.attr({
+                        "min"      : 1,
+                        "max"      : 12,
+                        "maxLength": 2
+                    });
+                } else if (id === 'year') {
+                    input.attr({
+                        "min"      : 1980,
+                        "maxLength": 4
+                    });
+                }
+            },
+            onKeyDownInput: function (e) {
+                if (// Allow: backspace, delete, tab, escape, enter
+                $.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
+                    // Allow: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    return;
+                }
+
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            },
+
+            onKeyUpInput: function (e) {
+                var element = e.target;
+
+                if (element.maxLength && element.value.length > element.maxLength) {
+                    element.value = element.value.slice(0, element.maxLength);
+                }
+            },
+
+            onChangeInput: function (e) {
+                var element = e.target;
+                var max = parseInt(element.max);
+                var min = parseInt(element.min);
+                var value = parseInt(element.value);
+
+                if (max && value > max) {
+                    element.value = max;
+                }
+
+                if (min && value < min) {
+                    element.value = min;
+                }
             },
 
             setChangedValue: function () {
@@ -32,8 +90,8 @@ define([
                 }
             },
 
-            generate: function(){
-              this.generateItems();
+            generate: function () {
+                this.generateItems();
             },
 
             generateItems: function () {
@@ -51,7 +109,7 @@ define([
 
                 key = parseInt(self.year) * 100 + parseInt(self.month);
 
-                if (this.keys.indexOf(key.toString()) > -1){
+                if (this.keys.indexOf(key.toString()) > -1) {
                     return alert("Please, choose empty month!");
                 }
 
@@ -60,7 +118,7 @@ define([
 
                 $.ajax({
                     type       : 'POST',
-                    url : '/payroll/generate/',
+                    url        : '/payroll/generate/',
                     contentType: "application/json",
                     data       : JSON.stringify(data),
 
@@ -107,8 +165,8 @@ define([
                             text : "Generate",
                             class: "btn",
                             id   : "generateBtn",
-                            click: function(){
-                               // self.generateItems()
+                            click: function () {
+                                // self.generateItems()
                                 self.generate()
                             }
                         },

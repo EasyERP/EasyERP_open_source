@@ -14,11 +14,11 @@ define([
 ], function (quotationTopBar, ListTemplate, stagesTemplate, editView, listView, quotationCreateView, quotationCollection, currentModel, common, helpers, dataService) {
     var quotationView = listView.extend({
 
-        el            : '#quotations',
+        el                      : '#quotations',
         totalCollectionLengthUrl: '/quotation/totalCollectionLength',
-        contentCollection: quotationCollection,
-        templateHeader: _.template(quotationTopBar),
-        templateList  : _.template(ListTemplate),
+        contentCollection       : quotationCollection,
+        templateHeader          : _.template(quotationTopBar),
+        templateList            : _.template(ListTemplate),
 
         events: {
             "click .checkbox"                    : "checked",
@@ -30,7 +30,10 @@ define([
 
         initialize: function (options) {
             this.remove();
-
+            this.visible = options.visible;
+            this.projectModel = options.model;
+            this.wTrackCollection = options.wTrackCollection;
+            this.createJob = options.createJob;
             this.collection = options.collection;
             this.projectID = options.projectId;
             this.customerId = options.customerId;
@@ -51,9 +54,10 @@ define([
 
             model.save({
                 workflow: {
-                    _id: target$.attr("id"),
-                    name:target$.text()
-                }}, {
+                    _id : target$.attr("id"),
+                    name: target$.text()
+                }
+            }, {
                 headers : {
                     mid: 55
                 },
@@ -171,7 +175,7 @@ define([
             var modelQuot = this.collection.get(id);
             self.collection.bind('remove', renderProformRevenue);
 
-            function renderProformRevenue(){
+            function renderProformRevenue() {
                 self.renderProformRevenue(modelQuot);
                 self.render();
             }
@@ -179,7 +183,13 @@ define([
             model.urlRoot = '/quotation/form/' + id;
             model.fetch({
                 success: function (model) {
-                    new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId, collection: self.collection});
+                    new editView({
+                        model     : model,
+                        redirect  : true,
+                        pId       : self.projectID,
+                        customerId: self.customerId,
+                        collection: self.collection
+                    });
 
 
                     //self.collection.remove(id);
@@ -267,29 +277,32 @@ define([
         checked: function (e) {
             var el = this.$el;
 
-                var checkLength = el.find("input.checkbox:checked").length;
+            var checkLength = el.find("input.checkbox:checked").length;
 
-                if (el.find("input.checkbox:checked").length > 0) {
-                    el.find("#removeQuotation").show();
-                    el.find('#check_all_quotations').prop('checked', false);
+            if (el.find("input.checkbox:checked").length > 0) {
+                el.find("#removeQuotation").show();
+                el.find('#check_all_quotations').prop('checked', false);
 
-                    if (checkLength === this.collection.length) {
-                        el.find('#check_all_quotations').prop('checked', true);
-                    }
+                if (checkLength === this.collection.length) {
+                    el.find('#check_all_quotations').prop('checked', true);
                 }
-                else {
-                    el.find("#removeQuotation").hide();
-                    el.find('#check_all_quotations').prop('checked', false);
-                }
+            }
+            else {
+                el.find("#removeQuotation").hide();
+                el.find('#check_all_quotations').prop('checked', false);
+            }
         },
 
         createQuotation: function (e) {
             e.preventDefault();
             new quotationCreateView({
-                projectId     : this.projectID,
-                customerId    : this.customerId,
-                collection    : this.collection,
-                projectManager: this.projectManager
+                projectId       : this.projectID,
+                customerId      : this.customerId,
+                collection      : this.collection,
+                projectManager  : this.projectManager,
+                projectModel    : this.projectModel,
+                wTrackCollection: this.wTrackCollection,
+                createJob       : this.createJob
             });
         },
 

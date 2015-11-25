@@ -22,8 +22,12 @@ define([
             templateNewRow: _.template(newRow),
 
             initialize: function (options) {
+
                 if (options) {
                     this.visible = options.visible;
+                    this.projectModel = options.projectModel;
+                    this.wTrackCollection = options.wTrackCollection;
+                    this.createJob = options.createJob;
                 }
 
                 this.populate = true;
@@ -91,6 +95,8 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -100,8 +106,6 @@ define([
                     }
 
                 });
-
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
@@ -200,8 +204,10 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
                     new ProductItemView({
-                        canBeSold: true,
-                        service  : 'Service'
+                        canBeSold       : true,
+                        service  : 'Service',
+                        projectModel: this.projectModel,
+                        wTrackCollection: this.wTrackCollection
                     }).render().el
                 );
 
