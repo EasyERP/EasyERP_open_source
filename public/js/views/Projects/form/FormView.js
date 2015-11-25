@@ -48,6 +48,7 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected:not(.disabled,jobs)"                     : "showNewSelect",
                 "click #createItem"                                               : "createDialog",
+                "click #createJob"                                                : "createJob",
                 "change input:not(.checkbox, .check_all)"                         : "showSaveButton",
                 "click #jobsItem td:not(.selects, .remove)"                       : "renderJobWTracks",
                 "mouseover #jobsItem"                                             : "showRemoveButton",
@@ -291,6 +292,23 @@ define([
                     jobs            : jobs
                 });
             },
+
+            createJob: function () {
+                this.wCollection.unbind();
+                this.wCollection.bind('reset', this.renderContent, this);
+                this.wCollection.bind('showmore', this.showMoreContent, this);
+
+                if (this.generatedView){
+                    this.generatedView.undelegateEvents();
+                }
+
+                this.generatedView = new GenerateWTrack({
+                    model: this.formModel,
+                    wTrackCollection: this.wCollection,
+                    createJob: true
+                });
+            },
+
 
             notHide: function () {
                 return false;
