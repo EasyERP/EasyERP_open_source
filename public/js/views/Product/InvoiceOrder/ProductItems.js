@@ -11,8 +11,9 @@ define([
     'views/Projects/projectInfo/wTracks/generateWTrack',
     'populate',
     'helpers',
-    'dataService'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService) {
+    'dataService',
+    'constants'
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS) {
     "use strict";
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
@@ -70,22 +71,34 @@ define([
         },
 
         generateJob: function () {
+            var model = this.projectModel;
+            var projectsDdContainer = $('#projectDd');
+
+            if (!model) {
+                projectsDdContainer.css('color', 'red');
+
+                App.render({
+                    type: 'error',
+                    message: CONSTANTS.SELECTP_ROJECT
+                });
+            }
+
             if (this.generatedView) {
                 this.generatedView.undelegateEvents();
             }
 
             this.generatedView = new GenerateWTrack({
-                model           : this.projectModel,
-                wTrackCollection: this.wTrackCollection,
-                createJob       : this.createJob,
+                model               : this.projectModel,
+                wTrackCollection    : this.wTrackCollection,
+                createJob           : this.createJob,
                 forQuotationGenerate: true,
-                quotationDialog: this
+                quotationDialog     : this
             });
 
             return false;
         },
 
-        generatedWtracks: function(){
+        generatedWtracks: function () {
             var tr = this.$el.find('tr[data-error="true"]');
             var aEl = tr.find('a[data-id="jobs"]');
 
@@ -391,6 +404,12 @@ define([
                     changeYear : true
                 }).datepicker('setDate', new Date());
 
+                datePicker = trEl.find('input.datepicker');
+                spanDatePicker = trEl.find('span.datepicker');
+
+                spanDatePicker.text(datePicker.val());
+                datePicker.remove();
+
                 $(parrents[2]).attr('class', 'editable');
                 $(parrents[3]).attr('class', 'editable').find("span").text(1);
 
@@ -410,12 +429,6 @@ define([
 
                     this.calculateTotal(selectedProduct.info.salePrice);
                 }
-
-                datePicker = trEl.find('input.datepicker');
-                spanDatePicker = trEl.find('span.datepicker');
-
-                spanDatePicker.text(datePicker.val());
-                datePicker.remove();
             } else if (_id === 'createJob') {
                 self.generateJob();
             }

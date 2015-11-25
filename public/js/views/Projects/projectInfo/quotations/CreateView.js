@@ -95,6 +95,8 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -104,8 +106,6 @@ define([
                     }
 
                 });
-
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
