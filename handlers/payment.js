@@ -40,7 +40,7 @@ var Payment = function (models, event) {
 
        // moduleId = !!body.forSales ? 61 : !!body.salary ? 79 : 60;
 
-        moduleId = (type === 'customer') ? 61 : (type === 'supplier') ? 60 : 79;
+        moduleId = (type === 'customers') ? 61 : (type === 'supplier') ? 60 : 79;
 
         return moduleId;
     }
