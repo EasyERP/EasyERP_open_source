@@ -3,7 +3,7 @@
     <td class = "notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=(payment.invoice && payment.invoice.assigned) ? payment.invoice.assigned.name: ''%></td>
-    <td><%=payment.supplier.fullName%></td>
+    <td><%=payment.supplier[0] ? payment.supplier[0].fullName : payment.supplier.fullName%></td>
     <td><%=payment.invoice ? payment.invoice.name : ''%></td>
     <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
     <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=currencySplitter(payment.invoiced)%></td>

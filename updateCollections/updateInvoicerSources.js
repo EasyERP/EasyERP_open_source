@@ -19,24 +19,32 @@ dbObject.once('open', function callback() {
 
 var Quotation = dbObject.model("Quotation", QuotationSchema);
 var Invoice = dbObject.model("wTrackInvoice", InvoiceSchema);
+var count = 0;
 
-var query = Quotation.find({isOrder: true}).lean();
+var query = Invoice.find({forSales: true}).lean();
 
-query.exec(function(err, orders){
+query.exec(function(err, invoice){
     if (err){
         console.log(err);
     }
 
-    async.each(orders, function(orderEl, cb){
+    async.each(invoice, function(orderEl, cb){
         var products = orderEl.products;
-        var orderId = orderEl._id;
 
         async.each(products, function(el, callback){
             var jobId = el.jobs;
 
-            Invoice.update({"products.jobs": jobId}, {$set: {sourceDocument: orderId}}, function(err, result){
-                callback()
-            });
+            Quotation.find({"products.jobs": jobId}, function(err, result){
+                if (err){
+                   return console.log(err);
+                }
+                var orderId = result._id;
+
+                Invoice.update({"products.jobs": jobId}, {$set: {sourceDocument: orderId}}, function(err, result){
+                    console.log(count++);
+                    callback()
+                });
+            })
         }, function(){
             cb();
         });
