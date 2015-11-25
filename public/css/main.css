@@ -1165,31 +1165,27 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
   margin: 0 auto;
 }
+.notification .notify,
 .notification .error {
-  left: 85%;
+  left: 84%;
   width: 15%;
   position: relative;
   line-height: 17px;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding: 10px;
+  font-size: 14px;
+  color: #fff;
+}
+.notification .error {
   background-color: #fe7e86;
 }
 .notification .notify {
-  left: 85%;
-  width: 15%;
-  position: relative;
-  line-height: 17px;
-  padding-right: 10px;
-  padding-left: 10px;
   background-color: #00db30;
 }
 .notification .animate {
   position: absolute;
   width: 15%;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  margin-top: 0px;
-  margin-left: 0px;
+  margin-top: 0;
+  margin-left: 0;
   left: 100%;
   opacity: 0;
 }
@@ -7166,7 +7162,10 @@ span.new,
 a.new,
 .stageSelect.cancelled,
 span.cancelled,
-a.cancelled {
+a.cancelled,
+.stageSelect.draft,
+span.draft,
+a.draft {
   display: block;
   text-align: center;
   -moz-border-radius: 4px;

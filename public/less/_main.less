@@ -32,35 +32,32 @@
   width: 100%;
   margin: 0 auto;
 
-  .error {
-    left: 85%;
+  .notify, .error {
+    left: 84%;
     width: 15%;
     position: relative;
     line-height: 17px;
-    padding-right: 10px;
-    padding-left: 10px;
+    padding: 10px;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .error {
     background-color: @notifikation-error-color;
   }
 
   .notify {
-    left: 85%;
-    width: 15%;
-    position: relative;
-    line-height: 17px;
-    padding-right: 10px;
-    padding-left: 10px;
     background-color: @notifikation-notify-color;
   }
 
   .animate {
     position: absolute;
     width: 15%;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
+    margin-top: 0;
+    margin-left: 0;
     left: 100%;
     opacity: 0;
+
   }
 }
 
@@ -4475,7 +4472,7 @@ h3.dashboard {
   &.inprogress {
     color: @mainText-color-selected;
   }
-  &.closed, &.done, &.unDone, &.new, &.cancelled {
+  &.closed, &.done, &.unDone, &.new, &.cancelled, &.draft {
     display: block;
     //color: @notifikation-notify-color;
     text-align: center;
