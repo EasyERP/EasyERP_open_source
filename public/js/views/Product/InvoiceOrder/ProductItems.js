@@ -8,18 +8,18 @@ define([
     'text!templates/Product/InvoiceOrder/ItemsEditList.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
-    /*'views/Projects/projectInfo/wTracks/generateWTrack',*/
+    'views/Projects/projectInfo/wTracks/generateWTrack',
     'populate',
     'helpers',
     'dataService'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, /*GenerateWTrack,*/ populate, helpers, dataService) {
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService) {
     "use strict";
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
 
         events: {
             'click .addProductItem a'                                                 : 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination,#createJob)"            : "chooseOption",
+            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
             "click .newSelectList li.miniStylePagination"                             : "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
@@ -30,7 +30,7 @@ define([
             "click #cancelSpan"                                                       : "cancelClick",
             "click #saveSpan"                                                         : "saveClick",
             "click #editSpan"                                                         : "editClick",
-            "click #createJob"                                                        : "createJob"
+            //"click #generateJobs"                                                     : "createJob"
         },
 
         template: _.template(productItemTemplate),
@@ -69,7 +69,7 @@ define([
             }, this);
         },
 
-        createJob: function () {
+        generateJob: function () {
             if (this.generatedView) {
                 this.generatedView.undelegateEvents();
             }
@@ -77,8 +77,19 @@ define([
             this.generatedView = new GenerateWTrack({
                 model           : this.projectModel,
                 wTrackCollection: this.wTrackCollection,
-                createJob       : this.createJob
+                createJob       : this.createJob,
+                forQuotationGenerate: true,
+                quotationDialog: this
             });
+
+            return false;
+        },
+
+        generatedWtracks: function(){
+            var tr = this.$el.find('tr[data-error="true"]');
+            var aEl = tr.find('a[data-id="jobs"]');
+
+            aEl.click();
         },
 
         checkForQuickEdit: function (el) {
@@ -405,6 +416,8 @@ define([
 
                 spanDatePicker.text(datePicker.val());
                 datePicker.remove();
+            } else if (_id === 'createJob') {
+                self.generateJob();
             }
         },
 
