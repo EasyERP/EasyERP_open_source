@@ -209,7 +209,7 @@ define([
                 currentPage++;
             }
 
-            s = "<ul class='newSelectList' data-page='1'><li id='false'>Generate</li>";
+            s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
             start = (currentPage - 1) * elementVisible;
             end = Math.min(currentPage * elementVisible, data.length);
             allPages = Math.ceil(data.length / elementVisible);

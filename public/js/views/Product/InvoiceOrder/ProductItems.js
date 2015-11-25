@@ -8,17 +8,18 @@ define([
     'text!templates/Product/InvoiceOrder/ItemsEditList.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
+    /*'views/Projects/projectInfo/wTracks/generateWTrack',*/
     'populate',
     'helpers',
     'dataService'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, populate, helpers, dataService) {
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, /*GenerateWTrack,*/ populate, helpers, dataService) {
     "use strict";
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
 
         events: {
             'click .addProductItem a'                                                 : 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
+            "click .newSelectList li:not(.miniStylePagination,#createJob)"            : "chooseOption",
             "click .newSelectList li.miniStylePagination"                             : "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
@@ -28,7 +29,8 @@ define([
             "mouseleave .editable"                                                    : "removeEdit",
             "click #cancelSpan"                                                       : "cancelClick",
             "click #saveSpan"                                                         : "saveClick",
-            "click #editSpan"                                                         : "editClick"
+            "click #editSpan"                                                         : "editClick",
+            "click #createJob"                                                        : "createJob"
         },
 
         template: _.template(productItemTemplate),
@@ -38,6 +40,17 @@ define([
 
             this.responseObj = {};
             this.taxesRate = 0.15;
+
+            if (options) {
+                this.projectModel = options.projectModel;
+                this.wTrackCollection = options.wTrackCollection;
+                this.createJob = options.createJob;
+
+                delete options.projectModel;
+                delete options.wTrackCollection;
+                delete options.createJob;
+                delete options.visible;
+            }
 
             if (options && options.editable) {
                 this.editable = options.editable;
@@ -54,6 +67,18 @@ define([
                 this.products = products;
                 this.filterProductsForDD();
             }, this);
+        },
+
+        createJob: function () {
+            if (this.generatedView) {
+                this.generatedView.undelegateEvents();
+            }
+
+            this.generatedView = new GenerateWTrack({
+                model           : this.projectModel,
+                wTrackCollection: this.wTrackCollection,
+                createJob       : this.createJob
+            });
         },
 
         checkForQuickEdit: function (el) {
@@ -297,7 +322,7 @@ define([
             var parrent = target.parents("td");
             var trEl = target.parents("tr");
             var parrents = trEl.find('td');
-            var _id;
+            var _id = target.attr("id");
             var model;
             var taxes;
             var datePicker;
@@ -309,76 +334,78 @@ define([
             var currentJob;
             var product = $('.productsDd');
 
-            if (parrent.hasClass('jobs')) {
-                _id = product.attr("data-id");
-                jobId = target.attr("id");
+            if (_id !== 'createJob') {
 
-                currentJob = _.find(self.responseObj['#jobs'], function (job) {
-                    return job._id === jobId
-                });
 
-                parrent.find(".jobs").text(target.text()).attr("data-id", jobId);
+                if (parrent.hasClass('jobs')) {
+                    _id = product.attr("data-id");
+                    jobId = target.attr("id");
 
-                model = this.products.get(_id);
+                    currentJob = _.find(self.responseObj['#jobs'], function (job) {
+                        return job._id === jobId
+                    });
 
-            } else {
-                _id = target.attr("id");
+                    parrent.find(".jobs").text(target.text()).attr("data-id", jobId);
 
-                model = this.products.get(_id);
+                    model = this.products.get(_id);
 
-                trEl.attr('data-id', model.id);
+                } else {
+                    model = this.products.get(_id);
 
-                parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
+                    trEl.attr('data-id', model.id);
+
+                    parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
+                }
+
+                selectedProduct = model ? model.toJSON() : null;
+
+                if (currentJob && selectedProduct) {
+                    selectedProduct.info.salePrice = currentJob.budget.budgetTotal.revenueSum;
+
+                    this.taxesRate = 0;
+                }
+
+                if (!this.forSales && selectedProduct) {
+                    $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+                }
+
+
+                //trEl.find('.datepicker').removeClass('notVisible');
+
+
+                //$(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+                $(parrents[2]).find('.datepicker.notVisible').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true
+                }).datepicker('setDate', new Date());
+
+                $(parrents[2]).attr('class', 'editable');
+                $(parrents[3]).attr('class', 'editable').find("span").text(1);
+
+                if (selectedProduct) {
+                    $(parrents[4]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
+                    total = parseFloat(selectedProduct.info.salePrice);
+                    taxes = total * this.taxesRate;
+                    subtotal = total + taxes;
+                    taxes = taxes.toFixed(2);
+                    subtotal = subtotal.toFixed(2);
+
+                    $(parrents[5]).text(taxes);
+                    $(parrents[6]).text(subtotal);
+
+                    $(".newSelectList").hide();
+                    trEl.attr('data-error', null);
+
+                    this.calculateTotal(selectedProduct.info.salePrice);
+                }
+
+                datePicker = trEl.find('input.datepicker');
+                spanDatePicker = trEl.find('span.datepicker');
+
+                spanDatePicker.text(datePicker.val());
+                datePicker.remove();
             }
-
-            selectedProduct = model ? model.toJSON() : null;
-
-            if (currentJob && selectedProduct) {
-                selectedProduct.info.salePrice = currentJob.budget.budgetTotal.revenueSum;
-
-                this.taxesRate = 0;
-            }
-
-            if (!this.forSales && selectedProduct) {
-                $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
-            }
-
-
-            //trEl.find('.datepicker').removeClass('notVisible');
-
-
-            //$(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
-            $(parrents[2]).find('.datepicker.notVisible').datepicker({
-                dateFormat : "d M, yy",
-                changeMonth: true,
-                changeYear : true
-            }).datepicker('setDate', new Date());
-
-            $(parrents[2]).attr('class', 'editable');
-            $(parrents[3]).attr('class', 'editable').find("span").text(1);
-
-            if (selectedProduct) {
-                $(parrents[4]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
-                total = parseFloat(selectedProduct.info.salePrice);
-                taxes = total * this.taxesRate;
-                subtotal = total + taxes;
-                taxes = taxes.toFixed(2);
-                subtotal = subtotal.toFixed(2);
-
-                $(parrents[5]).text(taxes);
-                $(parrents[6]).text(subtotal);
-
-                $(".newSelectList").hide();
-                trEl.attr('data-error', null);
-
-                this.calculateTotal(selectedProduct.info.salePrice);
-            }
-
-            datePicker = trEl.find('input.datepicker');
-            spanDatePicker = trEl.find('span.datepicker');
-
-            spanDatePicker.text(datePicker.val());
-            datePicker.remove();
         },
 
         recalculateTaxes: function (parent) {

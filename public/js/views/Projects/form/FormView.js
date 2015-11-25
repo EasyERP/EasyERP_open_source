@@ -807,11 +807,14 @@ define([
 
                     cb();
                     new QuotationView({
-                        collection    : self.qCollection,
+                        collection      : self.qCollection,
                         projectId : _id,
                         customerId: self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
-                        filter        : filter
+                        filter        : filter,
+                        model         : self.formModel,
+                        wTrackCollection: self.wCollection,
+                        createJob       : true
                     }).render();
 
 
@@ -876,13 +879,13 @@ define([
                 var orderSum = 0;
 
                 ordersCollectionJSON.forEach(function (element) {
-                    if (element.paymentInfo){
+                    if (element.paymentInfo) {
                         orderSum += element.paymentInfo.total;
                     }
                 });
 
                 qCollectionJSON.forEach(function (element) {
-                    if (element.paymentInfo){
+                    if (element.paymentInfo) {
                         sum += element.paymentInfo.total;
                     }
                 });

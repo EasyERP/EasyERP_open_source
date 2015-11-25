@@ -22,8 +22,12 @@ define([
             templateNewRow: _.template(newRow),
 
             initialize: function (options) {
+
                 if (options) {
                     this.visible = options.visible;
+                    this.projectModel = options.projectModel;
+                    this.wTrackCollection = options.wTrackCollection;
+                    this.createJob = options.createJob;
                 }
 
                 this.populate = true;
@@ -200,8 +204,10 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
                     new ProductItemView({
-                        canBeSold: true,
-                        service  : 'Service'
+                        canBeSold       : true,
+                        service  : 'Service',
+                        projectModel: this.projectModel.toJSON(),
+                        wTrackCollection: this.wTrackCollection.toJSON()
                     }).render().el
                 );
 
