@@ -31,17 +31,16 @@ define([
             var products;
 
             this.responseObj = {};
-            this.render();
-
             this.taxesRate = 0.15;
 
             if (options) {
                 this.visible = !!options.balanceVisible;
                 this.isPaid = !!options.isPaid;
-            }
-            ;
+            };
 
             this.forSales = options.forSales;
+
+            this.render();
 
             products = new productCollection(options);
             products.bind('reset', function () {
@@ -304,7 +303,8 @@ define([
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {
                         products: products,
-                        forSales: self.forSales
+                        forSales: self.forSales,
+                        isPaid  : self.isPaid
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
@@ -315,9 +315,10 @@ define([
                 }
             } else {
                 this.$el.html(this.template({
-                    forSales: self.forSales
+                    forSales: self.forSales,
                     /*collection: this.collection,
                      options: options*/
+                    isPaid  : self.isPaid
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
