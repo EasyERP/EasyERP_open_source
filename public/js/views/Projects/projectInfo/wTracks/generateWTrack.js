@@ -55,7 +55,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     this.jobsCollection = options.jobsCollection;
 
-                    this.createJob = options.createJob;
+                    this.createJob = options.createJob ? options.createJob : true;
                     this.quotationDialog = options.quotationDialog;
 
                     this.render();
@@ -355,15 +355,15 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             success: function () {
                                 self.hideDialog();
 
-                                if(self.quotationDialog){
-                                    return self.quotationDialog.generatedWtracks();
-                                }
-
                                 if (self.wTrackCollection.wTrackView){
                                     self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
                                 }
 
                                 self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+
+                                if(self.quotationDialog){
+                                    return self.quotationDialog.generatedWtracks();
+                                }
 
                                 tabs = $(".chart-tabs");
                                 activeTab = tabs.find('.active');
