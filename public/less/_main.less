@@ -32,35 +32,32 @@
   width: 100%;
   margin: 0 auto;
 
-  .error {
-    left: 85%;
+  .notify, .error {
+    left: 84%;
     width: 15%;
     position: relative;
     line-height: 17px;
-    padding-right: 10px;
-    padding-left: 10px;
+    padding: 10px;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .error {
     background-color: @notifikation-error-color;
   }
 
   .notify {
-    left: 85%;
-    width: 15%;
-    position: relative;
-    line-height: 17px;
-    padding-right: 10px;
-    padding-left: 10px;
     background-color: @notifikation-notify-color;
   }
 
   .animate {
     position: absolute;
     width: 15%;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
+    margin-top: 0;
+    margin-left: 0;
     left: 100%;
     opacity: 0;
+
   }
 }
 
@@ -1635,7 +1632,7 @@ input::-ms-clear {
         text-align: center;
       }
 
-      P {
+      p {
         font-family: @lucida-font;
         color: #000;
         font-size: @font-size;
@@ -3767,6 +3764,12 @@ table#workflows {
 
 .addUserAndGroup {
   margin-top: 8px;
+  .addUser, .addGroup {
+    color: @tilte-color;
+  }
+  span {
+    color: @mainText-color;
+  }
 }
 
 #allUsers, .buttons, #targetUsers {
@@ -3803,7 +3806,7 @@ table#workflows {
 .createBtnHolder, #createBtnHolder {
   float: left;
   margin-top: 6px;
-  margin-left: 10px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -4462,16 +4465,16 @@ h3.dashboard {
   }
 }
 
-.stageSelect, span {
+.stageSelect, span, a {
   &.pending {
     color: red;
   }
   &.inprogress {
     color: @mainText-color-selected;
   }
-  &.closed, &.done, &.unDone {
+  &.closed, &.done, &.unDone, &.new, &.cancelled, &.draft {
     display: block;
-    color: @notifikation-notify-color;
+    //color: @notifikation-notify-color;
     text-align: center;
     .border-radius(4px);
     padding: 0 5px;
@@ -4483,6 +4486,12 @@ h3.dashboard {
   }
   &.unDone {
     color: @unpaid-wtrack;
+  }
+  &.done {
+    color: @notifikation-notify-color;
+  }
+  &.cancelled {
+    text-decoration: line-through ;
   }
 
 }
@@ -4694,6 +4703,7 @@ h3.dashboard {
     }
     .current-selected {
       line-height: 27px !important;
+      color: @tilte-color;
     }
   }
 
@@ -5347,19 +5357,19 @@ textarea#editInput {
           }
 
           .item {
-            padding: 0 0 10px 0;
+            //padding: 0 0 10px 0;
 
             .title {
               text-align: center;
-              font-size: 16px;
-              margin-bottom: 10px;
+              font-size: 14px;
+              margin-bottom: 5px;
               color: @mainText-color;
             }
             .countDays {
-              font-size: 40px;
+              font-size: 20px;
               color: #ffffff;
               width: 126px;
-              padding: 10px;
+              padding: 5px;
               text-align: center;
               margin: 0 auto;
 

@@ -7,7 +7,7 @@
 <td><%=payment.supplier.name%></td>
 <td><%=(payment.journal) ? payment.journal : ''%></td>
 <td class="total"><%=(payment.paidAmount) ? payment.paidAmount : '0.00'%></td>
-<td id='<%=payment._id%>'>
+<td id='<%=payment._id%>' >
     <a href="javascript:;" class="stageSelect"><%=payment.workflow ? payment.workflow.name: 'Undefinded'%></a>
 </td>
     <td><%=payment.date%></td>
