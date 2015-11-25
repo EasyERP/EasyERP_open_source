@@ -47,7 +47,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     _.bindAll(this, 'generateItems');
 
-                    this.modelJSON = this.model._doc ? this.model.toJSON() : this.model;
+                    this.modelJSON = this.model.id ? this.model.toJSON() : this.model;
 
                     this.resultArray = [];
 
@@ -62,7 +62,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 asyncLoadImgs: function (model) {
-                    var currentModel = model._doc ? model.toJSON() : model;
+                    var currentModel = model.id ? model.toJSON() : model;
                     var id = currentModel._id;
 
                     common.getImagesPM([currentModel.projectmanager._id], "/getEmployeesImages", "#" + id, function (result) {
@@ -513,7 +513,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 render: function () {
                     var thisEl = this.$el;
                     var self = this;
-                    var project = this.model._doc ? this.model.toJSON() : this.model;
+                    var project = this.model.id ? this.model.toJSON() : this.model;
                     var dialog = this.template({
                         project: project,
                         jobs:  self.jobs,
