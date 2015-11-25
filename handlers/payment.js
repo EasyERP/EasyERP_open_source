@@ -1050,6 +1050,7 @@ var Payment = function (models, event) {
                                 }
 
                                 res.status(200).send({success: 'Done'});
+                                composeExpensesAndCache(req);
                             })
                         })
                     } else {
