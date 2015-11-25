@@ -40,11 +40,13 @@
     <tr></tr>
     </tfoot>
     <tbody id ="productList">
-    <tr>
-        <td colspan="6" class="addProductItem">
-            <a href="javascript:;">Add an item</a>
-        </td>
-    </tr>
+    <%if(!isPaid){%>
+        <tr>
+            <td colspan="6" class="addProductItem">
+                <a href="javascript:;">Add an item</a>
+            </td>
+        </tr>
+    <%}%>
     <tr>
         <td colspan="6">&nbsp;</td>
     </tr>
