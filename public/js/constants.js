@@ -427,6 +427,7 @@ define([], function () {
             'QA',
             'Design',
             'PM'
-        ]
+        ],
+        SELECTP_ROJECT: 'Please select a Project'
     }
 });
