@@ -90,7 +90,7 @@ define([
                         table.find('[data-id="' + id + '"]').remove();
 
                         tr.find('.type').text("Not Invoiced");
-                        
+
                         tr.find('.workflow').html('<a href="javascript:;" class="stageSelect">Draft</a>');
 
                         tr.removeClass('notEditable');
