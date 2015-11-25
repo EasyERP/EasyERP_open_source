@@ -135,6 +135,12 @@ define([
                     aEl.text("Select");
                 }
 
+                if (!self.projectModel){
+                    dataService.getData("/project/getForQuotation", {"projectId": $("#projectDd").attr("data-id")}, function (project) {
+                        self.projectModel = project;
+                    })
+                }
+
                 populate.showSelect(e, prev, next, self);
             });
 

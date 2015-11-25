@@ -47,7 +47,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     _.bindAll(this, 'generateItems');
 
-                    this.modelJSON = this.model.toJSON();
+                    this.modelJSON = this.model._doc ? this.model.toJSON() : this.model;
 
                     this.resultArray = [];
 
@@ -62,7 +62,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 asyncLoadImgs: function (model) {
-                    var currentModel = model.toJSON();
+                    var currentModel = model._doc ? model.toJSON() : model;
                     var id = currentModel._id;
 
                     common.getImagesPM([currentModel.projectmanager._id], "/getEmployeesImages", "#" + id, function (result) {
@@ -355,11 +355,13 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             success: function () {
                                 self.hideDialog();
 
-                                if (self.wTrackCollection.wTrackView){
+                                if (self.wTrackCollection && self.wTrackCollection.wTrackView){
                                     self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
                                 }
 
-                                self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                if (self.wTrackCollection){
+                                    self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                }
 
                                 if(self.quotationDialog){
                                     return self.quotationDialog.generatedWtracks();
@@ -511,7 +513,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 render: function () {
                     var thisEl = this.$el;
                     var self = this;
-                    var project = this.model.toJSON();
+                    var project = this.model._doc ? this.model.toJSON() : this.model;
                     var dialog = this.template({
                         project: project,
                         jobs:  self.jobs,

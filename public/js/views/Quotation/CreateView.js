@@ -182,7 +182,7 @@ define([
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = targetEl.find('.subtotal').text();
-                            jobs = targetEl.find('#jobs').attr('data-id');
+                            jobs = targetEl.find('.jobs').attr('data-id');
 
                             if (!jobs && this.forSales) {
                                 return alert("Job field can't be empty. Please, choose or create one.");
