@@ -169,6 +169,7 @@ define([
             var a = parentTd.find("a");
             var id = targetElement.attr("data-id");
             var model = this.collection.get(id);
+            var status = target$.text();
 
             model.save({
                 workflow: {
@@ -182,7 +183,11 @@ define([
                 patch   : true,
                 validate: false,
                 success : function () {
-                    a.text(target$.text())
+                    a.remove();
+
+                    if (status === "Done"){
+                        parentTd.append("<span class='done'>" + status + "</span>");
+                    }
                 }
             });
 

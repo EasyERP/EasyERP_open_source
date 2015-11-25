@@ -12,7 +12,7 @@
   <td><%=(order.project) ? order.project.projectmanager.name : '------'%></td>
   <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
   <td class="type"><%=order.type%></td>
-<td id='<%=order._id%>'>
+<td id='<%=order._id%>' class="centerCell workflow">
   <%if(order.workflow.name !== 'Done'){%>
     <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
   <% } else {%>
