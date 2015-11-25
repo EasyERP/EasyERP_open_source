@@ -14,7 +14,8 @@ define([
             events: {
                 "click input"   : "setAttr",
                 "keyup input"   : "onKeyUpInput",
-                "focusout input": "onChangeInput"
+                "focusout input": "onChangeInput",
+                "keydown input" : "onKeyDownInput"
             },
 
             initialize: function (options) {
@@ -24,7 +25,7 @@ define([
                 this.render();
             },
 
-            setAttr: function (e) {
+            setAttr       : function (e) {
                 var input = $(e.target);
                 var id = input.attr('id');
 
@@ -39,6 +40,18 @@ define([
                         "min"      : 1980,
                         "maxLength": 4
                     });
+                }
+            },
+            onKeyDownInput: function (e) {
+                if (// Allow: backspace, delete, tab, escape, enter
+                $.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
+                    // Allow: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    return;
+                }
+
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
                 }
             },
 
