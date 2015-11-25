@@ -14,32 +14,33 @@ define([
         el: '#invoiceItemsHolder',
 
         events: {
-            'click .addProductItem': 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click .newSelectList li.miniStylePagination": "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .current-selected": "showProductsSelect",
+            'click .addProductItem'                                                   : 'getProducts',
+            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
+            "click .newSelectList li.miniStylePagination"                             : "notHide",
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
+            "click .current-selected"                                                 : "showProductsSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
-            "mouseleave .editable": "removeEdit",
-            "click #cancelSpan": "cancelClick",
-            "click #saveSpan": "saveClick",
-            "click #editSpan": "editClick"
+            "mouseleave .editable"                                                    : "removeEdit",
+            "click #cancelSpan"                                                       : "cancelClick",
+            "click #saveSpan"                                                         : "saveClick",
+            "click #editSpan"                                                         : "editClick"
         },
 
         initialize: function (options) {
             var products;
 
             this.responseObj = {};
-            this.render();
-
             this.taxesRate = 0.15;
 
-            if (options && options.balanceVisible) {
-                this.visible = options.balanceVisible;
+            if (options) {
+                this.visible = !!options.balanceVisible;
+                this.isPaid = !!options.isPaid;
             };
 
             this.forSales = options.forSales;
+
+            this.render();
 
             products = new productCollection(options);
             products.bind('reset', function () {
@@ -289,23 +290,35 @@ define([
             var thisEl = this.$el;
             var products;
 
-            if(options && options.model){
+            if (options && options.model) {
                 products = options.model.products;
 
-                thisEl.html(_.template(productItemTemplate, {model: options.model, forSales : self.forSales}));
+                thisEl.html(_.template(productItemTemplate, {
+                    model   : options.model,
+                    forSales: self.forSales,
+                    isPaid  : self.isPaid
+                }));
 
-                if(products) {
+                if (products) {
                     productsContainer = thisEl.find('#productList');
-                    productsContainer.prepend(_.template(ProductItemsEditList, {products: products, forSales: self.forSales}));
+                    productsContainer.prepend(_.template(ProductItemsEditList, {
+                        products: products,
+                        forSales: self.forSales,
+                        isPaid  : self.isPaid
+                    }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
-                    totalAmountContainer.append(_.template(totalAmount, {model: options.model, balanceVisible: this.visible}));
+                    totalAmountContainer.append(_.template(totalAmount, {
+                        model         : options.model,
+                        balanceVisible: this.visible
+                    }));
                 }
             } else {
                 this.$el.html(this.template({
-                    forSales : self.forSales
+                    forSales: self.forSales,
                     /*collection: this.collection,
                      options: options*/
+                    isPaid  : self.isPaid
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
