@@ -1036,11 +1036,10 @@ var Payment = function (models, event) {
                     } else if (invoiceId) {
                         Invoice = models.get(req.session.lastDb, 'payRollInvoice', payRollInvoiceSchema);
 
-                        Invoice.findById(invoiceId, function (err, invoice) {
+                        Invoice.findByIdAndRemove(invoiceId, function (err, invoice) {
                             if (err) {
                                 return next(err);
                             }
-
 
                             async.each(invoice.products, function (_payment, eachCb) {
                                 payrollExpensUpdater(db, _payment, -1, eachCb);
