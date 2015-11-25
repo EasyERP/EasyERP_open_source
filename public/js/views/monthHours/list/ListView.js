@@ -11,8 +11,9 @@ define([
     'dataService',
     'populate',
     'async',
-    'constants'
-], function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS) {
+    'constants',
+    'text!templates/monthHours/list/cancelEdit.html'
+], function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit) {
     var monthHoursListView = listViewBase.extend({
         createView              : createView,
         listTemplate            : listTemplate,
@@ -46,14 +47,19 @@ define([
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
             "click td.editable"                                               : "editRow",
             "click .oe_sortable"                                              : "goSort",
-            "change .editable "                                               : "setEditable",
+            "change .editable"                                                : "setEditable",
             'keydown input.editing'                                           : 'keyDown'
         },
 
         keyDown: function (e) {
             if (e.which === 13) {
+                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                    this.setEditable(e);
+                }
+
                 this.setChangedValueToModel();
             }
+
         },
 
         setChangedValueToModel: function () {
@@ -63,10 +69,6 @@ define([
             var editedElementContent;
             var editedElementValue;
             var editModel;
-
-            if(navigator.userAgent.indexOf("Firefox") > -1) {
-                this.setEditable(editedElement);
-            }
 
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
@@ -94,13 +96,13 @@ define([
         },
 
         setEditable: function (td) {
-            var tr;
+            //var tr;
 
             if (!td.parents) {
                 td = $(td.target).closest('td');
             }
 
-            tr = td.parents('tr');
+            //tr = td.parents('tr');
             td.addClass('edited');
 
             if (this.isEditRows()) {
@@ -149,9 +151,10 @@ define([
         },
 
         saveItem: function () {
+            var id;
             var model;
             this.setChangedValueToModel();
-            for (var id in this.changedModels) {
+            for (id in this.changedModels) {
                 model = this.editCollection.get(id);
                 model.changed = this.changedModels[id];
             }
@@ -186,6 +189,7 @@ define([
         updatedOptions: function () {
             this.hideSaveCancelBtns();
             this.resetCollection();
+            this.changedModels = {};
         },
 
         showNewSelect: function (e, prev, next) {
@@ -405,7 +409,7 @@ define([
             async.each(edited, function (el, cb) {
                 var tr = $(el).closest('tr');
                 var rowNumber = tr.find('[data-content="number"]').text();
-                var id = tr.data('id');
+                var id = tr.attr('data-id');
                 var template = _.template(cancelEdit);
                 var model;
 
@@ -421,6 +425,8 @@ define([
             }, function (err) {
                 if (!err) {
                     self.editCollection = new EditCollection(collection.toJSON());
+                    self.editCollection.on('saved', self.savedNewModel, self);
+                    self.editCollection.on('updated', self.updatedOptions, self);
                     self.hideSaveCancelBtns();
                 }
             });
