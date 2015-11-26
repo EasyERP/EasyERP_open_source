@@ -37,7 +37,7 @@ dbObject.once('open', function callback() {
                 } else if (job.type === "Invoice"){
                     updateObj.type = "Invoiced"
                 } else if (job.type === "Payment"){
-                    updateObj.type = "Payed"
+                    updateObj.type = "Paid"
                 }
 
                 Job.findByIdAndUpdate(jobId, {$set: updateObj}, function (err, result) {

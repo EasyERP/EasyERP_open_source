@@ -534,7 +534,7 @@ var Payment = function (models, event) {
         var mid = body.mid;
         var data = body;
         var project;
-        var type = "Payed";
+        var type = "Paid";
 
         delete  data.mid;
 
