@@ -34,12 +34,12 @@ define([
                 "click #saveFilterButton"              : "saveFilter",
                 "click .removeSavedFilter"             : "removeFilterFromDB",
                 "click .removeValues"                  : "removeFilter",
-                "keydown": "keyDown"
+                "keydown #forFilterName"               : "keyDown"
             },
 
-            keyDown: function(e){
+            keyDown: function (e) {
                 if (e.which === 13) {
-                   this.saveFilter();
+                    this.saveFilter();
                 }
             },
 
@@ -346,7 +346,6 @@ define([
                 filterIc.addClass('active');
                 filterValues.append('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
 
-
             },
 
             removeFilter: function (e) {
@@ -387,8 +386,17 @@ define([
             },
 
             showHideValues: function (e) {
-                var filterGroupContainer = $(e.target).closest('.filterGroup');
 
+                var filterGroupContainer = $(e.target).closest('.filterGroup');
+                if (this.previousGroupContainer) {
+                    this.toggleGroup(this.previousGroupContainer)
+                }
+                this.previousGroupContainer = filterGroupContainer;
+                this.toggleGroup(filterGroupContainer);
+
+            },
+
+            toggleGroup: function (filterGroupContainer) {
                 filterGroupContainer.find('.ulContent').toggleClass('hidden');
                 filterGroupContainer.toggleClass('activeGroup');
             },
@@ -430,7 +438,7 @@ define([
                     });
                 }
 
-                if (App.filter && this.enable){
+                if (App.filter && this.enable) {
                     this.showFilterIcons(App.filter);
                 }
 

@@ -3,14 +3,14 @@
     <td class = "notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=(payment.invoice && payment.invoice.assigned) ? payment.invoice.assigned.name: ''%></td>
-    <td><%=payment.supplier.fullName%></td>
+    <td><%=payment.supplier[0] ? payment.supplier[0].fullName : payment.supplier.fullName%></td>
     <td><%=payment.invoice ? payment.invoice.name : ''%></td>
-    <td data-type="dtPicker" class="editable date" data-content="date">
-        <%=payment.date%>
-    </td>
     <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
     <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=currencySplitter(payment.invoiced)%></td>
     <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=currencySplitter(payment.paidAmount)%></td>
     <td data-content="workflow" class="editable"><a href="javascript:;" class="currentSelected <%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow%></a></td>
+    <td data-type="dtPicker" class="editable date" data-content="date">
+        <%=payment.date%>
+    </td>
 </tr>
 <%})%>

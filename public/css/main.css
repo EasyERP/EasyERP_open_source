@@ -424,7 +424,7 @@ th {
 .pagination .nextPrev div,
 .pagination .nextPrev button {
   float: left;
-  line-height: 24px;
+  line-height: 20px;
 }
 .pagination .nextPrev span {
   padding: 0 3px;
@@ -433,10 +433,10 @@ th {
   border: 1px solid #7f7f80;
   background: transparent;
   color: #cdcdcd;
-  line-height: 15px;
+  line-height: 14px;
   font-size: 15px;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 21px;
   display: block;
   text-align: center;
   padding: 2px;
@@ -501,13 +501,13 @@ th {
   background-color: #303031;
   border: 1px solid #7f7f80;
   position: absolute;
-  bottom: 23px;
+  bottom: 100%;
   left: 5px;
   display: none;
 }
 .pagination .nextPrev #pageList li {
   display: block;
-  width: 22px;
+  width: 18px;
   height: 20px;
   line-height: 20px;
   text-align: center;
@@ -523,7 +523,7 @@ th {
   border: 1px solid #7f7f80;
   margin: 0 2px 0 5px;
   width: 30px;
-  height: 22px;
+  height: 20px;
   float: left;
   font-size: 12px !important;
   text-align: center;
@@ -603,7 +603,7 @@ th {
 }
 .ui-spinner .ui-spinner-up {
   position: absolute;
-  right: 5px;
+  right: 15px;
   top: 2px;
   padding: 0;
   cursor: pointer;
@@ -617,7 +617,7 @@ th {
 .ui-spinner .ui-spinner-down {
   position: absolute;
   padding: 0;
-  right: 5px;
+  right: 15px;
   top: 10px;
   cursor: pointer;
   font-size: 8px;
@@ -627,7 +627,30 @@ th {
   text-decoration: none;
   color: #99e8ff;
 }
+.disable_input_style {
+  cursor: pointer;
+  text-align: right;
+}
+.disable_input_style input {
+  height: 19px;
+  margin: 0;
+  border: none !important;
+  width: 100%;
+  min-width: 100%;
+}
+.disable_input_style input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
 /*== End Input type number =============*/
+.tableResponsive {
+  min-height: .01%;
+  overflow-x: auto;
+  width: 100%;
+  overflow-y: hidden;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
@@ -672,7 +695,8 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Revenu ======================================*/
 /*== Notifikation ===============================*/
 /*== Btn Color=====================================*/
-/*VocationDashBoard =============================*/
+/*== VocationDashBoard =============================*/
+/*== Capacity =====================================*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -847,6 +871,11 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 1;
   height: 20px;
 }
+.tableFixed {
+  table-layout: fixed;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
@@ -854,25 +883,33 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 98%;
 }
 .vacation-list .V {
-  background-color: #fd0001;
-  color: #ffffff;
+  background-color: #a22a2d;
 }
 .vacation-list .P {
-  background-color: #fda401;
-  color: #ffffff;
+  background-color: #f9a203;
 }
 .vacation-list .S {
-  background-color: #66b5d4;
-  color: #ffffff;
+  background-color: #3c86e0;
 }
 .vacation-list .E {
-  background-color: #66b5d4;
+  background-color: #3e7f42;
+}
+.vacation-list .V,
+.vacation-list .P,
+.vacation-list .S,
+.vacation-list .E {
   color: #ffffff;
+}
+.vacation-list td {
+  padding: 0 5px;
 }
 .vacation-list td,
 .vacation-list th {
   position: relative;
   cursor: pointer;
+  line-height: 20px;
+  height: 20px;
+  font-size: 12px;
 }
 .vacation-list td input,
 .vacation-list th input,
@@ -937,10 +974,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list tfoot td.notForm input {
   display: block;
 }
-.vacation-list tfoot tr {
-  line-height: 20px;
-  height: 20px;
-}
 .vacation-list tfoot tr td {
   color: #cdcdcd;
 }
@@ -989,8 +1022,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .salary-list tbody tr td:nth-child(2),
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
-  font-size: 12px;
-  line-height: 20px;
 }
 /*== temp files==*/
 .payRoll-list {
@@ -1013,23 +1044,37 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .payRoll-list tfoot {
   margin-right: 17px;
 }
+.payRoll-list tfoot td {
+  border-color: transparent;
+  padding-right: 20px;
+}
 .payRoll-list tbody tr:hover {
   background: none;
 }
 .payRoll-list #payRoll-Table {
   padding: 0;
 }
+.payRoll-list #payRoll-Table .datePicker {
+  padding: 0px;
+}
+.payRoll-list #payRoll-Table .datePicker input:not([disabled]) {
+  outline: 1px solid #66b5d4 !important;
+}
+.payRoll-list #payRoll-Table .datePicker input:focus {
+  outline: 1px solid #66b5d4 !important;
+}
 .payRoll-list #payRoll-Table .scrollit {
   display: block;
-  height: calc(100vh - 209px);
+  height: calc(100vh - 2010px);
   overflow-x: hidden;
 }
 .payRollHolder {
   margin-top: 0 !important;
 }
 .totalContainer {
-  margin-top: 15px;
+  margin: 15px 20px 0 0;
   text-align: right;
+  color: #cdcdcd;
   font-size: 17px;
 }
 .borders col {
@@ -1040,7 +1085,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 @media (min-width: 1320px) {
   table.payRoll-list #payRoll-Table .scrollit {
-    height: calc(100vh - 179px);
+    height: calc(100vh - 190px);
   }
 }
 #forInfo {
@@ -1059,7 +1104,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 #forInfo .tableProjects .forCaption {
   color: #ffffff;
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   line-height: 28px;
 }
 #forInfo .tableProjects .forCaption:last-child {
@@ -1109,14 +1154,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 #forInfo .innerTableProject .innerTableProject-footer td {
   border-width: 0;
 }
-.tableResponsive {
-  min-height: .01%;
-  overflow-x: auto;
-  width: 100%;
-  overflow-y: hidden;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
-}
 /*------------------------Constants-----------------------------*/
+.spinner {
+  background-color: yellow;
+}
 .notification {
   z-index: 20000;
   position: fixed;
@@ -1124,31 +1165,27 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
   margin: 0 auto;
 }
+.notification .notify,
 .notification .error {
-  left: 85%;
+  left: 84%;
   width: 15%;
   position: relative;
   line-height: 17px;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding: 10px;
+  font-size: 14px;
+  color: #fff;
+}
+.notification .error {
   background-color: #fe7e86;
 }
 .notification .notify {
-  left: 85%;
-  width: 15%;
-  position: relative;
-  line-height: 17px;
-  padding-right: 10px;
-  padding-left: 10px;
   background-color: #00db30;
 }
 .notification .animate {
   position: absolute;
   width: 15%;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  margin-top: 0px;
-  margin-left: 0px;
+  margin-top: 0;
+  margin-left: 0;
   left: 100%;
   opacity: 0;
 }
@@ -2012,7 +2049,7 @@ input::-ms-clear {
 input:not([type="checkbox"]),
 textarea:not([type="checkbox"]),
 select:not([type="checkbox"]) {
-  padding: 2px 4px;
+  padding: 0 4px;
   border: 1px solid #7f7f80;
   background-color: inherit;
   color: #cdcdcd;
@@ -2024,7 +2061,7 @@ select:not([type="checkbox"]):focus {
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   outline: none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #66b5d4;
 }
 .current-selected {
   font-size: 12px;
@@ -2178,7 +2215,7 @@ dl dd a.formLink {
   line-height: 0;
 }
 dl dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .clear {
   content: "\0020";
@@ -2500,35 +2537,24 @@ dl dd span.ui-spinner {
   margin-bottom: 2px;
   width: 90%;
 }
+.form span#saveSpan a,
+.form span#cancelSpan a,
 .form span#editSpan a {
   margin-left: 5px;
   width: 16px;
-  height: 25px;
-  line-height: 15px;
+  height: 20px;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
 }
-.form span#saveSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
+.form span#saveSpan i,
+.form span#cancelSpan i,
+.form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
   font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.form span#cancelSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
+  cursor: pointer;
 }
 .form #cancelSpan a,
 .form #saveSpan a,
@@ -2608,7 +2634,7 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .form .job-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .opp-info {
   clear: both;
@@ -2661,7 +2687,7 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .form .opp-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -2717,7 +2743,7 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .form .internal-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -2774,7 +2800,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .form .assignees-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -2784,6 +2810,7 @@ dl dd span.ui-spinner {
 }
 .form .assignees-info .current-selected {
   line-height: 27px !important;
+  color: #66b5d4;
 }
 .hidden {
   display: none !important;
@@ -3073,35 +3100,24 @@ dl dd span.ui-spinner {
   margin-bottom: 2px;
   width: 90%;
 }
+.formLeftColumn .form span#saveSpan a,
+.formLeftColumn .form span#cancelSpan a,
 .formLeftColumn .form span#editSpan a {
   margin-left: 5px;
   width: 16px;
-  height: 25px;
-  line-height: 15px;
+  height: 20px;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
 }
-.formLeftColumn .form span#saveSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
+.formLeftColumn .form span#saveSpan i,
+.formLeftColumn .form span#cancelSpan i,
+.formLeftColumn .form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
   font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.formLeftColumn .form span#cancelSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
+  cursor: pointer;
 }
 .formLeftColumn .form #cancelSpan a,
 .formLeftColumn .form #saveSpan a,
@@ -3418,35 +3434,24 @@ dl dd span.ui-spinner {
   margin-bottom: 2px;
   width: 90%;
 }
+.formRightColumn .form span#saveSpan a,
+.formRightColumn .form span#cancelSpan a,
 .formRightColumn .form span#editSpan a {
   margin-left: 5px;
   width: 16px;
-  height: 25px;
-  line-height: 15px;
+  height: 20px;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
 }
-.formRightColumn .form span#saveSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
+.formRightColumn .form span#saveSpan i,
+.formRightColumn .form span#cancelSpan i,
+.formRightColumn .form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
   font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.formRightColumn .form span#cancelSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 25px;
-  line-height: 27px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
+  cursor: pointer;
 }
 .formRightColumn .form #cancelSpan a,
 .formRightColumn .form #saveSpan a,
@@ -3614,8 +3619,9 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .noteWrapper #noteBody .noteContainer {
-  padding: 10px 0;
-  border-bottom: 1px solid #eeeeee;
+  padding: 10px;
+  border: 1px solid #7f7f80;
+  margin-bottom: 15px;
 }
 .noteWrapper #noteBody .noteContainer .name {
   margin-right: 15px;
@@ -3630,6 +3636,8 @@ dl dd span.ui-spinner {
 }
 .noteWrapper #noteBody .noteContainer .noteText {
   word-break: break-word;
+  color: #cdcdcd;
+  margin-bottom: 10px;
 }
 .noteWrapper #noteBody .noteContainer .right {
   float: right;
@@ -3642,7 +3650,7 @@ dl dd span.ui-spinner {
   color: #CCC;
 }
 .noteWrapper #noteBody .noteContainer:hover {
-  background-color: #FAFAFA;
+  background-color: #3d3d3e;
 }
 .noteWrapper #noteBody .noteContainer:hover .right {
   display: block;
@@ -3663,9 +3671,10 @@ dl dd span.ui-spinner {
   width: 100%;
   height: 100%;
   min-width: 100%;
-  height: 100hv;
+  height: 100 hv;
   position: absolute;
   clear: both;
+  box-sizing: border-box;
 }
 #wrapper #content-holder {
   height: auto;
@@ -3673,6 +3682,7 @@ dl dd span.ui-spinner {
   background: inherit;
   clear: both;
   position: relative;
+  padding: 0 5px;
 }
 #startLetter {
   margin: 0;
@@ -3755,7 +3765,7 @@ dl dd span.ui-spinner {
 }
 .person-info dd span.ui-spinner,
 .customer-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .person-info span,
 .customer-info span {
@@ -3813,7 +3823,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .settings-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .settings-info label {
   line-height: 20px;
@@ -3872,7 +3882,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .project-edit-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .quotation-info {
   clear: both;
@@ -3925,7 +3935,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .quotation-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .quotation-info dd {
   margin-top: 1em;
@@ -3981,7 +3991,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .edit-employee-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .edit-employee-info input {
   max-width: 180px !important;
@@ -4452,6 +4462,10 @@ a.red:hover {
 .miniPaginationPersons > div:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
+.miniPagination > div:hover span,
+.miniPaginationPersons > div:hover span {
+  color: #ffffff;
+}
 .miniPagination > div.not-active,
 .miniPaginationPersons > div.not-active {
   color: silver;
@@ -4461,6 +4475,14 @@ a.red:hover {
 .miniPagination > div.not-active:hover,
 .miniPaginationPersons > div.not-active:hover {
   background: none;
+}
+.miniPagination > div.not-active:hover span,
+.miniPaginationPersons > div.not-active:hover span {
+  color: #cdcdcd;
+}
+.miniPagination > div span,
+.miniPaginationPersons > div span {
+  color: #cdcdcd;
 }
 .miniPagination .last,
 .miniPaginationPersons .last,
@@ -4834,6 +4856,13 @@ table#workflows tr td.edit-status {
 .addUserAndGroup {
   margin-top: 8px;
 }
+.addUserAndGroup .addUser,
+.addUserAndGroup .addGroup {
+  color: #66b5d4;
+}
+.addUserAndGroup span {
+  color: #cdcdcd;
+}
 #allUsers,
 .buttons,
 #targetUsers {
@@ -5087,26 +5116,6 @@ table#workflows tr td.edit-status {
 }
 .noPadding {
   padding: 0 !important;
-}
-.startDate,
-.endDate {
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  height: 26px !important;
-  line-height: 26px;
-  padding: 2px 4px !important;
-  border: transparent !important;
-  text-align: center;
-}
-.startDate input,
-.endDate input {
-  display: none;
-  position: absolute;
-  top: 5px;
-  left: 0;
-  margin: 0;
-  max-width: 100%;
 }
 .createBtnHolder,
 #createBtnHolder {
@@ -5439,7 +5448,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar h4 {
   color: #66b5d4;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
@@ -5457,7 +5466,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .title {
   color: #66b5d4;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
@@ -5483,15 +5492,15 @@ ul.dialog-tabs li.right button {
   text-overflow: ellipsis;
   text-align: center;
 }
-.thumbnailwithavatar .inner .info P {
+.thumbnailwithavatar .inner .info p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 200 !important;
   line-height: 16px;
   text-align: center;
 }
-.thumbnailwithavatar .inner .info P a {
+.thumbnailwithavatar .inner .info p a {
   word-break: break-all;
   word-wrap: break-word;
 }
@@ -6123,7 +6132,7 @@ ul.dialog-tabs li.right button {
   line-height: 0;
 }
 .ui-dialog .app-empty-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .ui-dialog .app-empty-info dd {
   display: none;
@@ -6187,7 +6196,7 @@ ul.dialog-tabs li.right button {
   line-height: 0;
 }
 .ui-dialog .person-info-h3 dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .ui-dialog .person-info-h3 dt,
 .ui-dialog .person-info-h3 dd {
@@ -6258,7 +6267,7 @@ ul.dialog-tabs li.right button {
   line-height: 0;
 }
 .ui-dialog .summary-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .ui-dialog .summary-info #summary {
   width: 89% !important;
@@ -6284,7 +6293,7 @@ ul.dialog-tabs li.right button {
   -moz-box-shadow: 0 0 5px #66b5d4;
   -webkit-box-shadow: 0 0 5px #66b5d4;
   outline: medium none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #66b5d4;
 }
 .ui-dialog input#summary {
   width: 100%;
@@ -6452,7 +6461,7 @@ ul.dialog-tabs li.right button {
   line-height: 16px;
 }
 .form-holder form dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form select {
   font-family: Arial, Helvetica, sans-serif;
@@ -6479,6 +6488,9 @@ ul.dialog-tabs li.right button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   padding: 0 4px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  box-sizing: border-box;
   color: #cdcdcd;
 }
 .form-holder form input:not([type=checkbox]):focus {
@@ -6486,7 +6498,7 @@ ul.dialog-tabs li.right button {
   -moz-box-shadow: 0 0 5px #66b5d4;
   -webkit-box-shadow: 0 0 5px #66b5d4;
   outline: medium none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #66b5d4;
 }
 .form-holder form .mainInfo {
   width: auto;
@@ -7127,21 +7139,34 @@ h3.dashboard {
   color: #cdcdcd;
 }
 .stageSelect.pending,
-span.pending {
+span.pending,
+a.pending {
   color: red;
 }
 .stageSelect.inprogress,
-span.inprogress {
+span.inprogress,
+a.inprogress {
   color: #66b5d4;
 }
 .stageSelect.closed,
 span.closed,
+a.closed,
 .stageSelect.done,
 span.done,
+a.done,
 .stageSelect.unDone,
-span.unDone {
+span.unDone,
+a.unDone,
+.stageSelect.new,
+span.new,
+a.new,
+.stageSelect.cancelled,
+span.cancelled,
+a.cancelled,
+.stageSelect.draft,
+span.draft,
+a.draft {
   display: block;
-  color: #00db30;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -7150,9 +7175,9 @@ span.unDone {
   line-height: 16px;
 }
 .stageSelect.projectClosed,
-span.projectClosed {
+span.projectClosed,
+a.projectClosed {
   display: block;
-  color: #00db30;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -7162,8 +7187,19 @@ span.projectClosed {
   background-color: inherit;
 }
 .stageSelect.unDone,
-span.unDone {
+span.unDone,
+a.unDone {
   color: #fd0001;
+}
+.stageSelect.done,
+span.done,
+a.done {
+  color: #00db30;
+}
+.stageSelect.cancelled,
+span.cancelled,
+a.cancelled {
+  text-decoration: line-through;
 }
 .form-holder form .task-info {
   clear: both;
@@ -7216,7 +7252,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .task-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .task-info input {
   width: 150px;
@@ -7272,7 +7308,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .task-summary-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .task-summary-info input {
   width: 95% !important;
@@ -7328,7 +7364,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .profile-create dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .profile-create input {
   width: 276px;
@@ -7387,7 +7423,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .project-edit-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .project-edit-info input {
   width: 220px;
@@ -7449,7 +7485,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .job-create-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .job-create-info input {
   width: 218px !important;
@@ -7514,7 +7550,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .subject-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .subject-info input {
   max-width: inherit !important;
@@ -7577,7 +7613,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .opprtunitie-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .opprtunitie-info input {
   max-width: 231px !important;
@@ -7640,7 +7676,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .opprtunitie-lead-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .opprtunitie-lead-info input {
   max-width: 231px !important;
@@ -7659,6 +7695,29 @@ span.unDone {
 .form-holder form .opp-internal-create {
   height: 235px;
   margin-top: 5px;
+}
+.form-holder form .startDate,
+.form-holder form .endDate {
+  cursor: pointer;
+  text-align: right;
+}
+.form-holder form .startDate input,
+.form-holder form .endDate input {
+  height: 19px;
+  margin: 0;
+  border: none !important;
+  width: 100%;
+  min-width: 100%;
+}
+.form-holder form .startDate input:focus,
+.form-holder form .endDate input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.form-holder form .startDate input,
+.form-holder form .endDate input {
+  display: none;
 }
 #workflows {
   width: 603px;
@@ -7769,7 +7828,7 @@ span.unDone {
   line-height: 30px;
 }
 .form .job-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .opp-info {
   clear: both;
@@ -7822,7 +7881,7 @@ span.unDone {
   line-height: 30px;
 }
 .form .opp-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -7878,7 +7937,7 @@ span.unDone {
   line-height: 30px;
 }
 .form .internal-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -7935,7 +7994,7 @@ span.unDone {
   line-height: 0;
 }
 .form .assignees-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -7945,6 +8004,7 @@ span.unDone {
 }
 .form .assignees-info .current-selected {
   line-height: 27px !important;
+  color: #66b5d4;
 }
 .full-width {
   width: 100%;
@@ -8051,7 +8111,7 @@ input::-webkit-inner-spin-button {
 .topInputHolder {
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #7f7f80;
 }
 .topInputHolder .thirdPartBlock {
   width: 33.33%;
@@ -8124,12 +8184,12 @@ textarea#editInput {
 .grid tr {
   color: #cdcdcd;
   /* tr.head-row {
-      td {
-        span {
-          color: @captionsColor;
-        }
-      }
-    }*/
+       td {
+         span {
+           color: @captionsColor;
+         }
+       }
+     }*/
 }
 .grid tr th span {
   padding-right: 6px;
@@ -8490,20 +8550,17 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td:last-child {
   border: none;
 }
-.grid-conatiner .statisticsAtten table tr td .item {
-  padding: 0 0 10px 0;
-}
 .grid-conatiner .statisticsAtten table tr td .item .title {
   text-align: center;
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 14px;
+  margin-bottom: 5px;
   color: #cdcdcd;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
-  font-size: 52px;
+  font-size: 20px;
   color: #ffffff;
   width: 126px;
-  padding: 20px;
+  padding: 5px;
   text-align: center;
   margin: 0 auto;
   /*for vacationDashboard*/
@@ -8551,6 +8608,7 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten.stick {
   position: fixed;
   bottom: 0;
+  left: 0;
   width: 100%;
   background-color: #303031;
   padding-top: 10px;
@@ -8782,7 +8840,7 @@ textarea#editInput {
 .grid-conatiner.revenue .divCell {
   float: left;
   display: table-column;
-  width: 5.5%;
+  width: 5.4%;
   height: 22px;
   padding: 0 5px;
   box-sizing: border-box;
@@ -8790,8 +8848,9 @@ textarea#editInput {
   line-height: 22px;
 }
 .grid-conatiner.revenue .divCell.left-cell {
-  width: 10%;
+  width: 11%;
   text-align: left;
+  white-space: nowrap;
 }
 .grid-conatiner.revenue .divCell.trend {
   width: 7.5%;
@@ -9139,6 +9198,7 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup .filterValues {
   text-align: left;
   width: 100%;
+  min-height: 155px;
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup {
   color: #cdcdcd;
@@ -9154,9 +9214,9 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName {
   border-bottom: 1px solid #7f7f80;
 }
-.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName:after {
+.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName > span:after {
   transform: rotate(-45deg);
-  top: 18px;
+  top: 9px;
 }
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
@@ -9168,17 +9228,22 @@ textarea#editInput {
   font-size: 13px;
   padding: 10px;
   color: #cdcdcd;
+}
+.drop-down-filter #filtersContent .filterGroup .groupName > span {
+  display: inline-block;
+  min-width: 120px;
+  padding: 0 10px;
   position: relative;
 }
-.drop-down-filter #filtersContent .filterGroup .groupName:after {
+.drop-down-filter #filtersContent .filterGroup .groupName > span:after {
   content: '';
   border-style: solid;
   border-width: 1px 1px 0 0;
   border-color: #cdcdcd;
   display: block;
   height: 5px;
-  right: 110px;
-  top: 15px;
+  right: 10%;
+  top: 5px;
   position: absolute;
   width: 5px;
   transform: rotate(135deg);
@@ -9267,17 +9332,22 @@ textarea#editInput {
 #favoritesContent {
   padding-top: 5px;
 }
+#favoritesContent .filter_name_wrapper {
+  font-size: 0;
+}
 #favoritesContent #forFilterName {
-  height: 22px;
+  height: 29px;
   width: 80%;
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   border-right: none;
+  box-sizing: border-box;
   color: #cdcdcd;
+  vertical-align: top;
+  font-size: 12px;
 }
 #favoritesContent #saveFilterButton {
   border: 1px solid #7f7f80;
-  margin-left: -3px;
   box-sizing: border-box;
   border-radius: 0 5px 5px 0;
   line-height: 14px;
@@ -9285,7 +9355,7 @@ textarea#editInput {
   background-color: #303031;
   color: #a9a9a9;
   width: 14%;
-  height: 28px;
+  height: 29px;
 }
 #favoritesContent .removeSavedFilter {
   float: right;

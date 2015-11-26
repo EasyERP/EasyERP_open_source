@@ -23,7 +23,12 @@ define([
                 this.$el = $(options.element);
 
                 this.filteredCollection = new filterCollection(this.collection.toJSON(), sortOptions);
-                this.filteredCollection.on('reset', this.renderContent);
+
+                this.collection.on('change', function() { 
+                    this.filteredCollection.set(this.collection.toJSON(), {add: false});
+                }, this);
+
+                this.filteredCollection.on('reset', this.renderContent);             
 
                 this.collectionLength = this.filteredCollection.length;
                 this.paginationBool = this.collectionLength > this.elementToShow;
@@ -40,6 +45,8 @@ define([
                             this.$el.find('.miniStylePagination').show();
                             return this.filteredCollection.reset(this.collection.toJSON());
                         }
+
+                        this.currentPage = 1;
 
                         newFilteredCollection = this.filterCollection(value);
                         this.$el.find('.miniStylePagination').toggle(!!newFilteredCollection.length);

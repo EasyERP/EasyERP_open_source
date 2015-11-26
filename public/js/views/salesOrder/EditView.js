@@ -2,19 +2,20 @@ define([
         "text!templates/salesOrder/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        "views/Projects/projectInfo/invoiceView",
+        "views/Projects/projectInfo/invoices/invoiceView",
         'collections/salesInvoice/filterCollection',
         "common",
         "custom",
         "dataService",
-        "populate"
+        "populate",
+        "constants"
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
-            imageSrc: '',
-            template: _.template(EditTemplate),
+            imageSrc   : '',
+            template   : _.template(EditTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -27,6 +28,8 @@ define([
                 this.forSales = true;
                 this.redirect = options.redirect;
 
+                this.projectManager = options.projectManager;
+
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
                 this.responseObj = {};
@@ -34,17 +37,17 @@ define([
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .receiveInvoice": "receiveInvoice",
-                "click .cancelOrder": "cancelOrder",
-                "click .setDraft": "setDraft"
+                "click .receiveInvoice"                                           : "receiveInvoice",
+                "click .cancelOrder"                                              : "cancelOrder",
+                "click .setDraft"                                                 : "setDraft"
             },
 
 
@@ -53,19 +56,19 @@ define([
                 return false;
 
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            nextSelect: function (e) {
+            nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -105,9 +108,9 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Order',
+                    wId   : 'Purchase Order',
                     status: 'Cancelled',
-                    order: 1
+                    order : 1
                 }, function (workflow) {
                     var redirectUrl = window.location.hash;//self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
@@ -117,14 +120,14 @@ define([
 
                     self.currentModel.save({
                         workflow: {
-                            _id: workflow._id,
-                            name : workflow.name
+                            _id : workflow._id,
+                            name: workflow.name
                         }
                     }, {
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
                             $(".edit-dialog").remove();
                             Backbone.history.fragment = '';
@@ -139,9 +142,10 @@ define([
 
                 var self = this;
                 var url = '/invoice/receive';
+                var orderId = this.currentModel.id;
                 var data = {
                     forSales: this.forSales,
-                    orderId: this.currentModel.id
+                    orderId : orderId
                 };
 
                 dataService.postData(url, data, function (err, response) {
@@ -151,12 +155,18 @@ define([
                         alert('Can\'t receive invoice');
                     } else {
 
-                        if (self.redirect){
+                        if (self.redirect) {
                             var _id = window.location.hash.split('form/')[1];
+
+                            var tr = $("[data-id=" + orderId + "]");
+
+                            tr.addClass('notEditable');
+
+                            tr.find('.type').text("Invoiced");
 
                             var filter = {
                                 'project': {
-                                    key: 'project._id',
+                                    key  : 'project._id',
                                     value: [_id]
                                 }
                             };
@@ -202,14 +212,14 @@ define([
 
                     self.currentModel.save({
                         workflow: {
-                            _id: workflow._id,
-                            name : workflow.name
+                            _id : workflow._id,
+                            name: workflow.name
                         }
                     }, {
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
@@ -231,7 +241,9 @@ define([
                 var quantity;
                 var price;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
+                var supplier = {};
+                var project = {};
+
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
@@ -246,6 +258,7 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
+                var jobs;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -259,43 +272,54 @@ define([
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
+                        jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
 
                         products.push({
-                            product: productId,
+                            product  : productId,
                             unitPrice: price,
-                            quantity: quantity
+                            quantity : quantity,
+                            jobs: jobs
                         });
                     }
                 }
 
 
                 data = {
-                    supplier: supplier,
+                    supplier         : supplier,
                     supplierReference: supplierReference,
-                    products: products,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination: destination ? destination : null,
-                    incoterm: incoterm ? incoterm : null,
-                    invoiceControl: invoiceControl ? invoiceControl : null,
-                    paymentTerm: paymentTerm ? paymentTerm : null,
-                    fiscalPosition: fiscalPosition ? fiscalPosition : null,
-                    paymentInfo: {
-                        total: total,
+                    products         : products,
+                    orderDate        : orderDate,
+                    expectedDate     : expectedDate,
+                    destination      : destination ? destination : null,
+                    incoterm         : incoterm ? incoterm : null,
+                    invoiceControl   : invoiceControl ? invoiceControl : null,
+                    paymentTerm      : paymentTerm ? paymentTerm : null,
+                    fiscalPosition   : fiscalPosition ? fiscalPosition : null,
+                    project       : project,
+                    paymentInfo      : {
+                        total  : total,
                         unTaxed: unTaxed
                     },
-                    groups: {
+                    groups           : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW         : whoCanRW
                 };
 
                 if (supplier) {
@@ -303,13 +327,13 @@ define([
                         headers: {
                             mid: mid
                         },
-                        patch: true,
+                        patch  : true,
                         success: function (model) {
                             Backbone.history.fragment = "";
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -339,7 +363,7 @@ define([
                             $('.edit-product-dialog').remove();
                             Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         },
-                        error: function (model, err) {
+                        error  : function (model, err) {
                             if (err.status === 403) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -352,7 +376,7 @@ define([
             render: function () {
                 var self = this;
                 var formString = this.template({
-                    model: this.currentModel.toJSON(),
+                    model  : this.currentModel.toJSON(),
                     visible: this.visible
                 });
                 var service = true;
@@ -362,27 +386,27 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Edit Order",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Order",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            text: "Save",
+                            text : "Save",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         },
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
                         }
                     ]
@@ -407,15 +431,19 @@ define([
                 model = this.currentModel.toJSON();
 
                 this.$el.find('#expectedDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 })/*.datepicker('setDate', model.expectedDate)*/;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
-                    new ProductItemView({editable: false, balanceVissible: false, service: service}).render({model: model}).el
+                    new ProductItemView({
+                        editable       : false,
+                        balanceVissible: false,
+                        service        : service
+                    }).render({model: model}).el
                 );
 
 

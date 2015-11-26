@@ -18,6 +18,7 @@ var Invoice = function (models, event) {
     var workflowHandler = new WorkflowHandler(models);
     var moment = require('../public/js/libs/moment/moment');
     var _ = require('../node_modules/underscore');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
@@ -28,10 +29,11 @@ var Invoice = function (models, event) {
     this.create = function (req, res, next) {
         var isWtrack = checkDb(req.session.lastDb);
         var body = req.body;
+        var forSales = body.forSales;
         var Invoice;
         var invoice;
 
-        if (isWtrack) {
+        if (isWtrack && forSales) {
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -110,7 +112,7 @@ var Invoice = function (models, event) {
             var supplier;
             var company;
             var project;
-            var type = "Invoice";
+            var type = "Invoiced";
             var query;
 
             if (parallelResponse && parallelResponse.length) {
@@ -136,7 +138,8 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
-            invoice.sourceDocument = order.name;
+            // invoice.sourceDocument = order.name;
+            invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
             invoice.workflow = {};
             invoice.workflow._id = workflow._id;
@@ -145,7 +148,10 @@ var Invoice = function (models, event) {
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
             if (forSales === "true") {
-                invoice.project.name = order.project.projectName;
+                if (!invoice.project) {
+                    invoice.project = {};
+                }
+                invoice.project.name = order.project ? order.project.projectName : "";
             }
 
             supplier = order['supplier'];
@@ -209,17 +215,39 @@ var Invoice = function (models, event) {
                 return next(err)
             }
 
+            Order.findByIdAndUpdate(id, {$set: {type: "Invoiced"}}, {new: true}, function (err, result) {
+                if (err) {
+                    return next(err)
+                }
+            });
+
+
             res.status(201).send(result);
         });
 
     };
 
     this.updateOnlySelected = function (req, res, next) {
+        var db = req.session.lastDb;
         var id = req.params.id;
         var data = req.body;
+        var moduleId;
+        var isWtrack;
+        var Invoice;
+
+        if (checkDb(db)) {
+            moduleId = 64
+            isWtrack = true;
+        }
+
+        if (isWtrack) {
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 56, function (access) {
+            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
                     data.editedBy = {
@@ -227,7 +255,7 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    //var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
 
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
@@ -306,7 +334,7 @@ var Invoice = function (models, event) {
                         break;
                     }
                 case 'forSales':
-                    if (condition){
+                    if (condition) {
                         condition = ConvertType(condition[0], 'boolean');
                         filtrElement[key] = condition;
                         resArray.push(filtrElement);
@@ -407,6 +435,8 @@ var Invoice = function (models, event) {
                         }
 
                         optionsObject.$and.push({_id: {$in: invoicesIds}});
+                        optionsObject.$and.push({expense: {$exists: false}});
+
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
@@ -419,9 +449,10 @@ var Invoice = function (models, event) {
                             .populate('groups.users')
                             .populate('groups.group')
                             .populate('groups.owner', '_id login')
-                            .populate('products.jobs');
-                            /*.populate('project', '_id projectName').
-                            populate('workflow._id', '-sequence');*/
+                            .populate('products.jobs')
+                            .populate('sourceDocument');
+                        /*.populate('project', '_id projectName').
+                         populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -567,7 +598,8 @@ var Invoice = function (models, event) {
                             .populate('editedBy.user')
                             .populate('groups.users')
                             .populate('groups.group')
-                            .populate('groups.owner', '_id login');
+                            .populate('groups.owner', '_id login')
+                            .populate('sourceDocument');
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -597,9 +629,12 @@ var Invoice = function (models, event) {
         var paymentIds = [];
         var jobs = [];
         var wTrackIds = [];
+        var project;
+        var orderId;
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
+        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
         if (checkDb(db)) {
@@ -616,6 +651,14 @@ var Invoice = function (models, event) {
                         }
 
                         invoiceDeleted = result.toJSON();
+
+                        orderId = invoiceDeleted.sourceDocument;
+
+                        Order.findByIdAndUpdate(objectId(orderId), {$set: {type: "Not Invoiced"}, workflow: {name: "Draft", _id: CONSTANTS.ORDERDRAFT}}, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err)
+                            }
+                        });
 
                         async.each(invoiceDeleted.products, function (product) {
                             jobs.push(product.jobs);
@@ -639,19 +682,18 @@ var Invoice = function (models, event) {
                             var setData = {};
                             var array;
 
-                            async.each(jobs, function (id) {
+                            async.each(jobs, function (id, cb) {
                                 setData.editedBy = {
                                     user: req.session.uId,
                                     date: new Date().toISOString()
                                 };
 
-                                setData.type = "Order";
-
-                                JobsModel.findByIdAndUpdate(id, setData, {new: true}, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, {type: "Ordered"}, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
 
+                                    project = result ? result.project : null;
                                     array = result ? result.wTracks : [];
 
                                     async.each(array, function (id) {
@@ -667,33 +709,17 @@ var Invoice = function (models, event) {
                                             if (err) {
                                                 return console.log(err);
                                             }
-                                            //  console.log('success');
+
                                         });
                                     });
+                                    cb();
                                 });
+                            }, function () {
+                                if (project) {
+                                    event.emit('fetchJobsCollection', {project: project});
+                                }
                             });
                         };
-
-                        //function wTrackUpdate (){
-                        //    var setData = {};
-                        //
-                        //    async.each(wTrackIds, function (id) {
-                        //        setData.editedBy = {
-                        //            user: req.session.uId,
-                        //            date: new Date().toISOString()
-                        //        };
-                        //
-                        //        setData.isPaid = false;
-                        //        setData.amount = 0;
-                        //
-                        //        wTrack.findByIdAndUpdate(id, setData, function (err, result) {
-                        //            if (err) {
-                        //                return console.log(err);
-                        //            }
-                        //          //  console.log('success');
-                        //        });
-                        //    });
-                        //};
 
                         async.parallel([paymentsRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
@@ -721,15 +747,24 @@ var Invoice = function (models, event) {
     this.updateInvoice = function (req, res, _id, data, next) {
         var db = req.session.lastDb;
         var moduleId = 56;
+        var isWtrack;
+        var Invoice;
 
         if (checkDb(db)) {
             moduleId = 64
+            isWtrack = true;
+        }
+
+        if (isWtrack) {
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         }
 
         if (req.session && req.session.loggedIn && db) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    var Invoice = models.get(db, 'Invoice', InvoiceSchema);
+                    //Invoice = models.get(db, 'Invoice', InvoiceSchema);
                     //data.editedBy = {
                     //    user: req.session.uId,
                     //    date: new Date().toISOString()

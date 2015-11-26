@@ -45,6 +45,21 @@ var Users = function (mainDb, models) {
         });
     };
 
+    function checkIfUserLoginUnique(req, login, cb) {
+        models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
+            if (error) {
+                cb({error: error});
+            } else if (doc.length > 0) {
+                if (doc[0].login === login) {
+                    cb({unique: false});
+                }
+            } else if (doc.length === 0) {
+                cb({unique: true});
+            }
+
+        });
+    }
+
     function createUser(req, data, result) {
         /**
          * __Type__ `POST`
@@ -69,31 +84,19 @@ var Users = function (mainDb, models) {
          */
         try {
             var shaSum = crypto.createHash('sha256');
-            var res = {};
+
             if (!data) {
                 logWriter.log('Person.create Incorrect Incoming Data');
                 result.send(400, {error: 'User.create Incorrect Incoming Data'});
-                return;
             } else {
-                models.get(req.session.lastDb, 'Users', userSchema).find({login: data.login}, function (error, doc) {
-                    try {
-                        if (error) {
-                            logWriter.log('User.js create User.find' + error);
-                            result.send(500, {error: 'User.create find error'});
-                        }
-                        if (doc.length > 0) {
-                            if (doc[0].login === data.login) {
-                                result.send(400, {error: "An user with the same Login already exists"});
-                            }
-                        }
-                        else if (doc.length === 0) {
-                            savetoBd(data);
-                        }
-                    }
-
-                    catch (error) {
+                checkIfUserLoginUnique(req, data.login, function (res) {
+                    if (res.unique) {
+                        savetoBd(data);
+                    } else if (res.error) {
                         logWriter.log("User.js. create Account.find " + error);
                         result.send(500, {error: 'User.create find error'});
+                    } else {
+                        result.send(400, {error: "An user with the same Login already exists"});
                     }
                 });
             }
@@ -376,7 +379,15 @@ var Users = function (mainDb, models) {
                         }
                         if (result) {
                             id = result.get('_id');
-                            query = {$pull: {'savedFilters': {_id: deleteId, byDefault: byDefault, viewType: viewType}}};
+                            query = {
+                                $pull: {
+                                    'savedFilters': {
+                                        _id      : deleteId,
+                                        byDefault: byDefault,
+                                        viewType : viewType
+                                    }
+                                }
+                            };
 
                             updateThisUser(_id, query);
                         }
@@ -389,35 +400,35 @@ var Users = function (mainDb, models) {
                     filterModel.contentView = key;
                     filterModel.filter = data.filter;
 
-                   var byDefault = data.useByDefault;
+                    var byDefault = data.useByDefault;
                     var viewType = data.viewType;
                     var newSavedFilters = [];
 
                     filterModel.save(function (err, result) {
                         if (err) {
                             return console.log('error save filter');
-                        };
+                        }
 
                         if (result) {
                             id = result.get('_id');
 
-                            if (byDefault){
+                            if (byDefault) {
                                 models.get(req.session.lastDb, 'Users', userSchema).findById(_id, {savedFilters: 1}, function (err, result) {
-                                    if (err){
+                                    if (err) {
                                         return next(err);
                                     }
                                     var savedFilters = result.toJSON().savedFilters ? result.toJSON().savedFilters : [];
 
-                                    savedFilters.forEach(function(filter){
-                                        if (filter.byDefault === byDefault){
+                                    savedFilters.forEach(function (filter) {
+                                        if (filter.byDefault === byDefault) {
                                             filter.byDefault = '';
                                         }
                                     });
 
                                     savedFilters.push({
-                                        _id: id,
+                                        _id      : id,
                                         byDefault: byDefault,
-                                        viewType: viewType
+                                        viewType : viewType
                                     });
 
                                     query = {$set: {'savedFilters': savedFilters}};
@@ -425,17 +436,16 @@ var Users = function (mainDb, models) {
                                     updateThisUser(_id, query);
                                 });
                             } else {
-                                newSavedFilters ={
-                                    _id : id,
+                                newSavedFilters = {
+                                    _id      : id,
                                     byDefault: byDefault,
-                                    viewType: viewType
+                                    viewType : viewType
                                 };
 
                                 query = {$push: {'savedFilters': newSavedFilters}};
 
                                 updateThisUser(_id, query);
                             }
-
 
                         }
                     });
@@ -446,29 +456,35 @@ var Users = function (mainDb, models) {
                 updateThisUser(_id, query);
 
                 function updateThisUser(_id, query) {
-                    models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
-                        //if (err) {
-                        //    logWriter.log("User.js update profile.update" + err);
-                        //    res.send(500, {error: 'User.update DB error'});
-                        //} else {
-                        //    req.session.kanbanSettings = result.kanbanSettings;
-                        //    if (data.profile && (result._id == req.session.uId))
-                        //        //res.send(200, {success: 'User updated success', logout: true});
-                        //    res.status(200).send(result);
-                        //    else
-                        //        res.status(200).send(result);
-                        //       // res.send(200, {success: 'User updated success'});
-                        //}
-                        if (err) {
-                            return console.log(err);
-                        }
-                        req.session.kanbanSettings = result.kanbanSettings;
-                        if (data.profile && (result._id == req.session.uId)) {
-                            res.status(200).send({success: result, logout: true});
-                        } else {
-                            res.status(200).send({success: result});
-                        }
-                    });
+                    var saveChanges = function () {
+                        models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                            if (err) {
+                                return console.log(err);
+                            }
+                            req.session.kanbanSettings = result.kanbanSettings;
+                            if (data.profile && (result._id == req.session.uId)) {
+                                res.status(200).send({success: result, logout: true});
+                            } else {
+                                res.status(200).send({success: result});
+                            }
+                        });
+                    };
+
+                    if (query.$set && query.$set.login) {
+                        checkIfUserLoginUnique(req, query.$set.login, function (resp) {
+                            if (resp.unique) {
+                                saveChanges();
+                            } else if (resp.error) {
+                                logWriter.log("User.js. create Account.find " + error);
+                                res.send(500, {error: 'User.create find error'});
+                            } else {
+                                res.send(400, {error: "An user with the same Login already exists"});
+                            }
+                        });
+                    } else {
+                        saveChanges();
+                    }
+
                 }
 
             }

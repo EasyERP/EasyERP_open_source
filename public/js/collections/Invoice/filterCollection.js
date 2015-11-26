@@ -45,16 +45,18 @@
                     }
                 }
 
-
-
                 if (options && options.viewType) {
                     this.url += options.viewType;
                 }
                 this.fetch({
                     data: options,
                     reset: true,
-                    success: function () {
+                    success: function (newCollection) {
                         that.page++;
+
+                        if (App.invoiceCollection){
+                            App.invoiceCollection.reset(newCollection.models);
+                        }
                     },
                     error: function (models, xhr) {
                         if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });

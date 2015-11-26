@@ -18,6 +18,10 @@
 
   tfoot {
     margin-right: 17px;
+    td {
+      border-color: transparent;
+      padding-right: 20px;
+    }
   }
   tbody {
     tr:hover {
@@ -27,23 +31,36 @@
 
   #payRoll-Table {
     padding: 0;
+    .datePicker {
+      padding: 0px;
+      input {
+        &:not([disabled]) {
+          outline: 1px solid #66b5d4 !important;
+        }
+        &:focus {
+          outline: 1px solid #66b5d4 !important;
+        }
+      }
+    }
+
     .scrollit {
       display: block;
-      height: ~"calc(100vh - 209px)";
+      height: ~"calc(100vh - 2010px)";
       overflow-x: hidden;
     }
   }
 
 }
 
-.payRollHolder { //костыль
+.payRollHolder {
   margin-top: 0 !important;
 }
 
 .totalContainer {
-  margin-top: 15px;
+  margin: 15px 20px 0 0;
   text-align: right;
 
+  color: @mainText-color;
   font-size: 17px;
 }
 
@@ -63,7 +80,7 @@
   table.payRoll-list {
     #payRoll-Table {
       .scrollit {
-        height: ~"calc(100vh - 179px)";
+        height: ~"calc(100vh - 190px)";
       }
     }
   }

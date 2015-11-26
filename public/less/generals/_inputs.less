@@ -17,7 +17,7 @@
   }
   .ui-spinner-up {
     position: absolute;
-    right: 5px;
+    right: 15px;
     top: 2px;
     padding: 0;
     cursor: pointer;
@@ -31,7 +31,7 @@
   .ui-spinner-down {
     position: absolute;
     padding: 0;
-    right: 5px;
+    right: 15px;
     top: 10px;
     cursor: pointer;
     font-size: 8px;
@@ -42,5 +42,31 @@
     }
   }
 }
+
+.disable_input_style { //disable all visual effects for input (add to parent input)
+  //box-sizing: border-box;//bad for projects -> Bonus
+  //height: 26px !important;
+  //line-height: 26px;
+  //padding: 2px 4px !important;
+  cursor: pointer;
+  text-align: right;
+
+  input {
+    //display: none;
+    height: 19px;
+    margin: 0;
+    border: none !important;
+    width: 100%;
+    min-width: 100%;
+
+
+    &:focus { // must be working on ui-dialog
+      outline: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+  }
+}
+
 
 /*== End Input type number =============*/

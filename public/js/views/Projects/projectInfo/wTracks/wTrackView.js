@@ -20,8 +20,28 @@ define([
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
         templateHeader          : _.template(wTrackTopBar),
         listItemView            : listItemView,
+        template: _.template(wTrackTemplate),
+
+        events: {
+            "mouseover .currentPageList"                             : "showPagesPopup",
+            "click .itemsNumber"                                     : "switchPageCounter",
+            "click .showPage"                                        : "showPage",
+            "change #currentShowPage"                                : "showPage",
+            "click #previousPage"                                    : "previousPage",
+            "click #nextPage"                                        : "nextPage",
+            "click #firstShowPage"                                   : "firstPage",
+            "click #lastShowPage"                                    : "lastPage",
+            "click .checkbox"                                        : "checked",
+            "change .listCB"                                         : "setAllTotalVals",
+            "click #top-bar-copyBtn"                                 : "copyRow",
+            "click #savewTrack"                                      : "saveItem",
+            "click #deletewTrack"                                    : "deleteItems",
+            "click .oe_sortable :not(span.arrow.down, span.arrow.up)": "goSort",
+            "click"                                                  : "removeInputs"
+        },
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.model;
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};
@@ -35,9 +55,16 @@ define([
             this.render();
         },
 
+        stopDefaultEvents: function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        },
+
         showMoreContent: function (newModels) {
             var holder = this.$el;
             var itemView;
+
+            this.editCollection.reset(newModels);
 
             holder.find("#listTable").empty();
 
@@ -65,6 +92,7 @@ define([
         },
 
         goSort: function (e) {
+            e.preventDefault();
             var target$;
             var currentParrentSortClass;
             var sortClass;
@@ -108,6 +136,22 @@ define([
             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
+        fetchSortCollection: function (sortObject) {
+            this.sort = sortObject;
+            this.collection = new wTrackCollection({
+                viewType        : 'list',
+                sort            : sortObject,
+                page            : this.page,
+                count           : this.defaultItemsNumber,
+                filter          : this.filter,
+                parrentContentId: this.parrentContentId,
+                contentType     : this.contentType,
+                newCollection   : this.newCollection
+            });
+            this.collection.bind('reset', this.renderContent, this);
+            this.collection.bind('showmore', this.showMoreContent, this);
+        },
+
         getTotalLength: function (currentNumber, itemsNumber, filter) {
             var self = this;
 
@@ -133,28 +177,6 @@ define([
 
                 context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
             }, this);
-        },
-
-        template: _.template(wTrackTemplate),
-
-        events: {
-            "mouseover .currentPageList"                             : "showPagesPopup",
-            "click .itemsNumber"                                     : "switchPageCounter",
-            "click .showPage"                                        : "showPage",
-            "change #currentShowPage"                                : "showPage",
-            "click #previousPage"                                    : "previousPage",
-            "click #nextPage"                                        : "nextPage",
-            "click #firstShowPage"                                   : "firstPage",
-            "click #lastShowPage"                                    : "lastPage",
-            //"click .stageSelect"                                              : "showNewSelect",
-            //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .checkbox"                                        : "checked",
-            "change .listCB"                                         : "setAllTotalVals",
-            "click #top-bar-copyBtn"                                 : "copyRow",
-            "click #savewTrack"                                      : "saveItem",
-            "click #deletewTrack"                                    : "deleteItems",
-            "click .oe_sortable :not(span.arrow.down, span.arrow.up)": "goSort"
         },
 
         rerenderContent: function () {
@@ -186,11 +208,12 @@ define([
         },
 
         showPage: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
 
-            event.preventDefault();
             this.showPProject(event, {
                 filter       : this.filter,
                 newCollection: this.newCollection,
@@ -199,11 +222,11 @@ define([
         },
 
         previousPage: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
-
-            event.preventDefault();
 
             $('#check_all').prop('checked', false);
             this.prevPProject({
@@ -221,11 +244,12 @@ define([
         },
 
         nextPage: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
 
-            event.preventDefault();
 
             $('#check_all').prop('checked', false);
 
@@ -243,11 +267,11 @@ define([
         },
 
         firstPage: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
-
-            event.preventDefault();
 
             $('#check_all').prop('checked', false);
             this.firstPProject({
@@ -264,10 +288,11 @@ define([
         },
 
         lastPage: function (event) {
-
             event.preventDefault();
+            event.stopPropagation();
 
             $('#check_all').prop('checked', false);
+
             this.lastPProject({
                 sort         : this.sort,
                 filter       : this.filter,
@@ -327,6 +352,10 @@ define([
             // this.resetCollection(modelObject);
         },
 
+        removeInputs: function () {
+            this.setChangedValueToModel();
+        },
+
         deleteItems: function (e) {
             e.preventDefault();
 
@@ -354,6 +383,8 @@ define([
 
                             table.find('[data-id="' + id + '"]').remove();
 
+                            that.$el.find('#check_all').prop('checked', false);
+                            that.setAllTotalVals();
                             that.hideSaveCancelBtns();
 
                             that.copyEl.hide();

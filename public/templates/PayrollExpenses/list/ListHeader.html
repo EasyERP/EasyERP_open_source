@@ -6,33 +6,25 @@
 <div>
     <table class="list payRoll-list">
         <colgroup class="borders" span="8">
-            <col span="1" width="2%">
-            <col span="1" width="36%">
-            <col span="1" width="12%">
-            <col span="1" width="12%">
-            <col span="1" width="12%">
-            <col span="1" width="12%">
-            <col span="1" width="12%">
-
+            <col span="1" width="5%">
+            <col span="1" width="5%">
+            <col span="1" width="15%">
+            <col span="1" width="20%">
+            <col span="1" width="20%">
+            <col span="1" width="20%">
+            <col span="1" width="5%">
+            <col span="1" width="10%">
         </colgroup>
         <thead>
             <tr>
-                <th><a id="expandAll">#</a></th>
-                <!--<th></th>-->
-                <th class="oe_sortable_sub" data-sort="employee.name">Complete Name<span
-                        class="arrow down">7</span><span
-                        class="arrow up">v</span></th>
+                <th class="centerCell"><a id="expandAll">#</a></th>
+                <th class="centerCell"><input type="checkbox" id="check_all" /></th>
                 <th>Month</th>
-
-                <th class="oe_sortable_sub" data-sort="type">Payment Type<span class="arrow down">7</span><span
-                        class="arrow up">v</span></th>
-
-                <th class="oe_sortable_sub" data-sort="calc">Calc<span class="arrow down">7</span><span
-                        class="arrow up">v</span></th>
-                <th class="oe_sortable_sub" data-sort="paid">Paid<span class="arrow down">7</span><span
-                        class="arrow up">v</span></th>
-                <th class="oe_sortable_sub" data-sort="diff">Diff<span class="arrow down">7</span><span
-                        class="arrow up">v</span></th>
+                <th>Calc</th>
+                <th>Paid</th>
+                <th>Diff</th>
+                <th class="centerCell">Status</th>
+                <th>Date</th>
             </tr>
         </thead>
 
@@ -42,13 +34,14 @@
                     <div class="scrollit">
                         <table class="list enable_hover" id="payRoll-listTable">
                             <colgroup class="borders" span="8">
-                                <col span="1" width="2%">
-                                <col span="1" width="36%">
-                                <col span="1" width="12%">
-                                <col span="1" width="12%">
-                                <col span="1" width="12%">
-                                <col span="1" width="12%">
-                                <col span="1" width="12%">
+                                <col span="1" width="5%">
+                                <col span="1" width="5%">
+                                <col span="1" width="15%">
+                                <col span="1" width="20%">
+                                <col span="1" width="20%">
+                                <col span="1" width="20%">
+                                <col span="1" width="5%">
+                                <col span="1" width="10%">
                             </colgroup>
                             <tbody id="payRoll-TableBody"  class="enableTableOdd">
 

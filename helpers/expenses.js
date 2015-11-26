@@ -10,6 +10,7 @@ module.exports = function(models){
         var key = 'payrollExpenses' + filter;
         var redisStore = require('../helpers/redisClient');
 
+        var moment = require('../public/js/libs/moment/moment');
         var async = require('async');
         var _ = require('lodash');
 
@@ -56,6 +57,8 @@ module.exports = function(models){
                     var obj = {};
 
                     obj[key] = {
+                        date: _.pluck(value, "date")[0],
+                        status: _.pluck(value, "status")[0],
                         calc: {
                             onCash: sum(_.pluck(value, "calc"))
                         },

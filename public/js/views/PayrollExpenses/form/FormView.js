@@ -21,9 +21,9 @@ define([
     function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
         var PayrollExpanses = Backbone.View.extend({
 
-            el: '#content-holder',
+            el           : '#content-holder',
             changedModels: {},
-            responseObj: {},
+            responseObj  : {},
 
             initialize: function (options) {
                 this.collection = options.model;
@@ -31,28 +31,30 @@ define([
                 this.dataKey = this.collection.toJSON()[0].dataKey;
             },
 
-            events:{
-                "click .checkbox": "checked",
-                "click td.editable": "editRow",
-                "click .newSelectList li": "chooseOption",
-                "change .autoCalc": "autoCalc",
-                "change .editable": "setEditable",
-                "keydown input.editing": "keyDown",
-                "click #expandAll": "expandAll",
-                "click": "removeNewSelect",
-                "click .diff": "newPayment",
+            events: {
+                "click .checkbox"                                                 : "checked",
+                "click td.editable"                                               : "editRow",
+                "click .newSelectList li"                                         : "chooseOption",
+                "change .autoCalc"                                                : "autoCalc",
+                "change .editable"                                                : "setEditable",
+                "keydown input.editing"                                           : "keyDown",
+                "click #expandAll"                                                : "expandAll",
+                "click"                                                           : "removeNewSelect",
+                "click .diff"                                                     : "newPayment",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .oe_sortable"          : "goSort"
+                "click .oe_sortable"                                              : "goSort"
             },
 
-            cancelChanges: function(e){
+            cancelChanges: function (e) {
                 var self = this;
                 var edited = this.edited;
                 var collection = this.collection;
                 var editedCollectin = this.editCollection;
                 var copiedCreated;
                 var dataId;
+
+                this.$el.find('#false').remove();
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
@@ -77,7 +79,11 @@ define([
                     model = collection.get(id);
                     model = model.toJSON();
                     model.startNumber = rowNumber;
-                    tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter, weekSplitter: helpers.weekSplitter}));
+                    tr.replaceWith(template({
+                        model           : model,
+                        currencySplitter: helpers.currencySplitter,
+                        weekSplitter    : helpers.weekSplitter
+                    }));
                     cb();
                 }, function (err) {
                     if (!err) {
@@ -135,9 +141,9 @@ define([
 
                 this.sort = sortObject;
                 this.collection = new sortCollection({
-                    viewType        : 'list',
-                    sort            : sortObject,
-                    dataKey: self.dataKey
+                    viewType: 'list',
+                    sort    : sortObject,
+                    dataKey : self.dataKey
                 });
                 this.collection.bind('reset', this.renderContent, this);
             },
@@ -151,7 +157,10 @@ define([
                 $('#check_all').prop('checked', false);
 
                 if (this.collection.length > 0) {
-                    tBody.append(_.template(sortTemplate, {collection: this.collection.toJSON(), currencySplitter: helpers.currencySplitter}));
+                    tBody.append(_.template(sortTemplate, {
+                        collection      : this.collection.toJSON(),
+                        currencySplitter: helpers.currencySplitter
+                    }));
                 }
             },
 
@@ -181,7 +190,7 @@ define([
                 var model;
                 var jsonModel;
                 var modelPayment;
-                var target = e ? e.target: null;
+                var target = e ? e.target : null;
 
                 if (checkboxes.length) {
                     for (var i = checkboxes.length - 1; i >= 0; i--) {
@@ -192,21 +201,21 @@ define([
                         if (jsonModel.diff < 0) {
 
                             modelPayment = {
-                                paidAmount: jsonModel.diff * (-1),
-                                workflow: "Draft",
+                                paidAmount      : jsonModel.diff * (-1),
+                                workflow        : "Draft",
                                 differenceAmount: 0,
-                                month: jsonModel.month,
-                                year: jsonModel.year,
-                                supplier: {
-                                    _id: jsonModel.employee._id,
+                                month           : jsonModel.month,
+                                year            : jsonModel.year,
+                                supplier        : {
+                                    _id     : jsonModel.employee._id,
                                     fullName: jsonModel.employee.name
                                 },
-                                paymentMethod: {
-                                    _id: jsonModel.type._id,
+                                paymentMethod   : {
+                                    _id : jsonModel.type._id,
                                     name: jsonModel.type.name
                                 },
-                                period: jsonModel.year + '-' + jsonModel.month + '-01',
-                                paymentRef: dataId
+                                period          : jsonModel.year + '-' + jsonModel.month + '-01',
+                                paymentRef      : dataId
                             };
 
                             this.forPayments.add(modelPayment);
@@ -223,20 +232,21 @@ define([
                     if (jsonModel.diff < 0) {
 
                         modelPayment = {
-                            "paidAmount": jsonModel.diff * (-1),
-                            "workflow": "Draft",
-                            "differenceAmount": 0,
-                            "month": jsonModel.month,
-                            "year": jsonModel.year,
-                            "supplier": {
-                                "_id": jsonModel.employee._id,
-                                "fullName": jsonModel.employee.name
+                            paidAmount      : jsonModel.diff * (-1),
+                            workflow        : "Draft",
+                            differenceAmount: 0,
+                            month           : jsonModel.month,
+                            year            : jsonModel.year,
+                            supplier        : {
+                                _id     : jsonModel.employee._id,
+                                fullName: jsonModel.employee.name
                             },
-                            "paymentMethod": {
-                                "_id": jsonModel.type._id,
-                                "name": jsonModel.type.name
+                            paymentMethod   : {
+                                _id : jsonModel.type._id,
+                                name: jsonModel.type.name
                             },
-                            "period": jsonModel.year + '-' + jsonModel.month + '-01'
+                            period          : jsonModel.year + '-' + jsonModel.month + '-01',
+                            paymentRef      : dataId
                         };
 
                         this.forPayments.add(modelPayment);
@@ -246,7 +256,7 @@ define([
 
                 if (this.forPayments.length) {
                     new paymentCreateView({
-                        redirect: this.redirect,
+                        redirect  : this.redirect,
                         collection: this.forPayments
                     });
                 } else {
@@ -254,7 +264,6 @@ define([
                 }
 
             },
-
 
             showMoreContent: function (newCollection) {
                 var collectionsObjects;
@@ -268,10 +277,10 @@ define([
 
                 currentEl.empty();
                 currentEl.append(this.totalTemplate({
-                    collection: this.collection.toJSON(),
-                    total: this.total,
+                    collection      : this.collection.toJSON(),
+                    total           : this.total,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter: helpers.weekSplitter
+                    weekSplitter    : helpers.weekSplitter
                 }));
 
                 $("#top-bar-deleteBtn").hide();
@@ -285,7 +294,6 @@ define([
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
-
 
             deleteRender: function () {
                 this.resetCollection();
@@ -312,7 +320,7 @@ define([
                             value = checkbox.attr('id');
                             tr = checkbox.closest('tr');
 
-                            if (value){
+                            if (value) {
                                 that.deleteItem(tr, value);
                             }
                         });
@@ -327,12 +335,20 @@ define([
                 var model;
                 var mid = 39;
                 var totalNew;
-                var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
+                var totalNewCalc;
+                var totalNewPaid;
+                var totalDiffOld = parseFloat(this.$el.find('#totalDiff').attr('data-cash'));
+                var totalCalcOld = parseFloat(this.$el.find('#totalCalc').attr('data-cash'));
+                var totalPaidOld = parseFloat(this.$el.find('#totalPaid').attr('data-cash'));
                 var id = tr.attr('data-id');
                 var elDiff = parseFloat(this.editCollection.get(id).get("diff"));
+                var elCalc = parseFloat(this.editCollection.get(id).get("calc"));
+                var elPaid = parseFloat(this.editCollection.get(id).get("paid"));
 
 
-                totalNew = totalOld + elDiff;
+                totalNew = totalDiffOld + elDiff;
+                totalNewCalc = totalCalcOld + elCalc;
+                totalNewPaid = totalPaidOld + elPaid;
 
                 if (id.length < 24) {
                     this.editCollection.remove(id);
@@ -347,12 +363,12 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             delete self.changedModels[id];
                             self.deleteItemsRender(tr, id);
                         },
-                        error: function (model, res) {
+                        error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -360,8 +376,14 @@ define([
                     });
                 }
 
-                this.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
-                this.$el.find('#total').attr('data-cash', totalNew);
+                this.$el.find('#totalDiff').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                this.$el.find('#totalDiff').attr('data-cash', totalNew);
+
+                this.$el.find('#totalCalc').text(helpers.currencySplitter(totalNewCalc.toFixed(2)));
+                this.$el.find('#totalCalc').attr('data-cash', totalNewCalc);
+
+                this.$el.find('#totalPaid').text(helpers.currencySplitter(totalNewPaid.toFixed(2)));
+                this.$el.find('#totalPaid').attr('data-cash', totalNewPaid);
             },
 
             deleteItemsRender: function (tr, id) {
@@ -383,19 +405,19 @@ define([
                 var dataKey = parseInt(year) * 100 + parseInt(month);
 
                 var startData = {
-                    dataKey: dataKey,
-                    type: {
-                        _id: null,
+                    dataKey : dataKey,
+                    type    : {
+                        _id : null,
                         name: ""
                     },
-                    month: month,
-                    year: year,
-                    diff: 0,
-                    paid: 0,
-                    calc: 0,
+                    month   : month,
+                    year    : year,
+                    diff    : 0,
+                    paid    : 0,
+                    calc    : 0,
                     employee: {
                         name: '',
-                        _id: null
+                        _id : null
                     }
                 };
 
@@ -411,7 +433,6 @@ define([
                     new createView({model: startData});
                 }
             },
-
 
             setChangedValueToModel: function () {
                 var editedElement = this.$el.find('.editing');
@@ -778,10 +799,10 @@ define([
                     target.html(inputHtml);
 
                     $('.datapicker').datepicker({
-                        dateFormat: "mm/yy",
+                        dateFormat : "mm/yy",
                         changeMonth: true,
-                        changeYear: true,
-                        onSelect: function (text, datPicker) {
+                        changeYear : true,
+                        onSelect   : function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
                             var endDatePicker = td.find('.endDateDP');
@@ -806,8 +827,8 @@ define([
                 } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
-                    tempContainer + '" value="' + tempContainer +
-                    '"  maxLength="4" style="display: block;" />';
+                        tempContainer + '" value="' + tempContainer +
+                        '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -823,28 +844,49 @@ define([
 
 
             checked: function (e) {
-                var checkLength;
-                var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
-                var totalNew;
-                var target = $(e.target);
-                var id = target.attr('id');
-                var elDiff = parseFloat(this.editCollection.get(id).get("diff")) * (-1);
-
-                if (!target.prop('checked')){
-                    elDiff = elDiff * (-1);
+                if (this.$el.find('#false').length) {
+                    return false;
                 }
 
-                totalNew = totalOld + elDiff;
+                var checkLength;
+                var totalOld = parseFloat(this.$el.find('#total').attr('data-cash'));
+                var target = $(e.target);
+                var id = target.attr('id');
+                var totalNew;
+                var totalNewCalc;
+                var totalNewPaid;
+                var totalDiffOld = parseFloat(this.$el.find('#totalDiff').attr('data-cash'));
+                var totalCalcOld = parseFloat(this.$el.find('#totalCalc').attr('data-cash'));
+                var totalPaidOld = parseFloat(this.$el.find('#totalPaid').attr('data-cash'));
+                var elDiff = parseFloat(this.editCollection.get(id).get("diff"));
+                var elCalc = parseFloat(this.editCollection.get(id).get("calc"));
+                var elPaid = parseFloat(this.editCollection.get(id).get("paid"));
+
+                if (!target.prop('checked')) {
+                    elDiff = elDiff * (-1);
+                    elCalc = elCalc * (-1);
+                    elPaid = elPaid * (-1);
+                }
+
+                totalNew = totalDiffOld + elDiff;
+                totalNewCalc = totalCalcOld + elCalc;
+                totalNewPaid = totalPaidOld + elPaid;
 
 
                 if (this.editCollection.length > 0) {
                     checkLength = $("input.checkbox:checked").length;
 
-                    this.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
-                    this.$el.find('#total').attr('data-cash', totalNew);
+                    this.$el.find('#totalDiff').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                    this.$el.find('#totalDiff').attr('data-cash', totalNew);
 
+                    this.$el.find('#totalCalc').text(helpers.currencySplitter(totalNewCalc.toFixed(2)));
+                    this.$el.find('#totalCalc').attr('data-cash', totalNewCalc);
+
+                    this.$el.find('#totalPaid').text(helpers.currencySplitter(totalNewPaid.toFixed(2)));
+                    this.$el.find('#totalPaid').attr('data-cash', totalNewPaid);
 
                     if ($("input.checkbox:checked").length > 0) {
+                        $('#top-bar-createBtn').hide();
                         $('#top-bar-deleteBtn').show();
                         $('#topBarPaymentGenerate').show();
                         if (checkLength === 1) {
@@ -852,7 +894,6 @@ define([
                             $('#top-bar-createBtn').hide();
                         } else {
                             $('#top-bar-copy').hide();
-                            $('#top-bar-createBtn').show();
                         }
                         if (checkLength == this.collection.length) {
                             this.$el.find(".check_all").prop('checked', true);
@@ -969,7 +1010,7 @@ define([
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
-                modelObject = modelObject.success;
+                //modelObject = modelObject.success;
 
                 if (modelObject) {
                     modelId = modelObject._id;
@@ -1028,7 +1069,10 @@ define([
                 var self = this;
                 var collection = this.collection.toJSON();
 
-                this.$el.html(_.template(PayrollTemplate, {collection: collection, currencySplitter: helpers.currencySplitter}));
+                this.$el.html(_.template(PayrollTemplate, {
+                    collection      : collection,
+                    currencySplitter: helpers.currencySplitter
+                }));
 
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');
 
@@ -1039,36 +1083,54 @@ define([
                 $('.check_all').click(function (e) {
                     var totalOld = 0;
                     var totalNew = 0;
+                    var totalCalc = 0;
+                    var totalPaid = 0;
 
                     var checkboxes = self.$el.find('.checkbox');
 
                     self.$el.find('.checkbox').prop('checked', this.checked);
 
-                    $.each(checkboxes, function(){
+                    $.each(checkboxes, function () {
                         var target = $(this);
                         var id = target.attr('id');
-                        var elDiff = parseFloat(self.editCollection.get(id).get("diff")) * (-1);
+                        var elDiff = parseFloat(self.editCollection.get(id).get("diff"));
+                        var elCalc = parseFloat(self.editCollection.get(id).get("calc"));
+                        var elPaid = parseFloat(self.editCollection.get(id).get("paid"));
 
-                        if (!target.prop('checked')){
+                        if (!target.prop('checked')) {
                             elDiff = elDiff * (-1);
                         }
 
                         totalNew += totalOld + elDiff;
+                        totalCalc += totalOld + elCalc;
+                        totalPaid += totalOld + elPaid;
 
                     });
 
                     if (self.$el.find("input.checkbox:checked").length > 0) {
 
-                        self.$el.find('#total').text(helpers.currencySplitter(totalNew.toFixed(2)));
-                        self.$el.find('#total').attr('data-cash', totalNew);
+                        self.$el.find('#totalDiff').text(helpers.currencySplitter(totalNew.toFixed(2)));
+                        self.$el.find('#totalDiff').attr('data-cash', totalNew);
+
+                        self.$el.find('#totalCalc').text(helpers.currencySplitter(totalCalc.toFixed(2)));
+                        self.$el.find('#totalCalc').attr('data-cash', totalCalc);
+
+                        self.$el.find('#totalPaid').text(helpers.currencySplitter(totalPaid.toFixed(2)));
+                        self.$el.find('#totalPaid').attr('data-cash', totalPaid);
 
                         $("#top-bar-deleteBtn").show();
                         $("#topBarPaymentGenerate").show();
                         $('#top-bar-createBtn').hide();
                     } else {
 
-                        self.$el.find('#total').text(0);
-                        self.$el.find('#total').attr('data-cash', 0);
+                        self.$el.find('#totalDiff').text(0);
+                        self.$el.find('#totalDiff').attr('data-cash', 0);
+
+                        self.$el.find('#totalCalc').text(0);
+                        self.$el.find('#totalCalc').attr('data-cash', 0);
+
+                        self.$el.find('#totalPaid').text(0);
+                        self.$el.find('#totalPaid').attr('data-cash', 0);
 
                         $("#top-bar-deleteBtn").hide();
                         $("#topBarPaymentGenerate").hide();

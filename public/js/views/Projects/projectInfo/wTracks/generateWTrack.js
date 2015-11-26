@@ -10,22 +10,22 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
     function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, JobsCollection, populate, dataService, moment, common) {
         "use strict";
         var CreateView = Backbone.View.extend({
-                template: _.template(generateTemplate),
+                template                 : _.template(generateTemplate),
                 wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
-                responseObj: {},
+                responseObj              : {},
 
                 events: {
-                    "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                    "click .current-selected": "showNewSelect",
-                    "click .newSelectList li.miniStylePagination": "notHide",
+                    "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                    "click .current-selected"                          : "showNewSelect",
+                    "click .newSelectList li.miniStylePagination"      : "notHide",
                     "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                     "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                    "click #addNewEmployeeRow": "addNewEmployeeRow",
-                    "click a.generateType": "generateType",
-                    "click td.editable": "editRow",
-                    "change .editable ": "setEditable",
+                    "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
+                    "click a.generateType"                                            : "generateType",
+                    "click td.editable"                                               : "editRow",
+                    "change .editable "                                               : "setEditable",
                     //"click": "hideNewSelect",
-                    'keydown input.editing': 'keyDown'
+                    'keydown input.editing'                                           : 'keyDown'
                 },
 
                 keyDown: function (e) {
@@ -43,37 +43,45 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.model = options.model;
                     this.wTrackCollection = options.wTrackCollection;
                     this.asyncLoadImgs(this.model);
+                    this.forQuotationGenerate = !!options.forQuotationGenerate;
 
                     _.bindAll(this, 'generateItems');
 
-                    this.modelJSON = this.model.toJSON();
+                    this.modelJSON = this.model.id ? this.model.toJSON() : this.model;
 
                     this.resultArray = [];
 
-                    this.jobs = options.jobs ? options.jobs: null;
+                    this.jobs = options.jobs ? options.jobs : null;
 
                     this.jobsCollection = options.jobsCollection;
 
-                    this.createJob = options.createJob;
+                    this.createJob = options.createJob ? options.createJob : true;
+                    this.quotationDialog = options.quotationDialog;
 
                     this.render();
                 },
 
                 asyncLoadImgs: function (model) {
-                    var currentModel = model.toJSON();
+                    var currentModel = model.id ? model.toJSON() : model;
                     var id = currentModel._id;
+                    var pm = currentModel.projectmanager;
+                    var customer = currentModel.customer;
 
-                    common.getImagesPM([currentModel.projectmanager._id], "/getEmployeesImages", "#" + id, function (result) {
-                        var res = result.data[0];
+                    if (pm) {
+                        common.getImagesPM([pm._id], "/getEmployeesImages", "#" + id, function (result) {
+                            var res = result.data[0];
 
-                        $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
-                    });
+                            $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
+                        });
+                    }
 
-                    common.getImagesPM([currentModel.customer._id], "/getCustomersImages", "#" + id, function (result) {
-                        var res = result.data[0];
+                    if (customer) {
+                        common.getImagesPM([customer._id], "/getCustomersImages", "#" + id, function (result) {
+                            var res = result.data[0];
 
-                        $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
-                    });
+                            $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
+                        });
+                    }
                 },
 
                 generateType: function (e) {
@@ -83,7 +91,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     ul.show();
 
-                   // this.stopDefaultEvents(e);
+                    this.stopDefaultEvents(e);
                 },
 
                 addNewEmployeeRow: function (e) {
@@ -94,26 +102,26 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var self = this;
 
                     var defaultObject = {
-                        startDate: '',
-                        endDate: '',
-                        hours: '',
-                        project: {
-                            projectName: this.modelJSON.projectName,
-                            workflow: this.modelJSON.workflow,
-                            customer: this.modelJSON.customer,
+                        startDate : '',
+                        endDate  : '',
+                        hours    : '',
+                        project  : {
+                            projectName   : this.modelJSON.projectName,
+                            workflow   : this.modelJSON.workflow,
+                            customer   : this.modelJSON.customer,
                             projectmanager: this.modelJSON.projectmanager,
-                            _id: this.modelJSON._id
+                            _id           : this.modelJSON._id
                         },
-                        employee: {},
+                        employee : {},
                         department: {},
-                        1: 8,
-                        2: 8,
-                        3: 8,
-                        4: 8,
-                        5: 8,
-                        6: 0,
-                        7: 0,
-                        revenue: 120
+                        1         : 8,
+                        2         : 8,
+                        3         : 8,
+                        4         : 8,
+                        5         : 8,
+                        6         : 0,
+                        7         : 0,
+                        revenue   : 120
                     };
 
                     var target = $(e.target);
@@ -128,10 +136,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var week = date.isoWeek();
 
                     var elem = this.wTrackPerEmployeeTemplate({
-                        year: year,
+                        year : year,
                         month: month,
-                        week: week,
-                        id: this.resultArray.length
+                        week : week,
+                        id   : this.resultArray.length
                     });
                     var errors = this.$el.find('.errorContent');
 
@@ -157,12 +165,15 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var dataPickerStartContainers = $('.datapicker.startDate');
                     var dataPickerEndContainers = $('.endDateDP.datapicker');
                     var self = this;
+                    var currntYear = parseInt(moment(new Date()).get('year'));
+                    var yearRange = (currntYear - 1).toString() + ":" + (currntYear + 1).toString();
 
                     dataPickerStartContainers.datepicker({
-                        dateFormat: "d M, yy",
+                        dateFormat       : "d M, yy",
                         changeMonth: true,
-                        changeYear: true,
-                        onSelect: function (text, datPicker) {
+                        changeYear : true,
+                        yearRange  : yearRange,
+                        onSelect   : function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
                             var endDatePicker = td.find('.endDateDP');
@@ -179,20 +190,27 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             self.setChangedValueToModel(targetInput);
 
                             return false;
+                        },
+                        onChangeMonthYear: function (year, month, inst) {
+                            return false;
                         }
                     }).removeClass('datapicker');
 
                     dataPickerEndContainers.datepicker({
-                        dateFormat: "d M, yy",
+                        dateFormat       : "d M, yy",
                         changeMonth: true,
-                        changeYear: true,
-                        onSelect: function (text, datPicker) {
+                        changeYear : true,
+                        yearRange  : yearRange,
+                        onSelect   : function (text, datPicker) {
                             var targetInput = $(this);
 
                             targetInput.parent().removeClass('errorContent');
 
                             self.setChangedValueToModel(targetInput);
 
+                            return false;
+                        },
+                        onChangeMonthYear: function (year, month, inst) {
                             return false;
                         }
                     }).removeClass('datapicker');
@@ -228,7 +246,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         insertedInput[0].setSelectionRange(0, insertedInput.val().length);
                     }
 
-                   // this.setChangedValueToModel(e);
+                    // this.setChangedValueToModel(e);
 
                     return false;
                 },
@@ -267,7 +285,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 setChangedValueToModel: function (elem) {
-                    var editedElement = elem ||this.$listTable.find('.editing');
+                    var editedElement = elem || this.$listTable.find('.editing');
                     var editedCol;
                     var editedElementRowId;
                     var editedElementContent;
@@ -284,6 +302,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
 
+                        if (editedElementValue) {
+                            editedCol.removeClass('errorContent');
+                        }
+
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
 
                         if (!elem) {
@@ -294,7 +316,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 generateItems: function (e) {
-
                     this.setChangedValueToModel(); // add for setChanges by Hours
 
                     var errors = this.$el.find('.errorContent');
@@ -308,6 +329,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var _id = window.location.hash.split('form/')[1];
                     //var nameRegExp = /^[\w\.@]{3,100}$/;
                     var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
+                    //var quotationDialog = $('.edit-dialog');
 
                     var filter = {
                         'projectName': {
@@ -322,12 +344,12 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         return alert("Please, enter all information first.");
                     }
 
-                    if (nameRegExp.test(jobName)){
+                    if (nameRegExp.test(jobName)) {
                         $.ajax({
-                            type: 'Post',
-                            url: '/wTrack/generateWTrack',
+                            type       : 'Post',
+                            url : '/wTrack/generateWTrack',
                             contentType: "application/json",
-                            data: data,
+                            data       : data,
 
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("createJob", self.createJob);
@@ -339,7 +361,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             success: function () {
                                 self.hideDialog();
 
-                                self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                if (self.wTrackCollection && self.wTrackCollection.wTrackView) {
+                                    self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
+                                }
+
+                                if (self.wTrackCollection) {
+                                    self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                }
+
+                                if (self.quotationDialog) {
+                                    return self.quotationDialog.generatedWtracks();
+                                }
 
                                 tabs = $(".chart-tabs");
                                 activeTab = tabs.find('.active');
@@ -351,18 +383,18 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                                 dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
                                 dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
                             },
-                            error: function () {
+                            error  : function () {
                                 alert('error');
                             }
                         });
                     } else {
-                        alert("Please, enter Job name!");
+                        alert("Please, enter correct Job name!");
                     }
 
                 },
 
                 hideDialog: function () {
-                    $(".edit-dialog").remove();
+                    $(".wTrackDialog").remove();
                 },
 
                 showNewSelect: function (e, prev, next) {
@@ -430,24 +462,24 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         departmentContainer.removeClass('errorContent');
 
                         employee = {
-                            _id: element._id,
+                            _id : element._id,
                             name: element.name
                         };
                         department = {
-                            _id: element.department._id,
+                            _id           : element.department._id,
                             departmentName: element.department.name
                         };
 
                         editWtrackModel.employee = employee;
                         editWtrackModel.department = department;
 
-                    } else if (elementType === '#department'){
+                    } else if (elementType === '#department') {
                         departmentContainer = tr.find('[data-content="department"]');
                         departmentContainer.find('a.current-selected').text(element.name);
                         departmentContainer.removeClass('errorContent');
 
                         department = {
-                            _id: element._id,
+                            _id           : element._id,
                             departmentName: element.name
                         };
 
@@ -487,26 +519,26 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 render: function () {
                     var thisEl = this.$el;
                     var self = this;
-                    var project = this.model.toJSON();
+                    var project = this.model.id ? this.model.toJSON() : this.model;
                     var dialog = this.template({
-                        project: project,
-                        jobs:  self.jobs,
+                        project  : project,
+                        jobs   : self.jobs,
                         createJob: self.createJob
                     });
 
                     this.$el = $(dialog).dialog({
-                        dialogClass: "edit-dialog",
-                        width: 1200,
-                        title: "Generate weTrack",
-                        buttons: {
-                            save: {
-                                text: "Generate",
+                        dialogClass: "wTrackDialog",
+                        width      : 1200,
+                        title      : "Generate weTrack",
+                        buttons    : {
+                            save  : {
+                                text : "Generate",
                                 class: "btn",
-                                id: "generateBtn",
+                                id   : "generateBtn",
                                 click: self.generateItems
                             },
                             cancel: {
-                                text: "Cancel",
+                                text : "Cancel",
                                 class: "btn",
                                 click: function () {
                                     self.hideDialog();
