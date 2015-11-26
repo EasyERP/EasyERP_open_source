@@ -68,7 +68,7 @@ define([
             var editedElementRowId;
             var editedElementContent;
             var editedElementValue;
-            var editModel;
+            //var editModel;
 
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
@@ -76,7 +76,7 @@ define([
                 editedElementContent = editedCol.data('content');
                 editedElementValue = editedElement.val();
 
-                editModel = this.editCollection.get(editedElementRowId);
+                //editModel = this.editCollection.get(editedElementRowId);
 
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
@@ -96,13 +96,10 @@ define([
         },
 
         setEditable: function (td) {
-            //var tr;
-
             if (!td.parents) {
                 td = $(td.target).closest('td');
             }
 
-            //tr = td.parents('tr');
             td.addClass('edited');
 
             if (this.isEditRows()) {
@@ -131,10 +128,6 @@ define([
             var width;
 
             if (mothHoursId && el.prop('tagName') !== 'INPUT') {
-                if (this.mothHoursId) {
-                    editedElement = this.$listTable.find('.editing');
-                    this.setChangedValueToModel();
-                }
                 this.modelId = mothHoursId;
                 this.setChangedValueToModel();
             }
@@ -153,6 +146,7 @@ define([
         saveItem: function () {
             var id;
             var model;
+
             this.setChangedValueToModel();
             for (id in this.changedModels) {
                 model = this.editCollection.get(id);
