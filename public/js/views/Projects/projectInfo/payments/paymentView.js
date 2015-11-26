@@ -78,6 +78,7 @@ define([
                 model.changed = this.changedModels[id];
             }
             this.editCollection.save();
+            this.changedModels = {};
         },
 
         setChangedValueToModel: function () {

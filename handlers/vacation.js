@@ -135,6 +135,9 @@ var Vacation = function (event, models) {
     this.getYears = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var query;
+        var lastEl;
+        var length;
+        var curDate = new Date();
 
         query = Vacation.distinct('year');
 
@@ -150,7 +153,17 @@ var Vacation = function (event, models) {
                 element.name = el;
 
                 return element;
-            })
+            }).sort();
+
+            length = result.length;
+            lastEl = result[length - 1];
+
+            if(lastEl._id === curDate.getFullYear()) {
+                result[length] = {};
+                result[length]._id = lastEl._id + 1;
+                result[length].name = lastEl._id + 1;
+            }
+
             res.status(200).send(result);
         });
     };
