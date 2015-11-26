@@ -46,7 +46,7 @@ define([
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected:not(.disabled,jobs)"                     : "showNewSelect",
+                "click .current-selected:not(.disabled)"                     : "showNewSelect",
                 "click #createItem"                                               : "createDialog",
                 "click #createJob"                                                : "createJob",
                 "change input:not(.checkbox, .check_all)"                         : "showSaveButton",
