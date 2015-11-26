@@ -148,7 +148,7 @@ define([
                     }).render());
                 }
                 //added two parameters page and items number
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
+                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
 
                 this.renderCheckboxes();
                 this.renderPagination(currentEl, this);
@@ -168,8 +168,14 @@ define([
             goToEditDialog: function (e) {
                 e.preventDefault();
 
-                var id = $(e.target).closest('tr').data("id");
+                var tr = $(e.target).closest('tr');
+                var id = tr.data("id");
+                var notEditable = tr.hasClass('notEditable');
                 var model = new quotationModel({ validate: false });
+
+                if (notEditable){
+                    return false;
+                }
 
                 model.urlRoot = '/Order/form/' + id;
                 model.fetch({

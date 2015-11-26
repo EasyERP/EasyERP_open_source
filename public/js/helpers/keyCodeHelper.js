@@ -16,6 +16,8 @@ define([], function () {
         return keyCode === 190;
     };
 
+
+
     var isDigitOrDecimalDot = function (keyCode) {
         return isDigit(keyCode) || isDecimalDot(keyCode);
     };

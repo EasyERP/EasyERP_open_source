@@ -166,9 +166,9 @@ define([
                 var targetElement = target.parents("td");
                 var targetW = targetElement.find("a");
                 var tr = target.parents("tr");
-                var modelId = tr.data('id');
+                var modelId = tr.attr('data-id');
                 var id = target.attr("id");
-                var attr = targetElement.attr("id") || targetElement.data("content");
+                var attr = targetElement.attr("id") || targetElement.attr("data-content");
                 var elementType = '#' + attr;
                 var workflow;
                 var changedAttr;
@@ -358,7 +358,7 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 return this;
-            },
+            }
         });
 
         return PaymentListView;

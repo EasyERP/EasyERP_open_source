@@ -1,34 +1,27 @@
-/**
- * Created by Roman on 20.05.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
+    var extend = require('mongoose-schema-extend');
     var Schema = mongoose.Schema;
 
-
-    var paymentSchema = new Schema({
-        forSale:{type: Boolean, default: true},
-        invoice: {type: ObjectId, ref: 'Invoice', default: null},
-        supplier: {
-            _id: {type: ObjectId, ref: 'Customers', default: null},
-            fullName: String
+    var basePaymentSchema = new Schema({
+        ID              : Number,
+        invoice         : {
+            _id     : {type: ObjectId, ref: 'Invoice', default: null},
+            name    : String,
+            assigned: {
+                _id : {type: ObjectId, ref: 'Employee', default: null},
+                name: String
+            }
         },
-        paidAmount: {type: Number, default: 0, set: setPrice},
-        paymentMethod: {
-            _id: {type: ObjectId, ref: 'PaymentMethod', default: null},
-            name: String
-        },
-        date: {type: Date, default: Date.now},
-        name: {type: String, default: '', unique: true},
-        period: {type: ObjectId, ref: 'Destination', default: null},
-        paymentRef: {type: String, default: ''},
-        workflow: {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
+        paidAmount      : {type: Number, default: 0, set: setPrice},
+        date            : {type: Date, default: Date.now},
+        name            : {type: String, default: '', unique: true},
+        workflow        : {type: String, enum: ['Draft', 'Paid'], default: 'Paid'},
         differenceAmount: {type: Number, default: 0, set: setPrice},
-        whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
-        month: {type: Number},
-        year:  {type: Number},
-        bonus: {type: Boolean},
+        whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
+        month           : {type: Number},
+        year            : {type: Number},
 
         groups: {
             owner: {type: ObjectId, ref: 'Users', default: null},
@@ -40,46 +33,93 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        editedBy: {
+        editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         }
-    }, {collection: 'Payment'});
+    }, {collection: 'Payment', discriminatorKey: '_type'});
 
-    mongoose.model('Payment', paymentSchema);
+    var PaymentSchema = basePaymentSchema.extend({
+        forSale      : {type: Boolean, default: true},
+        paymentRef   : {type: String, default: ''},
+        supplier     : {
+            _id     : {type: ObjectId, ref: 'Customers', default: null},
+            fullName: String
+        },
+        paymentMethod: {
+            _id : {type: ObjectId, ref: 'PaymentMethod', default: null},
+            name: String
+        },
+        period       : {type: ObjectId, ref: 'Destination', default: null},
+        bonus        : {type: Boolean}
+    });
 
-    paymentSchema.pre('save', function (next) {
+    var salaryPaymentSchema = basePaymentSchema.extend({
+        isExpense    : {type: Boolean, default: true},
+        supplier     : [{
+            _id             : {type: ObjectId, ref: 'Employees', default: null},
+            fullName        : String,
+            paidAmount      : Number,
+            differenceAmount: {type: Number, default: 0, set: setPrice}
+        }],
+        paymentMethod: {
+            _id : {type: ObjectId, ref: 'ProductCategory', default: null},
+            name: String
+        },
+        paymentRef   : {type: ObjectId, ref: 'PayRoll', default: null},//ref to PayRoll
+        period       : {type: Date, default: null}
+    });
+
+    var payOutSchema = basePaymentSchema.extend({
+        forSale         : {type: Boolean, default: false},
+        supplier     : {
+            _id             : {type: ObjectId, ref: 'Employees', default: null},
+            fullName        : String
+        },
+        paymentMethod: {
+            _id : {type: ObjectId, ref: 'ProductCategory', default: null},
+            name: String
+        },
+        paymentRef   : {type: String, default: ''},
+        period       : {type: Date, default: null}
+    });
+
+    mongoose.model('Payment', PaymentSchema);
+    mongoose.model('salaryPayment', salaryPaymentSchema);
+    mongoose.model('wTrackPayOut', payOutSchema);
+
+    PaymentSchema.pre('save', function (next) {
         var payment = this;
         var db = payment.db.db;
 
         db.collection('settings').findOneAndUpdate({
                 dbName: db.databaseName,
-                name: 'payment'
+                name  : 'payment'
             },
             //[['name', 1]],
             {
                 $inc: {seq: 1}
             },
             {
-                new: true
+                returnOriginal: false,
+                upsert        : true
             },
             function (err, rate) {
                 if (err) {
                     return next(err);
                 }
 
-                payment.name += '_' + rate.seq;
+                payment.name += '_' + rate.value.seq;
 
-                next()
+                next();
             });
     });
-
-    paymentSchema.post('save', function (doc) {
+    PaymentSchema.post('save', function (doc) {
         var payment = this;
         var db = payment.db.db;
 
         db.collection('Invoice').findOneAndUpdate({
-                _id: doc.invoice
+                _id: doc.invoice._id
             },
             [['name', 1]],
             {
@@ -95,6 +135,60 @@ module.exports = (function () {
             });
     });
 
+    salaryPaymentSchema.pre('save', function (next) {
+        var payment = this;
+        var db = payment.db.db;
+
+        db.collection('settings').findOneAndUpdate({
+                dbName: db.databaseName,
+                name  : 'salary'
+            },
+            //[['name', 1]],
+            {
+                $inc: {seq: 1}
+            },
+            {
+                returnOriginal: false,
+                upsert        : true
+            },
+            function (err, rate) {
+                if (err) {
+                    return next(err);
+                }
+
+                payment.name = payment.year + '/' + payment.month + '_' + rate.value.seq;
+
+                next();
+            });
+    });
+    /*salaryPaymentSchema.post('save', function (doc) {
+        var payment = this;
+        var db = payment.db.db;
+
+        db.collection('Invoice').findOneAndUpdate({
+                _id: doc.invoice._id
+            },
+            [['name', 1]],
+            {
+                $set: {paymentDate: new Date()}
+            },
+            null,
+            function (err) {
+                if (err) {
+                    return console.error('An error was occurred during updating %s', doc.invoice);
+                }
+
+                console.log('Invoice %s was updated success', doc.invoice);
+            });
+    });*/
+
+    payOutSchema.pre('save', function (next) {
+        var payment = this;
+
+        payment.name = new Date().valueOf();
+        next();
+    });
+
     function setPrice(num) {
         return num * 100;
     }
@@ -103,5 +197,7 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Payment'] = paymentSchema;
+    mongoose.Schemas['Payment'] = PaymentSchema;
+    mongoose.Schemas['salaryPayment'] = salaryPaymentSchema;
+    mongoose.Schemas['wTrackPayOut'] = payOutSchema;
 })();

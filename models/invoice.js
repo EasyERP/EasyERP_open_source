@@ -1,10 +1,7 @@
-/**
- * Created by ANDREY on 29.04.2015.
- */
-
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
+    var extend = require('mongoose-schema-extend');
 
     var payments = {
         _id    : false,
@@ -14,33 +11,24 @@ module.exports = (function () {
         taxes  : {type: Number, default: 0, set: setPrice}
     };
 
-    var products = {
-        _id        : false,
-        quantity   : {type: Number, default: 1},
-        unitPrice  : Number,
-        product    : {type: ObjectId, ref: 'Product', default: null},
-        description: {type: String, default: ''},
-        taxes      : Number,
-        subTotal   : Number
-    };
+    var productForJobs = {type: ObjectId, ref: 'Product', default: null};
+    var productForPayRolls = {type: ObjectId, ref: 'PayRoll', default: null};
+    var product = {type: ObjectId, ref: 'Product', default: null};
 
-    var invoiceSchema = new mongoose.Schema({
-        ID                   : Number,
-        forSales             : {type: Boolean, default: true},
-        supplier             : {
+    var baseSchema = new mongoose.Schema({
+        ID              : Number,
+        name            : {type: String, default: ''},
+        forSales        : {type: Boolean, default: true},
+        supplier        : {
             _id : {type: ObjectId, ref: 'Customers', default: null},
             name: String
         },
-        /*fiscalPosition: { type: String, default: null },*/
-        sourceDocument       : {type: String, default: null},
-        supplierInvoiceNumber: {type: String, default: null},
-        paymentReference     : {type: String, default: 'free'},
+        sourceDocument  : {type: ObjectId, ref: 'Quotation', default: null},//should be order in invoice case
+        paymentReference: {type: String, default: 'free'},
 
         invoiceDate: {type: Date, default: Date.now},
         dueDate    : Date,
         paymentDate: Date,
-        account    : {type: String, default: null},
-        journal    : {type: String, default: null},
 
         salesPerson : {
             _id : {type: ObjectId, ref: 'Employees', default: null},
@@ -50,7 +38,6 @@ module.exports = (function () {
 
         paymentInfo: payments,
         payments   : [{type: ObjectId, ref: 'Payment', default: null}],
-        products   : [products],
 
         workflow: {
             _id   : {type: ObjectId, ref: 'workflows', default: null},
@@ -78,15 +65,63 @@ module.exports = (function () {
 
     }, {collection: 'Invoice'});
 
+    var jobsInvoiceSchema = baseSchema.extend({
+        forSales: {type: Boolean, default: true},
+        products: [{
+            _id        : false,
+            quantity   : {type: Number, default: 1},
+            unitPrice  : Number,
+            product    : productForJobs,
+            description: {type: String, default: ''},
+            jobs       : {type: ObjectId, ref: "jobs", default: null},
+            taxes      : {type: Number, default: 0},
+            subTotal   : Number
+        }],
+        project : {
+            _id : {type: ObjectId, ref: 'Project', default: null},
+            name: String
+        }
+    });
+
+    var payRollInvoiceSchema = baseSchema.extend({
+        expense : {type: Boolean, default: true},
+        products: [{
+            _id    : false,
+            product: productForPayRolls,
+            paid   : Number,
+            diff   : Number
+        }]
+    });
+
+    var invoiceSchema = baseSchema.extend({
+        products: [{
+            _id        : false,
+            quantity   : {type: Number, default: 1},
+            unitPrice  : Number,
+            product    : product,
+            description: {type: String, default: ''},
+            taxes      : {type: Number, default: 0},
+            subTotal   : Number
+        }]
+    });
+
+    function setPrice(num) {
+        return num * 100;
+    };
+
+    jobsInvoiceSchema.set('toJSON', {getters: true});
+    payRollInvoiceSchema.set('toJSON', {getters: true});
+    invoiceSchema.set('toJSON', {getters: true});
+
+    mongoose.model('wTrackInvoice', jobsInvoiceSchema);
+    mongoose.model('payRollInvoice', payRollInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    function setPrice(num) {
-        return num * 100;
-    }
-
+    mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
+    mongoose.Schemas['payRollInvoice'] = payRollInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
 })();

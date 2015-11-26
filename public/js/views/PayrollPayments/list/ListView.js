@@ -20,8 +20,8 @@ define([
 
         var PaymentListView = Backbone.View.extend({
             el                 : '#content-holder',
-            contentType: 'PayrollPayments',//needs in view.prototype.changeLocationHash
-            viewType   : 'list',//needs in view.prototype.changeLocationHash
+            contentType        : 'PayrollPayments',//needs in view.prototype.changeLocationHash
+            viewType           : 'list',//needs in view.prototype.changeLocationHash
             collectionLengthUrl: '/payment/salary/totalCollectionLength',
             changedModels      : {},
             responseObj        : {},
@@ -44,7 +44,7 @@ define([
                 "change .editable "                                               : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "focusout .editing"                                               : "onChangeInput",
-                "click td:not(.notForm )"                                          : "showDialog"
+                "click td:not(.notForm )"                                         : "showDialog"
             },
 
             initialize: function (options) {
@@ -182,7 +182,7 @@ define([
                     if (dataContent === 'month') {
                         editingEl.attr({
                             "min"      : 1,
-                            "max": 12,
+                            "max"      : 12,
                             "maxLength": 2
                         });
                     } else if (dataContent === 'year') {
@@ -397,8 +397,8 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({
                     count        : itemsNumber,
-                    page : 1,
-                    filter: this.filter,
+                    page         : 1,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 this.page = 1;
@@ -413,13 +413,13 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 this.prevP({
                     sort            : this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
                 dataService.getData('/supplierPayments/totalCollectionLength', {
                     filter          : this.filter,
-                    newCollection: this.newCollection,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId,
                     contentType     : this.contentType
                 }, function (response, context) {
@@ -433,16 +433,16 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 this.nextP({
                     sort            : this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
 
                 });
 
                 dataService.getData('/supplierPayments/totalCollectionLength', {
                     contentType     : this.contentType,
-                    filter     : this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -455,12 +455,12 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 this.firstP({
                     sort         : this.sort,
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData('/supplierPayments/totalCollectionLength', {
                     contentType  : this.contentType,
-                    filter     : this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -473,12 +473,12 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 this.lastP({
                     sort         : this.sort,
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData('/supplierPayments/totalCollectionLength', {
                     contentType  : this.contentType,
-                    filter     : this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -561,10 +561,10 @@ define([
                 this.sort = sortObject;
                 this.collection = new paymentCollection({
                     viewType        : 'list',
-                    sort    : sortObject,
-                    page    : this.page,
-                    count   : this.defaultItemsNumber,
-                    filter  : this.filter,
+                    sort            : sortObject,
+                    page            : this.page,
+                    count           : this.defaultItemsNumber,
+                    filter          : this.filter,
                     parrentContentId: this.parrentContentId,
                     contentType     : this.contentType,
                     newCollection   : this.newCollection
@@ -605,7 +605,7 @@ define([
                 holder.find("#listTable").empty();
                 itemView = new listItemView({
                     collection : newModels,
-                    page      : holder.find("#currentShowPage").val(),
+                    page       : holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });//added two parameters page and items number
 
@@ -640,7 +640,7 @@ define([
                 tBody.empty();
                 var itemView = new listItemView({
                     collection : this.collection,
-                    page      : currentEl.find("#currentShowPage").val(),
+                    page       : currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
@@ -666,7 +666,7 @@ define([
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({
                     collection : this.collection,
-                    page      : this.page,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());
 
@@ -817,7 +817,7 @@ define([
                 }, this);
                 this.deleteRender(deleteCounter, deletePage, {
                     filter          : this.filter,
-                    newCollection: this.newCollection,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
 
@@ -827,7 +827,7 @@ define([
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
                         collection : this.collection,
-                        page      : holder.find("#currentShowPage").val(),
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -927,18 +927,18 @@ define([
                 this.resetCollection(modelObject);
             },
 
-            showDialog: function(e){
+            showDialog: function (e) {
                 var targetEl = $(e.target);
                 var tr = targetEl.closest('tr');
                 var id = tr.attr('data-id');
                 var requestedUrl = 'payment/' + id;
 
-                dataService.getData(requestedUrl, null, function(response){
-                    if(!response.error){
+                dataService.getData(requestedUrl, null, function (response) {
+                    if (!response.error) {
                         return new DialogView(response.success);
                     } else {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Something went wrong'
                         });
                     }

@@ -10,9 +10,10 @@ define([
     'collections/salesInvoice/filterCollection',
     'models/InvoiceModel',
     'common',
-    'helpers'
+    'helpers',
+    "dataService"
 
-], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers) {
+], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers, dataService) {
     var invoiceView = ListView.extend({
 
         el: '#invoices',
@@ -30,7 +31,39 @@ define([
         events: {
             "click .checkbox": "checked",
             "click  .list td:not(.notForm)": "goToEditDialog",
-            "click #removeInvoice": "deleteItems"
+            "click #removeInvoice": "deleteItems",
+            "click .newSelectList li"      : "chooseOption"
+        },
+
+        chooseOption: function (e) {
+            var self = this;
+            var target$ = $(e.target);
+            var targetElement = target$.parents("td");
+            var wId = target$.attr("id");
+            var status = _.find(this.stages, function (stage) {
+                return wId === stage._id;
+            });
+            var name = target$.text();
+            var id = targetElement.attr("id");
+            var model = this.collection.get(id);
+
+            model.save({
+                'workflow._id'   : wId,
+                'workflow.status': status.status,
+                'workflow.name'  : name
+            }, {
+                headers : {
+                    mid: 55
+                },
+                patch   : true,
+                validate: false,
+                success : function () {
+                    self.render();
+                }
+            });
+
+            this.hideNewSelect();
+            return false;
         },
 
         deleteItems: function (e) {
@@ -38,6 +71,7 @@ define([
 
             var that = this;
             var model;
+            var orderId;
             var listTableCheckedInput;
             var table = this.$el.find('#listTable');
             listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
@@ -45,12 +79,21 @@ define([
             this.collectionLength = this.collection.length;
             $.each(listTableCheckedInput, function (index, checkbox) {
                 model = that.collection.get(checkbox.value);
+                orderId = model.get("sourceDocument");
+                orderId = orderId && orderId._id ? orderId._id : orderId;
                 model.destroy({
                     wait   : true,
                     success: function (model) {
                         var id = model.get('_id');
+                        var tr = $("[data-id=" + orderId + "]");
 
                         table.find('[data-id="' + id + '"]').remove();
+
+                        tr.find('.type').text("Not Invoiced");
+
+                        tr.find('.workflow').html('<a href="javascript:;" class="stageSelect">Draft</a>');
+
+                        tr.removeClass('notEditable');
 
                         $("#removeInvoice").hide();
                     },
@@ -219,6 +262,14 @@ define([
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
                 currencySplitter: helpers.currencySplitter
             }));
+
+            dataService.getData("/workflow/fetch", {
+                wId         : 'Sales Invoice',
+                source      : 'purchase',
+                targetSource: 'invoice'
+            }, function (stages) {
+                self.stages = stages;
+            });
 
             this.$el.find("#removeInvoice").hide();
 

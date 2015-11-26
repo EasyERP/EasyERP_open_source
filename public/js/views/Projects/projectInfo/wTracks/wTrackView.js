@@ -41,6 +41,7 @@ define([
         },
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.model;
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};
@@ -382,6 +383,8 @@ define([
 
                             table.find('[data-id="' + id + '"]').remove();
 
+                            that.$el.find('#check_all').prop('checked', false);
+                            that.setAllTotalVals();
                             that.hideSaveCancelBtns();
 
                             that.copyEl.hide();
