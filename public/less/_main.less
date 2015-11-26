@@ -2403,9 +2403,9 @@ input, textarea, select {
     background-color: inherit;
     color: @mainText-color;
     &:focus {
-      .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
-      outline: none;
-      border: @thin-border @border-color-selected;
+      //.box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
+      //outline: none;
+      //border: @thin-border @border-color-selected;
     }
   }
 }
@@ -2739,6 +2739,7 @@ dl {
     &.active {
       padding: 10px 14px 10px 10px;
       width: 100%;
+      box-sizing: border-box;
       .buttons {
         margin-top: 3px;
         .dialog-buttons;

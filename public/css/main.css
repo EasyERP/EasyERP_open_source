@@ -2051,15 +2051,6 @@ select:not([type="checkbox"]) {
   background-color: inherit;
   color: #cdcdcd;
 }
-input:not([type="checkbox"]):focus,
-textarea:not([type="checkbox"]):focus,
-select:not([type="checkbox"]):focus {
-  box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  outline: none;
-  border: 1px solid #66b5d4;
-}
 .current-selected {
   font-size: 12px;
   text-decoration: none;
@@ -3553,6 +3544,7 @@ dl dd span.ui-spinner {
 .noteWrapper .addNote.active {
   padding: 10px 14px 10px 10px;
   width: 100%;
+  box-sizing: border-box;
 }
 .noteWrapper .addNote.active .buttons {
   margin-top: 3px;
