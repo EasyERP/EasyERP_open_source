@@ -534,7 +534,7 @@ var Payment = function (models, event) {
         var mid = body.mid;
         var data = body;
         var project;
-        var type = "Paid";
+        //var type = "Paid";
 
         delete  data.mid;
 
@@ -622,24 +622,24 @@ var Payment = function (models, event) {
                         return waterfallCallback(err);
                     }
 
-                    async.each(products, function (product, cb) {
-
-                        JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
-                            if (err) {
-                                return next(err);
-                            }
-
-                            project = result ? result.get('project') : null;
-
-                            cb();
-                        });
-
-                    }, function () {
-                        if (project) {
-                            event.emit('fetchJobsCollection', {project: project});
-                            event.emit('fetchInvoiceCollection', {project: project});
-                        }
-                    });
+                    //async.each(products, function (product, cb) {
+                    //
+                    //    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                    //        if (err) {
+                    //            return next(err);
+                    //        }
+                    //
+                    //        project = result ? result.get('project') : null;
+                    //
+                    //        cb();
+                    //    });
+                    //
+                    //}, function () {
+                    //    if (project) {
+                    //        event.emit('fetchJobsCollection', {project: project});
+                    //        event.emit('fetchInvoiceCollection', {project: project});
+                    //    }
+                    //});
 
                     waterfallCallback(null, invoice, payment);
                 });
@@ -1123,28 +1123,28 @@ var Payment = function (models, event) {
                                         return next(err);
                                     }
 
-                                    var products = result.get('products');
-
-                                    async.each(products, function (product, cb) {
-
-                                        JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
-                                            if (err) {
-                                                return next(err);
-                                            }
-
-                                            project = result ? result.get('project') : null;
-
-                                            cb();
-                                        });
-
-                                    }, function () {
-                                        if (project) {
-                                            event.emit('fetchJobsCollection', {project: project});
-                                            event.emit('fetchInvoiceCollection', {project: project});
-                                        }
-
-                                        res.status(200).send({success: removed});
-                                    });
+                                    //var products = result.get('products');
+                                    //
+                                    //async.each(products, function (product, cb) {
+                                    //
+                                    //    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                                    //        if (err) {
+                                    //            return next(err);
+                                    //        }
+                                    //
+                                    //        project = result ? result.get('project') : null;
+                                    //
+                                    //        cb();
+                                    //    });
+                                    //
+                                    //}, function () {
+                                    //    if (project) {
+                                    //        event.emit('fetchJobsCollection', {project: project});
+                                    //        event.emit('fetchInvoiceCollection', {project: project});
+                                    //    }
+                                    //
+                                    //    res.status(200).send({success: removed});
+                                    //});
                                 });
                             });
                         });
