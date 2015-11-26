@@ -217,22 +217,24 @@ define([
                 e.stopPropagation();
 
                 var $target = $(e.target);
-                var isCheckBox = $target.hasClass('checkbox');
-                var $checkbox = isCheckBox ? $target : $target.find('.checkbox');
+                var $td = $target.closest('td');
+                //var isCheckBox = $target.hasClass('checkbox');
+                var $checkbox = $td.find('.checkbox');
                 var state = $checkbox.prop('checked');
                 var $tr = $target.closest('tr');
                 var dataKey = $tr.attr('id');
 
-                if (!isCheckBox) {
-                    $checkbox.prop('checked', !state);
-                }
+                //if (!isCheckBox) {
+                $checkbox.prop('checked', !state);
+                e.preventDefault();
+                //}
 
                 if (!this.changedPeriods[dataKey]) {
                     this.changedPeriods[dataKey] = {};
                 }
 
                 if (!this.changedPeriods[dataKey].hasOwnProperty('status')) {
-                    this.changedPeriods[dataKey].status = state;
+                    this.changedPeriods[dataKey].status = !state;
                     this.changesCount++;
                 } else {
                     delete this.changedPeriods[dataKey].status;
