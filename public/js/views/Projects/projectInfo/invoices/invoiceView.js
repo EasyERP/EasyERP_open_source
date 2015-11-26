@@ -16,9 +16,10 @@ define([
 ], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers, dataService) {
     var invoiceView = ListView.extend({
 
-        el: '#invoices',
-        listItemView            : listItemView,
+        el               : '#invoices',
+        listItemView     : listItemView,
         contentCollection: invoiceCollection,
+        changedModels    : {},
 
         initialize: function (options) {
             this.remove();
@@ -29,41 +30,102 @@ define([
         template: _.template(invoiceTemplate),
 
         events: {
-            "click .checkbox": "checked",
-            "click  .list td:not(.notForm)": "goToEditDialog",
-            "click #removeInvoice": "deleteItems",
-            "click .newSelectList li"      : "chooseOption"
+            "click .checkbox"                          : "checked",
+            "click  .list td:not(.notForm, .validated)": "goToEditDialog",
+            "click #removeInvoice"                     : "deleteItems",
+            "click #saveInvoice"                       : "saveItems",
+            "click .selectList"                        : "showSelects",
+            "click .newSelectList li"                  : "chooseOption"
+        },
+
+        showSelects: function (e) {
+            e.preventDefault();
+
+            $('.newSelectList').show();
+
+            e.stopPropagation();
+        },
+
+        saveItems: function (e) {
+            e.preventDefault();
+
+            var model;
+            var self = this;
+
+            for (var id in this.changedModels) {
+                model = this.collection.get(id);
+
+                model.save({
+                    'validated': self.changedModels[id].validated
+                }, {
+                    headers : {
+                        mid: 55
+                    },
+                    patch   : true,
+                    validate: false,
+                    success : function () {
+                        self.$el.find("#saveInvoice").hide();
+                    }
+                });
+            }
+
+            for (var id in this.changedModels) {
+                delete this.changedModels[id];
+            }
         },
 
         chooseOption: function (e) {
+            //var self = this;
+            //var target$ = $(e.target);
+            //var targetElement = target$.parents("td");
+            //var wId = target$.attr("id");
+            //var status = _.find(this.stages, function (stage) {
+            //    return wId === stage._id;
+            //});
+            //var name = target$.text();
+            //var id = targetElement.attr("id");
+            //var model = this.collection.get(id);
+            //
+            //model.save({
+            //    'workflow._id'   : wId,
+            //    'workflow.status': status.status,
+            //    'workflow.name'  : name
+            //}, {
+            //    headers : {
+            //        mid: 55
+            //    },
+            //    patch   : true,
+            //    validate: false,
+            //    success : function () {
+            //        self.render();
+            //    }
+            //});
+
             var self = this;
             var target$ = $(e.target);
             var targetElement = target$.parents("td");
-            var wId = target$.attr("id");
-            var status = _.find(this.stages, function (stage) {
-                return wId === stage._id;
-            });
-            var name = target$.text();
-            var id = targetElement.attr("id");
-            var model = this.collection.get(id);
+            var targetTr = target$.parents("tr");
+            var id = targetTr.attr('data-id');
 
-            model.save({
-                'workflow._id'   : wId,
-                'workflow.status': status.status,
-                'workflow.name'  : name
-            }, {
-                headers : {
-                    mid: 55
-                },
-                patch   : true,
-                validate: false,
-                success : function () {
-                    self.render();
-                }
-            });
+            if (!this.changedModels[id]) {
+                this.changedModels[id] = {};
+            }
+
+            if (!this.changedModels[id].hasOwnProperty('validated')) {
+                this.changedModels[id].validated = target$.text();
+                this.changesCount++;
+            }
+
+            targetElement.find('.selectList').text(target$.text());
 
             this.hideNewSelect();
+
+            this.$el.find("#saveInvoice").show();
             return false;
+        },
+
+        hideNewSelect: function (e) {
+            $(".newSelectList").hide();
         },
 
         deleteItems: function (e) {
@@ -121,7 +183,7 @@ define([
                 success: function (model) {
                     // var isWtrack = App.weTrack;
 
-                    new editView({model: model, redirect: true, collection : this.collection});
+                    new editView({model: model, redirect: true, collection: this.collection});
                 },
                 error  : function () {
                     alert('Please refresh browser');
@@ -204,7 +266,7 @@ define([
             if (this.collection.length > 0) {
                 var el = this.$el;
                 var checkLength = el.find("input.checkbox:checked").length;
-                var checkAll$=el.find('#check_all_invoice');
+                var checkAll$ = el.find('#check_all_invoice');
                 var removeBtnEl = $('#removeInvoice');
 
                 if (checkLength > 0) {
@@ -242,11 +304,11 @@ define([
 
             currentEl.html('');
 
-            if (options && options.activeTab){
+            if (options && options.activeTab) {
                 self.hideDialog();
 
                 tabs = $(".chart-tabs");
-                target =  tabs.find('#invoiceTab');
+                target = tabs.find('#invoiceTab');
 
                 target.closest(".chart-tabs").find("a.active").removeClass("active");
                 target.addClass("active");
@@ -257,10 +319,10 @@ define([
             }
 
             currentEl.append(template({
-                collection: this.collection.toJSON(),
-                startNumber: 0,
+                collection         : this.collection.toJSON(),
+                startNumber        : 0,
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
-                currencySplitter: helpers.currencySplitter
+                currencySplitter   : helpers.currencySplitter
             }));
 
             dataService.getData("/workflow/fetch", {
@@ -272,6 +334,7 @@ define([
             });
 
             this.$el.find("#removeInvoice").hide();
+            this.$el.find("#saveInvoice").hide();
 
             $('#check_all_invoice').click(function () {
                 self.$el.find(':checkbox').prop('checked', this.checked);

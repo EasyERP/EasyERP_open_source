@@ -22,6 +22,7 @@ define([
             filterView              : filterView,
             totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
             contentType             : 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
+            changedModels           : {},
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -45,40 +46,97 @@ define([
             },
 
             events: {
-                "click .stageSelect"           : "showNewSelect",
-                "click  .list td:not(.notForm)": "goToEditDialog",
-                "click .newSelectList li"      : "chooseOption"
+                "click .stageSelect"                       : "showNewSelect",
+                "click  .list td:not(.notForm, .validated)": "goToEditDialog",
+                "click .newSelectList li"                  : "chooseOption",
+                "click .selectList"                        : "showSelects"
+            },
+
+            showSelects: function (e) {
+                e.preventDefault();
+
+                $(e.target).parent('td').append("<ul class='newSelectList'><li>Draft</li><li>Done</li></ul>");
+
+                e.stopPropagation();
+            },
+
+            saveItem: function () {
+                var model;
+                var self = this;
+
+                for (var id in this.changedModels) {
+                    model = this.collection.get(id);
+
+                    model.save({
+                        'validated': self.changedModels[id].validated
+                    }, {
+                        headers : {
+                            mid: 55
+                        },
+                        patch   : true,
+                        validate: false,
+                        success : function () {
+                            $("#top-bar-saveBtn").hide();
+                        }
+                    });
+                }
+
+                for (var id in this.changedModels) {
+                    delete this.changedModels[id];
+                }
             },
 
             chooseOption: function (e) {
+                //var self = this;
+                //var target$ = $(e.target);
+                //var targetElement = target$.parents("td");
+                //var wId = target$.attr("id");
+                //var status = _.find(this.stages, function (stage) {
+                //    return wId === stage._id;
+                //});
+                //var name = target$.text();
+                //var id = targetElement.attr("id");
+                //var model = this.collection.get(id);
+                //
+                //model.save({
+                //    'workflow._id'   : wId,
+                //    'workflow.status': status.status,
+                //    'workflow.name'  : name
+                //}, {
+                //    headers : {
+                //        mid: 55
+                //    },
+                //    patch   : true,
+                //    validate: false,
+                //    success : function () {
+                //        self.showFilteredPage(self.filter, self);
+                //    }
+                //});
+                //
+                //this.hideNewSelect();
+                //return false;
                 var self = this;
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
-                var wId = target$.attr("id");
-                var status = _.find(this.stages, function (stage) {
-                    return wId === stage._id;
-                });
-                var name = target$.text();
-                var id = targetElement.attr("id");
-                var model = this.collection.get(id);
+                var targetTr = target$.parents("tr");
+                var id = targetTr.attr('data-id');
 
-                model.save({
-                    'workflow._id'   : wId,
-                    'workflow.status': status.status,
-                    'workflow.name'  : name
-                }, {
-                    headers : {
-                        mid: 55
-                    },
-                    patch   : true,
-                    validate: false,
-                    success : function () {
-                        self.showFilteredPage(self.filter, self);
-                    }
-                });
+                if (!this.changedModels[id]) {
+                    this.changedModels[id] = {};
+                }
+
+                if (!this.changedModels[id].hasOwnProperty('validated')) {
+                    this.changedModels[id].validated = target$.text();
+                    this.changesCount++;
+                }
+
+                targetElement.find('.selectList').text(target$.text());
 
                 this.hideNewSelect();
+
+                $("#top-bar-saveBtn").show();
                 return false;
+
             },
 
             showNewSelect: function (e) {

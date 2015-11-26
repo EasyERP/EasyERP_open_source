@@ -551,7 +551,7 @@ var Payment = function (models, event) {
             var payment = new Payment(data);
 
             //payment.paidAmount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
-            payment.name = invoice.sourceDocument;
+            //payment.name = invoice.sourceDocument;
             payment.whoCanRW = invoice.whoCanRW;
             payment.groups = invoice.groups;
             payment.createdBy.user = req.session.uId;

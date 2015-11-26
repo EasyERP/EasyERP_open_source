@@ -259,10 +259,10 @@ define([
                 var isInput = el.prop("tagName") === 'INPUT';
                 var tr = $(e.target).closest('tr');
 
-                if (!isInput && !hasInput) {
+                if (!isInput /*&& !hasInput*/) {
                     populate.showSelect(e, prev, next, this);
-                } else if (hasInput) {
-                    el.find('input').show();
+                //} else if (hasInput) {
+                //    el.find('input').show();
                 } else {
                     populate.showSelect(e, prev, next, this);
                 }
