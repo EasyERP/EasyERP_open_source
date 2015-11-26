@@ -169,7 +169,7 @@ define([
                         name: supplierName
                     },
                     fiscalPosition       : null,
-                    sourceDocument       : $.trim($('#source_document').val()),
+                    //sourceDocument       : $.trim($('#source_document').val()),
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
                     paymentReference     : $.trim($('#payment_reference').val()),
                     invoiceDate          : invoiceDate,
