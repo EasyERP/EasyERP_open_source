@@ -34,14 +34,14 @@ define([
     function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var View = Backbone.View.extend({
             el            : '#content-holder',
-            contentType: 'Projects',
+            contentType   : 'Projects',
             proformRevenue: _.template(ProformRevenueTemplate),
 
             events: {
                 'click .chart-tabs'                                               : 'changeTab',
-                'click .deleteAttach': 'deleteAttach',
-                "click #health a:not(.disabled)": "showHealthDd",
-                "click #health ul li div:not(.disabled)": "chooseHealthDd",
+                'click .deleteAttach'                                             : 'deleteAttach',
+                "click #health a:not(.disabled)"                                  : "showHealthDd",
+                "click #health ul li div:not(.disabled)"                          : "chooseHealthDd",
                 "click .newSelectList li:not(.miniStylePagination):not(.disabled)": "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
@@ -49,7 +49,7 @@ define([
                 "click .current-selected:not(.disabled,jobs)"                     : "showNewSelect",
                 "click #createItem"                                               : "createDialog",
                 "click #createJob"                                                : "createJob",
-                "change input:not(.checkbox, .check_all)"                         : "showSaveButton",
+                "change input:not(.checkbox, .check_all, .statusCheckbox)"        : "showSaveButton",
                 "click #jobsItem td:not(.selects, .remove)"                       : "renderJobWTracks",
                 "mouseover #jobsItem"                                             : "showRemoveButton",
                 "mouseleave #jobsItem"                                            : "hideRemoveButton",
@@ -131,7 +131,6 @@ define([
 
                         $(e.target).prev('input').remove();
 
-
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
@@ -208,7 +207,6 @@ define([
 
                         self.recalcTotal(id);
 
-
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
@@ -263,11 +261,11 @@ define([
                 } else {
                     icon.html('-');
                     $('<tr id=' + subId + ' class="subRow">' +
-                        '<td colspan="11" id="subRow-holder' + jobId + '"></td>' +
-                        '</tr>').insertAfter(jobContainer);
+                    '<td colspan="11" id="subRow-holder' + jobId + '"></td>' +
+                    '</tr>').insertAfter(jobContainer);
                     $('#subRow-holder' + jobId).append(template({
                         jobStatus       : job.type,
-                        jobItem  : job,
+                        jobItem         : job,
                         currencySplitter: helpers.currencySplitter
                     }));
 
@@ -298,17 +296,16 @@ define([
                 this.wCollection.bind('reset', this.renderContent, this);
                 this.wCollection.bind('showmore', this.showMoreContent, this);
 
-                if (this.generatedView){
+                if (this.generatedView) {
                     this.generatedView.undelegateEvents();
                 }
 
                 this.generatedView = new GenerateWTrack({
-                    model: this.formModel,
+                    model           : this.formModel,
                     wTrackCollection: this.wCollection,
-                    createJob: true
+                    createJob       : true
                 });
             },
-
 
             notHide: function () {
                 return false;
@@ -467,7 +464,6 @@ define([
                         data = {_id: id, type: $(e.target).text()};
                     }
 
-
                     dataService.postData("/jobs/update", data, function (err, result) {
                         if (err) {
                             return console.log(err);
@@ -616,11 +612,10 @@ define([
                     this.projectValues.radio = 0;
                 }
 
-
                 container.html(template({
                         jobs            : projectTeam,
-                        bonus: formModel.budget.bonus,
-                        projectValues: self.projectValues,
+                        bonus           : formModel.budget.bonus,
+                        projectValues   : self.projectValues,
                         currencySplitter: helpers.currencySplitter,
                         contentType     : self.contentType
                     })
@@ -649,7 +644,6 @@ define([
 
                 var callback = _.once(cb);
 
-
                 function createView() {
                     callback();
 
@@ -661,7 +655,7 @@ define([
 
                     this.wTrackView = new wTrackView({
                         model      : self.wCollection,
-                        filter: filter,
+                        filter     : filter,
                         startNumber: startNumber
                     }).render();
                 };
@@ -694,7 +688,7 @@ define([
 
                 this.wTrackView = new wTrackView({
                     model      : self.wCollection,
-                    filter: filter,
+                    filter     : filter,
                     startNumber: startNumber
                 }).render();
 
@@ -711,7 +705,7 @@ define([
 
                 this.wTrackView = new wTrackView({
                     model      : this.wCollection,
-                    filter: filter,
+                    filter     : filter,
                     startNumber: startNumber
                 }).render();
             },
@@ -729,7 +723,7 @@ define([
 
                 self.iCollection = new invoiceCollection({
                     count      : 50,
-                    viewType: 'list',
+                    viewType   : 'list',
                     contentType: 'salesInvoice',
                     filter     : filter
                 });
@@ -761,11 +755,10 @@ define([
 
                     self.pCollection = new paymentCollection({
                         count      : 50,
-                        viewType: 'list',
+                        viewType   : 'list',
                         contentType: 'customerPayments',
                         filter     : filterPayment
                     });
-
 
                     self.pCollection.unbind();
                     self.pCollection.bind('reset', createPayment);
@@ -799,7 +792,7 @@ define([
 
                 this.qCollection = new quotationCollection({
                     count      : 50,
-                    viewType: 'list',
+                    viewType   : 'list',
                     contentType: 'salesQuotation',
                     filter     : filter
                 });
@@ -809,15 +802,14 @@ define([
                     cb();
                     new QuotationView({
                         collection      : self.qCollection,
-                        projectId : _id,
-                        customerId: self.formModel.toJSON().customer._id,
-                        projectManager: self.formModel.toJSON().projectmanager,
-                        filter        : filter,
-                        model         : self.formModel,
+                        projectId       : _id,
+                        customerId      : self.formModel.toJSON().customer._id,
+                        projectManager  : self.formModel.toJSON().projectmanager,
+                        filter          : filter,
+                        model           : self.formModel,
                         wTrackCollection: self.wCollection,
                         createJob       : true
                     }).render();
-
 
                     // self.renderProformRevenue();
                 };
@@ -843,7 +835,7 @@ define([
 
                 this.ordersCollection = new quotationCollection({
                     count      : 50,
-                    viewType: 'list',
+                    viewType   : 'list',
                     contentType: 'salesOrder',
                     filter     : filter
                 });
@@ -852,8 +844,8 @@ define([
                     cb();
                     new oredrView({
                         collection    : self.ordersCollection,
-                        projectId : _id,
-                        customerId: self.formModel.toJSON().customer._id,
+                        projectId     : _id,
+                        customerId    : self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
                         filter        : filter
                     }).render();
@@ -990,7 +982,6 @@ define([
                     url  : "/uploadProjectsFiles"
                 }).render().el;
 
-
                 thisEl.html(templ({
                     model: formModel
                 }));
@@ -1027,10 +1018,10 @@ define([
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs');
                 /*_.bindAll(this, 'getOrders');
-                _.bindAll(this, 'getWTrack');
-                _.bindAll(this, 'renderProformRevenue');
-                _.bindAll(this, 'renderProjectInfo');
-                _.bindAll(this, 'renderJobs');*/
+                 _.bindAll(this, 'getWTrack');
+                 _.bindAll(this, 'renderProformRevenue');
+                 _.bindAll(this, 'renderProjectInfo');
+                 _.bindAll(this, 'renderJobs');*/
 
                 paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 

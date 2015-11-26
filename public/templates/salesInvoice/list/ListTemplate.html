@@ -25,5 +25,12 @@ class="canceledListItem"
     <%}%>
 </td>
 <td><%=invoice.invoiceDate%></td>
+<td class="validated"><a href="javascript:;" class="selectList <%=invoice.validated%>"><%=invoice.validated%></a>
+    <ul class="newSelectList" style="display: none;">
+        <li>Draft</li>
+        <li>Done</li>
+    </ul>
+</td>
+
 </tr>
 <% }) %>

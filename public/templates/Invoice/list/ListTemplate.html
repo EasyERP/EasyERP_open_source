@@ -7,7 +7,6 @@
     <td><%=startNumber + index + 1%></td>
     <td><%=(Invoice.supplier) ? Invoice.supplier.name : ' - - - '%></td>
     <td><%=Invoice.name%></td>
-    <td><%=Invoice.invoiceDate%></td>
     <td><%=Invoice.supplierInvoiceNumber%></td>
     <td><%=(Invoice.salesPerson)? Invoice.salesPerson.name : ''%></td>
     <td><%=Invoice.dueDate%></td>
@@ -25,5 +24,13 @@
         <span> </span>
         <%}%>
     </td>
+    <td><%=Invoice.invoiceDate%></td>
+    <td class="validated"><a href="javascript:;" class="selectList <%=Invoice.validated%>"><%=Invoice.validated%></a>
+        <ul class="newSelectList" style="display: none;">
+            <li>Draft</li>
+            <li>Done</li>
+        </ul>
+    </td>
+
 </tr>
 <% }) %>
