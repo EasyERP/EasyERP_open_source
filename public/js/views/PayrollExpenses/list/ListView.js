@@ -61,9 +61,27 @@ define([
             dataKeyCbCheck: function (e) {
                 e.stopPropagation();
 
-                var checkedCB = this.$el.find('.totalRowCB');
+                if (this.changesCount !== 0) {
+                    return false;
+                }
 
-                if (checkedCB.length) {
+                var $target = $(e.target);
+
+                var id = $target.attr('id');
+                var $curEl = this.$el
+                var $allCheckBoxes;
+                var $checkedCB;
+                var status;
+
+                if (id && id === 'check_all') {
+                    status = $target.prop('checked');
+                    $allCheckBoxes = $curEl.find('.totalRowCB').not($target);
+                    $allCheckBoxes.prop('checked', status);
+                }
+
+                $checkedCB = this.$el.find('.totalRowCB:checked');
+
+                if ($checkedCB.length) {
                     this.showHideSaveCancelBtns({delete: true});
                 } else {
                     this.showHideSaveCancelBtns({delete: false});
