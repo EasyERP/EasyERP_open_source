@@ -60,9 +60,7 @@ define([
                 e.stopPropagation();
             },
 
-            saveItems: function (e) {
-                e.preventDefault();
-
+            saveItem: function () {
                 var model;
                 var self = this;
 
