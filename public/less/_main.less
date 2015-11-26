@@ -371,7 +371,7 @@ input::-ms-clear {
     }
 
     input:not([type='checkbox']) {
-      width: 93%;
+      width: 100%;
     }
 
     a.formLink {
@@ -379,7 +379,7 @@ input::-ms-clear {
     }
     span {
       &.ui-spinner {
-        width: 100%%;
+        width: 100%;
       }
     }
   }
@@ -586,7 +586,7 @@ input::-ms-clear {
   .inner {
     .half-block {
       textarea {
-        width: 95%;
+        width: 99%;
         resize: none;
         padding-top: 10px;
       }
@@ -2423,7 +2423,6 @@ input, textarea, select {
   background-color: @bg-main;
   padding: 3px 0;
   z-index: 100;
-  .box-shadow(0, 1px, 3px, rgba(150, 150, 150, 0.7));
 
   li {
     margin: 0;
@@ -2945,7 +2944,8 @@ dl {
 }
 
 .half-block {
-  width: 50%;
+  width: 49%;
+  margin-right: 1%; // for job position
   &.withPaddingRightProject {
     .inner {
       padding-top: 5px;
@@ -4538,7 +4538,7 @@ h3.dashboard {
   .job-create-info {
     .dl-auto(200px, 42%);
     input {
-      width: 218px !important;
+      width: 218px; //was important, delete because dont work in job position
     }
     select {
       width: 212px;
