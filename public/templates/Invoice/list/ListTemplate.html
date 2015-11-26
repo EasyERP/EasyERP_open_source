@@ -25,12 +25,6 @@
         <%}%>
     </td>
     <td><%=Invoice.invoiceDate%></td>
-    <td class="validated"><a href="javascript:;" class="selectList <%=Invoice.validated%>"><%=Invoice.validated%></a>
-        <ul class="newSelectList" style="display: none;">
-            <li>Draft</li>
-            <li>Done</li>
-        </ul>
-    </td>
-
+    <td class="validated"><a href="javascript:;" class="selectList <%=Invoice.validated%>"><%=Invoice.validated%></a></td>
 </tr>
 <% }) %>
