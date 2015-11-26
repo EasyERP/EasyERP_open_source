@@ -55,6 +55,22 @@ define([
             this.render(options);
         },
 
+        showOrderDialog: function(id) {
+            var self = this;
+            var model = new orderModel({validate: false});
+
+            model.urlRoot = '/Order/form/' + id;
+            model.fetch({
+                data   : {contentType: this.contentType},
+                success: function (model) {
+                    new editView({model: model, redirect: true,  projectManager: self.projectManager});
+                },
+                error  : function () {
+                    alert('Please refresh browser');
+                }
+            });
+        },
+
         goToEditDialog: function (e) {
             e.preventDefault();
 

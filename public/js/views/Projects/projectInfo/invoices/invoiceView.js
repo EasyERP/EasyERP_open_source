@@ -25,6 +25,8 @@ define([
             this.remove();
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
+
+            this.render(options);
         },
 
         template: _.template(invoiceTemplate),
@@ -41,7 +43,7 @@ define([
         showSelects: function (e) {
             e.preventDefault();
 
-            $('.newSelectList').show();
+            $(e.target).parent('td').append("<ul class='newSelectList'><li>Draft</li><li>Done</li></ul>");
 
             e.stopPropagation();
         },
@@ -166,6 +168,29 @@ define([
                     }
                 });
             });
+        },
+
+        showDialog: function(orderId){
+            var invoice = _.find(this.collection.toJSON(), function(el){
+                return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null)
+            });
+
+            var model = new invoiceModel({validate: false});
+
+            model.urlRoot = '/Invoice/form';
+            model.fetch({
+                data   : {
+                    id       : invoice._id,
+                    currentDb: App.currentDb
+                },
+                success: function (model) {
+                    new editView({model: model, redirect: true, collection: this.collection});
+                },
+                error  : function () {
+                    alert('Please refresh browser');
+                }
+            });
+
         },
 
         goToEditDialog: function (e) {

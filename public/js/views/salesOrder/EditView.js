@@ -181,9 +181,12 @@ define([
 
                             function createView() {
 
-                                new InvoiceView({
-                                    model: self.collection
-                                }).render({activeTab: true});
+                                this.invoiceView = new InvoiceView({
+                                    model: self.collection,
+                                    activeTab: true
+                                });
+
+                                this.invoiceView.showDialog(orderId);
 
                             };
 
