@@ -22,26 +22,26 @@
             </div>
             <div class="thirdPartBlock left">
                 <dl class="person-info">
-                    <div class="miniAvatarCustomer miniAvatar" data-id="<%=(project.customer._id) ? project.customer._id: ''%>">
+                    <div class="miniAvatarCustomer miniAvatar" data-id="<%=(project.customer && project.customer._id) ? project.customer._id: ''%>">
                         <img alt="" src="" class="avatar"/>
                     </div>
                     <div class="miniAvatarInfo">
                         <dt><label for="customer">Customer</label></dt>
                         <dd>
-                            <span id="customer"><%= project.customer.name %></span>
+                            <span id="customer"><%= project.customer ? project.customer.name : '' %></span>
                         </dd>
                     </div>
                 </dl>
             </div>
             <div class="thirdPartBlock left">
                 <dl class="person-info">
-                    <div class="miniAvatarPM miniAvatar" data-id="<%=(project.projectmanager._id) ? project.projectmanager._id: ''%>">
+                    <div class="miniAvatarPM miniAvatar" data-id="<%=(project.projectmanager && project.projectmanager._id) ? project.projectmanager._id: ''%>">
                             <img alt="" src="" class="avatar"/>
                     </div>
                     <div class="miniAvatarInfo">
                         <dt><label for="projectManager">Sales Manager</label></dt>
                         <dd>
-                            <span id="projectManager"><%= project.projectmanager.name %></span>
+                            <span id="projectManager"><%= project.projectmanager ? project.projectmanager.name : ''%></span>
                         </dd>
                     </div>
                 </dl>
