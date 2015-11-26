@@ -603,7 +603,7 @@ th {
 }
 .ui-spinner .ui-spinner-up {
   position: absolute;
-  right: 15px;
+  right: 8px;
   top: 2px;
   padding: 0;
   cursor: pointer;
@@ -617,8 +617,8 @@ th {
 .ui-spinner .ui-spinner-down {
   position: absolute;
   padding: 0;
-  right: 15px;
-  top: 10px;
+  right: 8px;
+  bottom: 0;
   cursor: pointer;
   font-size: 8px;
   line-height: 8px;
@@ -879,8 +879,8 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
-  margin: 30px 1%;
-  width: 98%;
+  margin: 30px 0;
+  width: 100%;
 }
 .vacation-list .V {
   background-color: #a22a2d;
@@ -905,7 +905,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .vacation-list td,
 .vacation-list th {
-  position: relative;
   cursor: pointer;
   line-height: 20px;
   height: 20px;
@@ -921,11 +920,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   outline-offset: 0;
   display: none;
   cursor: pointer;
-  border: 1px solid #66b5d4;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 5px;
+  border: 1px solid transparent;
   margin: 0 auto;
 }
 .vacation-list td input:focus,
@@ -937,6 +932,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   -webkit-box-shadow: none;
 }
 .vacation-list thead th {
+  position: relative;
   border: 1px solid #7f7f80;
 }
 .vacation-list thead th#legandCaption {
@@ -973,6 +969,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list tbody td.notForm input,
 .vacation-list tfoot td.notForm input {
   display: block;
+  width: 100%;
 }
 .vacation-list tfoot tr td {
   color: #cdcdcd;
@@ -2054,15 +2051,6 @@ select:not([type="checkbox"]) {
   background-color: inherit;
   color: #cdcdcd;
 }
-input:not([type="checkbox"]):focus,
-textarea:not([type="checkbox"]):focus,
-select:not([type="checkbox"]):focus {
-  box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  outline: none;
-  border: 1px solid #66b5d4;
-}
 .current-selected {
   font-size: 12px;
   text-decoration: none;
@@ -2074,9 +2062,6 @@ select:not([type="checkbox"]):focus {
   background-color: #303031;
   padding: 3px 0;
   z-index: 100;
-  box-shadow: 0 1px 3px rgba(150, 150, 150, 0.7);
-  -moz-box-shadow: 0 1px 3px rgba(150, 150, 150, 0.7);
-  -webkit-box-shadow: 0 1px 3px rgba(150, 150, 150, 0.7);
 }
 .newSelectList li {
   margin: 0;
@@ -2209,13 +2194,13 @@ dl dd:nth-child(2) {
   margin-top: 0;
 }
 dl dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 dl dd a.formLink {
   line-height: 0;
 }
 dl dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .clear {
   content: "\0020";
@@ -2500,7 +2485,7 @@ dl dd span.ui-spinner {
   height: 20px;
 }
 .form .inner .half-block textarea {
-  width: 95%;
+  width: 99%;
   resize: none;
   padding-top: 10px;
 }
@@ -2628,13 +2613,13 @@ dl dd span.ui-spinner {
   margin-top: 0;
 }
 .form .job-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form .job-info dd a.formLink {
   line-height: 30px;
 }
 .form .job-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form .opp-info {
   clear: both;
@@ -2681,13 +2666,13 @@ dl dd span.ui-spinner {
   margin-top: 0;
 }
 .form .opp-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
 }
 .form .opp-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -2737,13 +2722,13 @@ dl dd span.ui-spinner {
   margin-top: 0;
 }
 .form .internal-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form .internal-info dd a.formLink {
   line-height: 30px;
 }
 .form .internal-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -2794,13 +2779,13 @@ dl dd span.ui-spinner {
   margin-top: 0;
 }
 .form .assignees-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
 }
 .form .assignees-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -3063,7 +3048,7 @@ dl dd span.ui-spinner {
   height: 20px;
 }
 .formLeftColumn .form .inner .half-block textarea {
-  width: 95%;
+  width: 99%;
   resize: none;
   padding-top: 10px;
 }
@@ -3397,7 +3382,7 @@ dl dd span.ui-spinner {
   height: 20px;
 }
 .formRightColumn .form .inner .half-block textarea {
-  width: 95%;
+  width: 99%;
   resize: none;
   padding-top: 10px;
 }
@@ -3559,6 +3544,7 @@ dl dd span.ui-spinner {
 .noteWrapper .addNote.active {
   padding: 10px 14px 10px 10px;
   width: 100%;
+  box-sizing: border-box;
 }
 .noteWrapper .addNote.active .buttons {
   margin-top: 3px;
@@ -3757,7 +3743,7 @@ dl dd span.ui-spinner {
 }
 .person-info dd input:not([type='checkbox']),
 .customer-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .person-info dd a.formLink,
 .customer-info dd a.formLink {
@@ -3765,7 +3751,7 @@ dl dd span.ui-spinner {
 }
 .person-info dd span.ui-spinner,
 .customer-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .person-info span,
 .customer-info span {
@@ -3817,13 +3803,13 @@ dl dd span.ui-spinner {
   margin-top: 0;
 }
 .settings-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .settings-info dd a.formLink {
   line-height: 0;
 }
 .settings-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .settings-info label {
   line-height: 20px;
@@ -3876,13 +3862,13 @@ dl dd span.ui-spinner {
   margin-top: 0;
 }
 .project-edit-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .project-edit-info dd a.formLink {
   line-height: 0;
 }
 .project-edit-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .quotation-info {
   clear: both;
@@ -3929,13 +3915,13 @@ dl dd span.ui-spinner {
   margin-top: 0;
 }
 .quotation-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .quotation-info dd a.formLink {
   line-height: 0;
 }
 .quotation-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .quotation-info dd {
   margin-top: 1em;
@@ -3985,13 +3971,13 @@ dl dd span.ui-spinner {
   margin-top: 0;
 }
 .edit-employee-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .edit-employee-info dd a.formLink {
   line-height: 0;
 }
 .edit-employee-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .edit-employee-info input {
   max-width: 180px !important;
@@ -4000,7 +3986,8 @@ dl dd span.ui-spinner {
   max-width: 190px !important;
 }
 .half-block {
-  width: 50%;
+  width: 49%;
+  margin-right: 1%;
 }
 .half-block.withPaddingRightProject .inner {
   padding-top: 5px;
@@ -5996,7 +5983,8 @@ ul.dialog-tabs li.right button {
   display: none;
 }
 .ui-dialog .app-block {
-  width: 50%;
+  width: 49%;
+  margin-right: 1%;
 }
 .ui-dialog .app-block.withPaddingRightProject .inner {
   padding-top: 5px;
@@ -6126,13 +6114,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .app-empty-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .ui-dialog .app-empty-info dd a.formLink {
   line-height: 0;
 }
 .ui-dialog .app-empty-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .ui-dialog .app-empty-info dd {
   display: none;
@@ -6190,13 +6178,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .person-info-h3 dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .ui-dialog .person-info-h3 dd a.formLink {
   line-height: 0;
 }
 .ui-dialog .person-info-h3 dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .ui-dialog .person-info-h3 dt,
 .ui-dialog .person-info-h3 dd {
@@ -6261,13 +6249,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .summary-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .ui-dialog .summary-info dd a.formLink {
   line-height: 0;
 }
 .ui-dialog .summary-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .ui-dialog .summary-info #summary {
   width: 89% !important;
@@ -6455,13 +6443,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .form-holder form dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form dd a.formLink {
   line-height: 16px;
 }
 .form-holder form dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form select {
   font-family: Arial, Helvetica, sans-serif;
@@ -7246,13 +7234,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form-holder form .task-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form .task-info dd a.formLink {
   line-height: 0;
 }
 .form-holder form .task-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form .task-info input {
   width: 150px;
@@ -7302,13 +7290,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form-holder form .task-summary-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form .task-summary-info dd a.formLink {
   line-height: 0;
 }
 .form-holder form .task-summary-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form .task-summary-info input {
   width: 95% !important;
@@ -7358,13 +7346,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form-holder form .profile-create dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form .profile-create dd a.formLink {
   line-height: 0;
 }
 .form-holder form .profile-create dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form .profile-create input {
   width: 276px;
@@ -7417,13 +7405,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form-holder form .project-edit-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form .project-edit-info dd a.formLink {
   line-height: 0;
 }
 .form-holder form .project-edit-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form .project-edit-info input {
   width: 220px;
@@ -7479,16 +7467,16 @@ a.cancelled {
   margin-top: 0;
 }
 .form-holder form .job-create-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form .job-create-info dd a.formLink {
   line-height: 0;
 }
 .form-holder form .job-create-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form .job-create-info input {
-  width: 218px !important;
+  width: 218px;
 }
 .form-holder form .job-create-info select {
   width: 212px;
@@ -7544,13 +7532,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form-holder form .subject-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form .subject-info dd a.formLink {
   line-height: 0;
 }
 .form-holder form .subject-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form .subject-info input {
   max-width: inherit !important;
@@ -7607,13 +7595,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form-holder form .opprtunitie-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form .opprtunitie-info dd a.formLink {
   line-height: 0;
 }
 .form-holder form .opprtunitie-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form .opprtunitie-info input {
   max-width: 231px !important;
@@ -7670,13 +7658,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form-holder form .opprtunitie-lead-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form-holder form .opprtunitie-lead-info dd a.formLink {
   line-height: 0;
 }
 .form-holder form .opprtunitie-lead-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form-holder form .opprtunitie-lead-info input {
   max-width: 231px !important;
@@ -7822,13 +7810,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form .job-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form .job-info dd a.formLink {
   line-height: 30px;
 }
 .form .job-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form .opp-info {
   clear: both;
@@ -7875,13 +7863,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form .opp-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
 }
 .form .opp-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -7931,13 +7919,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form .internal-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form .internal-info dd a.formLink {
   line-height: 30px;
 }
 .form .internal-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -7988,13 +7976,13 @@ a.cancelled {
   margin-top: 0;
 }
 .form .assignees-info dd input:not([type='checkbox']) {
-  width: 93%;
+  width: 100%;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
 }
 .form .assignees-info dd span.ui-spinner {
-  width: 100%%;
+  width: 100%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -9354,7 +9342,7 @@ textarea#editInput {
   padding-top: 5px;
   background-color: #303031;
   color: #a9a9a9;
-  width: 14%;
+  width: 20%;
   height: 29px;
 }
 #favoritesContent .removeSavedFilter {
