@@ -2,7 +2,7 @@ define([
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        'views/Projects/projectInfo/orderView',
+        'views/Projects/projectInfo/orders/orderView',
         'collections/Quotation/filterCollection',
         "common",
         "custom",
@@ -126,8 +126,8 @@ define([
                 populate.fetchWorkflow({
                     wId: wId,
                     source: 'purchase',
-                    status: 'In Progress',
-                    targetSource: 'order'
+                    status: 'New'
+                    //targetSource: 'order'
                 }, function (workflow) {
                     var products;
 
@@ -143,7 +143,8 @@ define([
                             workflow: {
                                 _id: workflow._id,
                                 name: workflow.name
-                            }
+                            },
+                            type: "Not Invoiced"
                         }, {
                             headers: {
                                 mid: 57
@@ -153,11 +154,6 @@ define([
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                                 if (self.redirect){
-                                    //var url = window.location.hash;
-                                    //
-                                    //Backbone.history.fragment = '';
-                                    //Backbone.history.navigate(url, {trigger: true});
-
                                     var data ={products: JSON.stringify(products), type: "Ordered"};
 
                                     dataService.postData("/jobs/update", data,  function(err, result){

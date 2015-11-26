@@ -32,35 +32,32 @@
   width: 100%;
   margin: 0 auto;
 
-  .error {
-    left: 85%;
+  .notify, .error {
+    left: 84%;
     width: 15%;
     position: relative;
     line-height: 17px;
-    padding-right: 10px;
-    padding-left: 10px;
+    padding: 10px;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .error {
     background-color: @notifikation-error-color;
   }
 
   .notify {
-    left: 85%;
-    width: 15%;
-    position: relative;
-    line-height: 17px;
-    padding-right: 10px;
-    padding-left: 10px;
     background-color: @notifikation-notify-color;
   }
 
   .animate {
     position: absolute;
     width: 15%;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
+    margin-top: 0;
+    margin-left: 0;
     left: 100%;
     opacity: 0;
+
   }
 }
 
@@ -382,7 +379,7 @@ input::-ms-clear {
     }
     span {
       &.ui-spinner {
-        width: 96%;
+        width: 100%%;
       }
     }
   }
@@ -1563,7 +1560,7 @@ input::-ms-clear {
   }
 }
 
-.thumbnailwithavatar(@defaultWidth: 149px, @minHeight: 165px, @font-size: 13px, @defaultMargin: 7px 0 0 7px) {
+.thumbnailwithavatar(@defaultWidth: 149px, @minHeight: 165px, @font-size: 12px, @defaultMargin: 7px 0 0 7px) {
   display: block;
   position: relative;
   width: @defaultWidth;
@@ -1635,7 +1632,7 @@ input::-ms-clear {
         text-align: center;
       }
 
-      P {
+      p {
         font-family: @lucida-font;
         color: #000;
         font-size: @font-size;
@@ -2401,7 +2398,7 @@ input::-ms-clear {
 
 input, textarea, select {
   &:not([type="checkbox"]) {
-    padding: 2px 4px;
+    padding: 0 4px; //big cells in BonusType
     border: 1px solid @border-color-main;
     background-color: inherit;
     color: @mainText-color;
@@ -3767,6 +3764,12 @@ table#workflows {
 
 .addUserAndGroup {
   margin-top: 8px;
+  .addUser, .addGroup {
+    color: @tilte-color;
+  }
+  span {
+    color: @mainText-color;
+  }
 }
 
 #allUsers, .buttons, #targetUsers {
@@ -3803,7 +3806,7 @@ table#workflows {
 .createBtnHolder, #createBtnHolder {
   float: left;
   margin-top: 6px;
-  margin-left: 10px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -4462,16 +4465,16 @@ h3.dashboard {
   }
 }
 
-.stageSelect, span {
+.stageSelect, span, a {
   &.pending {
     color: red;
   }
   &.inprogress {
     color: @mainText-color-selected;
   }
-  &.closed, &.done, &.unDone {
+  &.closed, &.done, &.unDone, &.new, &.cancelled, &.draft {
     display: block;
-    color: @notifikation-notify-color;
+    //color: @notifikation-notify-color;
     text-align: center;
     .border-radius(4px);
     padding: 0 5px;
@@ -4483,6 +4486,12 @@ h3.dashboard {
   }
   &.unDone {
     color: @unpaid-wtrack;
+  }
+  &.done {
+    color: @notifikation-notify-color;
+  }
+  &.cancelled {
+    text-decoration: line-through ;
   }
 
 }
@@ -4694,6 +4703,7 @@ h3.dashboard {
     }
     .current-selected {
       line-height: 27px !important;
+      color: @tilte-color;
     }
   }
 
@@ -5347,19 +5357,19 @@ textarea#editInput {
           }
 
           .item {
-            padding: 0 0 10px 0;
+            //padding: 0 0 10px 0;
 
             .title {
               text-align: center;
-              font-size: 16px;
-              margin-bottom: 10px;
+              font-size: 14px;
+              margin-bottom: 5px;
               color: @mainText-color;
             }
             .countDays {
-              font-size: 40px;
+              font-size: 20px;
               color: #ffffff;
               width: 126px;
-              padding: 10px;
+              padding: 5px;
               text-align: center;
               margin: 0 auto;
 
@@ -5413,6 +5423,7 @@ textarea#editInput {
     &.stick {
       position: fixed;
       bottom: 0;
+      left: 0;
       width: 100%;
       background-color: @bg-main;
       padding-top: 10px;
@@ -5733,15 +5744,16 @@ textarea#editInput {
   .divCell {
     float: left;
     display: table-column;
-    width: 5.5%;
+    width: 5.4%;
     height: 22px;
     padding: 0 5px;
     box-sizing: border-box;
     text-align: right;
     line-height: 22px;
     &.left-cell {
-      width: 10%;
+      width: 11%;
       text-align: left;
+      white-space: nowrap;
     }
     &.trend {
       width: 7.5%;
@@ -6109,6 +6121,7 @@ textarea#editInput {
       .filterValues {
         text-align: left;
         width: 100%;
+        min-height: 155px;
       }
       &:not(.activeGroup) .groupName {
         &.checkedGroup {
@@ -6272,17 +6285,23 @@ textarea#editInput {
 
 #favoritesContent {
   padding-top: 5px;
+
+  .filter_name_wrapper {
+    font-size: 0;
+  }
   #forFilterName {
-    height: 22px;
+    height: 29px;
     width: 80%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
     border-right: none;
+    box-sizing: border-box;
     color: @filter-text-color;
+    vertical-align: top;
+    font-size: 12px;
   }
   #saveFilterButton {
     border: 1px solid @border-color-main;
-    margin-left: -3px;
     box-sizing: border-box;
     border-radius: 0 5px 5px 0;
     line-height: 14px;
@@ -6290,7 +6309,7 @@ textarea#editInput {
     background-color: @bg-main;
     color: @kanab-text-color;
     width: 14%;
-    height: 28px;
+    height: 29px; //28
   }
   .removeSavedFilter {
     float: right;

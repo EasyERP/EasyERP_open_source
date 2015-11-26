@@ -72,10 +72,10 @@ module.exports = (function () {
 
     var payOutSchema = basePaymentSchema.extend({
         forSale         : {type: Boolean, default: false},
-        supplier     : [{
+        supplier     : {
             _id             : {type: ObjectId, ref: 'Employees', default: null},
             fullName        : String
-        }],
+        },
         paymentMethod: {
             _id : {type: ObjectId, ref: 'ProductCategory', default: null},
             name: String
@@ -161,7 +161,7 @@ module.exports = (function () {
                 next();
             });
     });
-    salaryPaymentSchema.post('save', function (doc) {
+    /*salaryPaymentSchema.post('save', function (doc) {
         var payment = this;
         var db = payment.db.db;
 
@@ -180,7 +180,7 @@ module.exports = (function () {
 
                 console.log('Invoice %s was updated success', doc.invoice);
             });
-    });
+    });*/
 
     payOutSchema.pre('save', function (next) {
         var payment = this;

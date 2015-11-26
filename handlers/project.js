@@ -7,6 +7,7 @@ var Project = function (models) {
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
+    var objectId = mongoose.Types.ObjectId;
 
     this.getForWtrack = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -26,20 +27,33 @@ var Project = function (models) {
             });
     };
 
+    this.getForQuotation = function (req, res, next) {
+        var pId = req.query.projectId;
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+
+        Project.findOne({_id: objectId(pId)}, function (err, project) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(project);
+        });
+    };
+
     this.getFilterValues = function (req, res, next) {
         var project = models.get(req.session.lastDb, 'Project', ProjectSchema);
 
         project.aggregate([
             {
                 $group: {
-                    _id: null,
-                    project: {
+                    _id      : null,
+                    project  : {
                         $addToSet: '$projectName'
                     },
                     startDate: {
                         $addToSet: '$StartDate'
                     },
-                    endDate: {
+                    endDate  : {
                         $addToSet: '$EndDate'
                     }
                 }
@@ -110,18 +124,18 @@ var Project = function (models) {
 
                         monthHours.aggregate([{
                             $match: {
-                                year: {$in: uYear},
+                                year : {$in: uYear},
                                 month: {$in: uMonth}
                             }
                         }, {
                             $project: {
-                                date: {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                                date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
                                 hours: '$hours'
 
                             }
                         }, {
                             $group: {
-                                _id: '$date',
+                                _id  : '$date',
                                 value: {$addToSet: '$hours'}
                             }
                         }], function (err, months) {
@@ -131,7 +145,6 @@ var Project = function (models) {
 
                             cb(null, {wTrack: result, monthHours: months});
                         });
-
 
                     });
                 };
@@ -199,7 +212,6 @@ var Project = function (models) {
                         });
                     });
 
-
                     keys = Object.keys(projectTeam);
                     if (keys.length > 0) {
 
@@ -217,9 +229,9 @@ var Project = function (models) {
                         projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
 
                         var empQuery = Employee.find({_id: {$in: keys}}, {
-                            'name': 1,
+                            'name'            : 1,
                             'jobPosition.name': 1,
-                            'department.name': 1
+                            'department.name' : 1
                         }).lean();
                         empQuery.exec(function (err, response) {
 
@@ -259,13 +271,12 @@ var Project = function (models) {
                             });
 
                             budget = {
-                               // projectTeam: response,
+                                // projectTeam: response,
                                 bonus: bonus,
-                               // budget: sortBudget,
-                               // projectValues: projectValues,
+                                // budget: sortBudget,
+                                // projectValues: projectValues,
                                 //budgetTotal: budgetTotal
                             };
-
 
                             Project.update({_id: pID}, {$set: {budget: budget}}, function (err, result) {
                                 if (err) {
@@ -316,9 +327,9 @@ var Project = function (models) {
 
             collection = result;
 
-            collection.forEach(function(project){
+            collection.forEach(function (project) {
                 var totalInPr = 0;
-               // var totalNew = 0;
+                // var totalNew = 0;
                 var totalFinished = 0;
                 var total = 0;
                 var totalObj = {};
@@ -345,44 +356,44 @@ var Project = function (models) {
                     byQA : 0
                 };
 
-                jobs.forEach(function(job){
-                    if (job.workflow.name === "In Progress"){
-                        totalInPr +=  job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
-                    //} else if (job.workflow.name === "New"){
-                    //    totalNew += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
-                    } else if (job.workflow.name === "Finished"){
+                jobs.forEach(function (job) {
+                    if (job.workflow.name === "In Progress") {
+                        totalInPr += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                        //} else if (job.workflow.name === "New"){
+                        //    totalNew += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                    } else if (job.workflow.name === "Finished") {
                         totalFinished += job.budget.budgetTotal.costSum;
                     }
 
-                   total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                    total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
 
                     minDate = totalObj.minDate;
                     maxDate = totalObj.maxDate;
 
                     totalObj.revenueSum += job.budget.budgetTotal ? job.budget.budgetTotal.revenueSum : 0;
                     totalObj.costSum += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
-                    totalObj.profitSum += job.budget.budgetTotal ? job.budget.budgetTotal.profitSum: 0;
-                    totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum: 0;
-                    totalObj.minDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate: minDate <= minDate) ? minDate : minDate;
-                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate: maxDate >= maxDate) ? maxDate : maxDate;
+                    totalObj.profitSum += job.budget.budgetTotal ? job.budget.budgetTotal.profitSum : 0;
+                    totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum : 0;
+                    totalObj.minDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate : minDate <= minDate) ? minDate : minDate;
+                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate : maxDate >= maxDate) ? maxDate : maxDate;
                     totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
-                    totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA: 0;
+                    totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;
                 });
 
                 totalObj.totalInPr = totalInPr;
-               // totalObj.totalNew = totalNew;
+                // totalObj.totalNew = totalNew;
                 totalObj.totalFinished = totalFinished;
                 totalObj.total = total;
 
                 totalObj.markUp = ((totalObj.profitSum / totalObj.costSum) * 100);
 
-                if (!isFinite(totalObj.markUp)){
+                if (!isFinite(totalObj.markUp)) {
                     totalObj.markUp = 0;
                 }
 
                 totalObj.radio = ((totalObj.profitSum / totalObj.revenueSum) * 100);
 
-                if (!isFinite(totalObj.radio)){
+                if (!isFinite(totalObj.radio)) {
                     totalObj.radio = 0;
                 }
 

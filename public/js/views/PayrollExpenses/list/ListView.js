@@ -141,7 +141,7 @@ define([
                     self.changedPeriods = {};
 
                     self.showHideSaveCancelBtns();
-                });
+                }, 'application/json');
             },
 
             deleteItems: function () {
@@ -189,7 +189,7 @@ define([
                                 return Object.keys(el)[0] === curDataKey;
                             });
                         }
-                    });
+                    }, 'application/json');
                 }
 
                 self.showHideSaveCancelBtns({save: false, delete: false});

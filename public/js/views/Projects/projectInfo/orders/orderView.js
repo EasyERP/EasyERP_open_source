@@ -59,8 +59,14 @@ define([
             e.preventDefault();
 
             var self = this;
-            var id = $(e.target).closest('tr').data("id");
+            var tr = $(e.target).closest('tr');
+            var id = tr.data("id");
+            var notEditable = tr.hasClass('notEditable');
             var model = new orderModel({validate: false});
+
+            if (notEditable){
+                return false;
+            }
 
             model.urlRoot = '/Order/form/' + id;
             model.fetch({
@@ -163,6 +169,7 @@ define([
             var a = parentTd.find("a");
             var id = targetElement.attr("data-id");
             var model = this.collection.get(id);
+            var status = target$.text();
 
             model.save({
                 workflow: {
@@ -176,7 +183,11 @@ define([
                 patch   : true,
                 validate: false,
                 success : function () {
-                    a.text(target$.text())
+                    a.remove();
+
+                    if (status === "Done"){
+                        parentTd.append("<span class='done'>" + status + "</span>");
+                    }
                 }
             });
 
@@ -186,21 +197,17 @@ define([
 
         renderContent: function () {
             var currentEl = this.$el;
-            var tBody = currentEl.find('#orderTable');
-            var itemView;
             var pagenation;
 
-            tBody.empty();
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
             if (this.collection.length > 0) {
-                itemView = new this.listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                });
-                tBody.append(itemView.render({thisEl: tBody}));
+                currentEl.find('#orderTable').html(this.templateList({
+                    orderCollection: this.collection.toJSON(),
+                    startNumber    : 0,
+                    dateToLocal    : common.utcDateToLocaleDate
+                }));
             }
 
             pagenation = this.$el.find('.pagination');

@@ -9,32 +9,6 @@
 
     </colgroup>
     <thead>
-    <!--<tr class="productListItemsColumns">-->
-        <!--<th class="width20" data-sort="Product">-->
-            <!--Product-->
-        <!--</th>-->
-        <!--<% if (forSales) {%>-->
-        <!--<th class="width25" data-sort="jobs">-->
-            <!--Job-->
-        <!--</th>-->
-        <!--<% } else {%>-->
-        <!--<th class="width20" data-sort="description">-->
-            <!--Description-->
-        <!--</th>-->
-        <!--<% } %>-->
-        <!--<th class="width20" data-sort="quantity">-->
-            <!--Quantity-->
-        <!--</th>-->
-        <!--<th class="width20" data-sort="unitPrice">-->
-            <!--Unit Price-->
-        <!--</th>-->
-        <!--<th class="width20" data-sort="taxes">-->
-            <!--Taxes-->
-        <!--</th>-->
-        <!--<th class="width20" data-sort="amount">-->
-            <!--Amount-->
-        <!--</th>-->
-    <!--</tr>-->
     <tr class="productListItemsColumns">
         <th data-sort="Product">
             Product
@@ -66,11 +40,13 @@
     <tr></tr>
     </tfoot>
     <tbody id ="productList">
-    <tr>
-        <td colspan="6" class="addProductItem">
-            <a href="javascript:;">Add an item</a>
-        </td>
-    </tr>
+    <%if(!isPaid){%>
+        <tr>
+            <td colspan="6" class="addProductItem">
+                <a href="javascript:;">Add an item</a>
+            </td>
+        </tr>
+    <%}%>
     <tr>
         <td colspan="6">&nbsp;</td>
     </tr>

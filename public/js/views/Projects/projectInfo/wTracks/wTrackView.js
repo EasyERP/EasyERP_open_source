@@ -383,6 +383,8 @@ define([
 
                             table.find('[data-id="' + id + '"]').remove();
 
+                            that.$el.find('#check_all').prop('checked', false);
+                            that.setAllTotalVals();
                             that.hideSaveCancelBtns();
 
                             that.copyEl.hide();

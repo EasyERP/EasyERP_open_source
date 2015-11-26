@@ -60,7 +60,7 @@ require(['app'], function (app) {
         container.append(renderEl);
 
         container.find('div.animate').delay(10).animate({
-            left   : "85%",
+            left   : "84%",
             opacity: 1
         }, 500, function () {
             var self = $(this);

@@ -18,6 +18,7 @@ var Invoice = function (models, event) {
     var workflowHandler = new WorkflowHandler(models);
     var moment = require('../public/js/libs/moment/moment');
     var _ = require('../node_modules/underscore');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
@@ -28,10 +29,11 @@ var Invoice = function (models, event) {
     this.create = function (req, res, next) {
         var isWtrack = checkDb(req.session.lastDb);
         var body = req.body;
+        var forSales = body.forSales;
         var Invoice;
         var invoice;
 
-        if (isWtrack) {
+        if (isWtrack && forSales) {
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -136,7 +138,8 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
-            invoice.sourceDocument = order.name;
+            // invoice.sourceDocument = order.name;
+            invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
             invoice.workflow = {};
             invoice.workflow._id = workflow._id;
@@ -145,7 +148,10 @@ var Invoice = function (models, event) {
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
             if (forSales === "true") {
-                invoice.project.name = order.project.projectName;
+                if (!invoice.project) {
+                    invoice.project = {};
+                }
+                invoice.project.name = order.project ? order.project.projectName : "";
             }
 
             supplier = order['supplier'];
@@ -208,6 +214,13 @@ var Invoice = function (models, event) {
             if (err) {
                 return next(err)
             }
+
+            Order.findByIdAndUpdate(id, {$set: {type: "Invoiced"}}, {new: true}, function (err, result) {
+                if (err) {
+                    return next(err)
+                }
+            });
+
 
             res.status(201).send(result);
         });
@@ -321,7 +334,7 @@ var Invoice = function (models, event) {
                         break;
                     }
                 case 'forSales':
-                    if (condition){
+                    if (condition) {
                         condition = ConvertType(condition[0], 'boolean');
                         filtrElement[key] = condition;
                         resArray.push(filtrElement);
@@ -422,6 +435,8 @@ var Invoice = function (models, event) {
                         }
 
                         optionsObject.$and.push({_id: {$in: invoicesIds}});
+                        optionsObject.$and.push({expense: {$exists: false}});
+
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
@@ -434,9 +449,10 @@ var Invoice = function (models, event) {
                             .populate('groups.users')
                             .populate('groups.group')
                             .populate('groups.owner', '_id login')
-                            .populate('products.jobs');
-                            /*.populate('project', '_id projectName').
-                            populate('workflow._id', '-sequence');*/
+                            .populate('products.jobs')
+                            .populate('sourceDocument');
+                        /*.populate('project', '_id projectName').
+                         populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -582,7 +598,8 @@ var Invoice = function (models, event) {
                             .populate('editedBy.user')
                             .populate('groups.users')
                             .populate('groups.group')
-                            .populate('groups.owner', '_id login');
+                            .populate('groups.owner', '_id login')
+                            .populate('sourceDocument');
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -613,9 +630,11 @@ var Invoice = function (models, event) {
         var jobs = [];
         var wTrackIds = [];
         var project;
+        var orderId;
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
+        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
         if (checkDb(db)) {
@@ -632,6 +651,14 @@ var Invoice = function (models, event) {
                         }
 
                         invoiceDeleted = result.toJSON();
+
+                        orderId = invoiceDeleted.sourceDocument;
+
+                        Order.findByIdAndUpdate(objectId(orderId), {$set: {type: "Not Invoiced"}, workflow: {name: "Draft", _id: CONSTANTS.ORDERDRAFT}}, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err)
+                            }
+                        });
 
                         async.each(invoiceDeleted.products, function (product) {
                             jobs.push(product.jobs);
@@ -687,7 +714,7 @@ var Invoice = function (models, event) {
                                     });
                                     cb();
                                 });
-                            }, function(){
+                            }, function () {
                                 if (project) {
                                     event.emit('fetchJobsCollection', {project: project});
                                 }

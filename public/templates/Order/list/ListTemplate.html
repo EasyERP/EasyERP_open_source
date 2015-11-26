@@ -2,7 +2,9 @@
 <tr data-id="<%=quotation._id%>"
     <%if (quotation.workflow && quotation.workflow.status === 'Cancelled') { %>
 class="canceledListItem"
-<%}%>>
+<%} else if (quotation.type !== "Not Invoiced"){ %>
+class="notEditable"
+<% } %>>
     <td class = "notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=quotation.name%></td>
@@ -10,6 +12,7 @@ class="canceledListItem"
     <td><%=quotation.expectedDate%></td>
     <td class="unTaxed"><%=(quotation.paymentInfo) ? quotation.paymentInfo.unTaxed.toFixed(2) : '0.00'%></td>
     <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total.toFixed(2) : '0.00'%></td>
+    <td class="type"><%=quotation.type%></td>
     <td id='<%=quotation._id%>'>
         <a href="javascript:;" class="stageSelect"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
     </td>

@@ -2,7 +2,7 @@ define([
         "text!templates/salesOrder/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        "views/Projects/projectInfo/invoiceView",
+        "views/Projects/projectInfo/invoices/invoiceView",
         'collections/salesInvoice/filterCollection',
         "common",
         "custom",
@@ -142,9 +142,10 @@ define([
 
                 var self = this;
                 var url = '/invoice/receive';
+                var orderId = this.currentModel.id;
                 var data = {
                     forSales: this.forSales,
-                    orderId : this.currentModel.id
+                    orderId : orderId
                 };
 
                 dataService.postData(url, data, function (err, response) {
@@ -156,6 +157,12 @@ define([
 
                         if (self.redirect) {
                             var _id = window.location.hash.split('form/')[1];
+
+                            var tr = $("[data-id=" + orderId + "]");
+
+                            tr.addClass('notEditable');
+
+                            tr.find('.type').text("Invoiced");
 
                             var filter = {
                                 'project': {

@@ -424,7 +424,7 @@ th {
 .pagination .nextPrev div,
 .pagination .nextPrev button {
   float: left;
-  line-height: 24px;
+  line-height: 20px;
 }
 .pagination .nextPrev span {
   padding: 0 3px;
@@ -433,10 +433,10 @@ th {
   border: 1px solid #7f7f80;
   background: transparent;
   color: #cdcdcd;
-  line-height: 15px;
+  line-height: 14px;
   font-size: 15px;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 21px;
   display: block;
   text-align: center;
   padding: 2px;
@@ -501,13 +501,13 @@ th {
   background-color: #303031;
   border: 1px solid #7f7f80;
   position: absolute;
-  bottom: 23px;
+  bottom: 100%;
   left: 5px;
   display: none;
 }
 .pagination .nextPrev #pageList li {
   display: block;
-  width: 22px;
+  width: 18px;
   height: 20px;
   line-height: 20px;
   text-align: center;
@@ -523,7 +523,7 @@ th {
   border: 1px solid #7f7f80;
   margin: 0 2px 0 5px;
   width: 30px;
-  height: 22px;
+  height: 20px;
   float: left;
   font-size: 12px !important;
   text-align: center;
@@ -603,7 +603,7 @@ th {
 }
 .ui-spinner .ui-spinner-up {
   position: absolute;
-  right: 5px;
+  right: 15px;
   top: 2px;
   padding: 0;
   cursor: pointer;
@@ -617,7 +617,7 @@ th {
 .ui-spinner .ui-spinner-down {
   position: absolute;
   padding: 0;
-  right: 5px;
+  right: 15px;
   top: 10px;
   cursor: pointer;
   font-size: 8px;
@@ -644,6 +644,13 @@ th {
   border: none !important;
 }
 /*== End Input type number =============*/
+.tableResponsive {
+  min-height: .01%;
+  overflow-x: auto;
+  width: 100%;
+  overflow-y: hidden;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
@@ -688,7 +695,8 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Revenu ======================================*/
 /*== Notifikation ===============================*/
 /*== Btn Color=====================================*/
-/*VocationDashBoard =============================*/
+/*== VocationDashBoard =============================*/
+/*== Capacity =====================================*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -875,25 +883,33 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 98%;
 }
 .vacation-list .V {
-  background-color: #fd0001;
-  color: #ffffff;
+  background-color: #a22a2d;
 }
 .vacation-list .P {
-  background-color: #fda401;
-  color: #ffffff;
+  background-color: #f9a203;
 }
 .vacation-list .S {
-  background-color: #66b5d4;
-  color: #ffffff;
+  background-color: #3c86e0;
 }
 .vacation-list .E {
-  background-color: #66b5d4;
+  background-color: #3e7f42;
+}
+.vacation-list .V,
+.vacation-list .P,
+.vacation-list .S,
+.vacation-list .E {
   color: #ffffff;
+}
+.vacation-list td {
+  padding: 0 5px;
 }
 .vacation-list td,
 .vacation-list th {
   position: relative;
   cursor: pointer;
+  line-height: 20px;
+  height: 20px;
+  font-size: 12px;
 }
 .vacation-list td input,
 .vacation-list th input,
@@ -958,10 +974,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list tfoot td.notForm input {
   display: block;
 }
-.vacation-list tfoot tr {
-  line-height: 20px;
-  height: 20px;
-}
 .vacation-list tfoot tr td {
   color: #cdcdcd;
 }
@@ -1010,8 +1022,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .salary-list tbody tr td:nth-child(2),
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
-  font-size: 12px;
-  line-height: 20px;
 }
 /*== temp files==*/
 .payRoll-list {
@@ -1055,7 +1065,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .payRoll-list #payRoll-Table .scrollit {
   display: block;
-  height: calc(100vh - 209px);
+  height: calc(100vh - 2010px);
   overflow-x: hidden;
 }
 .payRollHolder {
@@ -1075,7 +1085,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 @media (min-width: 1320px) {
   table.payRoll-list #payRoll-Table .scrollit {
-    height: calc(100vh - 155px);
+    height: calc(100vh - 190px);
   }
 }
 #forInfo {
@@ -1155,31 +1165,27 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
   margin: 0 auto;
 }
+.notification .notify,
 .notification .error {
-  left: 85%;
+  left: 84%;
   width: 15%;
   position: relative;
   line-height: 17px;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding: 10px;
+  font-size: 14px;
+  color: #fff;
+}
+.notification .error {
   background-color: #fe7e86;
 }
 .notification .notify {
-  left: 85%;
-  width: 15%;
-  position: relative;
-  line-height: 17px;
-  padding-right: 10px;
-  padding-left: 10px;
   background-color: #00db30;
 }
 .notification .animate {
   position: absolute;
   width: 15%;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  margin-top: 0px;
-  margin-left: 0px;
+  margin-top: 0;
+  margin-left: 0;
   left: 100%;
   opacity: 0;
 }
@@ -2043,7 +2049,7 @@ input::-ms-clear {
 input:not([type="checkbox"]),
 textarea:not([type="checkbox"]),
 select:not([type="checkbox"]) {
-  padding: 2px 4px;
+  padding: 0 4px;
   border: 1px solid #7f7f80;
   background-color: inherit;
   color: #cdcdcd;
@@ -2209,7 +2215,7 @@ dl dd a.formLink {
   line-height: 0;
 }
 dl dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .clear {
   content: "\0020";
@@ -2628,7 +2634,7 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .form .job-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .opp-info {
   clear: both;
@@ -2681,7 +2687,7 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .form .opp-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -2737,7 +2743,7 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .form .internal-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -2794,7 +2800,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .form .assignees-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -2804,6 +2810,7 @@ dl dd span.ui-spinner {
 }
 .form .assignees-info .current-selected {
   line-height: 27px !important;
+  color: #66b5d4;
 }
 .hidden {
   display: none !important;
@@ -3758,7 +3765,7 @@ dl dd span.ui-spinner {
 }
 .person-info dd span.ui-spinner,
 .customer-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .person-info span,
 .customer-info span {
@@ -3816,7 +3823,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .settings-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .settings-info label {
   line-height: 20px;
@@ -3875,7 +3882,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .project-edit-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .quotation-info {
   clear: both;
@@ -3928,7 +3935,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .quotation-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .quotation-info dd {
   margin-top: 1em;
@@ -3984,7 +3991,7 @@ dl dd span.ui-spinner {
   line-height: 0;
 }
 .edit-employee-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .edit-employee-info input {
   max-width: 180px !important;
@@ -4849,6 +4856,13 @@ table#workflows tr td.edit-status {
 .addUserAndGroup {
   margin-top: 8px;
 }
+.addUserAndGroup .addUser,
+.addUserAndGroup .addGroup {
+  color: #66b5d4;
+}
+.addUserAndGroup span {
+  color: #cdcdcd;
+}
 #allUsers,
 .buttons,
 #targetUsers {
@@ -5107,7 +5121,7 @@ table#workflows tr td.edit-status {
 #createBtnHolder {
   float: left;
   margin-top: 6px;
-  margin-left: 10px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -5434,7 +5448,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar h4 {
   color: #66b5d4;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
@@ -5452,7 +5466,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .title {
   color: #66b5d4;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
@@ -5478,15 +5492,15 @@ ul.dialog-tabs li.right button {
   text-overflow: ellipsis;
   text-align: center;
 }
-.thumbnailwithavatar .inner .info P {
+.thumbnailwithavatar .inner .info p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 200 !important;
   line-height: 16px;
   text-align: center;
 }
-.thumbnailwithavatar .inner .info P a {
+.thumbnailwithavatar .inner .info p a {
   word-break: break-all;
   word-wrap: break-word;
 }
@@ -6118,7 +6132,7 @@ ul.dialog-tabs li.right button {
   line-height: 0;
 }
 .ui-dialog .app-empty-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .ui-dialog .app-empty-info dd {
   display: none;
@@ -6182,7 +6196,7 @@ ul.dialog-tabs li.right button {
   line-height: 0;
 }
 .ui-dialog .person-info-h3 dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .ui-dialog .person-info-h3 dt,
 .ui-dialog .person-info-h3 dd {
@@ -6253,7 +6267,7 @@ ul.dialog-tabs li.right button {
   line-height: 0;
 }
 .ui-dialog .summary-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .ui-dialog .summary-info #summary {
   width: 89% !important;
@@ -6447,7 +6461,7 @@ ul.dialog-tabs li.right button {
   line-height: 16px;
 }
 .form-holder form dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form select {
   font-family: Arial, Helvetica, sans-serif;
@@ -7125,21 +7139,34 @@ h3.dashboard {
   color: #cdcdcd;
 }
 .stageSelect.pending,
-span.pending {
+span.pending,
+a.pending {
   color: red;
 }
 .stageSelect.inprogress,
-span.inprogress {
+span.inprogress,
+a.inprogress {
   color: #66b5d4;
 }
 .stageSelect.closed,
 span.closed,
+a.closed,
 .stageSelect.done,
 span.done,
+a.done,
 .stageSelect.unDone,
-span.unDone {
+span.unDone,
+a.unDone,
+.stageSelect.new,
+span.new,
+a.new,
+.stageSelect.cancelled,
+span.cancelled,
+a.cancelled,
+.stageSelect.draft,
+span.draft,
+a.draft {
   display: block;
-  color: #00db30;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -7148,9 +7175,9 @@ span.unDone {
   line-height: 16px;
 }
 .stageSelect.projectClosed,
-span.projectClosed {
+span.projectClosed,
+a.projectClosed {
   display: block;
-  color: #00db30;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -7160,8 +7187,19 @@ span.projectClosed {
   background-color: inherit;
 }
 .stageSelect.unDone,
-span.unDone {
+span.unDone,
+a.unDone {
   color: #fd0001;
+}
+.stageSelect.done,
+span.done,
+a.done {
+  color: #00db30;
+}
+.stageSelect.cancelled,
+span.cancelled,
+a.cancelled {
+  text-decoration: line-through;
 }
 .form-holder form .task-info {
   clear: both;
@@ -7214,7 +7252,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .task-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .task-info input {
   width: 150px;
@@ -7270,7 +7308,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .task-summary-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .task-summary-info input {
   width: 95% !important;
@@ -7326,7 +7364,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .profile-create dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .profile-create input {
   width: 276px;
@@ -7385,7 +7423,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .project-edit-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .project-edit-info input {
   width: 220px;
@@ -7447,7 +7485,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .job-create-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .job-create-info input {
   width: 218px !important;
@@ -7512,7 +7550,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .subject-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .subject-info input {
   max-width: inherit !important;
@@ -7575,7 +7613,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .opprtunitie-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .opprtunitie-info input {
   max-width: 231px !important;
@@ -7638,7 +7676,7 @@ span.unDone {
   line-height: 0;
 }
 .form-holder form .opprtunitie-lead-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form-holder form .opprtunitie-lead-info input {
   max-width: 231px !important;
@@ -7790,7 +7828,7 @@ span.unDone {
   line-height: 30px;
 }
 .form .job-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .opp-info {
   clear: both;
@@ -7843,7 +7881,7 @@ span.unDone {
   line-height: 30px;
 }
 .form .opp-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -7899,7 +7937,7 @@ span.unDone {
   line-height: 30px;
 }
 .form .internal-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -7956,7 +7994,7 @@ span.unDone {
   line-height: 0;
 }
 .form .assignees-info dd span.ui-spinner {
-  width: 96%;
+  width: 100%%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -7966,6 +8004,7 @@ span.unDone {
 }
 .form .assignees-info .current-selected {
   line-height: 27px !important;
+  color: #66b5d4;
 }
 .full-width {
   width: 100%;
@@ -8511,20 +8550,17 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td:last-child {
   border: none;
 }
-.grid-conatiner .statisticsAtten table tr td .item {
-  padding: 0 0 10px 0;
-}
 .grid-conatiner .statisticsAtten table tr td .item .title {
   text-align: center;
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 14px;
+  margin-bottom: 5px;
   color: #cdcdcd;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
-  font-size: 40px;
+  font-size: 20px;
   color: #ffffff;
   width: 126px;
-  padding: 10px;
+  padding: 5px;
   text-align: center;
   margin: 0 auto;
   /*for vacationDashboard*/
@@ -8572,6 +8608,7 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten.stick {
   position: fixed;
   bottom: 0;
+  left: 0;
   width: 100%;
   background-color: #303031;
   padding-top: 10px;
@@ -8803,7 +8840,7 @@ textarea#editInput {
 .grid-conatiner.revenue .divCell {
   float: left;
   display: table-column;
-  width: 5.5%;
+  width: 5.4%;
   height: 22px;
   padding: 0 5px;
   box-sizing: border-box;
@@ -8811,8 +8848,9 @@ textarea#editInput {
   line-height: 22px;
 }
 .grid-conatiner.revenue .divCell.left-cell {
-  width: 10%;
+  width: 11%;
   text-align: left;
+  white-space: nowrap;
 }
 .grid-conatiner.revenue .divCell.trend {
   width: 7.5%;
@@ -9160,6 +9198,7 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup .filterValues {
   text-align: left;
   width: 100%;
+  min-height: 155px;
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup {
   color: #cdcdcd;
@@ -9293,17 +9332,22 @@ textarea#editInput {
 #favoritesContent {
   padding-top: 5px;
 }
+#favoritesContent .filter_name_wrapper {
+  font-size: 0;
+}
 #favoritesContent #forFilterName {
-  height: 22px;
+  height: 29px;
   width: 80%;
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   border-right: none;
+  box-sizing: border-box;
   color: #cdcdcd;
+  vertical-align: top;
+  font-size: 12px;
 }
 #favoritesContent #saveFilterButton {
   border: 1px solid #7f7f80;
-  margin-left: -3px;
   box-sizing: border-box;
   border-radius: 0 5px 5px 0;
   line-height: 14px;
@@ -9311,7 +9355,7 @@ textarea#editInput {
   background-color: #303031;
   color: #a9a9a9;
   width: 14%;
-  height: 28px;
+  height: 29px;
 }
 #favoritesContent .removeSavedFilter {
   float: right;

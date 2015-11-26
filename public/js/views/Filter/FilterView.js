@@ -346,7 +346,6 @@ define([
                 filterIc.addClass('active');
                 filterValues.append('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
 
-
             },
 
             removeFilter: function (e) {
@@ -387,8 +386,17 @@ define([
             },
 
             showHideValues: function (e) {
-                var filterGroupContainer = $(e.target).closest('.filterGroup');
 
+                var filterGroupContainer = $(e.target).closest('.filterGroup');
+                if (this.previousGroupContainer) {
+                    this.toggleGroup(this.previousGroupContainer)
+                }
+                this.previousGroupContainer = filterGroupContainer;
+                this.toggleGroup(filterGroupContainer);
+
+            },
+
+            toggleGroup: function (filterGroupContainer) {
                 filterGroupContainer.find('.ulContent').toggleClass('hidden');
                 filterGroupContainer.toggleClass('activeGroup');
             },

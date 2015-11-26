@@ -20,20 +20,21 @@ define(function () {
         sendData(url, data, 'PUT', callback);
     };
 
-    var patchData = function (url, data, callback) {
-        sendData(url, data, 'PATCH', callback);
+    var patchData = function (url, data, callback, contentType) {
+        sendData(url, data, 'PATCH', callback, contentType);
     };
 
-    var deleteData = function (url, data, callback) {
-        sendData(url, data, 'DELETE', callback);
+    var deleteData = function (url, data, callback, contentType) {
+        sendData(url, data, 'DELETE', callback, contentType);
     };
 
 
-    var sendData = function (url, data, method, callback) {
+    var sendData = function (url, data, method, callback, contentType) {
+        var ajaxObject;
         method = method.toUpperCase() || 'POST';
-        $.ajax({
+
+        ajaxObject = {
             url        : url,
-            contentType: 'application/json',
             data       : data,
             type       : method,
             success    : function (response) {
@@ -42,7 +43,13 @@ define(function () {
             error      : function (jxhr) {
                 callback(jxhr)
             }
-        });
+        };
+
+        if (contentType) {
+            ajaxObject.contentType = contentType;
+        }
+
+        $.ajax(ajaxObject);
     };
     return {
         getData   : getData,

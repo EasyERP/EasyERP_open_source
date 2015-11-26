@@ -14,7 +14,7 @@ module.exports = function (models, event) {
     router.post('/supplier', handler.createPayOut);
     router.post('/salary', handler.salaryPayOut);
     router.delete('/:id', handler.remove);
-    router.patch('/:contentType', handler.putchBulk);
+    router.patch('/:byType', handler.putchBulk);
 
     return router;
 };

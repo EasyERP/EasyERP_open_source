@@ -45,8 +45,6 @@
                     }
                 }
 
-
-
                 if (options && options.viewType) {
                     this.url += options.viewType;
                 }
