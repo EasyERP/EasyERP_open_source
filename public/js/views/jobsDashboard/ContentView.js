@@ -105,6 +105,8 @@ define([
                 if (App.cashedData && App.cashedData.projectInfo) {
                     this.collection = custom.retriveFromCash('projectInfo');
 
+                    this.quotationColl
+
                     this.$el.find('#jobsContent').html(template({
                         collection: this.collection.toJSON(),
                         startNumber: 0,
@@ -113,7 +115,7 @@ define([
 
                     this.$el.find('#footer').html(footer({
                         collection: this.collection.toJSON(),
-                        currencySplitter: helpers.currencySplitter,
+                        currencySplitter: helpers.currencySplitter
                     }))
                 } else {
                     this.collection = new contentCollection({});
@@ -138,7 +140,7 @@ define([
 
                 this.$el.find('#footer').html(footer({
                     collection: this.collection.toJSON(),
-                    currencySplitter: helpers.currencySplitter,
+                    currencySplitter: helpers.currencySplitter
                 }))
 
             },
