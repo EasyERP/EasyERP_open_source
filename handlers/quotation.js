@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+var WorkflowHandler = require('./workflow');
+
 var Quotation = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
@@ -10,6 +12,7 @@ var Quotation = function (models, event) {
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
+    var workflowHandler = new WorkflowHandler(models);
 
     this.create = function (req, res, next) {
         var db = req.session.lastDb;
