@@ -106,20 +106,6 @@ define([
                 var template = _.template(DashboardTemplate);
                 var footer = _.template(FooterDashboard);
 
-                function fetchQuotations(cb){
-                    var quotationCollection = new QuotationCollection({
-                        count      : 50,
-                        viewType   : 'list',
-                        contentType: 'salesQuotation'
-                    });
-
-                    quotationCollection.bind('reset', sendCB);
-
-                    function sendCB(){
-                        cb(null, quotationCollection);
-                    }
-                };
-
                 function fetchJobs(cb){
                     var jobsCollection = new JobsCollection({
                         viewType: 'list',
@@ -139,7 +125,6 @@ define([
 
                     self.$el.find('#jobsContent').html(template({
                         collection         : self.collection.toJSON(),
-                       // quotationCollection: self.quotationCollection.toJSON(),
                         startNumber        : 0,
                         currencySplitter   : helpers.currencySplitter
                     }));
@@ -157,7 +142,6 @@ define([
 
                 self.$el.find('#jobsContent').html(template({
                     collection         : self.collection.toJSON(),
-                    quotationCollection: self.quotationCollection.toJSON(),
                     startNumber        : 0,
                     currencySplitter   : helpers.currencySplitter
                 }));
