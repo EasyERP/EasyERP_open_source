@@ -236,7 +236,7 @@ var Invoice = function (models, event) {
         var Invoice;
 
         if (checkDb(db)) {
-            moduleId = 64
+            moduleId = 64;
             isWtrack = true;
         }
 
@@ -255,16 +255,13 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    //var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
-                            next(err);
-                        } else {
-                            res.status(200).send(invoice);
+                           return next(err);
                         }
-                    });
 
+                        res.status(200).send(invoice);
+                    });
                 } else {
                     res.status(403).send();
                 }
@@ -282,6 +279,7 @@ var Invoice = function (models, event) {
             if (err) {
                 return next(err);
             }
+
             res.status(200).send(invoices);
         });
     };
@@ -352,7 +350,7 @@ var Invoice = function (models, event) {
         var moduleId = 56;
 
         if (checkDb(db)) {
-            moduleId = 64
+            moduleId = 64;
         }
 
         if (req.session && req.session.loggedIn && db) {

@@ -20,12 +20,12 @@ define([
 
             events: {
                 "click #saveBtn"                                                  : "saveItem",
-                "click #cancelBtn": "hideDialog",
-                "click .current-selected": "showNewSelect",
-                "click"                  : "hideNewSelect",
-                'click .dialog-tabs a'   : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"      : "notHide",
+                "click #cancelBtn"                                                : "hideDialog",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .details"                                                  : "showDetailsBox",
@@ -79,7 +79,7 @@ define([
 
                 var paymentView = new PaymentCreateView({
                     model     : this.currentModel,
-                    redirect: this.redirect,
+                    redirect  : this.redirect,
                     collection: this.collection
                 });
 
@@ -101,7 +101,7 @@ define([
 
                 populate.fetchWorkflow({
                     wId         : wId,
-                    source: 'purchase',
+                    source      : 'purchase',
                     targetSource: 'invoice',
                     status      : 'Cancelled',
                     order       : 1
@@ -113,7 +113,7 @@ define([
                     self.currentModel.save({
                         workflow: {
                             _id   : workflow._id,
-                            name: workflow.name,
+                            name  : workflow.name,
                             status: workflow.status
                         }
                     }, {
@@ -152,7 +152,7 @@ define([
                     self.currentModel.save({
                         workflow: {
                             _id   : workflow._id,
-                            name: workflow.name,
+                            name  : workflow.name,
                             status: workflow.status
                         }
                     }, {
@@ -211,6 +211,12 @@ define([
             saveItem: function () {
                 var self = this;
                 var mid = 56;
+
+                var errors = this.$el.find('.errorContent');
+
+                if (errors.length){
+                    return
+                }
 
                 var selectedProducts = this.$el.find('.productItem');
                 var products = [];
@@ -285,7 +291,7 @@ define([
 
                 var data = {
                     supplier             : supplier,
-                    fiscalPosition: null,
+                    fiscalPosition       : null,
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                     paymentReference     : $.trim(this.$el.find('#payment_reference').val()),
@@ -297,8 +303,8 @@ define([
                     salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
 
-                    products   : this.redirect ? productsOld : products,
-                    paymentInfo: payments,
+                    //products   : this.redirect ? productsOld : products,
+                    //paymentInfo: payments,
 
                     groups  : {
                         owner: $("#allUsersSelect").data("id"),
@@ -309,7 +315,6 @@ define([
                     workflow: workflow
 
                 };
-
 
                 if (supplier) {
                     this.model.save(data, {
@@ -409,13 +414,13 @@ define([
 
                 formString = this.template({
                     model           : this.currentModel.toJSON(),
-                    isWtrack: self.isWtrack,
-                    isPaid  : this.isPaid,
-                    wTracks : wTracks,
-                    project : project,
-                    assigned: assigned,
-                    customer: customer,
-                    total   : total,
+                    isWtrack        : self.isWtrack,
+                    isPaid          : this.isPaid,
+                    wTracks         : wTracks,
+                    project         : project,
+                    assigned        : assigned,
+                    customer        : customer,
+                    total           : total,
                     currencySplitter: helpers.currencySplitter
                 });
 
@@ -489,7 +494,12 @@ define([
                 this.$el.find('#due_date').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
+                onSelect: function() {
+                    var targetInput = $(this);
+
+                    targetInput.removeClass('errorContent');
+                }
                 });
 
                 this.delegateEvents(this.events);
@@ -524,7 +534,7 @@ define([
                     }).render({model: model}).el
                 );
 
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -537,7 +547,7 @@ define([
                         });
 
                     }
-
+                }
 
                 return this;
             }

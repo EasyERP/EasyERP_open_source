@@ -116,6 +116,7 @@ define([
 
                 var self = this;
                 var wId;
+                var id = self.currentModel.get('_id');
 
                 if (this.forSales) {
                     wId = 'Sales Order';
@@ -182,13 +183,16 @@ define([
 
                                     function createView() {
 
-                                        new ordersView({
+                                        this.ordersView = new ordersView({
                                             collection: self.ordersCollection,
                                             projectId : self.pId,
                                             customerId: self.customerId,
                                             projectManager: self.projectManager,
-                                            filter: filter
-                                        }).render({activeTab: true});
+                                            filter: filter,
+                                            activeTab: true
+                                        });
+
+                                        this.ordersView.showOrderDialog(id);
                                     };
 
                                     self.ordersCollection.bind('reset', createView);

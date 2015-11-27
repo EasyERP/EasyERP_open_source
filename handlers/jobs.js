@@ -199,6 +199,10 @@ var Jobs = function (models, event) {
             });
         }
     }
+
+    this.getJobsForDashboard =  function(req, res, next){
+
+    }
 };
 
 module.exports = Jobs;
