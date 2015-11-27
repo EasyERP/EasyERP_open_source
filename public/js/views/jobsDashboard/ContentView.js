@@ -7,17 +7,19 @@ define([
         "text!templates/jobsDashboard/FooterDashboard.html",
         'collections/Projects/projectInfoCollection',
         'collections/salesQuotation/filterCollection',
+        'collections/Jobs/filterCollection',
         "custom",
         "dataService",
-        "helpers"
+        "helpers",
+        "async"
     ],
-    function (DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, custom, dataService, helpers) {
+    function (DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, JobsCollection, custom, dataService, helpers, async) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
-            actionType: "Content",
-            template: _.template(DashboardHeader),
-            el: '#content-holder',
-            initialize: function (options) {
+            actionType : "Content",
+            template   : _.template(DashboardHeader),
+            el         : '#content-holder',
+            initialize : function (options) {
                 this.startTime = options.startTime;
 
                 this.render();
@@ -26,17 +28,16 @@ define([
             events: {
                 //"click .choseDateRange .item": "newRange",
                 "click .oe_sortable": "goSort",
-                "click #project": "showJobs"
+                "click #project"    : "showJobs"
             },
 
-            showJobs: function(e){
+            showJobs: function (e) {
                 var target = e.target;
                 var projectId = $(target).parents("tr").attr("data-id");
                 var subId = "subRow" + projectId;
                 var subRowCheck = $('.' + subId);
                 var jobContainer = $(target).parents("tr");
                 var icon = $(jobContainer).find('.expand');
-
 
                 if (icon.html() === '-') {
                     icon.html('+');
@@ -92,8 +93,9 @@ define([
 
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
-                this.collection = new contentCollection({
-                    sort: sortObject
+                this.collection = new JobsCollection({
+                    sort: sortObject,
+                    joinWithQuotation: true
                 });
 
                 this.collection.bind('reset', this.renderContent, this);
@@ -104,67 +106,61 @@ define([
                 var template = _.template(DashboardTemplate);
                 var footer = _.template(FooterDashboard);
 
-                if (App.cashedData && App.cashedData.projectInfo) {
-                    this.collection = custom.retriveFromCash('projectInfo');
-
-                    this.quotationCollection = new QuotationCollection({
+                function fetchQuotations(cb){
+                    var quotationCollection = new QuotationCollection({
                         count      : 50,
                         viewType   : 'list',
                         contentType: 'salesQuotation'
                     });
 
-                    this.quotationCollection.bind('reset', renderTemplate );
+                    quotationCollection.bind('reset', sendCB);
 
-                    function renderTemplate(){
-                        self.$el.find('#jobsContent').html(template({
-                            collection: self.collection.toJSON(),
-                            quotationCollection : self.quotationCollection.toJSON(),
-                            startNumber: 0,
-                            currencySplitter: helpers.currencySplitter
-                        }));
-
-                        self.$el.find('#footer').html(footer({
-                            collection: self.collection.toJSON(),
-                            currencySplitter: helpers.currencySplitter
-                        }))
+                    function sendCB(){
+                        cb(null, quotationCollection);
                     }
-                } else {
-                    this.collection = new contentCollection({});
+                };
 
-                    custom.cacheToApp('projectInfo', this.collection);
-                }
+                function fetchJobs(cb){
+                    var jobsCollection = new JobsCollection({
+                        viewType: 'list',
+                        joinWithQuotation: true
+                    });
 
-                this.collection.bind('reset', this.renderContent, this);
+                    jobsCollection.bind('reset', sendCB);
+
+                    function sendCB(){
+                        cb(null, jobsCollection);
+                    }
+                };
+
+                async.parallel([fetchQuotations, fetchJobs], function(err, result){
+                    self.collection = result[1];
+                    self.quotationCollection = result[0];
+
+                    self.$el.find('#jobsContent').html(template({
+                        collection         : self.collection.toJSON(),
+                        quotationCollection: self.quotationCollection.toJSON(),
+                        startNumber        : 0,
+                        currencySplitter   : helpers.currencySplitter
+                    }));
+
+                    //self.$el.find('#footer').html(footer({
+                    //    collection      : self.collection.toJSON(),
+                    //    currencySplitter: helpers.currencySplitter
+                    //}));
+                });
             },
 
             renderContent: function () {
                 var self = this;
                 var template = _.template(DashboardTemplate);
-                var footer = _.template(FooterDashboard);
 
-                custom.cacheToApp('projectInfo', this.collection);
-
-                this.quotationCollection = new QuotationCollection({
-                    viewType   : 'list',
-                    contentType: 'salesQuotation'
-                });
-
-                this.quotationCollection.bind('reset', renderTemplate );
-
-                function renderTemplate(){
-                    self.$el.find('#jobsContent').html(template({
-                        collection: self.collection.toJSON(),
-                        quotationCollection : self.quotationCollection.toJSON(),
-                        startNumber: 0,
-                        currencySplitter: helpers.currencySplitter
-                    }));
-
-                    self.$el.find('#footer').html(footer({
-                        collection: self.collection.toJSON(),
-                        currencySplitter: helpers.currencySplitter
-                    }))
-                }
-
+                self.$el.find('#jobsContent').html(template({
+                    collection         : self.collection.toJSON(),
+                    quotationCollection: self.quotationCollection.toJSON(),
+                    startNumber        : 0,
+                    currencySplitter   : helpers.currencySplitter
+                }));
             },
 
             render: function () {
