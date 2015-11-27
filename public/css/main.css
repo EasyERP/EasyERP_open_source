@@ -876,6 +876,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.invisible_border {
+  border: 1px solid transparent;
+}
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
