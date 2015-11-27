@@ -1,5 +1,5 @@
 /**
- * Created by Лилия on 23.06.2015.
+ * Created by пїЅпїЅпїЅпїЅпїЅ on 23.06.2015.
  */
 define([
         'text!templates/monthHours/topBarTemplate.html',
@@ -40,8 +40,7 @@ define([
 
             deleteEvent: function (event) {
                 event.preventDefault();
-                var answer=confirm("Really DELETE items ?!");
-                if (answer==true) this.trigger('deleteEvent');
+                this.trigger('deleteEvent');
             },
 
             saveEvent: function (event) {

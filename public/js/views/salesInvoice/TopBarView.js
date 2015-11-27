@@ -15,7 +15,8 @@ define([
                 "click a.changeContentView": 'changeContentViewType',
                 "click #top-bar-deleteBtn": "deleteEvent",
                 "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click #top-bar-createBtn": "createEvent",
+                "click #top-bar-saveBtn": "saveEvent"
             },
 
             changeContentViewType: function (e) {
@@ -31,6 +32,11 @@ define([
             createEvent: function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
+            },
+
+            saveEvent: function (event) {
+                event.preventDefault();
+                this.trigger('saveEvent');
             },
 
             render: function () {

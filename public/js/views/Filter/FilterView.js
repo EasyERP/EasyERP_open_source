@@ -729,7 +729,10 @@ define([
                 }
                 for (var i = valuesArray.length - 1; i >= 0; i--) {
                     collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
-                    collectionElement.set({status: true});
+
+                    if (collectionElement){
+                        collectionElement.set({status: true});
+                    }
                 }
             },
 
