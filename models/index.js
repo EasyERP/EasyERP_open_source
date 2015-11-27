@@ -54,4 +54,5 @@ module.exports = (function () {
     require('./jobs.js');
     require('./payRoll.js');
     require('./paymentType.js');
+    require('./chartAccount.js');
 })();
