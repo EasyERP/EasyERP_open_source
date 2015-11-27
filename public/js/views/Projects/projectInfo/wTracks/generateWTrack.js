@@ -526,6 +526,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         createJob: self.createJob
                     });
 
+                    if(!project){
+                        return;
+                    }
+
                     this.$el = $(dialog).dialog({
                         dialogClass: "wTrackDialog",
                         width      : 1200,
