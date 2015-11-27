@@ -394,7 +394,7 @@ define([
 
                     currentEl.append(new listTotalView({
                         element : this.$el.find("#listTable"),
-                        cellSpan: 7,
+                        cellSpan: 6,
                         wTrack  : true
                     }).render());
 
@@ -409,7 +409,7 @@ define([
                         itemsNumber: this.collection.namberToShow
                     }).render());
 
-                    currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+                    currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
                 }
 
                 self.renderCheckboxes();
