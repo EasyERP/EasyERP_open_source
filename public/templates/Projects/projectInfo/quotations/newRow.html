@@ -8,7 +8,7 @@ class="canceledListItem"
 <td><%=(quotation.supplier) ? quotation.supplier.name : ''%></td>
 <td><%=quotation.project.projectmanager.name%></td>
 <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total : '0'%></td>
-<td class="type"><%=quotation.type%></td>
+<!--<td class="type"><%=quotation.type%></td>-->
 <td id='<%=quotation._id%>'>
     <a href="javascript:;" class="stageSelect"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
 </td>

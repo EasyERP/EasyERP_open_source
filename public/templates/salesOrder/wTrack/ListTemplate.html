@@ -11,7 +11,7 @@ class="notEditable"
 <td><%=(order.supplier) ? order.supplier.name : '------'%></td>
 <td><%=(order.project) ? order.project.projectmanager.name : '------'%></td>
 <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
-<td class="type"><%=order.type%></td>
+<!--<td class="type"><%=order.type%></td>-->
 <td id='<%=order._id%>'>
     <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
 </td>

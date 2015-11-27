@@ -84,17 +84,19 @@ var Jobs = function (models, event) {
                             return next(err);
                         }
 
-                        async.each(result, function(job, cb){
+                        var newResult = result;
+
+                            async.each(result, function(job, cb){
                             async.each(quots, function(quotation){
                                 quotation.products.forEach(function(product){
                                     if (product.jobs.toString() === job._id.toString()){
-                                        return job.quotation = quotation.paymentInfo.total;
+                                      return newResult.quotation = quotation.paymentInfo.total;
                                     }
                                 });
                             });
                             cb();
                         }, function(){
-                            res.status(200).send(result)
+                            res.status(200).send(newResult)
                         })
 
                     });

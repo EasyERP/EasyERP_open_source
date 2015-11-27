@@ -31,8 +31,8 @@
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="validated">Validated<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <!--<th class="oe_sortable" data-sort="validated">Validated<span class="arrow down">7</span><span-->
+                    <!--class="arrow up">v</span></th>-->
         </tr>
         </thead>
         <tbody id="listTable">
@@ -67,12 +67,12 @@
                 <%}%>
             </td>
         <td><%=invoice.invoiceDate%></td>
-        <td class="validated"><a href="javascript:;" class="selectList <%=invoice.validated%>"><%=invoice.validated%></a>
-            <ul class="newSelectList" style="display: none;">
-                <li>Draft</li>
-                <li>Done</li>
-            </ul>
-        </td>
+        <!--<td class="validated"><a href="javascript:;" class="selectList <%=invoice.validated%>"><%=invoice.validated%></a>-->
+            <!--<ul class="newSelectList" style="display: none;">-->
+                <!--<li>Draft</li>-->
+                <!--<li>Done</li>-->
+            <!--</ul>-->
+        <!--</td>-->
 
         <%balance += parseFloat(invoice.paymentInfo.balance)%>
     <%paid += parseFloat(invoice.paymentInfo.unTaxed)%>

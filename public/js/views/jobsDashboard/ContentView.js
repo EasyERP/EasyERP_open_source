@@ -133,13 +133,13 @@ define([
                     }
                 };
 
-                async.parallel([fetchQuotations, fetchJobs], function(err, result){
-                    self.collection = result[1];
-                    self.quotationCollection = result[0];
+                async.parallel([fetchJobs], function(err, result){
+                    self.collection = result[0];
+                   // self.quotationCollection = result[0];
 
                     self.$el.find('#jobsContent').html(template({
                         collection         : self.collection.toJSON(),
-                        quotationCollection: self.quotationCollection.toJSON(),
+                       // quotationCollection: self.quotationCollection.toJSON(),
                         startNumber        : 0,
                         currencySplitter   : helpers.currencySplitter
                     }));
