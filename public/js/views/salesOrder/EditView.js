@@ -162,7 +162,7 @@ define([
 
                             tr.addClass('notEditable');
 
-                            tr.find('.type').text("Invoiced");
+                            tr.find('.workflow').find('a').text("Invoiced");
 
                             var filter = {
                                 'project': {

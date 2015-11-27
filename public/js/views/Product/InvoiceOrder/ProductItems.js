@@ -102,7 +102,7 @@ define([
             var tr = this.$el.find('tr[data-error="true"]');
             var aEl = tr.find('a[data-id="jobs"]');
 
-            aEl.click();
+            //aEl.click();
         },
 
         checkForQuickEdit: function (el) {
