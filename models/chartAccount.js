@@ -13,13 +13,13 @@ module.exports = (function () {
         account: {type: String, default: ""},
         type: {type: String, default: ""}
 
-    }, {collection: 'chartAccount'});
+    }, {collection: 'chartOfAccount'});
 
-    mongoose.model('chartAccount', chartAccountSchema);
+    mongoose.model('chartOfAccount', chartAccountSchema);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['chartAccount'] = chartAccountSchema;
+    mongoose.Schemas['chartOfAccount'] = chartAccountSchema;
 })();
