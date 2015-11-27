@@ -900,6 +900,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list .E {
   color: #ffffff;
 }
+.vacation-list .vacation_input .editing {
+  width: 100%;
+}
 .vacation-list td {
   padding: 0 5px;
 }
@@ -1254,6 +1257,9 @@ td {
   font-size: 100%;
   line-height: 1;
   font-family: inherit;
+}
+input {
+  box-sizing: border-box;
 }
 table {
   border-collapse: collapse;
