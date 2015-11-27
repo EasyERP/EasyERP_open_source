@@ -5640,7 +5640,6 @@ ul.dialog-tabs li.right button {
   display: block;
   background: #303031 !important;
   border: 1px solid #7f7f80;
-  -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: 280px;
   min-height: 130px;
   cursor: pointer;
