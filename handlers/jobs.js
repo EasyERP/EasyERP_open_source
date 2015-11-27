@@ -39,7 +39,7 @@ var Jobs = function (models, event) {
         var queryObject = {};
 
         var data = req.query;
-        var joinWithQuotation = data.joinWithQuotation && data.joinWithQuotation === "true" ? true: false;
+        var joinWithQuotation = data.joinWithQuotation && data.joinWithQuotation === "true" ? true : false;
         var sort = data.sort ? data.sort : {"budget.budgetTotal.costSum": -1};
         var query;
 
@@ -62,7 +62,7 @@ var Jobs = function (models, event) {
         }
 
         query = JobsModel.find(queryObject).sort(sort);
-        if (!joinWithQuotation){
+        if (!joinWithQuotation) {
             query
                 .populate('project')
                 .exec(function (err, result) {
@@ -80,27 +80,22 @@ var Jobs = function (models, event) {
                         return next(err);
                     }
 
-                    Quotation.find({}, {products: 1, paymentInfo: 1}, function(err, quots){
-                        if (err){
+                    Quotation.find({}, {products: 1, paymentInfo: 1}, function (err, quots) {
+                        if (err) {
                             return next(err);
                         }
 
-                        var newResult = [];
-
-                            async.each(result, function(job, cb){
-                            async.each(quots, function(quotation){
-                                quotation.products.forEach(function(product){
-                                    if (product.jobs && product.jobs.toString() === job._id.toString()){
-                                        var newJob = _.clone(job);
-                                        newJob.quotation = quotation.paymentInfo.total;
-                                        newResult.push(newJob);
-                                      return newResult;
+                        async.each(result, function (job, cb) {
+                            async.each(quots, function (quotation) {
+                                quotation.products.forEach(function (product) {
+                                    if (product.jobs && product.jobs.toString() === job._id.toString()) {
+                                        job._doc.quotation = quotation.paymentInfo.total;
                                     }
                                 });
                             });
                             cb();
-                        }, function(){
-                            res.status(200).send(newResult)
+                        }, function () {
+                            res.status(200).send(result)
                         })
 
                     });
@@ -241,7 +236,7 @@ var Jobs = function (models, event) {
         }
     }
 
-    this.getJobsForDashboard =  function(req, res, next){
+    this.getJobsForDashboard = function (req, res, next) {
 
     }
 };
