@@ -52,7 +52,15 @@
     <td><%=job.workflow.name%></td>
     <td><%=job.type%></td>
     <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
-    <td>&nbsp</td>
+    <!--<td><% _.find(quotationCollection, function(quot){ %>-->
+        <!--<% quot.products.forEach(function(product){ %>-->
+        <!--<%if (product.jobs === job._id) {%>-->
+          <!--<% return quot.paymentInfo.total%>-->
+
+        <!--<%}%>-->
+        <!--<%})%>-->
+        <!--<%})%>-->
+        </td>
 </tr>
 <%  }); %>
 <%  }); %>

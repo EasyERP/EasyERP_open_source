@@ -129,6 +129,7 @@ var PayRoll = function (models) {
                         return next(err);
                     }
                     res.status(200).send(payRoll);
+                    composeExpensesAndCache(req);
                 });
             });
         } else {

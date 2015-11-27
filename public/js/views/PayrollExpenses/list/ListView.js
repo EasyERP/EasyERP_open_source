@@ -35,11 +35,13 @@ define([
             changesCount  : 0,
 
             events: {
-                "click .statusCheckbox": "statusCheck",
-                "click tr.mainRow"     : "gotoForm",
-                "click .datePicker"    : "datePickerClick",
-                "change .datePicker"   : "datePickerChange",
-                "click .totalRowCB"    : "dataKeyCbCheck"
+                "click .statusCheckbox"      : "showDropDown",
+                "click li"                   : "statusCheck",
+                "click tr.mainRow"           : "gotoForm",
+                "click .datePicker"          : "datePickerClick",
+                "change .datePicker"         : "datePickerChange",
+                "click .totalRowCB"          : "dataKeyCbCheck",
+                "click :not(.statusCheckbox)": "hideDropDowns",
             },
 
             initialize: function (options) {
@@ -58,12 +60,34 @@ define([
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
+            hideDropDowns: function () {
+                this.$el.find('.newSelectList').remove();
+            },
+
             dataKeyCbCheck: function (e) {
                 e.stopPropagation();
 
-                var checkedCB = this.$el.find('.totalRowCB');
+                if (this.changesCount !== 0) {
+                    return false;
+                }
 
-                if (checkedCB.length) {
+                var $target = $(e.target);
+
+                var id = $target.attr('id');
+                var $curEl = this.$el
+                var $allCheckBoxes;
+                var $checkedCB;
+                var status;
+
+                if (id && id === 'check_all') {
+                    status = $target.prop('checked');
+                    $allCheckBoxes = $curEl.find('.totalRowCB').not($target);
+                    $allCheckBoxes.prop('checked', status);
+                }
+
+                $checkedCB = this.$el.find('.totalRowCB:checked');
+
+                if ($checkedCB.length) {
                     this.showHideSaveCancelBtns({delete: true});
                 } else {
                     this.showHideSaveCancelBtns({delete: false});
@@ -152,6 +176,7 @@ define([
                 var $tr;
                 var $statusCb;
                 var $dateTd;
+                var defVal;
 
                 var curDataKey;
 
@@ -163,9 +188,14 @@ define([
 
                         $statusCb = $tr.find('.statusCheckbox .checkbox');
                         $dateTd = $tr.find('.datePicker');
+                        defVal = $dateTd.attr('data-val');
 
-                        $statusCb.find('.checkbox').prop('checked', !$statusCb.prop('checked'));
-                        $dateTd.find('input').datepicker('setDate', new Date($dateTd.attr('data-val')));
+                        $statusCb.prop('checked', !$statusCb.prop('checked'));
+                        if (defVal) {
+                            $dateTd.find('input').datepicker('setDate', new Date(defVal));
+                        } else {
+                            $.datepicker._clearDate($dateTd.find('input'));
+                        }
                     }
                 } else {
                     checkboxes = this.$el.find('.totalRowCB:checked');
@@ -195,26 +225,37 @@ define([
                 self.showHideSaveCancelBtns({save: false, delete: false});
             },
 
+            showDropDown: function (e) {
+                e.stopPropagation();
+
+                var $target = $(e.target);
+                var isHref = $target.hasClass('currentSelected');
+                var $href = isHref ? $target : $target.find('.currentSelected');
+
+                $href.append('<ul class="newSelectList"><li data-value="false">Draft</li><li data-value="true">Done</li></ul>');
+            },
+
             statusCheck: function (e) {
                 e.stopPropagation();
 
                 var $target = $(e.target);
-                var isCheckBox = $target.hasClass('checkbox');
-                var $checkbox = isCheckBox ? $target : $target.find('.checkbox');
-                var state = $checkbox.prop('checked');
+                var dataVal = $target.attr('data-value');
+                var $td = $target.closest('td');
+                var $href = $td.find('.currentSelected');
                 var $tr = $target.closest('tr');
                 var dataKey = $tr.attr('id');
 
-                if (!isCheckBox) {
-                    $checkbox.prop('checked', !state);
-                }
+                dataVal = dataVal === 'true' ? true : null;
+
+                $href.text(dataVal ? 'Done' : 'Draft');
+                $href.attr('data-value', dataVal);
 
                 if (!this.changedPeriods[dataKey]) {
                     this.changedPeriods[dataKey] = {};
                 }
 
                 if (!this.changedPeriods[dataKey].hasOwnProperty('status')) {
-                    this.changedPeriods[dataKey].status = state;
+                    this.changedPeriods[dataKey].status = dataVal;
                     this.changesCount++;
                 } else {
                     delete this.changedPeriods[dataKey].status;
