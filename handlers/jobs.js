@@ -3,6 +3,7 @@
  */
 var mongoose = require('mongoose');
 var async = require('async');
+var _ = require('../node_modules/underscore');
 
 var Jobs = function (models, event) {
     var JobsSchema = mongoose.Schemas['jobs'];
@@ -84,13 +85,16 @@ var Jobs = function (models, event) {
                             return next(err);
                         }
 
-                        var newResult = result;
+                        var newResult = [];
 
                             async.each(result, function(job, cb){
                             async.each(quots, function(quotation){
                                 quotation.products.forEach(function(product){
                                     if (product.jobs && product.jobs.toString() === job._id.toString()){
-                                      return newResult.quotation = quotation.paymentInfo.total;
+                                        var newJob = _.clone(job);
+                                        newJob.quotation = quotation.paymentInfo.total;
+                                        newResult.push(newJob);
+                                      return newResult;
                                     }
                                 });
                             });
