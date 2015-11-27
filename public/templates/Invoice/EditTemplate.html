@@ -84,7 +84,13 @@
 
                                         <dt><label for="due_date">Due Date </label></dt>
                                         <dd>
-                                            <input type="text" class="date errorContent" id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
+                                            <input type="text" class="date
+                                            <% if (!model.dueDate) {%>
+                                              errorContent"
+                                              <% } else { %>
+                                              "
+                                            <% } %>
+                                            id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
                                         </dd>
 
                                         <dt><label for="account">Account</label></dt>
