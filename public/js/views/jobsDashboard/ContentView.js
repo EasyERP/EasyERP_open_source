@@ -6,11 +6,12 @@ define([
         "text!templates/jobsDashboard/DashboardTemplate.html",
         "text!templates/jobsDashboard/FooterDashboard.html",
         'collections/Projects/projectInfoCollection',
+        'collections/salesQuotation/filterCollection',
         "custom",
         "dataService",
         "helpers"
     ],
-    function (DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, custom, dataService, helpers) {
+    function (DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, custom, dataService, helpers) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType: "Content",
@@ -99,22 +100,34 @@ define([
             },
 
             renderJobs: function () {
+                var self = this;
                 var template = _.template(DashboardTemplate);
                 var footer = _.template(FooterDashboard);
 
                 if (App.cashedData && App.cashedData.projectInfo) {
                     this.collection = custom.retriveFromCash('projectInfo');
 
-                    this.$el.find('#jobsContent').html(template({
-                        collection: this.collection.toJSON(),
-                        startNumber: 0,
-                        currencySplitter: helpers.currencySplitter
-                    }));
+                    this.quotationCollection = new QuotationCollection({
+                        count      : 50,
+                        viewType   : 'list',
+                        contentType: 'salesQuotation'
+                    });
 
-                    this.$el.find('#footer').html(footer({
-                        collection: this.collection.toJSON(),
-                        currencySplitter: helpers.currencySplitter,
-                    }))
+                    this.quotationCollection.bind('reset', renderTemplate );
+
+                    function renderTemplate(){
+                        self.$el.find('#jobsContent').html(template({
+                            collection: self.collection.toJSON(),
+                            quotationCollection : self.quotationCollection.toJSON(),
+                            startNumber: 0,
+                            currencySplitter: helpers.currencySplitter
+                        }));
+
+                        self.$el.find('#footer').html(footer({
+                            collection: self.collection.toJSON(),
+                            currencySplitter: helpers.currencySplitter
+                        }))
+                    }
                 } else {
                     this.collection = new contentCollection({});
 
@@ -125,21 +138,32 @@ define([
             },
 
             renderContent: function () {
+                var self = this;
                 var template = _.template(DashboardTemplate);
                 var footer = _.template(FooterDashboard);
 
                 custom.cacheToApp('projectInfo', this.collection);
 
-                this.$el.find('#jobsContent').html(template({
-                    collection: this.collection.toJSON(),
-                    startNumber: 0,
-                    currencySplitter: helpers.currencySplitter
-                }));
+                this.quotationCollection = new QuotationCollection({
+                    viewType   : 'list',
+                    contentType: 'salesQuotation'
+                });
 
-                this.$el.find('#footer').html(footer({
-                    collection: this.collection.toJSON(),
-                    currencySplitter: helpers.currencySplitter,
-                }))
+                this.quotationCollection.bind('reset', renderTemplate );
+
+                function renderTemplate(){
+                    self.$el.find('#jobsContent').html(template({
+                        collection: self.collection.toJSON(),
+                        quotationCollection : self.quotationCollection.toJSON(),
+                        startNumber: 0,
+                        currencySplitter: helpers.currencySplitter
+                    }));
+
+                    self.$el.find('#footer').html(footer({
+                        collection: self.collection.toJSON(),
+                        currencySplitter: helpers.currencySplitter
+                    }))
+                }
 
             },
 

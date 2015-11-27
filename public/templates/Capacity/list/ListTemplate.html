@@ -8,7 +8,7 @@
         if (typeof capacity.capacityArray[i] === 'string') {%>
             <%=capacity.capacityArray[i] ? '<td data-dayID="' + (i) + '" class="' + capacity.capacityArray[i] + '" data-content="vacType">' + capacity.capacityArray[i] + '</td>' : '<td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue"></td>'%>
         <%  } else { %>
-            <%=capacity.capacityArray[i] ? '<td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue">' + capacity.capacityArray[i] + '</td>' : '<td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue"></td>'%>
+            <%=capacity.capacityArray[i] ? '<td data-dayID="' + (i) + '" class="editable vacation_input" data-type="input" data-content="capacityValue">' + capacity.capacityArray[i] + '</td>' : '<td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue"></td>'%>
     <%  } }%>
     <td class="totalHours">
         <%=capacity.capacityMonthTotal%>

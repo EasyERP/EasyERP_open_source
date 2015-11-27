@@ -62,12 +62,11 @@
             <td class="expand">+</td>
             <td class="editableJobs" id="jobsName"><%=element.name%></td>
             <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
-            <td class="selects"><a data-id="<%=element.type%>" id="type" class="current-selected"><%=element.type%></a>
+            <td class="selects"><a data-id="<%=element.type%>" id="type" class=""><%=element.type%></a>
                 <ul class="newSelectList" style="display: none;">
                     <li>Ordered</li>
                     <li>Quoted</li>
                     <li>Invoiced</li>
-                    <li>Paid</li>
                     <li>Not Quoted</li>
                 </ul>
             </td>

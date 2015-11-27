@@ -323,12 +323,13 @@ var Quotation = function (models, event) {
                 key  : 'isOrder',
                 value: ['true']
             }
-        } else {
-            filter.isOrder = {
-                key  : 'isOrder',
-                value: ['false']
-            }
         }
+        //} else {
+        //    filter.isOrder = {
+        //        key  : 'isOrder',
+        //        value: ['false']
+        //    }
+        //}
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
