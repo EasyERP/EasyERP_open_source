@@ -2,7 +2,7 @@
  * Created by lilya on 27/11/15.
  */
 var mongoose = require('mongoose');
-require('../../models/index.js');
+require('../models/index.js');
 var QuotationSchema = mongoose.Schemas['Quotation'];
 var async = require('async');
 
