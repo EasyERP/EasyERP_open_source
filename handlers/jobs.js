@@ -89,7 +89,7 @@ var Jobs = function (models, event) {
                             async.each(result, function(job, cb){
                             async.each(quots, function(quotation){
                                 quotation.products.forEach(function(product){
-                                    if (product.jobs.toString() === job._id.toString()){
+                                    if (product.jobs && product.jobs.toString() === job._id.toString()){
                                       return newResult.quotation = quotation.paymentInfo.total;
                                     }
                                 });
