@@ -1,0 +1,7 @@
+<% collection.forEach(function(chart, index){ %>
+<tr data-id="<%=chart._id%>">
+    <td data-content="_id" class="money"><%=chart._id%></td>
+    <td data-content="account" class="money"><%=chart.account%></td>
+    <td data-content="type" class="money"><%=chart.type%></td>
+</tr>
+<% }) %>

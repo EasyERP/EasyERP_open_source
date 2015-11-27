@@ -406,6 +406,7 @@ define([], function () {
         JOBSDASHBOARD     : 'jobsDashboard',
         PAYROLLPAYMENTS   : 'PayrollPayments',
         PRODUCTSETTINGS   : "productSettings",
+        CHARTOFACCOUNT   : "ChartOfAccount",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
