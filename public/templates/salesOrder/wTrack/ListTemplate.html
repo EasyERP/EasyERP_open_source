@@ -13,7 +13,7 @@ class="notEditable"
 <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
 <!--<td class="type"><%=order.type%></td>-->
 <td id='<%=order._id%>'>
-    <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
+    <a href="javascript:;" class=""><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
 </td>
 <td><%=order.orderDate%></td>
 </tr>

@@ -14,7 +14,7 @@
   <!--<td class="type"><%=order.type%></td>-->
 <td id='<%=order._id%>' class="centerCell workflow">
   <%if(order.workflow.name !== 'Done'){%>
-    <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
+    <a href="javascript:;" class=""><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
   <% } else {%>
   <span class="done"><%=order.workflow.name%></span>
   <%}%>
