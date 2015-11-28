@@ -13,6 +13,7 @@ define([
         'helpers'
     ],
     function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+        "use strict";
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -20,12 +21,12 @@ define([
 
             events: {
                 "click #saveBtn"                                                  : "saveItem",
-                "click #cancelBtn"                                                : "hideDialog",
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
+                "click #cancelBtn": "hideDialog",
+                "click .current-selected": "showNewSelect",
+                "click"                  : "hideNewSelect",
+                'click .dialog-tabs a'   : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .newSelectList li.miniStylePagination"      : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .details"                                                  : "showDetailsBox",
@@ -75,14 +76,26 @@ define([
             },
 
             newPayment: function (e) {
+                var paymentView;
+                var self = this;
+
                 e.preventDefault();
 
-                var paymentView = new PaymentCreateView({
-                    model     : this.currentModel,
-                    redirect  : this.redirect,
-                    collection: this.collection
+                this.saveItem(function (err) {
+                    if (!err) {
+                        paymentView = new PaymentCreateView({
+                            model     : self.currentModel,
+                            redirect: self.redirect,
+                            collection: self.collection
+                        });
+                    }
                 });
 
+                /*paymentView = new PaymentCreateView({
+                    model     : this.currentModel,
+                    redirect: this.redirect,
+                    collection: this.collection
+                });*/
             },
 
             cancelInvoice: function (e) {
@@ -101,7 +114,7 @@ define([
 
                 populate.fetchWorkflow({
                     wId         : wId,
-                    source      : 'purchase',
+                    source: 'purchase',
                     targetSource: 'invoice',
                     status      : 'Cancelled',
                     order       : 1
@@ -113,7 +126,7 @@ define([
                     self.currentModel.save({
                         workflow: {
                             _id   : workflow._id,
-                            name  : workflow.name,
+                            name: workflow.name,
                             status: workflow.status
                         }
                     }, {
@@ -152,7 +165,7 @@ define([
                     self.currentModel.save({
                         workflow: {
                             _id   : workflow._id,
-                            name  : workflow.name,
+                            name: workflow.name,
                             status: workflow.status
                         }
                     }, {
@@ -208,13 +221,13 @@ define([
                 $('.edit-invoice-dialog').remove();
             },
 
-            saveItem: function () {
+            saveItem: function (paymentCb) {
                 var self = this;
                 var mid = 56;
 
                 var errors = this.$el.find('.errorContent');
 
-                if (errors.length){
+                if (errors.length) {
                     return
                 }
 
@@ -291,7 +304,7 @@ define([
 
                 var data = {
                     supplier             : supplier,
-                    fiscalPosition       : null,
+                    fiscalPosition: null,
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                     paymentReference     : $.trim(this.$el.find('#payment_reference').val()),
@@ -328,6 +341,11 @@ define([
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             self.hideDialog();
+
+                            if (paymentCb && typeof paymentCb === 'function') {
+                                return paymentCb(null);
+                            }
+
                             if (self.redirect) {
                                 Backbone.history.navigate(url, {trigger: true});
                             } else {
@@ -336,6 +354,10 @@ define([
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
+
+                            if (paymentCb && typeof paymentCb === 'function') {
+                                return paymentCb(xhr.text);
+                            }
                         }
                     });
 
@@ -397,8 +419,10 @@ define([
                 var total;
                 var wTracksDom;
                 var buttons;
+                var invoiceDate;
 
                 model = this.currentModel.toJSON();
+                invoiceDate = model.invoiceDate;
 
                 this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
 
@@ -414,13 +438,13 @@ define([
 
                 formString = this.template({
                     model           : this.currentModel.toJSON(),
-                    isWtrack        : self.isWtrack,
-                    isPaid          : this.isPaid,
-                    wTracks         : wTracks,
-                    project         : project,
-                    assigned        : assigned,
-                    customer        : customer,
-                    total           : total,
+                    isWtrack: self.isWtrack,
+                    isPaid  : this.isPaid,
+                    wTracks : wTracks,
+                    project : project,
+                    assigned: assigned,
+                    customer: customer,
+                    total   : total,
                     currencySplitter: helpers.currencySplitter
                 });
 
@@ -488,19 +512,25 @@ define([
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
+                    onSelect   : function () {
+                        var dueDatePicker = $('#due_date');
+                        var endDate = $(this).datepicker('getDate');
+
+                        dueDatePicker.datepicker('option', 'minDate', endDate);
+                    }
                 });
 
                 this.$el.find('#due_date').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                onSelect: function() {
-                    var targetInput = $(this);
+                    onSelect   : function () {
+                        var targetInput = $(this);
 
-                    targetInput.removeClass('errorContent');
-                }
-                });
+                        targetInput.removeClass('errorContent');
+                    }
+                }).datepicker('option', 'minDate', invoiceDate);
 
                 this.delegateEvents(this.events);
 

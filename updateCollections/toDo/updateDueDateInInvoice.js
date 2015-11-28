@@ -1,11 +1,3 @@
-/**
- * Created by soundstorm on 06.08.15.
- */
-
-/**
- * Created by Roman on 04.04.2015.
- */
-
 var mongoose = require('mongoose');
 var moment = require('../../public/js/libs/moment/moment');
 var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -23,7 +15,7 @@ dbObject.once('open', function callback() {
 
 var Invoice = dbObject.model("wTrackInvoice", jobsInvoiceSchema);
 
-var query = Invoice.find({dueDate: {$exists: false}});
+var query = Invoice.find({$or: [{dueDate: {$exists: false}}, {dueDate: {$type: 2}}]});
 
 query.exec(function (error, _res) {
     if (error) {

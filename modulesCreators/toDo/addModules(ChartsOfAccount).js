@@ -24,7 +24,7 @@ MongoClient.connect(url, function (err, db) {
             _id: 83,
             mname: 'ChartOfAccount',
             href: 'ChartOfAccount',
-            sequence: 72,
+            sequence: 83,
             parrent: 59,
             link: true,
             visible: true

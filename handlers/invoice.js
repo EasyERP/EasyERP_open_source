@@ -478,23 +478,15 @@ var Invoice = function (models, event) {
     this.getInvoiceById = function (req, res, next) {
         var isWtrack = checkDb(req.session.lastDb);
         var moduleId = 56;
-        var data = {};
+        var data = req.query || {};
         var id = data.id;
         var forSales;
-
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
 
         if (isWtrack) {
             moduleId = 64
         }
 
-        if (data.forSales === 'false') {
-            forSales = false;
-        } else {
-            forSales = true;
-        }
+        forSales = data.forSales !== 'false';
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {

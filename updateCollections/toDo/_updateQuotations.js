@@ -2,7 +2,7 @@
  * Created by lilya on 27/11/15.
  */
 var mongoose = require('mongoose');
-require('../models/index.js');
+require('../../models/index.js');
 var QuotationSchema = mongoose.Schemas['Quotation'];
 var async = require('async');
 
@@ -14,7 +14,7 @@ dbObject.once('open', function callback() {
 
 var Quotation = dbObject.model("Quotation", QuotationSchema);
 
-var query = Quotation.find() .lean();
+var query = Quotation.find().lean();
 
 query.exec(function (error, _res) {
     if (error) {
@@ -23,13 +23,8 @@ query.exec(function (error, _res) {
 
     async.each(_res, function (quot, callback) {
 
-        var workNotQuoted = {
-            _id: "55647b932e4aa3804a765ec5",
-            name: "Not Quoted"
-        };
-
         var workNotInvoiced = {
-            _id: "56586521d89184c0049e6a7d",
+            _id: "55647b932e4aa3804a765ec5",
             name: "Not Invoiced"
         };
 
@@ -39,7 +34,7 @@ query.exec(function (error, _res) {
         };
 
         if (quot.type === 'Not Ordered'){
-            Quotation.update({_id: quot._id}, {$set: {workflow: workNotQuoted}}, callback);
+            Quotation.update({_id: quot._id}, {$set: {workflow: workNotInvoiced}}, callback);
         } else if (quot.type === 'Not Invoiced'){
             Quotation.update({_id: quot._id}, {$set: {workflow: workNotInvoiced}}, callback);
         } else if (quot.type === 'Invoiced'){
