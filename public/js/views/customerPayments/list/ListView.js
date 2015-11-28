@@ -312,36 +312,36 @@ define([
 
             render: function (options) {
                 var self;
-                var currentEl;
+                var $currentEl;
 
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
+                $currentEl = this.$el;
 
                 if (App.weTrack) {
-                    currentEl.html('');
-                    currentEl.append(_.template(ListHeaderForWTrack));
-                    currentEl.append(new listItemView({
+                    $currentEl.html('');
+                    $currentEl.append(_.template(ListHeaderForWTrack));
+                    $currentEl.append(new listItemView({
                         collection : this.collection,
                         page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
                 } else {
-                    currentEl.html('');
-                    currentEl.append(_.template(listTemplate));
-                    currentEl.append(new listItemView({
+                    $currentEl.html('');
+                    $currentEl.append(_.template(listTemplate));
+                    $currentEl.append(new listItemView({
                         collection : this.collection,
                         page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
                 }
 
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
                 this.renderCheckboxes();
 
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
 
                 this.renderFilter(self);
 
@@ -355,7 +355,7 @@ define([
 
                 this.$listTable = $('#listTable');
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 return this;
             }

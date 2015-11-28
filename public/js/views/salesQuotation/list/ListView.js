@@ -115,9 +115,12 @@ define([
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
+
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
+                    $(e.target).parent().append(_.template(stagesTemplate, {
+                        stagesCollection: this.stages
+                    }));
                     return false;
                 }
             },
@@ -128,44 +131,44 @@ define([
 
             render: function () {
                 var self;
-                var currentEl;
+                var $currentEl;
                 var FilterView = filterView;
                 var templ;
 
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
+                $currentEl = this.$el;
 
-                currentEl.html('');
+                $currentEl.html('');
 
                 if (App.weTrack) {
                     templ = _.template(listForWTrack);
-                    currentEl.append(templ);
-                    currentEl.append(new listItemView({
+                    $currentEl.append(templ);
+                    $currentEl.append(new listItemView({
                         collection : this.collection,
                         page      : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());//added two parameters page and items number
 
-                    currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 5}).render());
+                    $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 5}).render());
                 } else {
-                    currentEl.append(_.template(listTemplate));
-                    currentEl.append(new listItemView({
+                    $currentEl.append(_.template(listTemplate));
+                    $currentEl.append(new listItemView({
                         collection : this.collection,
                         page      : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());//added two parameters page and items number
 
-                    currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 5}).render());
+                    $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 5}).render());
                 }
 
 
                 this.renderCheckboxes();
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
                 this.renderFilter(self);
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 dataService.getData("/workflow/fetch", {
                     wId         : 'Sales Order',

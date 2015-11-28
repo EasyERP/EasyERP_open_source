@@ -127,17 +127,17 @@
             render: function () {
                 var self = this;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var filterObject;
                 var FilterView;
                 var showList;
 
-                currentEl.html('');
+                $currentEl.html('');
 
                 if (this.collection.length > 0) {
-                    currentEl.append(this.template({collection: this.collection.toJSON()}));
+                    $currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
-                    currentEl.html('<h2>No companies found</h2>');
+                    $currentEl.html('<h2>No companies found</h2>');
                 }
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
@@ -157,7 +157,7 @@
                         });
                     }
                 });
-                currentEl.append(createdInTag);
+                $currentEl.append(createdInTag);
                 filterObject = [
                     {
                         name: 'isCustomer',

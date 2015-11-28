@@ -215,11 +215,11 @@
 
             render: function () {
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var createdInTag;
 
-                currentEl.html('');
-                currentEl.append(this.template({collection: this.collection.toJSON()}));
+                $currentEl.html('');
+                $currentEl.append(this.template({collection: this.collection.toJSON()}));
 
                 this.bind('incomingStages', this.pushStages, this);
 
@@ -257,7 +257,7 @@
                 populate.getPriority("#priority", this);
 
                 createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-                currentEl.append(createdInTag);
+                $currentEl.append(createdInTag);
 
                 return this;
             },

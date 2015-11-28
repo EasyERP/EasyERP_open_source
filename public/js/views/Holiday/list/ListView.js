@@ -253,11 +253,11 @@ define([
             render: function () {
                 $('.ui-dialog ').remove();
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
+                $currentEl.append(new listItemView({
                     collection: this.collection,
                     page: this.page,
                     itemsNumber: this.collection.namberToShow
@@ -273,22 +273,22 @@ define([
 
                 this.renderCheckboxes();
 
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
 
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
             renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
+                var $currentEl = this.$el;
+                var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
                     collection: this.collection,
-                    page: currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                    page: $currentEl.find("#currentShowPage").val(),
+                    itemsNumber: $currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
 
@@ -369,7 +369,7 @@ define([
             },
 
             deleteItems: function () {
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var that = this,
                     mid = 39,
                     model;

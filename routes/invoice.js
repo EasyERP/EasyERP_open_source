@@ -8,13 +8,10 @@ module.exports = function (models, event) {
     var handler = new InvoiceHandler(models, event);
 
     router.get('/', handler.getAll);
-
     router.get('/totalCollectionLength', handler.totalCollectionLength);
-
     router.get('/getFilterValues', handler.getFilterValues);
-
     router.get('/generateName', handler.generateName);
-    
+    router.get('/stats', handler.getStats);
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;
         switch (viewType) {

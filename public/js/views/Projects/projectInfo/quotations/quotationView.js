@@ -118,14 +118,14 @@ define([
         },
 
         renderContent: function () {
-            var currentEl = this.$el;
+            var $currentEl = this.$el;
             var pagenation;
 
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
             if (this.collection.length > 0) {
-                currentEl.find('#listTableQuotation').html(this.templateList({
+                $currentEl.find('#listTableQuotation').html(this.templateList({
                     quotations : this.collection.toJSON(),
                     startNumber: 0,
                     dateToLocal: common.utcDateToLocaleDate
@@ -173,6 +173,7 @@ define([
             var id = $(e.target).closest("tr").attr("data-id");
             var model = new currentModel({validate: false});
             var modelQuot = this.collection.get(id);
+
             self.collection.bind('remove', renderProformRevenue);
 
             function renderProformRevenue() {
@@ -307,13 +308,13 @@ define([
         },
 
         render: function () {
-            var currentEl = this.$el;
+            var $currentEl = this.$el;
             var self = this;
 
-            currentEl.html('');
-            currentEl.prepend(this.templateHeader);
+            $currentEl.html('');
+            $currentEl.prepend(this.templateHeader);
 
-            currentEl.find('#listTableQuotation').html(this.templateList({
+            $currentEl.find('#listTableQuotation').html(this.templateList({
                 quotations : this.collection.toJSON(),
                 startNumber: 0,
                 dateToLocal: common.utcDateToLocaleDate
@@ -331,7 +332,7 @@ define([
             });
 
             dataService.getData("/workflow/fetch", {
-                wId         : 'Purchase Order',
+                wId         : 'Sales Order',
                 source      : 'purchase',
                 targetSource: 'quotation'
             }, function (stages) {

@@ -279,7 +279,7 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Type'  : {
+            'Type'    : {
                 view   : 'type',
                 backend: 'type'
             },
@@ -301,7 +301,7 @@ define([], function () {
                 view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
             },
-            'Type'  : {
+            'Type'         : {
                 view   : 'type',
                 backend: 'type'
             },
@@ -323,7 +323,7 @@ define([], function () {
                 view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
             },
-            'Type'  : {
+            'Type'         : {
                 view   : 'type',
                 backend: 'type'
             },
@@ -337,7 +337,7 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Type'  : {
+            'Type'    : {
                 view   : 'type',
                 backend: 'type'
             },
@@ -406,6 +406,7 @@ define([], function () {
         JOBSDASHBOARD     : 'jobsDashboard',
         PAYROLLPAYMENTS   : 'PayrollPayments',
         PRODUCTSETTINGS   : "productSettings",
+        INVOICEAGING      : "invoiceAging",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -428,6 +429,6 @@ define([], function () {
             'Design',
             'PM'
         ],
-        SELECTP_ROJECT: 'Please select a Project'
+        SELECTP_ROJECT   : 'Please select a Project'
     }
 });

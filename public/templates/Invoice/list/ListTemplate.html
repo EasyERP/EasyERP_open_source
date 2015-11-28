@@ -15,13 +15,13 @@
     <td class="total"><%=(Invoice.paymentInfo) ? parseFloat(Invoice.paymentInfo.total).toFixed(2) : '0.00'%></td>
     <td id='<%=Invoice._id%>'>
         <%if(Invoice.workflow){%>
-        <%if(Invoice.workflow.status !== 'Done'){%>
-        <a href="javascript:;" class="stageSelect <%=Invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=Invoice.workflow.name%></a>
+            <%if(Invoice.workflow.status !== 'Done'){%>
+                <a href="javascript:;" class="stageSelect <%=Invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=Invoice.workflow.name%></a>
+            <% } else {%>
+                <span class="done"><%=Invoice.workflow.name%></span>
+            <%}%>
         <% } else {%>
-        <span class="done"><%=Invoice.workflow.name%></span>
-        <%}%>
-        <% } else {%>
-        <span> </span>
+            <span> </span>
         <%}%>
     </td>
     <td><%=Invoice.invoiceDate%></td>

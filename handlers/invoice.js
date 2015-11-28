@@ -3,6 +3,8 @@ var WorkflowHandler = require('./workflow');
 var RESPONSES = require('../constants/responses');
 
 var Invoice = function (models, event) {
+    "use strict";
+
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var InvoiceSchema = mongoose.Schemas['Invoice'];
@@ -257,7 +259,7 @@ var Invoice = function (models, event) {
 
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
-                           return next(err);
+                            return next(err);
                         }
 
                         res.status(200).send(invoice);
@@ -439,8 +441,8 @@ var Invoice = function (models, event) {
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query
-                            //.populate('supplier', 'name _id')
-                            //.populate('salesPerson', 'name _id')
+                        //.populate('supplier', 'name _id')
+                        //.populate('salesPerson', 'name _id')
                             .populate('department', '_id departmentName')
                             .populate('createdBy.user')
                             .populate('editedBy.user')
@@ -477,13 +479,12 @@ var Invoice = function (models, event) {
         var isWtrack = checkDb(req.session.lastDb);
         var moduleId = 56;
         var data = {};
+        var id = data.id;
+        var forSales;
 
         for (var i in req.query) {
             data[i] = req.query[i];
         }
-
-        var id = data.id;
-        var forSales;
 
         if (isWtrack) {
             moduleId = 64
@@ -652,7 +653,10 @@ var Invoice = function (models, event) {
 
                         orderId = invoiceDeleted.sourceDocument;
 
-                        Order.findByIdAndUpdate(objectId(orderId), {$set: {type: "Not Invoiced"}, workflow: {name: "Draft", _id: CONSTANTS.ORDERDRAFT}}, {new: true}, function (err, result) {
+                        Order.findByIdAndUpdate(objectId(orderId), {
+                            $set    : {type: "Not Invoiced"},
+                            workflow: {name: "Draft", _id: CONSTANTS.ORDERDRAFT}
+                        }, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err)
                             }
@@ -896,7 +900,7 @@ var Invoice = function (models, event) {
 
         db.collection('settings').findOneAndUpdate({
                 dbName : currentDbName,
-                name   : 'invoice',
+                name  : 'invoice',
                 project: project
             },
             {
@@ -982,6 +986,73 @@ var Invoice = function (models, event) {
             res.status(200).send(result)
         })
     };
+
+    this.getStats = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var now = new Date();
+
+        Invoice.aggregate([{
+            $match: {
+                forSales: true,
+                'paymentInfo.balance': {
+                    $gt: 0
+                }
+            }
+        }, {
+            $project: {
+                dueDate    : 1,
+                project    : 1,
+                supplier   : 1,
+                name       : 1,
+                paymentInfo: 1,
+                salesPerson: 1,
+                diffStatus : {
+                    $cond: {
+                        if  : {
+                            $lt: [{$subtract: [now, '$dueDate']}, 0]
+                        },
+                        then: -1,
+                        else: {
+                            $cond: {
+                                if  : {
+                                    $lt: [{$subtract: [now, '$dueDate']}, 2592000000]
+                                },
+                                then: 0,
+                                else: {
+                                    $cond: {
+                                        if  : {
+                                            $lt: [{$subtract: [now, '$dueDate']}, 5184000000]
+                                        },
+                                        then: 1,
+                                        else: {
+                                            $cond: {
+                                                if  : {
+                                                    $lt: [{$subtract: [now, '$dueDate']}, 7776000000]
+                                                },
+                                                then: 2,
+                                                else: 3
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }, {
+            $sort: {
+                'paymentInfo.balance': -1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    };
+
 
 };
 

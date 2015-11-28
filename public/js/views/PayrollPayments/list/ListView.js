@@ -633,19 +633,19 @@ define([
             },
 
             renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
+                var $currentEl = this.$el;
+                var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
                     collection : this.collection,
-                    page       : currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                    page       : $currentEl.find("#currentShowPage").val(),
+                    itemsNumber: $currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
 
-                currentEl.append(new listTotalView({element: tBody, cellSpan: 6}).render());
+                $currentEl.append(new listTotalView({element: tBody, cellSpan: 6}).render());
 
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -657,20 +657,20 @@ define([
 
             render: function (options) {
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var pagenation;
 
                 $('.ui-dialog ').remove();
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
+                $currentEl.append(new listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());
 
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
 
                 $('#check_all').click(function () {
@@ -683,7 +683,7 @@ define([
                     }
                 });
 
-                currentEl.append(_.template(paginationTemplate));
+                $currentEl.append(_.template(paginationTemplate));
 
                 pagenation = this.$el.find('.pagination');
 
@@ -719,7 +719,7 @@ define([
                     self.hideNewSelect(e);
                 });
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
             showFilteredPage: function (filter) {
@@ -738,7 +738,7 @@ define([
             },
 
             deleteItems: function () {
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var that = this;
                 var mid = 60;
                 var model;

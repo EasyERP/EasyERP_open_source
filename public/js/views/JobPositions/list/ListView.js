@@ -99,21 +99,21 @@ define([
 
             render: function () {
                 var self;
-                var currentEl;
+                var $currentEl;
 
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
+                $currentEl = this.$el;
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
                 var itemView = new listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 });
-                currentEl.append(itemView.render());
+                $currentEl.append(itemView.render());
                 itemView.bind('incomingStages', itemView.pushStages, itemView);
 
                 this.renderCheckboxes();
@@ -124,8 +124,8 @@ define([
                     itemView.trigger('incomingStages', stages);
                 });
 
-                this.renderPagination(currentEl, this);
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                this.renderPagination($currentEl, this);
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
             goToEditDialog: function (e) {

@@ -155,14 +155,14 @@ define([
 
             render: function () {
                 var self;
-                var currentEl;
+                var $currentEl;
 
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
+                $currentEl = this.$el;
 
-                currentEl.html('');
+                $currentEl.html('');
 
                 if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
@@ -172,15 +172,15 @@ define([
                         }
 
                         currentEllistRenderer(self);
-                        //currentEl.append(itemView.render());
+                        //$currentEl.append(itemView.render());
                     });
                 } else {
                     currentEllistRenderer(self);
-                    //currentEl.append(itemView.render());
+                    //$currentEl.append(itemView.render());
                 }
 
                 self.renderCheckboxes();
-                self.renderPagination(currentEl, self);
+                self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
                 dataService.getData("/workflow/fetch", {
@@ -191,10 +191,10 @@ define([
                     self.stages = stages;
                 });
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 function currentEllistRenderer(self) {
-                    currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
+                    $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
                     var itemView = new listItemView({
                         collection : self.collection,
                         page       : self.page,
@@ -202,7 +202,7 @@ define([
                     });
                     itemView.bind('incomingStages', self.pushStages, self);
 
-                    currentEl.append(itemView.render());
+                    $currentEl.append(itemView.render());
 
                 }
 

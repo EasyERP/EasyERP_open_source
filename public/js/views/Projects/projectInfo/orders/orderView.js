@@ -212,14 +212,14 @@ define([
         },
 
         renderContent: function () {
-            var currentEl = this.$el;
+            var $currentEl = this.$el;
             var pagenation;
 
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
             if (this.collection.length > 0) {
-                currentEl.find('#orderTable').html(this.templateList({
+                $currentEl.find('#orderTable').html(this.templateList({
                     orderCollection: this.collection.toJSON(),
                     startNumber    : 0,
                     dateToLocal    : common.utcDateToLocaleDate
@@ -306,8 +306,8 @@ define([
             }, this);
         },
 
-        renderPagination: function (currentEl, self) {
-            currentEl.append(_.template(paginationTemplate));
+        renderPagination: function ($currentEl, self) {
+            $currentEl.append(_.template(paginationTemplate));
 
             var pagenation = self.$el.find('.pagination');
 
@@ -398,7 +398,7 @@ define([
         },
 
         render: function (options) {
-            var currentEl = this.$el;
+            var $currentEl = this.$el;
             var self = this;
             var tabs;
             var dialogHolder;
@@ -419,16 +419,16 @@ define([
                 dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
             }
 
-            currentEl.html('');
-            currentEl.prepend(this.templateHeader);
+            $currentEl.html('');
+            $currentEl.prepend(this.templateHeader);
 
-            currentEl.find('#orderTable').html(this.templateList({
+            $currentEl.find('#orderTable').html(this.templateList({
                 orderCollection: this.collection.toJSON(),
                 startNumber    : 0,
                 dateToLocal    : common.utcDateToLocaleDate
             }));
 
-            //this.renderPagination(currentEl, this);
+            //this.renderPagination($currentEl, this);
 
             this.$el.find('.fa.fa-times').hide();
 

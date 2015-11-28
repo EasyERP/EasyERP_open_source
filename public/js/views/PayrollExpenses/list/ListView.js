@@ -281,12 +281,12 @@ define([
             },
 
             render: function () {
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
 
-                currentEl.html('');
-                currentEl.append(headerTemplate);
+                $currentEl.html('');
+                $currentEl.append(headerTemplate);
 
-                currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
+                $currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
                     total           : this.total,
                     currencySplitter: helpers.currencySplitter,
                     weekSplitter    : helpers.weekSplitter,
@@ -299,7 +299,7 @@ define([
                 $('#top-bar-createBtn').hide();
                 $('#topBarPaymentGenerate').hide();
 
-                currentEl.find('.datePicker input').datepicker({
+                $currentEl.find('.datePicker input').datepicker({
                     dateFormat : "dd/mm/yy",
                     changeMonth: true,
                     changeYear : true

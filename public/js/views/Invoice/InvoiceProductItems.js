@@ -245,15 +245,15 @@ define([
 
             var totalUntax = 0;
             var totalEls = resultForCalculate.length;
-            var currentEl;
+            var $currentEl;
             var quantity;
             var cost;
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
-                    currentEl = $(resultForCalculate[i]);
-                    quantity = currentEl.find('[data-name="quantity"]').text();
-                    cost = currentEl.find('[data-name="price"]').text();
+                    $currentEl = $(resultForCalculate[i]);
+                    quantity = $currentEl.find('[data-name="quantity"]').text();
+                    cost = $currentEl.find('[data-name="price"]').text();
                     totalUntax += (quantity * cost);
                 }
             }

@@ -3,17 +3,18 @@
     ],
     function (InvoiceModel) {
         var InvoiceCollection = Backbone.Collection.extend({
-            model: InvoiceModel,
-            url: "/Invoice/",
-            page: null,
+            model       : InvoiceModel,
+            url  : "/Invoice/",
+            page : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
-            initialize: function (options) {
-                this.startTime = new Date();
-                var regex = /^sales/;
+            viewType    : null,
+            contentType : null,
 
+            initialize: function (options) {
+                var regex = /^sales/;
                 var that = this;
+
+                this.startTime = new Date();
                 this.namberToShow = options.count;
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;
@@ -25,20 +26,19 @@
                     options['forSales'] = true;
                 }
 
-                if (options && options.contentType && !(options.filter))
-                {
+                if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
                         options.filter = {
                             'forSales': {
-                                key: 'forSales',
+                                key  : 'forSales',
                                 value: ['true']
                             }
                         }
                     } else {
                         options.filter = {
                             'forSales': {
-                                key: 'forSales',
+                                key  : 'forSales',
                                 value: ['false']
                             }
                         }
@@ -49,17 +49,17 @@
                     this.url += options.viewType;
                 }
                 this.fetch({
-                    data: options,
+                    data   : options,
                     reset: true,
                     success: function (newCollection) {
                         that.page++;
 
-                        if (App.invoiceCollection){
+                        if (App.invoiceCollection) {
                             App.invoiceCollection.reset(newCollection.models);
                         }
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
                     }
                 });
             },
@@ -79,22 +79,22 @@
                     filterObject['forSales'] = true;
                 }
 
-                if (options && options.contentType && !(options.filter))
-                {
+                if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
+
                     if (regex.test(this.contentType)) {
                         filterObject.filter.forSales = true;
                     }
                 }
 
                 this.fetch({
-                    data: filterObject,
+                    data   : filterObject,
                     waite: true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
+                    error  : function () {
                         alert('Some Error');
                     }
                 });

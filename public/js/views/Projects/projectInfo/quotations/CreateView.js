@@ -214,8 +214,8 @@ define([
             },
 
             redirectAfterSave: function (content, model) {
-                var currentEl = $('#listTableQuotation');
-                var number = currentEl.find('.countNumber');
+                var $currentEl = $('#listTableQuotation');
+                var number = $currentEl.find('.countNumber');
                 var numberLength = number.length ? number.length : 0;
                 var lastNumber = number.length ? $(number[numberLength - 1]).html() : 0;
 
@@ -236,7 +236,7 @@ define([
 
                 this.collection.add(model);
 
-                currentEl.append(this.templateNewRow({
+                $currentEl.append(this.templateNewRow({
                     quotation  : model.toJSON(),
                     startNumber: currentNumber,
                     dateToLocal: common.utcDateToLocaleDate

@@ -134,8 +134,8 @@ define([
         },
 
         renderContent: function () {
-            var currentEl = this.$el;
-            var tBody = currentEl.find("#listTable");
+            var $currentEl = this.$el;
+            var tBody = $currentEl.find("#listTable");
             var itemView;
             var pagenation;
 
@@ -265,7 +265,7 @@ define([
         },
 
         render: function (options) {
-            var currentEl = this.$el;
+            var $currentEl = this.$el;
             var self = this;
             var tabs;
             var dialogHolder;
@@ -273,7 +273,7 @@ define([
             var target;
             var template = _.template(paymentTemplate);
 
-            currentEl.html('');
+            $currentEl.html('');
 
             if (options && options.activeTab) {
                 self.hideDialog();
@@ -289,7 +289,7 @@ define([
                 dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
             }
 
-            currentEl.append(template({
+            $currentEl.append(template({
                 paymentCollection  : this.collection.toJSON(),
                 startNumber        : 0,
                 utcDateToLocaleDate: common.utcDateToLocaleDate,

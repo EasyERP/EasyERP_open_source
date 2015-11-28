@@ -149,8 +149,8 @@ define([
             },
 
             renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#payRoll-TableBody');
+                var $currentEl = this.$el;
+                var tBody = $currentEl.find('#payRoll-TableBody');
 
                 tBody.empty();
                 $("#top-bar-deleteBtn").hide();
@@ -269,14 +269,14 @@ define([
                 var collectionsObjects;
 
                 var holder = this.$el;
-                var currentEl = holder.find("#payRoll-TableBody");
+                var $currentEl = holder.find("#payRoll-TableBody");
 
                 this.collection = newCollection;
                 collectionsObjects = this.collection.toJSON()[0];
                 this.total = collectionsObjects.total;
 
-                currentEl.empty();
-                currentEl.append(this.totalTemplate({
+                $currentEl.empty();
+                $currentEl.append(this.totalTemplate({
                     collection      : this.collection.toJSON(),
                     total           : this.total,
                     currencySplitter: helpers.currencySplitter,

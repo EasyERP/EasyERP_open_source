@@ -356,12 +356,12 @@ define([
             render: function () {
                 $('.ui-dialog ').remove();
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var pagenation;
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
+                $currentEl.append(new listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.numberToShow
@@ -380,7 +380,7 @@ define([
                     }
                 });
 
-                currentEl.append(_.template(paginationTemplate));
+                $currentEl.append(_.template(paginationTemplate));
 
                 pagenation = this.$el.find('.pagination');
 
@@ -390,7 +390,7 @@ define([
                     pagenation.show();
                 }
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
@@ -415,8 +415,8 @@ define([
             },
 
             renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
+                var $currentEl = this.$el;
+                var tBody = $currentEl.find('#listTable');
                 var itemView;
                 var pagenation;
 
@@ -427,8 +427,8 @@ define([
 
                 itemView = new listItemView({
                     collection : this.collection,
-                    page       : currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                    page       : $currentEl.find("#currentShowPage").val(),
+                    itemsNumber: $currentEl.find("span#itemsNumber").text()
                 });
 
                 tBody.append(itemView.render());
@@ -704,7 +704,7 @@ define([
             },
 
             deleteItems: function () {
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var that = this,
                     mid = 72,
                     model;

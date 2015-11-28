@@ -445,8 +445,8 @@ define([
             //<editor-fold desc="Renders">
 
             renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
+                var $currentEl = this.$el;
+                var tBody = $currentEl.find('#listTable');
                 var itemView;
                 var pagenation;
 
@@ -511,7 +511,7 @@ define([
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    //currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    //$currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
                     $('#searchContainer').after(_.template(aphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
                         selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
@@ -529,8 +529,8 @@ define([
                 });
             },
 
-            renderPagination: function (currentEl, self) {
-                currentEl.append(_.template(paginationTemplate));
+            renderPagination: function ($currentEl, self) {
+                $currentEl.append(_.template(paginationTemplate));
 
                 var pagenation = self.$el.find('.pagination');
 

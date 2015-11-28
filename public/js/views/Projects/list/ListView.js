@@ -120,17 +120,17 @@ define([
 
             render: function () {
                 var self;
-                var currentEl;
+                var $currentEl;
 
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
+                $currentEl = this.$el;
 
                 var itemView;
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
                 itemView = new listItemView({
                     collection : this.collection,
                     page       : this.page,
@@ -143,15 +143,15 @@ define([
                     itemView.trigger('incomingStages', stages);
                 });
 
-                currentEl.append(itemView.render());//added two parameters page and items number
+                $currentEl.append(itemView.render());//added two parameters page and items number
 
                 this.renderCheckboxes();
 
                 this.renderFilter(self);
 
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
             }
 

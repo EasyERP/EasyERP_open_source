@@ -427,15 +427,15 @@ define([
                 if (this.isWtrack || this.isPaid) {
                     buttons = [
                         {
-                            text : "Cancel",
+                            text : this.isPaid ? "Close" : 'Cancel',
                             click: function () {
                                 self.hideDialog();
                             }
-                        },
+                        }/*,
                         {
                             text : "Delete",
                             click: self.deleteItem
-                        }
+                        }*/
                     ]
                 } else {
                     buttons = [

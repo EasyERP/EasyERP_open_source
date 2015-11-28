@@ -114,16 +114,16 @@
 
             render: function () {
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var FilterView;
 
-                currentEl.html('');
+                $currentEl.html('');
 
                 if (this.collection.length > 0) {
-                    currentEl.append(this.template({collection: this.collection.toJSON()}));
+                    $currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
-                    currentEl.html('<h2>No Employees found</h2>');
+                    $currentEl.html('<h2>No Employees found</h2>');
                 }
                 self.filterView = new filterView({contentType: self.contentType});
 
@@ -157,7 +157,7 @@
                         });
                     }
                 });
-                currentEl.append(createdInTag);
+                $currentEl.append(createdInTag);
 
                 return this;
             },

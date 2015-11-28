@@ -115,6 +115,7 @@ define([
                     case CONTENT_TYPES.CAPACITY:
                     case CONTENT_TYPES.JOBSDASHBOARD:
                     case CONTENT_TYPES.PAYROLLPAYMENTS:
+                    case CONTENT_TYPES.INVOICEAGING:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -161,6 +162,7 @@ define([
                     case CONTENT_TYPES.CAPACITY:
                     case CONTENT_TYPES.JOBSDASHBOARD:
                     case CONTENT_TYPES.PAYROLLPAYMENTS:
+                    case CONTENT_TYPES.INVOICEAGING:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

@@ -387,7 +387,7 @@ define([
                 }, this);
             },
 
-            renderdSubHeader: function (currentEl) {
+            renderdSubHeader: function ($currentEl) {
                 var subHeaderContainer;
 
                 var month;
@@ -400,7 +400,7 @@ define([
                 var daysRow = '';
                 var daysNumRow = '';
 
-                subHeaderContainer = currentEl.find('.subHeaderHolder');
+                subHeaderContainer = $currentEl.find('.subHeaderHolder');
 
                 month = this.monthElement.attr('data-content');
                 year = this.yearElement.text();
@@ -648,7 +648,7 @@ define([
                 $('.ui-dialog ').remove();
 
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var collection;
 
                 var year = this.startTime.getFullYear();
@@ -659,13 +659,13 @@ define([
                 month.number = this.startTime.getMonth() + 1;
                 month.name = moment(this.startTime).format('MMMM');
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate, {options: {month: month, year: year}}));
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate, {options: {month: month, year: year}}));
 
-                this.monthElement = currentEl.find('#monthSelect');
-                this.yearElement = currentEl.find('#yearSelect');
+                this.monthElement = $currentEl.find('#monthSelect');
+                this.yearElement = $currentEl.find('#yearSelect');
 
-                this.renderdSubHeader(currentEl);
+                this.renderdSubHeader($currentEl);
 
                 collection = this.collection.toJSON();
 
@@ -691,19 +691,19 @@ define([
                     self.hideNewSelect();
                 });
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
             renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
+                var $currentEl = this.$el;
+                var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
                     collection : this.collection,
-                    page       : currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                    page       : $currentEl.find("#currentShowPage").val(),
+                    itemsNumber: $currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
 

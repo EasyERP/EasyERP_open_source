@@ -450,7 +450,7 @@ define([
         },
 
         render: function (options) {
-            var currentEl = this.$el;
+            var $currentEl = this.$el;
             var defaultData = options ? !options.defaultData : true;
             var dashboardData = this.dashCollection;
             var filter = this.filter || custom.retriveFromCash('DashVacation.filter');
@@ -474,7 +474,7 @@ define([
                 weeksArr = custom.retriveFromCash('vacationDashWeeksArr');
             }
 
-            currentEl.html(self.template({
+            $currentEl.html(self.template({
                 weeks         : weeksArr,
                 dashboardData : dashboardData,
                 leadComparator: self.leadComparator,
@@ -486,7 +486,7 @@ define([
 
             statictics = new StatisticsView({});
             this.statisticsView$ = statictics;
-            currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             this.calculateStatistics();
 
             this.findDataPickers();
