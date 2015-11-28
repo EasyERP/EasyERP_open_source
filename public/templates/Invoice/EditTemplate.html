@@ -39,65 +39,115 @@
                 <div class="dialog-tabs-items mainTabs">
                     <div class="dialog-tabs-item mainTabs active">
                         <%if(!isWtrack){%>
-                            <div class="half-block left">
-                                <dl class="opp-info">
+                            <%if(!isPaid){%>
+                                <div class="half-block left">
+                                    <dl class="opp-info">
 
-                                    <dt><label for="supplier">Supplier</label></dt>
-                                    <dd>
-                                        <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier)?model.supplier.name:"Select"%></a>
-                                    </dd>
+                                        <dt><label for="supplier">Supplier</label></dt>
+                                        <dd>
+                                            <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier)?model.supplier.name:"Select"%></a>
+                                        </dd>
 
-                                    <dt><label for="fiscal_pos">Fiscal Position</label></dt>
-                                    <dd>
-                                        <a id="fiscal_pos" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                    </dd>
+                                        <dt><label for="fiscal_pos">Fiscal Position</label></dt>
+                                        <dd>
+                                            <a id="fiscal_pos" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                        </dd>
 
-                                    <dt><label for="source_document">Source Document</label></dt>
-                                    <dd>
-                                        <input type="text" id="source_document" value="<%=(model.sourceDocument) ? model.sourceDocument : ''%>" placeholder="Source Document"  maxlength="32"/>
-                                    </dd>
+                                        <dt><label for="source_document">Source Document</label></dt>
+                                        <dd>
+                                            <input type="text" id="source_document" value="<%=(model.sourceDocument) ? model.sourceDocument.name : ''%>" placeholder="Source Document"  maxlength="32" readonly/>
+                                        </dd>
 
-                                    <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
-                                    <dd>
-                                        <input type="text" id="supplier_invoice_num" value="<%=(model.supplierInvoiceNumber) ? model.supplierInvoiceNumber : ''%>" placeholder="Supplier Invoice Number"  maxlength="32"/>
-                                    </dd>
+                                        <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                        <dd>
+                                            <input type="text" id="supplier_invoice_num" value="<%=(model.supplierInvoiceNumber) ? model.supplierInvoiceNumber : ''%>" placeholder="Supplier Invoice Number"  maxlength="32"/>
+                                        </dd>
 
-                                    <dt>
-                                        <label for="payment_reference">Payment Reference</label>
-                                    </dt>
-                                    <dd>
-                                        <input type="text" id="payment_reference" value="<%=(model.paymentReference) ? model.paymentReference : ''%>" placeholder="Payment Reference"  maxlength="32"/>
-                                    </dd>
+                                        <dt>
+                                            <label for="payment_reference">Payment Reference</label>
+                                        </dt>
+                                        <dd>
+                                            <input type="text" id="payment_reference" value="<%=(model.paymentReference) ? model.paymentReference : ''%>" placeholder="Payment Reference"  maxlength="32"/>
+                                        </dd>
 
 
 
-                                </dl>
-                            </div>
-                            <div class="half-block left">
-                                <dl class="opp-info">
+                                    </dl>
+                                </div>
+                                <div class="half-block left">
+                                    <dl class="opp-info">
 
-                                    <dt><label for="invoice_date">Invoice Date </label></dt>
-                                    <dd>
-                                        <input type="text" class="date" id="invoice_date" value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32" placeholder="Invoice Date" readonly />
-                                    </dd>
+                                        <dt><label for="invoice_date">Invoice Date </label></dt>
+                                        <dd>
+                                            <input type="text" class="date" id="invoice_date" value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32" placeholder="Invoice Date" readonly />
+                                        </dd>
 
-                                    <dt><label for="due_date">Due Date </label></dt>
-                                    <dd>
-                                        <input type="text" class="date" id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
-                                    </dd>
+                                        <dt><label for="due_date">Due Date </label></dt>
+                                        <dd>
+                                            <input type="text" class="date
+                                            <% if (!model.dueDate) {%>
+                                              errorContent"
+                                              <% } else { %>
+                                              "
+                                            <% } %>
+                                            id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
+                                        </dd>
 
-                                    <dt><label for="account">Account</label></dt>
-                                    <dd>
-                                        <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                    </dd>
+                                        <dt><label for="account">Account</label></dt>
+                                        <dd>
+                                            <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                        </dd>
 
-                                    <dt><label for="journal">Journal</label></dt>
-                                    <dd>
-                                        <a id="journal" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                    </dd>
+                                        <dt><label for="journal">Journal</label></dt>
+                                        <dd>
+                                            <a id="journal" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                        </dd>
 
-                                </dl>
-                            </div>
+                                    </dl>
+                                </div>
+                            <%} else {%>
+                                <div class="half-block left">
+                                    <dl class="opp-info">
+
+                                        <dt><label for="supplier">Supplier</label></dt>
+                                        <dd>
+                                            <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" href="javascript:;"><%=(model.supplier)?model.supplier.name:""%></span>
+                                        </dd>
+
+                                        <dt><label for="source_document">Source Document</label></dt>
+                                        <dd>
+                                            <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
+                                        </dd>
+
+                                        <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                        <dd>
+                                            <span type="text" id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="half-block left">
+                                    <dl class="opp-info">
+
+                                        <dt><label for="inv_date">Invoice Date </label></dt>
+                                        <dd>
+                                            <span id="inv_date"><%=(model.invoiceDate) ? model.invoiceDate : ''%></span>
+                                        </dd>
+
+                                        <dt><label for="d_date">Due Date </label></dt>
+                                        <dd>
+                                            <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
+                                        </dd>
+                                        <dt>
+                                            <label for="payment_reference">Payment Reference</label>
+                                        </dt>
+                                        <dd>
+                                            <span><%=(model.paymentReference) ? model.paymentReference : ''%></span>
+                                        </dd>
+
+                                    </dl>
+                                </div>
+                            <%}%>
+
                         <%} else {%>
                             <div class="half-block left">
                                 <dl class="opp-info">

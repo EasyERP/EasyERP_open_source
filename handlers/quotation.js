@@ -1,14 +1,18 @@
 var mongoose = require('mongoose');
-var Quotation = function (models) {
+var WorkflowHandler = require('./workflow');
+
+var Quotation = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var QuotationSchema = mongoose.Schemas['Quotation'];
     var CustomerSchema = mongoose.Schemas['Customer'];
     var WorkflowSchema = mongoose.Schemas['workflow'];
     var DepartmentSchema = mongoose.Schemas['Department'];
+    var JobsSchema = mongoose.Schemas['jobs'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
+    var workflowHandler = new WorkflowHandler(models);
 
     this.create = function (req, res, next) {
         var db = req.session.lastDb;
@@ -274,6 +278,10 @@ var Quotation = function (models) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                case 'type':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
                 case 'projectmanager':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
@@ -508,13 +516,37 @@ var Quotation = function (models) {
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
+        var project;
+        var type = "Not Quoted";
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        Quotation.remove({_id: id}, function (err, product) {
+        Quotation.findByIdAndRemove(id, function (err, quotation) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: product});
+
+            var products = quotation.get('products');
+
+            async.each(products, function (product, cb) {
+
+                JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    project = result ? result.get('project') : null;
+
+                    cb();
+                });
+
+            }, function () {
+                if (project) {
+                    event.emit('fetchJobsCollection', {project: project});
+                }
+
+                res.status(200).send({success: quotation});
+            });
         });
     };
 

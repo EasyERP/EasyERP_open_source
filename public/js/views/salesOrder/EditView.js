@@ -2,14 +2,15 @@ define([
         "text!templates/salesOrder/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        "views/Projects/projectInfo/invoiceView",
+        "views/Projects/projectInfo/invoices/invoiceView",
         'collections/salesInvoice/filterCollection',
         "common",
         "custom",
         "dataService",
-        "populate"
+        "populate",
+        "constants"
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
@@ -26,6 +27,8 @@ define([
 
                 this.forSales = true;
                 this.redirect = options.redirect;
+
+                this.projectManager = options.projectManager;
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
@@ -139,9 +142,10 @@ define([
 
                 var self = this;
                 var url = '/invoice/receive';
+                var orderId = this.currentModel.id;
                 var data = {
                     forSales: this.forSales,
-                    orderId : this.currentModel.id
+                    orderId : orderId
                 };
 
                 dataService.postData(url, data, function (err, response) {
@@ -153,6 +157,12 @@ define([
 
                         if (self.redirect) {
                             var _id = window.location.hash.split('form/')[1];
+
+                            var tr = $("[data-id=" + orderId + "]");
+
+                            tr.addClass('notEditable');
+
+                            tr.find('.workflow').find('a').text("Invoiced");
 
                             var filter = {
                                 'project': {
@@ -171,9 +181,12 @@ define([
 
                             function createView() {
 
-                                new InvoiceView({
-                                    model: self.collection
-                                }).render({activeTab: true});
+                                this.invoiceView = new InvoiceView({
+                                    model: self.collection,
+                                    activeTab: true
+                                });
+
+                                this.invoiceView.showDialog(orderId);
 
                             };
 
@@ -231,7 +244,9 @@ define([
                 var quantity;
                 var price;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
+                var supplier = {};
+                var project = {};
+
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
@@ -246,6 +261,7 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
+                var jobs;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -259,17 +275,27 @@ define([
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
+                        jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
 
                         products.push({
                             product  : productId,
                             unitPrice: price,
-                            quantity : quantity
+                            quantity : quantity,
+                            jobs: jobs
                         });
                     }
                 }
@@ -286,6 +312,7 @@ define([
                     invoiceControl   : invoiceControl ? invoiceControl : null,
                     paymentTerm      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
+                    project       : project,
                     paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed

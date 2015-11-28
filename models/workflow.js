@@ -9,7 +9,8 @@ module.exports = (function () {
         status: String,
         name: String,
         color: {type: String, default: "#2C3E50"},
-        sequence: Number
+        sequence: Number,
+        visible: {type: Boolean, default: true}
     }, {collection: 'workflows'});
 
     mongoose.model('workflows', workflowSchema);

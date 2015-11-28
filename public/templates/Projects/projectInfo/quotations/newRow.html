@@ -5,11 +5,12 @@ class="canceledListItem"
 <td class = "notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
 <td class="countNumber centerCell"><%=startNumber%></td>
 <td><%=quotation.project.projectName%></td>
-<td><%=dateToLocal(quotation.orderDate)%></td>
 <td><%=(quotation.supplier) ? quotation.supplier.name : ''%></td>
 <td><%=quotation.project.projectmanager.name%></td>
 <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total : '0'%></td>
+<!--<td class="type"><%=quotation.type%></td>-->
 <td id='<%=quotation._id%>'>
-    <a href="javascript:;" class="stageSelect"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
+    <a href="javascript:;" class=""><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
 </td>
+<td><%=dateToLocal(quotation.orderDate)%></td>
 </tr>

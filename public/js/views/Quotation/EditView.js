@@ -2,7 +2,7 @@ define([
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        'views/Projects/projectInfo/orderView',
+        'views/Projects/projectInfo/orders/orderView',
         'collections/Quotation/filterCollection',
         "common",
         "custom",
@@ -116,6 +116,7 @@ define([
 
                 var self = this;
                 var wId;
+                var id = self.currentModel.get('_id');
 
                 if (this.forSales) {
                     wId = 'Sales Order';
@@ -126,8 +127,8 @@ define([
                 populate.fetchWorkflow({
                     wId: wId,
                     source: 'purchase',
-                    status: 'In Progress',
-                    targetSource: 'order'
+                    status: 'New'
+                    //targetSource: 'order'
                 }, function (workflow) {
                     var products;
 
@@ -144,6 +145,7 @@ define([
                                 _id: workflow._id,
                                 name: workflow.name
                             }
+                            //type: "Not Invoiced"
                         }, {
                             headers: {
                                 mid: 57
@@ -153,12 +155,7 @@ define([
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                                 if (self.redirect){
-                                    //var url = window.location.hash;
-                                    //
-                                    //Backbone.history.fragment = '';
-                                    //Backbone.history.navigate(url, {trigger: true});
-
-                                    var data ={products: JSON.stringify(products), type: "Order"};
+                                    var data ={products: JSON.stringify(products), type: "Ordered"};
 
                                     dataService.postData("/jobs/update", data,  function(err, result){
                                         if (err){
@@ -186,13 +183,16 @@ define([
 
                                     function createView() {
 
-                                        new ordersView({
+                                        this.ordersView = new ordersView({
                                             collection: self.ordersCollection,
                                             projectId : self.pId,
                                             customerId: self.customerId,
                                             projectManager: self.projectManager,
-                                            filter: filter
-                                        }).render({activeTab: true});
+                                            filter: filter,
+                                            activeTab: true
+                                        });
+
+                                        this.ordersView.showOrderDialog(id);
                                     };
 
                                     self.ordersCollection.bind('reset', createView);
@@ -322,6 +322,8 @@ define([
                 var description;
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
                 var subTotal;
+                var jobs;
+                var scheduledDate;
 
                 var usersId = [];
                 var groupsId = [];
@@ -354,6 +356,7 @@ define([
                             scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
+                            jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
                             subTotal = targetEl.find('.subtotal').text();
 
                             products.push({
@@ -363,7 +366,8 @@ define([
                                 scheduledDate: scheduledDate,
                                 taxes: taxes,
                                 description: description,
-                                subTotal: subTotal
+                                subTotal: subTotal,
+                                jobs: jobs
                             });
                         }
                     }

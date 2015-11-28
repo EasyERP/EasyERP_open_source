@@ -1050,8 +1050,8 @@ var Employee = function (event, models) {
             InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
             Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
 
-            PaymentSchema = mongoose.Schemas['wTrackPayment'];
-            Payment = models.get(dbName, 'wTrackPayment', PaymentSchema);
+            PaymentSchema = mongoose.Schemas['Payment'];
+            Payment = models.get(dbName, 'Payment', PaymentSchema);
 
             SalarySchema = mongoose.Schemas['Salary'];
             Salary = models.get(dbName, 'Salary', SalarySchema);

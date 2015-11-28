@@ -1,28 +1,39 @@
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
-  margin: 30px 1%;
-  width: 98%;
+  margin: 30px 0;
+  width: 100%;
   .V {
-    background-color: @unpaid-wtrack;
-    color: #ffffff;
+    background-color: @capacityColorVacation;
   }
   .P {
-    background-color: #fda401;
-    color: #ffffff;
+    background-color: @capacityColorPerson;
   }
   .S {
-    background-color: @tilte-color;
-    color: #ffffff;
+    background-color: @capacityColorSick;
   }
   .E {
-    background-color: @forInfo-caption-color;
-    color: #ffffff;
+    background-color: @capacityColorEducation;
   }
+  .V, .P, .S, .E {
+    color: @overiewText-color;
+  }
+
+  .vacation_input {
+    .editing {
+      width: 100%;
+    }
+  }
+
+  td {
+    padding: 0 5px;
+  }
+
   td, th {
-    //padding: 5px;
-    position: relative;
     cursor: pointer;
+    line-height: 20px;
+    height: 20px;
+    font-size: 12px;
 
     input, input:focus {
       width: 50%;
@@ -31,11 +42,11 @@
       outline-offset: 0;
       display: none;
       cursor: pointer;
-      border: 1px solid @border-color-selected;
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 5px;
+      border: 1px solid transparent;
+      //position: absolute;
+      //left: 0;
+      //right: 0;
+      //top: 5px;
       margin: 0 auto;
     }
 
@@ -49,6 +60,7 @@
   }
   thead {
     th {
+      position: relative;
       border: 1px solid @border-color-main;
       &#legandCaption {
         text-align: left;
@@ -79,14 +91,12 @@
       color: @mainText-color;
 
 
-      &.totalDays {
-        //
-      }
-      &.notForm {
+       &.notForm {
         padding-left: 10px;
         line-height: 10px;
         input {
           display: block;
+          width: 100%;
         }
       }
       &.employee{}
@@ -95,8 +105,7 @@
 
   tfoot {
     tr {
-      line-height: 20px;
-      height: 20px;
+
       td {
         color: @mainText-color;
       }
@@ -146,8 +155,6 @@
         }
         &:nth-child(2) {
           text-align: left;
-          font-size: 12px;
-          line-height: 20px;
         }
       }
 

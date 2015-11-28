@@ -26,6 +26,7 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
+                this.collection.unbind();
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};
@@ -80,9 +81,12 @@ define([
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
+
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
+                    $(e.target).parent().append(_.template(stagesTemplate, {
+                        stagesCollection: this.stages
+                    }));
                     return false;
                 }
             },
@@ -93,16 +97,16 @@ define([
 
             render: function () {
                 var self;
-                var currentEl;
+                var $currentEl;
                 var itemView;
 
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
-                currentEl.html('');
+                $currentEl = this.$el;
+                $currentEl.html('');
 
-                currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
+                $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
                 itemView = new listItemView({
                     collection : self.collection,
                     page       : self.page,
@@ -111,15 +115,15 @@ define([
 
                 itemView.bind('incomingStages', this.pushStages, this);
 
-                currentEl.append(itemView.render());
+                $currentEl.append(itemView.render());
 
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 8}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 8}).render());
 
                 this.renderCheckboxes();
 
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 dataService.getData("/workflow/fetch", {
                     wId         : 'Purchase Invoice',
@@ -174,6 +178,8 @@ define([
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 var holder = this.$el;
+                var pagenation = holder.find('.pagination');
+                var created;
 
                 dataService.getData('/Invoice/totalCollectionLength', {
                     forSales     : this.forSales,
@@ -182,14 +188,16 @@ define([
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
+
                 this.deleteRender(deleteCounter, deletePage, {
                     filter          : this.filter,
                     newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
+
                 if (deleteCounter !== this.collectionLength) {
 
-                    var created = holder.find('#timeRecivingDataFromServer');
+                    created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
                         collection : this.collection,
                         page       : holder.find("#currentShowPage").val(),
@@ -200,14 +208,12 @@ define([
                 holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 8}).render());
 
                 //this.recalculateTotal();   //-----------------------------!
-
-                var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
                 }
-            },
+            }
 
         });
         return InvoiceListView;

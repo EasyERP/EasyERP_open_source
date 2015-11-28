@@ -13,26 +13,27 @@ define([
         'helpers'
     ],
     function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+        "use strict";
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
-            template: _.template(EditTemplate),
+            template   : _.template(EditTemplate),
 
             events: {
-                "click #saveBtn": "saveItem",
+                "click #saveBtn"                                                  : "saveItem",
                 "click #cancelBtn": "hideDialog",
                 "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                'click .dialog-tabs a': 'changeTab',
+                "click"                  : "hideNewSelect",
+                'click .dialog-tabs a'   : 'changeTab',
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                "click .newSelectList li.miniStylePagination"      : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .details": "showDetailsBox",
-                "click .newPayment": "newPayment",
-                "click .cancelInvoice": "cancelInvoice",
+                "click .details"                                                  : "showDetailsBox",
+                "click .newPayment"                                               : "newPayment",
+                "click .cancelInvoice"                                            : "cancelInvoice",
                 // "click .refund": "refund",
-                "click .setDraft": "setDraft"
+                "click .setDraft"                                                 : "setDraft"
 
             },
 
@@ -56,7 +57,7 @@ define([
                         if (response && !response.error) {
                             App.currentDb = response;
 
-                            if ((response === "weTrack") || (response === "production") || (response === "development")){
+                            if ((response === "weTrack") || (response === "production") || (response === "development")) {
                                 App.weTrack = true;
                             } else {
                                 App.weTrack = false;
@@ -75,10 +76,26 @@ define([
             },
 
             newPayment: function (e) {
+                var paymentView;
+                var self = this;
+
                 e.preventDefault();
 
-                var paymentView = new PaymentCreateView({model: this.currentModel, redirect: this.redirect, collection: this.collection});
+                this.saveItem(function (err) {
+                    if (!err) {
+                        paymentView = new PaymentCreateView({
+                            model     : self.currentModel,
+                            redirect: self.redirect,
+                            collection: self.collection
+                        });
+                    }
+                });
 
+                /*paymentView = new PaymentCreateView({
+                    model     : this.currentModel,
+                    redirect: this.redirect,
+                    collection: this.collection
+                });*/
             },
 
             cancelInvoice: function (e) {
@@ -89,18 +106,18 @@ define([
                 var self = this;
                 var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
-                if (self.forSales){
+                if (self.forSales) {
                     wId = 'Sales Invoice';
                 } else {
                     wId = 'Purchase Invoice';
                 }
 
                 populate.fetchWorkflow({
-                    wId: wId,
+                    wId         : wId,
                     source: 'purchase',
                     targetSource: 'invoice',
-                    status: 'Cancelled',
-                    order: 1
+                    status      : 'Cancelled',
+                    order       : 1
                 }, function (workflow) {
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -108,7 +125,7 @@ define([
 
                     self.currentModel.save({
                         workflow: {
-                           _id: workflow._id,
+                            _id   : workflow._id,
                             name: workflow.name,
                             status: workflow.status
                         }
@@ -116,7 +133,7 @@ define([
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
@@ -130,7 +147,7 @@ define([
                 var self = this;
                 var wId;
 
-                if (self.forSales){
+                if (self.forSales) {
                     wId = 'Sales Invoice';
                 } else {
                     wId = 'Purchase Invoice';
@@ -147,7 +164,7 @@ define([
 
                     self.currentModel.save({
                         workflow: {
-                            _id: workflow._id,
+                            _id   : workflow._id,
                             name: workflow.name,
                             status: workflow.status
                         }
@@ -155,7 +172,7 @@ define([
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
@@ -166,13 +183,13 @@ define([
             showDetailsBox: function (e) {
                 $(e.target).parent().find(".details-box").toggle();
             },
-            notHide: function () {
+            notHide       : function () {
                 return false;
             },
-            nextSelect: function (e) {
+            nextSelect    : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect    : function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -204,9 +221,15 @@ define([
                 $('.edit-invoice-dialog').remove();
             },
 
-            saveItem: function () {
+            saveItem: function (paymentCb) {
                 var self = this;
                 var mid = 56;
+
+                var errors = this.$el.find('.errorContent');
+
+                if (errors.length) {
+                    return
+                }
 
                 var selectedProducts = this.$el.find('.productItem');
                 var products = [];
@@ -235,7 +258,7 @@ define([
                 var balance = parseFloat(this.$("#balance").text());
 
                 var payments = {
-                    total: total,
+                    total  : total,
                     unTaxed: unTaxed,
                     balance: balance
                 };
@@ -252,12 +275,12 @@ define([
                             amount = targetEl.find('.amount').text();
 
                             products.push({
-                                product: productId,
+                                product    : productId,
                                 description: description,
-                                unitPrice: price,
-                                quantity: quantity,
-                                taxes: taxes,
-                                amount: amount
+                                unitPrice  : price,
+                                quantity   : quantity,
+                                taxes      : taxes,
+                                amount     : amount
                             });
                         }
                     }
@@ -280,23 +303,23 @@ define([
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
                 var data = {
-                    supplier: supplier,
+                    supplier             : supplier,
                     fiscalPosition: null,
-                    sourceDocument: $.trim(this.$el.find('#source_document').val()),
+                    //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
-                    paymentReference: $.trim(this.$el.find('#payment_reference').val()),
-                    invoiceDate: invoiceDate,
-                    dueDate: dueDate,
-                    account: null,
-                    journal: null,
+                    paymentReference     : $.trim(this.$el.find('#payment_reference').val()),
+                    invoiceDate          : invoiceDate,
+                    dueDate              : dueDate,
+                    account              : null,
+                    journal              : null,
 
-                    salesPerson: salesPerson,
+                    salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
 
-                    products: this.redirect ? productsOld : products,
-                    paymentInfo: payments,
+                    //products   : this.redirect ? productsOld : products,
+                    //paymentInfo: payments,
 
-                    groups: {
+                    groups  : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
@@ -306,27 +329,35 @@ define([
 
                 };
 
-
                 if (supplier) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
                         },
-                        wait: true,
-                        patch: true,
+                        wait   : true,
+                        patch  : true,
                         success: function () {
                             var url = window.location.hash;
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             self.hideDialog();
-                            if (self.redirect){
+
+                            if (paymentCb && typeof paymentCb === 'function') {
+                                return paymentCb(null);
+                            }
+
+                            if (self.redirect) {
                                 Backbone.history.navigate(url, {trigger: true});
                             } else {
                                 Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
+
+                            if (paymentCb && typeof paymentCb === 'function') {
+                                return paymentCb(xhr.text);
+                            }
                         }
                     });
 
@@ -344,7 +375,7 @@ define([
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
@@ -352,7 +383,7 @@ define([
             deleteItem: function (event) {
                 var url = window.location.hash;
 
-               // var redirectUrl = this.forSales ? url : "easyErp/Invoice";
+                // var redirectUrl = this.forSales ? url : "easyErp/Invoice";
 
                 event.preventDefault();
 
@@ -364,7 +395,7 @@ define([
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(url, {trigger: true});
                         },
-                        error: function (model, err) {
+                        error  : function (model, err) {
                             if (err.status === 403) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -388,8 +419,12 @@ define([
                 var total;
                 var wTracksDom;
                 var buttons;
+                var invoiceDate;
 
                 model = this.currentModel.toJSON();
+                invoiceDate = model.invoiceDate;
+
+                this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
 
                 if (this.isWtrack) {
                     wTracks = _.map(model.products, function (product) {
@@ -402,44 +437,45 @@ define([
                 }
 
                 formString = this.template({
-                    model: this.currentModel.toJSON(),
+                    model           : this.currentModel.toJSON(),
                     isWtrack: self.isWtrack,
-                    wTracks: wTracks,
-                    project: project,
+                    isPaid  : this.isPaid,
+                    wTracks : wTracks,
+                    project : project,
                     assigned: assigned,
                     customer: customer,
-                    total: total,
+                    total   : total,
                     currencySplitter: helpers.currencySplitter
                 });
 
-                if (this.isWtrack) {
+                if (this.isWtrack || this.isPaid) {
                     buttons = [
                         {
-                            text: "Cancel",
+                            text : this.isPaid ? "Close" : 'Cancel',
                             click: function () {
                                 self.hideDialog();
                             }
-                        },
+                        }/*,
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
-                        }
+                        }*/
                     ]
                 } else {
                     buttons = [
                         {
-                            text: "Save",
+                            text : "Save",
                             click: self.saveItem
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         },
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
                         }
                     ]
@@ -447,13 +483,13 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-invoice-dialog",
-                    title: "Edit Invoice",
-                    width: self.isWtrack ? '1200' : '900',
-                    position: {my: "center bottom", at: "center", of: window},
-                    buttons: buttons
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-invoice-dialog",
+                    title        : "Edit Invoice",
+                    width        : self.isWtrack ? '1200' : '900',
+                    position     : {my: "center bottom", at: "center", of: window},
+                    buttons      : buttons
 
                 });
 
@@ -474,16 +510,27 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
 
                 this.$el.find('#invoice_date').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true,
+                    onSelect   : function () {
+                        var dueDatePicker = $('#due_date');
+                        var endDate = $(this).datepicker('getDate');
+
+                        dueDatePicker.datepicker('option', 'minDate', endDate);
+                    }
                 });
 
                 this.$el.find('#due_date').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
-                });
+                    changeYear : true,
+                    onSelect   : function () {
+                        var targetInput = $(this);
+
+                        targetInput.removeClass('errorContent');
+                    }
+                }).datepicker('option', 'minDate', invoiceDate);
 
                 this.delegateEvents(this.events);
 
@@ -510,10 +557,14 @@ define([
                 //}
 
                 invoiceItemContainer.append(
-                    new InvoiceItemView({balanceVisible: true, forSales: self.forSales}).render({model: model}).el
+                    new InvoiceItemView({
+                        balanceVisible: true,
+                        forSales      : self.forSales,
+                        isPaid        : this.isPaid
+                    }).render({model: model}).el
                 );
 
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -526,7 +577,7 @@ define([
                         });
 
                     }
-
+                }
 
                 return this;
             }

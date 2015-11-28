@@ -94,27 +94,27 @@ define([
 
             render: function () {
                 var self;
-                var currentEl;
+                var $currentEl;
                 var FilterView = filterView;
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
+                $currentEl = this.$el;
 
-                currentEl.html('');
-                currentEl.append(_.template(this.listTemplate));
-                currentEl.append(new this.listItemView({
+                $currentEl.html('');
+                $currentEl.append(_.template(this.listTemplate));
+                $currentEl.append(new this.listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 6}).render());
+                $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 5}).render());
 
                 this.renderCheckboxes();
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
 
                 this.renderFilter(self);

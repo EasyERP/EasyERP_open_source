@@ -1,7 +1,7 @@
 <div class="forInfo-half-block left tableResponsive">
     <table class="list tableProjects">
         <colgroup span="11">
-            <col span="1" width="2%">
+            <col span="1" width="3%">
             <col span="1">
             <col span="1">
             <col span="1">
@@ -35,7 +35,7 @@
             <th>Job</th>
             <th>Status</th>
             <th>Type</th>
-            <th>Count</th>
+            <th>Employees</th>
             <th>Hours</th>
             <th>Cost</th>
             <th>Revenue</th>
@@ -62,13 +62,12 @@
             <td class="expand">+</td>
             <td class="editableJobs" id="jobsName"><%=element.name%></td>
             <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
-            <td class=""><a data-id="<%=element.type%>" id="type" class=""><%=element.type%></a>
+            <td class="selects"><a data-id="<%=element.type%>" id="type" class=""><%=element.type%></a>
                 <ul class="newSelectList" style="display: none;">
-                    <li>Order</li>
-                    <li>Quotation</li>
-                    <li>Invoice</li>
-                    <li>Payment</li>
-                    <li>Empty</li>
+                    <li>Ordered</li>
+                    <li>Quoted</li>
+                    <li>Invoiced</li>
+                    <li>Not Quoted</li>
                 </ul>
             </td>
             <td><%=element.budget.projectTeam.length%></td>

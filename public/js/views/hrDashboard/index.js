@@ -38,7 +38,7 @@ define([
 
         render: function () {
             var self = this;
-            var currentEl = this.$el;
+            var $currentEl = this.$el;
             $('title').text(this.contentType);
 
             var start = moment().subtract(11, 'month').date(1);
@@ -72,7 +72,7 @@ define([
                 custom.cacheToApp('arrOfDates', arrOfDates);
             }
 
-            currentEl.html(this.template({arrOfDates: arrOfDates, hired: hired, fired: fired}));
+            $currentEl.html(this.template({arrOfDates: arrOfDates, hired: hired, fired: fired}));
 
             arrOfDates.forEach(function(dateObject){
                 var totalContainer = self.$el.find('#total_' + dateObject.dateByMonth);
@@ -82,7 +82,7 @@ define([
                 totalContainer.text(parseInt(hiredContainer.text()) - parseInt(firedContainer.text()));
             });
 
-            currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             return this;
         }
     });

@@ -262,9 +262,9 @@ define([
             },
 
             selectValue: function (e) {
-                var currentElement = $(e.target);
-                var currentValue = currentElement.attr('data-value');
-                var filterGroupElement = currentElement.closest('.filterGroup');
+                var $currentElement = $(e.target);
+                var currentValue = $currentElement.attr('data-value');
+                var filterGroupElement = $currentElement.closest('.filterGroup');
                 var groupType = filterGroupElement.attr('data-value');
                 var groupNameElement = filterGroupElement.find('.groupName');
                 var constantsName = $.trim(groupNameElement.text());
@@ -274,7 +274,7 @@ define([
                 var intVal;
                 var index;
 
-                currentElement.toggleClass('checkedValue');
+                $currentElement.toggleClass('checkedValue');
 
                 intVal = parseInt(currentValue);
 
@@ -282,7 +282,7 @@ define([
 
                 collectionElement = currentCollection.findWhere({_id: currentValue});
 
-                if (currentElement.hasClass('checkedValue')) {
+                if ($currentElement.hasClass('checkedValue')) {
 
                     if (!App.filter[filterObjectName]) {
                         App.filter[filterObjectName] = {
@@ -346,7 +346,6 @@ define([
                 filterIc.addClass('active');
                 filterValues.append('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
 
-
             },
 
             removeFilter: function (e) {
@@ -387,8 +386,17 @@ define([
             },
 
             showHideValues: function (e) {
-                var filterGroupContainer = $(e.target).closest('.filterGroup');
 
+                var filterGroupContainer = $(e.target).closest('.filterGroup');
+                if (this.previousGroupContainer) {
+                    this.toggleGroup(this.previousGroupContainer)
+                }
+                this.previousGroupContainer = filterGroupContainer;
+                this.toggleGroup(filterGroupContainer);
+
+            },
+
+            toggleGroup: function (filterGroupContainer) {
                 filterGroupContainer.find('.ulContent').toggleClass('hidden');
                 filterGroupContainer.toggleClass('activeGroup');
             },
@@ -505,13 +513,13 @@ define([
             },
 
             clickSearchResult: function (e) {
-                var currentElement = e.target ? $(e.target).closest("li") : e;
+                var $currentElement = e.target ? $(e.target).closest("li") : e;
 
-                var container = currentElement.closest('.ui-autocomplete');
-                var checkOnGroup = currentElement.hasClass('ui-autocomplete-category');
+                var container = $currentElement.closest('.ui-autocomplete');
+                var checkOnGroup = $currentElement.hasClass('ui-autocomplete-category');
 
-                var filterObjectName = currentElement.attr('data-view');
-                var groupType = currentElement.attr('data-back');
+                var filterObjectName = $currentElement.attr('data-view');
+                var groupType = $currentElement.attr('data-back');
                 var elements = container.find('.' + filterObjectName);
 
                 if (!App.filter[filterObjectName]) {
@@ -526,7 +534,7 @@ define([
                         App.filter[filterObjectName]['value'].push($(element).attr('data-content'));
                     });
                 } else {
-                    App.filter[filterObjectName]['value'].push(currentElement.attr('data-content'));
+                    App.filter[filterObjectName]['value'].push($currentElement.attr('data-content'));
                 }
 
                 this.setDbOnce();
@@ -536,13 +544,13 @@ define([
 
             render: function (options) {
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var searchInput;
                 var filterName = this.parentContentType + '.filter';
                 var filters = custom.retriveFromCash(filterName) || App.filter;
                 var allResults;
 
-                currentEl.html(this.template({filterCollection: this.constantsObject}));
+                $currentEl.html(this.template({filterCollection: this.constantsObject}));
 
                 this.renderFilterContent(options);
                 this.showFilterIcons(filters);
@@ -597,7 +605,7 @@ define([
                     }
                 });
 
-                searchInput = currentEl.find("#searchInput");
+                searchInput = $currentEl.find("#searchInput");
 
                 searchInput.keydown(function (e) {
                     if (e.which === 13) {
@@ -721,7 +729,10 @@ define([
                 }
                 for (var i = valuesArray.length - 1; i >= 0; i--) {
                     collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
-                    collectionElement.set({status: true});
+
+                    if (collectionElement){
+                        collectionElement.set({status: true});
+                    }
                 }
             },
 

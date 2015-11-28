@@ -2,8 +2,8 @@
     "use strict";
     var config = {
         db  : 1,
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT) || 6379
+        host: process.env.SOCKET_DB_HOST || 'localhost',
+        port: parseInt(process.env.SOCKET_DB_PORT) || 6379
     };
     var redis = require('redis');
     var client = redis.createClient(config.port, config.host, {});

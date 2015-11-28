@@ -920,8 +920,8 @@ var Customers = function (event, models) {
                 InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
                 Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
 
-                PaymentSchema = mongoose.Schemas['wTrackPayment'];
-                Payment = models.get(dbName, 'wTrackPayment', PaymentSchema);
+                PaymentSchema = mongoose.Schemas['Payment'];
+                Payment = models.get(dbName, 'Payment', PaymentSchema);
 
                 fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 

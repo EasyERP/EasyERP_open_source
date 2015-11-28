@@ -3,6 +3,8 @@ var WorkflowHandler = require('./workflow');
 var RESPONSES = require('../constants/responses');
 
 var Invoice = function (models, event) {
+    "use strict";
+
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var InvoiceSchema = mongoose.Schemas['Invoice'];
@@ -18,6 +20,7 @@ var Invoice = function (models, event) {
     var workflowHandler = new WorkflowHandler(models);
     var moment = require('../public/js/libs/moment/moment');
     var _ = require('../node_modules/underscore');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
@@ -28,10 +31,11 @@ var Invoice = function (models, event) {
     this.create = function (req, res, next) {
         var isWtrack = checkDb(req.session.lastDb);
         var body = req.body;
+        var forSales = body.forSales;
         var Invoice;
         var invoice;
 
-        if (isWtrack) {
+        if (isWtrack && forSales) {
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -110,7 +114,7 @@ var Invoice = function (models, event) {
             var supplier;
             var company;
             var project;
-            var type = "Invoice";
+            var type = "Invoiced";
             var query;
 
             if (parallelResponse && parallelResponse.length) {
@@ -136,7 +140,8 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
-            invoice.sourceDocument = order.name;
+            // invoice.sourceDocument = order.name;
+            invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
             invoice.workflow = {};
             invoice.workflow._id = workflow._id;
@@ -145,7 +150,10 @@ var Invoice = function (models, event) {
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
             if (forSales === "true") {
-                invoice.project.name = order.project.projectName;
+                if (!invoice.project) {
+                    invoice.project = {};
+                }
+                invoice.project.name = order.project ? order.project.projectName : "";
             }
 
             supplier = order['supplier'];
@@ -209,6 +217,13 @@ var Invoice = function (models, event) {
                 return next(err)
             }
 
+            Order.findByIdAndUpdate(id, {$set: {workflow:{name: "Invoiced", _id: CONSTANTS.ORDERDONE}}}, {new: true}, function (err, result) {
+                if (err) {
+                    return next(err)
+                }
+            });
+
+
             res.status(201).send(result);
         });
 
@@ -223,7 +238,7 @@ var Invoice = function (models, event) {
         var Invoice;
 
         if (checkDb(db)) {
-            moduleId = 64
+            moduleId = 64;
             isWtrack = true;
         }
 
@@ -242,16 +257,13 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    //var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
-                            next(err);
-                        } else {
-                            res.status(200).send(invoice);
+                            return next(err);
                         }
-                    });
 
+                        res.status(200).send(invoice);
+                    });
                 } else {
                     res.status(403).send();
                 }
@@ -269,6 +281,7 @@ var Invoice = function (models, event) {
             if (err) {
                 return next(err);
             }
+
             res.status(200).send(invoices);
         });
     };
@@ -321,8 +334,8 @@ var Invoice = function (models, event) {
                         break;
                     }
                 case 'forSales':
-                    if (condition){
-                        condition = ConvertType(condition, 'boolean');
+                    if (condition) {
+                        condition = ConvertType(condition[0], 'boolean');
                         filtrElement[key] = condition;
                         resArray.push(filtrElement);
                         break;
@@ -339,7 +352,7 @@ var Invoice = function (models, event) {
         var moduleId = 56;
 
         if (checkDb(db)) {
-            moduleId = 64
+            moduleId = 64;
         }
 
         if (req.session && req.session.loggedIn && db) {
@@ -422,21 +435,24 @@ var Invoice = function (models, event) {
                         }
 
                         optionsObject.$and.push({_id: {$in: invoicesIds}});
+                        optionsObject.$and.push({expense: {$exists: false}});
+
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query
-                            //.populate('supplier', 'name _id')
-                            //.populate('salesPerson', 'name _id')
+                        //.populate('supplier', 'name _id')
+                        //.populate('salesPerson', 'name _id')
                             .populate('department', '_id departmentName')
                             .populate('createdBy.user')
                             .populate('editedBy.user')
                             .populate('groups.users')
                             .populate('groups.group')
                             .populate('groups.owner', '_id login')
-                            .populate('products.jobs');
-                            /*.populate('project', '_id projectName').
-                            populate('workflow._id', '-sequence');*/
+                            .populate('products.jobs')
+                            .populate('sourceDocument');
+                        /*.populate('project', '_id projectName').
+                         populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -462,12 +478,7 @@ var Invoice = function (models, event) {
     this.getInvoiceById = function (req, res, next) {
         var isWtrack = checkDb(req.session.lastDb);
         var moduleId = 56;
-        var data = {};
-
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-
+        var data = req.query || {};
         var id = data.id;
         var forSales;
 
@@ -475,11 +486,7 @@ var Invoice = function (models, event) {
             moduleId = 64
         }
 
-        if (data.forSales === 'false') {
-            forSales = false;
-        } else {
-            forSales = true;
-        }
+        forSales = data.forSales !== 'false';
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
@@ -582,7 +589,8 @@ var Invoice = function (models, event) {
                             .populate('editedBy.user')
                             .populate('groups.users')
                             .populate('groups.group')
-                            .populate('groups.owner', '_id login');
+                            .populate('groups.owner', '_id login')
+                            .populate('sourceDocument');
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -612,9 +620,12 @@ var Invoice = function (models, event) {
         var paymentIds = [];
         var jobs = [];
         var wTrackIds = [];
+        var project;
+        var orderId;
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
+        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
         if (checkDb(db)) {
@@ -631,6 +642,14 @@ var Invoice = function (models, event) {
                         }
 
                         invoiceDeleted = result.toJSON();
+
+                        orderId = invoiceDeleted.sourceDocument;
+
+                        Order.findByIdAndUpdate(objectId(orderId), {$set: {workflow: {name: "Not Invoiced", _id: CONSTANTS.ORDERDRAFT}}}, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err)
+                            }
+                        });
 
                         async.each(invoiceDeleted.products, function (product) {
                             jobs.push(product.jobs);
@@ -654,19 +673,18 @@ var Invoice = function (models, event) {
                             var setData = {};
                             var array;
 
-                            async.each(jobs, function (id) {
+                            async.each(jobs, function (id, cb) {
                                 setData.editedBy = {
                                     user: req.session.uId,
                                     date: new Date().toISOString()
                                 };
 
-                                setData.type = "Order";
-
-                                JobsModel.findByIdAndUpdate(id, setData, {new: true}, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, {type: "Ordered"}, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
 
+                                    project = result ? result.project : null;
                                     array = result ? result.wTracks : [];
 
                                     async.each(array, function (id) {
@@ -682,33 +700,17 @@ var Invoice = function (models, event) {
                                             if (err) {
                                                 return console.log(err);
                                             }
-                                            //  console.log('success');
+
                                         });
                                     });
+                                    cb();
                                 });
+                            }, function () {
+                                if (project) {
+                                    event.emit('fetchJobsCollection', {project: project});
+                                }
                             });
                         };
-
-                        //function wTrackUpdate (){
-                        //    var setData = {};
-                        //
-                        //    async.each(wTrackIds, function (id) {
-                        //        setData.editedBy = {
-                        //            user: req.session.uId,
-                        //            date: new Date().toISOString()
-                        //        };
-                        //
-                        //        setData.isPaid = false;
-                        //        setData.amount = 0;
-                        //
-                        //        wTrack.findByIdAndUpdate(id, setData, function (err, result) {
-                        //            if (err) {
-                        //                return console.log(err);
-                        //            }
-                        //          //  console.log('success');
-                        //        });
-                        //    });
-                        //};
 
                         async.parallel([paymentsRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
@@ -887,7 +889,7 @@ var Invoice = function (models, event) {
 
         db.collection('settings').findOneAndUpdate({
                 dbName : currentDbName,
-                name   : 'invoice',
+                name  : 'invoice',
                 project: project
             },
             {
@@ -973,6 +975,73 @@ var Invoice = function (models, event) {
             res.status(200).send(result)
         })
     };
+
+    this.getStats = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var now = new Date();
+
+        Invoice.aggregate([{
+            $match: {
+                forSales: true,
+                'paymentInfo.balance': {
+                    $gt: 0
+                }
+            }
+        }, {
+            $project: {
+                dueDate    : 1,
+                project    : 1,
+                supplier   : 1,
+                name       : 1,
+                paymentInfo: 1,
+                salesPerson: 1,
+                diffStatus : {
+                    $cond: {
+                        if  : {
+                            $lt: [{$subtract: [now, '$dueDate']}, 0]
+                        },
+                        then: -1,
+                        else: {
+                            $cond: {
+                                if  : {
+                                    $lt: [{$subtract: [now, '$dueDate']}, 2592000000]
+                                },
+                                then: 0,
+                                else: {
+                                    $cond: {
+                                        if  : {
+                                            $lt: [{$subtract: [now, '$dueDate']}, 5184000000]
+                                        },
+                                        then: 1,
+                                        else: {
+                                            $cond: {
+                                                if  : {
+                                                    $lt: [{$subtract: [now, '$dueDate']}, 7776000000]
+                                                },
+                                                then: 2,
+                                                else: 3
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }, {
+            $sort: {
+                'paymentInfo.balance': -1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    };
+
 
 };
 

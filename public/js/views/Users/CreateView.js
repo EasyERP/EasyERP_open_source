@@ -2,9 +2,10 @@ define([
         "text!templates/Users/CreateTemplate.html",
         "models/UsersModel",
         "common",
-        "populate"
+        "populate",
+        "Validation"
     ],
-    function (CreateTemplate, UsersModel, common, populate) {
+    function (CreateTemplate, UsersModel, common, populate, Validation) {
 
         var UsersCreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -27,7 +28,8 @@ define([
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click"                                                           : "hideNewSelect"
+                "click"                                                           : "hideNewSelect",
+                "keypress #login"                                                 : "checkLoginInputKey"
             },
             notHide      : function () {
                 return false;
@@ -48,6 +50,14 @@ define([
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+            },
+
+            checkLoginInputKey: function (e) {
+                var char = String.fromCharCode(e.charCode);
+
+                if (Validation.loginCharNotValid(char)) {
+                    e.preventDefault();
+                }
             },
 
             hideDialog: function () {

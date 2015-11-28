@@ -376,11 +376,11 @@ define([
             render: function () {
                 var self = this;
                 $('.ui-dialog ').remove();
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var itemView;
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
                 itemView = new listItemView({
                     collection: this.collection,
                     page: this.page,
@@ -393,7 +393,7 @@ define([
                     itemView.trigger('incomingStages', stages);
                 });
 
-                currentEl.append(itemView.render());//added two parameters page and items number
+                $currentEl.append(itemView.render());//added two parameters page and items number
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)
@@ -419,7 +419,7 @@ define([
                     self.hideItemsNumber(e);
                 });
 
-                currentEl.append(_.template(paginationTemplate));
+                $currentEl.append(_.template(paginationTemplate));
 
                 var pagenation = this.$el.find('.pagination');
 
@@ -428,20 +428,20 @@ define([
                 } else {
                     pagenation.show();
                 }
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 //this.renderContent();
             },
 
             renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
+                var $currentEl = this.$el;
+                var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
                     collection: this.collection,
-                    page: currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                    page: $currentEl.find("#currentShowPage").val(),
+                    itemsNumber: $currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
                 var pagenation = this.$el.find('.pagination');

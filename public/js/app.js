@@ -11,12 +11,12 @@ define([
 
         var opts = {
             lines    : 17, // The number of lines to draw
-            length   : 56, // The length of each line
-            width    : 14, // The line thickness
-            radius   : 82, // The radius of the inner circle
+            length   : 30, // The length of each line
+            width    : 5, // The line thickness
+            radius   : 30, // The radius of the inner circle
             scale    : 0.75, // Scales overall size of the spinner
             corners  : 1, // Corner roundness (0..1)
-            color    : '#000', // #rgb or #rrggbb or array of colors
+            color    : '#fff', // #rgb or #rrggbb or array of colors
             opacity  : 0.25, // Opacity of the lines
             rotate   : 68, // The rotation offset
             direction: 1, // 1: clockwise, -1: counterclockwise

@@ -17,10 +17,10 @@ module.exports = function (app, mainDb) {
     var dbsObject = mainDb.dbsObject;
     var models = require("../models.js")(dbsObject);
     var productRouter = require('./product')(models);
-    var orderRouter = require('./order')(models);
+    var orderRouter = require('./order')(models, event);
     var invoiceRouter = require('./invoice')(models, event);
     var supplierRouter = require('./supplier')(models);
-    var quotationRouter = require('./quotation')(models);
+    var quotationRouter = require('./quotation')(models, event);
     var destinationRouter = require('./destination')(models);
     var incotermRouter = require('./incoterm')(models);
     var invoicingControlRouter = require('./invoicingControl')(models);
@@ -54,6 +54,7 @@ module.exports = function (app, mainDb) {
     var paymentTypeRouter = require('./paymentType')(models);
     var payrollExprnsesRouter = require('./payrollExprnses')(models);
     var jobsRouter = require('./jobs')(models, event);
+    var chartOfAccountRouter = require('./chartOfAccount')(models);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
@@ -99,6 +100,7 @@ module.exports = function (app, mainDb) {
     app.use('/jobs', jobsRouter);
     app.use('/paymentType', paymentTypeRouter);
     app.use('/payrollExprnses', payrollExprnsesRouter);
+    app.use('/chartOfAccount', chartOfAccountRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

@@ -35,10 +35,13 @@ define([
             changesCount  : 0,
 
             events: {
-                "click .statusCheckbox": "statusCheck",
-                "click tr.mainRow"     : "gotoForm",
-                "click .datePicker"    : "datePickerClick",
-                "change .datePicker"   : "datePickerChange",
+                "click .statusCheckbox"      : "showDropDown",
+                "click li"                   : "statusCheck",
+                "click tr.mainRow"           : "gotoForm",
+                "click .datePicker"          : "datePickerClick",
+                "change .datePicker"         : "datePickerChange",
+                "click .totalRowCB"          : "dataKeyCbCheck",
+                "click :not(.statusCheckbox)": "hideDropDowns",
             },
 
             initialize: function (options) {
@@ -55,6 +58,40 @@ define([
                 this.render();
 
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');
+            },
+
+            hideDropDowns: function () {
+                this.$el.find('.newSelectList').remove();
+            },
+
+            dataKeyCbCheck: function (e) {
+                e.stopPropagation();
+
+                if (this.changesCount !== 0) {
+                    return false;
+                }
+
+                var $target = $(e.target);
+
+                var id = $target.attr('id');
+                var $curEl = this.$el
+                var $allCheckBoxes;
+                var $checkedCB;
+                var status;
+
+                if (id && id === 'check_all') {
+                    status = $target.prop('checked');
+                    $allCheckBoxes = $curEl.find('.totalRowCB').not($target);
+                    $allCheckBoxes.prop('checked', status);
+                }
+
+                $checkedCB = this.$el.find('.totalRowCB:checked');
+
+                if ($checkedCB.length) {
+                    this.showHideSaveCancelBtns({delete: true});
+                } else {
+                    this.showHideSaveCancelBtns({delete: false});
+                }
             },
 
             datePickerClick: function (e) {
@@ -77,7 +114,7 @@ define([
                 var $td = $input.closest('td');
 
                 var $tr = $td.closest('tr');
-                var dataKey = $tr.attr('data-id');
+                var dataKey = $tr.attr('id');
 
                 var defVal = $td.attr('data-val');
 
@@ -99,52 +136,126 @@ define([
                 this.showHideSaveCancelBtns();
             },
 
-            showHideSaveCancelBtns: function () {
-                var option;
+            showHideSaveCancelBtns: function (options) {
                 var $btnHolder = $('.createBtnHolder');
                 var $saveBtn = $btnHolder.find('#top-bar-saveBtn');
                 var $deleteBtn = $btnHolder.find('#top-bar-deleteBtn');
 
-                if (this.changesCount !== 0) {
-                    option = {save: true, delete: true};
-                } else {
-                    option = {save: false, delete: false};
+                if (!options) {
+                    if (this.changesCount) {
+                        options = {save: true, delete: true};
+                    } else {
+                        options = {save: false, delete: false};
+                    }
                 }
 
-                option.save ? $saveBtn.show() : $saveBtn.hide();
-                option.delete ? $deleteBtn.show() : $deleteBtn.hide();
+                options.save ? $saveBtn.show() : $saveBtn.hide();
+                options.delete ? $deleteBtn.show() : $deleteBtn.hide();
             },
 
-            saveItem: function() {
-                /*var self = this;
+            saveItem: function () {
+                var self = this;
 
-                dataService.patchData("/payroll/byDataKey", self.changedPeriods, function (err, result) {
+                dataService.patchData("/payroll/byDataKey", JSON.stringify(self.changedPeriods), function (err, result) {
                     if (err) {
                         return console.log(err);
                     }
-                });*/
+
+                    self.changesCount = 0;
+                    self.changedPeriods = {};
+
+                    self.showHideSaveCancelBtns();
+                }, 'application/json');
+            },
+
+            deleteItems: function () {
+                var self = this;
+                var checkboxes;
+                var checkboxesValues = [];
+                var keys;
+                var $tr;
+                var $statusCb;
+                var $dateTd;
+                var defVal;
+
+                var curDataKey;
+
+                if (this.changesCount) {
+                    keys = Object.keys(this.changedPeriods);
+
+                    for (var i = keys.length - 1; i >= 0; i--) {
+                        $tr = $('#' + keys[i]);
+
+                        $statusCb = $tr.find('.statusCheckbox .checkbox');
+                        $dateTd = $tr.find('.datePicker');
+                        defVal = $dateTd.attr('data-val');
+
+                        $statusCb.prop('checked', !$statusCb.prop('checked'));
+                        if (defVal) {
+                            $dateTd.find('input').datepicker('setDate', new Date(defVal));
+                        } else {
+                            $.datepicker._clearDate($dateTd.find('input'));
+                        }
+                    }
+                } else {
+                    checkboxes = this.$el.find('.totalRowCB:checked');
+
+                    $.each(checkboxes, function () {
+                        checkboxesValues.push($(this).attr('data-id'));
+                    })
+
+                    dataService.deleteData("/payroll/byDataKey", JSON.stringify({dataKeys: checkboxesValues}), function (err, result) {
+                        if (err) {
+                            return console.log(err);
+                        }
+
+                        for (var i = checkboxes.length - 1; i >= 0; i--) {
+
+                            curDataKey = $(checkboxes[i]).attr('data-id');
+
+                            checkboxes[i].closest('tr').remove();
+
+                            self.total = _.reject(self.total, function (el) {
+                                return Object.keys(el)[0] === curDataKey;
+                            });
+                        }
+                    }, 'application/json');
+                }
+
+                self.showHideSaveCancelBtns({save: false, delete: false});
+            },
+
+            showDropDown: function (e) {
+                e.stopPropagation();
+
+                var $target = $(e.target);
+                var isHref = $target.hasClass('currentSelected');
+                var $href = isHref ? $target : $target.find('.currentSelected');
+
+                $href.append('<ul class="newSelectList"><li data-value="false">Draft</li><li data-value="true">Done</li></ul>');
             },
 
             statusCheck: function (e) {
                 e.stopPropagation();
 
                 var $target = $(e.target);
-                var isCheckBox = $target.hasClass('checkbox');
-                var $checkbox = isCheckBox ? $target : $target.find('.checkbox');
-                var state = $checkbox.prop('checked');
+                var dataVal = $target.attr('data-value');
+                var $td = $target.closest('td');
+                var $href = $td.find('.currentSelected');
                 var $tr = $target.closest('tr');
-                var dataKey = $tr.attr('data-id');
+                var dataKey = $tr.attr('id');
 
-                if (!isCheckBox) {
-                    $checkbox.prop('checked', !state);
-                }
+                dataVal = dataVal === 'true' ? true : null;
+
+                $href.text(dataVal ? 'Done' : 'Draft');
+                $href.attr('data-value', dataVal);
 
                 if (!this.changedPeriods[dataKey]) {
                     this.changedPeriods[dataKey] = {};
                 }
 
                 if (!this.changedPeriods[dataKey].hasOwnProperty('status')) {
-                    this.changedPeriods[dataKey].status = state;
+                    this.changedPeriods[dataKey].status = dataVal;
                     this.changesCount++;
                 } else {
                     delete this.changedPeriods[dataKey].status;
@@ -171,7 +282,7 @@ define([
                     return;
                 }
                 App.ownContentType = true;
-                var id = $(e.target).closest("tr").attr("data-id");
+                var id = $(e.target).closest("tr").attr("id");
                 window.location.hash = this.formUrl + id;
             },
 
@@ -211,15 +322,16 @@ define([
             },
 
             render: function () {
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
 
-                currentEl.html('');
-                currentEl.append(headerTemplate);
+                $currentEl.html('');
+                $currentEl.append(headerTemplate);
 
-                currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
+                $currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
                     total           : this.total,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter    : helpers.weekSplitter
+                    weekSplitter    : helpers.weekSplitter,
+                    moment          : moment,
                 }));
 
                 this.hideSaveCancelBtns();
@@ -228,7 +340,7 @@ define([
                 $('#top-bar-createBtn').hide();
                 $('#topBarPaymentGenerate').hide();
 
-                currentEl.find('.datePicker input').datepicker({
+                $currentEl.find('.datePicker input').datepicker({
                     dateFormat : "dd/mm/yy",
                     changeMonth: true,
                     changeYear : true

@@ -127,8 +127,8 @@ define([
 
             this.prevQuickEdit = parent;
 
-            parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
-            parent.append('<span id="cancelSpan" class="productEdit"><a href="javascript:;">x</a></span>');
+            parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');
+            parent.append('<span id="cancelSpan" class="productEdit"><i class="fa fa-times"></i></span>');
             parent.find("#editInput").width(parent.find("#editInput").width() - 50);
         },
 
@@ -251,7 +251,7 @@ define([
 
             var totalUntax = 0;
             var totalEls = resultForCalculate.length;
-            var currentEl;
+            var $currentEl;
             var quantity;
             var cost;
             var dates = [];
@@ -259,11 +259,11 @@ define([
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
-                    currentEl = $(resultForCalculate[i]);
-                    quantity = currentEl.find('[data-name="quantity"]').text();
-                    cost = currentEl.find('[data-name="price"]').text();
+                    $currentEl = $(resultForCalculate[i]);
+                    quantity = $currentEl.find('[data-name="quantity"]').text();
+                    cost = $currentEl.find('[data-name="price"]').text();
                     totalUntax += (quantity * cost);
-                    date = currentEl.find('.datepicker').text();
+                    date = $currentEl.find('.datepicker').text();
                     dates.push(date);
                 }
             }

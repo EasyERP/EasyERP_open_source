@@ -191,22 +191,22 @@ define([
 
             render: function () {
                 var self;
-                var currentEl;
+                var $currentEl;
 
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
+                $currentEl = this.$el;
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
                 var itemView = new listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 });
                 itemView.bind('incomingStages', this.pushStages, this);
-                currentEl.append(itemView.render());
+                $currentEl.append(itemView.render());
 
                 this.renderCheckboxes();
 
@@ -216,9 +216,9 @@ define([
 
                 });
                 this.renderFilter(this);
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
             }
 

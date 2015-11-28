@@ -124,37 +124,37 @@ define([
 
             render: function () {
                 var self;
-                var currentEl;
+                var $currentEl;
 
                 $('.ui-dialog ').remove();
 
                 self = this;
-                currentEl = this.$el;
+                $currentEl = this.$el;
 
-                currentEl.html('');
+                $currentEl.html('');
                 if (App.weTrack) {
-                    currentEl.append(_.template(listForWTrack));
-                    currentEl.append(new listItemView({
+                    $currentEl.append(_.template(listForWTrack));
+                    $currentEl.append(new listItemView({
                         collection: this.collection,
                         page: this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
                 }else {
-                    currentEl.append(_.template(listTemplate));
-                    currentEl.append(new listItemView({
+                    $currentEl.append(_.template(listTemplate));
+                    $currentEl.append(new listItemView({
                         collection: this.collection,
                         page: this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
                 }
                 //added two parameters page and items number
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
 
                 this.renderCheckboxes();
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
                 this.renderFilter(self);
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 dataService.getData("/workflow/fetch", {
                     wId: 'Sales Order',
@@ -168,8 +168,14 @@ define([
             goToEditDialog: function (e) {
                 e.preventDefault();
 
-                var id = $(e.target).closest('tr').data("id");
+                var tr = $(e.target).closest('tr');
+                var id = tr.data("id");
+                var notEditable = tr.hasClass('notEditable');
                 var model = new quotationModel({ validate: false });
+
+                if (notEditable){
+                    return false;
+                }
 
                 model.urlRoot = '/Order/form/' + id;
                 model.fetch({

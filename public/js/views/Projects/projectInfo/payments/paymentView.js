@@ -3,34 +3,35 @@
  */
 
 define([
-    'views/salesInvoice/list/ListView',
-    'text!templates/Projects/projectInfo/invoiceTemplate.html',
-    'views/salesInvoice/EditView',
-    'views/salesInvoice/list/ListItemView',
-    'collections/salesInvoice/filterCollection',
-    'models/InvoiceModel',
-    'common',
-    'helpers'
+    'views/customerPayments/list/ListView',
+    'text!templates/Projects/projectInfo/paymentTemplate.html',
+    'views/customerPayments/list/ListItemView',
+    'collections/customerPayments/filterCollection',
+    'collections/customerPayments/editCollection',
+    'helpers',
+    'common'
 
-], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers) {
-    var invoiceView = ListView.extend({
+], function (ListView, paymentTemplate, listItemView, paymentCollection, editCollection, helpers, common) {
+    var paymentView = ListView.extend({
 
-        el: '#invoices',
-        listItemView            : listItemView,
-        contentCollection: invoiceCollection,
+        el               : '#payments',
+        listItemView     : listItemView,
+        contentCollection: paymentCollection,
 
         initialize: function (options) {
             this.remove();
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
+
+            this.render();
         },
 
-        template: _.template(invoiceTemplate),
+        template: _.template(paymentTemplate),
 
         events: {
             "click .checkbox": "checked",
-            "click  .list td:not(.notForm)": "goToEditDialog",
-            "click #removeInvoice": "deleteItems"
+            "click #savePayment": "saveItem",
+            "click #removePayment": "deleteItems"
         },
 
         deleteItems: function (e) {
@@ -39,8 +40,7 @@ define([
             var that = this;
             var model;
             var listTableCheckedInput;
-            var table = this.$el.find('#listTable');
-            listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
+            listTableCheckedInput = $('#paymentsTable').find("input:not('#check_all_payments'):checked");
 
             this.collectionLength = this.collection.length;
             $.each(listTableCheckedInput, function (index, checkbox) {
@@ -50,9 +50,9 @@ define([
                     success: function (model) {
                         var id = model.get('_id');
 
-                        table.find('[data-id="' + id + '"]').remove();
+                        that.$listTable.find('[data-id="' + id + '"]').remove();
 
-                        $("#removeInvoice").hide();
+                        $("#removePayment").hide();
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
@@ -63,32 +63,79 @@ define([
             });
         },
 
-        goToEditDialog: function (e) {
+        saveItem: function (e) {
+
             e.preventDefault();
 
-            var id = $(e.target).closest('tr').data("id");
-            var model = new invoiceModel({validate: false});
+            var model;
+            var modelJSON;
 
-            model.urlRoot = '/Invoice/form';
-            model.fetch({
-                data   : {
-                    id       : id,
-                    currentDb: App.currentDb
-                },
-                success: function (model) {
-                    // var isWtrack = App.weTrack;
+            this.setChangedValueToModel();
 
-                    new editView({model: model, redirect: true, collection : this.collection});
-                },
-                error  : function () {
-                    alert('Please refresh browser');
+            for (var id in this.changedModels) {
+                model = this.editCollection.get(id);
+                modelJSON = model.toJSON();
+                model.changed = this.changedModels[id];
+            }
+            this.editCollection.save();
+            this.changedModels = {};
+        },
+
+        setChangedValueToModel: function () {
+            var editedElement = this.$el.find('#listTable').find('.editing');
+            var editedCol;
+            var editedElementRowId;
+            var editedElementContent;
+            var editedElementValue;
+            var editHolidayModel;
+
+            if (editedElement.length) {
+                editedCol = editedElement.closest('td');
+                editedElementRowId = editedElement.closest('tr').data('id');
+                editedElementContent = editedCol.data('content');
+                editedElementValue = editedElement.val();
+
+                editHolidayModel = this.editCollection.get(editedElementRowId);
+
+                if (!this.changedModels[editedElementRowId]) {
+                    if (!editHolidayModel.id) {
+                        this.changedModels[editedElementRowId] = editHolidayModel.attributes;
+                    } else {
+                        this.changedModels[editedElementRowId] = {};
+                    }
                 }
-            });
+
+                this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
+                editedCol.text(editedElementValue);
+                editedElement.remove();
+            }
+        },
+
+        updatedOptions: function () {
+            var savedRow = this.$listTable.find('#false');
+            var editedEl = savedRow.find('.editing');
+            var editedCol = editedEl.closest('td');
+            this.hideSaveCancelBtns();
+
+            editedCol.text(editedEl.val());
+            editedEl.remove();
+
+            this.resetCollection();
+        },
+
+        resetCollection: function (model) {
+            if (model && model._id) {
+                model = new currentModel(model);
+                this.collection.add(model);
+            } else {
+                this.collection.set(this.editCollection.models, {remove: false});
+            }
         },
 
         renderContent: function () {
-            var currentEl = this.$el;
-            var tBody = currentEl.find("#listTable");
+            var $currentEl = this.$el;
+            var tBody = $currentEl.find("#listTable");
             var itemView;
             var pagenation;
 
@@ -161,19 +208,19 @@ define([
             if (this.collection.length > 0) {
                 var el = this.$el;
                 var checkLength = el.find("input.checkbox:checked").length;
-                var checkAll$=el.find('#check_all_invoice');
-                var removeBtnEl = $('#removeInvoice');
+                var checkAll$ = el.find('#check_all_payments');
+                var removeBtnEl = $('#removePayment');
 
                 if (checkLength > 0) {
                     checkAll$.prop('checked', false);
+
                     removeBtnEl.show();
 
                     if (checkLength == this.collection.length) {
 
                         checkAll$.prop('checked', true);
                     }
-                }
-                else {
+                } else {
                     removeBtnEl.hide();
                     checkAll$.prop('checked', false);
                 }
@@ -188,22 +235,51 @@ define([
             $(".crop-images-dialog").remove();
         },
 
+        hideSaveCancelBtns: function () {
+            var saveBtnEl = $('#savePayment');
+            var cancelBtnEl = $('#removePayment');
+
+            this.changed = false;
+
+            saveBtnEl.hide();
+            cancelBtnEl.hide();
+
+            return false;
+        },
+
+        showSaveCancelBtns: function () {
+            var saveBtnEl = $('#savePayment');
+            var cancelBtnEl = $('#removePayment');
+
+            saveBtnEl.show();
+            //cancelBtnEl.show();
+
+            return false;
+        },
+
+        setChangedValue: function () {
+            if (!this.changed) {
+                this.changed = true;
+                this.showSaveCancelBtns()
+            }
+        },
+
         render: function (options) {
-            var currentEl = this.$el;
-            var template = _.template(invoiceTemplate);
+            var $currentEl = this.$el;
             var self = this;
             var tabs;
             var dialogHolder;
             var n;
             var target;
+            var template = _.template(paymentTemplate);
 
-            currentEl.html('');
+            $currentEl.html('');
 
-            if (options && options.activeTab){
+            if (options && options.activeTab) {
                 self.hideDialog();
 
                 tabs = $(".chart-tabs");
-                target =  tabs.find('#invoiceTab');
+                target = tabs.find('#paymentsTab');
 
                 target.closest(".chart-tabs").find("a.active").removeClass("active");
                 target.addClass("active");
@@ -213,27 +289,35 @@ define([
                 dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
             }
 
-            currentEl.append(template({
-                collection: this.collection.toJSON(),
-                startNumber: 0,
+            $currentEl.append(template({
+                paymentCollection  : this.collection.toJSON(),
+                startNumber        : 0,
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
-                currencySplitter: helpers.currencySplitter
+                currencySplitter   : helpers.currencySplitter
             }));
 
-            this.$el.find("#removeInvoice").hide();
+            this.$el.find("#savePayment").hide();
+            this.$el.find("#removePayment").hide();
 
-            $('#check_all_invoice').click(function () {
+            $('#check_all_payments').click(function () {
                 self.$el.find(':checkbox').prop('checked', this.checked);
                 if (self.$el.find("input.checkbox:checked").length > 0) {
-                    self.$el.find("#removeInvoice").show();
+                    self.$el.find("#removePayment").show();
                 } else {
-                    self.$el.find("#removeInvoice").hide();
+                    self.$el.find("#removePayment").hide();
                 }
             });
+
+            setTimeout(function () {
+                self.editCollection = new editCollection(self.collection.toJSON());
+                self.editCollection.on('updated', self.updatedOptions, self);
+
+                self.$listTable = $('#paymentsTable');
+            }, 10);
 
             return this;
         }
     });
 
-    return invoiceView;
+    return paymentView;
 });

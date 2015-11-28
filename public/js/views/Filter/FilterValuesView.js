@@ -23,7 +23,12 @@ define([
                 this.$el = $(options.element);
 
                 this.filteredCollection = new filterCollection(this.collection.toJSON(), sortOptions);
-                this.filteredCollection.on('reset', this.renderContent);
+
+                this.collection.on('change', function() { 
+                    this.filteredCollection.set(this.collection.toJSON(), {add: false});
+                }, this);
+
+                this.filteredCollection.on('reset', this.renderContent);             
 
                 this.collectionLength = this.filteredCollection.length;
                 this.paginationBool = this.collectionLength > this.elementToShow;
@@ -139,9 +144,9 @@ define([
                 var self = this;
                 var searchInput;
 
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
 
-                currentEl.append(_.template(valuesTemplate, {
+                $currentEl.append(_.template(valuesTemplate, {
                     groupStatus   : this.groupStatus,
                     groupViewName : this.groupViewName,
                     status        : this.status,
@@ -151,11 +156,11 @@ define([
 
                 this.renderContent();
 
-                currentEl.find("[id='" + this.groupViewName + "Container'] .miniStylePagination a").click(function (e) {
+                $currentEl.find("[id='" + this.groupViewName + "Container'] .miniStylePagination a").click(function (e) {
                     self.paginationChange(e, self);
                 });
 
-                searchInput = currentEl.find(".ulContent input");
+                searchInput = $currentEl.find(".ulContent input");
 
                 searchInput.keyup(function (e) {
                     self.inputEvent(e)

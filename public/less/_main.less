@@ -21,6 +21,10 @@
 @bold-border: 3px solid;
 @thin-border: 1px solid;
 
+.spinner {
+  background-color: yellow;
+}
+
 .notification {
   z-index: 20000;
   position: fixed;
@@ -28,35 +32,32 @@
   width: 100%;
   margin: 0 auto;
 
-  .error {
-    left: 85%;
+  .notify, .error {
+    left: 84%;
     width: 15%;
     position: relative;
     line-height: 17px;
-    padding-right: 10px;
-    padding-left: 10px;
+    padding: 10px;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .error {
     background-color: @notifikation-error-color;
   }
 
   .notify {
-    left: 85%;
-    width: 15%;
-    position: relative;
-    line-height: 17px;
-    padding-right: 10px;
-    padding-left: 10px;
     background-color: @notifikation-notify-color;
   }
 
   .animate {
     position: absolute;
     width: 15%;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
+    margin-top: 0;
+    margin-left: 0;
     left: 100%;
     opacity: 0;
+
   }
 }
 
@@ -90,6 +91,10 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, cod
   font-size: 100%;
   line-height: 1;
   font-family: inherit;
+}
+
+input {
+  box-sizing: border-box;
 }
 
 table {
@@ -370,7 +375,7 @@ input::-ms-clear {
     }
 
     input:not([type='checkbox']) {
-      width: 93%;
+      width: 100%;
     }
 
     a.formLink {
@@ -378,7 +383,7 @@ input::-ms-clear {
     }
     span {
       &.ui-spinner {
-        width: 96%;
+        width: 100%;
       }
     }
   }
@@ -585,7 +590,7 @@ input::-ms-clear {
   .inner {
     .half-block {
       textarea {
-        width: 95%;
+        width: 99%;
         resize: none;
         padding-top: 10px;
       }
@@ -638,40 +643,37 @@ input::-ms-clear {
 
   span {
     //padding: 3px 8px 3px 0;
-    &#editSpan {
+    //&#editSpan {
+    //  a {
+    //    margin-left: 5px;
+    //    width: 16px;
+    //    height: 25px;
+    //    line-height: 16px;
+    //    font-size: 16px;
+    //    background: no-repeat 0 50%;
+    //    margin-right: 5px;
+    //    font-family: Icons;
+    //  }
+    //}
+    &#saveSpan, &#cancelSpan, &#editSpan {
       a {
         margin-left: 5px;
         width: 16px;
-        height: 25px;
-        line-height: 15px;
+        height: 20px;
+        //line-height: 20px;
         font-size: 16px;
         background: no-repeat 0 50%;
         margin-right: 5px;
         font-family: Icons;
       }
-    }
-    &#saveSpan {
-      a {
-        margin-left: 5px;
-        width: 16px;
-        height: 25px;
-        line-height: 27px;
+
+      i {
+        margin: 0 5px;
+        //width: 16px;
+        //height: 20px;
+        line-height: 20px;
         font-size: 16px;
-        background: no-repeat 0 50%;
-        margin-right: 5px;
-        font-family: Icons;
-      }
-    }
-    &#cancelSpan {
-      a {
-        margin-left: 5px;
-        width: 16px;
-        height: 25px;
-        line-height: 27px;
-        font-size: 16px;
-        background: no-repeat 0 50%;
-        margin-right: 5px;
-        font-family: Icons;
+        cursor: pointer;
       }
     }
   }
@@ -1072,8 +1074,6 @@ input::-ms-clear {
   display: block;
   background: @background !important;
   border: @thin-border @border-color-main;
-  // border-bottom-color: rgba(0, 0, 0, 0.3);
-  -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: @width;
   min-height: 130px;
   cursor: pointer;
@@ -1562,7 +1562,7 @@ input::-ms-clear {
   }
 }
 
-.thumbnailwithavatar(@defaultWidth: 149px, @minHeight: 165px, @font-size: 13px, @defaultMargin: 7px 0 0 7px) {
+.thumbnailwithavatar(@defaultWidth: 149px, @minHeight: 165px, @font-size: 12px, @defaultMargin: 7px 0 0 7px) {
   display: block;
   position: relative;
   width: @defaultWidth;
@@ -1634,7 +1634,7 @@ input::-ms-clear {
         text-align: center;
       }
 
-      P {
+      p {
         font-family: @lucida-font;
         color: #000;
         font-size: @font-size;
@@ -2111,6 +2111,9 @@ input::-ms-clear {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     padding: 0 4px;
+    margin-top: 1px;//need for Project-Project-Order
+    margin-bottom: 1px;//need for Project-Project-Order
+    box-sizing: border-box;
     color: @mainText-color;
 
     &:focus {
@@ -2397,14 +2400,14 @@ input::-ms-clear {
 
 input, textarea, select {
   &:not([type="checkbox"]) {
-    padding: 2px 4px;
+    padding: 0 4px; //big cells in BonusType
     border: 1px solid @border-color-main;
     background-color: inherit;
     color: @mainText-color;
     &:focus {
-      .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
-      outline: none;
-      border: @thin-border @border-color-selected;
+      //.box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
+      //outline: none;
+      //border: @thin-border @border-color-selected;
     }
   }
 }
@@ -2422,7 +2425,6 @@ input, textarea, select {
   background-color: @bg-main;
   padding: 3px 0;
   z-index: 100;
-  .box-shadow(0, 1px, 3px, rgba(150, 150, 150, 0.7));
 
   li {
     margin: 0;
@@ -2739,6 +2741,7 @@ dl {
     &.active {
       padding: 10px 14px 10px 10px;
       width: 100%;
+      box-sizing: border-box;
       .buttons {
         margin-top: 3px;
         .dialog-buttons;
@@ -2944,7 +2947,8 @@ dl {
 }
 
 .half-block {
-  width: 50%;
+  width: 49%;
+  margin-right: 1%; // for job position
   &.withPaddingRightProject {
     .inner {
       padding-top: 5px;
@@ -3763,6 +3767,12 @@ table#workflows {
 
 .addUserAndGroup {
   margin-top: 8px;
+  .addUser, .addGroup {
+    color: @tilte-color;
+  }
+  span {
+    color: @mainText-color;
+  }
 }
 
 #allUsers, .buttons, #targetUsers {
@@ -3799,7 +3809,7 @@ table#workflows {
 .createBtnHolder, #createBtnHolder {
   float: left;
   margin-top: 6px;
-  margin-left: 10px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -4076,7 +4086,6 @@ ul.chart-tabs {
     fill: black;
     font: 18px sans-serif;
     text-anchor: end;
-    //
   }
 
   .x .tick line {
@@ -4124,7 +4133,6 @@ ul.chart-tabs {
   &.label {
     fill: #57D0b5;
     font: 18px sans-serif;
-    //
   }
 }
 
@@ -4458,16 +4466,15 @@ h3.dashboard {
   }
 }
 
-.stageSelect, span {
+.stageSelect, span, a {
   &.pending {
     color: red;
   }
   &.inprogress {
     color: @mainText-color-selected;
   }
-  &.closed, &.done, &.unDone {
+  &.closed, &.done, &.unDone, &.new, &.cancelled, &.draft {
     display: block;
-    color: @notifikation-notify-color;
     text-align: center;
     .border-radius(4px);
     padding: 0 5px;
@@ -4479,6 +4486,12 @@ h3.dashboard {
   }
   &.unDone {
     color: @unpaid-wtrack;
+  }
+  &.done {
+    color: @notifikation-notify-color;
+  }
+  &.cancelled {
+    text-decoration: line-through ;
   }
 
 }
@@ -4525,7 +4538,7 @@ h3.dashboard {
   .job-create-info {
     .dl-auto(200px, 42%);
     input {
-      width: 218px !important;
+      width: 218px; //was important, delete because dont work in job position
     }
     select {
       width: 212px;
@@ -4690,6 +4703,7 @@ h3.dashboard {
     }
     .current-selected {
       line-height: 27px !important;
+      color: @tilte-color;
     }
   }
 
@@ -4819,7 +4833,7 @@ input::-webkit-inner-spin-button {
 .topInputHolder {
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: @thin-border #DDD;
+  border-bottom: @thin-border @border-color-main;
 
   .thirdPartBlock {
     width: 33.33%;
@@ -5286,7 +5300,7 @@ textarea#editInput {
     }
   }
   &.dashBoardMargin {
-    margin-bottom: 150px;
+    margin-bottom: 45px;
   }
 }
 
@@ -5343,19 +5357,19 @@ textarea#editInput {
           }
 
           .item {
-            padding: 0 0 10px 0;
+            //padding: 0 0 10px 0;
 
             .title {
               text-align: center;
-              font-size: 16px;
-              margin-bottom: 10px;
+              font-size: 14px;
+              margin-bottom: 5px;
               color: @mainText-color;
             }
             .countDays {
-              font-size: 40px;
+              font-size: 20px;
               color: #ffffff;
               width: 126px;
-              padding: 10px;
+              padding: 5px;
               text-align: center;
               margin: 0 auto;
 
@@ -5409,6 +5423,7 @@ textarea#editInput {
     &.stick {
       position: fixed;
       bottom: 0;
+      left: 0;
       width: 100%;
       background-color: @bg-main;
       padding-top: 10px;
@@ -5729,15 +5744,16 @@ textarea#editInput {
   .divCell {
     float: left;
     display: table-column;
-    width: 5.5%;
+    width: 5.4%;
     height: 22px;
     padding: 0 5px;
     box-sizing: border-box;
     text-align: right;
     line-height: 22px;
     &.left-cell {
-      width: 10%;
+      width: 11%;
       text-align: left;
+      white-space: nowrap;
     }
     &.trend {
       width: 7.5%;
@@ -6105,6 +6121,7 @@ textarea#editInput {
       .filterValues {
         text-align: left;
         width: 100%;
+        min-height: 155px;
       }
       &:not(.activeGroup) .groupName {
         &.checkedGroup {
@@ -6268,25 +6285,31 @@ textarea#editInput {
 
 #favoritesContent {
   padding-top: 5px;
+
+  .filter_name_wrapper {
+    font-size: 0;
+  }
   #forFilterName {
-    height: 22px;
+    height: 29px;
     width: 80%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
     border-right: none;
+    box-sizing: border-box;
     color: @filter-text-color;
+    vertical-align: top;
+    font-size: 12px;
   }
   #saveFilterButton {
     border: 1px solid @border-color-main;
-    margin-left: -3px;
     box-sizing: border-box;
     border-radius: 0 5px 5px 0;
     line-height: 14px;
     padding-top: 5px;
     background-color: @bg-main;
     color: @kanab-text-color;
-    width: 14%;
-    height: 28px;
+    width: 20%;
+    height: 29px; //28
   }
   .removeSavedFilter {
     float: right;

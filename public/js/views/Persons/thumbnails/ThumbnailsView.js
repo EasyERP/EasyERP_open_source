@@ -154,14 +154,14 @@
             render: function () {
                 var self = this;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
 
-                currentEl.html('');
+                $currentEl.html('');
 
                 if (this.collection.length > 0) {
-                    currentEl.append(this.template({collection: this.collection.toJSON()}));
+                    $currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
-                    currentEl.html('<h2>No persons found</h2>');
+                    $currentEl.html('<h2>No persons found</h2>');
                 }
 
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -198,7 +198,7 @@
                     self.hideItemsNumber(e);
                 });
 
-                currentEl.append(createdInTag);
+                $currentEl.append(createdInTag);
                 return this;
             },
 

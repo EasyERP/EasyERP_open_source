@@ -8,21 +8,18 @@ module.exports = function (models, event) {
     var handler = new InvoiceHandler(models, event);
 
     router.get('/', handler.getAll);
-
     router.get('/totalCollectionLength', handler.totalCollectionLength);
-
     router.get('/getFilterValues', handler.getFilterValues);
-
     router.get('/generateName', handler.generateName);
-    
-    router.get('/:viewType', function (req, res) {
+    router.get('/stats', handler.getStats);
+    router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;
         switch (viewType) {
             case "form":
-                handler.getInvoiceById(req, res);
+                handler.getInvoiceById(req, res, next);
                 break;
             default:
-                handler.getForView(req, res);
+                handler.getForView(req, res, next);
         }
     });
 

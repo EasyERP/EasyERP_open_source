@@ -3,17 +3,20 @@ define([
 	'collections/Dashboard/vacationDashboard',
 	'collections/Projects/projectInfoCollection',
 	'collections/Jobs/filterCollection',
+	'collections/Invoice/filterCollection',
 	'custom'
-], function (io, VacationDashboard, ProjectCollection, JobsCollection, custom) {
+], function (io, VacationDashboard, ProjectCollection, JobsCollection, InvoiceCollection, custom) {
 	'use strict';
 	var socket = io.connect();
 	var fetch = _.debounce(fetchData, 500);
 	var fetchProjects = _.debounce(fetchProjects, 500);
 	var fetchJobs = _.debounce(fetchJobs, 500);
+	var fetchInvoice = _.debounce(fetchInvoice, 500);
 
 	socket.on('recollectVacationDash', fetch);
 	socket.on('recollectProjectInfo', fetchProjects);
 	socket.on('fetchJobsCollection', fetchJobs);
+	socket.on('fetchInvoiceCollection', fetchInvoice);
 
 	function fetchProjects(){
 		var projectCollection;
@@ -31,11 +34,6 @@ define([
 
 	function fetchJobs(options){
 		var jobsCollection;
-		var fragment = Backbone.history.fragment;
-
-		//if (fragment && fragment.indexOf('Project') !== -1) {
-		//	App.render({type: 'notify', message: "Data was updated. Please refresh browser."});
-		//}
 
 		var filter = {
 			"project": {
@@ -51,6 +49,25 @@ define([
 		});
 
 		return jobsCollection;
+	}
+
+	function fetchInvoice(options){
+		var invoiceCollection;
+
+		var filter = {
+			'project': {
+				key: 'project._id',
+				value: [options.project]
+			}
+		};
+
+		invoiceCollection = new InvoiceCollection({
+			viewType: 'list',
+			filter: filter,
+			count: 50
+		});
+
+		return invoiceCollection;
 	}
 
 	function fetchData() {

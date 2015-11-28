@@ -279,6 +279,10 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
+            'Type'    : {
+                view   : 'type',
+                backend: 'type'
+            },
             'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow._id'
@@ -296,6 +300,10 @@ define([], function () {
             'Sales Manager': {
                 view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
+            },
+            'Type'         : {
+                view   : 'type',
+                backend: 'type'
             },
             'Status'       : {
                 view   : 'workflow',
@@ -315,6 +323,10 @@ define([], function () {
                 view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
             },
+            'Type'         : {
+                view   : 'type',
+                backend: 'type'
+            },
             'Status'       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
@@ -324,6 +336,10 @@ define([], function () {
             'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
+            },
+            'Type'    : {
+                view   : 'type',
+                backend: 'type'
             },
             'Status'  : {
                 view   : 'workflow',
@@ -390,6 +406,8 @@ define([], function () {
         JOBSDASHBOARD     : 'jobsDashboard',
         PAYROLLPAYMENTS   : 'PayrollPayments',
         PRODUCTSETTINGS   : "productSettings",
+        INVOICEAGING      : "invoiceAging",
+        CHARTOFACCOUNT   : "ChartOfAccount",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -411,6 +429,7 @@ define([], function () {
             'QA',
             'Design',
             'PM'
-        ]
+        ],
+        SELECTP_ROJECT   : 'Please select a Project'
     }
 });

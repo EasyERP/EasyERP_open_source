@@ -118,10 +118,10 @@
 
             render: function () {
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
 
-                currentEl.html('');
+                $currentEl.html('');
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
@@ -137,9 +137,9 @@
                     }
                 });
 
-                currentEl.append(this.template({collection: this.collection.toJSON()}));
+                $currentEl.append(this.template({collection: this.collection.toJSON()}));
 
-                currentEl.append(createdInTag);
+                $currentEl.append(createdInTag);
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);

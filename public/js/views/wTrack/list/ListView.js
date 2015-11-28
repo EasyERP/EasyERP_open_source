@@ -726,22 +726,22 @@ define([
 
             render: function () {
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var pagenation;
                 var checkedInputs;
                 var allInputs;
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
+                $currentEl.append(new listItemView({
                     collection: this.collection,
                     page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                this.renderPagination(currentEl, this);
+                this.renderPagination($currentEl, this);
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 $('#check_all').click(function () {
                     var checkLength;
@@ -1029,7 +1029,7 @@ define([
             },
 
             deleteItems: function () {
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
                 var that = this,
                     mid = 39,
                     model;

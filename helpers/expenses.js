@@ -10,6 +10,7 @@ module.exports = function(models){
         var key = 'payrollExpenses' + filter;
         var redisStore = require('../helpers/redisClient');
 
+        var moment = require('../public/js/libs/moment/moment');
         var async = require('async');
         var _ = require('lodash');
 
@@ -54,8 +55,6 @@ module.exports = function(models){
                 })
                 .map(function (value, key) {
                     var obj = {};
-
-                    console.dir(value);
 
                     obj[key] = {
                         date: _.pluck(value, "date")[0],

@@ -41,6 +41,7 @@ define([
         },
 
         initialize: function (options) {
+            this.remove();
             this.collection = options.model;
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};
@@ -190,8 +191,8 @@ define([
 
         },
 
-        renderPagination: function (currentEl, self) {
-            currentEl.append(_.template(paginationTemplate));
+        renderPagination: function ($currentEl, self) {
+            $currentEl.append(_.template(paginationTemplate));
 
             var pagenation = self.$el.find('.pagination');
 
@@ -382,6 +383,8 @@ define([
 
                             table.find('[data-id="' + id + '"]').remove();
 
+                            that.$el.find('#check_all').prop('checked', false);
+                            that.setAllTotalVals();
                             that.hideSaveCancelBtns();
 
                             that.copyEl.hide();
@@ -586,17 +589,17 @@ define([
 
         render: function () {
             var self = this;
-            var currentEl = this.$el;
+            var $currentEl = this.$el;
             var wTracks = this.collection.toJSON();
             var allInputs;
             var checkedInputs;
 
             if (this.startNumber < 50) {
-                currentEl.html('');
-                currentEl.prepend(this.templateHeader);
+                $currentEl.html('');
+                $currentEl.prepend(this.templateHeader);
             }
 
-            currentEl.find('#listTable').html(this.template({
+            $currentEl.find('#listTable').html(this.template({
                 wTracks    : wTracks,
                 startNumber: self.startNumber - 1
             }));

@@ -381,40 +381,40 @@ define([
                 $('.ui-dialog ').remove();
 
                 var self = this;
-                var currentEl = this.$el;
+                var $currentEl = this.$el;
 
                 if (App.weTrack) {
-                    currentEl.html('');
-                    currentEl.append(_.template(ListHeaderForWTrack));
-                    currentEl.append(new listItemView({
+                    $currentEl.html('');
+                    $currentEl.append(_.template(ListHeaderForWTrack));
+                    $currentEl.append(new listItemView({
                         collection : this.collection,
                         page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
 
-                    currentEl.append(new listTotalView({
+                    $currentEl.append(new listTotalView({
                         element : this.$el.find("#listTable"),
-                        cellSpan: 7,
+                        cellSpan: 6,
                         wTrack  : true
                     }).render());
 
                     self.renderFilter(self);
 
                 } else {
-                    currentEl.html('');
-                    currentEl.append(_.template(listTemplate));
-                    currentEl.append(new listItemView({
+                    $currentEl.html('');
+                    $currentEl.append(_.template(listTemplate));
+                    $currentEl.append(new listItemView({
                         collection : this.collection,
                         page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
 
-                    currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+                    $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
                 }
 
                 self.renderCheckboxes();
 
-                self.renderPagination(currentEl,self);
+                self.renderPagination($currentEl,self);
 
                 dataService.getData("/employee/getForDD", null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
@@ -442,7 +442,7 @@ define([
                     self.hidePagesPopup(e);
                 });
 
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
             triggerDeleteItemsRender: function (deleteCounter) {
