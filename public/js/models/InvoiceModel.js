@@ -24,8 +24,12 @@ define(['Validation', 'common'], function (Validation, common) {
 
                 if(response.paymentInfo){
                     balance = response.paymentInfo.balance || 0;
-                    paid = response.paymentInfo.unTaxed || 0;
                     total = response.paymentInfo.total || 0;
+                    paid = /*response.paymentInfo.unTaxed || 0;*/total - balance
+                }
+
+                if(isNaN(paid)){
+                    paid = 0;
                 }
 
                 balance = (balance/ 100).toFixed(2);
