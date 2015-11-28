@@ -18,7 +18,7 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(callback) {
         var module = {
-            _id: 80,
+            _id: 81,
             mname: 'Categories',
             href: 'productSettings',
             sequence: 1000,

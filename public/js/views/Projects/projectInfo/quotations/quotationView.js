@@ -196,7 +196,7 @@ define([
                     //self.collection.remove(id);
 
                 },
-                error  : function () {
+                error  : function (xhr) {
                     alert('Please refresh browser');
                 }
             });

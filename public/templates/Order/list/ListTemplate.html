@@ -12,9 +12,9 @@ class="notEditable"
     <td><%=quotation.expectedDate%></td>
     <td class="unTaxed"><%=(quotation.paymentInfo) ? quotation.paymentInfo.unTaxed.toFixed(2) : '0.00'%></td>
     <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total.toFixed(2) : '0.00'%></td>
-    <td class="type"><%=quotation.type%></td>
+    <!--<td class="type"><%=quotation.type%></td>-->
     <td id='<%=quotation._id%>'>
-        <a href="javascript:;" class="stageSelect"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
+        <a href="javascript:;" class=""><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
     </td>
     <td><%=quotation.orderDate%></td>
 </tr>

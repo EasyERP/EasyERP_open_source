@@ -3,10 +3,12 @@
  */
 var mongoose = require('mongoose');
 var async = require('async');
+var _ = require('../node_modules/underscore');
 
 var Jobs = function (models, event) {
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
+    var QuotationSchema = mongoose.Schemas['Quotation'];
     var access = require("../Modules/additions/access.js")(models);
     var objectId = mongoose.Types.ObjectId;
 
@@ -33,9 +35,12 @@ var Jobs = function (models, event) {
 
     this.getData = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var queryObject = {};
 
         var data = req.query;
+        var joinWithQuotation = data.joinWithQuotation && data.joinWithQuotation === "true" ? true : false;
+        var sort = data.sort ? data.sort : {"budget.budgetTotal.costSum": -1};
         var query;
 
         var filter = data ? data.filter : {};
@@ -56,16 +61,47 @@ var Jobs = function (models, event) {
             }
         }
 
-        query = JobsModel.find(queryObject);
-        query
-            .populate('project')
-            .exec(function (err, result) {
-                if (err) {
-                    return next(err);
-                }
+        query = JobsModel.find(queryObject).sort(sort);
+        if (!joinWithQuotation) {
+            query
+                .populate('project')
+                .exec(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
 
-                res.status(200).send(result)
-            })
+                    res.status(200).send(result)
+                })
+        } else {
+            query
+                .populate('project')
+                .exec(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    Quotation.find({}, {products: 1, paymentInfo: 1}, function (err, quots) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        async.each(result, function (job, cb) {
+                            async.each(quots, function (quotation) {
+                                quotation.products.forEach(function (product) {
+                                    if (product.jobs && product.jobs.toString() === job._id.toString()) {
+                                        job._doc.quotation = quotation.paymentInfo.total;
+                                    }
+                                });
+                            });
+                            cb();
+                        }, function () {
+                            res.status(200).send(result)
+                        })
+
+                    });
+                })
+        }
+
 
     };
 
@@ -198,6 +234,10 @@ var Jobs = function (models, event) {
                 }
             });
         }
+    }
+
+    this.getJobsForDashboard = function (req, res, next) {
+
     }
 };
 

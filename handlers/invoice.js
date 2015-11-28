@@ -217,7 +217,7 @@ var Invoice = function (models, event) {
                 return next(err)
             }
 
-            Order.findByIdAndUpdate(id, {$set: {type: "Invoiced"}}, {new: true}, function (err, result) {
+            Order.findByIdAndUpdate(id, {$set: {workflow:{name: "Invoiced", _id: CONSTANTS.ORDERDONE}}}, {new: true}, function (err, result) {
                 if (err) {
                     return next(err)
                 }
@@ -653,10 +653,7 @@ var Invoice = function (models, event) {
 
                         orderId = invoiceDeleted.sourceDocument;
 
-                        Order.findByIdAndUpdate(objectId(orderId), {
-                            $set    : {type: "Not Invoiced"},
-                            workflow: {name: "Draft", _id: CONSTANTS.ORDERDRAFT}
-                        }, {new: true}, function (err, result) {
+                        Order.findByIdAndUpdate(objectId(orderId), {$set: {workflow: {name: "Not Invoiced", _id: CONSTANTS.ORDERDRAFT}}}, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err)
                             }

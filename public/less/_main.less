@@ -93,6 +93,10 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, cod
   font-family: inherit;
 }
 
+input {
+  box-sizing: border-box;
+}
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
@@ -1070,8 +1074,6 @@ input::-ms-clear {
   display: block;
   background: @background !important;
   border: @thin-border @border-color-main;
-  // border-bottom-color: rgba(0, 0, 0, 0.3);
-  -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: @width;
   min-height: 130px;
   cursor: pointer;
@@ -4084,7 +4086,6 @@ ul.chart-tabs {
     fill: black;
     font: 18px sans-serif;
     text-anchor: end;
-    //
   }
 
   .x .tick line {
@@ -4132,7 +4133,6 @@ ul.chart-tabs {
   &.label {
     fill: #57D0b5;
     font: 18px sans-serif;
-    //
   }
 }
 
@@ -4475,7 +4475,6 @@ h3.dashboard {
   }
   &.closed, &.done, &.unDone, &.new, &.cancelled, &.draft {
     display: block;
-    //color: @notifikation-notify-color;
     text-align: center;
     .border-radius(4px);
     padding: 0 5px;
@@ -5301,7 +5300,7 @@ textarea#editInput {
     }
   }
   &.dashBoardMargin {
-    margin-bottom: 150px;
+    margin-bottom: 45px;
   }
 }
 

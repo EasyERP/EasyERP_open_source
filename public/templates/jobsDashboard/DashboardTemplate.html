@@ -1,43 +1,13 @@
-
-<% collection.forEach(function(project, count){ %>
-<% var projectTeam = (project.budget && project.budget.projectTeam) ? project.budget.projectTeam : [];%>
-
-  <tr id="project" data-id="<%=project._id%>">
-    <td class="expand"><%= projectTeam.length ? '+' : '&nbsp' %></td>
-    <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
-    <td><%= project.total.totalInPr ? currencySplitter(project.total.totalInPr.toFixed(2)) : '&nbsp'%></td>
-    <!--<td><%= project.total.totalNew ? currencySplitter(project.total.totalNew.toFixed(2)) : '&nbsp'%></td>-->
-    <td><%= project.total.totalFinished ? currencySplitter(project.total.totalFinished.toFixed(2)) : '&nbsp'%></td>
-    <td><%= project.total.total ? currencySplitter(project.total.total.toFixed(2)) : '&nbsp'%></td>
-  </tr>
-
-  <%  projectTeam.forEach(function(job, index){ %>
-   <tr data-id="jobs" id="subRow<%=project._id%>" class="subRow<%=project._id%> jobsDashboard" style="display: none;">
-    <td><%=index + 1%></td>
-    <td><%= job.name %></td>
-    <% if (job.workflow.name === "In Progress") { %>
-
-    <td><%=currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
-    <td>&nbsp</td>
-    <td>&nbsp</td>
-    <!--<td>&nbsp</td>-->
-    <% } else if (job.workflow.name === "New") { %>
-    <td>&nbsp</td>
+<% collection.forEach(function(job, count){ %>
+<tr data-id="<%=job._id%>">
+    <td><%=count + 1%></a></td>
+    <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
+        job.project.projectName : "---"%></a></td>
+    <td><%=job.name%></td>
+    <td><%=job.workflow.name%></td>
+    <td><%=job.type%></td>
     <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
-    <td>&nbsp</td>
-    <td>&nbsp</td>
-    <% } else if (job.workflow.name === "Finished") {%>
-    <td>&nbsp</td>
-    <!--<td>&nbsp</td>-->
-    <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
-    <td>&nbsp</td>
-    <% } %>
-
-   </tr>
-  <%  }); %>
-<>
-
- </tr>
-<% }) %>
-
+    <td><%=currencySplitter(job.quotation ? job.quotation.toFixed(2) : "")%></td>
+</tr>
+<%  }); %>
 
