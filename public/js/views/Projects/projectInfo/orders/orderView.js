@@ -55,7 +55,7 @@ define([
             this.render(options);
         },
 
-        showOrderDialog: function(id) {
+        showOrderDialog: function (id) {
             var self = this;
             var model = new orderModel({validate: false});
 
@@ -63,7 +63,7 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true,  projectManager: self.projectManager});
+                    new editView({model: model, redirect: true, projectManager: self.projectManager});
                 },
                 error  : function () {
                     alert('Please refresh browser');
@@ -80,7 +80,7 @@ define([
             var notEditable = tr.hasClass('notEditable');
             var model = new orderModel({validate: false});
 
-            if (notEditable){
+            if (notEditable) {
                 return false;
             }
 
@@ -88,7 +88,7 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true,  projectManager: self.projectManager});
+                    new editView({model: model, redirect: true, projectManager: self.projectManager});
                 },
                 error  : function () {
                     alert('Please refresh browser');
@@ -201,7 +201,7 @@ define([
                 success : function () {
                     a.remove();
 
-                    if (status === "Done"){
+                    if (status === "Done") {
                         parentTd.append("<span class='done'>" + status + "</span>");
                     }
                 }
@@ -373,22 +373,28 @@ define([
         },
 
         checked: function (e) {
-            var el = this.$el;
+            var $targetEl = $(e.target);
+            var $el = this.$el;
+
+            if ($targetEl.hasClass('notRemovable')) {
+                $targetEl.prop('checked', false);
+
+                return false;
+            }
 
             if (this.collection.length > 0) {
-                var checkLength = el.find("input.checkbox:checked").length;
+                var checkLength = $el.find("input.checkbox:checked").length;
 
-                if (el.find("input.checkbox:checked").length > 0) {
-                    el.find("#removeOrder").show();
-                    el.find('#check_all_orders').prop('checked', false);
+                if ($el.find("input.checkbox:checked").length > 0) {
+                    $el.find("#removeOrder").show();
+                    $el.find('#check_all_orders').prop('checked', false);
 
                     if (checkLength === this.collection.length) {
-                        el.find('#check_all_orders').prop('checked', true);
+                        $el.find('#check_all_orders').prop('checked', true);
                     }
-                }
-                else {
-                    el.find("#removeOrder").hide();
-                    el.find('#check_all_orders').prop('checked', false);
+                } else {
+                    $el.find("#removeOrder").hide();
+                    $el.find('#check_all_orders').prop('checked', false);
                 }
             }
         },

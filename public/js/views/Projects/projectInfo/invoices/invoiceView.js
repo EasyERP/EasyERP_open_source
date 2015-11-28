@@ -170,8 +170,8 @@ define([
             });
         },
 
-        showDialog: function(orderId){
-            var invoice = _.find(this.collection.toJSON(), function(el){
+        showDialog: function (orderId) {
+            var invoice = _.find(this.collection.toJSON(), function (el) {
                 return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null)
             });
 
@@ -288,11 +288,22 @@ define([
         },
 
         checked: function (e) {
+            var $targetEl = $(e.target);
+            var $el = this.$el;
+            var checkLength;
+            var checkAll$;
+            var removeBtnEl;
+
+            if($targetEl.hasClass('notRemovable')){
+                $targetEl.prop('checked', false);
+
+                return false;
+            }
+
             if (this.collection.length > 0) {
-                var el = this.$el;
-                var checkLength = el.find("input.checkbox:checked").length;
-                var checkAll$ = el.find('#check_all_invoice');
-                var removeBtnEl = $('#removeInvoice');
+                checkLength = $el.find("input.checkbox:checked:not(.notRemovable)").length;
+                checkAll$ = $el.find('#check_all_invoice');
+                removeBtnEl = $('#removeInvoice');
 
                 if (checkLength > 0) {
                     checkAll$.prop('checked', false);
@@ -302,8 +313,7 @@ define([
 
                         checkAll$.prop('checked', true);
                     }
-                }
-                else {
+                } else {
                     removeBtnEl.hide();
                     checkAll$.prop('checked', false);
                 }

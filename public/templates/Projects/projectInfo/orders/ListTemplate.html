@@ -1,11 +1,13 @@
 <% orderCollection.forEach(function(order, index){ %>
   <tr data-id="<%=order._id%>"
-  <%if (order.workflow && order.workflow.status === 'Cancelled') { %>
-   class="canceledListItem"
-  <%} else if (order.type !== "Not Invoiced"){ %>
+  <%if (order.workflow && order.workflow.name === 'Cancelled') { %>
+    class="canceledListItem"
+  <%} else if (order.workflow && order.workflow.name !== 'Not Invoiced'){ %>
     class="notEditable"
 <% } %>>
-  <td class = "notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
+  <td class = "notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox <%if (order.workflow && order.workflow.name !== 'Not Invoiced') { %>
+                notRemovable
+                <% } %>" /></td>
   <td class="centerCell"><%=startNumber + index + 1%></td>
   <td><%=order.project ? order.project.projectName : '------'%></td>
   <td><%=(order.supplier) ? order.supplier.name : '------'%></td>

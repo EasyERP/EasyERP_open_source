@@ -43,9 +43,14 @@
         <% collection.forEach(function(invoice, index){ %>
         <tr data-id="<%=invoice._id%>"
             <%if (invoice.workflow && invoice.workflow.status === 'Cancelled') { %>
-            class="canceledListItem"
-            <%}%>>
-            <td class = "notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox" /></td>
+                class="canceledListItem"
+            <%} else if (invoice.workflow && invoice.workflow.status !== 'New'){ %>
+                class="notRemovable"
+             <% } %>>
+            <td class = "notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
+                notRemovable
+                <% } %>" />
+            </td>
             <td class="centerCell"><%=startNumber + index + 1%></td>
             <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name : ''%></td>
             <td><%=invoice.name%></td>

@@ -64,7 +64,7 @@ module.exports = (function () {
         },
         validated: {type: String, enum: ["Draft", "Done"], default: "Draft"}
 
-    }, {collection: 'Invoice'});
+    }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({
         forSales: {type: Boolean, default: true},

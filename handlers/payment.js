@@ -1067,7 +1067,7 @@ var Payment = function (models, event) {
 
                             paymentInfo = invoice.get('paymentInfo');
 
-                            if (invoice.invoiceType === 'wTrack') {
+                            if (invoice._type === 'wTrackInvoice') {
                                 wId = 'Sales Invoice';
                             } else {
                                 wId = 'Purchase Invoice';
@@ -1145,6 +1145,7 @@ var Payment = function (models, event) {
                                     //
                                     //    res.status(200).send({success: removed});
                                     //});
+                                    res.status(200).send({success: removed});
                                 });
                             });
                         });
