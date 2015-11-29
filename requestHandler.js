@@ -1303,6 +1303,7 @@ var requestHandler = function (app, event, mainDb) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     }
+
                     customer.update(req, id, remove, data.person, res);
                 } else {
                     res.send(403);
@@ -1312,6 +1313,7 @@ var requestHandler = function (app, event, mainDb) {
             res.send(401);
         }
     };
+
     function personUpdateOnlySelectedFields(req, res, id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 49, function (access) {

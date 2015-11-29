@@ -737,14 +737,16 @@ module.exports = function (app, mainDb) {
 
     app.put('/Persons/:_id', function (req, res) {
         var data = {};
-        var id = req.param('_id');
+        var id = req.params._id;
         var remove = req.headers.remove;
+
         data.person = req.body;
         requestHandler.updatePerson(req, res, id, data, remove);
     });
 
     app.patch('/Persons/:_id', function (req, res) {
-        var id = req.param('_id');
+        var id = req.params._id;
+
         requestHandler.personUpdateOnlySelectedFields(req, res, id, req.body);
     });
 
@@ -958,6 +960,7 @@ module.exports = function (app, mainDb) {
 
     app.post('/Companies', function (req, res) {
         var data = {};
+
         data.company = req.body;
         requestHandler.createCompany(req, res, data);
     });
@@ -987,15 +990,18 @@ module.exports = function (app, mainDb) {
             data[i] = req.query[i];
         }
         var id = req.param('_id');
+        var remove = req.headers.remove;
+
         data.mid = req.headers.mid;
         data.company = req.body;
-        var remove = req.headers.remove;
+
         if (data.company.salesPurchases.salesPerson && (typeof (data.company.salesPurchases.salesPerson) == 'object')) {
             data.company.salesPurchases.salesPerson = data.company.salesPurchases.salesPerson._id;
         }
         if (data.company.salesPurchases.salesTeam && (typeof (data.company.salesPurchases.salesTeam) == 'object')) {
             data.company.salesPurchases.salesTeam = data.company.salesPurchases.salesTeam._id;
         }
+
         requestHandler.updateCompany(req, res, id, data, remove);
     });
 

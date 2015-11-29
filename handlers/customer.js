@@ -6,13 +6,11 @@ var Customers = function (models) {
      */
     var access = require("../Modules/additions/access.js")(models);
     var CustomerSchema = mongoose.Schemas['Customer'];
-
     var _ = require('../node_modules/underscore');
-
     var CONSTANTS = require('../constants/mainConstants');
-
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
+
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'Customer', CustomerSchema)
     }, exportMap);
