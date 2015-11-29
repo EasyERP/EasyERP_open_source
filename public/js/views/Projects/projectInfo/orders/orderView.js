@@ -352,6 +352,9 @@ define([
 
                             table.find('[data-id="' + id + '"]').remove();
 
+                            $("#removeOrder").hide();
+                            $('#check_all_orders').prop('checked', false);
+
                             //that.deleteItemsRender(that.deleteCounter, that.deletePage);
                         },
                         error  : function (model, res) {

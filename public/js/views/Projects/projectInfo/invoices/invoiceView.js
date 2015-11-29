@@ -160,6 +160,7 @@ define([
                         tr.removeClass('notEditable');
 
                         $("#removeInvoice").hide();
+                        $('#check_all_invoice').prop('checked', false);
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {

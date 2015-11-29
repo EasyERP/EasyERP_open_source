@@ -53,6 +53,7 @@ define([
                         that.$listTable.find('[data-id="' + id + '"]').remove();
 
                         $("#removePayment").hide();
+                        $('#check_all_payments').prop('checked', false);
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
