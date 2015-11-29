@@ -6,7 +6,7 @@
  */
 var mongoose = require('mongoose');
 require('../../models/index.js');
-var _ = require('../../node_modules/underscore');
+var _ = require('../../node_modules/underscore/underscore');
 var async = require('async');
 var JobsSchema = mongoose.Schemas['jobs'];
 var InvoiceSchema = mongoose.Schemas['Invoice'];
