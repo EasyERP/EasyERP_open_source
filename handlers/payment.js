@@ -1067,6 +1067,8 @@ var Payment = function (models, event) {
 
                             paymentInfo = invoice.get('paymentInfo');
 
+                            project = invoice ? invoice.get('project._id') : null;
+
                             if (invoice._type === 'wTrackInvoice') {
                                 wId = 'Sales Invoice';
                             } else {
@@ -1145,6 +1147,11 @@ var Payment = function (models, event) {
                                     //
                                     //    res.status(200).send({success: removed});
                                     //});
+
+                                    if (project) {
+                                        event.emit('fetchInvoiceCollection', {project: project});
+                                    }
+
                                     res.status(200).send({success: removed});
                                 });
                             });
