@@ -40,7 +40,7 @@
     <tr></tr>
     </tfoot>
     <tbody id ="productList">
-    <%if(!isPaid){%>
+    <%if(!notAddItem){%>
         <tr>
             <td colspan="6" class="addProductItem">
                 <a href="javascript:;">Add an item</a>
@@ -48,10 +48,10 @@
         </tr>
     <%}%>
     <tr>
-        <td colspan="6">&nbsp;</td>
+        <td colspan="6" class="invisible_border">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="6">&nbsp;</td>
+        <td colspan="6" class="invisible_border">&nbsp;</td>
     </tr>
     </tbody>
 </table>

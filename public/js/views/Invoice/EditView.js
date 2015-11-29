@@ -426,6 +426,8 @@ define([
 
                 this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
 
+                this.notAddItem = true;
+
                 if (this.isWtrack) {
                     wTracks = _.map(model.products, function (product) {
                         return product.product;
@@ -440,6 +442,7 @@ define([
                     model           : this.currentModel.toJSON(),
                     isWtrack: self.isWtrack,
                     isPaid  : this.isPaid,
+                    notAddItem  : this.notAddItem,
                     wTracks : wTracks,
                     project : project,
                     assigned: assigned,
@@ -560,7 +563,8 @@ define([
                     new InvoiceItemView({
                         balanceVisible: true,
                         forSales      : self.forSales,
-                        isPaid        : this.isPaid
+                        isPaid        : this.isPaid,
+                        notAddItem  : this.notAddItem
                     }).render({model: model}).el
                 );
 
