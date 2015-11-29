@@ -622,24 +622,11 @@ var Payment = function (models, event) {
                         return waterfallCallback(err);
                     }
 
-                    //async.each(products, function (product, cb) {
-                    //
-                    //    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
-                    //        if (err) {
-                    //            return next(err);
-                    //        }
-                    //
-                    //        project = result ? result.get('project') : null;
-                    //
-                    //        cb();
-                    //    });
-                    //
-                    //}, function () {
-                    //    if (project) {
-                    //        event.emit('fetchJobsCollection', {project: project});
-                    //        event.emit('fetchInvoiceCollection', {project: project});
-                    //    }
-                    //});
+                    project = invoice ? invoice.get('project._id') : null;
+
+                    if (project) {
+                        event.emit('fetchInvoiceCollection', {project: project});
+                    }
 
                     waterfallCallback(null, invoice, payment);
                 });
