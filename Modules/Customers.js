@@ -38,6 +38,7 @@ var Customers = function (event, models) {
                 function (err, deps) {
                     if (!err) {
                         var arrOfObjectId = deps.objectID();
+
                         models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
                             {
                                 $match: {
@@ -109,6 +110,8 @@ var Customers = function (event, models) {
                     savetoBd(data);
                 }
                 function savetoBd(data) {
+                    var _customer;
+
                     try {
                         _customer = new models.get(req.session.lastDb, "Customers", customerSchema)();
                         if (data.uId) {
@@ -912,6 +915,12 @@ var Customers = function (event, models) {
             var Invoice;
             var PaymentSchema;
             var Payment;
+            var ProjectSchema;
+            var Project;
+            var QuotationSchema;
+            var Quotation;
+            var wTrackSchema;
+            var wTrack;
 
             var fullName;
 
@@ -923,23 +932,35 @@ var Customers = function (event, models) {
                 PaymentSchema = mongoose.Schemas['Payment'];
                 Payment = models.get(dbName, 'Payment', PaymentSchema);
 
+                ProjectSchema = mongoose.Schemas['Project'];
+                Project = models.get(dbName, 'Project', ProjectSchema);
+
+                QuotationSchema = mongoose.Schemas['Quotation'];
+                Quotation = models.get(dbName, 'Quotation', QuotationSchema);
+
+                wTrackSchema = mongoose.Schemas['wTrack'];
+                wTrack = models.get(dbName, 'wTrack', wTrackSchema);
+
                 fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
                 event.emit('updateName', _id, Invoice, 'supplier._id', 'supplier.name', fullName);
                 event.emit('updateName', _id, Payment, 'supplier._id', 'supplier.fullName', fullName);
-
+                event.emit('updateName', _id, Project, 'customer._id', 'customer.name', fullName);
+                event.emit('updateName', _id, Quotation, 'supplier._id', 'supplier.name', fullName);
+                event.emit('updateName', _id, wTrack, 'customer._id', 'customer.name', fullName);
             }
         },
 
         update: function (req, _id, remove, data, res) {
             var dbName = req.session.lastDb;
             var self = this;
+            var obj;
 
             try {
                 delete data._id;
                 delete data.createdBy;
-                if (data.notes && data.notes.length != 0 && !remove) {
-                    var obj = data.notes[data.notes.length - 1];
+                if (data.notes && data.notes.length !== 0 && !remove) {
+                    obj = data.notes[data.notes.length - 1];
                     obj._id = mongoose.Types.ObjectId();
                     obj.date = new Date();
                     data.notes[data.notes.length - 1] = obj;
@@ -1032,7 +1053,7 @@ var Customers = function (event, models) {
                         });
 
                     }
-                    res.send(200, {success: 'Customer update', notes: result.notes});
+                    res.send(200, {success: 'Customer updated', notes: result.notes});
 
                     self.updateRefs(result, dbName, _id);
                 }

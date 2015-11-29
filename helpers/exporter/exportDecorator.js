@@ -28,6 +28,7 @@ var createProjection = function (map, options) {
  * @param {Object} map - object with all model properties and their names
  * @param {string fileName - name that will be used for export file, without extension
  */
+
 var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName) {
     handler['exportToCsv'] = function (req, res, next) {
         var Model = getModel(req);
@@ -39,6 +40,7 @@ var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName
         var project = createProjection(map.aliases, {properties: propertiesToDisplay});
         var nameOfFile = fileName ? fileName : type ? type : 'data';
         var formatters = map.formatters;
+
         var writeCsv = function (array) {
             var writableStream = fs.createWriteStream(nameOfFile + ".csv");
 
