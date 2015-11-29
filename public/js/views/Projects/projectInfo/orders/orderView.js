@@ -442,11 +442,12 @@ define([
             this.$el.find('.fa.fa-times').hide();
 
             $('#check_all_orders').click(function () {
-                self.$el.find(':checkbox').prop('checked', this.checked);
+                self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeOrder").show();
                 } else {
                     $("#removeOrder").hide();
+                    $('#check_all_orders').prop('checked', false);
                 }
             });
 
