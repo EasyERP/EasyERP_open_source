@@ -114,26 +114,39 @@ module.exports = (function () {
                 next();
             });
     });
-    PaymentSchema.post('save', function (doc) {
+    /*PaymentSchema.post('save', function (doc) {
         var payment = this;
+        var paymentDate = new Date(this.date);
         var db = payment.db.db;
+        var invoiceId = doc.invoice._id;
+
+        console.log('===================================================');
+        console.log('||' + invoiceId + '||');
+        console.log('===================================================');
+
+        if(paymentDate === 'Invalid Date'){
+            paymentDate = new Date();
+        }
 
         db.collection('Invoice').findOneAndUpdate({
                 _id: doc.invoice._id
             },
-            [['name', 1]],
+            //[['name', 1]],
             {
-                $set: {paymentDate: new Date()}
+                $set: {paymentDate: paymentDate.toString()}
             },
-            null,
-            function (err) {
+            {
+                returnOriginal: false
+            },
+            function (err, result) {
                 if (err) {
                     return console.error('An error was occurred during updating %s', doc.invoice);
                 }
 
                 console.log('Invoice %s was updated success', doc.invoice);
+                console.dir(result);
             });
-    });
+    });*/
 
     salaryPaymentSchema.pre('save', function (next) {
         var payment = this;

@@ -42,19 +42,29 @@ dbObject.once('open', function callback() {
 
             var parallelTasks = [
                 function invoiceUpdater(parallelCb){
-                    Invoice.update({'supplier._id': customerId}, {$set: {'supplier.name': fullName}}, parallelCb);
+                    Invoice.update({'supplier._id': customerId}, {$set: {'supplier.name': fullName}}, {multi: true}, parallelCb);
                 },
                 function paymentUpdater(parallelCb){
-                    Payment.update({'supplier._id': customerId}, {$set: {'supplier.fullName': fullName}}, parallelCb);
+                    Payment.update({'supplier._id': customerId}, {$set: {'supplier.fullName': fullName}}, {multi: true}, function(err, payments){
+                        if(err){
+                            return parallelCb(err);
+                        }
+
+                        if(customerId.toString() === '55b92ad621e4b7c40f00064f'){
+                            console.log(payments);
+                        }
+
+                        parallelCb(null, payments)
+                    });
                 },
                 function projectUpdater(parallelCb){
-                    Project.update({'customer._id': customerId}, {$set: {'customer.name': fullName}}, parallelCb);
+                    Project.update({'customer._id': customerId}, {$set: {'customer.name': fullName}}, {multi: true}, parallelCb);
                 },
                 function quotationUpdater(parallelCb){
-                    Quotation.update({'supplier._id': customerId}, {$set: {'supplier.name': fullName}}, parallelCb);
+                    Quotation.update({'supplier._id': customerId}, {$set: {'supplier.name': fullName}}, {multi: true}, parallelCb);
                 },
                 function wTrackUpdater(parallelCb){
-                    wTrack.update({'project.customer._id': customerId}, {$set: {'project.customer.name': fullName}}, parallelCb);
+                    wTrack.update({'project.customer._id': customerId}, {$set: {'project.customer.name': fullName}}, {multi: true}, parallelCb);
                 }
             ];
 

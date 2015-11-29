@@ -571,6 +571,11 @@ var Payment = function (models, event) {
             var isNotFullPaid;
             var wId;
             var products = invoice.products;
+            var paymentDate = new Date(payment.date);
+
+            if(paymentDate === 'Invalid Date'){
+                paymentDate = new Date();
+            }
 
             if (invoice._type === 'wTrackInvoice') {
                 wId = 'Sales Invoice';
@@ -615,7 +620,9 @@ var Payment = function (models, event) {
                 // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
                 invoice.payments.push(payment._id);
 
-                invoice.paymentDate = new Date();
+                invoice.paymentDate = new Date(paymentDate); //Because we have it in post.schema
+
+                delete invoice.paymentDate;
 
                 Invoice.findByIdAndUpdate(invoiceId, invoice, {new: true}, function (err, invoice) {
                     if (err) {
@@ -1048,7 +1055,7 @@ var Payment = function (models, event) {
                             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
                         }
 
-                        Invoice.findById({_id: invoiceId}, function (err, invoice) {
+                        Invoice.findByIdAndUpdate({_id: invoiceId}, {$pull: {payments: removed._id}}, function (err, invoice) {
                             if (err) {
                                 return next(err);
                             }
