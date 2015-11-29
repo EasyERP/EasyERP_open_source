@@ -3,12 +3,12 @@
  */
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Schema.Types.ObjectId;
-require('../models/index.js');
+require('../../models/index.js');
 var async = require('async');
 var QuotationSchema = mongoose.Schemas['Quotation'];
 var InvoiceSchema = mongoose.Schemas['Invoice'];
 var objectId = mongoose.Types.ObjectId;
-var CONSTANTS = require('../constants/mainConstants');
+var CONSTANTS = require('../../constants/mainConstants');
 
 var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
@@ -38,7 +38,7 @@ query.exec(function(err, invoice){
                 if (err){
                    return console.log(err);
                 }
-                var orderId = result._id;
+                var orderId = result.length ? result[0].get('_id') : null;
 
                 Invoice.update({"products.jobs": jobId}, {$set: {sourceDocument: orderId}}, function(err, result){
                     console.log(count++);
