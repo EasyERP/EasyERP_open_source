@@ -164,17 +164,24 @@ define([
                         $('#check_all_invoice').prop('checked', false);
 
                         that.collection.remove(checkbox.value);
+
+                        cb();
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
                             alert("You do not have permission to perform this action");
                         }
+
+                        cb();
                     }
                 });
 
-                cb();
             }, function(){
-                that.recalcTotal();
+                if (that.collection.length){
+                    that.recalcTotal();
+                } else {
+                    that.$el.find('#listTotal').hide();
+                }
             });
         },
 
@@ -185,7 +192,7 @@ define([
             var paid = 0;
             var total = 0;
 
-            collection.forEach(function(model, cb){
+            async.forEach(collection, function(model, cb){
                 balance += parseInt(model.paymentInfo.balance);
                 paid += parseInt(model.paymentInfo.unTaxed);
                 total += parseInt(model.paymentInfo.total);

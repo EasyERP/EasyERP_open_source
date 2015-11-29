@@ -9,9 +9,10 @@ define([
     'collections/customerPayments/filterCollection',
     'collections/customerPayments/editCollection',
     'helpers',
-    'common'
+    'common',
+    "async"
 
-], function (ListView, paymentTemplate, listItemView, paymentCollection, editCollection, helpers, common) {
+], function (ListView, paymentTemplate, listItemView, paymentCollection, editCollection, helpers, common, async) {
     var paymentView = ListView.extend({
 
         el               : '#payments',
@@ -43,7 +44,7 @@ define([
             listTableCheckedInput = $('#paymentsTable').find("input:not('#check_all_payments'):checked");
 
             this.collectionLength = this.collection.length;
-            $.each(listTableCheckedInput, function (index, checkbox) {
+            async.each(listTableCheckedInput, function (checkbox, cb) {
                 model = that.collection.get(checkbox.value);
                 model.destroy({
                     wait   : true,
@@ -54,13 +55,36 @@ define([
 
                         $("#removePayment").hide();
                         $('#check_all_payments').prop('checked', false);
+
+                        that.collection.remove(checkbox.value);
+
+                        cb();
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
                             alert("You do not have permission to perform this action");
                         }
+
+                        cb();
                     }
                 });
+            });
+        },
+
+        recalcTotal: function(){
+            var self = this;
+            var collection = this.collection.toJSON();
+            var totalPaidAmount = 0;
+            var total = 0;
+
+            async.forEach(collection, function(model, cb){
+                totalPaidAmount +=  parseFloat(model.paidAmount);
+                total += parseFloat(model.paidAmount) + parseFloat(model.differenceAmount);
+
+                cb();
+            }, function(){
+                self.$el.find("#totalPaidAmount").text(helpers.currencySplitter(totalPaidAmount.toFixed(2)));
+                self.$el.find("#total").text(helpers.currencySplitter(total.toFixed(2)));
             });
         },
 
