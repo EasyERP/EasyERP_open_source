@@ -36,6 +36,7 @@ define([
             if (options) {
                 this.visible = !!options.balanceVisible;
                 this.isPaid = !!options.isPaid;
+                this.notAddItem = !!options.notAddItem;
             };
 
             this.forSales = options.forSales;
@@ -296,7 +297,8 @@ define([
                 thisEl.html(_.template(productItemTemplate, {
                     model   : options.model,
                     forSales: self.forSales,
-                    isPaid  : self.isPaid
+                    isPaid  : self.isPaid,
+                    notAddItem: this.notAddItem
                 }));
 
                 if (products) {
@@ -304,7 +306,8 @@ define([
                     productsContainer.prepend(_.template(ProductItemsEditList, {
                         products: products,
                         forSales: self.forSales,
-                        isPaid  : self.isPaid
+                        isPaid  : self.isPaid,
+                        notAddItem: this.notAddItem
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
@@ -318,7 +321,8 @@ define([
                     forSales: self.forSales,
                     /*collection: this.collection,
                      options: options*/
-                    isPaid  : self.isPaid
+                    isPaid  : self.isPaid,
+                    notAddItem: this.notAddItem
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));

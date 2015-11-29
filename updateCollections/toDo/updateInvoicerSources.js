@@ -13,7 +13,7 @@ var CONSTANTS = require('../../constants/mainConstants');
 var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
-    console.log("Connection to weTrack is success");
+    console.log("Connection to production is success");
 });
 
 

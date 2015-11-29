@@ -255,6 +255,8 @@ define([
 
                             table.find('[data-id="' + id + '"]').remove();
 
+                            $("#removeQuotation").hide();
+                            $('#check_all_quotations').prop('checked', false);
                             //that.deleteItemsRender(that.deleteCounter, that.deletePage);
                         },
                         error  : function (model, res) {

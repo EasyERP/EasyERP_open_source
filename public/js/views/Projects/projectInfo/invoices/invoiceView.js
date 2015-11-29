@@ -11,9 +11,10 @@ define([
     'models/InvoiceModel',
     'common',
     'helpers',
-    "dataService"
+    "dataService",
+    "async"
 
-], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers, dataService) {
+], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers, dataService, async) {
     var invoiceView = ListView.extend({
 
         el               : '#invoices',
@@ -141,7 +142,7 @@ define([
             listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
 
             this.collectionLength = this.collection.length;
-            $.each(listTableCheckedInput, function (index, checkbox) {
+            async.each(listTableCheckedInput, function (checkbox, cb) {
                 model = that.collection.get(checkbox.value);
                 orderId = model.get("sourceDocument");
                 orderId = orderId && orderId._id ? orderId._id : orderId;
@@ -160,13 +161,47 @@ define([
                         tr.removeClass('notEditable');
 
                         $("#removeInvoice").hide();
+                        $('#check_all_invoice').prop('checked', false);
+
+                        that.collection.remove(checkbox.value);
+
+                        cb();
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
                             alert("You do not have permission to perform this action");
                         }
+
+                        cb();
                     }
                 });
+
+            }, function(){
+                if (that.collection.length){
+                    that.recalcTotal();
+                } else {
+                    that.$el.find('#listTotal').hide();
+                }
+            });
+        },
+
+        recalcTotal: function(){
+            var self = this;
+            var collection = this.collection.toJSON();
+            var balance = 0;
+            var paid = 0;
+            var total = 0;
+
+            async.forEach(collection, function(model, cb){
+                balance += parseInt(model.paymentInfo.balance);
+                paid += parseInt(model.paymentInfo.unTaxed);
+                total += parseInt(model.paymentInfo.total);
+
+                cb();
+            }, function(){
+                self.$el.find("#balance").text(helpers.currencySplitter(balance.toFixed(2)));
+                self.$el.find("#paid").text(helpers.currencySplitter(paid.toFixed(2)));
+                self.$el.find("#total").text(helpers.currencySplitter(total.toFixed(2)));
             });
         },
 
@@ -372,11 +407,14 @@ define([
             this.$el.find("#saveInvoice").hide();
 
             $('#check_all_invoice').click(function () {
-                self.$el.find(':checkbox').prop('checked', this.checked);
+
+                self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
+
                 if (self.$el.find("input.checkbox:checked").length > 0) {
                     self.$el.find("#removeInvoice").show();
                 } else {
                     self.$el.find("#removeInvoice").hide();
+                    $('#check_all_invoice').prop('checked', false);
                 }
             });
 
