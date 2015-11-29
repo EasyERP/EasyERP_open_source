@@ -541,7 +541,8 @@ var Filters = function (models) {
                 {
                     $match: {
                         forSales   : true,
-                        invoiceType: 'wTrack'
+                        _type: "wTrackInvoice"
+                        //invoiceType: 'wTrack'
                     }
                 },
                 {
