@@ -165,7 +165,7 @@ async.waterfall(waterfallTasks, function(err, result){
 });
 
 function getInvoices(pCb){
-    var query = Invoice.find({invoiceType: "wTrack"}).lean();
+    var query = Invoice.find({_type: "wTrackInvoice"}).lean();
 
     query.exec(function(err, result){
         if (err){

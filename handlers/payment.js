@@ -572,7 +572,7 @@ var Payment = function (models, event) {
             var wId;
             var products = invoice.products;
 
-            if (invoice.invoiceType === 'wTrack') {
+            if (invoice._type === 'wTrackInvoice') {
                 wId = 'Sales Invoice';
             } else {
                 wId = 'Purchase Invoice';
@@ -908,7 +908,8 @@ var Payment = function (models, event) {
 
                                     paymentInfo = invoice.get('paymentInfo');
 
-                                    if (invoice.invoiceType === 'wTrack') {
+                                    //if (invoice.invoiceType === 'wTrack') {
+                                    if (invoice._type === 'wTrackInvoice') {
                                         wId = 'Sales Invoice';
                                     } else {
                                         wId = 'Purchase Invoice';
