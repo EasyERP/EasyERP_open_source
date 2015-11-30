@@ -7,7 +7,11 @@ module.exports = (function () {
 
 
     var paymentSchema = new Schema({
-        name: String
+        name    : {type: String},
+        account : {type: String},
+        currency: {type: String},
+        bankName: {type: String},
+        owner   : {type: String, default: ''},
     }, {collection: 'PaymentMethod'});
 
     mongoose.model('PaymentMethod', paymentSchema);
