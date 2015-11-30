@@ -162,6 +162,8 @@ define([
 
                             tr.addClass('notEditable');
 
+                            tr.find('.checkbox').addClass('notRemovable');
+
                             tr.find('.workflow').find('a').text("Invoiced");
 
                             var filter = {
