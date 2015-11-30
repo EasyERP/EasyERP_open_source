@@ -16,8 +16,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 events: {
                     "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                    "click .current-selected"                          : "showNewSelect",
-                    "click .newSelectList li.miniStylePagination"      : "notHide",
+                    "click .current-selected"                                         : "showNewSelect",
+                    "click .newSelectList li.miniStylePagination"                     : "notHide",
                     "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                     "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                     "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
@@ -25,7 +25,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click td.editable"                                               : "editRow",
                     "change .editable "                                               : "setEditable",
                     //"click": "hideNewSelect",
-                    'keydown input.editing'                                           : 'keyDown'
+                    'keydown input.editing'                                           : 'keyDown',
+                    'mouseover tbody tr:not("#addNewItem")'                           : 'showRemove',
+                    'mouseleave tbody tr:not("#addNewItem")'                          : 'hideRemove',
+                    'click .remove'                                                   : 'deleteRow'
                 },
 
                 keyDown: function (e) {
@@ -37,6 +40,32 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 stopDefaultEvents: function (e) {
                     e.stopPropagation();
                     e.preventDefault();
+                },
+
+                showRemove: function (e) {
+                    var $target = $(e.target);
+                    var $tr = $target.closest('tr');
+                    var $removeHref = $tr.find('.remove a');
+
+                    $removeHref.removeClass('hidden');
+                },
+
+                deleteRow: function (e) {
+                    var $target = $(e.target);
+                    var $tr = $target.closest('tr');
+                    var $removeHref = $tr.find('.remove a');
+                    var arrayIndex = $removeHref.attr('id');
+
+                    this.resultArray.splice(arrayIndex, 1);
+                    $tr.remove();
+                },
+
+                hideRemove: function (e) {
+                    var $target = $(e.target);
+                    var $tr = $target.closest('tr');
+                    var $removeHref = $tr.find('.remove a');
+
+                    $removeHref.addClass('hidden');
                 },
 
                 initialize: function (options) {
@@ -103,16 +132,16 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     var defaultObject = {
                         startDate : '',
-                        endDate  : '',
-                        hours    : '',
-                        project  : {
+                        endDate   : '',
+                        hours     : '',
+                        project   : {
                             projectName   : this.modelJSON.projectName,
-                            workflow   : this.modelJSON.workflow,
-                            customer   : this.modelJSON.customer,
+                            workflow      : this.modelJSON.workflow,
+                            customer      : this.modelJSON.customer,
                             projectmanager: this.modelJSON.projectmanager,
                             _id           : this.modelJSON._id
                         },
-                        employee : {},
+                        employee  : {},
                         department: {},
                         1         : 8,
                         2         : 8,
@@ -170,10 +199,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     dataPickerStartContainers.datepicker({
                         dateFormat       : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        yearRange  : yearRange,
-                        onSelect   : function (text, datPicker) {
+                        changeMonth      : true,
+                        changeYear       : true,
+                        yearRange        : yearRange,
+                        onSelect         : function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
                             var endDatePicker = td.find('.endDateDP');
@@ -198,10 +227,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     dataPickerEndContainers.datepicker({
                         dateFormat       : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        yearRange  : yearRange,
-                        onSelect   : function (text, datPicker) {
+                        changeMonth      : true,
+                        changeYear       : true,
+                        yearRange        : yearRange,
+                        onSelect         : function (text, datPicker) {
                             var targetInput = $(this);
 
                             targetInput.parent().removeClass('errorContent');
@@ -347,7 +376,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     if (nameRegExp.test(jobName)) {
                         $.ajax({
                             type       : 'Post',
-                            url : '/wTrack/generateWTrack',
+                            url        : '/wTrack/generateWTrack',
                             contentType: "application/json",
                             data       : data,
 
@@ -522,11 +551,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var project = this.model.id ? this.model.toJSON() : this.model;
                     var dialog = this.template({
                         project  : project,
-                        jobs   : self.jobs,
+                        jobs     : self.jobs,
                         createJob: self.createJob
                     });
 
-                    if(!project){
+                    if (!project) {
                         return;
                     }
 
