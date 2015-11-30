@@ -12,6 +12,7 @@ module.exports = function (models, event) {
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/generateName', handler.generateName);
     router.get('/stats', handler.getStats);
+    router.get('/chart', handler.chartForProject);
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;
         switch (viewType) {

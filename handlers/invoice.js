@@ -71,18 +71,18 @@ var Invoice = function (models, event) {
         function fetchFirstWorkflow(callback) {
             if (forSales === "true") {
                 request = {
-                    query  : {
-                        wId         : 'Sales Invoice',
-                        source      : 'purchase',
+                    query: {
+                        wId: 'Sales Invoice',
+                        source: 'purchase',
                         targetSource: 'invoice'
                     },
                     session: req.session
                 };
             } else {
                 request = {
-                    query  : {
-                        wId         : 'Purchase Invoice',
-                        source      : 'purchase',
+                    query: {
+                        wId: 'Purchase Invoice',
+                        source: 'purchase',
                         targetSource: 'invoice'
                     },
                     session: req.session
@@ -217,7 +217,14 @@ var Invoice = function (models, event) {
                 return next(err)
             }
 
-            Order.findByIdAndUpdate(id, {$set: {workflow:{name: "Invoiced", _id: CONSTANTS.ORDERDONE}}}, {new: true}, function (err, result) {
+            Order.findByIdAndUpdate(id, {
+                $set: {
+                    workflow: {
+                        name: "Invoiced",
+                        _id: CONSTANTS.ORDERDONE
+                    }
+                }
+            }, {new: true}, function (err, result) {
                 if (err) {
                     return next(err)
                 }
@@ -574,7 +581,7 @@ var Invoice = function (models, event) {
                     contentSearcher = function (invoicesIds, waterfallCallback) {
 
                         optionsObject = {
-                            _id     : id,
+                            _id: id,
                             forSales: forSales
                         };
 
@@ -645,7 +652,14 @@ var Invoice = function (models, event) {
 
                         orderId = invoiceDeleted.sourceDocument;
 
-                        Order.findByIdAndUpdate(objectId(orderId), {$set: {workflow: {name: "Not Invoiced", _id: CONSTANTS.ORDERDRAFT}}}, {new: true}, function (err, result) {
+                        Order.findByIdAndUpdate(objectId(orderId), {
+                            $set: {
+                                workflow: {
+                                    name: "Not Invoiced",
+                                    _id: CONSTANTS.ORDERDRAFT
+                                }
+                            }
+                        }, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err)
                             }
@@ -888,8 +902,8 @@ var Invoice = function (models, event) {
         var date = moment().format('DD/MM/YYYY');
 
         db.collection('settings').findOneAndUpdate({
-                dbName : currentDbName,
-                name  : 'invoice',
+                dbName: currentDbName,
+                name: 'invoice',
                 project: project
             },
             {
@@ -897,7 +911,7 @@ var Invoice = function (models, event) {
             },
             {
                 returnOriginal: false,
-                upsert        : true
+                upsert: true
             },
             function (err, rate) {
                 var resultName;
@@ -922,7 +936,7 @@ var Invoice = function (models, event) {
                     .aggregate([
                         {
                             $group: {
-                                _id       : null,
+                                _id: null,
                                 'Due date': {
                                     $addToSet: '$dueDate'
                                 }/*,
@@ -977,8 +991,22 @@ var Invoice = function (models, event) {
     };
 
     this.getStats = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var Invoice;
         var now = new Date();
+        var moduleId;
+
+        var isWtrack;
+
+        if (checkDb(db)) {
+            moduleId = 64;
+            isWtrack = true;
+        }
+
+        if (isWtrack) {
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        }
 
         Invoice.aggregate([{
             $match: {
@@ -989,39 +1017,39 @@ var Invoice = function (models, event) {
             }
         }, {
             $project: {
-                dueDate    : 1,
-                project    : 1,
-                supplier   : 1,
-                name       : 1,
+                dueDate: 1,
+                project: 1,
+                supplier: 1,
+                name: 1,
                 paymentInfo: 1,
                 salesPerson: 1,
-                diffStatus : {
+                diffStatus: {
                     $cond: {
-                        if  : {
+                        if: {
                             $lt: [{$subtract: [now, '$dueDate']}, 0]
                         },
                         then: -1,
                         else: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $lt: [{$subtract: [now, '$dueDate']}, 1296000000]
                                 },
                                 then: 0,
                                 else: {
                                     $cond: {
-                                        if  : {
+                                        if: {
                                             $lt: [{$subtract: [now, '$dueDate']}, 2592000000]
                                         },
                                         then: 1,
                                         else: {
                                             $cond: {
-                                                if  : {
+                                                if: {
                                                     $lt: [{$subtract: [now, '$dueDate']}, 5184000000]
                                                 },
                                                 then: 2,
                                                 else: {
                                                     $cond: {
-                                                        if  : {
+                                                        if: {
                                                             $lt: [{$subtract: [now, '$dueDate']}, 7776000000]
                                                         },
                                                         then: 3,
@@ -1050,6 +1078,34 @@ var Invoice = function (models, event) {
         });
     };
 
+    this.chartForProject = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var now = moment();
+
+        var query = req.query;
+        var startDate = query.startDate ? moment(query.startDate) : moment(now).subtract(1, 'month');
+        var endDate = query.endDate ? moment(query.endDate) : now;
+
+        startDate = startDate.toDate();
+        endDate = endDate.toDate();
+
+        console.log(startDate, endDate);
+
+        Invoice
+            .aggregate([{
+                $match: {
+                    dueDate: {$gte: startDate, $lte: endDate}
+                }
+            }])
+            /*.allowDiskUse(true)*/
+            .exec(function (err, invoices) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(invoices);
+            });
+    }
 
 };
 
