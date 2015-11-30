@@ -1,0 +1,54 @@
+<div class="form-holder">
+    <form method="post" action="" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="topInputHolder">
+                    <h2>Payment</h2>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="supplierDD">Supplier</label></dt>
+                        <dd>
+                            <%if(invoice && invoice.supplier && invoice.supplier._id){%>
+                            <a id="supplierDd" class="" href="javascript:;"
+                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name%></a>
+                            <%} else {%>
+                            <a id="supplierDd" class="" href="javascript:;">Select</a>
+                            <%}%>
+                        </dd>
+                        <dt>
+                            <label for="paidAmount">Paid Amount</label>
+                        </dt>
+                        <dd>
+                            <input type="text" name="paidAmount" id="paidAmount" maxlength="10"
+                                   value="<%=invoice.paymentInfo ? invoice.paymentInfo.balance : 0%>" readonly/>
+                            <span>€</span>
+                        </dd>
+                        <dt>
+                            <label for="paymentMethod">Payment Method
+                            </label>
+                        </dt>
+                        <dd>
+                            <a id="paymentMethod" class="current-selected" href="javascript:;">Select</a>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="paymentDate">Date</label></dt>
+                        <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate"></dd>
+                        <dt><label for="paymentRef">Payment Ref</label></dt>
+                        <dd>
+                            <input type="text" name="paymentRef" id="paymentRef" maxlength="20"
+                                   value="<%=invoice.name%>" readonly/>
+                        </dd>
+                    </dl>
+                </div>
+                <div id="differenceAmountContainer" class="half-block left hidden">
+                    <dt><label>Difference Amount</label></dt>
+                    <dd><span id="differenceAmount"></span></dd>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

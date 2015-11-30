@@ -6,13 +6,15 @@ define([
     'views/customerPayments/list/ListView',
     'text!templates/Projects/projectInfo/paymentTemplate.html',
     'views/customerPayments/list/ListItemView',
+    'views/customerPayments/EditView',
     'collections/customerPayments/filterCollection',
     'collections/customerPayments/editCollection',
+    'models/PaymentModel',
     'helpers',
     'common',
     "async"
 
-], function (ListView, paymentTemplate, listItemView, paymentCollection, editCollection, helpers, common, async) {
+], function (ListView, paymentTemplate, listItemView, EditView, paymentCollection, editCollection, PaymentModel, helpers, common, async) {
     var paymentView = ListView.extend({
 
         el               : '#payments',
@@ -32,7 +34,29 @@ define([
         events: {
             "click .checkbox": "checked",
             "click #savePayment": "saveItem",
-            "click #removePayment": "deleteItems"
+            "click #removePayment": "deleteItems",
+            "click td:not(.checkbox, .date)": "goToEditDialog"
+        },
+
+        goToEditDialog: function(e){
+            e.preventDefault();
+
+            var id = $(e.target).closest('tr').data("id");
+            var model = new PaymentModel({validate: false});
+
+            model.urlRoot = '/customerPayments/form';
+            model.fetch({
+                data   : {
+                    id       : id,
+                    currentDb: App.currentDb
+                },
+                success: function (model) {
+                    new EditView({model: model});
+                },
+                error  : function () {
+                    alert('Please refresh browser');
+                }
+            });
         },
 
         deleteItems: function (e) {
