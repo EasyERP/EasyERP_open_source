@@ -159,6 +159,7 @@ define([
                         tr.find('.workflow').html('<a href="javascript:;" class="">Not Invoiced</a>');
 
                         tr.removeClass('notEditable');
+                        tr.find('.checkbox').removeClass('notRemovable');
 
                         $("#removeInvoice").hide();
                         $('#check_all_invoice').prop('checked', false);

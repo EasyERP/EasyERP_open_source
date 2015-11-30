@@ -13,16 +13,17 @@
                     <dt><label for="jobName">Job Name</label></dt>
                     <dd>
                         <% if (jobs && jobs._id) {%>
-                          <input id="jobName" value="<%=jobs.name%>"  readonly/>
+                        <input id="jobName" value="<%=jobs.name%>" readonly/>
                         <% } else {%>
-                          <input id="jobName"/>
+                        <input id="jobName"/>
                         <% } %>
                     </dd>
                 </dl>
             </div>
             <div class="thirdPartBlock left">
                 <dl class="person-info">
-                    <div class="miniAvatarCustomer miniAvatar" data-id="<%=(project.customer && project.customer._id) ? project.customer._id: ''%>">
+                    <div class="miniAvatarCustomer miniAvatar"
+                         data-id="<%=(project.customer && project.customer._id) ? project.customer._id: ''%>">
                         <img alt="" src="" class="avatar"/>
                     </div>
                     <div class="miniAvatarInfo">
@@ -35,8 +36,9 @@
             </div>
             <div class="thirdPartBlock left">
                 <dl class="person-info">
-                    <div class="miniAvatarPM miniAvatar" data-id="<%=(project.projectmanager && project.projectmanager._id) ? project.projectmanager._id: ''%>">
-                            <img alt="" src="" class="avatar"/>
+                    <div class="miniAvatarPM miniAvatar"
+                         data-id="<%=(project.projectmanager && project.projectmanager._id) ? project.projectmanager._id: ''%>">
+                        <img alt="" src="" class="avatar"/>
                     </div>
                     <div class="miniAvatarInfo">
                         <dt><label for="projectManager">Sales Manager</label></dt>
@@ -54,7 +56,8 @@
             <div id="wTrackItemsHolder">
                 <table id="rawTable" class="list2">
                     <colgroup>
-                        <col width="15%">
+                        <col width="2%">
+                        <col width="13%">
                         <col width="10%">
                         <col width="7%">
                         <col width="7%">
@@ -70,6 +73,7 @@
                     </colgroup>
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Employee</th>
                         <th>Department</th>
                         <th>Generate&nbspBy</th>
@@ -86,19 +90,19 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="13">
-                                <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="13" class="invisible_border">&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td colspan="13" class="invisible_border">&nbsp;</td>
-                        </tr>
+                    <tr id="addNewItem">
+                        <td colspan="14">
+                            <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
+                        </td>
+                    </tr>
                     </tbody>
                     <tfoot>
+                    <tr>
+                        <td colspan="14" class="invisible_border">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="14" class="invisible_border">&nbsp;</td>
+                    </tr>
 
                     </tfoot>
                 </table>

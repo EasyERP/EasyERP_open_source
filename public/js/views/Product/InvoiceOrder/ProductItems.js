@@ -90,7 +90,7 @@ define([
             this.generatedView = new GenerateWTrack({
                 model               : this.projectModel,
                 wTrackCollection    : this.wTrackCollection,
-                createJob           : this.createJob,
+                createJob           : true,
                 forQuotationGenerate: true,
                 quotationDialog     : this
             });
