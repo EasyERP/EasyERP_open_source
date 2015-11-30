@@ -1004,22 +1004,30 @@ var Invoice = function (models, event) {
                         else: {
                             $cond: {
                                 if  : {
-                                    $lt: [{$subtract: [now, '$dueDate']}, 2592000000]
+                                    $lt: [{$subtract: [now, '$dueDate']}, 1296000000]
                                 },
                                 then: 0,
                                 else: {
                                     $cond: {
                                         if  : {
-                                            $lt: [{$subtract: [now, '$dueDate']}, 5184000000]
+                                            $lt: [{$subtract: [now, '$dueDate']}, 2592000000]
                                         },
                                         then: 1,
                                         else: {
                                             $cond: {
                                                 if  : {
-                                                    $lt: [{$subtract: [now, '$dueDate']}, 7776000000]
+                                                    $lt: [{$subtract: [now, '$dueDate']}, 5184000000]
                                                 },
                                                 then: 2,
-                                                else: 3
+                                                else: {
+                                                    $cond: {
+                                                        if  : {
+                                                            $lt: [{$subtract: [now, '$dueDate']}, 7776000000]
+                                                        },
+                                                        then: 3,
+                                                        else: 4
+                                                    }
+                                                }
                                             }
                                         }
                                     }
