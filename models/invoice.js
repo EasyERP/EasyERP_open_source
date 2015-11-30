@@ -58,7 +58,7 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        editedBy: {
+        editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
@@ -81,6 +81,10 @@ module.exports = (function () {
         project : {
             _id : {type: ObjectId, ref: 'Project', default: null},
             name: String
+        },
+        currency: {
+            _id : {type: ObjectId, ref: 'currency', default: null},
+            name: {type: String, default: ''}
         }
     });
 

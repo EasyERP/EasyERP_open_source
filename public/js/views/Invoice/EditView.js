@@ -21,12 +21,12 @@ define([
 
             events: {
                 "click #saveBtn"                                                  : "saveItem",
-                "click #cancelBtn": "hideDialog",
-                "click .current-selected": "showNewSelect",
-                "click"                  : "hideNewSelect",
-                'click .dialog-tabs a'   : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"      : "notHide",
+                "click #cancelBtn"                                                : "hideDialog",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .details"                                                  : "showDetailsBox",
@@ -85,17 +85,17 @@ define([
                     if (!err) {
                         paymentView = new PaymentCreateView({
                             model     : self.currentModel,
-                            redirect: self.redirect,
+                            redirect  : self.redirect,
                             collection: self.collection
                         });
                     }
                 });
 
                 /*paymentView = new PaymentCreateView({
-                    model     : this.currentModel,
-                    redirect: this.redirect,
-                    collection: this.collection
-                });*/
+                 model     : this.currentModel,
+                 redirect: this.redirect,
+                 collection: this.collection
+                 });*/
             },
 
             cancelInvoice: function (e) {
@@ -114,7 +114,7 @@ define([
 
                 populate.fetchWorkflow({
                     wId         : wId,
-                    source: 'purchase',
+                    source      : 'purchase',
                     targetSource: 'invoice',
                     status      : 'Cancelled',
                     order       : 1
@@ -126,7 +126,7 @@ define([
                     self.currentModel.save({
                         workflow: {
                             _id   : workflow._id,
-                            name: workflow.name,
+                            name  : workflow.name,
                             status: workflow.status
                         }
                     }, {
@@ -165,7 +165,7 @@ define([
                     self.currentModel.save({
                         workflow: {
                             _id   : workflow._id,
-                            name: workflow.name,
+                            name  : workflow.name,
                             status: workflow.status
                         }
                     }, {
@@ -241,17 +241,23 @@ define([
                 var description;
                 var taxes;
                 var amount;
+                var curEl = this.$el;
 
                 var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
                 var salesPerson = this.currentModel.salesPerson ? this.currentModel.salesPerson : this.currentModel.get('salesPerson');
                 var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
 
-                var invoiceDate = this.$el.find("#invoice_date").val();
-                var dueDate = this.$el.find("#due_date").val();
+                var currency = {
+                    _id : curEl.find('#currencyDd').attr('data-id'),
+                    name: curEl.find('#currencyDd').text()
+                };
+
+                var invoiceDate = curEl.find("#invoice_date").val();
+                var dueDate = curEl.find("#due_date").val();
 
                 var supplier = {};
-                supplier._id = this.$el.find('#supplier').data("id");
-                supplier.name = this.$el.find('#supplier').text();
+                supplier._id = curEl.find('#supplier').attr("data-id");
+                supplier.name = curEl.find('#supplier').text();
 
                 var total = parseFloat(this.$("#totalAmount").text());
                 var unTaxed = parseFloat(this.$("#totalUntaxes").text());
@@ -286,8 +292,8 @@ define([
                     }
                 }
 
-                var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
-                var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
+                var salesPersonId = this.$("#salesPerson").attr("data-id") ? this.$("#salesPerson").attr("data-id") : null;
+                var paymentTermId = this.$("#payment_terms").attr("data-id") ? this.$("#payment_terms").attr("data-id") : null;
 
                 var usersId = [];
                 var groupsId = [];
@@ -300,11 +306,12 @@ define([
                     }
 
                 });
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                var whoCanRW = curEl.find("[name='whoCanRW']:checked").val();
 
                 var data = {
+                    currency             : currency,
                     supplier             : supplier,
-                    fiscalPosition: null,
+                    fiscalPosition       : null,
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                     paymentReference     : $.trim(this.$el.find('#payment_reference').val()),
@@ -440,14 +447,14 @@ define([
 
                 formString = this.template({
                     model           : this.currentModel.toJSON(),
-                    isWtrack: self.isWtrack,
-                    isPaid  : this.isPaid,
-                    notAddItem  : this.notAddItem,
-                    wTracks : wTracks,
-                    project : project,
-                    assigned: assigned,
-                    customer: customer,
-                    total   : total,
+                    isWtrack        : self.isWtrack,
+                    isPaid          : this.isPaid,
+                    notAddItem      : this.notAddItem,
+                    wTracks         : wTracks,
+                    project         : project,
+                    assigned        : assigned,
+                    customer        : customer,
+                    total           : total,
                     currencySplitter: helpers.currencySplitter
                 });
 
@@ -459,10 +466,10 @@ define([
                                 self.hideDialog();
                             }
                         }/*,
-                        {
-                            text : "Delete",
-                            click: self.deleteItem
-                        }*/
+                         {
+                         text : "Delete",
+                         click: self.deleteItem
+                         }*/
                     ]
                 } else {
                     buttons = [
@@ -511,6 +518,7 @@ define([
                 populate.get2name("#supplier", "/supplier", {}, this, false);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, false, true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",
@@ -564,7 +572,7 @@ define([
                         balanceVisible: true,
                         forSales      : self.forSales,
                         isPaid        : this.isPaid,
-                        notAddItem  : this.notAddItem
+                        notAddItem    : this.notAddItem
                     }).render({model: model}).el
                 );
 
