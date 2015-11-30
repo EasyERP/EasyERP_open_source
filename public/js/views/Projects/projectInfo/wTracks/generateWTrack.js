@@ -55,7 +55,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     this.jobsCollection = options.jobsCollection;
 
-                    this.createJob = options.createJob ? options.createJob : true;
+                    this.createJob = options.createJob; //? options.createJob : true;
                     this.quotationDialog = options.quotationDialog;
 
                     this.render();
