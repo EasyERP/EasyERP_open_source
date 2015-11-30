@@ -1,4 +1,3 @@
-/*Just for test*/
 require('pmx').init();
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
