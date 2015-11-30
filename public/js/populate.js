@@ -151,12 +151,18 @@ define([
         var showSelect = function (e, prev, next, context, number) {
             e.stopPropagation();
 
+            var attr;
             var targetEl = $(e.target);
-            var attr = targetEl.attr("id") || targetEl.attr("data-id") || targetEl.closest('td').data("content");
-            var data = context.responseObj["#" + attr];
+            var dataContent = targetEl.closest('td').attr("data-content");
+            var data = context.responseObj["#" + dataContent];
             var elementVisible;
             var targetParent = $(e.target).parent();
             var newSel;
+
+            if (!data){
+                attr = targetEl.attr("id") || targetEl.attr("data-id");
+                data = context.responseObj["#" + attr];
+            }
 
             elementVisible = number || 10;
 
