@@ -42,21 +42,9 @@ define([
             e.preventDefault();
 
             var id = $(e.target).closest('tr').data("id");
-            var model = new PaymentModel({validate: false});
+            var model = this.collection.get(id);
 
-            model.urlRoot = '/customerPayments/form';
-            model.fetch({
-                data   : {
-                    id       : id,
-                    currentDb: App.currentDb
-                },
-                success: function (model) {
-                    new EditView({model: model});
-                },
-                error  : function () {
-                    alert('Please refresh browser');
-                }
-            });
+            new EditView({model: model});
         },
 
         deleteItems: function (e) {

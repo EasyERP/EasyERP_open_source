@@ -9,9 +9,9 @@
                     <dl class="opp-info">
                         <dt><label for="supplierDD">Supplier</label></dt>
                         <dd>
-                            <%if(invoice && invoice.supplier && invoice.supplier._id){%>
+                            <%if(model && model.supplier && model.supplier._id){%>
                             <a id="supplierDd" class="" href="javascript:;"
-                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name%></a>
+                               data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></a>
                             <%} else {%>
                             <a id="supplierDd" class="" href="javascript:;">Select</a>
                             <%}%>
@@ -21,7 +21,7 @@
                         </dt>
                         <dd>
                             <input type="text" name="paidAmount" id="paidAmount" maxlength="10"
-                                   value="<%=invoice.paymentInfo ? invoice.paymentInfo.balance : 0%>" readonly/>
+                                   value="<%=model.paidAmount ? model.paidAmount : 0%>" readonly/>
                             <span>€</span>
                         </dd>
                         <dt>
@@ -29,18 +29,18 @@
                             </label>
                         </dt>
                         <dd>
-                            <a id="paymentMethod" class="current-selected" href="javascript:;">Select</a>
+                            <a id="paymentMethod" class="current-selected" href="javascript:;"><%=model.paymentMethod.name%></a>
                         </dd>
                     </dl>
                 </div>
                 <div class="half-block left">
                     <dl class="opp-info">
                         <dt><label for="paymentDate">Date</label></dt>
-                        <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate"></dd>
+                        <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate" value="<%=model.date%>" readonly/></dd>
                         <dt><label for="paymentRef">Payment Ref</label></dt>
                         <dd>
                             <input type="text" name="paymentRef" id="paymentRef" maxlength="20"
-                                   value="<%=invoice.name%>" readonly/>
+                                   value="<%=model.invoice.name%>" readonly/>
                         </dd>
                     </dl>
                 </div>

@@ -2,9 +2,10 @@
  * Created by lilya on 30/11/15.
  */
 define([
-        "text!templates/Payment/EditTemplate.html"
+        "text!templates/Payment/EditTemplate.html",
+        "helpers"
     ],
-    function (EditTemplate) {
+    function (EditTemplate, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -27,6 +28,7 @@ define([
             },
 
             render: function () {
+                var self = this;
                 var formString;
                 var buttons;
                 var model = this.currentModel.toJSON();
