@@ -7,6 +7,8 @@ define([
 
         var get = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId) {
             dataService.getData(url, data, function (response) {
+                var curEl = $(id);
+
                 content.responseObj[id] = [];
                 if (canBeEmpty) {
                     content.responseObj[id].push({_id: "", name: "Select"});
@@ -16,7 +18,11 @@ define([
                 }));
 
                 if (isCreate) {
-                    $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
+                    //add check on data-id exist. if not set first one in responseObj
+                    //if element was sat from model data-id exist.
+                    if (!curEl.attr('data-id')) {
+                        curEl.text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
+                    }
                 }
                 if (parrrentContentId && parrrentContentId.split("=").length === 2) {
                     parrrentContentId = parrrentContentId.split("=")[1]

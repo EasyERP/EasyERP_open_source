@@ -83,8 +83,9 @@ module.exports = (function () {
             name: String
         },
         currency: {
-            _id : {type: ObjectId, ref: 'currency', default: null},
-            name: {type: String, default: ''}
+            _id   : {type: ObjectId, ref: 'currency', default: null},
+            name  : {type: String, default: ''},
+            course: {type: Number, default: 1}
         }
     });
 
