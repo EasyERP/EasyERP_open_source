@@ -4,15 +4,20 @@
 define([
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
-        'collections/ChartOfAccount/filterCollection'
+        'collections/ChartOfAccount/filterCollection',
+        'collections/ChartOfAccount/editCollection',
+        "populate"
     ],
-    function(listHeaderTemplate, listTemplate, contentCollection){
+    function (listHeaderTemplate, listTemplate, contentCollection, EditCollection, populate) {
         var ProjectsListView = Backbone.View.extend({
-            el                : '#content-holder',
+            el         : '#content-holder',
             contentType: "ChartOfAccount",
+            changedModels: {},
 
             events: {
-                "click .oe_sortable"          : "goSort"
+                "click .oe_sortable": "goSort",
+                "click td.editable" : "editRow",
+                "change .editable"  : "setEditable"
             },
 
             initialize: function (options) {
@@ -20,6 +25,55 @@ define([
                 this.collection = options.collection;
 
                 this.render();
+            },
+
+            editRow: function (e, prev, next) {
+                $(".newSelectList").hide();
+                var el = $(e.target);
+                var tr = $(e.target).closest('tr');
+                var trId = tr.data('id');
+                var colType = el.data('type');
+                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var tempContainer;
+                var width;
+
+                if (trId && el.prop('tagName') !== 'INPUT') {
+                    this.modelId = trId;
+                    this.setChangedValueToModel();
+                }
+
+                if (isSelect) {
+                    populate.showSelect(e, prev, next, this);
+                } else {
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                }
+
+                return false;
+            },
+
+            setChangedValueToModel: function () {
+                var editedElement = this.$listTable.find('.editing');
+                var editedCol;
+                var editedElementRowId;
+                var editedElementContent;
+                var editedElementValue;
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementContent = editedCol.data('content');
+                    editedElementValue = editedElement.val();
+
+                    if (!this.changedModels[editedElementRowId]) {
+                        this.changedModels[editedElementRowId] = {};
+                    }
+
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
             },
 
             goSort: function (e) {
@@ -83,32 +137,61 @@ define([
 
             renderContent: function () {
                 var currentEl = this.$el;
-                var tempalte = _.template(listTemplate);
+                var template = _.template(listTemplate);
                 var tBody = currentEl.find('#chartOfAccount');
 
                 tBody.empty();
 
                 if (this.collection.length > 0) {
-                    this.$el.find('#chartOfAccount').html(tempalte({
+                    this.$el.find('#chartOfAccount').html(template({
                         collection: this.collection.toJSON()
                     }));
                 }
             },
 
+            hideSaveCancelButtons: function () {
+                var saveBtn = $("#top-bar-saveBtn");
+                var cancelBtn = $("#top-bar-deleteBtn");
 
-            render: function(){
+                saveBtn.hide();
+                cancelBtn.hide();
+            },
+
+            render: function () {
+                var self = this;
                 var currentEl;
-                var tempalte = _.template(listTemplate);
+                var template = _.template(listTemplate);
                 currentEl = this.$el;
 
                 currentEl.html('');
                 currentEl.html(_.template(listHeaderTemplate));
-                this.$el.find('#chartOfAccount').html(tempalte({
+                currentEl.find('#chartOfAccount').html(template({
                     collection: this.collection.toJSON()
                 }));
 
+
+                this.hideSaveCancelButtons();
+
+                $('#check_all').click(function () {
+                    $(':checkbox').prop('checked', this.checked);
+                    if ($("input.checkbox:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                    }
+                });
+
+                setTimeout(function () {
+                    self.editCollection = new EditCollection(self.collection.toJSON());
+                    self.editCollection.on('saved', self.savedNewModel, self);
+                    self.editCollection.on('updated', self.updatedOptions, self);
+
+                    self.$listTable =  currentEl.find('#chartOfAccount');
+                }, 10);
+
+                return this;
             }
         });
 
-return ProjectsListView;
-});
+        return ProjectsListView;
+    });

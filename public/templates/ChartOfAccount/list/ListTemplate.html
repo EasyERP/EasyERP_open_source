@@ -1,5 +1,7 @@
 <% collection.forEach(function(chart, index){ %>
 <tr data-id="<%=chart._id%>">
+    <td class = "notForm"><input type="checkbox" value="<%=chart._id%>" class="checkbox listCB" /></td>
+    <td><%=index + 1%></td>
     <td data-content="_id"><%=chart._id%></td>
     <td data-content="account"><%=chart.account%></td>
     <td data-content="type"><%=chart.type%></td>
