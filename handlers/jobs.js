@@ -102,6 +102,8 @@ var Jobs = function (models, event) {
         if (!joinWithQuotation) {
             query
                 .populate('project')
+                .populate('invoice._id')
+                .populate('quotation._id')
                 .exec(function (err, result) {
                     if (err) {
                         return next(err);
@@ -112,30 +114,34 @@ var Jobs = function (models, event) {
         } else {
             query
                 .populate('project')
+                .populate('invoice._id')
+                .populate('quotation._id')
                 .exec(function (err, result) {
                     if (err) {
                         return next(err);
                     }
 
-                    Quotation.find({}, {products: 1, paymentInfo: 1}, function (err, quots) {
-                        if (err) {
-                            return next(err);
-                        }
+                    res.status(200).send(result)
 
-                        async.each(result, function (job, cb) {
-                            async.each(quots, function (quotation) {
-                                quotation.products.forEach(function (product) {
-                                    if (product.jobs && product.jobs.toString() === job._id.toString()) {
-                                        job._doc.quotation = quotation.paymentInfo.total;
-                                    }
-                                });
-                            });
-                            cb();
-                        }, function () {
-                            res.status(200).send(result)
-                        })
-
-                    });
+                    //Quotation.find({}, {products: 1, paymentInfo: 1}, function (err, quots) {
+                    //    if (err) {
+                    //        return next(err);
+                    //    }
+                    //
+                    //    async.each(result, function (job, cb) {
+                    //        async.each(quots, function (quotation) {
+                    //            quotation.products.forEach(function (product) {
+                    //                if (product.jobs && product.jobs.toString() === job._id.toString()) {
+                    //                    job._doc.quotation = quotation.paymentInfo.total;
+                    //                }
+                    //            });
+                    //        });
+                    //        cb();
+                    //    }, function () {
+                    //        res.status(200).send(result)
+                    //    })
+                    //
+                    //});
                 })
         }
 
