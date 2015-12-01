@@ -3,18 +3,19 @@
  */
 var mongoose = require('mongoose');
 var chartOfAccountSchema = mongoose.Schemas['chartOfAccount'];
+var async = require('async');
 
 var _ = require('../node_modules/underscore');
 var Chart = function (models) {
     var access = require("../Modules/additions/access.js")(models);
 
     this.create = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
+        var body = req.body;
+        var newModel;
+
         access.getEditWritAccess(req, req.session.uId, 82, function (access) {
             if (access) {
-
-                var Model = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
-                var body = req.body;
-                var newModel;
 
                 newModel = new Model(body);
 
