@@ -318,7 +318,7 @@ define([
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                    if (editedElementContent === '_id'){
+                    if (editedElementContent === 'code'){
                         editedElementValue = parseInt(editedElementValue);
 
                         if (isNaN(editedElementValue)){
@@ -458,6 +458,10 @@ define([
                 this.resetCollection(modelObject);
             },
 
+            errorFunction: function(){
+                alert("ERROR");
+            },
+
             render: function () {
                 var self = this;
                 var currentEl;
@@ -484,6 +488,7 @@ define([
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
+                    self.editCollection.on('error', self.errorFunction, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
 
                     self.$listTable = currentEl.find('#chartOfAccount');

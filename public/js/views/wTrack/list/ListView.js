@@ -98,6 +98,10 @@ define([
                 return false;
             },
 
+            generatedWtracks: function(){
+
+            },
+
             keyDown: function (e) {
                 if (e.which === 13) {
                     this.autoCalc(e);
@@ -711,9 +715,8 @@ define([
 
                 for (var id in this.changedModels) {
                    delete this.changedModels[id];
+                    this.editCollection.remove(id);
                 }
-                
-                this.editCollection.remove(id);
             },
 
             savedNewModel: function (modelObject) {
