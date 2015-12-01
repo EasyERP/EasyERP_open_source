@@ -1,6 +1,3 @@
-/**
- * Created by lilya on 27/11/15.
- */
 var express = require('express');
 var router = express.Router();
 var chartOfAccountHandler = require('../handlers/chartOfAccount');

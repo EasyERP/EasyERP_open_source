@@ -1,10 +1,8 @@
-/**
- * Created by lilya on 27/11/15.
- */
 var mongoose = require('mongoose');
 var chartOfAccountSchema = mongoose.Schemas['chartOfAccount'];
 
-var _ = require('../node_modules/underscore');
+//var _ = require('../node_modules/underscore');
+var _ = require('underscore');
 var Chart = function (models) {
 
     this.getForView = function (req, res, next) {
