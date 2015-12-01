@@ -93,7 +93,16 @@ define([
             },
 
             generatedWtracks: function () {
+                var self = this;
+                var tr = this.$listTable.find('#false');
+                var projectId = tr.find('[data-content="project"]').attr('data-id');
 
+                dataService.getData("/jobs/getForDD", {"projectId": projectId}, function (jobs) {
+
+                    self.responseObj['#jobs'] = jobs;
+
+                    tr.find('[data-content="jobs"]').addClass('editable');
+                });
             },
 
             keyDown: function (e) {
@@ -653,13 +662,14 @@ define([
 
                         changedAttr.year = year;
                     }
+
+                    targetElement.removeClass('errorContent');
+
+                    targetElement.text(target.text());
+
                 } else if (id === 'createJob') {
-                    self.generateJob();
+                    self.generateJob(e);
                 }
-
-                targetElement.removeClass('errorContent');
-
-                targetElement.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
