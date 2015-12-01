@@ -4,20 +4,26 @@
 define([
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
+        'text!templates/ChartOfAccount/list/cancelEdit.html',
+        'views/ChartOfAccount/CreateView',
         'collections/ChartOfAccount/filterCollection',
         'collections/ChartOfAccount/editCollection',
-        "populate"
+        'models/chartOfAccount',
+        "populate",
+        "async"
     ],
-    function (listHeaderTemplate, listTemplate, contentCollection, EditCollection, populate) {
+    function (listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
         var ProjectsListView = Backbone.View.extend({
-            el         : '#content-holder',
-            contentType: "ChartOfAccount",
+            el           : '#content-holder',
+            contentType  : "ChartOfAccount",
             changedModels: {},
 
             events: {
-                "click .oe_sortable": "goSort",
-                "click td.editable" : "editRow",
-                "change .editable"  : "setEditable"
+                "click .oe_sortable"    : "goSort",
+                "click td.editable"     : "editRow",
+                "change .editable"      : "setEditable",
+                "click .checkbox"       : "checked",
+                "keydown input.editing ": "keyDown"
             },
 
             initialize: function (options) {
@@ -25,6 +31,202 @@ define([
                 this.collection = options.collection;
 
                 this.render();
+            },
+
+            keyDown: function (e) {
+                if (e.which === 13) {
+                    this.setChangedValueToModel();
+                }
+            },
+
+            deleteItems: function () {
+                var that = this;
+                var mid = 82;
+                var model;
+                var localCounter = 0;
+                var count = $("#chartOfAccount input:checked").length;
+
+                this.collectionLength = this.collection.length;
+
+                if (!this.changed) {
+                    var answer = confirm("Really DELETE items ?!");
+                    var value;
+
+                    if (answer === true) {
+                        $.each($("#chartOfAccount input:checked"), function (index, checkbox) {
+                            value = checkbox.value;
+
+                            model = that.collection.get(value) ? that.collection.get(value) : that.editCollection.get(value);
+                            model.destroy({
+                                headers: {
+                                    mid: mid
+                                },
+                                wait   : true,
+                                success: function () {
+                                    that.listLength--;
+                                    localCounter++;
+
+                                    if (index === count - 1) {
+                                        that.deleteItemsRender(localCounter);
+                                    }
+                                },
+                                error  : function (model, res) {
+                                    if (res.status === 403 && index === 0) {
+                                        alert("You do not have permission to perform this action");
+                                    }
+                                    that.listLength--;
+                                    localCounter++;
+                                    if (index == count - 1) {
+                                        if (index === count - 1) {
+                                            that.deleteItemsRender(localCounter);
+                                        }
+                                    }
+
+                                }
+                            });
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            deleteItemsRender: function (deleteCounter) {
+                var holder;
+                var template = _.template(listTemplate);
+
+                holder = this.$el;
+
+                if (deleteCounter !== this.collectionLength) {
+                    holder.find('#chartOfAccount').html(template({
+                        collection: this.collection.toJSON()
+                    }));
+                }
+
+                this.editCollection.reset(this.collection.models);
+
+                this.hideSaveCancelBtns();
+            },
+
+            cancelChanges: function () {
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.attr('data-id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.startNumber = rowNumber;
+                    tr.replaceWith(template({chart: model}));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        self.bindingEventsToEditedCollection(self);
+                        self.hideSaveCancelBtns();
+                    }
+                });
+            },
+
+            hideSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                this.changed = false;
+
+                saveBtnEl.hide();
+                cancelBtnEl.hide();
+                createBtnEl.show();
+
+                return false;
+            },
+
+            isNewRow: function () {
+                var newRow = $('#false');
+
+                return !!newRow.length;
+            },
+
+            bindingEventsToEditedCollection: function (context) {
+                if (context.editCollection) {
+                    context.editCollection.unbind();
+                }
+                context.editCollection = new EditCollection(context.collection.toJSON());
+                context.editCollection.on('saved', context.savedNewModel, context);
+                context.editCollection.on('updated', context.updatedOptions, context);
+            },
+
+            resetCollection: function (model) {
+                if (model && model._id) {
+                    model = new currentModel(model);
+                    this.collection.add(model);
+                } else {
+                    this.collection.set(this.editCollection.models, {remove: false});
+                }
+            },
+
+            updatedOptions: function () {
+                this.hideSaveCancelBtns();
+                this.resetCollection();
+            },
+
+            checked: function () {
+                var checkLength;
+
+                if (this.collection.length > 0) {
+                    checkLength = $("input.listCB:checked").length;
+
+                    if (checkLength > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+                        if (checkLength === this.collection.length) {
+                            $('#check_all').prop('checked', true);
+                        }
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                        $('#check_all').prop('checked', false);
+                    }
+                }
+            },
+
+            createItem: function () {
+                var startData = {};
+                var model = new currentModel(startData);
+
+                startData.cid = model.cid;
+
+                if (!this.isNewRow()) {
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(model);
+
+                    new createView(startData);
+                }
+
+                this.changed = true;
+            },
+
+            showSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                if (!this.changed) {
+                    createBtnEl.hide();
+                }
+                saveBtnEl.show();
+                cancelBtnEl.show();
+
+                return false;
             },
 
             editRow: function (e, prev, next) {
@@ -42,15 +244,41 @@ define([
                     this.setChangedValueToModel();
                 }
 
-                if (isSelect) {
-                    populate.showSelect(e, prev, next, this);
-                } else {
-                    tempContainer = el.text();
-                    width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+
+                return false;
+            },
+
+            setEditable: function (td) {
+
+                if (!td.parents) {
+                    td = $(td.target).closest('td');
+                }
+
+                td.addClass('edited');
+
+                if (this.isEditRows()) {
+                    this.setChangedValue();
                 }
 
                 return false;
+            },
+
+            setChangedValue: function () {
+                if (!this.changed) {
+                    this.changed = true;
+                    this.showSaveCancelBtns()
+                }
+            },
+
+            isEditRows: function () {
+                var edited = this.$listTable.find('.edited');
+
+                this.edited = edited;
+
+                return !!edited.length;
             },
 
             setChangedValueToModel: function () {
@@ -71,6 +299,20 @@ define([
                     }
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
+                    if (editedElementContent === '_id'){
+                        editedElementValue = parseInt(editedElementValue);
+
+                        if (isNaN(editedElementValue)){
+                            editedCol.addClass('errorContent');
+                            editedElementValue = '';
+                        } else {
+                            editedCol.removeClass('errorContent');
+                        }
+                    }
+
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
                     editedCol.text(editedElementValue);
                     editedElement.remove();
                 }
@@ -157,6 +399,46 @@ define([
                 cancelBtn.hide();
             },
 
+            saveItem: function () {
+                var model;
+
+                var errors = this.$el.find('.errorContent');
+
+                for (var id in this.changedModels) {
+                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                    model.changed = this.changedModels[id];
+                }
+
+                if (errors.length) {
+                    return
+                }
+                this.editCollection.save();
+
+                for (var id in this.changedModels) {
+                    delete this.changedModels[id];
+                }
+
+                this.editCollection.remove(id);
+            },
+
+            savedNewModel: function (modelObject) {
+                var savedRow = this.$listTable.find('#false');
+                var modelId;
+                var checkbox = savedRow.find('input[type=checkbox]');
+
+                modelObject = modelObject.success;
+
+                if (modelObject) {
+                    modelId = modelObject._id;
+                    savedRow.attr("data-id", modelId);
+                    checkbox.val(modelId);
+                    savedRow.removeAttr('id');
+                }
+
+                this.hideSaveCancelBtns();
+                this.resetCollection(modelObject);
+            },
+
             render: function () {
                 var self = this;
                 var currentEl;
@@ -168,7 +450,6 @@ define([
                 currentEl.find('#chartOfAccount').html(template({
                     collection: this.collection.toJSON()
                 }));
-
 
                 this.hideSaveCancelButtons();
 
@@ -186,7 +467,7 @@ define([
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
 
-                    self.$listTable =  currentEl.find('#chartOfAccount');
+                    self.$listTable = currentEl.find('#chartOfAccount');
                 }, 10);
 
                 return this;
