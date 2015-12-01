@@ -8,7 +8,6 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var chartAccountSchema = mongoose.Schema({
-
         _id: Number,
         account: {type: String, default: ""},
         type: {type: String, default: ""}
