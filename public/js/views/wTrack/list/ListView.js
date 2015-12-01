@@ -11,7 +11,7 @@ define([
         'collections/wTrack/filterCollection',
         'collections/wTrack/editCollection',
         'views/Filter/FilterView',
-        'views/Projects/projectInfo/wTracks/generateWTrack',
+        'views/wTrack/list/createJob',
         'common',
         'dataService',
         'populate',
@@ -20,26 +20,26 @@ define([
         'moment'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, GenerateWTrack, common, dataService, populate, async, custom, moment) {
+    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment) {
         var wTrackListView = listViewBase.extend({
-            createView: createView,
-            listTemplate: listTemplate,
-            listItemView: listItemView,
-            contentCollection: contentCollection,
-            filterView: filterView,
-            contentType: 'wTrack',
-            viewType: 'list',
-            responseObj: {},
-            wTrackId: null, //need for edit rows in listView
+            createView              : createView,
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            filterView              : filterView,
+            contentType             : 'wTrack',
+            viewType                : 'list',
+            responseObj             : {},
+            wTrackId                : null, //need for edit rows in listView
             totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable: null, //cashedJqueryEllemnt
-            editCollection: null,
-            selectedProjectId: [],
-            genInvoiceEl: null,
-            copyEl: null,
-            changedModels: {},
-            exportToCsvUrl: '/wTrack/exportToCsv',
-            exportToXlsxUrl: '/wTrack/exportToXlsx',
+            $listTable              : null, //cashedJqueryEllemnt
+            editCollection          : null,
+            selectedProjectId       : [],
+            genInvoiceEl            : null,
+            copyEl                  : null,
+            changedModels           : {},
+            exportToCsvUrl          : '/wTrack/exportToCsv',
+            exportToXlsxUrl         : '/wTrack/exportToXlsx',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -60,15 +60,15 @@ define([
             },
 
             events: {
-                "click .stageSelect": "showNewSelect",
+                "click .stageSelect"                                              : "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable": "editRow",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "change .autoCalc": "autoCalc",
-                "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown",
-                "change .listCB": "setAllTotalVals"
+                "click td.editable"                                               : "editRow",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "change .autoCalc"                                                : "autoCalc",
+                "change .editable "                                               : "setEditable",
+                "keydown input.editing "                                          : "keyDown",
+                "change .listCB"                                                  : "setAllTotalVals"
             },
 
             generateJob: function () {
@@ -79,26 +79,20 @@ define([
                     projectsDdContainer.css('color', 'red');
 
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.SELECTP_ROJECT
                     });
                 }
 
-                if (this.generatedView) {
-                    this.generatedView.undelegateEvents();
-                }
-
-                this.generatedView = new GenerateWTrack({
-                    model               : this.projectModel,
-                    createJob           : true,
-                    forQuotationGenerate: true,
-                    quotationDialog     : this
+                new CreateJob({
+                    model     : this.projectModel,
+                    wTrackView: this
                 });
 
                 return false;
             },
 
-            generatedWtracks: function(){
+            generatedWtracks: function () {
 
             },
 
@@ -148,11 +142,11 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks: wTracks,
-                            project: project,
+                            wTracks : wTracks,
+                            project : project,
                             assigned: assigned,
                             customer: customer,
-                            total: total
+                            total   : total
                         });
                     }
                 });
@@ -517,8 +511,8 @@ define([
                     dataService.getData('/payroll/getByMonth',
                         {
                             month: month,
-                            year: year,
-                            _id: employeeId
+                            year : year,
+                            _id  : employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -566,7 +560,6 @@ define([
                 var week;
                 var year;
                 var jobs = {};
-
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
@@ -714,7 +707,7 @@ define([
                 this.editCollection.save();
 
                 for (var id in this.changedModels) {
-                   delete this.changedModels[id];
+                    delete this.changedModels[id];
                     this.editCollection.remove(id);
                 }
             },
@@ -771,8 +764,8 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
                 $currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
+                    collection : this.collection,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -803,7 +796,7 @@ define([
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
-                           // self.genInvoiceEl.hide();
+                            // self.genInvoiceEl.hide();
                             self.copyEl.hide();
                             $('#check_all').prop('checked', false);
                         }
@@ -887,10 +880,10 @@ define([
                 var week = now.getWeek();
                 var rate = 3;
                 var startData = {
-                    year: year,
+                    year : year,
                     month: month,
-                    week: week,
-                    rate: rate
+                    week : week,
+                    rate : rate
                 };
 
                 var model = new currentModel(startData);
@@ -1019,7 +1012,7 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -1033,14 +1026,13 @@ define([
                 //    parrentContentId: this.parrentContentId
                 //});
 
-
                 holder = this.$el;
 
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1100,7 +1092,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait: true,
+                                    wait   : true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -1109,7 +1101,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error: function (model, res) {
+                                    error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }

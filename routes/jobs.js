@@ -10,6 +10,7 @@ module.exports = function (models, event) {
 
     router.get('/', handler.getData);
     router.get('/getForDD', handler.getForDD);
+    router.post('/', handler.create);
     router.post('/update', handler.update);
     router.post('/remove', handler.remove);
 

@@ -33,6 +33,43 @@ var Jobs = function (models, event) {
         }
     };
 
+    this.create = function(req, res, next){
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var data = req.body;
+        var project = req.headers.project;
+        var jobName = req.headers.jobname;
+        var newModel;
+        var jobId;
+        var projectId;
+
+        data.name = jobName;
+        data.project = objectId(project);
+        data.workflow = {
+            _id : objectId("56337c705d49d8d6537832eb"),
+                name: "In Progress"
+        };
+        data.type = "Not Quoted";
+        data.wTracks = [];
+
+        newModel = new JobsModel(data);
+
+        newModel.save(function (err, model) {
+            if (err) {
+                return next(err);
+            }
+
+            jobId = model._id;
+            projectId = model.project;
+
+            if (projectId){
+                event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
+                event.emit('recollectProjectInfo');
+            }
+
+            res.status(200).send({success: model});
+        });
+    };
+
     this.getData = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
