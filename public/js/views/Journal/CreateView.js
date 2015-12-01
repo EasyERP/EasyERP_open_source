@@ -1,8 +1,8 @@
 define([
         "text!templates/Journal/CreateTemplate.html",
-        "helpers"
+        'populate'
     ],
-    function (CreateTemplate, helpers) {
+    function (CreateTemplate, populate) {
         "use strict";
 
         var CreateView = Backbone.View.extend({
@@ -18,7 +18,6 @@ define([
 
             render: function () {
                 var formString = this.template();
-                var self = this;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -43,7 +42,7 @@ define([
 
                 });
 
-                this.$el.find('#deleteBtn').hide();
+                populate.get("#debitDd", "/chartOfAccount/getForDd", {}, 'name', this, true);
 
                 this.delegateEvents(this.events);
 
