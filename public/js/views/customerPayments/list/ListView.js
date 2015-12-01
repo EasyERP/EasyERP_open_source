@@ -8,6 +8,7 @@ define([
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
         'views/Filter/FilterView',
+        'views/customerPayments/EditView',
         'collections/customerPayments/filterCollection',
         'collections/customerPayments/editCollection',
         'models/PaymentModel',
@@ -15,7 +16,7 @@ define([
         'populate',
         'async'
     ],
-    function (listViewBase, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, filterView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
+    function (listViewBase, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
         var PaymentListView = listViewBase.extend({
 
             listTemplate            : listTemplate,
@@ -34,7 +35,8 @@ define([
             events: {
                 "click td.editable"                                : "editRow",
                 "change .editable "                                : "setEditable",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click td:not(.checkbox, .date)": "goToEditDialog"
             },
 
             initialize: function (options) {
@@ -53,6 +55,15 @@ define([
                 this.contentCollection = paymentCollection;
 
                 this.filterView;
+            },
+
+            goToEditDialog: function(e){
+                e.preventDefault();
+
+                var id = $(e.target).closest('tr').data("id");
+                var model = this.collection.get(id);
+
+                new EditView({model: model});
             },
 
             setEditable: function (td) {
