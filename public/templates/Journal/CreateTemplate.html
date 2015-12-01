@@ -1,29 +1,27 @@
 <div class="form-holder">
     <form method="post" action="" id="createJournalForm" class="form">
         <dl class="journal-info">
-            <dt><label>Journal Name</label></dt>
-            <dd>
-                <input type="text" maxlength="25">
-            </dd>
-            <dt><label>Type</label></dt>
-            <dd>
-                <a id="typeDd" class="current-selected" href="javascript:;">Select</a>
-            </dd>
-            <dl>
-                <fildset>
-                    <legend>Journal Entries</legend>
-                    <dl>
-                        <dt><label>Default Debit Account</label></dt>
-                        <dd>
-                            <a id="debitDd" class="current-selected" href="javascript:;">Select</a>
-                        </dd>
-                        <dt><label>Default Credit Account</label></dt>
-                        <dd>
-                            <a id="creditDd" class="current-selected" href="javascript:;">Select</a>
-                        </dd>
-                    </dl>
-                </fildset>
-            </dl>
+            <div class="half-block left">
+                <dt><label>Journal Name</label></dt>
+                <dd>
+                    <input type="text" maxlength="25">
+                </dd>
+                <dt><label>Transaction</label></dt>
+                <dd>
+                    <a id="typeDd" class="current-selected" href="javascript:;">Select</a>
+                </dd>
+            </div>
+
+            <div class="half-block right">
+                <dt><label>Debit Account</label></dt>
+                <dd>
+                    <a id="debitDd" class="current-selected" href="javascript:;">Select</a>
+                </dd>
+                <dt><label>Credit Account</label></dt>
+                <dd>
+                    <a id="creditDd" class="current-selected" href="javascript:;">Select</a>
+                </dd>
+            </div>
         </dl>
     </form>
 </div>

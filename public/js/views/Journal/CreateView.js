@@ -52,8 +52,8 @@ define([
                     title        : "Create Journal",
                     buttons      : [
                         {
-                            id   : "saveBtn",
-                            text : "Save",
+                            id   : "createBtn",
+                            text : "Create",
                             click: function () {
                             }
                         },
@@ -69,6 +69,14 @@ define([
 
                 populate.get("#debitDd", "/chartOfAccount/getForDd", {}, 'name', this, true, true);
                 populate.get("#creditDd", "/chartOfAccount/getForDd", {}, 'name', this, true, true);
+
+                this.responseObj['#typeDd'] = [{
+                    _id: 'Invoice',
+                    name: 'Invoice'
+                }, {
+                    _id: 'Payment',
+                    name: 'Payment'
+                }];
 
                 this.delegateEvents(this.events);
 
