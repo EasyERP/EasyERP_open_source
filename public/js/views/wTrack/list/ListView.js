@@ -11,6 +11,7 @@ define([
         'collections/wTrack/filterCollection',
         'collections/wTrack/editCollection',
         'views/Filter/FilterView',
+        'views/Projects/projectInfo/wTracks/generateWTrack',
         'common',
         'dataService',
         'populate',
@@ -19,7 +20,7 @@ define([
         'moment'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
+    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, GenerateWTrack, common, dataService, populate, async, custom, moment) {
         var wTrackListView = listViewBase.extend({
             createView: createView,
             listTemplate: listTemplate,
@@ -68,6 +69,33 @@ define([
                 "change .editable ": "setEditable",
                 "keydown input.editing ": "keyDown",
                 "change .listCB": "setAllTotalVals"
+            },
+
+            generateJob: function () {
+                var model = this.projectModel;
+                var projectsDdContainer = $('#projectDd');
+
+                if (!model) {
+                    projectsDdContainer.css('color', 'red');
+
+                    App.render({
+                        type: 'error',
+                        message: CONSTANTS.SELECTP_ROJECT
+                    });
+                }
+
+                if (this.generatedView) {
+                    this.generatedView.undelegateEvents();
+                }
+
+                this.generatedView = new GenerateWTrack({
+                    model               : this.projectModel,
+                    createJob           : true,
+                    forQuotationGenerate: true,
+                    quotationDialog     : this
+                });
+
+                return false;
             },
 
             keyDown: function (e) {
@@ -552,78 +580,84 @@ define([
 
                 changedAttr = this.changedModels[modelId];
 
-                if (elementType === '#project') {
+                if (id !== 'createJob') {
 
-                    projectManager = element.projectmanager.name;
-                    assignedContainer = tr.find('[data-content="assigned"]');
-                    assignedContainer.text(projectManager);
-                    targetElement.attr('data-id', id);
+                    if (elementType === '#project') {
+                        this.projectModel = element;
 
-                    tr.find('[data-content="workflow"]').text(element.workflow.name);
-                    tr.find('[data-content="customer"]').text(element.customer.name);
+                        projectManager = element.projectmanager.name;
+                        assignedContainer = tr.find('[data-content="assigned"]');
+                        assignedContainer.text(projectManager);
+                        targetElement.attr('data-id', id);
 
-                    project = _.clone(editWtrackModel.get('project'));
-                    project._id = element._id;
-                    project.projectName = element.projectName;
-                    project.workflow._id = element.workflow._id;
-                    project.workflow.name = element.workflow.name;
-                    project.customer._id = element.customer._id;
-                    project.customer.name = element.customer.name;
+                        tr.find('[data-content="workflow"]').text(element.workflow.name);
+                        tr.find('[data-content="customer"]').text(element.customer.name);
 
-                    project.projectmanager.name = element.projectmanager.name;
-                    project.projectmanager._id = element.projectmanager._id;
+                        project = _.clone(editWtrackModel.get('project'));
+                        project._id = element._id;
+                        project.projectName = element.projectName;
+                        project.workflow._id = element.workflow._id;
+                        project.workflow.name = element.workflow.name;
+                        project.customer._id = element.customer._id;
+                        project.customer.name = element.customer.name;
 
-                    changedAttr.project = project;
+                        project.projectmanager.name = element.projectmanager.name;
+                        project.projectmanager._id = element.projectmanager._id;
 
-                    dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
+                        changedAttr.project = project;
 
-                        self.responseObj['#jobs'] = jobs;
+                        dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
 
-                        tr.find('[data-content="jobs"]').addClass('editable');
-                    });
+                            self.responseObj['#jobs'] = jobs;
 
-                } else if (elementType === '#jobs') {
+                            tr.find('[data-content="jobs"]').addClass('editable');
+                        });
 
-                    jobs._id = element._id;
-                    jobs.name = element.name;
+                    } else if (elementType === '#jobs') {
 
-                    changedAttr.jobs = jobs;
+                        jobs._id = element._id;
+                        jobs.name = element.name;
 
-                    tr.find('[data-content="jobs"]').removeClass('errorContent');
-                } else if (elementType === '#employee') {
-                    tr.find('[data-content="department"]').text(element.department.name);
+                        changedAttr.jobs = jobs;
 
-                    employee = _.clone(editWtrackModel.get('employee'));
-                    department = _.clone(editWtrackModel.get('department'));
+                        tr.find('[data-content="jobs"]').removeClass('errorContent');
+                    } else if (elementType === '#employee') {
+                        tr.find('[data-content="department"]').text(element.department.name);
 
-                    employee._id = element._id;
-                    employee.name = target.text();
+                        employee = _.clone(editWtrackModel.get('employee'));
+                        department = _.clone(editWtrackModel.get('department'));
 
-                    department._id = element.department._id;
-                    department.departmentName = element.department.name;
+                        employee._id = element._id;
+                        employee.name = target.text();
 
-                    changedAttr.employee = employee;
-                    changedAttr.department = department;
+                        department._id = element.department._id;
+                        department.departmentName = element.department.name;
 
-                    targetElement.attr("data-id", employee._id);
+                        changedAttr.employee = employee;
+                        changedAttr.department = department;
 
-                    this.calculateCost(e, wTrackId);
+                        targetElement.attr("data-id", employee._id);
 
-                    tr.find('[data-content="department"]').removeClass('errorContent');
-                } else if (elementType === '#department') {
-                    department = _.clone(editWtrackModel.get('department'));
-                    department._id = element._id;
-                    department.departmentName = element.departmentName;
+                        this.calculateCost(e, wTrackId);
 
-                    changedAttr.department = department;
-                } else if (elementType === '#week') {
-                    week = $(e.target).text();
+                        tr.find('[data-content="department"]').removeClass('errorContent');
+                    } else if (elementType === '#department') {
+                        department = _.clone(editWtrackModel.get('department'));
+                        department._id = element._id;
+                        department.departmentName = element.departmentName;
 
-                    changedAttr.week = week;
-                } else if (elementType === '#year') {
-                    year = $(e.target).text();
+                        changedAttr.department = department;
+                    } else if (elementType === '#week') {
+                        week = $(e.target).text();
 
-                    changedAttr.year = year;
+                        changedAttr.week = week;
+                    } else if (elementType === '#year') {
+                        year = $(e.target).text();
+
+                        changedAttr.year = year;
+                    }
+                } else if (id === 'createJob') {
+                    self.generateJob();
                 }
 
                 targetElement.removeClass('errorContent');

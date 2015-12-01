@@ -112,6 +112,8 @@ define([
                 var self = this;
                 var edited = this.edited;
                 var collection = this.collection;
+                var createItem;
+                var dataId;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
@@ -135,6 +137,16 @@ define([
                         self.hideSaveCancelBtns();
                     }
                 });
+
+                if (this.createdItem) {
+                    createItem = this.$el.find('#false');
+                    dataId = createItem.data('id');
+                    this.editCollection.remove(dataId);
+                    delete this.changedModels[dataId];
+                    createItem.remove();
+
+                    this.createdItem = false;
+                }
             },
 
             hideSaveCancelBtns: function () {
@@ -182,6 +194,11 @@ define([
 
             checked: function () {
                 var checkLength;
+                var newRows = this.$listTable.find('#false');
+
+                if (newRows.length){
+                    return false;
+                }
 
                 if (this.collection.length > 0) {
                     checkLength = $("input.listCB:checked").length;
@@ -213,6 +230,7 @@ define([
                 }
 
                 this.changed = true;
+                this.createdItem = true;
             },
 
             showSaveCancelBtns: function () {
@@ -359,6 +377,7 @@ define([
                 sortObject[sortBy] = sortConst;
 
                 this.fetchSortCollection(sortObject);
+                this.hideSaveCancelBtns();
             },
 
             fetchSortCollection: function (sortObject) {
