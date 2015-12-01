@@ -242,6 +242,8 @@ define([
         },
 
         checked: function (e) {
+            e.stopPropagation();
+
             if (this.collection.length > 0) {
                 var el = this.$el;
                 var checkLength = el.find("input.checkbox:checked").length;

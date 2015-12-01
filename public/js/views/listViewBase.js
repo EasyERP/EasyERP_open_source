@@ -141,7 +141,9 @@ define([
                 new this.createView();
             },
 
-            checked: function () {
+            checked: function (e) {
+                e.stopPropagation();
+
                 var checkLength;
                 var checkAll$;
 

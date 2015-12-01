@@ -6,6 +6,12 @@ define([], function () {
     var ChartOfAccountModel = Backbone.Model.extend({
         idAttribute: "_id",
 
+        default: {
+            account  : "",
+            type     : "",
+            payMethod: null
+        },
+
         urlRoot: function () {
             return "/ChartOfAccount";
         }

@@ -53,4 +53,5 @@ module.exports = (function () {
     require('./payRoll.js');
     require('./paymentType.js');
     require('./chartAccount.js');
+    require('./currency.js');
 })();
