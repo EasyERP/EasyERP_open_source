@@ -35,8 +35,8 @@ var Chart = function (models) {
         var data = req.query;
         var sort = data.sort ? data.sort : {_id: 1};
 
-        Model.find({}).sort(sort).exec(function(err, result){
-            if (err){
+        Model.find({}).sort(sort).exec(function (err, result) {
+            if (err) {
                 return next(err);
             }
 
@@ -104,6 +104,24 @@ var Chart = function (models) {
         });
     };
 
+    this.getForDd = function (req, res, next) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            var query = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
+
+            query
+                .find()
+                .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: result});
+            });
+
+        } else {
+            res.status(401).send();
+        }
+    };
 
 };
 

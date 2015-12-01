@@ -366,7 +366,6 @@ define([
 
             if (_id !== 'createJob') {
 
-
                 if (parrent.hasClass('jobs')) {
                     _id = product.attr("data-id");
                     jobId = target.attr("id");

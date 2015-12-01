@@ -9,7 +9,7 @@ module.exports = (function () {
 
     var chartAccountSchema = mongoose.Schema({
 
-        _id      : Number,
+        code      : {type: Number},
         account  : {type: String, default: ""},
         type     : {type: String, default: ""},
         payMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
@@ -25,6 +25,15 @@ module.exports = (function () {
     }, {collection: 'chartOfAccount'});
 
     mongoose.model('chartOfAccount', chartAccountSchema);
+
+    //for DropDown
+    chartAccountSchema
+        .virtual('name')
+        .get(function () {
+            return this.code + ' ' + this.account;
+        });
+
+    chartAccountSchema.set('toJSON', {virtuals: true});
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};

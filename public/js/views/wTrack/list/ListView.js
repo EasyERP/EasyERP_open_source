@@ -11,6 +11,7 @@ define([
         'collections/wTrack/filterCollection',
         'collections/wTrack/editCollection',
         'views/Filter/FilterView',
+        'views/wTrack/list/createJob',
         'common',
         'dataService',
         'populate',
@@ -19,26 +20,26 @@ define([
         'moment'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
+    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment) {
         var wTrackListView = listViewBase.extend({
-            createView: createView,
-            listTemplate: listTemplate,
-            listItemView: listItemView,
-            contentCollection: contentCollection,
-            filterView: filterView,
-            contentType: 'wTrack',
-            viewType: 'list',
-            responseObj: {},
-            wTrackId: null, //need for edit rows in listView
+            createView              : createView,
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            filterView              : filterView,
+            contentType             : 'wTrack',
+            viewType                : 'list',
+            responseObj             : {},
+            wTrackId                : null, //need for edit rows in listView
             totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable: null, //cashedJqueryEllemnt
-            editCollection: null,
-            selectedProjectId: [],
-            genInvoiceEl: null,
-            copyEl: null,
-            changedModels: {},
-            exportToCsvUrl: '/wTrack/exportToCsv',
-            exportToXlsxUrl: '/wTrack/exportToXlsx',
+            $listTable              : null, //cashedJqueryEllemnt
+            editCollection          : null,
+            selectedProjectId       : [],
+            genInvoiceEl            : null,
+            copyEl                  : null,
+            changedModels           : {},
+            exportToCsvUrl          : '/wTrack/exportToCsv',
+            exportToXlsxUrl         : '/wTrack/exportToXlsx',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -59,15 +60,49 @@ define([
             },
 
             events: {
-                "click .stageSelect": "showNewSelect",
+                "click .stageSelect"                                              : "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable": "editRow",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "change .autoCalc": "autoCalc",
-                "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown",
-                "change .listCB": "setAllTotalVals"
+                "click td.editable"                                               : "editRow",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "change .autoCalc"                                                : "autoCalc",
+                "change .editable "                                               : "setEditable",
+                "keydown input.editing "                                          : "keyDown",
+                "change .listCB"                                                  : "setAllTotalVals"
+            },
+
+            generateJob: function () {
+                var model = this.projectModel;
+                var projectsDdContainer = $('#projectDd');
+
+                if (!model) {
+                    projectsDdContainer.css('color', 'red');
+
+                    App.render({
+                        type   : 'error',
+                        message: CONSTANTS.SELECTP_ROJECT
+                    });
+                }
+
+                new CreateJob({
+                    model     : this.projectModel,
+                    wTrackView: this
+                });
+
+                return false;
+            },
+
+            generatedWtracks: function () {
+                var self = this;
+                var tr = this.$listTable.find('#false');
+                var projectId = tr.find('[data-content="project"]').attr('data-id');
+
+                dataService.getData("/jobs/getForDD", {"projectId": projectId}, function (jobs) {
+
+                    self.responseObj['#jobs'] = jobs;
+
+                    tr.find('[data-content="jobs"]').addClass('editable');
+                });
             },
 
             keyDown: function (e) {
@@ -116,11 +151,11 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks: wTracks,
-                            project: project,
+                            wTracks : wTracks,
+                            project : project,
                             assigned: assigned,
                             customer: customer,
-                            total: total
+                            total   : total
                         });
                     }
                 });
@@ -485,8 +520,8 @@ define([
                     dataService.getData('/payroll/getByMonth',
                         {
                             month: month,
-                            year: year,
-                            _id: employeeId
+                            year : year,
+                            _id  : employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -535,7 +570,6 @@ define([
                 var year;
                 var jobs = {};
 
-
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
@@ -552,83 +586,90 @@ define([
 
                 changedAttr = this.changedModels[modelId];
 
-                if (elementType === '#project') {
+                if (id !== 'createJob') {
 
-                    projectManager = element.projectmanager.name;
-                    assignedContainer = tr.find('[data-content="assigned"]');
-                    assignedContainer.text(projectManager);
-                    targetElement.attr('data-id', id);
+                    if (elementType === '#project') {
+                        this.projectModel = element;
 
-                    tr.find('[data-content="workflow"]').text(element.workflow.name);
-                    tr.find('[data-content="customer"]').text(element.customer.name);
+                        projectManager = element.projectmanager.name;
+                        assignedContainer = tr.find('[data-content="assigned"]');
+                        assignedContainer.text(projectManager);
+                        targetElement.attr('data-id', id);
 
-                    project = _.clone(editWtrackModel.get('project'));
-                    project._id = element._id;
-                    project.projectName = element.projectName;
-                    project.workflow._id = element.workflow._id;
-                    project.workflow.name = element.workflow.name;
-                    project.customer._id = element.customer._id;
-                    project.customer.name = element.customer.name;
+                        tr.find('[data-content="workflow"]').text(element.workflow.name);
+                        tr.find('[data-content="customer"]').text(element.customer.name);
 
-                    project.projectmanager.name = element.projectmanager.name;
-                    project.projectmanager._id = element.projectmanager._id;
+                        project = _.clone(editWtrackModel.get('project'));
+                        project._id = element._id;
+                        project.projectName = element.projectName;
+                        project.workflow._id = element.workflow._id;
+                        project.workflow.name = element.workflow.name;
+                        project.customer._id = element.customer._id;
+                        project.customer.name = element.customer.name;
 
-                    changedAttr.project = project;
+                        project.projectmanager.name = element.projectmanager.name;
+                        project.projectmanager._id = element.projectmanager._id;
 
-                    dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
+                        changedAttr.project = project;
 
-                        self.responseObj['#jobs'] = jobs;
+                        dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
 
-                        tr.find('[data-content="jobs"]').addClass('editable');
-                    });
+                            self.responseObj['#jobs'] = jobs;
 
-                } else if (elementType === '#jobs') {
+                            tr.find('[data-content="jobs"]').addClass('editable');
+                        });
 
-                    jobs._id = element._id;
-                    jobs.name = element.name;
+                    } else if (elementType === '#jobs') {
 
-                    changedAttr.jobs = jobs;
+                        jobs._id = element._id;
+                        jobs.name = element.name;
 
-                    tr.find('[data-content="jobs"]').removeClass('errorContent');
-                } else if (elementType === '#employee') {
-                    tr.find('[data-content="department"]').text(element.department.name);
+                        changedAttr.jobs = jobs;
 
-                    employee = _.clone(editWtrackModel.get('employee'));
-                    department = _.clone(editWtrackModel.get('department'));
+                        tr.find('[data-content="jobs"]').removeClass('errorContent');
+                    } else if (elementType === '#employee') {
+                        tr.find('[data-content="department"]').text(element.department.name);
 
-                    employee._id = element._id;
-                    employee.name = target.text();
+                        employee = _.clone(editWtrackModel.get('employee'));
+                        department = _.clone(editWtrackModel.get('department'));
 
-                    department._id = element.department._id;
-                    department.departmentName = element.department.name;
+                        employee._id = element._id;
+                        employee.name = target.text();
 
-                    changedAttr.employee = employee;
-                    changedAttr.department = department;
+                        department._id = element.department._id;
+                        department.departmentName = element.department.name;
 
-                    targetElement.attr("data-id", employee._id);
+                        changedAttr.employee = employee;
+                        changedAttr.department = department;
 
-                    this.calculateCost(e, wTrackId);
+                        targetElement.attr("data-id", employee._id);
 
-                    tr.find('[data-content="department"]').removeClass('errorContent');
-                } else if (elementType === '#department') {
-                    department = _.clone(editWtrackModel.get('department'));
-                    department._id = element._id;
-                    department.departmentName = element.departmentName;
+                        this.calculateCost(e, wTrackId);
 
-                    changedAttr.department = department;
-                } else if (elementType === '#week') {
-                    week = $(e.target).text();
+                        tr.find('[data-content="department"]').removeClass('errorContent');
+                    } else if (elementType === '#department') {
+                        department = _.clone(editWtrackModel.get('department'));
+                        department._id = element._id;
+                        department.departmentName = element.departmentName;
 
-                    changedAttr.week = week;
-                } else if (elementType === '#year') {
-                    year = $(e.target).text();
+                        changedAttr.department = department;
+                    } else if (elementType === '#week') {
+                        week = $(e.target).text();
 
-                    changedAttr.year = year;
+                        changedAttr.week = week;
+                    } else if (elementType === '#year') {
+                        year = $(e.target).text();
+
+                        changedAttr.year = year;
+                    }
+
+                    targetElement.removeClass('errorContent');
+
+                    targetElement.text(target.text());
+
+                } else if (id === 'createJob') {
+                    self.generateJob(e);
                 }
-
-                targetElement.removeClass('errorContent');
-
-                targetElement.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
@@ -676,10 +717,9 @@ define([
                 this.editCollection.save();
 
                 for (var id in this.changedModels) {
-                   delete this.changedModels[id];
+                    delete this.changedModels[id];
+                    this.editCollection.remove(id);
                 }
-                
-                this.editCollection.remove(id);
             },
 
             savedNewModel: function (modelObject) {
@@ -734,8 +774,8 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
                 $currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
+                    collection : this.collection,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -766,7 +806,7 @@ define([
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
-                           // self.genInvoiceEl.hide();
+                            // self.genInvoiceEl.hide();
                             self.copyEl.hide();
                             $('#check_all').prop('checked', false);
                         }
@@ -850,10 +890,10 @@ define([
                 var week = now.getWeek();
                 var rate = 3;
                 var startData = {
-                    year: year,
+                    year : year,
                     month: month,
-                    week: week,
-                    rate: rate
+                    week : week,
+                    rate : rate
                 };
 
                 var model = new currentModel(startData);
@@ -982,7 +1022,7 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -996,14 +1036,13 @@ define([
                 //    parrentContentId: this.parrentContentId
                 //});
 
-
                 holder = this.$el;
 
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1063,7 +1102,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait: true,
+                                    wait   : true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -1072,7 +1111,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error: function (model, res) {
+                                    error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }

@@ -57,7 +57,7 @@ define([
                         };
 
                         newModel = model.changed;
-                        //newModel._id = model.id;
+                        newModel._id = model.id;
 
                         Backbone.sync("create", saveObject, options);
                     }
