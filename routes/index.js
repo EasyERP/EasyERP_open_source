@@ -56,6 +56,7 @@ module.exports = function (app, mainDb) {
     var jobsRouter = require('./jobs')(models, event);
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
+    var journalRouter = require('./journal')(models);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
@@ -103,6 +104,7 @@ module.exports = function (app, mainDb) {
     app.use('/payrollExprnses', payrollExprnsesRouter);
     app.use('/chartOfAccount', chartOfAccountRouter);
     app.use('/currency', currencyRouter);
+    app.use('/journal', journalRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
