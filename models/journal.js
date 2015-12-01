@@ -9,7 +9,7 @@ module.exports = (function () {
         transaction     : {type: String, default: "invoice"},
         currency: {
             name: {type: String, default: 'USD'},
-            crossCourse: {type: Number, default: 1}
+            /*crossCourse: {type: Number, default: 1}*/ //not needed in journal, we have it in journalEntry
         },
         description: {type: String, default: ""},
         createdBy: {

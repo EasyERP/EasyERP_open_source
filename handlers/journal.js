@@ -8,7 +8,6 @@ var Module = function (models) {
     this.create = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journal', journalSchema);
         var body = req.body;
-
         var journal = new Model(body);
 
         journal.save(function (err, _journal) {

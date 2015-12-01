@@ -6,6 +6,7 @@ module.exports = (function () {
     var Schema = mongoose.Schema({
         date: {type: Date, default: Date.now},
         type: {type: String, default: ""},
+        journal: {type: ObjectId, ref: 'journal', default: null, require: true},
         account: {type: ObjectId, ref: 'chartOfAccount', default: null},
         currency: {
             name: {type: String, default: 'USD'},
