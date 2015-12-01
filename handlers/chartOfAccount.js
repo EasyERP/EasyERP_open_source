@@ -9,7 +9,7 @@ var Chart = function (models) {
     var access = require("../Modules/additions/access.js")(models);
 
     this.create = function (req, res, next) {
-        access.getEditWritAccess(req, req.session.uId, 75, function (access) {
+        access.getEditWritAccess(req, req.session.uId, 82, function (access) {
             if (access) {
 
                 var Model = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);

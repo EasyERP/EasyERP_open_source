@@ -4,20 +4,25 @@
 define([
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
+        'text!templates/ChartOfAccount/list/cancelEdit.html',
+        'views/ChartOfAccount/CreateView',
         'collections/ChartOfAccount/filterCollection',
         'collections/ChartOfAccount/editCollection',
+        'models/chartOfAccount',
         "populate"
     ],
-    function (listHeaderTemplate, listTemplate, contentCollection, EditCollection, populate) {
+    function (listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate) {
         var ProjectsListView = Backbone.View.extend({
-            el         : '#content-holder',
-            contentType: "ChartOfAccount",
+            el           : '#content-holder',
+            contentType  : "ChartOfAccount",
             changedModels: {},
 
             events: {
-                "click .oe_sortable": "goSort",
-                "click td.editable" : "editRow",
-                "change .editable"  : "setEditable"
+                "click .oe_sortable"    : "goSort",
+                "click td.editable"     : "editRow",
+                "change .editable"      : "setEditable",
+                "click .checkbox"       : "checked",
+                "keydown input.editing ": "keyDown"
             },
 
             initialize: function (options) {
@@ -25,6 +30,223 @@ define([
                 this.collection = options.collection;
 
                 this.render();
+            },
+
+            keyDown: function (e) {
+                if (e.which === 13) {
+                    this.setChangedValueToModel();
+                }
+            },
+
+            deleteItems: function () {
+                var that = this;
+                var mid = 82;
+                var model;
+                var localCounter = 0;
+                var count = $("#listTable input:checked").length;
+
+                this.collectionLength = this.collection.length;
+
+                if (!this.changed) {
+                    var answer = confirm("Really DELETE items ?!");
+                    var value;
+
+                    if (answer === true) {
+                        $.each($("#listTable input:checked"), function (index, checkbox) {
+                            value = checkbox.value;
+
+                            if (value.length < 24) {
+                                that.editCollection.remove(value);
+                                that.editCollection.on('remove', function () {
+                                    this.listLength--;
+                                    localCounter++;
+
+                                    if (index === count - 1) {
+                                        that.deleteItemsRender(localCounter);
+                                    }
+
+                                }, that);
+                            } else {
+
+                                model = that.collection.get(value);
+                                model.destroy({
+                                    headers: {
+                                        mid: mid
+                                    },
+                                    wait   : true,
+                                    success: function () {
+                                        that.listLength--;
+                                        localCounter++;
+
+                                        if (index === count - 1) {
+                                            that.deleteItemsRender(localCounter);
+                                        }
+                                    },
+                                    error  : function (model, res) {
+                                        if (res.status === 403 && index === 0) {
+                                            alert("You do not have permission to perform this action");
+                                        }
+                                        that.listLength--;
+                                        localCounter++;
+                                        if (index == count - 1) {
+                                            if (index === count - 1) {
+                                                that.deleteItemsRender(localCounter);
+                                            }
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            deleteItemsRender: function (deleteCounter) {
+                var holder;
+                var template = _.template(listTemplate);
+
+                holder = this.$el;
+
+                if (deleteCounter !== this.collectionLength) {
+                    holder.find('#chartOfAccount').html(template({
+                        collection: this.collection.toJSON()
+                    }));
+                }
+
+                this.editCollection.reset(this.collection.models);
+            },
+
+            cancelChanges: function () {
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.attr('data-id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    } else if (id.length < 24) {
+                        tr.remove();
+                        model = self.changedModels;
+
+                        if (model) {
+                            delete model[id];
+                        }
+
+                        return cb();
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.startNumber = rowNumber;
+                    tr.replaceWith(template({chart: model}));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        self.bindingEventsToEditedCollection(self);
+                        self.hideSaveCancelBtns();
+                    }
+                });
+            },
+
+            hideSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                this.changed = false;
+
+                saveBtnEl.hide();
+                cancelBtnEl.hide();
+                createBtnEl.show();
+
+                return false;
+            },
+
+            isNewRow: function () {
+                var newRow = $('#false');
+
+                return !!newRow.length;
+            },
+
+            bindingEventsToEditedCollection: function (context) {
+                if (context.editCollection) {
+                    context.editCollection.unbind();
+                }
+                context.editCollection = new EditCollection(context.collection.toJSON());
+                context.editCollection.on('saved', context.savedNewModel, context);
+                context.editCollection.on('updated', context.updatedOptions, context);
+            },
+
+            resetCollection: function (model) {
+                if (model && model._id) {
+                    model = new currentModel(model);
+                    this.collection.add(model);
+                } else {
+                    this.collection.set(this.editCollection.models, {remove: false});
+                }
+            },
+
+            updatedOptions: function () {
+                this.hideSaveCancelBtns();
+                this.resetCollection();
+            },
+
+            checked: function () {
+                var checkLength;
+
+                if (this.collection.length > 0) {
+                    checkLength = $("input.listCB:checked").length;
+
+                    if (checkLength > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+                        if (checkLength === this.collection.length) {
+                            $('#check_all').prop('checked', true);
+                        }
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                        $('#check_all').prop('checked', false);
+                    }
+                }
+            },
+
+            createItem: function () {
+                var startData = {};
+                var model = new currentModel(startData);
+
+                startData.cid = model.cid;
+
+                if (!this.isNewRow()) {
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(model);
+
+                    new createView(startData);
+                }
+
+                this.changed = true;
+            },
+
+            showSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                if (!this.changed) {
+                    createBtnEl.hide();
+                }
+                saveBtnEl.show();
+                cancelBtnEl.show();
+
+                return false;
             },
 
             editRow: function (e, prev, next) {
@@ -42,13 +264,9 @@ define([
                     this.setChangedValueToModel();
                 }
 
-                if (isSelect) {
-                    populate.showSelect(e, prev, next, this);
-                } else {
-                    tempContainer = el.text();
-                    width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
-                }
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
 
                 return false;
             },
@@ -157,6 +375,47 @@ define([
                 cancelBtn.hide();
             },
 
+            saveItem: function () {
+                var model;
+
+                var errors = this.$el.find('.errorContent');
+
+                for (var id in this.changedModels) {
+                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                    model.changed = this.changedModels[id];
+
+                }
+
+                if (errors.length) {
+                    return
+                }
+                this.editCollection.save();
+
+                for (var id in this.changedModels) {
+                    delete this.changedModels[id];
+                }
+
+                this.editCollection.remove(id);
+            },
+
+            savedNewModel: function (modelObject) {
+                var savedRow = this.$listTable.find('#false');
+                var modelId;
+                var checkbox = savedRow.find('input[type=checkbox]');
+
+                modelObject = modelObject.success;
+
+                if (modelObject) {
+                    modelId = modelObject._id;
+                    savedRow.attr("data-id", modelId);
+                    checkbox.val(modelId);
+                    savedRow.removeAttr('id');
+                }
+
+                this.hideSaveCancelBtns();
+                this.resetCollection(modelObject);
+            },
+
             render: function () {
                 var self = this;
                 var currentEl;
@@ -168,7 +427,6 @@ define([
                 currentEl.find('#chartOfAccount').html(template({
                     collection: this.collection.toJSON()
                 }));
-
 
                 this.hideSaveCancelButtons();
 
@@ -186,7 +444,7 @@ define([
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
 
-                    self.$listTable =  currentEl.find('#chartOfAccount');
+                    self.$listTable = currentEl.find('#chartOfAccount');
                 }, 10);
 
                 return this;

@@ -10,12 +10,33 @@ define([
             contentType: CONSTANTS.CHARTOFACCOUNT,
             template: _.template(ContentTopBarTemplate),
 
-            events: {},
+            events: {
+                "click #top-bar-deleteBtn"      : "deleteEvent",
+                "click #top-bar-saveBtn"        : "saveEvent",
+                "click #top-bar-createBtn"      : "createEvent"
+            },
 
             initialize: function (options) {
                 if (options.collection)
                     this.collection = options.collection;
                 this.render();
+            },
+
+            createEvent: function (event) {
+                event.preventDefault();
+
+                this.trigger('createEvent');
+            },
+
+            deleteEvent: function (event) {
+                event.preventDefault();
+                this.trigger('deleteEvent');
+            },
+
+            saveEvent: function (event) {
+                event.preventDefault();
+
+                this.trigger('saveEvent');
             },
 
             render: function () {
