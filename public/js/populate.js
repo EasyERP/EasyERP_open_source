@@ -152,11 +152,22 @@ define([
             e.stopPropagation();
 
             var targetEl = $(e.target);
-            var attr = targetEl.attr("id") || targetEl.attr("data-id") || targetEl.closest('td').data("content");
+            var attr = targetEl.closest('td').attr("data-content");
             var data = context.responseObj["#" + attr];
-            var elementVisible;
             var targetParent = $(e.target).parent();
+            var elementVisible;
             var newSel;
+            var parent;
+            var currentPage = 1;
+            var s;
+            var start;
+            var end;
+            var allPages;
+
+            if (!data){
+                attr = targetEl.attr("id") || targetEl.attr("data-id");
+                data = context.responseObj["#" + attr];
+            }
 
             elementVisible = number || 10;
 
@@ -165,14 +176,6 @@ define([
             } else {
                 newSel = targetParent.find(".emptySelector");
             }
-
-
-            var parent;
-            var currentPage = 1;
-            var s;
-            var start;
-            var end;
-            var allPages;
 
             if (prev || next) {
                 newSel = $(e.target).closest(".newSelectList");
