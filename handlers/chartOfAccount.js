@@ -108,12 +108,9 @@ var Chart = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             var query = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
 
-            query.aggregate([
-                {
-                    $project: {_id: 1, name: {$concat: ["$code", " ", "$account"]}}
-                }
-
-            ], function (err, result) {
+            query
+                .find()
+                .exec(function (err, result) {
                 if (err) {
                     return next(err);
                 }
