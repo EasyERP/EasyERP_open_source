@@ -2,7 +2,7 @@ define([
         'views/listViewBase',
         'text!templates/Projects/list/ListHeader.html',
         'text!templates/stages.html',
-        'views/Projects/CreateView',
+        'views/Journal/CreateView',
         'views/Projects/list/ListItemView',
         'views/Projects/EditView',
         'views/Projects/form/FormView',

@@ -60,6 +60,28 @@
                     cb();
                 }
 
+                function calcTotalFifteen(cb) {
+                    var total = 0;
+
+                    var $fifteenTotal = $thisEl.find('#fifteenTotal');
+                    var _$fifteenTotal = $thisEl.find('td[data-content="fifteenTotal"]');
+
+                    _$fifteenTotal.each(function () {
+                        var val = $.trim($(this).text());
+
+                        val = val.replace(' ', '') || 0;
+
+                        total += parseInt(val);
+
+                    });
+
+                    total = total.toFixed(2);
+                    total = helpers.currencySplitter(total);
+                    $fifteenTotal.text(total);
+
+                    cb();
+                }
+
                 function calcTotalSixty(cb) {
                     var total = 0;
 
@@ -129,7 +151,7 @@
                     startNumber     : this.startNumber
                 }));
 
-                async.parallel([calcTotalZero, calcTotalThirty, calcTotalSixty, calcTotalNinety, calcTotalMore], function(){
+                async.parallel([calcTotalZero, calcTotalFifteen, calcTotalThirty, calcTotalSixty, calcTotalNinety, calcTotalMore], function(){
 
                 });
             }
