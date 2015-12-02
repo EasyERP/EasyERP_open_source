@@ -409,6 +409,7 @@ define([], function () {
         INVOICEAGING      : "invoiceAging",
         CHARTOFACCOUNT    : "ChartOfAccount",
         JOURNAL           : "journal",
+        JOURNALENTRY      : "journalEntry",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
