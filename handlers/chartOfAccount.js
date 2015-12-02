@@ -15,6 +15,7 @@ var Chart = function (models) {
         access.getEditWritAccess(req, req.session.uId, 82, function (access) {
             if (access) {
 
+                body.name = body.code + ' ' + body.account;
                 newModel = new Model(body);
 
                 newModel.save(function (err, model) {
@@ -67,6 +68,7 @@ var Chart = function (models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
+                        data.name = data.code + ' ' + data.account;
 
                         Model.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, model) {
                             if (err) {

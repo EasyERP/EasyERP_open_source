@@ -2,14 +2,18 @@ define([
         'views/listViewBase',
         'text!templates/journal/list/ListHeader.html',
         'views/journal/list/ListItemView',
+        'views/journal/CreateView',
         'models/JournalModel',
         'collections/journal/filterCollection',
         'dataService',
         'custom'
     ],
 
-    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom) {
+    function (listViewBase, listTemplate, listItemView, createView, currentModel, contentCollection, dataService, custom) {
+        "use strict";
+
         var ListView = listViewBase.extend({
+            createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
@@ -39,6 +43,8 @@ define([
                 var itemView;
 
                 $('.ui-dialog ').remove();
+
+                $('#top-bar-deleteBtn').hide();
 
                 $currentEl = this.$el;
 

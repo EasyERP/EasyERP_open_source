@@ -31,16 +31,34 @@ var Module = function (models) {
 
         access.getReadAccess(req, req.session.uId, 85, function (access) {
             if (access) {
-                Model.find({}).sort(sort).exec(function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
+                Model
+                    .find({})
+                    .sort(sort)
+                    .populate('debitAccount', '_id name')
+                    .populate('creditAccount', '_id name')
+                    .exec(function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                    res.status(200).send(result);
-                });
+                        res.status(200).send(result);
+                    });
             } else {
                 res.status(403).send();
             }
+        });
+    };
+
+    this.remove = function (req, res, next) {
+        var id = req.params.id;
+        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
+
+        Journal.findByIdAndRemove(id, function (err, journal) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: journal});
+
         });
     };
 };
