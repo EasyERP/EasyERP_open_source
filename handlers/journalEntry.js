@@ -107,7 +107,9 @@ var Module = function (models) {
     };
 
     this.getForView = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var dbIndex = req.session.lastDb;
+        var Journal = models.get(dbIndex, 'journal', journalSchema);
+        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
 
         var data = req.query;
         var sort = data.sort ? data.sort : {_id: 1};
@@ -115,16 +117,40 @@ var Module = function (models) {
         access.getReadAccess(req, req.session.uId, 86, function (access) {
             if (access) {
                 Model
-                    .find({})
-                    .populate('journal', '_id name')
-                    .sort(sort)
-                    .exec(function (err, result) {
+                    .aggregate([{
+                        $project: {
+                            debit: {$divide: ['$debit', '$currency.rate']},
+                            credit: {$divide: ['$credit', '$currency.rate']},
+                            currency: 1,
+                            name: 1,
+                            journal: 1,
+                            date: 1
+                        }
+                    }], function (err, result) {
                         if (err) {
                             return next(err);
                         }
+                        Journal.populate(result, {
+                            path: 'journal',
+                            select: '_id name'
+                        }, function(err, journals){
+                            if (err) {
+                                return next(err);
+                            }
 
-                        res.status(200).send(result);
+                            res.status(200).send(result);
+                        });
                     });
+                /*.find({})
+                 .populate('journal', '_id name')
+                 .sort(sort)
+                 .exec(function (err, result) {
+                 if (err) {
+                 return next(err);
+                 }
+
+                 res.status(200).send(result);
+                 });*/
             } else {
                 res.status(403).send();
             }
