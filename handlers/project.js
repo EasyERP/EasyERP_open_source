@@ -444,7 +444,7 @@ var Project = function (models) {
                         if (wTrack){
                             newDate = moment([wTrack.year, wTrack.month - 1]).isoWeek(wTrack.week);
 
-                            if (wTrack['7']){  //neer refactor
+                            if (wTrack['7']){  //need refactor
                                 newDate = newDate.day(7);
                                 return cb(null, newDate);
                             } else if (wTrack['6']){
