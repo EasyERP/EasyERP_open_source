@@ -38,6 +38,9 @@ var Invoice = function (models, event) {
         journalEntryBody.journal = invoice.journal;
         journalEntryBody.currency = invoice.currency ? invoice.currency.name : 'USD';
         journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+        journalEntryBody.sourceDocument = {};
+        journalEntryBody.sourceDocument._id = invoice._id;
+        journalEntryBody.sourceDocument.model = 'Invoice';
 
         _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb)
     }
@@ -723,8 +726,8 @@ var Invoice = function (models, event) {
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
-        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var Order = models.get(db, 'Quotation', OrderSchema);
+        var JobsModel = models.get(db, 'jobs', JobsSchema);
 
         if (checkDb(db)) {
             moduleId = 64
@@ -763,18 +766,17 @@ var Invoice = function (models, event) {
                             paymentIds.push(payment);
                         });
 
-                        function paymentsRemove() {
+                        function paymentsRemove(parallelCb) {
                             async.each(paymentIds, function (id) {
-                                Payment.findByIdAndRemove(id, function (err, result) {
-                                    if (err) {
-                                        return console.log(err);
-                                    }
-                                    // console.log('success');
-                                });
+                                Payment.findByIdAndRemove(id, parallelCb);
                             });
                         };
 
-                        function jobsUpdateAndWTracks() {
+                        function journalEntryRemove(parallelCb) {
+                            _journalEntryHandler.removeByDocId(id, db, parallelCb);
+                        };
+
+                        function jobsUpdateAndWTracks(parallelCb) {
                             var setData = {};
                             var array;
 
@@ -817,10 +819,11 @@ var Invoice = function (models, event) {
                                 if (project) {
                                     event.emit('fetchJobsCollection', {project: project});
                                 }
+                                parallelCb();
                             });
                         };
 
-                        async.parallel([paymentsRemove, jobsUpdateAndWTracks], function (err, result) {
+                        async.parallel([paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
                                 next(err)
                             }
