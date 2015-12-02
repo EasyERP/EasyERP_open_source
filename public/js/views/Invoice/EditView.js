@@ -526,7 +526,7 @@ define([
                 populate.get2name("#supplier", "/supplier", {}, this, false);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, this.notCreate);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
                 populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, this.notCreate);
 
                 this.$el.find('#invoice_date').datepicker({

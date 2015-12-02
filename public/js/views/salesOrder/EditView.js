@@ -281,6 +281,11 @@ define([
                         _id : thisEl.find('#currencyDd').attr('data-id'),
                         name: thisEl.find('#currencyDd').text()
                     }
+                } else {
+                    currency = {
+                        _id : null,
+                        name: ''
+                    }
                 }
 
 
@@ -323,6 +328,7 @@ define([
 
 
                 data = {
+                    currency         : currency,
                     supplier         : supplier,
                     supplierReference: supplierReference,
                     products         : products,
@@ -339,16 +345,12 @@ define([
                         unTaxed: unTaxed
                     },
                     groups           : {
-                        owner: $("#allUsersSelect").data("id"),
+                        owner: $("#allUsersSelect").attr("data-id"),
                         users: usersId,
                         group: groupsId
                     },
                     whoCanRW         : whoCanRW
                 };
-
-                if (currency) {
-                    data.currency = currency;
-                }
 
                 if (supplier) {
                     this.model.save(data, {
