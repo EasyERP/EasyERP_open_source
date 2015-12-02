@@ -407,7 +407,8 @@ define([], function () {
         PAYROLLPAYMENTS   : 'PayrollPayments',
         PRODUCTSETTINGS   : "productSettings",
         INVOICEAGING      : "invoiceAging",
-        CHARTOFACCOUNT   : "ChartOfAccount",
+        CHARTOFACCOUNT    : "ChartOfAccount",
+        JOURNAL           : "journal",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

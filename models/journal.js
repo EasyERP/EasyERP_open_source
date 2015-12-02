@@ -4,6 +4,7 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var Schema = mongoose.Schema({
+        name: {type: String, required: true},
         date  : {type: Date, default: Date.now},
         type     : {type: String, default: ""},
         transaction     : {type: String, default: "invoice"},
