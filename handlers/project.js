@@ -349,8 +349,8 @@ var Project = function (models) {
                 totalObj.hoursSum = 0;
                 totalObj.markUp = 0;
                 totalObj.radio = 0;
-                totalObj.minDate;
-                totalObj.maxDate;
+                minDate = 1000000;
+                maxDate =  0;
                 totalObj.rateSum = {
                     byDev: 0,
                     byQA : 0
@@ -359,29 +359,35 @@ var Project = function (models) {
                 jobs.forEach(function (job) {
                     if (job.workflow.name === "In Progress") {
                         totalInPr += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
-                        //} else if (job.workflow.name === "New"){
-                        //    totalNew += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
                     } else if (job.workflow.name === "Finished") {
                         totalFinished += job.budget.budgetTotal.costSum;
                     }
 
-                    total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                   if (job.budget.budgetTotal && job.budget.budgetTotal.minDate){
+                       if (job.budget.budgetTotal.minDate <= minDate){
+                           totalObj.minDate = job.budget.budgetTotal.minDate;
+                           minDate = totalObj.minDate;
+                       }
+                   }
 
-                    minDate = job.budget.budgetTotal ? job.budget.budgetTotal.minDate : 10000;
-                    maxDate = job.budget.budgetTotal.maxDate;
+                    if (job.budget.budgetTotal && job.budget.budgetTotal.maxDate){
+                        if (job.budget.budgetTotal.maxDate >= maxDate){
+                            totalObj.maxDate = job.budget.budgetTotal.maxDate;
+                            maxDate = totalObj.maxDate;
+                        }
+                    }
+
+                    total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
 
                     totalObj.revenueSum += job.budget.budgetTotal ? job.budget.budgetTotal.revenueSum : 0;
                     totalObj.costSum += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
                     totalObj.profitSum += job.budget.budgetTotal ? job.budget.budgetTotal.profitSum : 0;
                     totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum : 0;
-                    totalObj.minDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate : minDate <= minDate) ? minDate : minDate;
-                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.maxDate : maxDate >= maxDate) ? maxDate : maxDate;
                     totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
                     totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;
                 });
 
                 totalObj.totalInPr = totalInPr;
-                // totalObj.totalNew = totalNew;
                 totalObj.totalFinished = totalFinished;
                 totalObj.total = total;
 
