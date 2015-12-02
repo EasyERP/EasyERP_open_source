@@ -274,10 +274,20 @@ define([
                 var groupsId = [];
                 var jobs;
 
-                var currency = {
-                    _id : thisEl.find('#currencyDd').attr('data-id'),
-                    name: thisEl.find('#currencyDd').text()
-                };
+                var currency;
+
+                if (thisEl.find('#currencyDd').attr('data-id')) {
+                    currency = {
+                        _id : thisEl.find('#currencyDd').attr('data-id'),
+                        name: thisEl.find('#currencyDd').text()
+                    }
+                } else {
+                    currency = {
+                        _id : null,
+                        name: ''
+                    }
+                }
+
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -335,7 +345,7 @@ define([
                         unTaxed: unTaxed
                     },
                     groups           : {
-                        owner: $("#allUsersSelect").data("id"),
+                        owner: $("#allUsersSelect").attr("data-id"),
                         users: usersId,
                         group: groupsId
                     },
