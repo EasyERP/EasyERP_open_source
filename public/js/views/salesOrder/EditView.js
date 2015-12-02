@@ -274,10 +274,15 @@ define([
                 var groupsId = [];
                 var jobs;
 
-                var currency = {
-                    _id : thisEl.find('#currencyDd').attr('data-id'),
-                    name: thisEl.find('#currencyDd').text()
-                };
+                var currency;
+
+                if (thisEl.find('#currencyDd').attr('data-id')) {
+                    currency = {
+                        _id : thisEl.find('#currencyDd').attr('data-id'),
+                        name: thisEl.find('#currencyDd').text()
+                    }
+                }
+
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -318,7 +323,6 @@ define([
 
 
                 data = {
-                    currency         : currency,
                     supplier         : supplier,
                     supplierReference: supplierReference,
                     products         : products,
@@ -341,6 +345,10 @@ define([
                     },
                     whoCanRW         : whoCanRW
                 };
+
+                if (currency) {
+                    data.currency = currency;
+                }
 
                 if (supplier) {
                     this.model.save(data, {
