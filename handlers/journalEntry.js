@@ -110,7 +110,7 @@ var Module = function (models) {
         var data = req.query;
         var sort = data.sort ? data.sort : {_id: 1};
 
-        access.getReadAccess(req, req.session.uId, 85, function (access) {
+        access.getReadAccess(req, req.session.uId, 86, function (access) {
             if (access) {
                 Model
                     .find({})
@@ -126,6 +126,19 @@ var Module = function (models) {
                 res.status(403).send();
             }
         });
+    };
+
+    this.removeByDocId = function (docId, dbIndex, callback) {
+        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+
+        Model
+            .remove({'sourceDocument._id': docId}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
+            });
     };
 };
 

@@ -20,6 +20,10 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date}
         },
+        sourceDocument: {
+            _id: {type: ObjectId, default: null},
+            model: {type: String, default: 'Invoice'}
+        },
         debit    : {type: Number, default: 0},
         credit   : {type: Number, default: 0}
 
