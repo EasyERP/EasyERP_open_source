@@ -4,7 +4,17 @@
     <td class="centerCell"><%=index + 1 %></td>
     <td><%=journalEntry.date%></td>
     <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
-    <td class="debit"><%=journalEntry.debit ? journalEntry.debit : ''%></td>
-    <td class="credit"><%=journalEntry.credit ? journalEntry.credit : ''%></td>
+
+    <%if (journalEntry.debit) {%>
+    <td class="debit" data-amount="<%=journalEntry.debit%>"><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>
+    <%} else {%>
+    <td class="debit" data-amount="0"></td>
+    <%}%>
+
+    <%if (journalEntry.credit) {%>
+    <td class="credit" data-amount="<%=journalEntry.credit%>"><%=currencySplitter(journalEntry.credit.toFixed(2))%></td>
+    <%} else {%>
+    <td class="credit" data-amount="0"></td>
+    <%}%>
 </tr>
 <% }) %>
