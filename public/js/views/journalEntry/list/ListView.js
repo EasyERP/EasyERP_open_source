@@ -35,6 +35,24 @@ define([
 
             },
 
+            calcTotal: function () {
+                var $curEl = this.$el;
+                var $rows = $curEl.find('#listTable tr');
+
+                var total = {
+                    debit: 0,
+                    credit: 0
+                }
+
+                $rows.each(function(index, $element) {
+                    var $debit = $curEl.find('.debit');
+                    var $credit = $curEl.find('.credit');
+
+                    total.debit += $debit.text();
+                })
+
+            },
+
             render: function () {
                 var $currentEl;
                 var itemView;

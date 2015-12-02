@@ -4,7 +4,7 @@
     <td class="centerCell"><%=index + 1 %></td>
     <td><%=journalEntry.date%></td>
     <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
-    <td><%=journalEntry.debit ? journalEntry.debit : ''%></td>
-    <td><%=journalEntry.credit ? journalEntry.credit : ''%></td>
+    <td class="debit"><%=journalEntry.debit ? journalEntry.debit : ''%></td>
+    <td class="credit"><%=journalEntry.credit ? journalEntry.credit : ''%></td>
 </tr>
 <% }) %>
