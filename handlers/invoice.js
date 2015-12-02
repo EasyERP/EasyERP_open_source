@@ -705,7 +705,7 @@ var Invoice = function (models, event) {
                                     date: new Date().toISOString()
                                 };
 
-                                JobsModel.findByIdAndUpdate(id, {type: "Ordered"}, {new: true}, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, {type: "Ordered", invoice: {_id: null, name: ""}}, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }

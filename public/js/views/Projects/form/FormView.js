@@ -112,7 +112,8 @@ define([
                     success: function (model) {
                         new editViewInvoice({
                             model: model,
-                            notCreate: true
+                            notCreate: true,
+                            redirect: true
                         });
                     },
                     error  : function () {
