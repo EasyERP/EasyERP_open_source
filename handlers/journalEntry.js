@@ -135,13 +135,7 @@ var Module = function (models) {
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
 
         Model
-            .remove({'sourceDocument._id': docId}, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
-            });
+            .remove({'sourceDocument._id': docId}, callback);
     };
 };
 
