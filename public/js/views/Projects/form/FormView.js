@@ -7,6 +7,7 @@ define([
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
         'views/salesOrder/EditView',
+        'views/salesQuotation/EditView',
         'views/salesInvoice/EditView',
         'views/Projects/EditView',
         'views/Notes/NoteView',
@@ -35,7 +36,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditViewOrder, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditViewOrder, editViewQuotation,  editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var View = Backbone.View.extend({
             el            : '#content-holder',
             contentType   : 'Projects',
@@ -77,23 +78,52 @@ define([
 
             viewQuotation: function(e){
                 e.stopPropagation();
+                var self = this;
 
                 var target = e.target;
                 var id = $(target).attr('data-id');
-                var model = new quotationModel({validate: false});
+                var model;
+                var type = $(target).closest('tr').find('#type').text();
+                var onlyView = false;
 
-                model.urlRoot = '/Order/form/' + id;
-                model.fetch({
-                    success: function (model) {
-                        new EditViewOrder({
-                            model     : model,
-                            onlyView: true
-                        });
-                    },
-                    error  : function (xhr) {
-                        alert('Please refresh browser');
-                    }
-                });
+                if (type === "Quoted"){
+                    model = new quotationModel({validate: false});
+
+                    model.urlRoot = '/quotation/form/' + id;
+                    model.fetch({
+                        success: function (model) {
+                            new editViewQuotation({
+                                model   : model,
+                                redirect: true,
+                                pId     : self.id
+                            })
+                        },
+                        error  : function (xhr) {
+                            alert('Please refresh browser');
+                        }
+                    });
+                } else  {
+                    model = new quotationModel({validate: false});
+
+                    model.urlRoot = '/Order/form/' + id;
+                    model.fetch({
+                        success: function (model) {
+
+                            if (type === "Invoiced"){
+                                onlyView = true;
+                            }
+
+                            new EditViewOrder({
+                                model     : model,
+                                redirect: true,
+                                onlyView  : onlyView
+                            });
+                        },
+                        error  : function (xhr) {
+                            alert('Please refresh browser');
+                        }
+                    });
+                }
             },
 
             viewInvoice: function(e){

@@ -416,7 +416,8 @@ define([
                 this.template = !this.onlyView ? _.template(EditTemplate) : _.template(ViewTemplate);
                 var formString = this.template({
                     model  : this.currentModel.toJSON(),
-                    visible: this.visible
+                    visible: this.visible,
+                    onlyView: this.onlyView
                 });
                 var service = true;
                 var notDiv;

@@ -215,8 +215,8 @@ var Invoice = function (models, event) {
 
             if (forSales === "true") {
                 invoice.salesPerson = {};
-                invoice.salesPerson._id = order.project.projectmanager._id;
-                invoice.salesPerson.name = order.project.projectmanager.name;
+                invoice.salesPerson._id = order.project.projectmanager ? order.project.projectmanager._id : null;
+                invoice.salesPerson.name = order.project.projectmanager ? order.project.projectmanager.name : "";
 
                 invoice.save(callback);
 

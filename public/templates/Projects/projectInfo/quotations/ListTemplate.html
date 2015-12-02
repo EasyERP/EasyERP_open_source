@@ -5,6 +5,7 @@ class="canceledListItem"
 <%}%>>
 <td class = "notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
 <td class="centerCell"><%=startNumber + index + 1%></td>
+<td><%=quotation.name ? quotation.name : '-------'%></td>
 <td><%=quotation.project ? quotation.project.projectName : '-------'%></td>
 <td><%=(quotation.supplier) ? quotation.supplier.name : '-------'%></td>
 <td><%=(quotation.project) ? quotation.project.projectmanager.name : '-------'%></td>

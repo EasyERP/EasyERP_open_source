@@ -6,20 +6,22 @@
                 <ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
-                    <!--<li class="right">-->
-                        <!--<%if(model.workflow && model.workflow.status !== 'Cancelled'){%>-->
-                        <!--<button class="btn receiveInvoice">-->
-                            <!--<span>Receive Invoice</span>-->
-                        <!--</button>-->
-                        <!--<button class="btn cancelOrder">-->
-                            <!--<span>Cancel</span>-->
-                        <!--</button>-->
-                        <!--<%} else {%>-->
-                        <!--<button class="btn setDraft">-->
-                            <!--<span>Set Draft</span>-->
-                        <!--</button>-->
-                        <!--<%}%>-->
-                    <!--</li>-->
+                    <%if (!onlyView){ %>
+                    <li class="right">
+                        <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
+                        <button class="btn receiveInvoice">
+                            <span>Receive Invoice</span>
+                        </button>
+                        <button class="btn cancelOrder">
+                            <span>Cancel</span>
+                        </button>
+                        <%} else {%>
+                        <button class="btn setDraft">
+                            <span>Set Draft</span>
+                        </button>
+                        <%}%>
+                    </li>
+                    <%}%>
                 </ul>
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
