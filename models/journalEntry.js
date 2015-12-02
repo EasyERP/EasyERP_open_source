@@ -10,7 +10,7 @@ module.exports = (function () {
         account: {type: ObjectId, ref: 'chartOfAccount', default: null},
         currency: {
             name: {type: String, default: 'USD'},
-            crossCourse: {type: Number, default: 1}
+            rate: {type: Number, default: 1}
         },
         createdBy: {
             user: {type: ObjectId, ref: 'Users', default: null},

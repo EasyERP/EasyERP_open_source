@@ -1,11 +1,9 @@
-/**
- * Created by lilya on 24/11/15.
- */
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Schema.Types.ObjectId;
-require('../../models/index.js');
 var async = require('async');
 var dbObject = mongoose.createConnection('localhost', 'production');
+
+require('../../models/index.js');
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
