@@ -93,14 +93,14 @@
                                             id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
                                         </dd>
 
-                                        <dt><label for="account">Account</label></dt>
+                                        <!--<dt><label for="account">Account</label></dt>
                                         <dd>
                                             <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                        </dd>
+                                        </dd>-->
 
                                         <dt><label for="journal">Journal</label></dt>
                                         <dd>
-                                            <a id="journal" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                            <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class="current-selected" href="javascript:;"><%=model.journal ? model.journal._id : 'Select'%></a>
                                         </dd>
 
                                         <dt><label for="currencyDd">Currency</label></dt>

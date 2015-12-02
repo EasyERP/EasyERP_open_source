@@ -227,43 +227,37 @@ define([
                 var self = this;
                 var mid = 56;
 
-                var errors = this.$el.find('.errorContent');
+                var $thisEl = this.$el;
 
-                if (errors.length) {
-                    return
-                }
-
-                var selectedProducts = this.$el.find('.productItem');
+                var errors = $thisEl.find('.errorContent');
+                var selectedProducts = $thisEl.find('.productItem');
                 var products = [];
                 var selectedLength = selectedProducts.length;
                 var targetEl;
                 var productId;
+                var journalId;
                 var quantity;
                 var price;
                 var description;
                 var taxes;
                 var amount;
-                var curEl = this.$el;
-
+                var data;
                 var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
                 var salesPerson = this.currentModel.salesPerson ? this.currentModel.salesPerson : this.currentModel.get('salesPerson');
                 var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
-
                 var currency = {
-                    _id : curEl.find('#currencyDd').attr('data-id'),
-                    name: curEl.find('#currencyDd').text()
+                    _id : $thisEl.find('#currencyDd').attr('data-id'),
+                    name: $thisEl.find('#currencyDd').text()
                 };
 
-                var invoiceDate = curEl.find("#invoice_date").val();
-                var dueDate = curEl.find("#due_date").val();
+                var invoiceDate = $thisEl.find("#invoice_date").val();
+                var dueDate = $thisEl.find("#due_date").val();
 
                 var supplier = {};
-                supplier._id = curEl.find('#supplier').attr("data-id");
-                supplier.name = curEl.find('#supplier').text();
 
-                var total = parseFloat(this.$("#totalAmount").text());
-                var unTaxed = parseFloat(this.$("#totalUntaxes").text());
-                var balance = parseFloat(this.$("#balance").text());
+                var total = parseFloat($thisEl.find("#totalAmount").text());
+                var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text());
+                var balance = parseFloat($thisEl.find("#balance").text());
 
                 var payments = {
                     total  : total,
@@ -271,10 +265,28 @@ define([
                     balance: balance
                 };
 
+                var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
+                var paymentTermId = $thisEl.find("#payment_terms").attr("data-id") || null;
+                var journalId = this.$el.find('#journal').attr("data-id") || null;
+
+                var usersId = [];
+                var groupsId = [];
+
+                var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
+
+                if (errors.length) {
+                    return
+                }
+
+                supplier._id = $thisEl.find('#supplier').attr("data-id");
+                supplier.name = $thisEl.find('#supplier').text();
+
+
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
+
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
                             price = targetEl.find('[data-name="price"]').text();
@@ -294,11 +306,6 @@ define([
                     }
                 }
 
-                var salesPersonId = this.$("#salesPerson").attr("data-id") ? this.$("#salesPerson").attr("data-id") : null;
-                var paymentTermId = this.$("#payment_terms").attr("data-id") ? this.$("#payment_terms").attr("data-id") : null;
-
-                var usersId = [];
-                var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -308,9 +315,8 @@ define([
                     }
 
                 });
-                var whoCanRW = curEl.find("[name='whoCanRW']:checked").val();
 
-                var data = {
+                data = {
                     currency             : currency,
                     supplier             : supplier,
                     fiscalPosition       : null,
@@ -320,7 +326,7 @@ define([
                     invoiceDate          : invoiceDate,
                     dueDate              : dueDate,
                     account              : null,
-                    journal              : null,
+                    journal              : journalId,
 
                     salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
@@ -521,6 +527,7 @@ define([
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, this.notCreate);
+                populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, this.notCreate);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",

@@ -49,6 +49,28 @@ var Module = function (models) {
         });
     };
 
+    this.getForDd = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journal', journalSchema);
+        var query = req.query;
+
+        access.getReadAccess(req, req.session.uId, 85, function (access) {
+            if (access) {
+                Model
+                    .find(query, {_id: 1, name: 1})
+                    .sort({name: 1})
+                    .exec(function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({data: result});
+                    });
+            } else {
+                res.status(403).send();
+            }
+        });
+    };
+
     this.remove = function (req, res, next) {
         var id = req.params.id;
         var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
