@@ -156,7 +156,7 @@ define([
                     jobsCollection.bind('reset', sendCB);
 
                     function sendCB(){
-                        self.renderContent();
+                        //self.renderContent();
                         cb(null, jobsCollection);
                     }
                 };
