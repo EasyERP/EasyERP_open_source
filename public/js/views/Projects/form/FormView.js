@@ -72,6 +72,7 @@ define([
                 this.formModel = options.model;
                 this.id = this.formModel.id;
                 this.formModel.urlRoot = '/Projects/';
+                this.projectManager = this.formModel.get('projectmanager');
                 this.responseObj = {};
                 this.proformValues = {};
             },
@@ -95,7 +96,8 @@ define([
                             new editViewQuotation({
                                 model   : model,
                                 redirect: true,
-                                pId     : self.id
+                                pId     : self.id,
+                                projectManager: self.projectManager
                             })
                         },
                         error  : function (xhr) {
@@ -116,7 +118,8 @@ define([
                             new EditViewOrder({
                                 model     : model,
                                 redirect: true,
-                                onlyView  : onlyView
+                                onlyView  : onlyView,
+                                projectManager: self.projectManager
                             });
                         },
                         error  : function (xhr) {
