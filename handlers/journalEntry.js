@@ -153,7 +153,7 @@ var Module = function (models) {
                         Journal.populate(result, {
                             path: 'journal',
                             select: '_id name'
-                        }, function(err, journals){
+                        }, function (err, journals) {
                             if (err) {
                                 return next(err);
                             }
@@ -161,16 +161,6 @@ var Module = function (models) {
                             res.status(200).send(result);
                         });
                     });
-                /*.find({})
-                 .populate('journal', '_id name')
-                 .sort(sort)
-                 .exec(function (err, result) {
-                 if (err) {
-                 return next(err);
-                 }
-
-                 res.status(200).send(result);
-                 });*/
             } else {
                 res.status(403).send();
             }

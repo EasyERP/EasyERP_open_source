@@ -827,9 +827,6 @@ var Invoice = function (models, event) {
                             if (err) {
                                 next(err)
                             }
-
-                            // console.log('success');
-
                         });
 
                         res.status(200).send(result);
