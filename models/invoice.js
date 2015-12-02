@@ -30,6 +30,12 @@ module.exports = (function () {
         dueDate    : Date,
         paymentDate: Date,
 
+        currency: {
+            _id : {type: ObjectId, ref: 'currency', default: null},
+            name: {type: String, default: ''},
+            rate: {type: Number, default: 1}
+        },
+
         salesPerson : {
             _id : {type: ObjectId, ref: 'Employees', default: null},
             name: String
@@ -81,11 +87,6 @@ module.exports = (function () {
         project : {
             _id : {type: ObjectId, ref: 'Project', default: null},
             name: String
-        },
-        currency: {
-            _id   : {type: ObjectId, ref: 'currency', default: null},
-            name  : {type: String, default: ''},
-            course: {type: Number, default: 1}
         }
     });
 

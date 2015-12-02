@@ -25,7 +25,7 @@ define([
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
         'models/QuotationModel',
-        'models/QuotationModel',
+        'models/InvoiceModel',
         'text!templates/Notes/AddAttachments.html',
         "common",
         'populate',
@@ -112,7 +112,8 @@ define([
                     success: function (model) {
                         new editViewInvoice({
                             model: model,
-                            notCreate: true
+                            notCreate: true,
+                            redirect: true
                         });
                     },
                     error  : function () {
@@ -313,7 +314,7 @@ define([
                 } else {
                     icon.html('-');
                     $('<tr id=' + subId + ' class="subRow">' +
-                    '<td colspan="11" id="subRow-holder' + jobId + '"></td>' +
+                    '<td colspan="13" id="subRow-holder' + jobId + '"></td>' +
                     '</tr>').insertAfter(jobContainer);
                     $('#subRow-holder' + jobId).append(template({
                         jobStatus       : job.type,

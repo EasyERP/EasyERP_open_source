@@ -6,6 +6,7 @@ var Project = function (models) {
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var _ = require('../node_modules/underscore');
+    var moment = require('../public/js/libs/moment/moment');
     var async = require('async');
     var objectId = mongoose.Types.ObjectId;
 
@@ -312,6 +313,7 @@ var Project = function (models) {
 
     this.getProjectPMForDashboard = function (req, res, next) {
         var Project = models.get(req.session.lastDb, "Project", ProjectSchema);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var data = {};
         var sort = req.query.sort ? req.query.sort : {projectName: 1};
         var collection;
@@ -349,8 +351,8 @@ var Project = function (models) {
                 totalObj.hoursSum = 0;
                 totalObj.markUp = 0;
                 totalObj.radio = 0;
-                totalObj.minDate = 0;
-                totalObj.maxDate = 0;
+                minDate = 1000000;
+                maxDate =  0;
                 totalObj.rateSum = {
                     byDev: 0,
                     byQA : 0
@@ -359,29 +361,35 @@ var Project = function (models) {
                 jobs.forEach(function (job) {
                     if (job.workflow.name === "In Progress") {
                         totalInPr += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
-                        //} else if (job.workflow.name === "New"){
-                        //    totalNew += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
                     } else if (job.workflow.name === "Finished") {
                         totalFinished += job.budget.budgetTotal.costSum;
                     }
 
-                    total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                   if (job.budget.budgetTotal && job.budget.budgetTotal.minDate){
+                       if (job.budget.budgetTotal.minDate <= minDate){
+                           totalObj.minDate = job.budget.budgetTotal.minDate;
+                           minDate = totalObj.minDate;
+                       }
+                   }
 
-                    minDate = totalObj.minDate;
-                    maxDate = totalObj.maxDate;
+                    if (job.budget.budgetTotal && job.budget.budgetTotal.maxDate){
+                        if (job.budget.budgetTotal.maxDate >= maxDate){
+                            totalObj.maxDate = job.budget.budgetTotal.maxDate;
+                            maxDate = totalObj.maxDate;
+                        }
+                    }
+
+                    total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
 
                     totalObj.revenueSum += job.budget.budgetTotal ? job.budget.budgetTotal.revenueSum : 0;
                     totalObj.costSum += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
                     totalObj.profitSum += job.budget.budgetTotal ? job.budget.budgetTotal.profitSum : 0;
                     totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum : 0;
-                    totalObj.minDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate : minDate <= minDate) ? minDate : minDate;
-                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate : maxDate >= maxDate) ? maxDate : maxDate;
                     totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
                     totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;
                 });
 
                 totalObj.totalInPr = totalInPr;
-                // totalObj.totalNew = totalNew;
                 totalObj.totalFinished = totalFinished;
                 totalObj.total = total;
 
@@ -398,6 +406,79 @@ var Project = function (models) {
                 }
 
                 project.total = totalObj;
+
+                var parallelTasks = [getMinWTrack, getMaxWTrack];
+
+                function getMinWTrack(cb){
+                    WTrack.find({"project._id": project._id, dateByWeek: minDate}).sort({worked: -1}).exec(function(err, result){
+                        if (err){
+                          return cb(err);
+                        }
+
+                        var wTrack = result ? result[0] : null;
+                        var newDate;
+                        if (wTrack){
+                            newDate = moment([wTrack.year, wTrack.month - 1]).isoWeek(wTrack.week);
+
+                           for (var i = 1 ; i <= 7; i++){
+                               var day = wTrack[i];
+                               if (day){
+                                   break;
+                               }
+                           }
+
+                            newDate = newDate.day(i);
+                            cb(null, newDate);
+                        }
+                    });
+                }
+
+                function getMaxWTrack(cb){
+                    WTrack.find({"project._id": project._id, dateByWeek: maxDate}).sort({worked: 1}).exec(function(err, result){
+                        if (err){
+                            return cb(err);
+                        }
+
+                        var wTrack = result ? result[0] : null;
+                        var newDate;
+                        if (wTrack){
+                            newDate = moment([wTrack.year, wTrack.month - 1]).isoWeek(wTrack.week);
+
+                            if (wTrack['7']){  //neer refactor
+                                newDate = newDate.day(7);
+                                return cb(null, newDate);
+                            } else if (wTrack['6']){
+                                newDate = newDate.day(6);
+                                return cb(null, newDate);
+                            } else if (wTrack['5']){
+                                newDate = newDate.day(5);
+                                return cb(null, newDate);
+                            } else if (wTrack['4']){
+                                newDate = newDate.day(4);
+                                return cb(null, newDate);
+                            } else if (wTrack['3']){
+                                newDate = newDate.day(3);
+                                return cb(null, newDate);
+                            } else if (wTrack['2']){
+                                newDate = newDate.day(2);
+                                return cb(null, newDate);
+                            } else if (wTrack['1']){
+                                newDate = newDate.day(1);
+                                return cb(null, newDate);
+                            }
+                        }
+                    });
+                }
+
+
+                async.parallel(parallelTasks, function(err, result){
+                    var startDate = result[0];
+                    var endDate = result[1];
+
+                    Project.findByIdAndUpdate(project._id, {$set: {StartDate: startDate, EndDate: endDate}}, {new: true}, function(err, result){
+
+                    });
+                });
             });
 
             data['data'] = collection;

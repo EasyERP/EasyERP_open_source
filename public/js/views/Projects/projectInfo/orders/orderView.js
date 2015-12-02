@@ -78,17 +78,18 @@ define([
             var tr = $(e.target).closest('tr');
             var id = tr.data("id");
             var notEditable = tr.hasClass('notEditable');
+            var onlyView;
             var model = new orderModel({validate: false});
 
             if (notEditable) {
-                return false;
+                onlyView = true;
             }
 
             model.urlRoot = '/Order/form/' + id;
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true, projectManager: self.projectManager});
+                    new editView({model: model, redirect: true, projectManager: self.projectManager, onlyView: onlyView});
                 },
                 error  : function () {
                     alert('Please refresh browser');
