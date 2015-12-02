@@ -12,8 +12,11 @@ define([
             responseObj: {},
 
             events: {
-                "click .current-selected"                          : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .current-selected"                                         : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click"                                                           : "removeDd"
             },
 
             initialize: function () {
@@ -21,11 +24,23 @@ define([
                 this.render();
             },
 
+            removeDd: function () {
+                this.$el.find('.newSelectList').remove();
+            },
+
             showNewSelect: function (e, prev, next) {
                 e.preventDefault();
 
                 populate.showSelect(e, prev, next, this);
                 return false;
+            },
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
             },
 
             chooseOption: function (e) {
