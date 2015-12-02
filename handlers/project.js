@@ -350,7 +350,7 @@ var Project = function (models) {
                 totalObj.markUp = 0;
                 totalObj.radio = 0;
                 totalObj.minDate;
-                totalObj.maxDate = 0;
+                totalObj.maxDate;
                 totalObj.rateSum = {
                     byDev: 0,
                     byQA : 0
@@ -367,15 +367,15 @@ var Project = function (models) {
 
                     total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
 
-                    minDate = totalObj.minDate;
-                    maxDate = totalObj.maxDate;
+                    minDate = job.budget.budgetTotal ? job.budget.budgetTotal.minDate : 10000;
+                    maxDate = job.budget.budgetTotal.maxDate;
 
                     totalObj.revenueSum += job.budget.budgetTotal ? job.budget.budgetTotal.revenueSum : 0;
                     totalObj.costSum += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
                     totalObj.profitSum += job.budget.budgetTotal ? job.budget.budgetTotal.profitSum : 0;
                     totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum : 0;
                     totalObj.minDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate : minDate <= minDate) ? minDate : minDate;
-                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.minDate : maxDate >= maxDate) ? maxDate : maxDate;
+                    totalObj.maxDate = (job.budget.budgetTotal ? job.budget.budgetTotal.maxDate : maxDate >= maxDate) ? maxDate : maxDate;
                     totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
                     totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;
                 });

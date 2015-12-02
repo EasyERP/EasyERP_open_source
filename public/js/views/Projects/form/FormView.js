@@ -25,7 +25,7 @@ define([
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
         'models/QuotationModel',
-        'models/QuotationModel',
+        'models/InvoiceModel',
         'text!templates/Notes/AddAttachments.html',
         "common",
         'populate',
