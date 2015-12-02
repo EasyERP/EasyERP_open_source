@@ -1,5 +1,5 @@
 ﻿define([
-        'text!templates/invoiceAging/list/ListTemplate.html',
+        'text!templates/journalEntry/list/ListTemplate.html',
         'helpers',
         'async'
     ],

@@ -2205,6 +2205,9 @@ dl dd:nth-child(2) {
 dl dd input:not([type='checkbox']) {
   width: 100%;
 }
+dl dd input.pikerSize {
+  width: 137px;
+}
 dl dd a.formLink {
   line-height: 0;
 }
@@ -2624,6 +2627,9 @@ dl dd span.ui-spinner {
 .form .job-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.form .job-info dd input.pikerSize {
+  width: 137px;
+}
 .form .job-info dd a.formLink {
   line-height: 30px;
 }
@@ -2676,6 +2682,9 @@ dl dd span.ui-spinner {
 }
 .form .opp-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form .opp-info dd input.pikerSize {
+  width: 137px;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
@@ -2733,6 +2742,9 @@ dl dd span.ui-spinner {
 .form .internal-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.form .internal-info dd input.pikerSize {
+  width: 137px;
+}
 .form .internal-info dd a.formLink {
   line-height: 30px;
 }
@@ -2789,6 +2801,9 @@ dl dd span.ui-spinner {
 }
 .form .assignees-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form .assignees-info dd input.pikerSize {
+  width: 137px;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
@@ -3500,7 +3515,7 @@ dl dd span.ui-spinner {
 .noteWrapper .addNote {
   margin-top: 6px;
   background-color: inherit;
-  padding: 5px 9px 10px 5px;
+  padding: 5px 0 10px 0;
   margin-bottom: 5px;
 }
 .noteWrapper .addNote label {
@@ -3521,7 +3536,8 @@ dl dd span.ui-spinner {
   max-width: inherit;
   background-color: white;
 }
-.noteWrapper .addNote #cancelNote {
+.noteWrapper .addNote #cancelNote,
+.noteWrapper .addNote #addNote {
   display: none;
 }
 .noteWrapper .addNote input {
@@ -3535,14 +3551,11 @@ dl dd span.ui-spinner {
   border-radius: 0;
 }
 .noteWrapper .addNote textarea {
-  min-height: inherit;
+  min-height: 25px;
   width: 100%;
-  height: 17px;
   padding: 2px 0 2px 3px;
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  border-radius: 0;
   resize: none;
+  box-sizing: border-box;
 }
 .noteWrapper .addNote textarea:focus {
   box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
@@ -3551,7 +3564,7 @@ dl dd span.ui-spinner {
   border: 1px solid #7f7f80;
 }
 .noteWrapper .addNote.active {
-  padding: 10px 14px 10px 10px;
+  padding: 10px 0 10px 0;
   width: 100%;
   box-sizing: border-box;
 }
@@ -3580,16 +3593,9 @@ dl dd span.ui-spinner {
 .noteWrapper .addNote.active .buttons a {
   float: left;
 }
-.noteWrapper .addNote.active .buttons #cancelNote {
-  line-height: 14px;
+.noteWrapper .addNote.active .buttons #cancelNote,
+.noteWrapper .addNote.active .buttons #addNote {
   display: inline-block;
-  border: 1px solid #7f7f80;
-  padding: 5px 15px;
-  font-size: 11px;
-}
-.noteWrapper .addNote.active .buttons #cancelNote:hover {
-  text-decoration: none;
-  border: 1px solid #66b5d4;
 }
 .noteWrapper .addNote.active label {
   display: block;
@@ -3602,12 +3608,12 @@ dl dd span.ui-spinner {
 }
 .noteWrapper .addNote.active input {
   display: block;
+  background-color: transparent;
 }
 .noteWrapper .addNote.active input:focus {
   box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  border: 1px solid rgba(121, 187, 238, 0.75);
 }
 .noteWrapper .addNote.active .addTitle {
   display: block;
@@ -3754,6 +3760,10 @@ dl dd span.ui-spinner {
 .customer-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.person-info dd input.pikerSize,
+.customer-info dd input.pikerSize {
+  width: 137px;
+}
 .person-info dd a.formLink,
 .customer-info dd a.formLink {
   line-height: 0;
@@ -3814,6 +3824,9 @@ dl dd span.ui-spinner {
 .settings-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.settings-info dd input.pikerSize {
+  width: 137px;
+}
 .settings-info dd a.formLink {
   line-height: 0;
 }
@@ -3873,6 +3886,9 @@ dl dd span.ui-spinner {
 .project-edit-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.project-edit-info dd input.pikerSize {
+  width: 137px;
+}
 .project-edit-info dd a.formLink {
   line-height: 0;
 }
@@ -3925,6 +3941,9 @@ dl dd span.ui-spinner {
 }
 .quotation-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.quotation-info dd input.pikerSize {
+  width: 137px;
 }
 .quotation-info dd a.formLink {
   line-height: 0;
@@ -3982,6 +4001,9 @@ dl dd span.ui-spinner {
 .edit-employee-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.edit-employee-info dd input.pikerSize {
+  width: 137px;
+}
 .edit-employee-info dd a.formLink {
   line-height: 0;
 }
@@ -4008,7 +4030,7 @@ dl dd span.ui-spinner {
 }
 .half-block.projectNote {
   width: 45%;
-  padding-right: 5%;
+  padding-right: 4%;
 }
 .half-block.projectNote .noteWrapper {
   width: 100%;
@@ -4018,7 +4040,7 @@ dl dd span.ui-spinner {
 }
 .half-block.taskNote {
   width: 45%;
-  padding-right: 5%;
+  padding-right: 4%;
 }
 .half-block.taskNote .noteWrapper {
   width: 95%;
@@ -6004,7 +6026,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .app-block.projectNote {
   width: 45%;
-  padding-right: 5%;
+  padding-right: 4%;
 }
 .ui-dialog .app-block.projectNote .noteWrapper {
   width: 100%;
@@ -6014,7 +6036,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .app-block.taskNote {
   width: 45%;
-  padding-right: 5%;
+  padding-right: 4%;
 }
 .ui-dialog .app-block.taskNote .noteWrapper {
   width: 95%;
@@ -6124,6 +6146,9 @@ ul.dialog-tabs li.right button {
 .ui-dialog .app-empty-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.ui-dialog .app-empty-info dd input.pikerSize {
+  width: 137px;
+}
 .ui-dialog .app-empty-info dd a.formLink {
   line-height: 0;
 }
@@ -6187,6 +6212,9 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .person-info-h3 dd input:not([type='checkbox']) {
   width: 100%;
+}
+.ui-dialog .person-info-h3 dd input.pikerSize {
+  width: 137px;
 }
 .ui-dialog .person-info-h3 dd a.formLink {
   line-height: 0;
@@ -6258,6 +6286,9 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .summary-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.ui-dialog .summary-info dd input.pikerSize {
+  width: 137px;
 }
 .ui-dialog .summary-info dd a.formLink {
   line-height: 0;
@@ -6452,6 +6483,9 @@ ul.dialog-tabs li.right button {
 }
 .form-holder form dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form-holder form dd input.pikerSize {
+  width: 137px;
 }
 .form-holder form dd a.formLink {
   line-height: 16px;
@@ -7244,6 +7278,9 @@ a.cancelled {
 .form-holder form .task-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.form-holder form .task-info dd input.pikerSize {
+  width: 137px;
+}
 .form-holder form .task-info dd a.formLink {
   line-height: 0;
 }
@@ -7300,6 +7337,9 @@ a.cancelled {
 .form-holder form .task-summary-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.form-holder form .task-summary-info dd input.pikerSize {
+  width: 137px;
+}
 .form-holder form .task-summary-info dd a.formLink {
   line-height: 0;
 }
@@ -7355,6 +7395,9 @@ a.cancelled {
 }
 .form-holder form .profile-create dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form-holder form .profile-create dd input.pikerSize {
+  width: 137px;
 }
 .form-holder form .profile-create dd a.formLink {
   line-height: 0;
@@ -7414,6 +7457,9 @@ a.cancelled {
 }
 .form-holder form .project-edit-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form-holder form .project-edit-info dd input.pikerSize {
+  width: 137px;
 }
 .form-holder form .project-edit-info dd a.formLink {
   line-height: 0;
@@ -7476,6 +7522,9 @@ a.cancelled {
 }
 .form-holder form .job-create-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form-holder form .job-create-info dd input.pikerSize {
+  width: 137px;
 }
 .form-holder form .job-create-info dd a.formLink {
   line-height: 0;
@@ -7542,6 +7591,9 @@ a.cancelled {
 .form-holder form .subject-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.form-holder form .subject-info dd input.pikerSize {
+  width: 137px;
+}
 .form-holder form .subject-info dd a.formLink {
   line-height: 0;
 }
@@ -7605,6 +7657,9 @@ a.cancelled {
 .form-holder form .opprtunitie-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.form-holder form .opprtunitie-info dd input.pikerSize {
+  width: 137px;
+}
 .form-holder form .opprtunitie-info dd a.formLink {
   line-height: 0;
 }
@@ -7667,6 +7722,9 @@ a.cancelled {
 }
 .form-holder form .opprtunitie-lead-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form-holder form .opprtunitie-lead-info dd input.pikerSize {
+  width: 137px;
 }
 .form-holder form .opprtunitie-lead-info dd a.formLink {
   line-height: 0;
@@ -7820,6 +7878,9 @@ a.cancelled {
 .form .job-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.form .job-info dd input.pikerSize {
+  width: 137px;
+}
 .form .job-info dd a.formLink {
   line-height: 30px;
 }
@@ -7872,6 +7933,9 @@ a.cancelled {
 }
 .form .opp-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form .opp-info dd input.pikerSize {
+  width: 137px;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
@@ -7929,6 +7993,9 @@ a.cancelled {
 .form .internal-info dd input:not([type='checkbox']) {
   width: 100%;
 }
+.form .internal-info dd input.pikerSize {
+  width: 137px;
+}
 .form .internal-info dd a.formLink {
   line-height: 30px;
 }
@@ -7985,6 +8052,9 @@ a.cancelled {
 }
 .form .assignees-info dd input:not([type='checkbox']) {
   width: 100%;
+}
+.form .assignees-info dd input.pikerSize {
+  width: 137px;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;

@@ -1,20 +1,21 @@
 define([
         'views/listViewBase',
-        'text!templates/invoiceAging/list/ListHeader.html',
-        'views/invoiceAging/list/ListItemView',
-        'models/invoiceAging',
-        'collections/invoiceAging/filterCollection',
+        'text!templates/journalEntry/list/ListHeader.html',
+        'views/journalEntry/list/ListItemView',
+        'models/journalEntry',
+        'collections/journalEntry/filterCollection',
         'dataService',
-        'custom'
+        'custom',
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom) {
+    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom, CONSTANTS) {
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            totalCollectionLengthUrl: '/invoice/invoiceAging/totalCollectionLength',
-            contentType             : 'invoiceAging',
+            totalCollectionLengthUrl: '/journalEntry/totalCollectionLength',
+            contentType             : CONSTANTS.JOURNALENTRY,
 
             initialize: function (options) {
                 $(document).off("click");
