@@ -21,10 +21,12 @@ define(['Validation', 'common'], function (Validation, common) {
                 var balance;
                 var paid;
                 var total;
+                var unTaxed;
 
                 if(response.paymentInfo){
                     balance = response.paymentInfo.balance || 0;
                     total = response.paymentInfo.total || 0;
+                    unTaxed = response.paymentInfo.unTaxed || 0;
                     paid = /*response.paymentInfo.unTaxed || 0;*/total - balance
                 }
 
@@ -35,9 +37,10 @@ define(['Validation', 'common'], function (Validation, common) {
                 balance = (balance/ 100).toFixed(2);
                 paid = (paid/100).toFixed(2);
                 total = (total / 100).toFixed(2);
+                unTaxed = (unTaxed / 100).toFixed(2);
 
                 response.paymentInfo.balance = balance;
-                response.paymentInfo.unTaxed = paid;
+                response.paymentInfo.unTaxed = paid !== "0.00" ? paid : unTaxed;
                 response.paymentInfo.total = total;
 
                 if (response.invoiceDate) {
