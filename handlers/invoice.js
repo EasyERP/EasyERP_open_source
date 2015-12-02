@@ -22,6 +22,9 @@ var Invoice = function (models, event) {
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants.js');
 
+    var journalEntryHandler = require('./journalEntry');
+    var _journalEntryHandler = new journalEntryHandler(models);
+
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
 
@@ -32,8 +35,38 @@ var Invoice = function (models, event) {
         var isWtrack = checkDb(req.session.lastDb);
         var body = req.body;
         var forSales = body.forSales;
+        var waterfallTasks = [invoiceSaver, journalEntryComposer];
+        var createdBy = {};
+        var editedBy = {};
+
         var Invoice;
         var invoice;
+
+        function invoiceSaver(waterfallCb) {
+            invoice = new Invoice(body);
+
+            if (req.session.uId) {
+                invoice.createdBy.user = createdBy.user = req.session.uId;
+                invoice.editedBy.user = editedBy.user = req.session.uId;
+            }
+
+            invoice.save(function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, result);
+            });
+        }
+
+        function journalEntryComposer(invoice, waterfallCb) {
+            var journalEntryBody = {};
+
+            journalEntryBody.date = invoice.invoiceDate;
+            journalEntryBody.journal = invoice.invoiceDate;
+
+            _journalEntryHandler.create(journalEntryBody, waterfallCb)
+        }
 
         if (isWtrack && forSales) {
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
@@ -41,19 +74,30 @@ var Invoice = function (models, event) {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         }
 
-        invoice = new Invoice(body);
-
-        if (req.session.uId) {
-            invoice.createdBy.user = req.session.uId;
-            invoice.editedBy.user = req.session.uId;
-        }
-
-        invoice.save(function (err, result) {
+        async.waterfall(waterfallTasks, function (err, result) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send(result);
+
+            res.status(201).send(result);
         });
+
+        /*invoice = new Invoice(body);
+
+         if (req.session.uId) {
+         invoice.createdBy.user = req.session.uId;
+         invoice.editedBy.user = req.session.uId;
+         }
+
+         invoice.save(function (err, result) {
+         if (err) {
+         return next(err);
+         }
+
+
+
+         res.status(200).send(result);
+         });*/
     };
 
     this.receive = function (req, res, next) {
@@ -71,18 +115,18 @@ var Invoice = function (models, event) {
         function fetchFirstWorkflow(callback) {
             if (forSales === "true") {
                 request = {
-                    query  : {
-                        wId         : 'Sales Invoice',
-                        source      : 'purchase',
+                    query: {
+                        wId: 'Sales Invoice',
+                        source: 'purchase',
                         targetSource: 'invoice'
                     },
                     session: req.session
                 };
             } else {
                 request = {
-                    query  : {
-                        wId         : 'Purchase Invoice',
-                        source      : 'purchase',
+                    query: {
+                        wId: 'Purchase Invoice',
+                        source: 'purchase',
                         targetSource: 'invoice'
                     },
                     session: req.session
@@ -226,7 +270,14 @@ var Invoice = function (models, event) {
             };
 
 
-            Order.findByIdAndUpdate(id, {$set: {workflow:{name: "Invoiced", _id: CONSTANTS.ORDERDONE}}}, {new: true}, function (err, result) {
+            Order.findByIdAndUpdate(id, {
+                $set: {
+                    workflow: {
+                        name: "Invoiced",
+                        _id: CONSTANTS.ORDERDONE
+                    }
+                }
+            }, {new: true}, function (err, result) {
                 if (err) {
                     return next(err)
                 }
@@ -339,36 +390,35 @@ var Invoice = function (models, event) {
                     if (condition) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
                 case 'salesPerson':
                     if (condition) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
                 case 'supplier':
                     if (condition) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
                 case 'workflow':
                     if (condition) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
                 case 'forSales':
                     if (condition) {
                         condition = ConvertType(condition[0], 'boolean');
                         filtrElement[key] = condition;
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
             }
         }
-        ;
 
         return resArray;
     };
@@ -600,7 +650,7 @@ var Invoice = function (models, event) {
                     contentSearcher = function (invoicesIds, waterfallCallback) {
 
                         optionsObject = {
-                            _id     : id,
+                            _id: id,
                             forSales: forSales
                         };
 
@@ -671,7 +721,14 @@ var Invoice = function (models, event) {
 
                         orderId = invoiceDeleted.sourceDocument;
 
-                        Order.findByIdAndUpdate(objectId(orderId), {$set: {workflow: {name: "Not Invoiced", _id: CONSTANTS.ORDERDRAFT}}}, {new: true}, function (err, result) {
+                        Order.findByIdAndUpdate(objectId(orderId), {
+                            $set: {
+                                workflow: {
+                                    name: "Not Invoiced",
+                                    _id: CONSTANTS.ORDERDRAFT
+                                }
+                            }
+                        }, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err)
                             }
@@ -768,7 +825,7 @@ var Invoice = function (models, event) {
         var Invoice;
 
         if (checkDb(db)) {
-            moduleId = 64
+            moduleId = 64;
             isWtrack = true;
         }
 
@@ -914,8 +971,8 @@ var Invoice = function (models, event) {
         var date = moment().format('DD/MM/YYYY');
 
         db.collection('settings').findOneAndUpdate({
-                dbName : currentDbName,
-                name  : 'invoice',
+                dbName: currentDbName,
+                name: 'invoice',
                 project: project
             },
             {
@@ -923,7 +980,7 @@ var Invoice = function (models, event) {
             },
             {
                 returnOriginal: false,
-                upsert        : true
+                upsert: true
             },
             function (err, rate) {
                 var resultName;
@@ -948,7 +1005,7 @@ var Invoice = function (models, event) {
                     .aggregate([
                         {
                             $group: {
-                                _id       : null,
+                                _id: null,
                                 'Due date': {
                                     $addToSet: '$dueDate'
                                 }/*,
@@ -1015,39 +1072,39 @@ var Invoice = function (models, event) {
             }
         }, {
             $project: {
-                dueDate    : 1,
-                project    : 1,
-                supplier   : 1,
-                name       : 1,
+                dueDate: 1,
+                project: 1,
+                supplier: 1,
+                name: 1,
                 paymentInfo: 1,
                 salesPerson: 1,
-                diffStatus : {
+                diffStatus: {
                     $cond: {
-                        if  : {
+                        if: {
                             $lt: [{$subtract: [now, '$dueDate']}, 0]
                         },
                         then: -1,
                         else: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $lt: [{$subtract: [now, '$dueDate']}, 1296000000]
                                 },
                                 then: 0,
                                 else: {
                                     $cond: {
-                                        if  : {
+                                        if: {
                                             $lt: [{$subtract: [now, '$dueDate']}, 2592000000]
                                         },
                                         then: 1,
                                         else: {
                                             $cond: {
-                                                if  : {
+                                                if: {
                                                     $lt: [{$subtract: [now, '$dueDate']}, 5184000000]
                                                 },
                                                 then: 2,
                                                 else: {
                                                     $cond: {
-                                                        if  : {
+                                                        if: {
                                                             $lt: [{$subtract: [now, '$dueDate']}, 7776000000]
                                                         },
                                                         then: 3,

@@ -93,8 +93,9 @@ define([
             saveItem: function () {
                 var self = this;
                 var mid = 56;
+                var $currentEl = this.$el;
 
-                var selectedProducts = this.$el.find('.productItem');
+                var selectedProducts = $currentEl.find('.productItem');
                 var products = [];
                 var selectedLength = selectedProducts.length;
                 var targetEl;
@@ -107,22 +108,27 @@ define([
 
                 var forSales = (this.forSales) ? true : false;
 
-                var supplier = this.$("#supplier").data("id");
-                var supplierName = this.$("#supplier").text();
-                var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
-                var salesPersonName = this.$("#salesPerson").text() ? this.$("#salesPerson").text() : null;
-                var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
-                var invoiceDate = this.$("#invoice_date").val();
-                var dueDate = this.$("#due_date").val();
+                var supplier = $currentEl.find("#supplier").data("id");
+                var supplierName = $currentEl.find("#supplier").text();
+                var salesPersonId = $currentEl.find("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
+                var salesPersonName = $currentEl.find("#salesPerson").text() ? this.$("#salesPerson").text() : null;
+                var paymentTermId = $currentEl.find("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
+                var invoiceDate = $currentEl.find("#invoice_date").val();
+                var dueDate = $currentEl.find("#due_date").val();
 
-                var total = parseFloat(this.$("#totalAmount").text());
-                var unTaxed = parseFloat(this.$("#totalUntaxes").text());
-                var balance = parseFloat(this.$("#balance").text());
+                var total = parseFloat($currentEl.find("#totalAmount").text());
+                var unTaxed = parseFloat($currentEl.find("#totalUntaxes").text());
+                var balance = parseFloat($currentEl.find("#balance").text());
 
                 var payments = {
                     total  : total,
                     unTaxed: unTaxed,
                     balance: balance
+                };
+
+                var currency = {
+                    _id : $currentEl.find('#currencyDd').attr('data-id'),
+                    name: $currentEl.find('#currencyDd').text()
                 };
 
                 if (selectedLength) {
@@ -185,6 +191,7 @@ define([
 
                     products   : products,
                     paymentInfo: payments,
+                    currency   : currency,
 
                     groups  : {
                         owner: $("#allUsersSelect").data("id"),
@@ -203,7 +210,7 @@ define([
                             mid: mid
                         },
                         wait   : true,
-                        success: function (resdfg) {
+                        success: function (res) {
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             self.hideDialog();
@@ -275,6 +282,8 @@ define([
                 paymentContainer.append(
                     new listHederInvoice().render().el
                 );
+
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, false);
 
                 populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);

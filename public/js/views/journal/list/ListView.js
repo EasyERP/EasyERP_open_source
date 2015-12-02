@@ -1,20 +1,24 @@
 define([
         'views/listViewBase',
-        'text!templates/invoiceAging/list/ListHeader.html',
-        'views/invoiceAging/list/ListItemView',
-        'models/invoiceAging',
-        'collections/invoiceAging/filterCollection',
+        'text!templates/journal/list/ListHeader.html',
+        'views/journal/list/ListItemView',
+        'views/journal/CreateView',
+        'models/JournalModel',
+        'collections/journal/filterCollection',
         'dataService',
         'custom'
     ],
 
-    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom) {
+    function (listViewBase, listTemplate, listItemView, createView, currentModel, contentCollection, dataService, custom) {
+        "use strict";
+
         var ListView = listViewBase.extend({
+            createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            totalCollectionLengthUrl: '/invoice/invoiceAging/totalCollectionLength',
-            contentType             : 'invoiceAging',
+            totalCollectionLengthUrl: '/journal/totalCollectionLength',
+            contentType             : 'journal',
 
             initialize: function (options) {
                 $(document).off("click");
@@ -39,6 +43,8 @@ define([
                 var itemView;
 
                 $('.ui-dialog ').remove();
+
+                $('#top-bar-deleteBtn').hide();
 
                 $currentEl = this.$el;
 

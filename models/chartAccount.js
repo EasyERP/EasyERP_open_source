@@ -26,15 +26,6 @@ module.exports = (function () {
 
     mongoose.model('chartOfAccount', chartAccountSchema);
 
-    //for DropDown
-    chartAccountSchema
-        .virtual('name')
-        .get(function () {
-            return this.code + ' ' + this.account;
-        });
-
-    chartAccountSchema.set('toJSON', {virtuals: true});
-
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }

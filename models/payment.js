@@ -22,7 +22,10 @@ module.exports = (function () {
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         month           : {type: Number},
         year            : {type: Number},
-
+        currency: {
+            name: {type: String, default: 'USD'},
+            rate: {type: Number, default: 1}
+        },
         groups: {
             owner: {type: ObjectId, ref: 'Users', default: null},
             users: [{type: ObjectId, ref: 'Users', default: null}],

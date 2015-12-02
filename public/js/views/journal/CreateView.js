@@ -1,8 +1,9 @@
 define([
-        "text!templates/Journal/CreateTemplate.html",
+        "text!templates/journal/CreateTemplate.html",
+        'models/JournalModel',
         'populate'
     ],
-    function (CreateTemplate, populate) {
+    function (CreateTemplate, JournalModel, populate) {
         "use strict";
 
         var CreateView = Backbone.View.extend({
@@ -16,6 +17,7 @@ define([
             },
 
             initialize: function () {
+                this.model = new JournalModel();
                 this.render();
             },
 
@@ -41,7 +43,45 @@ define([
                 return false;
             },
 
+            saveItem: function () {
+                var self = this;
+                var mid = 85;
+                var thisEl = this.$el;
+                var data = {};
+
+                data.name = thisEl.find('#nameInput').val();
+                data.transaction = thisEl.find('#typeDd').attr('data-id');
+                data.debitAccount = thisEl.find('#debitDd').attr('data-id');
+                data.creditAccount = thisEl.find('#creditDd').attr('data-id');
+
+                this.model.save(data, {
+                    headers: {
+                        mid: mid
+                    },
+                    wait   : true,
+                    success: function (model) {
+                        self.redirectAfterSave(self, model);
+                    },
+                    error  : function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
+                })
+            },
+
+            redirectAfterSave: function (content, model) {
+                var redirectUrl = content.forSales ? "easyErp/journal" : "easyErp/journal";
+
+                content.hideDialog();
+                Backbone.history.navigate(redirectUrl, {trigger: true});
+            },
+
+            hideDialog: function () {
+                $(".create-dialog").remove();
+                $(".edit-dialog").remove();
+            },
+
             render: function () {
+                var self = this;
                 var formString = this.template();
 
                 this.$el = $(formString).dialog({
@@ -55,6 +95,7 @@ define([
                             id   : "createBtn",
                             text : "Create",
                             click: function () {
+                                self.saveItem();
                             }
                         },
 
@@ -71,10 +112,10 @@ define([
                 populate.get("#creditDd", "/chartOfAccount/getForDd", {}, 'name', this, true, true);
 
                 this.responseObj['#typeDd'] = [{
-                    _id: 'Invoice',
+                    _id : 'Invoice',
                     name: 'Invoice'
                 }, {
-                    _id: 'Payment',
+                    _id : 'Payment',
                     name: 'Payment'
                 }];
 
