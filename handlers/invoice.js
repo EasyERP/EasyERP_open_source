@@ -216,6 +216,15 @@ var Invoice = function (models, event) {
             if (err) {
                 return next(err)
             }
+            var project;
+            var invoiceId = result._id;
+            var name = result.name;
+            var products = result.products;
+            var setObj = {
+                _id: invoiceId,
+                name: name
+            };
+
 
             Order.findByIdAndUpdate(id, {$set: {workflow:{name: "Invoiced", _id: CONSTANTS.ORDERDONE}}}, {new: true}, function (err, result) {
                 if (err) {
@@ -224,7 +233,24 @@ var Invoice = function (models, event) {
             });
 
 
-            res.status(201).send(result);
+            async.each(products, function(result, cb){
+                var jobs = result.jobs;
+
+                JobsModel.findByIdAndUpdate(jobs, {$set: {invoice: setObj}}, {new: true}, function(err, inv){
+                    if (err){
+                        return cb(err);
+                    }
+                    project = inv.project ? inv.project : null;
+                    cb();
+                });
+
+            }, function(){
+                if (project) {
+                    event.emit('fetchJobsCollection', {project: project});
+                }
+
+                res.status(201).send(result);
+            });
         });
 
     };

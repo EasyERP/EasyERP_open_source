@@ -349,7 +349,7 @@ var Project = function (models) {
                 totalObj.hoursSum = 0;
                 totalObj.markUp = 0;
                 totalObj.radio = 0;
-                totalObj.minDate = 0;
+                totalObj.minDate;
                 totalObj.maxDate = 0;
                 totalObj.rateSum = {
                     byDev: 0,
