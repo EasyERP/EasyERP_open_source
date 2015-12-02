@@ -31,8 +31,20 @@ var Invoice = function (models, event) {
         return validDbs.indexOf(db) !== -1;
     };
 
+    function journalEntryComposer(invoice, dbIndex, waterfallCb) {
+        var journalEntryBody = {};
+
+        journalEntryBody.date = invoice.invoiceDate;
+        journalEntryBody.journal = invoice.journal;
+        journalEntryBody.currency = invoice.currency ? invoice.currency.name : 'USD';
+        journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+
+        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb)
+    }
+
     this.create = function (req, res, next) {
-        var isWtrack = checkDb(req.session.lastDb);
+        var dbIndex = req.session.lastDb;
+        var isWtrack = checkDb(dbIndex);
         var body = req.body;
         var forSales = body.forSales;
         var waterfallTasks = [invoiceSaver, journalEntryComposer];
@@ -55,23 +67,14 @@ var Invoice = function (models, event) {
                     return waterfallCb(err);
                 }
 
-                waterfallCb(null, result);
+                waterfallCb(null, dbIndex, result);
             });
         }
 
-        function journalEntryComposer(invoice, waterfallCb) {
-            var journalEntryBody = {};
-
-            journalEntryBody.date = invoice.invoiceDate;
-            journalEntryBody.journal = invoice.invoiceDate;
-
-            _journalEntryHandler.create(journalEntryBody, waterfallCb)
-        }
-
         if (isWtrack && forSales) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+            Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+            Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
         }
 
         async.waterfall(waterfallTasks, function (err, result) {
@@ -103,11 +106,12 @@ var Invoice = function (models, event) {
     this.receive = function (req, res, next) {
         var id = req.body.orderId;
         var forSales = req.body.forSales;
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-        var wTrackInvoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
-        var Company = models.get(req.session.lastDb, 'Customer', CustomerSchema);
+        var dbIndex = req.session.lastDb;
+        var JobsModel = models.get(dbIndex, 'jobs', JobsSchema);
+        var Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
+        var wTrackInvoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Order = models.get(dbIndex, 'Quotation', OrderSchema);
+        var Company = models.get(dbIndex, 'Customer', CustomerSchema);
         var request;
         var parallelTasks;
         var waterFallTasks;
@@ -211,7 +215,13 @@ var Invoice = function (models, event) {
                 invoice.salesPerson._id = order.project.projectmanager._id;
                 invoice.salesPerson.name = order.project.projectmanager.name;
 
-                invoice.save(callback);
+                invoice.save(function (err, _invoice) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    journalEntryComposer(_invoice, dbIndex, callback);
+                });
 
                 async.each(order.products, function (product, cb) {
 
@@ -246,7 +256,13 @@ var Invoice = function (models, event) {
                         invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;
                     }
 
-                    invoice.save(callback);
+                    invoice.save(function (err, _invoice) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        journalEntryComposer(_invoice, dbIndex, callback);
+                    });
                 })
 
             }
@@ -284,18 +300,18 @@ var Invoice = function (models, event) {
             });
 
 
-            async.each(products, function(result, cb){
+            async.each(products, function (result, cb) {
                 var jobs = result.jobs;
 
-                JobsModel.findByIdAndUpdate(jobs, {$set: {invoice: setObj}}, {new: true}, function(err, inv){
-                    if (err){
+                JobsModel.findByIdAndUpdate(jobs, {$set: {invoice: setObj}}, {new: true}, function (err, inv) {
+                    if (err) {
                         return cb(err);
                     }
                     project = inv.project ? inv.project : null;
                     cb();
                 });
 
-            }, function(){
+            }, function () {
                 if (project) {
                     event.emit('fetchJobsCollection', {project: project});
                 }
@@ -762,7 +778,10 @@ var Invoice = function (models, event) {
                                     date: new Date().toISOString()
                                 };
 
-                                JobsModel.findByIdAndUpdate(id, {type: "Ordered", invoice: {_id: null, name: ""}}, {new: true}, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, {
+                                    type: "Ordered",
+                                    invoice: {_id: null, name: ""}
+                                }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }

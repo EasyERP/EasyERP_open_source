@@ -13,9 +13,9 @@ var Module = function (models) {
     //ToDo set it to process.env
     oxr.set({ app_id: 'b81387a200c2463e9ae3d31cc60eda62' });
 
-    this.create = function (body, cb) {
-        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+    this.create = function (body, dbIndex, cb) {
+        var Journal = models.get(dbIndex, 'journal', journalSchema);
+        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
         var journalId = body.journal;
         var now = moment();
         var date = body.date ? moment(body.date) : now;
