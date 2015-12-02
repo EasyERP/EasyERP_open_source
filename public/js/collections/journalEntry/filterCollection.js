@@ -1,10 +1,10 @@
 define([
-        'models/JournalModel'
+        'models/journalEntry'
     ],
-    function (JournalModel) {
-        var JournalCollection = Backbone.Collection.extend({
-            model: JournalModel,
-            url: "/journal/",
+    function (JournalEntryModel) {
+        var JournalEntryCollection = Backbone.Collection.extend({
+            model: JournalEntryModel,
+            url: "/journal/journalEntry/",
 
             showMore: function (options) {
                 var that = this;
@@ -54,5 +54,5 @@ define([
                 });
             }
         });
-        return JournalCollection;
+        return JournalEntryCollection;
     });

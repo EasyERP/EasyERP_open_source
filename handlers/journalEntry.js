@@ -13,6 +13,8 @@ var Module = function (models) {
     //ToDo set it to process.env
     oxr.set({app_id: 'b81387a200c2463e9ae3d31cc60eda62'});
 
+    var access = require("../Modules/additions/access.js")(models);
+
     this.create = function (body, dbIndex, cb) {
         var Journal = models.get(dbIndex, 'journal', journalSchema);
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
@@ -114,6 +116,7 @@ var Module = function (models) {
             if (access) {
                 Model
                     .find({})
+                    .populate('journal', '_id name')
                     .sort(sort)
                     .exec(function (err, result) {
                         if (err) {

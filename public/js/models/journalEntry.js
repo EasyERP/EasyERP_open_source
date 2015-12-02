@@ -1,9 +1,9 @@
 define([], function () {
-    var JournalModel = Backbone.Model.extend({
+    var JournalEntryModel = Backbone.Model.extend({
         idAttribute: "_id",
         urlRoot    : function () {
-            return "/journal";
+            return "/journalEntry";
         }
     });
-    return JournalModel;
+    return JournalEntryModel;
 });
