@@ -4,11 +4,11 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var Schema = mongoose.Schema({
-        date: {type: Date, default: Date.now},
-        type: {type: String, default: ""},
-        journal: {type: ObjectId, ref: 'journal', default: null, require: true},
-        account: {type: ObjectId, ref: 'chartOfAccount', default: null},
-        currency: {
+        date     : {type: Date, default: Date.now},
+        type     : {type: String, default: ""},
+        journal  : {type: ObjectId, ref: 'journal', default: null, require: true},
+        account  : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        currency : {
             name: {type: String, default: 'USD'},
             rate: {type: Number, default: 1}
         },
@@ -16,12 +16,12 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        editedBy: {
+        editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date}
         },
-        debit: {type: Number, default: 0},
-        credit: {type: Number, default: 0}
+        debit    : {type: Number, default: 0},
+        credit   : {type: Number, default: 0}
 
     });
 

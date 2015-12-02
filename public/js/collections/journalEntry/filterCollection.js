@@ -4,7 +4,7 @@ define([
     function (JournalModel) {
         var JournalCollection = Backbone.Collection.extend({
             model: JournalModel,
-            url: "/journal",
+            url: "/journal/",
 
             showMore: function (options) {
                 var that = this;
