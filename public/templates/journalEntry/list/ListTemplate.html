@@ -3,6 +3,7 @@
     <td class="notForm centerCell"><input type="checkbox" value="<%=journalEntry._id%>" class="checkbox"/></td>
     <td class="centerCell"><%=index + 1 %></td>
     <td><%=journalEntry.date%></td>
+    <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
     <td><%=journalEntry.debit ? journal.debit : ''%></td>
     <td><%=journalEntry.credit ? journal.credit : ''%></td>
 </tr>
