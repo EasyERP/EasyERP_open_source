@@ -52,7 +52,7 @@
 
                                     <dt><label for="currencyDd">Currency</label></dt>
                                     <dd>
-                                        <a id="currencyDd" class="current-selected" href="javascript:;">Select</a>
+                                        <a id="currencyDd" class="current-selected" data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>" href="javascript:;"><%= model.currency && model.currency.name ? model.currency.name : ''%></a>
                                     </dd>
                                 </dl>
                             </div>
