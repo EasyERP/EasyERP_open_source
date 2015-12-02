@@ -27,6 +27,14 @@ var Jobs = function (models, event) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'type':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
             }
 
             return resArray;

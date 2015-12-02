@@ -359,6 +359,16 @@ define([], function () {
                 view   : 'dataKey',
                 backend: 'dataKey'
             }
+        },
+        "Dashboard" : {
+            "Status" : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            },
+            "Type" : {
+                view   : 'type',
+                backend: 'type'
+            }
         }
     };
 
