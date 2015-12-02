@@ -148,7 +148,8 @@ define([
                 var orderId = this.currentModel.id;
                 var data = {
                     forSales: this.forSales,
-                    orderId : orderId
+                    orderId : orderId,
+                    currency: this.currentModel.currency
                 };
 
                 dataService.postData(url, data, function (err, response) {
@@ -187,7 +188,7 @@ define([
                             function createView() {
 
                                 this.invoiceView = new InvoiceView({
-                                    model: self.collection,
+                                    model    : self.collection,
                                     activeTab: true
                                 });
 
@@ -268,6 +269,11 @@ define([
                 var groupsId = [];
                 var jobs;
 
+                var currency = {
+                    _id : thisEl.find('#currencyDd').attr('data-id'),
+                    name: thisEl.find('#currencyDd').text()
+                };
+
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -300,13 +306,14 @@ define([
                             product  : productId,
                             unitPrice: price,
                             quantity : quantity,
-                            jobs: jobs
+                            jobs     : jobs
                         });
                     }
                 }
 
 
                 data = {
+                    currency         : currency,
                     supplier         : supplier,
                     supplierReference: supplierReference,
                     products         : products,
@@ -317,7 +324,7 @@ define([
                     invoiceControl   : invoiceControl ? invoiceControl : null,
                     paymentTerm      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
-                    project       : project,
+                    project          : project,
                     paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed
@@ -383,7 +390,7 @@ define([
 
             render: function () {
                 var self = this;
-                this.template = !this.onlyView ?  _.template(EditTemplate) : _.template(ViewTemplate);
+                this.template = !this.onlyView ? _.template(EditTemplate) : _.template(ViewTemplate);
                 var formString = this.template({
                     model  : this.currentModel.toJSON(),
                     visible: this.visible
@@ -394,7 +401,7 @@ define([
                 var productItemContainer;
                 var buttons;
 
-                if (!this.onlyView){
+                if (!this.onlyView) {
                     buttons = [
                         {
                             text : "Save",
@@ -443,7 +450,7 @@ define([
                     }).render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, false);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true, true);
 
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);

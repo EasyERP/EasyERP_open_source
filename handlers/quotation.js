@@ -72,22 +72,22 @@ var Quotation = function (models, event) {
                     var name = _quotation.name;
                     var products = _quotation.products;
                     var setObj = {
-                        _id: id,
+                        _id : id,
                         name: name
                     };
 
-                    async.each(products, function(product, cb){
+                    async.each(products, function (product, cb) {
                         var jobs = product.jobs;
 
-                        JobsModel.findByIdAndUpdate(jobs, {$set: {quotation: setObj}}, {new: true}, function(err, result){
-                            if (err){
+                        JobsModel.findByIdAndUpdate(jobs, {$set: {quotation: setObj}}, {new: true}, function (err, result) {
+                            if (err) {
                                 return cb(err);
                             }
                             project = result.project ? result.project : null;
                             cb();
                         });
 
-                    }, function(){
+                    }, function () {
                         if (project) {
                             event.emit('fetchJobsCollection', {project: project});
                         }
@@ -555,7 +555,10 @@ var Quotation = function (models, event) {
 
             async.each(products, function (product, cb) {
 
-                JobsModel.findByIdAndUpdate(product.jobs, {type: type, quotation: {_id: null, name: ""}}, {new: true}, function (err, result) {
+                JobsModel.findByIdAndUpdate(product.jobs, {
+                    type     : type,
+                    quotation: {_id: null, name: ""}
+                }, {new: true}, function (err, result) {
                     if (err) {
                         return next(err);
                     }
