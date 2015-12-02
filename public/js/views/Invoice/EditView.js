@@ -52,6 +52,8 @@ define([
                 this.redirect = options.redirect;
                 this.collection = options.collection;
 
+                this.notCreate = options.notCreate ? false : true;
+
                 if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
@@ -518,7 +520,7 @@ define([
                 populate.get2name("#supplier", "/supplier", {}, this, false);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, this.notCreate);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",

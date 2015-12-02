@@ -1,5 +1,6 @@
 define([
         "text!templates/salesOrder/EditTemplate.html",
+        "text!templates/salesOrder/ViewTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
         "views/Projects/projectInfo/invoices/invoiceView",
@@ -10,7 +11,7 @@ define([
         "populate",
         "constants"
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
@@ -27,6 +28,8 @@ define([
 
                 this.forSales = true;
                 this.redirect = options.redirect;
+
+                this.onlyView = !!options.onlyView;
 
                 this.projectManager = options.projectManager;
 
@@ -380,6 +383,7 @@ define([
 
             render: function () {
                 var self = this;
+                this.template = !this.onlyView ?  _.template(EditTemplate) : _.template(ViewTemplate);
                 var formString = this.template({
                     model  : this.currentModel.toJSON(),
                     visible: this.visible
@@ -388,15 +392,10 @@ define([
                 var notDiv;
                 var model;
                 var productItemContainer;
+                var buttons;
 
-                this.$el = $(formString).dialog({
-                    closeOnEscape: false,
-                    autoOpen     : true,
-                    resizable    : true,
-                    dialogClass  : "edit-dialog",
-                    title        : "Edit Order",
-                    width        : "900px",
-                    buttons      : [
+                if (!this.onlyView){
+                    buttons = [
                         {
                             text : "Save",
                             click: function () {
@@ -415,7 +414,26 @@ define([
                             click: self.deleteItem
                         }
                     ]
+                } else {
+                    buttons = [
+                        {
+                            text : "Close",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        }
+                    ]
+                }
 
+
+                this.$el = $(formString).dialog({
+                    closeOnEscape: false,
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Order",
+                    width        : "900px",
+                    buttons      : buttons
                 });
 
                 notDiv = this.$el.find('.assignees-container');

@@ -483,7 +483,7 @@ var Quotation = function (models, event) {
             var queryObject = {_id: objectId(id)};
             var query;
 
-            queryObject.isOrder = isOrder;
+            //queryObject.isOrder = isOrder;
             query = Quotation.findOne(queryObject);
 
             // query.populate('supplier', '_id name fullName');
