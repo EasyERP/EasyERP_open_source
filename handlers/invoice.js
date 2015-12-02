@@ -31,7 +31,7 @@ var Invoice = function (models, event) {
         return validDbs.indexOf(db) !== -1;
     };
 
-    function journalEntryComposer(invoice, dbIndex, waterfallCb) {
+    function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
 
         journalEntryBody.date = invoice.invoiceDate;
@@ -42,7 +42,7 @@ var Invoice = function (models, event) {
         journalEntryBody.sourceDocument._id = invoice._id;
         journalEntryBody.sourceDocument.model = 'Invoice';
 
-        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb)
+        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb, uId)
     }
 
     this.create = function (req, res, next) {
@@ -360,7 +360,7 @@ var Invoice = function (models, event) {
                                         return next(err);
                                     }
                                     res.status(200).send(invoice);
-                                });
+                                }, req.session.uId);
                             });
                         } else {
                             res.status(200).send(invoice);

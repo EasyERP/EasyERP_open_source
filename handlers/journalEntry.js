@@ -15,7 +15,7 @@ var Module = function (models) {
 
     var access = require("../Modules/additions/access.js")(models);
 
-    this.create = function (body, dbIndex, cb) {
+    this.create = function (body, dbIndex, cb, uId) {
         var Journal = models.get(dbIndex, 'journal', journalSchema);
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
         var journalId = body.journal;
@@ -57,6 +57,16 @@ var Module = function (models) {
                         debitObject.debit = amount;
                         debitObject.account = journal.debitAccount;
 
+                        debitObject.editedBy = {
+                            user: uId,
+                            date: new Date()
+                        };
+
+                        debitObject.createdBy = {
+                            user: uId,
+                            date: new Date()
+                        };
+
                         journalEntry = new Model(debitObject);
                         journalEntry.save(parallelCb);
                     },
@@ -65,6 +75,16 @@ var Module = function (models) {
 
                         creditObject.credit = amount;
                         creditObject.account = journal.creditAccount;
+
+                        creditObject.editedBy = {
+                            user: uId,
+                            date: new Date()
+                        };
+
+                        creditObject.createdBy = {
+                            user: uId,
+                            date: new Date()
+                        };
 
                         journalEntry = new Model(creditObject);
                         journalEntry.save(parallelCb);
