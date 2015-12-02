@@ -6,6 +6,8 @@ define([
         'text!templates/Projects/projectInfo/DetailsTemplate.html',
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
+        'views/salesOrder/EditView',
+        'views/salesInvoice/EditView',
         'views/Projects/EditView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -22,6 +24,8 @@ define([
         'collections/salesInvoice/filterCollection',
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
+        'models/QuotationModel',
+        'models/QuotationModel',
         'text!templates/Notes/AddAttachments.html',
         "common",
         'populate',
@@ -31,7 +35,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditViewOrder, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var View = Backbone.View.extend({
             el            : '#content-holder',
             contentType   : 'Projects',
@@ -46,11 +50,11 @@ define([
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected:not(.disabled)"                     : "showNewSelect",
+                "click .current-selected:not(.disabled)"                          : "showNewSelect",
                 "click #createItem"                                               : "createDialog",
                 "click #createJob"                                                : "createJob",
                 "change input:not(.checkbox, .check_all, .statusCheckbox)"        : "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove)"                       : "renderJobWTracks",
+                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)" : "renderJobWTracks",
                 "mouseover #jobsItem"                                             : "showRemoveButton",
                 "mouseleave #jobsItem"                                            : "hideRemoveButton",
                 "click .fa.fa-trash"                                              : "removeJobAndWTracks",
@@ -58,7 +62,9 @@ define([
                 "click #saveName"                                                 : "saveNewJobName",
                 "keydown input.editing "                                          : "keyDown",
                 'click'                                                           : 'hideSelect',
-                'keydown'                                                         : 'keydownHandler'
+                'keydown'                                                         : 'keydownHandler',
+                "click a.quotation"                                              : "viewQuotation",
+                "click a.invoice"                                                : "viewInvoice"
             },
 
             initialize: function (options) {
@@ -67,6 +73,52 @@ define([
                 this.formModel.urlRoot = '/Projects/';
                 this.responseObj = {};
                 this.proformValues = {};
+            },
+
+            viewQuotation: function(e){
+                e.stopPropagation();
+
+                var target = e.target;
+                var id = $(target).attr('data-id');
+                var model = new quotationModel({validate: false});
+
+                model.urlRoot = '/Order/form/' + id;
+                model.fetch({
+                    success: function (model) {
+                        new EditViewOrder({
+                            model     : model,
+                            onlyView: true
+                        });
+                    },
+                    error  : function (xhr) {
+                        alert('Please refresh browser');
+                    }
+                });
+            },
+
+            viewInvoice: function(e){
+                e.stopPropagation();
+
+                var target = e.target;
+                var id = $(target).attr('data-id');
+                var model = new invoiceModel({validate: false});
+
+                model.urlRoot = '/Invoice/form';
+                model.fetch({
+                    data   : {
+                        id       : id,
+                        currentDb: App.currentDb
+                    },
+                    success: function (model) {
+                        new editViewInvoice({
+                            model: model,
+                            notCreate: true
+                        });
+                    },
+                    error  : function () {
+                        alert('Please refresh browser');
+                    }
+                });
             },
 
             keyDown: function (e) {

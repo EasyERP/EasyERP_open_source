@@ -35,6 +35,8 @@
             <th>Sprint</th>
             <th>Status</th>
             <th>Type</th>
+            <th>Order</th>
+            <th>Invoice</th>
             <th>Employees</th>
             <th>Hours</th>
             <th>Cost</th>
@@ -70,6 +72,8 @@
                     <li>Not Quoted</li>
                 </ul>
             </td>
+            <td><a data-id="<%=element.quotation._id ? element.quotation._id._id : null%>" class="quotation"><%=element.quotation.name%></a></td>
+            <td><a data-id="<%=element.invoice._id ? element.invoice._id._id : null%>" class="invoice"><%=element.invoice.name%></a></td>
             <td><%=element.budget.projectTeam.length%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
