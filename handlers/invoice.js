@@ -215,13 +215,7 @@ var Invoice = function (models, event) {
                 invoice.salesPerson._id = order.project.projectmanager._id;
                 invoice.salesPerson.name = order.project.projectmanager.name;
 
-                invoice.save(function (err, _invoice) {
-                    if (err) {
-                        return callback(err);
-                    }
-
-                    journalEntryComposer(_invoice, dbIndex, callback);
-                });
+                invoice.save(callback);
 
                 async.each(order.products, function (product, cb) {
 
@@ -256,13 +250,7 @@ var Invoice = function (models, event) {
                         invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;
                     }
 
-                    invoice.save(function (err, _invoice) {
-                        if (err) {
-                            return callback(err);
-                        }
-
-                        journalEntryComposer(_invoice, dbIndex, callback);
-                    });
+                    invoice.save(callback);
                 })
 
             }
@@ -326,6 +314,7 @@ var Invoice = function (models, event) {
         var db = req.session.lastDb;
         var id = req.params.id;
         var data = req.body;
+        var journalId = data.journal;
         var moduleId;
         var isWtrack;
         var Invoice;
@@ -336,10 +325,12 @@ var Invoice = function (models, event) {
         }
 
         if (isWtrack) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+            Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+            Invoice = models.get(db, 'Invoice', InvoiceSchema);
         }
+
+        delete data.journal;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
@@ -355,7 +346,22 @@ var Invoice = function (models, event) {
                             return next(err);
                         }
 
-                        res.status(200).send(invoice);
+                        if(!invoice.journal){
+                            Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                journalEntryComposer(invoice, db, function(err, response){
+                                    if(err){
+                                        return next(err);
+                                    }
+                                    res.status(200).send(invoice);
+                                });
+                            });
+                        } else {
+                            res.status(200).send(invoice);
+                        }
                     });
                 } else {
                     res.status(403).send();
