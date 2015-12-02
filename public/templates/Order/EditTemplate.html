@@ -43,11 +43,16 @@
                                     <dd>
                                         <span><%=model.orderDate%></span>
                                     </dd>
-                                    <dt><label>Deliver To</label></dt>
+                                    <!--<dt><label>Deliver To</label></dt>
                                     <dd>
                                         <%if(model.deliverTo){%>
                                             <a id="deliveryDd" href="#easyErp/Companies/form/<%=model.deliverTo._id%>" data-id="<%=model.deliverTo._id%>"><%=model.deliverTo.name%></a>
                                         <%}%>
+                                    </dd>-->
+
+                                    <dt><label for="currencyDd">Currency</label></dt>
+                                    <dd>
+                                        <a id="currencyDd" class="current-selected" href="javascript:;">Select</a>
                                     </dd>
                                 </dl>
                             </div>

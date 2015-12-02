@@ -443,6 +443,8 @@ define([
                     }).render().el
                 );
 
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, false);
+
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
