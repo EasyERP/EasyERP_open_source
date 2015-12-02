@@ -127,10 +127,10 @@ define([
                 populate.get("#creditDd", "/chartOfAccount/getForDd", {}, 'name', this, true, true);
 
                 this.responseObj['#typeDd'] = [{
-                    _id : 'Invoice',
+                    _id : 'invoice',
                     name: 'Invoice'
                 }, {
-                    _id : 'Payment',
+                    _id : 'payment',
                     name: 'Payment'
                 }];
 

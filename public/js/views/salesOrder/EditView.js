@@ -152,55 +152,60 @@ define([
                     currency: this.currentModel.currency
                 };
 
-                dataService.postData(url, data, function (err, response) {
-                    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+                this.saveItem(function (err) {
+                    if (!err) {
 
-                    if (err) {
-                        alert('Can\'t receive invoice');
-                    } else {
+                        dataService.postData(url, data, function (err, response) {
+                            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
-                        if (self.redirect) {
-                            var _id = window.location.hash.split('form/')[1];
+                            if (err) {
+                                alert('Can\'t receive invoice');
+                            } else {
 
-                            var tr = $("[data-id=" + orderId + "]");
+                                if (self.redirect) {
+                                    var _id = window.location.hash.split('form/')[1];
 
-                            tr.addClass('notEditable');
+                                    var tr = $("[data-id=" + orderId + "]");
 
-                            tr.find('.checkbox').addClass('notRemovable');
+                                    tr.addClass('notEditable');
 
-                            tr.find('.workflow').find('a').text("Invoiced");
+                                    tr.find('.checkbox').addClass('notRemovable');
 
-                            var filter = {
-                                'project': {
-                                    key  : 'project._id',
-                                    value: [_id]
+                                    tr.find('.workflow').find('a').text("Invoiced");
+
+                                    var filter = {
+                                        'project': {
+                                            key  : 'project._id',
+                                            value: [_id]
+                                        }
+                                    };
+
+
+                                    self.collection = new invoiceCollection({
+                                        count      : 50,
+                                        viewType   : 'list',
+                                        contentType: 'salesInvoice',
+                                        filter     : filter
+                                    });
+
+                                    function createView() {
+
+                                        this.invoiceView = new InvoiceView({
+                                            model    : self.collection,
+                                            activeTab: true
+                                        });
+
+                                        this.invoiceView.showDialog(orderId);
+
+                                    };
+
+                                    self.collection.unbind();
+                                    self.collection.bind('reset', createView);
+                                } else {
+                                    Backbone.history.navigate(redirectUrl, {trigger: true});
                                 }
-                            };
-
-
-                            self.collection = new invoiceCollection({
-                                count      : 50,
-                                viewType   : 'list',
-                                contentType: 'salesInvoice',
-                                filter     : filter
-                            });
-
-                            function createView() {
-
-                                this.invoiceView = new InvoiceView({
-                                    model    : self.collection,
-                                    activeTab: true
-                                });
-
-                                this.invoiceView.showDialog(orderId);
-
-                            };
-
-                            self.collection.unbind();
-                            self.collection.bind('reset', createView);
-                        } else {
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
-                        }
+                            }
+                        });
                     }
                 });
             },
@@ -236,7 +241,7 @@ define([
                 });
             },
 
-            saveItem: function () {
+            saveItem: function (invoiceCb) {
 
                 var self = this;
                 var mid = 55;
@@ -347,9 +352,17 @@ define([
                             Backbone.history.fragment = "";
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
+
+                            if (invoiceCb && typeof invoiceCb === 'function') {
+                                return invoiceCb(null);
+                            }
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
+
+                            if (invoiceCb && typeof invoiceCb === 'function') {
+                                return invoiceCb(xhr.text);
+                            }
                         }
                     });
 
