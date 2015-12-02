@@ -140,13 +140,17 @@ define([
                     currency: this.currentModel.currency
                 };
 
-                dataService.postData(url, data, function (err, response) {
-                    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+                this.saveItem(function (err) {
+                    if (!err) {
+                        dataService.postData(url, data, function (err, response) {
+                            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
-                    if (err) {
-                        alert('Can\'t receive invoice');
-                    } else {
-                        Backbone.history.navigate(redirectUrl, {trigger: true});
+                            if (err) {
+                                alert('Can\'t receive invoice');
+                            } else {
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                            }
+                        });
                     }
                 });
             },
@@ -182,7 +186,7 @@ define([
                 });
             },
 
-            saveItem: function () {
+            saveItem: function (invoiceCb) {
                 var self = this;
                 var mid = 55;
                 var thisEl = this.$el;
@@ -280,9 +284,17 @@ define([
                             Backbone.history.fragment = "";
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
+
+                            if (invoiceCb && typeof invoiceCb === 'function') {
+                                return invoiceCb(null);
+                            }
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
+
+                            if (invoiceCb && typeof invoiceCb === 'function') {
+                                return invoiceCb(xhr.text);
+                            }
                         }
                     });
 
