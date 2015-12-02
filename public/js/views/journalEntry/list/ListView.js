@@ -6,10 +6,11 @@ define([
         'collections/journalEntry/filterCollection',
         'dataService',
         'custom',
-        'constants'
+        'constants',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom, CONSTANTS) {
+    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom, CONSTANTS, helpers) {
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
             listItemView            : listItemView,
@@ -31,13 +32,37 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-            events: {
+            events: {},
 
+            calcTotal: function () {
+                var $curEl = this.$el;
+                var $rows = $curEl.find('#listTable tr').not('#listFooter');
+
+                var total = {
+                    debit : 0,
+                    credit: 0
+                }
+
+                $rows.each(function (index, element) {
+                    var $curElement = $(element);
+                    var $debit = $curElement.find('.debit');
+                    var $credit = $curElement.find('.credit');
+
+                    var debitVal = parseInt($debit.attr('data-amount'));
+                    var creditVal = parseInt($credit.attr('data-amount'));
+
+                    total.debit += debitVal;
+                    total.credit += creditVal;
+                })
+
+                return total;
             },
 
             render: function () {
                 var $currentEl;
                 var itemView;
+                var total;
+                var $footer;
 
                 $('.ui-dialog ').remove();
 
@@ -52,12 +77,18 @@ define([
                 itemView.bind('incomingStages', this.pushStages, this);
 
 
-                $currentEl.append(itemView.render());//added two parameters page and items number
+                $currentEl.prepend(itemView.render());//added two parameters page and items number
 
                 this.renderCheckboxes();
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
+                total = this.calcTotal();
+
+                $footer = $currentEl.find('#listFooter');
+
+                $footer.find('#totalDebit').text(helpers.currencySplitter(total['debit'].toFixed(2)));
+                $footer.find('#totalCredit').text(helpers.currencySplitter(total['credit'].toFixed(2)));
             }
 
         });
