@@ -1,5 +1,5 @@
 define([
-        'text!templates/invoiceAging/TopBarTemplate.html',
+        'text!templates/journalEntry/TopBarTemplate.html',
         'custom',
         'common',
         'constants'
@@ -7,7 +7,7 @@ define([
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
-            contentType: CONSTANTS.INVOICEAGING,
+            contentType: CONSTANTS.JOURNALENTRY,
             template: _.template(ContentTopBarTemplate),
 
             events: {
