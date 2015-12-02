@@ -73,6 +73,30 @@ var Module = function (models) {
             cb(null, response);
         });
     };
+
+    this.getForView = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+
+        var data = req.query;
+        var sort = data.sort ? data.sort : {_id: 1};
+
+        access.getReadAccess(req, req.session.uId, 85, function (access) {
+            if (access) {
+                Model
+                    .find({})
+                    .sort(sort)
+                    .exec(function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send(result);
+                    });
+            } else {
+                res.status(403).send();
+            }
+        });
+    };
 };
 
 module.exports = Module;

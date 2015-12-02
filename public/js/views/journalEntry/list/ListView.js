@@ -1,9 +1,9 @@
 define([
         'views/listViewBase',
-        'text!templates/invoiceAging/list/ListHeader.html',
-        'views/invoiceAging/list/ListItemView',
-        'models/invoiceAging',
-        'collections/invoiceAging/filterCollection',
+        'text!templates/journalEntry/list/ListHeader.html',
+        'views/journalEntry/list/ListItemView',
+        'models/journalEntry',
+        'collections/journalEntry/filterCollection',
         'dataService',
         'custom',
         'constants'

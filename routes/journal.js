@@ -8,6 +8,7 @@ module.exports = function (models) {
     var _journalEntryHandler = new journalEntryHandler(models);
 
     router.get('/getForDd', _journalHandler.getForDd);
+    router.get('/journalEntry/:viewType', _journalEntryHandler.getForView);
     router.get('/:viewType', _journalHandler.getForView);
     router.post('/', _journalHandler.create);
     router.post('/journalEntry', _journalEntryHandler.create);
