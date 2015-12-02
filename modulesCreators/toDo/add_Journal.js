@@ -53,7 +53,6 @@ MongoClient.connect(url, function (err, db) {
         });
     };
 
-
     function profileUpdater(child, child2, callback) {
         var i;
 
@@ -100,7 +99,6 @@ MongoClient.connect(url, function (err, db) {
             }
         });
     };
-
 
     async.waterfall([childModule, profileUpdater], function (err, res) {
         if (err) {
