@@ -29,7 +29,7 @@ module.exports = (function () {
         invoiceDate: {type: Date, default: Date.now},
         dueDate    : Date,
         paymentDate: Date,
-
+        journal: {type: ObjectId, ref: 'journal', default: null},
         currency: {
             _id : {type: ObjectId, ref: 'currency', default: null},
             name: {type: String, default: ''},
