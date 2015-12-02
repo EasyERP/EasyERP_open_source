@@ -1,9 +1,9 @@
 define([
         'views/listViewBase',
-        'text!templates/invoiceAging/list/ListHeader.html',
-        'views/invoiceAging/list/ListItemView',
-        'models/invoiceAging',
-        'collections/invoiceAging/filterCollection',
+        'text!templates/journal/list/ListHeader.html',
+        'views/journal/list/ListItemView',
+        'models/JournalModel',
+        'collections/journal/filterCollection',
         'dataService',
         'custom'
     ],
@@ -13,8 +13,8 @@ define([
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            totalCollectionLengthUrl: '/invoice/invoiceAging/totalCollectionLength',
-            contentType             : 'invoiceAging',
+            totalCollectionLengthUrl: '/journal/totalCollectionLength',
+            contentType             : 'journal',
 
             initialize: function (options) {
                 $(document).off("click");

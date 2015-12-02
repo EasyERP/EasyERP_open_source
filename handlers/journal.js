@@ -29,7 +29,7 @@ var Module = function (models) {
         var data = req.query;
         var sort = data.sort ? data.sort : {_id: 1};
 
-        access.getReadAccess(req, req.session.uId, 82, function (access) {
+        access.getReadAccess(req, req.session.uId, 85, function (access) {
             if (access) {
                 Model.find({}).sort(sort).exec(function (err, result) {
                     if (err) {
