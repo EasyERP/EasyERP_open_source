@@ -7,7 +7,7 @@ module.exports = function (models) {
     var _journalHandler = new journalHandler(models);
     var _journalEntryHandler = new journalEntryHandler(models);
 
-    //router.get('/', handler.getForView);
+    router.get('/', _journalHandler.getForView);
     router.post('/', _journalHandler.create);
     router.post('/journalEntry', _journalEntryHandler.create);
     //router.delete('/:id', handler.remove);
