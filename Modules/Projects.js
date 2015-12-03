@@ -8,7 +8,9 @@ var Project = function (models, event) {
     var projectSchema = mongoose.Schemas['Project'];
     var projectTypeSchema = mongoose.Schemas['projectType'];
     var prioritySchema = mongoose.Schemas['Priority'];
+    var userSchema = mongoose.Schemas['User'];
     var fs = require('fs');
+    var async = require('async');
 
     var CONSTANTS = require('../constants/mainConstants');
 
@@ -546,8 +548,10 @@ var Project = function (models, event) {
 
     function getProjectsForList(req, data, response) {
         var res = {};
+        var Users = models.get(req.session.lastDb, 'Users', userSchema);
         var skip = (data.page - 1) * data.count;
         var limit = data.count;
+        var sort;
         res['data'] = [];
         models.get(req.session.lastDb, "Department", department).aggregate(
             {
@@ -632,60 +636,85 @@ var Project = function (models, event) {
                                      }*/
                                 }
                                 var query = models.get(req.session.lastDb, "Project", projectSchema)
-                                .find(obj);
-
+                                //.find(obj);
+                                //
                                 if (data.sort) {
-                                    query.sort(data.sort);
+                                    sort = data.sort;
                                 } else {
-                                    query.sort({"editedBy.date": -1});
+                                    sort = {"editedBy.date": -1};
                                 }
 
-                                //query.aggregate({
-                                //    $match: obj
+                                query.aggregate([
+                                    //{
+                                  //  $match: obj
                                 //}, {
-                                ////},{
-                                ////    $skip: skip
-                                ////},{
-                                ////    $limit: limit
-                                ////},{
-                                //    $project: {
-                                //        notRemovable : {
-                                //            $size: "$budget.projectTeam"
-                                //        },
-                                //            createdBy    : 1,
-                                //            editedBy     : 1,
-                                //            workflow     : 1,
-                                //            projectName  : 1,
-                                //            health       : 1,
-                                //            customer     : 1,
-                                //            progress     : 1,
-                                //            StartDate    : 1,
-                                //            EndDate      : 1,
-                                //            TargetEndDate: 1
-                                //    }
-                                //
-                                //}, function (error, _res) {
-                                //    res['data'] = _res;
-                                //    response.send(res);
-                                //});
+                                {
+                                    $skip: skip
+                                },{
+                                    $limit: limit
+                                },{
+                                    $project: {
+                                        notRemovable : {
+                                            $size: "$budget.projectTeam"
+                                        },
+                                            createdBy    : 1,
+                                            editedBy     : 1,
+                                            workflow     : 1,
+                                            projectName  : 1,
+                                            health       : 1,
+                                            customer     : 1,
+                                            progress     : 1,
+                                            StartDate    : 1,
+                                            EndDate      : 1,
+                                            TargetEndDate: 1
+                                    }
 
-                                query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
-                                    populate('createdBy.user', 'login').
-                                    populate('editedBy.user', 'login').
-                                    //populate('projectmanager', 'name').
-                                    // populate('customer', 'name').
-                                    // populate('workflow._id', 'status').
-                                    skip((data.page - 1) * data.count).
-                                    limit(data.count).
-                                    exec(function (error, _res) {
-                                        if (!error) {
-                                            res['data'] = _res;
-                                            //res['listLength'] = _res.length;
-                                            response.send(res);
-                                        } else {
-                                            console.log(error);
+                                }, {
+                                        $sort: sort
+                                    }], function (error, _res) {
+
+                                        function populateCreated(cb){
+                                            Users.populate(_res, {
+                                                path: 'createdBy.user',
+                                                select: 'login'
+                                            }, function(){
+                                                cb();
+                                            });
                                         }
-                                    });
+
+                                        function populateEdited(cb){
+                                            Users.populate(_res, {
+                                                path: 'editedBy.user',
+                                                select: 'login'
+                                            }, function(){
+                                                cb();
+                                            });
+                                        }
+
+                                        async.parallel([populateCreated, populateEdited], function(err, result){
+                                            res['data'] = _res;
+                                            response.send(res);
+                                        });
+
+                                });
+
+                                //query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
+                                //    populate('createdBy.user', 'login').
+                                //    populate('editedBy.user', 'login').
+                                //    //populate('projectmanager', 'name').
+                                //    // populate('customer', 'name').
+                                //    // populate('workflow._id', 'status').
+                                //    skip((data.page - 1) * data.count).
+                                //    limit(data.count).
+                                //    exec(function (error, _res) {
+                                //        if (!error) {
+                                //            res['data'] = _res;
+                                //            //res['listLength'] = _res.length;
+                                //            response.send(res);
+                                //        } else {
+                                //            console.log(error);
+                                //        }
+                                //    });
                             } else {
                                 console.log(err);
                             }
