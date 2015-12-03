@@ -452,6 +452,7 @@ define([
                 var self = this;
                 var mapData;
                 var sortOptions;
+                var intFiltersArray = ['week', 'month', 'year'];
 
                 if (!App.filtersValues || !App.filtersValues[self.parentContentType]) {
                     return setTimeout(function () {
@@ -462,6 +463,14 @@ define([
                 this.filterObject = App.filtersValues[this.parentContentType];
 
                 this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
+
+                if (intFiltersArray.indexOf(filterView) !== -1) {
+                    groupOptions = {};
+                    groupOptions.sort = {};
+                    groupOptions.sort.key = 'name';
+                    groupOptions.sort.order = 1;
+                    groupOptions.sort.int = true;
+                }
 
                 if (groupOptions && groupOptions.sort) {
                     sortOptions = groupOptions.sort;
