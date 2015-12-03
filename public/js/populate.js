@@ -45,8 +45,8 @@ define([
                 content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                     return {
                         _id             : item._id,
-                        name: item.departmentName,
-                        level: item.nestingLevel,
+                        name            : item.departmentName,
+                        level           : item.nestingLevel,
                         parentDepartment: item.parentDepartment
                     };
                 }));
@@ -65,9 +65,9 @@ define([
                 content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                     return {
                         _id     : item._id,
-                        name: item.name,
-                        level: item.nestingLevel,
-                        parent: item.parent,
+                        name    : item.name,
+                        level   : item.nestingLevel,
+                        parent  : item.parent,
                         fullName: item.fullName
                     };
                 }));
@@ -169,8 +169,13 @@ define([
             var start;
             var end;
             var allPages;
+            var $curUl;
+            var curUlHeight;
+            var curUlPosition;
+            var curUlOffset;
+            var $window = $(window);
 
-            if (!data){
+            if (!data) {
                 attr = targetEl.attr("id") || targetEl.attr("data-id");
                 data = context.responseObj["#" + attr];
             }
@@ -226,14 +231,27 @@ define([
             if (data && data.length) {
                 parent.append(_.template(selectTemplate, {
                     collection    : data.slice(start, end),
-                    currentPage: currentPage,
-                    allPages   : allPages,
-                    start      : start,
-                    end        : end,
-                    dataLength : data.length,
+                    currentPage   : currentPage,
+                    allPages      : allPages,
+                    start         : start,
+                    end           : end,
+                    dataLength    : data.length,
                     elementVisible: elementVisible
                 }));
-            } else if(attr === 'jobs'){
+
+                $curUl = parent.find('.newSelectList');
+                curUlOffset = $curUl.offset();
+                curUlPosition = $curUl.position();
+                curUlHeight = $curUl.outerHeight();
+
+                if (curUlOffset.top + curUlHeight > $window.scrollTop() + $window.height()) {
+                    $curUl.css({
+                        top: curUlPosition.top - curUlHeight - parent.outerHeight()
+                    });
+                }
+
+
+            } else if (attr === 'jobs') {
                 parent.append(s);
             }
 
@@ -320,11 +338,11 @@ define([
 
             parent.append(_.template(selectTemplate, {
                 collection    : data.slice(start, end),
-                currentPage: currentPage,
-                allPages   : allPages,
-                start      : start,
-                end        : end,
-                dataLength : data.length,
+                currentPage   : currentPage,
+                allPages      : allPages,
+                start         : start,
+                end           : end,
+                dataLength    : data.length,
                 elementVisible: elementVisible
             }));
 
@@ -363,11 +381,11 @@ define([
 
             parent.append(_.template(selectTemplate, {
                 collection    : data.slice(start, end),
-                currentPage: currentPage,
-                allPages   : allPages,
-                start      : start,
-                end        : end,
-                dataLength : data.length,
+                currentPage   : currentPage,
+                allPages      : allPages,
+                start         : start,
+                end           : end,
+                dataLength    : data.length,
                 elementVisible: elementVisible,
             }));
         };
@@ -403,11 +421,11 @@ define([
             var allPages = Math.ceil(data.length / elementVisible);
             parent.append(_.template(selectTemplate, {
                 collection    : data.slice(start, end),
-                currentPage: currentPage,
-                allPages   : allPages,
-                start      : start,
-                end        : end,
-                dataLength : data.length,
+                currentPage   : currentPage,
+                allPages      : allPages,
+                start         : start,
+                end           : end,
+                dataLength    : data.length,
                 elementVisible: elementVisible,
                 level         : data.level
             }));
@@ -424,10 +442,10 @@ define([
 
         return {
             get                 : get,
-            get2name: get2name,
-            getPriority: getPriority,
-            getWorkflow: getWorkflow,
-            showSelect : showSelect,
+            get2name            : get2name,
+            getPriority         : getPriority,
+            getWorkflow         : getWorkflow,
+            showSelect          : showSelect,
             getParrentDepartment: getParrentDepartment,
             getParrentCategory  : getParrentCategory,
             getCompanies        : getCompanies,
