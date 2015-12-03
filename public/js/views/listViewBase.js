@@ -4,7 +4,7 @@ define([
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
         'common',
-        'dataService',
+        'dataService'
     ],
 
     function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
