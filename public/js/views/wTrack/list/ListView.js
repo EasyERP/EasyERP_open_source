@@ -22,24 +22,24 @@ define([
 
     function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment) {
         var wTrackListView = listViewBase.extend({
-            createView              : createView,
-            listTemplate            : listTemplate,
-            listItemView            : listItemView,
-            contentCollection       : contentCollection,
-            filterView              : filterView,
-            contentType             : 'wTrack',
-            viewType                : 'list',
-            responseObj             : {},
-            wTrackId                : null, //need for edit rows in listView
+            createView: createView,
+            listTemplate: listTemplate,
+            listItemView: listItemView,
+            contentCollection: contentCollection,
+            filterView: filterView,
+            contentType: 'wTrack',
+            viewType: 'list',
+            responseObj: {},
+            wTrackId: null, //need for edit rows in listView
             totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable              : null, //cashedJqueryEllemnt
-            editCollection          : null,
-            selectedProjectId       : [],
-            genInvoiceEl            : null,
-            copyEl                  : null,
-            changedModels           : {},
-            exportToCsvUrl          : '/wTrack/exportToCsv',
-            exportToXlsxUrl         : '/wTrack/exportToXlsx',
+            $listTable: null, //cashedJqueryEllemnt
+            editCollection: null,
+            selectedProjectId: [],
+            genInvoiceEl: null,
+            copyEl: null,
+            changedModels: {},
+            exportToCsvUrl: '/wTrack/exportToCsv',
+            exportToXlsxUrl: '/wTrack/exportToXlsx',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -56,20 +56,19 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-                this.filterView;
             },
 
             events: {
-                "click .stageSelect"                                              : "showNewSelect",
+                "click .stageSelect": "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable"                                               : "editRow",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "change .autoCalc"                                                : "autoCalc",
-                "change .editable "                                               : "setEditable",
-                "keydown input.editing "                                          : "keyDown",
-                "change .listCB"                                                  : "setAllTotalVals",
-               // "click"                                                           : "removeInputs"
+                "click td.editable": "editRow",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "change .autoCalc": "autoCalc",
+                "change .editable ": "setEditable",
+                "keydown input.editing ": "keyDown",
+                //"change .listCB": "setAllTotalVals"
+                // "click"                                                           : "removeInputs"
             },
 
             removeInputs: function () {
@@ -84,13 +83,13 @@ define([
                     projectsDdContainer.css('color', 'red');
 
                     App.render({
-                        type   : 'error',
+                        type: 'error',
                         message: CONSTANTS.SELECTP_ROJECT
                     });
                 }
 
                 new CreateJob({
-                    model     : this.projectModel,
+                    model: this.projectModel,
                     wTrackView: this
                 });
 
@@ -126,6 +125,7 @@ define([
                 var assigned;
                 var customer;
                 var total = 0;
+                var revenue;
 
                 async.each(selectedWtracks, function (el, cb) {
                     var id = $(el).val();
@@ -136,9 +136,9 @@ define([
                         model.set({revenue: parseFloat(reven) * 100});
                     }
 
-                    var revenue = reven.toString().replace('$', '');
-
+                    revenue = reven.toString().replace('$', '');
                     revenue = parseFloat(revenue);
+
                     if (typeof(reven) === 'number') {
                         revenue = revenue / 100;
                     }
@@ -156,11 +156,11 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks : wTracks,
-                            project : project,
+                            wTracks: wTracks,
+                            project: project,
                             assigned: assigned,
                             customer: customer,
-                            total   : total
+                            total: total
                         });
                     }
                 });
@@ -525,8 +525,8 @@ define([
                     dataService.getData('/payroll/getByMonth',
                         {
                             month: month,
-                            year : year,
-                            _id  : employeeId
+                            year: year,
+                            _id: employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -779,8 +779,8 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
                 $currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
+                    collection: this.collection,
+                    page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -895,10 +895,10 @@ define([
                 var week = now.getWeek();
                 var rate = 3;
                 var startData = {
-                    year : year,
+                    year: year,
                     month: month,
-                    week : week,
-                    rate : rate
+                    week: week,
+                    rate: rate
                 };
 
                 var model = new currentModel(startData);
@@ -998,7 +998,7 @@ define([
                     rowTd = row.find('[data-content="' + dataRow + '"]')
 
                     rowTdVal += parseFloat(rowTd.html()) * 100;
-                })
+                });
 
                 if (money) {
                     totalTd.text((rowTdVal / 100).toFixed(2));
@@ -1007,7 +1007,9 @@ define([
                 }
             },
 
-            setAllTotalVals: function () {
+            setAllTotalVals: function (e) {
+                //e.stopPropagation();
+
                 this.getAutoCalcField('hours', 'worked');
                 this.getAutoCalcField('monHours', '1');
                 this.getAutoCalcField('tueHours', '2');
@@ -1027,7 +1029,7 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter       : this.filter,
+                    filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -1046,8 +1048,8 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection : this.collection,
-                        page       : holder.find("#currentShowPage").val(),
+                        collection: this.collection,
+                        page: holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1107,7 +1109,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait   : true,
+                                    wait: true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -1116,7 +1118,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error  : function (model, res) {
+                                    error: function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }
