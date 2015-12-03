@@ -68,7 +68,12 @@ define([
                 "change .autoCalc"                                                : "autoCalc",
                 "change .editable "                                               : "setEditable",
                 "keydown input.editing "                                          : "keyDown",
-                "change .listCB"                                                  : "setAllTotalVals"
+                "change .listCB"                                                  : "setAllTotalVals",
+               // "click"                                                           : "removeInputs"
+            },
+
+            removeInputs: function () {
+                this.setChangedValueToModel();
             },
 
             generateJob: function () {
@@ -1183,6 +1188,8 @@ define([
 
                     this.createdCopied = false;
                 }
+
+                self.changedModels = {};
             }
         });
 

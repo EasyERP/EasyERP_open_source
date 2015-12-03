@@ -65,6 +65,11 @@ define([
                 var sortConst;
                 var sortBy;
                 var sortObject;
+                var newRows = this.$el.find('#false');
+
+                if (newRows.length){
+                    return alert('Please, save previous changes or cancel them!');
+                }
 
                 this.collection.unbind('reset');
                 this.collection.unbind('showmore');
@@ -358,6 +363,10 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
+                }
+
+                if (typeof(this.setChangedValueToModel) === "function"){ //added for SetChangesToModel in ListView
+                    this.setChangedValueToModel();
                 }
             },
 

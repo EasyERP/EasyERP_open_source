@@ -57,8 +57,7 @@ define([
 
             deleteEvent: function (event) {
                 event.preventDefault();
-                var answer = confirm("Really DELETE items ?!");
-                if (answer == true) this.trigger('deleteEvent');
+                this.trigger('deleteEvent');
             }
         });
 

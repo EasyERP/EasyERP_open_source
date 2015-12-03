@@ -20,6 +20,7 @@ var requestHandler = function (app, event, mainDb) {
     var campaigns = require("./Modules/Campaigns.js")(models);
     var opportunities = require("./Modules/Opportunities.js")(models, event);
     var modules = require("./Modules/Module.js")(models);
+    var modules = require("./Modules/Module.js")(models);
     var sources = require("./Modules/Sources.js")(models);
     var languages = require("./Modules/Languages.js")(models);
     var jobType = require("./Modules/JobType.js")(models);
@@ -856,6 +857,39 @@ var requestHandler = function (app, event, mainDb) {
             }
         });
     });
+
+    event.on('updateNames', function (options) {
+        //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
+        var id = options.id;
+        var targetModel = options.targetModel;
+        var searchField = options.searchField;
+        var fieldName = options.fieldName;
+        var fieldValue = options.fieldValue;
+        var fieldInArray = options.fieldInArray;
+        var projectId = options.projectId;
+        var searchObject = {};
+        var updateObject = {};
+
+        searchObject[searchField] = id;
+
+        if (fieldInArray) {
+            updateObject['$set'] = {};
+            updateObject['$set'][fieldName] = fieldValue;
+        } else {
+            updateObject[fieldName] = fieldValue;
+        }
+
+        targetModel.update(searchObject, updateObject, {multi: true}, function (err) {
+            if (err) {
+                logWriter.log('requestHandler_eventEmiter_updateName', err.message);
+            }
+
+            if (projectId){
+                event.emit('fetchJobsCollection', {project: projectId});
+            }
+        });
+    });
+
     //binding for Sequence
     event.on('updateSequence', function (model, sequenceField, start, end, workflowStart, workflowEnd, isCreate, isDelete, callback) {
         var query;

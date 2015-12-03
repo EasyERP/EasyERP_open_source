@@ -5,6 +5,7 @@ define([
         'views/listViewBase',
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/customerPayments/forWTrack/ListHeader.html',
+        'text!templates/customerPayments/forWTrack/cancelTemplate.html',
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
         'views/Filter/FilterView',
@@ -14,9 +15,10 @@ define([
         'models/PaymentModel',
         'dataService',
         'populate',
-        'async'
+        'async',
+        "helpers"
     ],
-    function (listViewBase, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
+    function (listViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, listTotalView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async, helpers) {
         var PaymentListView = listViewBase.extend({
 
             listTemplate            : listTemplate,
@@ -98,6 +100,114 @@ define([
 
                 return !!edited.length;
             },
+
+            deleteItems: function () {
+                var $currentEl = this.$el;
+                var that = this,
+                    mid = 68,
+                    model;
+                var localCounter = 0;
+                var count = $("#listTable input:checked").length;
+                this.collectionLength = this.collection.length;
+
+                if (!this.changed) {
+                    var answer = confirm("Really DELETE items ?!");
+                    var value;
+
+                    if (answer === true) {
+                        $.each($("#listTable input:checked"), function (index, checkbox) {
+                            value = checkbox.value;
+
+                            if (value.length < 24) {
+                                that.editCollection.remove(value);
+                                that.editCollection.on('remove', function () {
+                                    this.listLength--;
+                                    localCounter++;
+
+                                    if (index === count - 1) {
+                                        that.triggerDeleteItemsRender(localCounter);
+                                    }
+
+                                }, that);
+                            } else {
+
+                                model = that.collection.get(value);
+                                model.destroy({
+                                    headers: {
+                                        mid: mid
+                                    },
+                                    wait   : true,
+                                    success: function () {
+                                        that.listLength--;
+                                        localCounter++;
+
+                                        if (index === count - 1) {
+                                            that.triggerDeleteItemsRender(localCounter);
+                                        }
+                                    },
+                                    error  : function (model, res) {
+                                        if (res.status === 403 && index === 0) {
+                                            alert("You do not have permission to perform this action");
+                                        }
+                                        that.listLength--;
+                                        localCounter++;
+                                        if (index == count - 1) {
+                                            if (index === count - 1) {
+                                                that.triggerDeleteItemsRender(localCounter);
+                                            }
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            cancelChanges: function () {
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+                var copiedCreated;
+                var dataId;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.attr('data-id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.startNumber = rowNumber;
+                    tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        self.editCollection = new editCollection(collection.toJSON());
+                        self.editCollection.on('saved', self.savedNewModel, self);
+                        self.editCollection.on('updated', self.updatedOptions, self);
+                        self.hideSaveCancelBtns();
+                    }
+                });
+
+                copiedCreated = this.$el.find('#false');
+                dataId = copiedCreated.attr('data-id');
+                this.editCollection.remove(dataId);
+                delete this.changedModels[dataId];
+                copiedCreated.remove();
+
+                self.changedModels = {};
+            },
+
 
             editRow: function (e, prev, next) {
                 var self = this;
