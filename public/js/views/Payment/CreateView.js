@@ -16,9 +16,9 @@ define([
     ],
     function (CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, /*invoiceView, */PaymentModel, common, populate, constants) {
         var CreateView = Backbone.View.extend({
-            el: "#paymentHolder",
+            el         : "#paymentHolder",
             contentType: "Payment",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -35,19 +35,30 @@ define([
 
                 this.render();
 
-                if(!this.forSales) {
-                   // this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
+                if (!this.forSales) {
+                    // this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
                     this.forSales = App.weTrack;
                 }
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
+                'keydown'                                          : 'keydownHandler',
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "change #paidAmount": "changePaidAmount"
+                "click .newSelectList li.miniStylePagination"      : "notHide",
+                "change #paidAmount"                               : "changePaidAmount",
+
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+            },
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
             },
 
             changePaidAmount: function (e) {
@@ -68,7 +79,7 @@ define([
                     return differenceAmountContainer.removeClass('hidden');
                 }
 
-                if(!differenceAmountContainer.hasClass('hidden')){
+                if (!differenceAmountContainer.hasClass('hidden')) {
                     return differenceAmountContainer.addClass('hidden');
                 }
             },
@@ -127,28 +138,28 @@ define([
                 period = period || null;
 
                 data = {
-                    mid: mid,
-                    forSale: this.forSales,
-                    invoice: {
-                        _id: invoiceModel._id,
-                        name: invoiceModel.name ? invoiceModel.name: invoiceModel.sourceDocument,
+                    mid             : mid,
+                    forSale         : this.forSales,
+                    invoice         : {
+                        _id     : invoiceModel._id,
+                        name    : invoiceModel.name ? invoiceModel.name : invoiceModel.sourceDocument,
                         assigned: {
-                            _id: invoiceModel.salesPerson ? invoiceModel.salesPerson._id : null,
+                            _id : invoiceModel.salesPerson ? invoiceModel.salesPerson._id : null,
                             name: invoiceModel.salesPerson ? invoiceModel.salesPerson.name : ""
                         }
                     },
-                    supplier: {
-                        _id: supplierId,
+                    supplier        : {
+                        _id     : supplierId,
                         fullName: supplierName
                     },
-                    paymentMethod: {
-                        _id: paymentMethodID,
+                    paymentMethod   : {
+                        _id : paymentMethodID,
                         name: paymentMethodName
                     },
-                    date: date,
-                    period: period,
-                    paymentRef: paymentRef,
-                    paidAmount: paidAmount,
+                    date            : date,
+                    period          : period,
+                    paymentRef      : paymentRef,
+                    paidAmount      : paidAmount,
                     differenceAmount: this.differenceAmount
                 };
 
@@ -157,18 +168,18 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             var redirectUrl = self.forSales ? "easyErp/customerPayments" : "easyErp/supplierPayments";
 
                             self.hideDialog();
 
-                            if (self.redirect){
+                            if (self.redirect) {
                                 var _id = window.location.hash.split('form/')[1];
 
                                 var filter = {
                                     'project': {
-                                        key: 'project._id',
+                                        key  : 'project._id',
                                         value: [_id]
                                     }
                                 };
@@ -196,23 +207,23 @@ define([
 
                                     var filterPayment = {
                                         'name': {
-                                            key: '_id',
+                                            key  : '_id',
                                             value: payments
                                         }
                                     };
 
                                     self.pCollection = new paymentCollection({
-                                        count: 50,
-                                        viewType: 'list',
+                                        count      : 50,
+                                        viewType   : 'list',
                                         contentType: 'customerPayments',
-                                        filter: filterPayment
+                                        filter     : filterPayment
                                     });
 
 
                                     self.pCollection.unbind();
                                     self.pCollection.bind('reset', createPayment);
 
-                                    function createPayment(){
+                                    function createPayment() {
                                         new PaymentView({
                                             model: self.pCollection
                                         }).render({activeTab: true});
@@ -226,7 +237,7 @@ define([
                                 Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -243,20 +254,20 @@ define([
 
                 this.$el = $(htmBody).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Cretae Payment",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Cretae Payment",
+                    buttons      : [
                         {
-                            id: "create-payment-dialog",
-                            text: "Create",
+                            id   : "create-payment-dialog",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
@@ -269,9 +280,9 @@ define([
                 populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true);
 
                 this.$el.find('#paymentDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 }).datepicker('setDate', new Date());
 
                 this.delegateEvents(this.events);
