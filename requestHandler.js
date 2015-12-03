@@ -20,6 +20,7 @@ var requestHandler = function (app, event, mainDb) {
     var campaigns = require("./Modules/Campaigns.js")(models);
     var opportunities = require("./Modules/Opportunities.js")(models, event);
     var modules = require("./Modules/Module.js")(models);
+    var modules = require("./Modules/Module.js")(models);
     var sources = require("./Modules/Sources.js")(models);
     var languages = require("./Modules/Languages.js")(models);
     var jobType = require("./Modules/JobType.js")(models);
