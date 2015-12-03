@@ -685,10 +685,13 @@ define([
             },
 
             checked: function (e) {
+                var $thisEl = this.$el;
+                var rawRows;
                 var checkLength;
 
                 if (this.collection.length > 0) {
-                    checkLength = $("input.listCB:checked").length;
+                    checkLength = $thisEl.find("input.listCB:checked").length;
+                    rawRows = checkLength.closest('');
 
                     this.checkProjectId(e, checkLength);
 
@@ -864,7 +867,7 @@ define([
 
                 //this.genInvoiceEl = $('#top-bar-generateBtn');
                 this.copyEl = $('#top-bar-copyBtn');
-
+                this.$saveBtn = $('#top-bar-saveBtn');
                 return this;
             },
 
