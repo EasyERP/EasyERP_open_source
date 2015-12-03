@@ -492,6 +492,12 @@ define([
                     changeYear : true
                 })/*.datepicker('setDate', model.expectedDate)*/;
 
+                this.$el.find('#orderDate').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true
+                });
+
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
