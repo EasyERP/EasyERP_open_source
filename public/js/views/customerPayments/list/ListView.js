@@ -258,7 +258,7 @@ define([
                 var editedElementContent;
                 var editedElementValue;
                 var editHolidayModel;
-                
+
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
                     editedElementRowId = editedElement.closest('tr').data('id');
