@@ -321,6 +321,11 @@ var Invoice = function (models, event) {
         var moduleId;
         var isWtrack;
         var Invoice;
+        var updateName = false;
+        var JobsModel = models.get(db, 'jobs', JobsSchema);
+        var PaymentModel = models.get(db, 'Payment', PaymentSchema);
+        var options;
+        var optionsForPayments;
 
         if (checkDb(db)) {
             moduleId = 64;
@@ -344,9 +349,34 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
+                    if (data.name){
+                        updateName = true;
+                    }
+
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
                             return next(err);
+                        }
+
+                        if (updateName){
+                            options = {
+                                id : invoice._id,
+                                targetModel : JobsModel,
+                                searchField : "invoice._id",
+                                fieldName : "invoice.name",
+                                fieldValue : invoice.name,
+                                projectId : invoice.project._id
+                            };
+
+                            optionsForPayments = {
+                                id : invoice._id,
+                                targetModel : PaymentModel,
+                                searchField : "invoice._id",
+                                fieldName : "invoice.name",
+                                fieldValue : invoice.name
+                            };
+                            event.emit("updateNames", options);
+                            event.emit("updateNames", optionsForPayments);
                         }
 
                         if(!invoice.journal){
