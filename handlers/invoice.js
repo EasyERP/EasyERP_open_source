@@ -323,6 +323,9 @@ var Invoice = function (models, event) {
         var Invoice;
         var updateName = false;
         var JobsModel = models.get(db, 'jobs', JobsSchema);
+        var PaymentModel = models.get(db, 'Payment', PaymentSchema);
+        var options;
+        var optionsForPayments;
 
         if (checkDb(db)) {
             moduleId = 64;
@@ -356,7 +359,24 @@ var Invoice = function (models, event) {
                         }
 
                         if (updateName){
-                            event.emit("updateName", invoice._id, JobsModel, "invoice._id", "invoice.name", invoice.name);
+                            options = {
+                                id : invoice._id,
+                                targetModel : JobsModel,
+                                searchField : "invoice._id",
+                                fieldName : "invoice.name",
+                                fieldValue : invoice.name,
+                                projectId : invoice.project._id
+                            };
+
+                            optionsForPayments = {
+                                id : invoice._id,
+                                targetModel : PaymentModel,
+                                searchField : "invoice._id",
+                                fieldName : "invoice.name",
+                                fieldValue : invoice.name
+                            };
+                            event.emit("updateNames", options);
+                            event.emit("updateNames", optionsForPayments);
                         }
 
                         if(!invoice.journal){
