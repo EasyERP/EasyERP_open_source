@@ -22,11 +22,11 @@ var Project = function (models, event) {
                 },
                 {
                     $group: {
-                        _id: "$project",
+                        _id     : "$project",
                         progress: {$sum: '$progress'},
-                        count: {$sum: 1},
-                        endDate: {$max: '$EndDate'},
-                        tasks: {$addToSet: '$_id'}
+                        count   : {$sum: 1},
+                        endDate : {$max: '$EndDate'},
+                        tasks   : {$addToSet: '$_id'}
                     }
                 },
                 function (err, result) {
@@ -47,8 +47,8 @@ var Project = function (models, event) {
 
                         models.get(request.session.lastDb, 'Project', projectSchema).findByIdAndUpdate(projectId, {
                                 $set: {
-                                    task: tasks,
-                                    EndDate: EndDate,
+                                    task    : tasks,
+                                    EndDate : EndDate,
                                     progress: progress
                                 }
                             }, {new: true},
@@ -82,7 +82,7 @@ var Project = function (models, event) {
                                 models.get(request.session.lastDb, 'Project', projectSchema).findByIdAndUpdate(
                                     projectId,
                                     {
-                                        $set: updateCondition,
+                                        $set : updateCondition,
                                         $push: {task: tasks._id}
                                     }, {new: true},
                                     function (err) {
@@ -180,7 +180,9 @@ var Project = function (models, event) {
         var endDate = startDate.getTime() + estimated;
         endDate = new Date(endDate);
 
-        if (endDate < startDate) return -1;                 // error code if dates transposed
+        if (endDate < startDate) {
+            return -1;
+        }                 // error code if dates transposed
 
         var iWeekday1 = startDate.getDay();                // day of week
         var iWeekday2 = endDate.getDay();
@@ -188,7 +190,9 @@ var Project = function (models, event) {
         iWeekday1 = (iWeekday1 == 0) ? 7 : iWeekday1;   // change Sunday from 0 to 7
         iWeekday2 = (iWeekday2 == 0) ? 7 : iWeekday2;
 
-        if ((iWeekday1 <= 5) && (iWeekday2 <= 5) && (iWeekday1 > iWeekday2)) iAdjust = 1;  // adjustment if both days on weekend
+        if ((iWeekday1 <= 5) && (iWeekday2 <= 5) && (iWeekday1 > iWeekday2)) {
+            iAdjust = 1;
+        }  // adjustment if both days on weekend
 
         iWeekday1 = (iWeekday1 <= 5) ? 0 : 1;    // only count weekdays
         iWeekday2 = (iWeekday2 <= 5) ? 0 : 1;
@@ -202,7 +206,6 @@ var Project = function (models, event) {
         } else {
             iDateDiff = (iWeeks * 2) + 2 * (iWeekday1 - iWeekday2);
         }
-
 
         //iDateDiff++;
         iDateDiff = iDateDiff * 1000 * 60 * 60 * 24;
@@ -303,7 +306,7 @@ var Project = function (models, event) {
                         _project.health = data.health;
                     }
 
-                    if (data.bonus){
+                    if (data.bonus) {
                         _project.bonus = data.bonus;
                     }
 
@@ -315,7 +318,7 @@ var Project = function (models, event) {
                                 res.send(500, {error: 'Project.save BD error'});
                             } else {
 
-                                if (result._id){
+                                if (result._id) {
                                     event.emit('updateProjectDetails', {req: req, _id: result._id});
                                 }
 
@@ -342,7 +345,6 @@ var Project = function (models, event) {
             res.send(500, {error: 'Project.save  error'});
         }
     };
-
 
     function getProjectStatusCountForDashboard(req, response) {
         models.get(req.session.lastDb, "Workflows", workflow).find({"wId": "Projects"}).select("_id name").exec(function (error, resWorkflow) {
@@ -410,7 +412,7 @@ var Project = function (models, event) {
                                             },
                                             {
                                                 $group: {
-                                                    _id: "$workflow._id",
+                                                    _id  : "$workflow._id",
                                                     count: {$sum: 1}
 
                                                 }
@@ -544,6 +546,8 @@ var Project = function (models, event) {
 
     function getProjectsForList(req, data, response) {
         var res = {};
+        var skip = (data.page - 1) * data.count;
+        var limit = data.count;
         res['data'] = [];
         models.get(req.session.lastDb, "Department", department).aggregate(
             {
@@ -627,31 +631,61 @@ var Project = function (models, event) {
                                      }
                                      }*/
                                 }
-                                var query = models.get(req.session.lastDb, "Project", projectSchema)
-                                    .find(obj);
+                                var query = models.get(req.session.lastDb, "Project", projectSchema);
+                                // .find(obj);
 
-                                if (data.sort) {
-                                    query.sort(data.sort);
-                                } else {
-                                    query.sort({"editedBy.date": -1});
-                                }
-                                query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
-                                    populate('createdBy.user', 'login').
-                                    populate('editedBy.user', 'login').
-                                    //populate('projectmanager', 'name').
-                                    // populate('customer', 'name').
-                                    // populate('workflow._id', 'status').
-                                    skip((data.page - 1) * data.count).
-                                    limit(data.count).
-                                    exec(function (error, _res) {
-                                        if (!error) {
-                                            res['data'] = _res;
-                                            //res['listLength'] = _res.length;
-                                            response.send(res);
-                                        } else {
-                                            console.log(error);
-                                        }
-                                    });
+                                //if (data.sort) {
+                                //    query.sort(data.sort);
+                                //} else {
+                                //    query.sort({"editedBy.date": -1});
+                                //}
+
+                                query.aggregate({
+                                    $match: obj
+                                }, {
+                                //},{
+                                //    $skip: skip
+                                //},{
+                                //    $limit: limit
+                                //},{
+                                    $project: {
+                                        notRemovable : {
+                                            $size: "$budget.projectTeam"
+                                        },
+                                            createdBy    : 1,
+                                            editedBy     : 1,
+                                            workflow     : 1,
+                                            projectName  : 1,
+                                            health       : 1,
+                                            customer     : 1,
+                                            progress     : 1,
+                                            StartDate    : 1,
+                                            EndDate      : 1,
+                                            TargetEndDate: 1
+                                    }
+
+                                }, function (error, _res) {
+                                    res['data'] = _res;
+                                    response.send(res);
+                                });
+
+                                //query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
+                                //    populate('createdBy.user', 'login').
+                                //    populate('editedBy.user', 'login').
+                                //    //populate('projectmanager', 'name').
+                                //    // populate('customer', 'name').
+                                //    // populate('workflow._id', 'status').
+                                //    skip((data.page - 1) * data.count).
+                                //    limit(data.count).
+                                //    exec(function (error, _res) {
+                                //        if (!error) {
+                                //            res['data'] = _res;
+                                //            //res['listLength'] = _res.length;
+                                //            response.send(res);
+                                //        } else {
+                                //            console.log(error);
+                                //        }
+                                //    });
                             } else {
                                 console.log(err);
                             }
@@ -1114,23 +1148,24 @@ var Project = function (models, event) {
                                     },
                                     {
                                         $project: {
-                                            _id: 1,
-                                            workflow: 1,
+                                            _id      : 1,
+                                            workflow : 1,
                                             remaining: 1
                                         }
                                     },
                                     {
                                         $group: {
-                                            _id: "$workflow",
-                                            count: {$sum: 1},
+                                            _id           : "$workflow",
+                                            count         : {$sum: 1},
                                             totalRemaining: {$sum: '$remaining'}
                                         }
                                     },
                                     function (err, responseTasks) {
                                         if (!err) {
                                             responseTasks.forEach(function (object) {
-                                                if (object.count > req.session.kanbanSettings.tasks.countPerPage)
+                                                if (object.count > req.session.kanbanSettings.tasks.countPerPage) {
                                                     data['showMore'] = true;
+                                                }
                                             });
                                             data['arrayOfObjects'] = responseTasks;
                                             res.send(data);
@@ -1210,7 +1245,7 @@ var Project = function (models, event) {
                     InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
                     Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
 
-                    if (project._id){
+                    if (project._id) {
                         event.emit('updateProjectDetails', {req: req, _id: project._id});
                     }
 
@@ -1289,7 +1324,7 @@ var Project = function (models, event) {
                     });
 
                 }
-                if (projects._id){
+                if (projects._id) {
                     event.emit('updateProjectDetails', {req: req, _id: projects._id});
                 }
                 event.emit('recollectProjectInfo');
@@ -1306,17 +1341,21 @@ var Project = function (models, event) {
         delete data.fileName;
         if (data.notes && data.notes.length != 0) {
             var obj = data.notes[data.notes.length - 1];
-            if (!obj._id)
+            if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
+            }
             obj.date = new Date();
-            if (!obj.author)
+            if (!obj.author) {
                 obj.author = req.session.uName;
+            }
             data.notes[data.notes.length - 1] = obj;
         }
-        if (data.estimated && data.logged)
+        if (data.estimated && data.logged) {
             data['remaining'] = data.estimated - data.logged;
-        if (data && data.EndDate)
+        }
+        if (data && data.EndDate) {
             data.duration = returnDuration(data.StartDate, data.EndDate);
+        }
         if (data.estimated && data.estimated != 0) {
             if (data.progress === 100) {
                 data.progress = 100;
@@ -1348,8 +1387,9 @@ var Project = function (models, event) {
                 event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
-                        if (data.workflow == data.workflowStart)
+                        if (data.workflow == data.workflowStart) {
                             data.sequence -= 1;
+                        }
                         updateTask();
                     });
                 });
@@ -1500,7 +1540,9 @@ var Project = function (models, event) {
                     }
                     if (data.StartDate) {
                         _task.StartDate = new Date(data.StartDate);
-                        if (!data.estimated) _task.EndDate = new Date(data.StartDate);
+                        if (!data.estimated) {
+                            _task.EndDate = new Date(data.StartDate);
+                        }
                     }
                     if (data.workflow) {
                         _task.workflow = data.workflow;
@@ -1728,7 +1770,6 @@ var Project = function (models, event) {
                                     query.where('type').in(data.filter.type);
                                 }
 
-
                                 query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
                                     populate('project', 'projectShortDesc').
@@ -1905,7 +1946,7 @@ var Project = function (models, event) {
 
         getProjectsForList: getProjectsForList,
 
-       // getProjectPMForDashboard: getProjectPMForDashboard,
+        // getProjectPMForDashboard: getProjectPMForDashboard,
 
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
 
