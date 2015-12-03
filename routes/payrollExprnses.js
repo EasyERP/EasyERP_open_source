@@ -70,9 +70,19 @@ module.exports = function (models) {
             "use strict";
             var month;
             var year = 2000 + parseInt(periodArray[1]);
+            var keyForNotSaved;
 
 
             switch (periodArray[0]) {
+                case 'Jan':
+                    month = 1;
+                    break;
+                case 'Feb':
+                    month = 2;
+                    break;
+                case 'March':
+                    month = 3;
+                    break;
                 case 'April':
                     month = 4;
                     break;
@@ -97,10 +107,15 @@ module.exports = function (models) {
                 case 'Nov':
                     month = 11;
                     break;
+                case 'Dec':
+                    month = 12;
+                    break;
             }
 
-            if (!notImportedEmployees[month]){
-                notImportedEmployees[month] = [];
+            keyForNotSaved = month + ' ' + year;
+
+            if (!notImportedEmployees[keyForNotSaved]){
+                notImportedEmployees[keyForNotSaved] = [];
             }
 
             return {
@@ -173,7 +188,7 @@ module.exports = function (models) {
                                 return cb(err);
                             }
                             if (!employee) {
-                                notImportedEmployees[saveObject.month].push(fullName);
+                                notImportedEmployees[saveObject.month + ' ' + saveObject.year].push(fullName);
                                 cb(null, 'empty');
                             } else {
                                 saveObject.employee._id = employee._id;
