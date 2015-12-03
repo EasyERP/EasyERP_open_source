@@ -359,6 +359,10 @@ define([
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
+
+                if (typeof(this.setChangedValueToModel) === "function"){ //added for SetChangesToModel in ListView
+                    this.setChangedValueToModel();
+                }
             },
 
             //</editor-fold>
