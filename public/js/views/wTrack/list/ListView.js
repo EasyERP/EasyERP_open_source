@@ -375,6 +375,7 @@ define([
                 $(".newSelectList").remove();
 
                 var el = $(e.target);
+                var self = this;
                 var tr = $(e.target).closest('tr');
                 var wTrackId = tr.attr('data-id');
                 var colType = el.data('type');
@@ -403,7 +404,17 @@ define([
                 }
 
                 if (isSelect) {
-                    populate.showSelect(e, prev, next, this);
+                    if (content === 'jobs'){
+                        dataService.getData("/jobs/getForDD", {"projectId": tr.find('[data-content="project"]').attr('data-id')}, function (jobs) {
+
+                            self.responseObj['#jobs'] = jobs;
+
+                            tr.find('[data-content="jobs"]').addClass('editable');
+                            populate.showSelect(e, prev, next, self);
+                        });
+                    } else {
+                        populate.showSelect(e, prev, next, this);
+                    }
                 } else if (isWeek) {
                     weeks = custom.getWeeks(month, year);
 

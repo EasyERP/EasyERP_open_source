@@ -631,61 +631,61 @@ var Project = function (models, event) {
                                      }
                                      }*/
                                 }
-                                var query = models.get(req.session.lastDb, "Project", projectSchema);
-                                // .find(obj);
+                                var query = models.get(req.session.lastDb, "Project", projectSchema)
+                                .find(obj);
 
-                                //if (data.sort) {
-                                //    query.sort(data.sort);
-                                //} else {
-                                //    query.sort({"editedBy.date": -1});
-                                //}
+                                if (data.sort) {
+                                    query.sort(data.sort);
+                                } else {
+                                    query.sort({"editedBy.date": -1});
+                                }
 
-                                query.aggregate({
-                                    $match: obj
-                                }, {
-                                //},{
-                                //    $skip: skip
-                                //},{
-                                //    $limit: limit
-                                //},{
-                                    $project: {
-                                        notRemovable : {
-                                            $size: "$budget.projectTeam"
-                                        },
-                                            createdBy    : 1,
-                                            editedBy     : 1,
-                                            workflow     : 1,
-                                            projectName  : 1,
-                                            health       : 1,
-                                            customer     : 1,
-                                            progress     : 1,
-                                            StartDate    : 1,
-                                            EndDate      : 1,
-                                            TargetEndDate: 1
-                                    }
+                                //query.aggregate({
+                                //    $match: obj
+                                //}, {
+                                ////},{
+                                ////    $skip: skip
+                                ////},{
+                                ////    $limit: limit
+                                ////},{
+                                //    $project: {
+                                //        notRemovable : {
+                                //            $size: "$budget.projectTeam"
+                                //        },
+                                //            createdBy    : 1,
+                                //            editedBy     : 1,
+                                //            workflow     : 1,
+                                //            projectName  : 1,
+                                //            health       : 1,
+                                //            customer     : 1,
+                                //            progress     : 1,
+                                //            StartDate    : 1,
+                                //            EndDate      : 1,
+                                //            TargetEndDate: 1
+                                //    }
+                                //
+                                //}, function (error, _res) {
+                                //    res['data'] = _res;
+                                //    response.send(res);
+                                //});
 
-                                }, function (error, _res) {
-                                    res['data'] = _res;
-                                    response.send(res);
-                                });
-
-                                //query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
-                                //    populate('createdBy.user', 'login').
-                                //    populate('editedBy.user', 'login').
-                                //    //populate('projectmanager', 'name').
-                                //    // populate('customer', 'name').
-                                //    // populate('workflow._id', 'status').
-                                //    skip((data.page - 1) * data.count).
-                                //    limit(data.count).
-                                //    exec(function (error, _res) {
-                                //        if (!error) {
-                                //            res['data'] = _res;
-                                //            //res['listLength'] = _res.length;
-                                //            response.send(res);
-                                //        } else {
-                                //            console.log(error);
-                                //        }
-                                //    });
+                                query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
+                                    populate('createdBy.user', 'login').
+                                    populate('editedBy.user', 'login').
+                                    //populate('projectmanager', 'name').
+                                    // populate('customer', 'name').
+                                    // populate('workflow._id', 'status').
+                                    skip((data.page - 1) * data.count).
+                                    limit(data.count).
+                                    exec(function (error, _res) {
+                                        if (!error) {
+                                            res['data'] = _res;
+                                            //res['listLength'] = _res.length;
+                                            response.send(res);
+                                        } else {
+                                            console.log(error);
+                                        }
+                                    });
                             } else {
                                 console.log(err);
                             }
