@@ -601,6 +601,8 @@ define([
                         assignedContainer.text(projectManager);
                         targetElement.attr('data-id', id);
 
+                        tr.find('[data-content="jobs"]').text("");
+
                         tr.find('[data-content="workflow"]').text(element.workflow.name);
                         tr.find('[data-content="customer"]').text(element.customer.name);
 
@@ -1190,6 +1192,7 @@ define([
                 }
 
                 self.changedModels = {};
+                self.responseObj['#jobs'] = [];
             }
         });
 
