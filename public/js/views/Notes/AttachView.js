@@ -9,6 +9,7 @@ define([
         initialize: function (options) {
             this.url = options.url;
             this.isCreate = options.isCreate;
+            this.elementId = options.elementId;
         },
         events: {
             "change .inputAttach": "addAttach",
@@ -39,8 +40,9 @@ define([
 
         sendToServer: function (event, model, self) {
             var currentModel = this.model;
+            var elementId = this.elementId || 'addAttachments';
             var currentModelId = currentModel ? currentModel["id"] : null;
-            var addFrmAttach = $("#addAttachments");
+            var addFrmAttach = $("#" + elementId);
             if (!self){
                 self = this;
             }
@@ -196,7 +198,10 @@ define([
                 attachments = this.model.toJSON().attachments;
             }
 
-            this.$el.html(this.template({attachments: attachments}));
+            this.$el.html(this.template({
+                attachments: attachments,
+                elementId: this.elementId || 'addAttachments'
+            }));
             return this;
         }
     });

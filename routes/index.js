@@ -183,12 +183,13 @@ module.exports = function (app, mainDb) {
 
     function uploadFileArray (req, res, callback) {
         var files = [];
-        if (req.files && !req.files.attachfile.length) {
+        if (req.files && req.files.attachfile && !req.files.attachfile.length) {
             req.files.attachfile = [req.files.attachfile];
         }
         var path;
         var os = require("os");
         var osType = (os.type().split('_')[0]);
+
         req.files.attachfile.forEach(function (item) {
             var localPath;
             switch (osType) {
