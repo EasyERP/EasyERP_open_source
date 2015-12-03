@@ -255,6 +255,7 @@ define([
 
             new createView(startData);
 
+            this.changed = true;
         },
 
         showSaveCancelBtns: function () {
@@ -399,6 +400,8 @@ define([
             var self = this;
             var edited = this.edited;
             var collection = this.collection;
+            var copiedCreated;
+            var dataId;
 
             async.each(edited, function (el, cb) {
                 var tr = $(el).closest('tr');
@@ -424,6 +427,16 @@ define([
                     self.hideSaveCancelBtns();
                 }
             });
+
+            copiedCreated = this.$el.find('#false');
+            dataId = copiedCreated.attr('data-id');
+            this.editCollection.remove(dataId);
+            delete this.changedModels[dataId];
+            copiedCreated.remove();
+
+            this.createdCopied = false;
+
+            self.changedModels = {};
         }
 
     });

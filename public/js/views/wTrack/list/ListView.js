@@ -1188,6 +1188,8 @@ define([
 
                     this.createdCopied = false;
                 }
+
+                self.changedModels = {};
             }
         });
 
