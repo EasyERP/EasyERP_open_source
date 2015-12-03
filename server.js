@@ -7,8 +7,8 @@ var mongoose = require('mongoose');
 var dbsObject = {};
 var dbsNames = {};
 var connectOptions = {
-    db: { native_parser: true },
-    server: { poolSize: 5 },
+    db: {native_parser: true},
+    server: {poolSize: 5},
     //replset: { rs_name: 'myReplicaSetName' },
     user: process.env.DB_USER,
     pass: process.env.DB_PASS,
@@ -28,7 +28,7 @@ mainDb.once('open', function callback() {
     var port = parseInt(process.env.PORT) || 8089;
     var instance = parseInt(process.env.NODE_APP_INSTANCE) || 0;
 
-    port +=instance;
+    port += instance;
     mainDb.dbsObject = dbsObject;
 
     console.log("Connection to mainDB is success");
@@ -37,12 +37,12 @@ mainDb.once('open', function callback() {
 
     var mainDBSchema = mongoose.Schema({
         _id: Number,
-        url: { type: String, default: 'localhost' },
-        DBname: { type: String, default: '' },
-        pass: { type: String, default: '' },
-        user: { type: String, default: '' },
+        url: {type: String, default: 'localhost'},
+        DBname: {type: String, default: ''},
+        pass: {type: String, default: ''},
+        user: {type: String, default: ''},
         port: Number
-    }, { collection: 'easyErpDBS' });
+    }, {collection: 'easyErpDBS'});
 
     var main = mainDb.model('easyErpDBS', mainDBSchema);
 
@@ -54,8 +54,8 @@ mainDb.once('open', function callback() {
                     url: ''
                 };
                 var opts = {
-                    db: { native_parser: true },
-                    server: { poolSize: 5 },
+                    db: {native_parser: true},
+                    server: {poolSize: 5},
                     //replset: { rs_name: 'myReplicaSetName' },
                     user: _db.user,
                     pass: _db.pass,
