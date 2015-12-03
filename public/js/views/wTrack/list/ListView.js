@@ -698,11 +698,14 @@ define([
             checked: function (e) {
                 var $thisEl = this.$el;
                 var rawRows;
+                var $checkedEls;
                 var checkLength;
 
                 if (this.collection.length > 0) {
-                    checkLength = $thisEl.find("input.listCB:checked").length;
-                    rawRows = checkLength.closest('');
+                    $checkedEls = $thisEl.find("input.listCB:checked");
+
+                    checkLength = $checkedEls.length;
+                    rawRows = $checkedEls.closest('#false');
 
                     this.checkProjectId(e, checkLength);
 
@@ -715,6 +718,12 @@ define([
                     } else {
                         $("#top-bar-deleteBtn").hide();
                         $('#check_all').prop('checked', false);
+                    }
+
+                    if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                        this.$saveBtn.hide();
+                    } else {
+                        this.$saveBtn.show();
                     }
                 }
 
@@ -926,6 +935,11 @@ define([
                     this.editCollection.add(model);
 
                     new createView(startData);
+                } else {
+                    App.render({
+                        type: 'notify',
+                        message: 'Please confirm or discard changes befor create a new item'
+                    });
                 }
 
                 this.createdCopied = true;

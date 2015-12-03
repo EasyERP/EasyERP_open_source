@@ -31,7 +31,7 @@ define([
             this.responseObj = {};
             this.render();
 
-            this.taxesRate = 0.15;
+            this.taxesRate = 0;
 
             products = new productCollection();
             products.bind('reset', function () {
