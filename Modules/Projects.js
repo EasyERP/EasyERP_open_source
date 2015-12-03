@@ -549,8 +549,8 @@ var Project = function (models, event) {
     function getProjectsForList(req, data, response) {
         var res = {};
         var Users = models.get(req.session.lastDb, 'Users', userSchema);
-        var skip = (data.page - 1) * data.count;
-        var limit = data.count;
+        var skip = (parseInt(data.page) - 1) * parseInt(data.count);
+        var limit = parseInt(data.count);
         var sort;
         res['data'] = [];
         models.get(req.session.lastDb, "Department", department).aggregate(
@@ -603,7 +603,7 @@ var Project = function (models, event) {
                         },
                         function (err, result) {
                             if (!err) {
-                                var obj = {'$and': [{_id: {$in: result}}]};
+                                var obj = {$and: [{_id: {$in: result}}]};
 
                                 /*if (data && data.filter && data.filter.workflow) {
                                  data.filter.workflow = data.filter.workflow.map(function (item) {
@@ -644,11 +644,9 @@ var Project = function (models, event) {
                                     sort = {"editedBy.date": -1};
                                 }
 
-                                query.aggregate([
-                                    //{
-                                  //  $match: obj
-                                //}, {
-                                {
+                                query.aggregate([{
+                                    $match: obj
+                                },{
                                     $skip: skip
                                 },{
                                     $limit: limit
