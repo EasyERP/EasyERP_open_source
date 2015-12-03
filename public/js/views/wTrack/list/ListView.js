@@ -935,6 +935,11 @@ define([
                     this.editCollection.add(model);
 
                     new createView(startData);
+                } else {
+                    App.render({
+                        type: 'notify',
+                        message: 'Please confirm or discard changes befor create a new item'
+                    });
                 }
 
                 this.createdCopied = true;
