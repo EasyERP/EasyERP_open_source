@@ -56,7 +56,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-                this.filterView;
             },
 
             events: {
