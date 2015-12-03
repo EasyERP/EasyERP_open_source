@@ -117,8 +117,7 @@ define([
 
                 if (custom === 'Select'){
                     value = 'Customer';
-                    alert('Please, choose ' + value + ' first.');
-                    validation = false;
+                    return alert('Please, choose ' + value + ' first.');
                 }
 
 
@@ -144,7 +143,7 @@ define([
                 });
 
                 if (!validation){
-                    alert('Employee and bonus fields must not be empty.');
+                    return alert('Employee and bonus fields must not be empty.');
                 }
 
                 var description = $.trim(this.$el.find("#description").val());
