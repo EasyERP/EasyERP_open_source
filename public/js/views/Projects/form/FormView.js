@@ -669,45 +669,47 @@ define([
 
                 var projectTeam = this.jobsCollection.toJSON();
 
-                App.currectCollection = this.jobsCollection;
+                if (formModel._id === this.jobsCollection.toJSON()[0].project._id){
+                    App.currectCollection = this.jobsCollection;
 
-                this.projectValues = {
-                    revenue: 0,
-                    profit : 0,
-                    cost   : 0
-                };
+                    this.projectValues = {
+                        revenue: 0,
+                        profit : 0,
+                        cost   : 0
+                    };
 
-                projectTeam.forEach(function (projectTeam) {
-                    var budgetTotal = projectTeam.budget.budgetTotal;
+                    projectTeam.forEach(function (projectTeam) {
+                        var budgetTotal = projectTeam.budget.budgetTotal;
 
-                    self.projectValues.revenue += budgetTotal ? budgetTotal.revenueSum : 0;
-                    self.projectValues.profit += budgetTotal ? budgetTotal.profitSum : 0;
-                    self.projectValues.cost += budgetTotal ? budgetTotal.costSum : 0;
+                        self.projectValues.revenue += budgetTotal ? budgetTotal.revenueSum : 0;
+                        self.projectValues.profit += budgetTotal ? budgetTotal.profitSum : 0;
+                        self.projectValues.cost += budgetTotal ? budgetTotal.costSum : 0;
 
-                });
+                    });
 
-                this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
+                    this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
 
-                if (!isFinite(this.projectValues.markUp)) {
-                    self.projectValues.markUp = 0;
+                    if (!isFinite(this.projectValues.markUp)) {
+                        self.projectValues.markUp = 0;
+                    }
+
+                    this.projectValues.radio = ((this.projectValues.profit / this.projectValues.revenue) * 100);
+
+                    if (!isFinite(this.projectValues.radio)) {
+                        this.projectValues.radio = 0;
+                    }
+
+                    container.html(template({
+                            jobs            : projectTeam,
+                            bonus           : formModel.budget.bonus,
+                            projectValues   : self.projectValues,
+                            currencySplitter: helpers.currencySplitter,
+                            contentType     : self.contentType
+                        })
+                    );
+
+                    this.renderProformRevenue();
                 }
-
-                this.projectValues.radio = ((this.projectValues.profit / this.projectValues.revenue) * 100);
-
-                if (!isFinite(this.projectValues.radio)) {
-                    this.projectValues.radio = 0;
-                }
-
-                container.html(template({
-                        jobs            : projectTeam,
-                        bonus           : formModel.budget.bonus,
-                        projectValues   : self.projectValues,
-                        currencySplitter: helpers.currencySplitter,
-                        contentType     : self.contentType
-                    })
-                );
-
-                this.renderProformRevenue();
             },
 
             getWTrack: function (cb) {
