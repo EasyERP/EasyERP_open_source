@@ -191,7 +191,7 @@ define([
 
                                     self.ordersCollection.bind('reset', createView);
 
-                                    if (self.collection){
+                                    if (self.collection) {
                                         self.collection.remove(self.currentModel.get('_id'));
 
                                     }
@@ -325,6 +325,11 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
+                var currency = {
+                    _id : thisEl.find('#currencyDd').attr('data-id'),
+                    name: thisEl.find('#currencyDd').text()
+                };
+
                 var wF = this.currentModel.get('workflow');
                 var workflow = {};
                 workflow._id = wF._id;
@@ -372,6 +377,7 @@ define([
 
 
                 data = {
+                    currency         : currency,
                     supplier         : supplier,
                     supplierReference: supplierReference,
                     deliverTo        : deliverTo,
@@ -499,6 +505,8 @@ define([
                     }).render().el
                 );
 
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
@@ -517,7 +525,8 @@ define([
                 this.$el.find('#orderDate').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
+                    maxDate    : "+0D"
                 });
 
                 this.delegateEvents(this.events);

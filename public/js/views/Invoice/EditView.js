@@ -534,15 +534,19 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
+                    maxDate: 0,
                     onSelect   : function () {
                         var dueDatePicker = $('#due_date');
                         var endDate = $(this).datepicker('getDate');
+
+                        endDate.setDate(endDate.getDate()+14);
 
                         dueDatePicker.datepicker('option', 'minDate', endDate);
                     }
                 });
 
                 this.$el.find('#due_date').datepicker({
+                    defaultValue: invoiceDate,
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
@@ -551,7 +555,7 @@ define([
 
                         targetInput.removeClass('errorContent');
                     }
-                }).datepicker('option', 'minDate', invoiceDate);
+                }).datepicker('option', 'minDate', "+2W");
 
                 this.delegateEvents(this.events);
 

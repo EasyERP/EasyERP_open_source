@@ -303,7 +303,7 @@ define([
                 this.$el.find('#due_date').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
                 });
 
                 this.delegateEvents(this.events);

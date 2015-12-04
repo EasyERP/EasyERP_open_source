@@ -17,8 +17,8 @@ define([
         var CreateView = createView.extend({
 
             el            : "#content-holder",
-            contentType: "Quotation",
-            template   : _.template(CreateTemplate),
+            contentType   : "Quotation",
+            template      : _.template(CreateTemplate),
             templateNewRow: _.template(newRow),
 
             initialize: function (options) {
@@ -62,6 +62,11 @@ define([
                 var scheduledDate;
 
                 var forSales = this.forSales ? true : false;
+
+                var currency = {
+                    _id : thisEl.find('#currencyDd').attr('data-id'),
+                    name: thisEl.find('#currencyDd').text()
+                };
 
                 var supplier = {};
                 var project = {};
@@ -126,8 +131,8 @@ define([
 
                             products.push({
                                 product      : productId,
-                                unitPrice: price,
-                                quantity : quantity,
+                                unitPrice    : price,
+                                quantity     : quantity,
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
                                 description  : description,
@@ -142,15 +147,16 @@ define([
 
 
                 data = {
+                    currency      : currency,
                     forSales      : forSales,
-                    supplier: supplier,
-                    project : project,
-                    deliverTo: deliverTo,
-                    products : products,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination : destination,
-                    incoterm    : incoterm,
+                    supplier      : supplier,
+                    project       : project,
+                    deliverTo     : deliverTo,
+                    products      : products,
+                    orderDate     : orderDate,
+                    expectedDate  : expectedDate,
+                    destination   : destination,
+                    incoterm      : incoterm,
                     invoiceControl: invoiceControl,
                     paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
@@ -205,8 +211,8 @@ define([
                 productItemContainer.append(
                     new ProductItemView({
                         canBeSold       : true,
-                        service  : 'Service',
-                        projectModel: this.projectModel,
+                        service         : 'Service',
+                        projectModel    : this.projectModel,
                         wTrackCollection: this.wTrackCollection
                     }).render().el
                 );
