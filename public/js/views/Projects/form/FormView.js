@@ -670,13 +670,13 @@ define([
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
 
-                //var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
-                //    return el.project._id === _id
-                //});
+                var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
+                    return el.project._id === _id
+                });
 
-                var projectTeam = this.jobsCollection.toJSON();
-
-                App.currectCollection = this.jobsCollection;
+                if (!App.currectCollection){
+                    App.currectCollection = this.jobsCollection;
+                }
 
                 this.projectValues = {
                     revenue: 0,

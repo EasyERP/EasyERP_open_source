@@ -25,7 +25,7 @@ define(['models/jobsModel'
                     that.page ++;
 
                     if (App.currectCollection){
-                        App.currectCollection.reset(newCollection.models);
+                        App.currectCollection.add(newCollection.models, {remove: false});
                     }
                 },
                 error: function(err, xhr){
