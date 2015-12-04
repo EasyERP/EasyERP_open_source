@@ -635,14 +635,15 @@ var Project = function (models, event) {
                                      }
                                      }*/
                                 }
-                                var query = models.get(req.session.lastDb, "Project", projectSchema)
-                                .find(obj);
-
                                 if (data.sort) {
                                     sort = data.sort;
                                 } else {
                                     sort = {"editedBy.date": -1};
                                 }
+
+                                var query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
+
+
 
                                 //query.aggregate([{
                                 //    $match: obj
