@@ -36,36 +36,36 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditViewOrder, editViewQuotation,  editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var View = Backbone.View.extend({
             el            : '#content-holder',
             contentType   : 'Projects',
             proformRevenue: _.template(ProformRevenueTemplate),
 
             events: {
-                'click .chart-tabs'                                               : 'changeTab',
-                'click .deleteAttach'                                             : 'deleteAttach',
-                "click #health a:not(.disabled)"                                  : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                          : "chooseHealthDd",
-                "click .newSelectList li:not(.miniStylePagination):not(.disabled)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected:not(.disabled)"                          : "showNewSelect",
-                "click #createItem"                                               : "createDialog",
-                "click #createJob"                                                : "createJob",
-                "change input:not(.checkbox, .check_all, .statusCheckbox)"        : "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)" : "renderJobWTracks",
-                "mouseover #jobsItem"                                             : "showRemoveButton",
-                "mouseleave #jobsItem"                                            : "hideRemoveButton",
-                "click .fa.fa-trash"                                              : "removeJobAndWTracks",
-                "dblclick td.editableJobs"                                        : "editRow",
-                "click #saveName"                                                 : "saveNewJobName",
-                "keydown input.editing "                                          : "keyDown",
-                'click'                                                           : 'hideSelect',
-                'keydown'                                                         : 'keydownHandler',
-                "click a.quotation"                                              : "viewQuotation",
-                "click a.invoice"                                                : "viewInvoice"
+                'click .chart-tabs'                                                : 'changeTab',
+                'click .deleteAttach'                                              : 'deleteAttach',
+                "click #health a:not(.disabled)"                                   : "showHealthDd",
+                "click #health ul li div:not(.disabled)"                           : "chooseHealthDd",
+                "click .newSelectList li:not(.miniStylePagination):not(.disabled)" : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                      : "notHide",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)" : "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)" : "prevSelect",
+                "click .current-selected:not(.disabled)"                           : "showNewSelect",
+                "click #createItem"                                                : "createDialog",
+                "click #createJob"                                                 : "createJob",
+                "change input:not(.checkbox, .check_all, .statusCheckbox)"         : "showSaveButton",
+                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)": "renderJobWTracks",
+                "mouseover #jobsItem"                                              : "showRemoveButton",
+                "mouseleave #jobsItem"                                             : "hideRemoveButton",
+                "click .fa.fa-trash"                                               : "removeJobAndWTracks",
+                "dblclick td.editableJobs"                                         : "editRow",
+                "click #saveName"                                                  : "saveNewJobName",
+                "keydown input.editing "                                           : "keyDown",
+                'click'                                                            : 'hideSelect',
+                'keydown'                                                          : 'keydownHandler',
+                "click a.quotation"                                                : "viewQuotation",
+                "click a.invoice"                                                  : "viewInvoice"
             },
 
             initialize: function (options) {
@@ -77,7 +77,7 @@ define([
                 this.proformValues = {};
             },
 
-            viewQuotation: function(e){
+            viewQuotation: function (e) {
                 e.stopPropagation();
                 var self = this;
 
@@ -87,16 +87,16 @@ define([
                 var type = $(target).closest('tr').find('#type').text();
                 var onlyView = false;
 
-                if (type === "Quoted"){
+                if (type === "Quoted") {
                     model = new quotationModel({validate: false});
 
                     model.urlRoot = '/quotation/form/' + id;
                     model.fetch({
                         success: function (model) {
                             new editViewQuotation({
-                                model   : model,
-                                redirect: true,
-                                pId     : self.id,
+                                model         : model,
+                                redirect      : true,
+                                pId           : self.id,
                                 projectManager: self.projectManager
                             })
                         },
@@ -104,21 +104,21 @@ define([
                             alert('Please refresh browser');
                         }
                     });
-                } else  {
+                } else {
                     model = new quotationModel({validate: false});
 
                     model.urlRoot = '/Order/form/' + id;
                     model.fetch({
                         success: function (model) {
 
-                            if (type === "Invoiced"){
+                            if (type === "Invoiced") {
                                 onlyView = true;
                             }
 
                             new EditViewOrder({
-                                model     : model,
-                                redirect: true,
-                                onlyView  : onlyView,
+                                model         : model,
+                                redirect      : true,
+                                onlyView      : onlyView,
                                 projectManager: self.projectManager
                             });
                         },
@@ -129,7 +129,7 @@ define([
                 }
             },
 
-            viewInvoice: function(e){
+            viewInvoice: function (e) {
                 e.stopPropagation();
 
                 var target = e.target;
@@ -144,9 +144,9 @@ define([
                     },
                     success: function (model) {
                         new editViewInvoice({
-                            model: model,
+                            model    : model,
                             notCreate: true,
-                            redirect: true
+                            redirect : true
                         });
                     },
                     error  : function () {
@@ -546,8 +546,6 @@ define([
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
-                    } else if (attrId === 'type') {
-                        data = {_id: id, type: $(e.target).text()};
                     }
 
                     dataService.postData("/jobs/update", data, function (err, result) {
@@ -669,47 +667,48 @@ define([
 
                 var projectTeam = this.jobsCollection.toJSON();
 
-                if (formModel._id === this.jobsCollection.toJSON()[0].project._id){
+                if (this.jobsCollection.toJSON().length && (formModel._id === this.jobsCollection.toJSON()[0].project._id)) {
                     App.currectCollection = this.jobsCollection;
-
-                    this.projectValues = {
-                        revenue: 0,
-                        profit : 0,
-                        cost   : 0
-                    };
-
-                    projectTeam.forEach(function (projectTeam) {
-                        var budgetTotal = projectTeam.budget.budgetTotal;
-
-                        self.projectValues.revenue += budgetTotal ? budgetTotal.revenueSum : 0;
-                        self.projectValues.profit += budgetTotal ? budgetTotal.profitSum : 0;
-                        self.projectValues.cost += budgetTotal ? budgetTotal.costSum : 0;
-
-                    });
-
-                    this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
-
-                    if (!isFinite(this.projectValues.markUp)) {
-                        self.projectValues.markUp = 0;
-                    }
-
-                    this.projectValues.radio = ((this.projectValues.profit / this.projectValues.revenue) * 100);
-
-                    if (!isFinite(this.projectValues.radio)) {
-                        this.projectValues.radio = 0;
-                    }
-
-                    container.html(template({
-                            jobs            : projectTeam,
-                            bonus           : formModel.budget.bonus,
-                            projectValues   : self.projectValues,
-                            currencySplitter: helpers.currencySplitter,
-                            contentType     : self.contentType
-                        })
-                    );
-
-                    this.renderProformRevenue();
                 }
+
+                this.projectValues = {
+                    revenue: 0,
+                    profit : 0,
+                    cost   : 0
+                };
+
+                projectTeam.forEach(function (projectTeam) {
+                    var budgetTotal = projectTeam.budget.budgetTotal;
+
+                    self.projectValues.revenue += budgetTotal ? budgetTotal.revenueSum : 0;
+                    self.projectValues.profit += budgetTotal ? budgetTotal.profitSum : 0;
+                    self.projectValues.cost += budgetTotal ? budgetTotal.costSum : 0;
+
+                });
+
+                this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
+
+                if (!isFinite(this.projectValues.markUp)) {
+                    self.projectValues.markUp = 0;
+                }
+
+                this.projectValues.radio = ((this.projectValues.profit / this.projectValues.revenue) * 100);
+
+                if (!isFinite(this.projectValues.radio)) {
+                    this.projectValues.radio = 0;
+                }
+
+                container.html(template({
+                        jobs            : projectTeam,
+                        bonus           : formModel.budget.bonus,
+                        projectValues   : self.projectValues,
+                        currencySplitter: helpers.currencySplitter,
+                        contentType     : self.contentType
+                    })
+                );
+
+                this.renderProformRevenue();
+
             },
 
             getWTrack: function (cb) {

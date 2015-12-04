@@ -157,14 +157,6 @@ define([
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                                 if (self.redirect) {
-                                    var data = {products: JSON.stringify(products), type: "Ordered"};
-
-                                    dataService.postData("/jobs/update", data, function (err, result) {
-                                        if (err) {
-                                            return console.log(err);
-                                        }
-
-                                    });
                                     var filter = {
                                         'projectName': {
                                             key  : 'project._id',

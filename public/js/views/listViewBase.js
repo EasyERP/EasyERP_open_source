@@ -67,8 +67,11 @@ define([
                 var sortObject;
                 var newRows = this.$el.find('#false');
 
-                if (newRows.length){
-                    return alert('Please, save previous changes or cancel them!');
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
                 }
 
                 this.collection.unbind('reset');
@@ -483,7 +486,8 @@ define([
             },
 
             alpabeticalRender: function (e) {
-                var selectedLetter = $(e.target).text();
+                var target = $(e.target);
+                var selectedLetter = target.text();
                 var itemsNumber = $("#itemsNumber").text();
 
                 this.startTime = new Date();
@@ -495,6 +499,9 @@ define([
                     selectedLetter = "";
                     this.filter = {};
                 }
+
+                target.parent().find(".current").removeClass("current");
+                target.addClass("current");
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
