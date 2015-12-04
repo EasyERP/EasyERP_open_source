@@ -221,17 +221,6 @@ define([
 
                 var currentNumber = parseInt(lastNumber) + 1;
 
-                var products = model.get('products');
-
-                var data = {products: JSON.stringify(products), type: "Quoted"};
-
-                dataService.postData("/jobs/update", data, function (err, result) {
-                    if (err) {
-                        return console.log(err);
-                    }
-
-                });
-
                 content.hideDialog();
 
                 this.collection.add(model);

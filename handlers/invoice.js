@@ -165,7 +165,6 @@ var Invoice = function (models, event) {
             var supplier;
             var company;
             var project;
-            var type = "Invoiced";
             var query;
 
             if (parallelResponse && parallelResponse.length) {
@@ -220,23 +219,6 @@ var Invoice = function (models, event) {
 
                 invoice.save(callback);
 
-                async.each(order.products, function (product, cb) {
-
-                    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        project = result.get('project');
-
-                        cb();
-                    });
-
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
-                    }
-                });
             } else {
                 query = Company.findById(invoice.supplier._id).lean();
 
@@ -294,7 +276,7 @@ var Invoice = function (models, event) {
             async.each(products, function (result, cb) {
                 var jobs = result.jobs;
 
-                JobsModel.findByIdAndUpdate(jobs, {$set: {invoice: setObj}}, {new: true}, function (err, inv) {
+                JobsModel.findByIdAndUpdate(jobs, {$set: {invoice: setObj, type: "Invoiced"}}, {new: true}, function (err, inv) {
                     if (err) {
                         return cb(err);
                     }
