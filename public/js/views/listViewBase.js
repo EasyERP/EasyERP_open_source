@@ -486,7 +486,8 @@ define([
             },
 
             alpabeticalRender: function (e) {
-                var selectedLetter = $(e.target).text();
+                var target = $(e.target);
+                var selectedLetter = target.text();
                 var itemsNumber = $("#itemsNumber").text();
 
                 this.startTime = new Date();
@@ -498,6 +499,9 @@ define([
                     selectedLetter = "";
                     this.filter = {};
                 }
+
+                target.parent().find(".current").removeClass("current");
+                target.addClass("current");
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
