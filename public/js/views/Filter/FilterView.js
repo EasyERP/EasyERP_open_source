@@ -270,6 +270,7 @@ define([
                 var constantsName = $.trim(groupNameElement.text());
                 var filterObjectName = this.constantsObject[constantsName].view;
                 var currentCollection = this.currentCollection[filterObjectName];
+                var filterType = this.constantsObject[constantsName].type;
                 var collectionElement;
                 var intVal;
                 var index;
@@ -287,7 +288,8 @@ define([
                     if (!App.filter[filterObjectName]) {
                         App.filter[filterObjectName] = {
                             key  : groupType,
-                            value: []
+                            value: [],
+                            type : filterType ? filterType : null
                         };
                     }
 
@@ -739,7 +741,7 @@ define([
                 for (var i = valuesArray.length - 1; i >= 0; i--) {
                     collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
 
-                    if (collectionElement){
+                    if (collectionElement) {
                         collectionElement.set({status: true});
                     }
                 }
