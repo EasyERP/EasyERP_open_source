@@ -25,10 +25,34 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click td.editable"                                               : "editRow",
                     "change .editable "                                               : "setEditable",
                     //"click": "hideNewSelect",
-                    'keydown input.editing'                                           : 'keyDown',
+                    //'keydown input.editing'                                           : 'keyDown',
                     'mouseover tbody tr:not("#addNewItem")'                           : 'showRemove',
                     'mouseleave tbody tr:not("#addNewItem")'                          : 'hideRemove',
-                    'click .remove'                                                   : 'deleteRow'
+                    'click .remove'                                                   : 'deleteRow',
+                    "keydown input:not(#jobName)"                                                   : "onKeyDownInput",
+                    "keyup input:not(#jobName)"                                                     : "onKeyUpInput"
+                },
+
+                onKeyDownInput: function (e) {
+                    // Allow: backspace, delete, tab, escape, enter, home, end, left, right
+                    if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 || (e.keyCode >= 35 && e.keyCode <= 39)) {
+                        if (e.which === 13) {
+                            this.setChangedValueToModel(e);
+                        }
+                        return;
+                    }
+
+                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                    }
+                },
+
+                onKeyUpInput: function (e) {
+                    var element = e.target;
+
+                    if (element.maxLength && element.value.length > element.maxLength) {
+                        element.value = element.value.slice(0, element.maxLength);
+                    }
                 },
 
                 keyDown: function (e) {
@@ -257,6 +281,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var width;
                     var value;
                     var insertedInput;
+                    var input;
 
                     //var isNotData = $(isInput).hasClass('noPadding') ? true: false;
 
@@ -268,7 +293,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     if (!isInput) {
                         tempContainer = el.text();
                         width = el.width() - 6;
-                        el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                        el.html('<input class="editing" type="text" value="' + tempContainer + '" style="width:' + width + 'px">');
+
+                        input = this.$el.find('.editing');
+
+                        if (content === "revenue"){
+                            input.attr({
+                                "maxLength": 6
+                            });
+                        }else {
+                            input.attr({
+                                "maxLength": 1
+                            });
+                        }
 
                         insertedInput = el.find('input');
                         insertedInput.focus();
