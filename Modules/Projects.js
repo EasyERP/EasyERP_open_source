@@ -643,8 +643,6 @@ var Project = function (models, event) {
 
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
 
-
-
                                 //query.aggregate([{
                                 //    $match: obj
                                 //},{
