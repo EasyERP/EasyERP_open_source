@@ -546,8 +546,6 @@ define([
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
-                    } else if (attrId === 'type') {
-                        data = {_id: id, type: $(e.target).text()};
                     }
 
                     dataService.postData("/jobs/update", data, function (err, result) {
