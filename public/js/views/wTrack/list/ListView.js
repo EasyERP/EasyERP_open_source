@@ -17,7 +17,7 @@ define([
         'populate',
         'async',
         'custom',
-        'moment'
+        'moment',
     ],
 
     function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment) {
