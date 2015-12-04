@@ -220,7 +220,8 @@ define([
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
-                                value: [_id]
+                                value: [_id],
+                                type: "ObjectId"
                             }
                         };
 
@@ -296,7 +297,8 @@ define([
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
-                                value: [_id]
+                                value: [_id],
+                                type: "ObjectId"
                             }
                         };
 
@@ -656,7 +658,7 @@ define([
                     count   : 50
                 });
 
-                this.jobsCollection.bind('reset add remove', self.renderJobs);
+                this.jobsCollection.bind('reset add remove', self.renderJobs, self);
 
                 cb();
             },
@@ -668,9 +670,11 @@ define([
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
 
-                var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
-                    return el.project._id === _id
-                });
+                //var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
+                //    return el.project._id === _id
+                //});
+
+                var projectTeam = this.jobsCollection.toJSON();
 
                 App.currectCollection = this.jobsCollection;
 
@@ -722,7 +726,8 @@ define([
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [_id]
+                        value: [_id],
+                        type: "ObjectId"
                     }
                 };
 
@@ -768,7 +773,8 @@ define([
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [_id]
+                        value: [_id],
+                        type: "ObjectId"
                     }
                 };
 
