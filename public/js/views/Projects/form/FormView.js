@@ -220,7 +220,8 @@ define([
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
-                                value: [_id]
+                                value: [_id],
+                                type: "ObjectId"
                             }
                         };
 
@@ -296,7 +297,8 @@ define([
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
-                                value: [_id]
+                                value: [_id],
+                                type: "ObjectId"
                             }
                         };
 
@@ -546,6 +548,8 @@ define([
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
+                    } else if (attrId === 'type'){
+                        data = {_id: id, type: $(e.target).text()};
                     }
 
                     dataService.postData("/jobs/update", data, function (err, result) {
@@ -654,7 +658,7 @@ define([
                     count   : 50
                 });
 
-                this.jobsCollection.bind('reset add remove', self.renderJobs);
+                this.jobsCollection.bind('reset add remove', self.renderJobs, self);
 
                 cb();
             },
@@ -664,10 +668,15 @@ define([
                 var container = this.$el.find('#forInfo');
                 var formModel = this.formModel.toJSON();
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
 
-                var projectTeam = this.jobsCollection.toJSON();
+                var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
+                    return el.project._id === _id
+                });
 
-                App.currectCollection = this.jobsCollection;
+                if (!App.currectCollection){
+                    App.currectCollection = this.jobsCollection;
+                }
 
                 this.projectValues = {
                     revenue: 0,
@@ -717,7 +726,8 @@ define([
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [_id]
+                        value: [_id],
+                        type: "ObjectId"
                     }
                 };
 
@@ -763,7 +773,8 @@ define([
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [_id]
+                        value: [_id],
+                        type: "ObjectId"
                     }
                 };
 
