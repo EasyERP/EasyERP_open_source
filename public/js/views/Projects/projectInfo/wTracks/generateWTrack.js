@@ -16,8 +16,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 events: {
                     "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                    "click .current-selected"                          : "showNewSelect",
-                    "click .newSelectList li.miniStylePagination"      : "notHide",
+                    "click .current-selected"                                         : "showNewSelect",
+                    "click .newSelectList li.miniStylePagination"                     : "notHide",
                     "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                     "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                     "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
@@ -25,7 +25,34 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click td.editable"                                               : "editRow",
                     "change .editable "                                               : "setEditable",
                     //"click": "hideNewSelect",
-                    'keydown input.editing'                                           : 'keyDown'
+                    //'keydown input.editing'                                           : 'keyDown',
+                    'mouseover tbody tr:not("#addNewItem")'                           : 'showRemove',
+                    'mouseleave tbody tr:not("#addNewItem")'                          : 'hideRemove',
+                    'click .remove'                                                   : 'deleteRow',
+                    "keydown input:not(#jobName)"                                                   : "onKeyDownInput",
+                    "keyup input:not(#jobName)"                                                     : "onKeyUpInput"
+                },
+
+                onKeyDownInput: function (e) {
+                    // Allow: backspace, delete, tab, escape, enter, home, end, left, right
+                    if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 || (e.keyCode >= 35 && e.keyCode <= 39)) {
+                        if (e.which === 13) {
+                            this.setChangedValueToModel(e);
+                        }
+                        return;
+                    }
+
+                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                    }
+                },
+
+                onKeyUpInput: function (e) {
+                    var element = e.target;
+
+                    if (element.maxLength && element.value.length > element.maxLength) {
+                        element.value = element.value.slice(0, element.maxLength);
+                    }
                 },
 
                 keyDown: function (e) {
@@ -37,6 +64,32 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 stopDefaultEvents: function (e) {
                     e.stopPropagation();
                     e.preventDefault();
+                },
+
+                showRemove: function (e) {
+                    var $target = $(e.target);
+                    var $tr = $target.closest('tr');
+                    var $removeHref = $tr.find('.remove a');
+
+                    $removeHref.removeClass('hidden');
+                },
+
+                deleteRow: function (e) {
+                    var $target = $(e.target);
+                    var $tr = $target.closest('tr');
+                    var $removeHref = $tr.find('.remove a');
+                    var arrayIndex = $removeHref.attr('id');
+
+                    this.resultArray.splice(arrayIndex, 1);
+                    $tr.remove();
+                },
+
+                hideRemove: function (e) {
+                    var $target = $(e.target);
+                    var $tr = $target.closest('tr');
+                    var $removeHref = $tr.find('.remove a');
+
+                    $removeHref.addClass('hidden');
                 },
 
                 initialize: function (options) {
@@ -55,7 +108,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     this.jobsCollection = options.jobsCollection;
 
-                    this.createJob = options.createJob ? options.createJob : true;
+                    this.createJob = options.createJob; //? options.createJob : true;
                     this.quotationDialog = options.quotationDialog;
 
                     this.render();
@@ -103,16 +156,16 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     var defaultObject = {
                         startDate : '',
-                        endDate  : '',
-                        hours    : '',
-                        project  : {
+                        endDate   : '',
+                        hours     : '',
+                        project   : {
                             projectName   : this.modelJSON.projectName,
-                            workflow   : this.modelJSON.workflow,
-                            customer   : this.modelJSON.customer,
+                            workflow      : this.modelJSON.workflow,
+                            customer      : this.modelJSON.customer,
                             projectmanager: this.modelJSON.projectmanager,
                             _id           : this.modelJSON._id
                         },
-                        employee : {},
+                        employee  : {},
                         department: {},
                         1         : 8,
                         2         : 8,
@@ -170,10 +223,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     dataPickerStartContainers.datepicker({
                         dateFormat       : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        yearRange  : yearRange,
-                        onSelect   : function (text, datPicker) {
+                        changeMonth      : true,
+                        changeYear       : true,
+                        yearRange        : yearRange,
+                        onSelect         : function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
                             var endDatePicker = td.find('.endDateDP');
@@ -198,10 +251,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     dataPickerEndContainers.datepicker({
                         dateFormat       : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        yearRange  : yearRange,
-                        onSelect   : function (text, datPicker) {
+                        changeMonth      : true,
+                        changeYear       : true,
+                        yearRange        : yearRange,
+                        onSelect         : function (text, datPicker) {
                             var targetInput = $(this);
 
                             targetInput.parent().removeClass('errorContent');
@@ -228,6 +281,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var width;
                     var value;
                     var insertedInput;
+                    var input;
 
                     //var isNotData = $(isInput).hasClass('noPadding') ? true: false;
 
@@ -239,7 +293,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     if (!isInput) {
                         tempContainer = el.text();
                         width = el.width() - 6;
-                        el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                        el.html('<input class="editing" type="text" value="' + tempContainer + '" style="width:' + width + 'px">');
+
+                        input = this.$el.find('.editing');
+
+                        if (content === "revenue"){
+                            input.attr({
+                                "maxLength": 6
+                            });
+                        }else {
+                            input.attr({
+                                "maxLength": 1
+                            });
+                        }
 
                         insertedInput = el.find('input');
                         insertedInput.focus();
@@ -347,7 +413,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     if (nameRegExp.test(jobName)) {
                         $.ajax({
                             type       : 'Post',
-                            url : '/wTrack/generateWTrack',
+                            url        : '/wTrack/generateWTrack',
                             contentType: "application/json",
                             data       : data,
 
@@ -522,11 +588,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var project = this.model.id ? this.model.toJSON() : this.model;
                     var dialog = this.template({
                         project  : project,
-                        jobs   : self.jobs,
+                        jobs     : self.jobs,
                         createJob: self.createJob
                     });
 
-                    if(!project){
+                    if (!project) {
                         return;
                     }
 

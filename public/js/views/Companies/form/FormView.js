@@ -182,9 +182,16 @@ define([
             },
 
             addOpportunities: function (e) {
+                var model;
+
                 e.preventDefault();
-                var model = this.formModel.toJSON();
-                new CreateViewOpportunities({ model: model });
+
+                model = this.formModel.toJSON();
+
+                new CreateViewOpportunities({
+                    model: model,
+                    elementId: 'companyAttach'
+                });
             },
 
             addPersons: function (e) {

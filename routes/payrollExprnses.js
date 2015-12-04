@@ -26,9 +26,7 @@ module.exports = function (models) {
         var filePath;
         var error;
         var rows = 0;
-        var notImportedEmployees = {
-
-        };
+        var notImportedEmployees = {};
 
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -70,9 +68,19 @@ module.exports = function (models) {
             "use strict";
             var month;
             var year = 2000 + parseInt(periodArray[1]);
+            var keyForNotSaved;
 
 
             switch (periodArray[0]) {
+                case 'Jan':
+                    month = 1;
+                    break;
+                case 'Feb':
+                    month = 2;
+                    break;
+                case 'March':
+                    month = 3;
+                    break;
                 case 'April':
                     month = 4;
                     break;
@@ -97,14 +105,19 @@ module.exports = function (models) {
                 case 'Nov':
                     month = 11;
                     break;
+                case 'Dec':
+                    month = 12;
+                    break;
             }
 
-            if (!notImportedEmployees[month]){
-                notImportedEmployees[month] = [];
+            keyForNotSaved = month + ' ' + year;
+
+            if (!notImportedEmployees[keyForNotSaved]) {
+                notImportedEmployees[keyForNotSaved] = [];
             }
 
             return {
-                year : year,
+                year: year,
                 month: month
             }
         };
@@ -155,6 +168,17 @@ module.exports = function (models) {
 
                         var saveObject = dateObjectComposer(periodArray);
 
+                        var firstName = namesArray[0];
+                        var lastName = namesArray[1];
+
+                        if (firstName) {
+                            firstName = firstName.replace(' ', '');
+                        }
+                        if (lastName) {
+                            lastName = lastName.replace(' ', '');
+                        }
+
+
                         dataKey = saveObject.year * 100 + saveObject.month;
 
                         saveObject.type = typeComposer(type);
@@ -165,15 +189,15 @@ module.exports = function (models) {
                         saveObject.employee = {};
 
                         Employee.findOne({
-                            'name.first': namesArray[0],
-                            'name.last' : namesArray[1]
+                            'name.first': firstName,
+                            'name.last': lastName
                         }, function (err, employee) {
                             "use strict";
                             if (err) {
                                 return cb(err);
                             }
                             if (!employee) {
-                                notImportedEmployees[saveObject.month].push(fullName);
+                                notImportedEmployees[saveObject.month + ' ' + saveObject.year].push(fullName);
                                 cb(null, 'empty');
                             } else {
                                 saveObject.employee._id = employee._id;
@@ -206,7 +230,15 @@ module.exports = function (models) {
         function saveToDbOrUpdate(objectToDb, callback) {
             var payroll = new PayRoll(objectToDb);
 
-            payroll.save(callback);
+            payroll.save(function (err, payRol) {
+                "use strict";
+                if (err) {
+                    console.dir(objectToDb);
+                    return callback(err);
+                }
+
+                callback(null, payRol);
+            });
         }
     }
 

@@ -5,22 +5,24 @@ define([
     'text!templates/Projects/projectInfo/wTrackTemplate.html',
     'text!templates/Projects/projectInfo/wTracks/wTrackHeader.html',
     'text!templates/Pagination/PaginationTemplate.html',
+    'text!templates/wTrack/list/cancelEdit.html',
     'views/wTrack/list/ListView',
     'views/wTrack/list/ListItemView',
     'models/wTrackModel',
     'collections/wTrack/editCollection',
     'collections/wTrack/filterCollection',
     'dataService',
-    'populate'
+    'populate',
+    'async'
 
-], function (wTrackTemplate, wTrackTopBar, paginationTemplate, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
+], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async) {
     var wTrackView = listView.extend({
 
         el                      : '#weTracks',
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
         templateHeader          : _.template(wTrackTopBar),
         listItemView            : listItemView,
-        template: _.template(wTrackTemplate),
+        template                : _.template(wTrackTemplate),
 
         events: {
             "mouseover .currentPageList"                             : "showPagesPopup",
@@ -99,6 +101,15 @@ define([
             var sortConst;
             var sortBy;
             var sortObject;
+
+            var newRows = this.$el.find('#false');
+
+            if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
+                return App.render({
+                    type   : 'notify',
+                    message: 'Please, save previous changes or cancel them!'
+                });
+            }
 
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
@@ -250,7 +261,6 @@ define([
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
 
-
             $('#check_all').prop('checked', false);
 
             this.nextPProject({
@@ -365,40 +375,99 @@ define([
             var table = $("#listTable");
             this.collectionLength = this.collection.length;
 
-            var answer = confirm("Really DELETE items ?!");
-            var value;
+            if (!this.changed) {
 
-            if (answer === true) {
-                $.each($("#listTable input:checked"), function (index, checkbox) {
-                    value = checkbox.value;
+                var answer = confirm("Really DELETE items ?!");
+                var value;
 
-                    model = that.collection.get(value);
-                    model.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        wait   : true,
-                        success: function (model) {
-                            var id = model.get('_id');
+                if (answer === true) {
+                    $.each($("#listTable input:checked"), function (index, checkbox) {
+                        value = checkbox.value;
 
-                            table.find('[data-id="' + id + '"]').remove();
+                        model = that.collection.get(value);
+                        model.destroy({
+                            headers: {
+                                mid: mid
+                            },
+                            wait   : true,
+                            success: function (model) {
+                                var id = model.get('_id');
 
-                            that.$el.find('#check_all').prop('checked', false);
-                            that.setAllTotalVals();
-                            that.hideSaveCancelBtns();
+                                table.find('[data-id="' + id + '"]').remove();
 
-                            that.copyEl.hide();
-                            that.genInvoiceEl.hide();
+                                that.$el.find('#check_all').prop('checked', false);
+                                that.setAllTotalVals();
+                                that.hideSaveCancelBtns();
 
-                        },
-                        error  : function (model, res) {
-                            if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
+                                that.copyEl.hide();
+                                that.genInvoiceEl.hide();
+
+                            },
+                            error  : function (model, res) {
+                                if (res.status === 403 && index === 0) {
+                                    alert("You do not have permission to perform this action");
+                                }
                             }
-                        }
+                        });
                     });
-                });
+                }
+            } else {
+                this.cancelChanges();
             }
+        },
+
+        cancelChanges: function () {
+            var self = this;
+            var edited = this.edited;
+            var collection = this.collection;
+            var editedCollectin = this.editCollection;
+            var copiedCreated;
+            var dataId;
+
+            async.each(edited, function (el, cb) {
+                var tr = $(el).closest('tr');
+                var rowNumber = tr.find('[data-content="number"]').text();
+                var id = tr.attr('data-id');
+                var template = _.template(cancelEdit);
+                var model;
+
+                if (!id) {
+                    return cb('Empty id');
+                } else if (id.length < 24) {
+                    tr.remove();
+                    model = self.changedModels;
+
+                    if (model) {
+                        delete model[id];
+                    }
+
+                    return cb();
+                }
+
+                model = collection.get(id);
+                model = model.toJSON();
+                model.startNumber = rowNumber;
+                tr.replaceWith(template({model: model}));
+                cb();
+            }, function (err) {
+                if (!err) {
+
+                    self.hideSaveCancelBtns();
+                }
+            });
+
+            if (this.createdCopied) {
+                copiedCreated = this.$el.find('#false');
+                dataId = copiedCreated.attr('data-id');
+                this.editCollection.remove(dataId);
+                delete this.changedModels[dataId];
+                copiedCreated.remove();
+
+                this.createdCopied = false;
+            }
+
+            self.changedModels = {};
+            self.responseObj['#jobs'] = [];
         },
 
         hideSaveCancelBtns: function () {

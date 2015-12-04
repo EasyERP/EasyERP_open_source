@@ -9,7 +9,7 @@
     </td>
     <% if (forSales) {%>
        <td data-name="jobs" data-content="<%=product.jobs._id%>">
-           <a class="current-selected" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
+           <a class="<%=editable ? 'current-selected' : ''%>" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
        </td>
     <% } else {%>
        <td data-name="productDescr">
@@ -18,18 +18,18 @@
           </span>
        </td>
     <% } %>
-    <td data-name="scheduledDate" class="editable">
+    <td data-name="scheduledDate" class="<%=editable ? 'editable' : ''%>">
         <span class="datepicker">
             <%=product.scheduledDate%>
         </span>
         <input type="text" class="datepicker notVisible" readonly>
     </td>
-    <td data-name="quantity" class="editable">
+    <td data-name="quantity" class="<%=editable ? 'editable' : ''%>">
         <span>
             <%=product.quantity%>
         </span>
     </td>
-    <td data-name="price"  class="editable">
+    <td data-name="price"  class="<%=editable ? 'editable' : ''%>">
         <span>
             <%=product.unitPrice%>
         </span>

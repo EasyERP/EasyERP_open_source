@@ -92,7 +92,10 @@ define([
             addOpportunities: function (e) {
                 e.preventDefault();
                 var model = this.formModel.toJSON();
-                new createViewOpportunities({ model: model });
+                new createViewOpportunities({
+                    model: model,
+                    elementId: 'personAttach'
+                });
             },
 
             quickEdit: function (e) {

@@ -40,7 +40,7 @@ define([
             var products;
 
             this.responseObj = {};
-            this.taxesRate = 0.15;
+            this.taxesRate = 0;
 
             if (options) {
                 this.projectModel = options.projectModel;
@@ -90,7 +90,7 @@ define([
             this.generatedView = new GenerateWTrack({
                 model               : this.projectModel,
                 wTrackCollection    : this.wTrackCollection,
-                createJob           : this.createJob,
+                createJob           : true,
                 forQuotationGenerate: true,
                 quotationDialog     : this
             });
@@ -365,7 +365,6 @@ define([
             var product = $('.productsDd');
 
             if (_id !== 'createJob') {
-
 
                 if (parrent.hasClass('jobs')) {
                     _id = product.attr("data-id");

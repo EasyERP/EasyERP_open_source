@@ -1,5 +1,6 @@
 define([
         "text!templates/salesOrder/EditTemplate.html",
+        "text!templates/salesOrder/ViewTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
         "views/Projects/projectInfo/invoices/invoiceView",
@@ -10,7 +11,7 @@ define([
         "populate",
         "constants"
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
@@ -27,6 +28,8 @@ define([
 
                 this.forSales = true;
                 this.redirect = options.redirect;
+
+                this.onlyView = !!options.onlyView;
 
                 this.projectManager = options.projectManager;
 
@@ -145,56 +148,64 @@ define([
                 var orderId = this.currentModel.id;
                 var data = {
                     forSales: this.forSales,
-                    orderId : orderId
+                    orderId : orderId,
+                    currency: this.currentModel.currency
                 };
 
-                dataService.postData(url, data, function (err, response) {
-                    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+                this.saveItem(function (err) {
+                    if (!err) {
 
-                    if (err) {
-                        alert('Can\'t receive invoice');
-                    } else {
+                        dataService.postData(url, data, function (err, response) {
+                            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
-                        if (self.redirect) {
-                            var _id = window.location.hash.split('form/')[1];
+                            if (err) {
+                                alert('Can\'t receive invoice');
+                            } else {
 
-                            var tr = $("[data-id=" + orderId + "]");
+                                if (self.redirect) {
+                                    var _id = window.location.hash.split('form/')[1];
 
-                            tr.addClass('notEditable');
+                                    var tr = $("[data-id=" + orderId + "]");
 
-                            tr.find('.workflow').find('a').text("Invoiced");
+                                    tr.addClass('notEditable');
 
-                            var filter = {
-                                'project': {
-                                    key  : 'project._id',
-                                    value: [_id]
+                                    tr.find('.checkbox').addClass('notRemovable');
+
+                                    tr.find('.workflow').find('a').text("Invoiced");
+
+                                    var filter = {
+                                        'project': {
+                                            key  : 'project._id',
+                                            value: [_id]
+                                        }
+                                    };
+
+
+                                    self.collection = new invoiceCollection({
+                                        count      : 50,
+                                        viewType   : 'list',
+                                        contentType: 'salesInvoice',
+                                        filter     : filter
+                                    });
+
+                                    function createView() {
+
+                                        this.invoiceView = new InvoiceView({
+                                            model    : self.collection,
+                                            activeTab: true
+                                        });
+
+                                        this.invoiceView.showDialog(orderId);
+
+                                    };
+
+                                    self.collection.unbind();
+                                    self.collection.bind('reset', createView);
+                                } else {
+                                    Backbone.history.navigate(redirectUrl, {trigger: true});
                                 }
-                            };
-
-
-                            self.collection = new invoiceCollection({
-                                count      : 50,
-                                viewType   : 'list',
-                                contentType: 'salesInvoice',
-                                filter     : filter
-                            });
-
-                            function createView() {
-
-                                this.invoiceView = new InvoiceView({
-                                    model: self.collection,
-                                    activeTab: true
-                                });
-
-                                this.invoiceView.showDialog(orderId);
-
-                            };
-
-                            self.collection.unbind();
-                            self.collection.bind('reset', createView);
-                        } else {
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
-                        }
+                            }
+                        });
                     }
                 });
             },
@@ -230,7 +241,7 @@ define([
                 });
             },
 
-            saveItem: function () {
+            saveItem: function (invoiceCb) {
 
                 var self = this;
                 var mid = 55;
@@ -262,6 +273,21 @@ define([
                 var usersId = [];
                 var groupsId = [];
                 var jobs;
+
+                var currency;
+
+                if (thisEl.find('#currencyDd').attr('data-id')) {
+                    currency = {
+                        _id : thisEl.find('#currencyDd').attr('data-id'),
+                        name: thisEl.find('#currencyDd').text()
+                    }
+                } else {
+                    currency = {
+                        _id : null,
+                        name: ''
+                    }
+                }
+
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -295,13 +321,14 @@ define([
                             product  : productId,
                             unitPrice: price,
                             quantity : quantity,
-                            jobs: jobs
+                            jobs     : jobs
                         });
                     }
                 }
 
 
                 data = {
+                    currency         : currency,
                     supplier         : supplier,
                     supplierReference: supplierReference,
                     products         : products,
@@ -312,13 +339,13 @@ define([
                     invoiceControl   : invoiceControl ? invoiceControl : null,
                     paymentTerm      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
-                    project       : project,
+                    project          : project,
                     paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed
                     },
                     groups           : {
-                        owner: $("#allUsersSelect").data("id"),
+                        owner: $("#allUsersSelect").attr("data-id"),
                         users: usersId,
                         group: groupsId
                     },
@@ -335,9 +362,17 @@ define([
                             Backbone.history.fragment = "";
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
+
+                            if (invoiceCb && typeof invoiceCb === 'function') {
+                                return invoiceCb(null);
+                            }
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
+
+                            if (invoiceCb && typeof invoiceCb === 'function') {
+                                return invoiceCb(xhr.text);
+                            }
                         }
                     });
 
@@ -378,23 +413,20 @@ define([
 
             render: function () {
                 var self = this;
+                this.template = !this.onlyView ? _.template(EditTemplate) : _.template(ViewTemplate);
                 var formString = this.template({
                     model  : this.currentModel.toJSON(),
-                    visible: this.visible
+                    visible: this.visible,
+                    onlyView: this.onlyView
                 });
                 var service = true;
                 var notDiv;
                 var model;
                 var productItemContainer;
+                var buttons;
 
-                this.$el = $(formString).dialog({
-                    closeOnEscape: false,
-                    autoOpen     : true,
-                    resizable    : true,
-                    dialogClass  : "edit-dialog",
-                    title        : "Edit Order",
-                    width        : "900px",
-                    buttons      : [
+                if (!this.onlyView) {
+                    buttons = [
                         {
                             text : "Save",
                             click: function () {
@@ -413,7 +445,26 @@ define([
                             click: self.deleteItem
                         }
                     ]
+                } else {
+                    buttons = [
+                        {
+                            text : "Close",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        }
+                    ]
+                }
 
+
+                this.$el = $(formString).dialog({
+                    closeOnEscape: false,
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Order",
+                    width        : "900px",
+                    buttons      : buttons
                 });
 
                 notDiv = this.$el.find('.assignees-container');
@@ -422,6 +473,8 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
+
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true, true);
 
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
@@ -438,6 +491,12 @@ define([
                     changeMonth: true,
                     changeYear : true
                 })/*.datepicker('setDate', model.expectedDate)*/;
+
+                this.$el.find('#orderDate').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true
+                });
 
                 productItemContainer = this.$el.find('#productItemsHolder');
 

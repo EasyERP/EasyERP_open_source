@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var wTrack = function (event, models) {
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
-    var _ = require('../node_modules/underscore');
+    var _ = require('underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
@@ -20,6 +20,9 @@ var wTrack = function (event, models) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var moment = require('../public/js/libs/moment/moment');
+
+    var FilterMapper = require('../helpers/filterMapper');
+    var filterMapper = new FilterMapper();
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').wTrack;
@@ -159,7 +162,7 @@ var wTrack = function (event, models) {
         }
     };
 
-    function ConvertType(array, type) {
+    /*function ConvertType(array, type) {
         if (type === 'integer') {
             for (var i = array.length - 1; i >= 0; i--) {
                 array[i] = parseInt(array[i]);
@@ -235,7 +238,7 @@ var wTrack = function (event, models) {
         }
 
         return resArray;
-    }
+    }*/
 
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -243,16 +246,16 @@ var wTrack = function (event, models) {
         var contentIdsSearcher;
         var contentSearcher;
         var query = req.query;
-        var queryObject = {};
         var filter = query.filter;
+        var queryObject = filter ? filterMapper.mapFilter(filter) : {};
 
-        if (filter && typeof filter === 'object') {
+        /*if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 queryObject['$or'] = caseFilter(filter);
             } else {
                 queryObject['$and'] = caseFilter(filter);
             }
-        }
+        }*/
         var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
@@ -320,7 +323,7 @@ var wTrack = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         var query = req.query;
-        var queryObject = {};
+        //var queryObject = {};
         var filter = query.filter;
         var departmentSearcher;
         var contentIdsSearcher;
@@ -339,14 +342,16 @@ var wTrack = function (event, models) {
         };
 
         var sort = {};
+        var queryObject = filter ? filterMapper.mapFilter(filter) : {};
 
-        if (filter && typeof filter === 'object') {
+
+        /*if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
-                queryObject['$or'] = caseFilter(filter);
+                queryObject['$or'] = filterObject; //caseFilter(filter);
             } else {
-                queryObject['$and'] = caseFilter(filter);
+                queryObject['$and'] = filterObject; //caseFilter(filter);
             }
-        }
+        }*/
 
         var count = query.count ? query.count : 100;
         var page = query.page;

@@ -16,7 +16,7 @@
 
         <thead>
         <tr>
-            <th colspan="7"
+            <th colspan="9"
                 class="forCaption">
                 Team & Resources
             </th>
@@ -32,9 +32,11 @@
         <tr>
             <th></th>
             <th>Expand</th>
-            <th>Job</th>
+            <th>Sprint</th>
             <th>Status</th>
             <th>Type</th>
+            <th>Quot/Order</th>
+            <th>Invoice</th>
             <th>Employees</th>
             <th>Hours</th>
             <th>Cost</th>
@@ -70,6 +72,8 @@
                     <li>Not Quoted</li>
                 </ul>
             </td>
+            <td><a data-id="<%=element.quotation._id ? element.quotation._id._id : null%>" class="quotation"><%=element.quotation.name%></a></td>
+            <td><a data-id="<%=element.invoice._id ? element.invoice._id._id : null%>" class="invoice"><%=element.invoice.name%></a></td>
             <td><%=element.budget.projectTeam.length%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
@@ -93,6 +97,8 @@
         <tr id="total">
             <td>&nbsp</td>
             <td>Total</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td>&nbsp</td>

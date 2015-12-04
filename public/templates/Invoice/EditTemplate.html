@@ -11,9 +11,9 @@
                                 <button class="btn newPayment">
                                     <span>Pay</span>
                                 </button>
-                                <button class="btn cancelInvoice">
-                                    <span>Cancel</span>
-                                </button>
+                                <!--<button class="btn cancelInvoice">-->
+                                    <!--<span>Cancel</span>-->
+                                <!--</button>-->
                             <%} else if(model.workflow.status === 'Done'){%>
                                 <% if(!isWtrack) {%>
                                     <!--<button class="red refund">-->
@@ -60,7 +60,7 @@
 
                                         <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
                                         <dd>
-                                            <input type="text" id="supplier_invoice_num" value="<%=(model.supplierInvoiceNumber) ? model.supplierInvoiceNumber : ''%>" placeholder="Supplier Invoice Number"  maxlength="32"/>
+                                            <input type="text" id="supplier_invoice_num" value="<%=(model.name) ? model.name : ''%>" placeholder="Supplier Invoice Number"  maxlength="32"/>
                                         </dd>
 
                                         <dt>
@@ -69,9 +69,6 @@
                                         <dd>
                                             <input type="text" id="payment_reference" value="<%=(model.paymentReference) ? model.paymentReference : ''%>" placeholder="Payment Reference"  maxlength="32"/>
                                         </dd>
-
-
-
                                     </dl>
                                 </div>
                                 <div class="half-block left">
@@ -93,14 +90,19 @@
                                             id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
                                         </dd>
 
-                                        <dt><label for="account">Account</label></dt>
+                                        <!--<dt><label for="account">Account</label></dt>
                                         <dd>
                                             <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                        </dd>
+                                        </dd>-->
 
                                         <dt><label for="journal">Journal</label></dt>
                                         <dd>
-                                            <a id="journal" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                            <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class="current-selected" href="javascript:;"><%=model.journal ? model.journal._id : 'Select'%></a>
+                                        </dd>
+
+                                        <dt><label for="currencyDd">Currency</label></dt>
+                                        <dd>
+                                            <a id="currencyDd" class="current-selected" data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>" href="javascript:;"><%= model.currency && model.currency.name ? model.currency.name : ''%></a>
                                         </dd>
 
                                     </dl>
@@ -123,6 +125,12 @@
                                         <dd>
                                             <span type="text" id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>
                                         </dd>
+                                        <dt>
+                                            <label for="payment_reference">Payment Reference</label>
+                                        </dt>
+                                        <dd>
+                                            <span><%=(model.paymentReference) ? model.paymentReference : ''%></span>
+                                        </dd>
                                     </dl>
                                 </div>
                                 <div class="half-block left">
@@ -137,11 +145,15 @@
                                         <dd>
                                             <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
                                         </dd>
-                                        <dt>
-                                            <label for="payment_reference">Payment Reference</label>
-                                        </dt>
+
+                                        <dt><label for="journal">Journal</label></dt>
                                         <dd>
-                                            <span><%=(model.paymentReference) ? model.paymentReference : ''%></span>
+                                            <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class="" href="javascript:;"><%=model.journal ? model.journal._id : ''%></a>
+                                        </dd>
+
+                                        <dt><label for="currencyDd">Currency</label></dt>
+                                        <dd>
+                                            <a id="currencyDd" class="" data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>" href="javascript:;"><%= model.currency && model.currency.name ? model.currency.name : ''%></a>
                                         </dd>
 
                                     </dl>

@@ -10,6 +10,7 @@ var Filters = function (models) {
     var QuotationSchema = mongoose.Schemas['Quotation'];
     var productSchema = mongoose.Schemas['Products'];
     var PayRollSchema = mongoose.Schemas['PayRoll'];
+    var JobsSchema = mongoose.Schemas['jobs'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
     var moment = require('../public/js/libs/moment/moment');
@@ -29,6 +30,7 @@ var Filters = function (models) {
         var Product = models.get(lastDB, 'Products', productSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
         var PayRoll = models.get(lastDB, 'PayRoll', PayRollSchema);
+        var Jobs = models.get(lastDB, 'jobs', JobsSchema);
         var startDate;
         var endDate;
         var dateRangeObject;
@@ -113,7 +115,8 @@ var Filters = function (models) {
                 salesOrder      : getSalesOrders,
                 Order           : getOrdersFiltersValues,
                 PayrollExpenses : getPayRollFiltersValues,
-                DashVacation    : getDashVacationFiltersValues
+                DashVacation    : getDashVacationFiltersValues,
+                Dashboard    : getDashJobsFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -897,6 +900,39 @@ var Filters = function (models) {
                         //        name: '$type'
                         //    }
                         //},
+                        'workflow'      : {
+                            $addToSet: {
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length) {
+                    result = result[0];
+                    callback(null, result);
+                } else {
+                    callback(null, []);
+                }
+
+            });
+        }
+
+        function getDashJobsFiltersValues (callback){
+            Jobs.aggregate([{
+                    $group: {
+                        _id             : null,
+                        'type': {
+                            $addToSet: {
+                                _id : '$type',
+                                name: '$type'
+                            }
+                        },
                         'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',

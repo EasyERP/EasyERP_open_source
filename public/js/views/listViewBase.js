@@ -4,7 +4,7 @@ define([
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
         'common',
-        'dataService',
+        'dataService'
     ],
 
     function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
@@ -65,6 +65,14 @@ define([
                 var sortConst;
                 var sortBy;
                 var sortObject;
+                var newRows = this.$el.find('#false');
+
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
+                }
 
                 this.collection.unbind('reset');
                 this.collection.unbind('showmore');
@@ -141,7 +149,9 @@ define([
                 new this.createView();
             },
 
-            checked: function () {
+            checked: function (e) {
+                e.stopPropagation();
+
                 var checkLength;
                 var checkAll$;
 
@@ -357,6 +367,10 @@ define([
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
+
+                if (typeof(this.setChangedValueToModel) === "function"){ //added for SetChangesToModel in ListView
+                    this.setChangedValueToModel();
+                }
             },
 
             //</editor-fold>
@@ -472,7 +486,8 @@ define([
             },
 
             alpabeticalRender: function (e) {
-                var selectedLetter = $(e.target).text();
+                var target = $(e.target);
+                var selectedLetter = target.text();
                 var itemsNumber = $("#itemsNumber").text();
 
                 this.startTime = new Date();
@@ -484,6 +499,9 @@ define([
                     selectedLetter = "";
                     this.filter = {};
                 }
+
+                target.parent().find(".current").removeClass("current");
+                target.addClass("current");
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);

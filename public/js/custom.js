@@ -117,6 +117,8 @@ define([
                     case CONTENT_TYPES.PAYROLLPAYMENTS:
                     case CONTENT_TYPES.INVOICEAGING:
                     case CONTENT_TYPES.CHARTOFACCOUNT:
+                    case CONTENT_TYPES.JOURNAL:
+                    case CONTENT_TYPES.JOURNALENTRY:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -165,6 +167,8 @@ define([
                     case CONTENT_TYPES.PAYROLLPAYMENTS:
                     case CONTENT_TYPES.INVOICEAGING:
                     case CONTENT_TYPES.CHARTOFACCOUNT:
+                    case CONTENT_TYPES.JOURNAL:
+                    case CONTENT_TYPES.JOURNALENTRY:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

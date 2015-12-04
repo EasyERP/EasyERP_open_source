@@ -7,7 +7,8 @@
     <td><%=job.workflow.name%></td>
     <td><%=job.type%></td>
     <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
-    <td><%=currencySplitter(job.quotation ? job.quotation.toFixed(2) : "")%></td>
+    <td><%=currencySplitter(job.quotation._id ? job.quotation._id.paymentInfo.total.toFixed(2) : "")%></td>
+    <td><%=currencySplitter(job.invoice._id ? (job.invoice._id.paymentInfo.total / 100).toFixed(2) : "")%></td>
 </tr>
 <%  }); %>
 

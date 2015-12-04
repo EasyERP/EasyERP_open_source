@@ -27,10 +27,55 @@ var Jobs = function (models, event) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'type':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
             }
 
             return resArray;
         }
+    };
+
+    this.create = function(req, res, next){
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var data = req.body;
+        var project = req.headers.project;
+        var jobName = req.headers.jobname;
+        var newModel;
+        var jobId;
+        var projectId;
+
+        data.name = jobName;
+        data.project = objectId(project);
+        data.workflow = {
+            _id : objectId("56337c705d49d8d6537832eb"),
+                name: "In Progress"
+        };
+        data.type = "Not Quoted";
+        data.wTracks = [];
+
+        newModel = new JobsModel(data);
+
+        newModel.save(function (err, model) {
+            if (err) {
+                return next(err);
+            }
+
+            jobId = model._id;
+            projectId = model.project;
+
+            if (projectId){
+                event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
+                event.emit('recollectProjectInfo');
+            }
+
+            res.status(200).send({success: model});
+        });
     };
 
     this.getData = function (req, res, next) {
@@ -65,6 +110,8 @@ var Jobs = function (models, event) {
         if (!joinWithQuotation) {
             query
                 .populate('project')
+                .populate('invoice._id')
+                .populate('quotation._id')
                 .exec(function (err, result) {
                     if (err) {
                         return next(err);
@@ -75,30 +122,34 @@ var Jobs = function (models, event) {
         } else {
             query
                 .populate('project')
+                .populate('invoice._id')
+                .populate('quotation._id')
                 .exec(function (err, result) {
                     if (err) {
                         return next(err);
                     }
 
-                    Quotation.find({}, {products: 1, paymentInfo: 1}, function (err, quots) {
-                        if (err) {
-                            return next(err);
-                        }
+                    res.status(200).send(result)
 
-                        async.each(result, function (job, cb) {
-                            async.each(quots, function (quotation) {
-                                quotation.products.forEach(function (product) {
-                                    if (product.jobs && product.jobs.toString() === job._id.toString()) {
-                                        job._doc.quotation = quotation.paymentInfo.total;
-                                    }
-                                });
-                            });
-                            cb();
-                        }, function () {
-                            res.status(200).send(result)
-                        })
-
-                    });
+                    //Quotation.find({}, {products: 1, paymentInfo: 1}, function (err, quots) {
+                    //    if (err) {
+                    //        return next(err);
+                    //    }
+                    //
+                    //    async.each(result, function (job, cb) {
+                    //        async.each(quots, function (quotation) {
+                    //            quotation.products.forEach(function (product) {
+                    //                if (product.jobs && product.jobs.toString() === job._id.toString()) {
+                    //                    job._doc.quotation = quotation.paymentInfo.total;
+                    //                }
+                    //            });
+                    //        });
+                    //        cb();
+                    //    }, function () {
+                    //        res.status(200).send(result)
+                    //    })
+                    //
+                    //});
                 })
         }
 

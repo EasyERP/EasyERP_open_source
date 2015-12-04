@@ -21,12 +21,12 @@ define([
 
             events: {
                 "click #saveBtn"                                                  : "saveItem",
-                "click #cancelBtn": "hideDialog",
-                "click .current-selected": "showNewSelect",
-                "click"                  : "hideNewSelect",
-                'click .dialog-tabs a'   : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"      : "notHide",
+                "click #cancelBtn"                                                : "hideDialog",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .details"                                                  : "showDetailsBox",
@@ -51,6 +51,8 @@ define([
 
                 this.redirect = options.redirect;
                 this.collection = options.collection;
+
+                this.notCreate = options.notCreate ? false : true;
 
                 if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
@@ -85,17 +87,17 @@ define([
                     if (!err) {
                         paymentView = new PaymentCreateView({
                             model     : self.currentModel,
-                            redirect: self.redirect,
+                            redirect  : self.redirect,
                             collection: self.collection
                         });
                     }
                 });
 
                 /*paymentView = new PaymentCreateView({
-                    model     : this.currentModel,
-                    redirect: this.redirect,
-                    collection: this.collection
-                });*/
+                 model     : this.currentModel,
+                 redirect: this.redirect,
+                 collection: this.collection
+                 });*/
             },
 
             cancelInvoice: function (e) {
@@ -114,7 +116,7 @@ define([
 
                 populate.fetchWorkflow({
                     wId         : wId,
-                    source: 'purchase',
+                    source      : 'purchase',
                     targetSource: 'invoice',
                     status      : 'Cancelled',
                     order       : 1
@@ -126,7 +128,7 @@ define([
                     self.currentModel.save({
                         workflow: {
                             _id   : workflow._id,
-                            name: workflow.name,
+                            name  : workflow.name,
                             status: workflow.status
                         }
                     }, {
@@ -165,7 +167,7 @@ define([
                     self.currentModel.save({
                         workflow: {
                             _id   : workflow._id,
-                            name: workflow.name,
+                            name  : workflow.name,
                             status: workflow.status
                         }
                     }, {
@@ -225,37 +227,37 @@ define([
                 var self = this;
                 var mid = 56;
 
-                var errors = this.$el.find('.errorContent');
+                var $thisEl = this.$el;
 
-                if (errors.length) {
-                    return
-                }
-
-                var selectedProducts = this.$el.find('.productItem');
+                var errors = $thisEl.find('.errorContent');
+                var selectedProducts = $thisEl.find('.productItem');
                 var products = [];
                 var selectedLength = selectedProducts.length;
                 var targetEl;
                 var productId;
+                var journalId;
                 var quantity;
                 var price;
                 var description;
                 var taxes;
                 var amount;
-
+                var data;
                 var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
                 var salesPerson = this.currentModel.salesPerson ? this.currentModel.salesPerson : this.currentModel.get('salesPerson');
                 var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
+                var currency = {
+                    _id : $thisEl.find('#currencyDd').attr('data-id'),
+                    name: $thisEl.find('#currencyDd').text()
+                };
 
-                var invoiceDate = this.$el.find("#invoice_date").val();
-                var dueDate = this.$el.find("#due_date").val();
+                var invoiceDate = $thisEl.find("#invoice_date").val();
+                var dueDate = $thisEl.find("#due_date").val();
 
                 var supplier = {};
-                supplier._id = this.$el.find('#supplier').data("id");
-                supplier.name = this.$el.find('#supplier').text();
 
-                var total = parseFloat(this.$("#totalAmount").text());
-                var unTaxed = parseFloat(this.$("#totalUntaxes").text());
-                var balance = parseFloat(this.$("#balance").text());
+                var total = parseFloat($thisEl.find("#totalAmount").text());
+                var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text());
+                var balance = parseFloat($thisEl.find("#balance").text());
 
                 var payments = {
                     total  : total,
@@ -263,10 +265,28 @@ define([
                     balance: balance
                 };
 
+                var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
+                var paymentTermId = $thisEl.find("#payment_terms").attr("data-id") || null;
+                var journalId = this.$el.find('#journal').attr("data-id") || null;
+
+                var usersId = [];
+                var groupsId = [];
+
+                var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
+
+                if (errors.length) {
+                    return
+                }
+
+                supplier._id = $thisEl.find('#supplier').attr("data-id");
+                supplier.name = $thisEl.find('#supplier').text();
+
+
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
+
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
                             price = targetEl.find('[data-name="price"]').text();
@@ -286,11 +306,6 @@ define([
                     }
                 }
 
-                var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
-                var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
-
-                var usersId = [];
-                var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -300,18 +315,19 @@ define([
                     }
 
                 });
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
-                var data = {
+                data = {
+                    currency             : currency,
                     supplier             : supplier,
-                    fiscalPosition: null,
+                    fiscalPosition       : null,
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
-                    supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
+                    //supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
+                    name                 : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
                     paymentReference     : $.trim(this.$el.find('#payment_reference').val()),
                     invoiceDate          : invoiceDate,
                     dueDate              : dueDate,
                     account              : null,
-                    journal              : null,
+                    journal              : journalId,
 
                     salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
@@ -440,14 +456,14 @@ define([
 
                 formString = this.template({
                     model           : this.currentModel.toJSON(),
-                    isWtrack: self.isWtrack,
-                    isPaid  : this.isPaid,
-                    notAddItem  : this.notAddItem,
-                    wTracks : wTracks,
-                    project : project,
-                    assigned: assigned,
-                    customer: customer,
-                    total   : total,
+                    isWtrack        : self.isWtrack,
+                    isPaid          : this.isPaid,
+                    notAddItem      : this.notAddItem,
+                    wTracks         : wTracks,
+                    project         : project,
+                    assigned        : assigned,
+                    customer        : customer,
+                    total           : total,
                     currencySplitter: helpers.currencySplitter
                 });
 
@@ -459,10 +475,10 @@ define([
                                 self.hideDialog();
                             }
                         }/*,
-                        {
-                            text : "Delete",
-                            click: self.deleteItem
-                        }*/
+                         {
+                         text : "Delete",
+                         click: self.deleteItem
+                         }*/
                     ]
                 } else {
                     buttons = [
@@ -511,6 +527,8 @@ define([
                 populate.get2name("#supplier", "/supplier", {}, this, false);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+                populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",
@@ -564,7 +582,7 @@ define([
                         balanceVisible: true,
                         forSales      : self.forSales,
                         isPaid        : this.isPaid,
-                        notAddItem  : this.notAddItem
+                        notAddItem    : this.notAddItem
                     }).render({model: model}).el
                 );
 

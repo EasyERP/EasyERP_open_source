@@ -16,10 +16,11 @@ var Quotation = function (models, event) {
 
     this.create = function (req, res, next) {
         var db = req.session.lastDb;
-
+        var project;
         var Customer = models.get(db, 'Customers', CustomerSchema);
         var Workflow = models.get(db, 'workflows', WorkflowSchema);
         var Quotation = models.get(db, 'Quotation', QuotationSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
         var body = mapObject(req.body);
         var isPopulate = req.body.populate;
@@ -67,7 +68,31 @@ var Quotation = function (models, event) {
                         return next(err);
                     }
 
-                    res.status(200).send(_quotation);
+                    var id = _quotation._id;
+                    var name = _quotation.name;
+                    var products = _quotation.products;
+                    var setObj = {
+                        _id : id,
+                        name: name
+                    };
+
+                    async.each(products, function (product, cb) {
+                        var jobs = product.jobs;
+
+                        JobsModel.findByIdAndUpdate(jobs, {$set: {quotation: setObj, type: "Quoted"}}, {new: true}, function (err, result) {
+                            if (err) {
+                                return cb(err);
+                            }
+                            project = result.project ? result.project : null;
+                            cb();
+                        });
+
+                    }, function () {
+                        if (project) {
+                            event.emit('fetchJobsCollection', {project: project});
+                        }
+                        res.status(200).send(_quotation);
+                    });
                 })
             } else {
                 res.status(200).send(_quotation);
@@ -77,12 +102,38 @@ var Quotation = function (models, event) {
 
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var products;
+        var project;
 
         Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
             if (err) {
                 next(err);
             } else {
-                res.status(200).send({success: 'Quotation updated', result: quotation});
+
+                if (data.isOrder){
+                    products = quotation.products;
+
+                    async.each(products, function (product, cb) {
+                        var jobs = product.jobs;
+
+                        JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered"}}, {new: true}, function (err, result) {
+                            if (err) {
+                                return cb(err);
+                            }
+                            project = result.project ? result.project : null;
+                            cb();
+                        });
+
+                    }, function () {
+                        if (project) {
+                            event.emit('fetchJobsCollection', {project: project});
+                        }
+
+                    });
+                } else {
+                    res.status(200).send({success: 'Quotation updated', result: quotation});
+                }
             }
         });
 
@@ -483,7 +534,7 @@ var Quotation = function (models, event) {
             var queryObject = {_id: objectId(id)};
             var query;
 
-            queryObject.isOrder = isOrder;
+            //queryObject.isOrder = isOrder;
             query = Quotation.findOne(queryObject);
 
             // query.populate('supplier', '_id name fullName');
@@ -530,7 +581,10 @@ var Quotation = function (models, event) {
 
             async.each(products, function (product, cb) {
 
-                JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                JobsModel.findByIdAndUpdate(product.jobs, {
+                    type     : type,
+                    quotation: {_id: null, name: ""}
+                }, {new: true}, function (err, result) {
                     if (err) {
                         return next(err);
                     }

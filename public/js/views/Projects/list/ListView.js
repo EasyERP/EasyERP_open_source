@@ -49,7 +49,7 @@ define([
                 "click .stageSelect"             : "showNewSelect",
                 "click .newSelectList li"        : "chooseOption",
                 "click #health .health-container": "showHealthDd",
-                "click #health ul li div"        : "chooseHealthDd",
+                "click #health ul li div"        : "chooseHealthDd"
                 //"click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
             },
 
@@ -113,6 +113,34 @@ define([
                 this.hideNewSelect();
                 return false;
             },
+
+            checked: function (e) {
+                var $targetEl = $(e.target);
+
+                if ($targetEl.hasClass('notRemovable')) {
+                    $targetEl.prop('checked', false);
+
+                    return false;
+                }
+
+                if (this.collection.length > 0) {
+                    var checkLength = $("input.checkbox:checked").length;
+
+                    if ($("input.checkbox:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+
+                        if (checkLength == this.collection.length) {
+                            $('#check_all').prop('checked', true);
+                        }
+                    }
+                    else {
+                        $("#top-bar-deleteBtn").hide();
+                        $('#check_all').prop('checked', false);
+                    }
+                }
+            },
+
 
             pushStages: function (stages) {
                 this.stages = stages;

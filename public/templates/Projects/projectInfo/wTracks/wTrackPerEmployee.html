@@ -1,4 +1,5 @@
 <tr data-id="<%=id%>" class="productItem">
+    <td class="remove"><a class="fa fa-trash hidden" id="<%=id%>"></a></td>
     <td data-content="employee" class="errorContent">
         <a class="current-selected" href="javascript:;">select</a>
     </td>
@@ -17,7 +18,7 @@
     </td>
     <td data-type="input" class="editable noPadding endDateTD errorContent disable_input_style" data-content="endDate">
         <input type="text" class="endDateDP endDate datapicker" readonly>
-        <input type="text" id="inputHours" class="endDate endDateInput hidden">
+        <input type="text" id="inputHours" class="endDate endDateInput hidden" maxlength="4">
     </td>
     <td data-type="input" class="editable money disable_input_style" data-content="revenue">120.00</td>
     <td data-type="input" class="editable autoCalc disable_input_style" data-content="1">8</td>

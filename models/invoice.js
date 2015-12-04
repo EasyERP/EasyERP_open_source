@@ -29,6 +29,12 @@ module.exports = (function () {
         invoiceDate: {type: Date, default: Date.now},
         dueDate    : Date,
         paymentDate: Date,
+        journal: {type: ObjectId, ref: 'journal', default: null},
+        currency: {
+            _id : {type: ObjectId, ref: 'currency', default: null},
+            name: {type: String, default: ''},
+            rate: {type: Number, default: 1}
+        },
 
         salesPerson : {
             _id : {type: ObjectId, ref: 'Employees', default: null},
@@ -58,7 +64,7 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        editedBy: {
+        editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },

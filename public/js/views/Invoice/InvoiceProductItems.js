@@ -31,7 +31,7 @@ define([
             var products;
 
             this.responseObj = {};
-            this.taxesRate = 0.15;
+            this.taxesRate = 0;
 
             if (options) {
                 this.visible = !!options.balanceVisible;

@@ -12,6 +12,8 @@ module.exports = (function () {
     require('./employee.js');
     require('./jobPosition.js');
     require('./jobType.js');
+    require('./journal.js');
+    require('./journalEntry.js');
     require('./incoterm.js');
     require('./industry.js');
     require('./invoicingControl.js');
@@ -53,4 +55,5 @@ module.exports = (function () {
     require('./payRoll.js');
     require('./paymentType.js');
     require('./chartAccount.js');
+    require('./currency.js');
 })();

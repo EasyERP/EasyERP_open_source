@@ -6,27 +6,35 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var jobsSchema = mongoose.Schema({
-        name: { type: String, default: '' },
-        workflow: {
-            _id: { type: ObjectId, ref: 'workflows', default: null },
+        name     : {type: String, default: ''},
+        workflow : {
+            _id : {type: ObjectId, ref: 'workflows', default: null},
             name: String
         },
-        type: {type: String, enum: ['Quoted', "Ordered", "Invoiced", "Paid", "Not Quoted"], default: 'Not Quoted'},
-        wTracks : [{type: ObjectId, ref: 'wTrack', default: null}],
-        project: {type: ObjectId, ref: 'Project', default: null},
-        budget: {
-            _id: false,
-            projectTeam: {type: Array, default: []},
+        type     : {type: String, enum: ['Quoted', "Ordered", "Invoiced", "Paid", "Not Quoted"], default: 'Not Quoted'},
+        wTracks  : [{type: ObjectId, ref: 'wTrack', default: null}],
+        project  : {type: ObjectId, ref: 'Project', default: null},
+        budget   : {
+            _id          : false,
+            projectTeam  : {type: Array, default: []},
             projectValues: {type: Array, default: []},
-            budget: {type: Array, default: []},
-            budgetTotal:{type: Object, default: {}}
+            budget       : {type: Array, default: []},
+            budgetTotal  : {type: Object, default: {}}
+        },
+        quotation: {
+            _id : {type: ObjectId, ref: 'Quotation', default: null},
+            name: String
+        },
+        invoice  : {
+            _id : {type: ObjectId, ref: 'Invoice', default: null},
+            name: String
         }
 
-    }, { collection: 'jobs' });
+    }, {collection: 'jobs'});
 
     mongoose.model('jobs', jobsSchema);
 
-    if(!mongoose.Schemas) {
+    if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 

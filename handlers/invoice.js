@@ -22,48 +22,99 @@ var Invoice = function (models, event) {
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants.js');
 
+    var journalEntryHandler = require('./journalEntry');
+    var _journalEntryHandler = new journalEntryHandler(models);
+
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
 
         return validDbs.indexOf(db) !== -1;
     };
 
+    function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
+        var journalEntryBody = {};
+
+        journalEntryBody.date = invoice.invoiceDate;
+        journalEntryBody.journal = invoice.journal;
+        journalEntryBody.currency = invoice.currency ? invoice.currency.name : 'USD';
+        journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+        journalEntryBody.sourceDocument = {};
+        journalEntryBody.sourceDocument._id = invoice._id;
+        journalEntryBody.sourceDocument.model = 'Invoice';
+
+        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb, uId)
+    }
+
     this.create = function (req, res, next) {
-        var isWtrack = checkDb(req.session.lastDb);
+        var dbIndex = req.session.lastDb;
+        var isWtrack = checkDb(dbIndex);
         var body = req.body;
         var forSales = body.forSales;
+        var waterfallTasks = [invoiceSaver, journalEntryComposer];
+        var createdBy = {};
+        var editedBy = {};
+
         var Invoice;
         var invoice;
 
+        function invoiceSaver(waterfallCb) {
+            invoice = new Invoice(body);
+
+            if (req.session.uId) {
+                invoice.createdBy.user = createdBy.user = req.session.uId;
+                invoice.editedBy.user = editedBy.user = req.session.uId;
+            }
+
+            invoice.save(function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, dbIndex, result);
+            });
+        }
+
         if (isWtrack && forSales) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+            Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+            Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
         }
 
-        invoice = new Invoice(body);
-
-        if (req.session.uId) {
-            invoice.createdBy.user = req.session.uId;
-            invoice.editedBy.user = req.session.uId;
-        }
-
-        invoice.save(function (err, result) {
+        async.waterfall(waterfallTasks, function (err, result) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send(result);
+
+            res.status(201).send(result);
         });
+
+        /*invoice = new Invoice(body);
+
+         if (req.session.uId) {
+         invoice.createdBy.user = req.session.uId;
+         invoice.editedBy.user = req.session.uId;
+         }
+
+         invoice.save(function (err, result) {
+         if (err) {
+         return next(err);
+         }
+
+
+
+         res.status(200).send(result);
+         });*/
     };
 
     this.receive = function (req, res, next) {
         var id = req.body.orderId;
         var forSales = req.body.forSales;
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-        var wTrackInvoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
-        var Company = models.get(req.session.lastDb, 'Customer', CustomerSchema);
+        var dbIndex = req.session.lastDb;
+        var JobsModel = models.get(dbIndex, 'jobs', JobsSchema);
+        var Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
+        var wTrackInvoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Order = models.get(dbIndex, 'Quotation', OrderSchema);
+        var Company = models.get(dbIndex, 'Customer', CustomerSchema);
         var request;
         var parallelTasks;
         var waterFallTasks;
@@ -114,7 +165,6 @@ var Invoice = function (models, event) {
             var supplier;
             var company;
             var project;
-            var type = "Invoiced";
             var query;
 
             if (parallelResponse && parallelResponse.length) {
@@ -164,28 +214,11 @@ var Invoice = function (models, event) {
 
             if (forSales === "true") {
                 invoice.salesPerson = {};
-                invoice.salesPerson._id = order.project.projectmanager._id;
-                invoice.salesPerson.name = order.project.projectmanager.name;
+                invoice.salesPerson._id = order.project.projectmanager ? order.project.projectmanager._id : null;
+                invoice.salesPerson.name = order.project.projectmanager ? order.project.projectmanager.name : "";
 
                 invoice.save(callback);
 
-                async.each(order.products, function (product, cb) {
-
-                    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        project = result.get('project');
-
-                        cb();
-                    });
-
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
-                    }
-                });
             } else {
                 query = Company.findById(invoice.supplier._id).lean();
 
@@ -216,6 +249,15 @@ var Invoice = function (models, event) {
             if (err) {
                 return next(err)
             }
+            var project;
+            var invoiceId = result._id;
+            var name = result.name;
+            var products = result.products;
+            var setObj = {
+                _id: invoiceId,
+                name: name
+            };
+
 
             Order.findByIdAndUpdate(id, {
                 $set: {
@@ -231,7 +273,24 @@ var Invoice = function (models, event) {
             });
 
 
-            res.status(201).send(result);
+            async.each(products, function (result, cb) {
+                var jobs = result.jobs;
+
+                JobsModel.findByIdAndUpdate(jobs, {$set: {invoice: setObj, type: "Invoiced"}}, {new: true}, function (err, inv) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    project = inv.project ? inv.project : null;
+                    cb();
+                });
+
+            }, function () {
+                if (project) {
+                    event.emit('fetchJobsCollection', {project: project});
+                }
+
+                res.status(201).send(result);
+            });
         });
 
     };
@@ -240,9 +299,15 @@ var Invoice = function (models, event) {
         var db = req.session.lastDb;
         var id = req.params.id;
         var data = req.body;
+        var journalId = data.journal;
         var moduleId;
         var isWtrack;
         var Invoice;
+        var updateName = false;
+        var JobsModel = models.get(db, 'jobs', JobsSchema);
+        var PaymentModel = models.get(db, 'Payment', PaymentSchema);
+        var options;
+        var optionsForPayments;
 
         if (checkDb(db)) {
             moduleId = 64;
@@ -250,10 +315,12 @@ var Invoice = function (models, event) {
         }
 
         if (isWtrack) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+            Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+            Invoice = models.get(db, 'Invoice', InvoiceSchema);
         }
+
+        delete data.journal;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
@@ -264,12 +331,52 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
+                    if (data.name){
+                        updateName = true;
+                    }
+
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
                             return next(err);
                         }
 
-                        res.status(200).send(invoice);
+                        if (updateName){
+                            options = {
+                                id : invoice._id,
+                                targetModel : JobsModel,
+                                searchField : "invoice._id",
+                                fieldName : "invoice.name",
+                                fieldValue : invoice.name,
+                                projectId : invoice.project._id
+                            };
+
+                            optionsForPayments = {
+                                id : invoice._id,
+                                targetModel : PaymentModel,
+                                searchField : "invoice._id",
+                                fieldName : "invoice.name",
+                                fieldValue : invoice.name
+                            };
+                            event.emit("updateNames", options);
+                            event.emit("updateNames", optionsForPayments);
+                        }
+
+                        if(!invoice.journal){
+                            Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                journalEntryComposer(invoice, db, function(err, response){
+                                    if(err){
+                                        return next(err);
+                                    }
+                                    res.status(200).send(invoice);
+                                }, req.session.uId);
+                            });
+                        } else {
+                            res.status(200).send(invoice);
+                        }
                     });
                 } else {
                     res.status(403).send();
@@ -320,36 +427,35 @@ var Invoice = function (models, event) {
                     if (condition) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
                 case 'salesPerson':
                     if (condition) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
                 case 'supplier':
                     if (condition) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
                 case 'workflow':
                     if (condition) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
                 case 'forSales':
                     if (condition) {
                         condition = ConvertType(condition[0], 'boolean');
                         filtrElement[key] = condition;
                         resArray.push(filtrElement);
-                        break;
                     }
+                    break;
             }
         }
-        ;
 
         return resArray;
     };
@@ -632,8 +738,8 @@ var Invoice = function (models, event) {
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
-        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var Order = models.get(db, 'Quotation', OrderSchema);
+        var JobsModel = models.get(db, 'jobs', JobsSchema);
 
         if (checkDb(db)) {
             moduleId = 64
@@ -672,18 +778,17 @@ var Invoice = function (models, event) {
                             paymentIds.push(payment);
                         });
 
-                        function paymentsRemove() {
+                        function paymentsRemove(parallelCb) {
                             async.each(paymentIds, function (id) {
-                                Payment.findByIdAndRemove(id, function (err, result) {
-                                    if (err) {
-                                        return console.log(err);
-                                    }
-                                    // console.log('success');
-                                });
+                                Payment.findByIdAndRemove(id, parallelCb);
                             });
                         };
 
-                        function jobsUpdateAndWTracks() {
+                        function journalEntryRemove(parallelCb) {
+                            _journalEntryHandler.removeByDocId(id, db, parallelCb);
+                        };
+
+                        function jobsUpdateAndWTracks(parallelCb) {
                             var setData = {};
                             var array;
 
@@ -693,7 +798,10 @@ var Invoice = function (models, event) {
                                     date: new Date().toISOString()
                                 };
 
-                                JobsModel.findByIdAndUpdate(id, {type: "Ordered"}, {new: true}, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, {
+                                    type: "Ordered",
+                                    invoice: {_id: null, name: ""}
+                                }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
@@ -723,16 +831,14 @@ var Invoice = function (models, event) {
                                 if (project) {
                                     event.emit('fetchJobsCollection', {project: project});
                                 }
+                                parallelCb();
                             });
                         };
 
-                        async.parallel([paymentsRemove, jobsUpdateAndWTracks], function (err, result) {
+                        async.parallel([paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
                                 next(err)
                             }
-
-                            // console.log('success');
-
                         });
 
                         res.status(200).send(result);
@@ -756,7 +862,7 @@ var Invoice = function (models, event) {
         var Invoice;
 
         if (checkDb(db)) {
-            moduleId = 64
+            moduleId = 64;
             isWtrack = true;
         }
 

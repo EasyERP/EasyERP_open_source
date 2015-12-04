@@ -6,6 +6,9 @@ define([
         'text!templates/Projects/projectInfo/DetailsTemplate.html',
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
+        'views/salesOrder/EditView',
+        'views/salesQuotation/EditView',
+        'views/salesInvoice/EditView',
         'views/Projects/EditView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -22,6 +25,8 @@ define([
         'collections/salesInvoice/filterCollection',
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
+        'models/QuotationModel',
+        'models/InvoiceModel',
         'text!templates/Notes/AddAttachments.html',
         "common",
         'populate',
@@ -31,42 +36,123 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var View = Backbone.View.extend({
             el            : '#content-holder',
             contentType   : 'Projects',
             proformRevenue: _.template(ProformRevenueTemplate),
 
             events: {
-                'click .chart-tabs'                                               : 'changeTab',
-                'click .deleteAttach'                                             : 'deleteAttach',
-                "click #health a:not(.disabled)"                                  : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                          : "chooseHealthDd",
-                "click .newSelectList li:not(.miniStylePagination):not(.disabled)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected:not(.disabled)"                     : "showNewSelect",
-                "click #createItem"                                               : "createDialog",
-                "click #createJob"                                                : "createJob",
-                "change input:not(.checkbox, .check_all, .statusCheckbox)"        : "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove)"                       : "renderJobWTracks",
-                "mouseover #jobsItem"                                             : "showRemoveButton",
-                "mouseleave #jobsItem"                                            : "hideRemoveButton",
-                "click .fa.fa-trash"                                              : "removeJobAndWTracks",
-                "dblclick td.editableJobs"                                        : "editRow",
-                "click #saveName"                                                 : "saveNewJobName",
-                "keydown input.editing "                                          : "keyDown",
-                'click'                                                           : 'hideSelect',
-                'keydown'                                                         : 'keydownHandler'
+                'click .chart-tabs'                                                : 'changeTab',
+                'click .deleteAttach'                                              : 'deleteAttach',
+                "click #health a:not(.disabled)"                                   : "showHealthDd",
+                "click #health ul li div:not(.disabled)"                           : "chooseHealthDd",
+                "click .newSelectList li:not(.miniStylePagination):not(.disabled)" : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                      : "notHide",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)" : "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)" : "prevSelect",
+                "click .current-selected:not(.disabled)"                           : "showNewSelect",
+                "click #createItem"                                                : "createDialog",
+                "click #createJob"                                                 : "createJob",
+                "change input:not(.checkbox, .check_all, .statusCheckbox)"         : "showSaveButton",
+                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)": "renderJobWTracks",
+                "mouseover #jobsItem"                                              : "showRemoveButton",
+                "mouseleave #jobsItem"                                             : "hideRemoveButton",
+                "click .fa.fa-trash"                                               : "removeJobAndWTracks",
+                "dblclick td.editableJobs"                                         : "editRow",
+                "click #saveName"                                                  : "saveNewJobName",
+                "keydown input.editing "                                           : "keyDown",
+                'click'                                                            : 'hideSelect',
+                'keydown'                                                          : 'keydownHandler',
+                "click a.quotation"                                                : "viewQuotation",
+                "click a.invoice"                                                  : "viewInvoice"
             },
 
             initialize: function (options) {
                 this.formModel = options.model;
                 this.id = this.formModel.id;
                 this.formModel.urlRoot = '/Projects/';
+                this.projectManager = this.formModel.get('projectmanager');
                 this.responseObj = {};
                 this.proformValues = {};
+            },
+
+            viewQuotation: function (e) {
+                e.stopPropagation();
+                var self = this;
+
+                var target = e.target;
+                var id = $(target).attr('data-id');
+                var model;
+                var type = $(target).closest('tr').find('#type').text();
+                var onlyView = false;
+
+                if (type === "Quoted") {
+                    model = new quotationModel({validate: false});
+
+                    model.urlRoot = '/quotation/form/' + id;
+                    model.fetch({
+                        success: function (model) {
+                            new editViewQuotation({
+                                model         : model,
+                                redirect      : true,
+                                pId           : self.id,
+                                projectManager: self.projectManager
+                            })
+                        },
+                        error  : function (xhr) {
+                            alert('Please refresh browser');
+                        }
+                    });
+                } else {
+                    model = new quotationModel({validate: false});
+
+                    model.urlRoot = '/Order/form/' + id;
+                    model.fetch({
+                        success: function (model) {
+
+                            if (type === "Invoiced") {
+                                onlyView = true;
+                            }
+
+                            new EditViewOrder({
+                                model         : model,
+                                redirect      : true,
+                                onlyView      : onlyView,
+                                projectManager: self.projectManager
+                            });
+                        },
+                        error  : function (xhr) {
+                            alert('Please refresh browser');
+                        }
+                    });
+                }
+            },
+
+            viewInvoice: function (e) {
+                e.stopPropagation();
+
+                var target = e.target;
+                var id = $(target).attr('data-id');
+                var model = new invoiceModel({validate: false});
+
+                model.urlRoot = '/Invoice/form';
+                model.fetch({
+                    data   : {
+                        id       : id,
+                        currentDb: App.currentDb
+                    },
+                    success: function (model) {
+                        new editViewInvoice({
+                            model    : model,
+                            notCreate: true,
+                            redirect : true
+                        });
+                    },
+                    error  : function () {
+                        alert('Please refresh browser');
+                    }
+                });
             },
 
             keyDown: function (e) {
@@ -261,7 +347,7 @@ define([
                 } else {
                     icon.html('-');
                     $('<tr id=' + subId + ' class="subRow">' +
-                    '<td colspan="11" id="subRow-holder' + jobId + '"></td>' +
+                    '<td colspan="13" id="subRow-holder' + jobId + '"></td>' +
                     '</tr>').insertAfter(jobContainer);
                     $('#subRow-holder' + jobId).append(template({
                         jobStatus       : job.type,
@@ -460,8 +546,6 @@ define([
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
-                    } else if (attrId === 'type') {
-                        data = {_id: id, type: $(e.target).text()};
                     }
 
                     dataService.postData("/jobs/update", data, function (err, result) {
@@ -583,7 +667,9 @@ define([
 
                 var projectTeam = this.jobsCollection.toJSON();
 
-                App.currectCollection = this.jobsCollection;
+                if (this.jobsCollection.toJSON().length && (formModel._id === this.jobsCollection.toJSON()[0].project._id)) {
+                    App.currectCollection = this.jobsCollection;
+                }
 
                 this.projectValues = {
                     revenue: 0,
@@ -622,6 +708,7 @@ define([
                 );
 
                 this.renderProformRevenue();
+
             },
 
             getWTrack: function (cb) {

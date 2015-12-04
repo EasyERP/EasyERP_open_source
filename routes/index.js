@@ -55,6 +55,8 @@ module.exports = function (app, mainDb) {
     var payrollExprnsesRouter = require('./payrollExprnses')(models);
     var jobsRouter = require('./jobs')(models, event);
     var chartOfAccountRouter = require('./chartOfAccount')(models);
+    var currencyRouter = require('./currency')(models);
+    var journalRouter = require('./journal')(models);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
@@ -101,6 +103,8 @@ module.exports = function (app, mainDb) {
     app.use('/paymentType', paymentTypeRouter);
     app.use('/payrollExprnses', payrollExprnsesRouter);
     app.use('/chartOfAccount', chartOfAccountRouter);
+    app.use('/currency', currencyRouter);
+    app.use('/journal', journalRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -179,12 +183,13 @@ module.exports = function (app, mainDb) {
 
     function uploadFileArray (req, res, callback) {
         var files = [];
-        if (req.files && !req.files.attachfile.length) {
+        if (req.files && req.files.attachfile && !req.files.attachfile.length) {
             req.files.attachfile = [req.files.attachfile];
         }
         var path;
         var os = require("os");
         var osType = (os.type().split('_')[0]);
+
         req.files.attachfile.forEach(function (item) {
             var localPath;
             switch (osType) {

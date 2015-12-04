@@ -14,8 +14,8 @@ define([
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
-            imageSrc: '',
-            template: _.template(EditTemplate),
+            imageSrc   : '',
+            template   : _.template(EditTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -34,16 +34,16 @@ define([
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .confirmOrder": "confirmOrder",
-                "click .cancelQuotation": "cancelQuotation",
-                "click .setDraft": "setDraft"
+                "click .confirmOrder"                                             : "confirmOrder",
+                "click .cancelQuotation"                                          : "cancelQuotation",
+                "click .setDraft"                                                 : "setDraft"
             },
 
 
@@ -52,13 +52,13 @@ define([
                 return false;
 
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 var target = $(e.target);
                 var id = target.attr("id");
                 var type = target.attr('data-level');
@@ -69,15 +69,15 @@ define([
 
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
-                if (type === 'emptyProject'){
+                if (type === 'emptyProject') {
                     this.$el.find('#supplierDd').text(element.customer.name);
                     this.$el.find('#supplierDd').attr('data-id', element.customer._id);
                 }
             },
-            nextSelect: function (e) {
+            nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -125,7 +125,7 @@ define([
                 }
 
                 populate.fetchWorkflow({
-                    wId: wId,
+                    wId   : wId,
                     source: 'purchase',
                     status: 'New'
                     //targetSource: 'order'
@@ -140,9 +140,11 @@ define([
 
                     if (products && products.length) {
                         self.currentModel.save({
-                            isOrder: true,
+                            isOrder : true,
+                            //for purchase orders to be clickable
+                            type    : 'Not Invoiced',
                             workflow: {
-                                _id: workflow._id,
+                                _id : workflow._id,
                                 name: workflow.name
                             }
                             //type: "Not Invoiced"
@@ -150,25 +152,17 @@ define([
                             headers: {
                                 mid: 57
                             },
-                            patch: true,
+                            patch  : true,
                             success: function () {
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
-                                if (self.redirect){
-                                    var data ={products: JSON.stringify(products), type: "Ordered"};
-
-                                    dataService.postData("/jobs/update", data,  function(err, result){
-                                        if (err){
-                                            return console.log(err);
-                                        }
-
-                                    });
+                                if (self.redirect) {
                                     var filter = {
                                         'projectName': {
                                             key  : 'project._id',
                                             value: [self.pId]
                                         },
-                                        'isOrder': {
+                                        'isOrder'    : {
                                             key  : 'isOrder',
                                             value: ['true']
                                         }
@@ -184,12 +178,12 @@ define([
                                     function createView() {
 
                                         this.ordersView = new ordersView({
-                                            collection: self.ordersCollection,
-                                            projectId : self.pId,
-                                            customerId: self.customerId,
+                                            collection    : self.ordersCollection,
+                                            projectId     : self.pId,
+                                            customerId    : self.customerId,
                                             projectManager: self.projectManager,
-                                            filter: filter,
-                                            activeTab: true
+                                            filter        : filter,
+                                            activeTab     : true
                                         });
 
                                         this.ordersView.showOrderDialog(id);
@@ -197,7 +191,10 @@ define([
 
                                     self.ordersCollection.bind('reset', createView);
 
-                                    self.collection.remove(self.currentModel.get('_id'));
+                                    if (self.collection){
+                                        self.collection.remove(self.currentModel.get('_id'));
+
+                                    }
 
                                 } else {
                                     Backbone.history.navigate(redirectUrl, {trigger: true});
@@ -217,11 +214,11 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Order',
-                    source: 'purchase',
+                    wId         : 'Purchase Order',
+                    source      : 'purchase',
                     targetSource: 'quotation',
-                    status: 'Cancelled',
-                    order: 1
+                    status      : 'Cancelled',
+                    order       : 1
                 }, function (workflow) {
                     //var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
                     var redirectUrl = window.location.hash;
@@ -232,14 +229,14 @@ define([
 
                     self.currentModel.save({
                         workflow: {
-                            _id: workflow._id,
+                            _id : workflow._id,
                             name: workflow.name
                         }
                     }, {
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
                             $(".edit-dialog").remove();
                             Backbone.history.fragment = '';
@@ -257,7 +254,7 @@ define([
                 populate.fetchWorkflow({
                     wId: 'Sales Order'
                 }, function (workflow) {
-                   // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
                     var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
@@ -266,14 +263,14 @@ define([
 
                     self.currentModel.save({
                         workflow: {
-                            _id: workflow._id,
+                            _id : workflow._id,
                             name: workflow.name
                         }
                     }, {
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
                             $(".edit-dialog").remove();
                             Backbone.history.fragment = '';
@@ -330,8 +327,8 @@ define([
 
                 var wF = this.currentModel.get('workflow');
                 var workflow = {};
-                workflow._id =  wF._id;
-                workflow.name =  wF.name;
+                workflow._id = wF._id;
+                workflow.name = wF.name;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -360,14 +357,14 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
 
                             products.push({
-                                product: productId,
-                                unitPrice: price,
-                                quantity: quantity,
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
                                 scheduledDate: scheduledDate,
-                                taxes: taxes,
-                                description: description,
-                                subTotal: subTotal,
-                                jobs: jobs
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal,
+                                jobs         : jobs
                             });
                         }
                     }
@@ -375,30 +372,30 @@ define([
 
 
                 data = {
-                    supplier: supplier,
+                    supplier         : supplier,
                     supplierReference: supplierReference,
-                    deliverTo: deliverTo,
-                    products: products,
-                    project       : project,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination: destination,
-                    incoterm: incoterm,
-                    invoiceControl: invoiceControl,
-                    paymentTerm: paymentTerm,
-                    fiscalPosition: fiscalPosition,
-                    paymentInfo: {
-                        total: total,
+                    deliverTo        : deliverTo,
+                    products         : products,
+                    project          : project,
+                    orderDate        : orderDate,
+                    expectedDate     : expectedDate,
+                    destination      : destination,
+                    incoterm         : incoterm,
+                    invoiceControl   : invoiceControl,
+                    paymentTerm      : paymentTerm,
+                    fiscalPosition   : fiscalPosition,
+                    paymentInfo      : {
+                        total  : total,
                         unTaxed: unTaxed,
-                        taxes: totalTaxes
+                        taxes  : totalTaxes
                     },
-                    groups: {
+                    groups           : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW,
-                    workflow: workflow
+                    whoCanRW         : whoCanRW,
+                    workflow         : workflow
                 };
 
                 if (supplier._id) {
@@ -406,7 +403,7 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             var url = window.location.hash;
 
@@ -415,7 +412,7 @@ define([
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(url, {trigger: true});
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -445,7 +442,7 @@ define([
                             $('.edit-product-dialog').remove();
                             Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         },
-                        error: function (model, err) {
+                        error  : function (model, err) {
                             if (err.status === 403) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -458,7 +455,7 @@ define([
             render: function () {
                 var self = this;
                 var formString = this.template({
-                    model: this.currentModel.toJSON(),
+                    model  : this.currentModel.toJSON(),
                     visible: this.visible
                 });
                 var service = this.forSales;
@@ -468,27 +465,27 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Edit Quotation",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Quotation",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            text: "Save",
+                            text : "Save",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         },
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
                         }
                     ]
@@ -508,7 +505,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
-                if (App.weTrack && this.forSales){
+                if (App.weTrack && this.forSales) {
                     populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
 
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
@@ -518,9 +515,9 @@ define([
                 }
 
                 this.$el.find('#orderDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 });
 
                 this.delegateEvents(this.events);
@@ -541,7 +538,6 @@ define([
 
                     self.responseObj['#project'] = projects;
                 });
-
 
 
                 if (model.groups)

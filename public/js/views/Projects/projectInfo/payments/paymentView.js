@@ -6,13 +6,15 @@ define([
     'views/customerPayments/list/ListView',
     'text!templates/Projects/projectInfo/paymentTemplate.html',
     'views/customerPayments/list/ListItemView',
+    'views/customerPayments/EditView',
     'collections/customerPayments/filterCollection',
     'collections/customerPayments/editCollection',
+    'models/PaymentModel',
     'helpers',
     'common',
     "async"
 
-], function (ListView, paymentTemplate, listItemView, paymentCollection, editCollection, helpers, common, async) {
+], function (ListView, paymentTemplate, listItemView, EditView, paymentCollection, editCollection, PaymentModel, helpers, common, async) {
     var paymentView = ListView.extend({
 
         el               : '#payments',
@@ -32,7 +34,17 @@ define([
         events: {
             "click .checkbox": "checked",
             "click #savePayment": "saveItem",
-            "click #removePayment": "deleteItems"
+            "click #removePayment": "deleteItems",
+            "click td:not(.checkbox, .date)": "goToEditDialog"
+        },
+
+        goToEditDialog: function(e){
+            e.preventDefault();
+
+            var id = $(e.target).closest('tr').data("id");
+            var model = this.collection.get(id);
+
+            new EditView({model: model});
         },
 
         deleteItems: function (e) {
@@ -230,6 +242,8 @@ define([
         },
 
         checked: function (e) {
+            e.stopPropagation();
+
             if (this.collection.length > 0) {
                 var el = this.$el;
                 var checkLength = el.find("input.checkbox:checked").length;

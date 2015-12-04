@@ -21,13 +21,23 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(callback) {
         var module = {
-            _id: 83,
-            mname: 'ChartOfAccount',
-            href: 'ChartOfAccount',
-            sequence: 83,
-            parrent: 59,
-            link: true,
-            visible: true
+            _id     : 85,
+            mname   : 'Journal',
+            href    : 'journal',
+            sequence: 85,
+            parrent : 59,
+            link    : true,
+            visible : true
+        };
+
+        var module2 = {
+            _id     : 86,
+            mname   : 'Journal Entry',
+            href    : 'journalEntry',
+            sequence: 86,
+            parrent : 59,
+            link    : true,
+            visible : true
         };
 
         var q = async.queue(function (module, callback) {
@@ -35,31 +45,39 @@ MongoClient.connect(url, function (err, db) {
         }, 1000);
 
         q.drain = function () {
-            callback(null, module);
+            callback(null, module, module2);
         };
 
-        q.push([module], function () {
+        q.push([module, module2], function () {
             console.log('finished process');
         });
     };
 
-
-    function profileUpdater(child, callback) {
+    function profileUpdater(child, child2, callback) {
         var i;
 
         var childInsert = {
             "module": child._id,
             "access": {
-                "del": true,
+                "del"      : true,
                 "editWrite": true,
-                "read": true
+                "read"     : true
             }
         };
+        var childInsert2 = {
+            "module": child2._id,
+            "access": {
+                "del"      : true,
+                "editWrite": true,
+                "read"     : true
+            }
+        };
+
 
         var q = async.queue(function (profile, callback) {
             if (profile) {
                 console.log('profile = ' + profile._id);
-                profiles.findOneAndUpdate({ _id: profile._id }, { $push: { profileAccess: { $each: [childInsert] } } }, callback);
+                profiles.findOneAndUpdate({_id: profile._id}, {$push: {profileAccess: {$each: [childInsert, childInsert2]}}}, callback);
             }
         }, 1000);
 
@@ -81,7 +99,6 @@ MongoClient.connect(url, function (err, db) {
             }
         });
     };
-
 
     async.waterfall([childModule, profileUpdater], function (err, res) {
         if (err) {

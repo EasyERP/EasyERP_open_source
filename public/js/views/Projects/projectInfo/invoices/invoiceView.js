@@ -159,6 +159,7 @@ define([
                         tr.find('.workflow').html('<a href="javascript:;" class="">Not Invoiced</a>');
 
                         tr.removeClass('notEditable');
+                        tr.find('.checkbox').removeClass('notRemovable');
 
                         $("#removeInvoice").hide();
                         $('#check_all_invoice').prop('checked', false);
@@ -219,7 +220,7 @@ define([
                     currentDb: App.currentDb
                 },
                 success: function (model) {
-                    new editView({model: model, redirect: true, collection: this.collection});
+                    new editView({model: model, redirect: true, collection: this.collection, notCreate: true});
                 },
                 error  : function () {
                     alert('Please refresh browser');
@@ -243,7 +244,7 @@ define([
                 success: function (model) {
                     // var isWtrack = App.weTrack;
 
-                    new editView({model: model, redirect: true, collection: this.collection});
+                    new editView({model: model, redirect: true, collection: this.collection, notCreate: true});
                 },
                 error  : function () {
                     alert('Please refresh browser');

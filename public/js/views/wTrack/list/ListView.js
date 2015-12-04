@@ -11,15 +11,16 @@ define([
         'collections/wTrack/filterCollection',
         'collections/wTrack/editCollection',
         'views/Filter/FilterView',
+        'views/wTrack/list/createJob',
         'common',
         'dataService',
         'populate',
         'async',
         'custom',
-        'moment'
+        'moment',
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
+    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment) {
         var wTrackListView = listViewBase.extend({
             createView: createView,
             listTemplate: listTemplate,
@@ -55,7 +56,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-                this.filterView;
             },
 
             events: {
@@ -67,7 +67,46 @@ define([
                 "change .autoCalc": "autoCalc",
                 "change .editable ": "setEditable",
                 "keydown input.editing ": "keyDown",
-                "change .listCB": "setAllTotalVals"
+                //"change .listCB": "setAllTotalVals"
+                // "click"                                                           : "removeInputs"
+            },
+
+            removeInputs: function () {
+                this.setChangedValueToModel();
+            },
+
+            generateJob: function () {
+                var model = this.projectModel;
+                var projectsDdContainer = $('#projectDd');
+
+                if (!model) {
+                    projectsDdContainer.css('color', 'red');
+
+                    App.render({
+                        type: 'error',
+                        message: CONSTANTS.SELECTP_ROJECT
+                    });
+                }
+
+                new CreateJob({
+                    model: this.projectModel,
+                    wTrackView: this
+                });
+
+                return false;
+            },
+
+            generatedWtracks: function () {
+                var self = this;
+                var tr = this.$listTable.find('#false');
+                var projectId = tr.find('[data-content="project"]').attr('data-id');
+
+                dataService.getData("/jobs/getForDD", {"projectId": projectId}, function (jobs) {
+
+                    self.responseObj['#jobs'] = jobs;
+
+                    tr.find('[data-content="jobs"]').addClass('editable');
+                });
             },
 
             keyDown: function (e) {
@@ -86,6 +125,7 @@ define([
                 var assigned;
                 var customer;
                 var total = 0;
+                var revenue;
 
                 async.each(selectedWtracks, function (el, cb) {
                     var id = $(el).val();
@@ -96,9 +136,9 @@ define([
                         model.set({revenue: parseFloat(reven) * 100});
                     }
 
-                    var revenue = reven.toString().replace('$', '');
-
+                    revenue = reven.toString().replace('$', '');
                     revenue = parseFloat(revenue);
+
                     if (typeof(reven) === 'number') {
                         revenue = revenue / 100;
                     }
@@ -336,6 +376,7 @@ define([
                 $(".newSelectList").remove();
 
                 var el = $(e.target);
+                var self = this;
                 var tr = $(e.target).closest('tr');
                 var wTrackId = tr.attr('data-id');
                 var colType = el.data('type');
@@ -364,7 +405,17 @@ define([
                 }
 
                 if (isSelect) {
-                    populate.showSelect(e, prev, next, this);
+                    if (content === 'jobs'){
+                        dataService.getData("/jobs/getForDD", {"projectId": tr.find('[data-content="project"]').attr('data-id')}, function (jobs) {
+
+                            self.responseObj['#jobs'] = jobs;
+
+                            tr.find('[data-content="jobs"]').addClass('editable');
+                            populate.showSelect(e, prev, next, self);
+                        });
+                    } else {
+                        populate.showSelect(e, prev, next, this);
+                    }
                 } else if (isWeek) {
                     weeks = custom.getWeeks(month, year);
 
@@ -535,7 +586,6 @@ define([
                 var year;
                 var jobs = {};
 
-
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
@@ -552,83 +602,92 @@ define([
 
                 changedAttr = this.changedModels[modelId];
 
-                if (elementType === '#project') {
+                if (id !== 'createJob') {
 
-                    projectManager = element.projectmanager.name;
-                    assignedContainer = tr.find('[data-content="assigned"]');
-                    assignedContainer.text(projectManager);
-                    targetElement.attr('data-id', id);
+                    if (elementType === '#project') {
+                        this.projectModel = element;
 
-                    tr.find('[data-content="workflow"]').text(element.workflow.name);
-                    tr.find('[data-content="customer"]').text(element.customer.name);
+                        projectManager = element.projectmanager.name;
+                        assignedContainer = tr.find('[data-content="assigned"]');
+                        assignedContainer.text(projectManager);
+                        targetElement.attr('data-id', id);
 
-                    project = _.clone(editWtrackModel.get('project'));
-                    project._id = element._id;
-                    project.projectName = element.projectName;
-                    project.workflow._id = element.workflow._id;
-                    project.workflow.name = element.workflow.name;
-                    project.customer._id = element.customer._id;
-                    project.customer.name = element.customer.name;
+                        tr.find('[data-content="jobs"]').text("");
 
-                    project.projectmanager.name = element.projectmanager.name;
-                    project.projectmanager._id = element.projectmanager._id;
+                        tr.find('[data-content="workflow"]').text(element.workflow.name);
+                        tr.find('[data-content="customer"]').text(element.customer.name);
 
-                    changedAttr.project = project;
+                        project = _.clone(editWtrackModel.get('project'));
+                        project._id = element._id;
+                        project.projectName = element.projectName;
+                        project.workflow._id = element.workflow._id;
+                        project.workflow.name = element.workflow.name;
+                        project.customer._id = element.customer._id;
+                        project.customer.name = element.customer.name;
 
-                    dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
+                        project.projectmanager.name = element.projectmanager.name;
+                        project.projectmanager._id = element.projectmanager._id;
 
-                        self.responseObj['#jobs'] = jobs;
+                        changedAttr.project = project;
 
-                        tr.find('[data-content="jobs"]').addClass('editable');
-                    });
+                        dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
 
-                } else if (elementType === '#jobs') {
+                            self.responseObj['#jobs'] = jobs;
 
-                    jobs._id = element._id;
-                    jobs.name = element.name;
+                            tr.find('[data-content="jobs"]').addClass('editable');
+                        });
 
-                    changedAttr.jobs = jobs;
+                    } else if (elementType === '#jobs') {
 
-                    tr.find('[data-content="jobs"]').removeClass('errorContent');
-                } else if (elementType === '#employee') {
-                    tr.find('[data-content="department"]').text(element.department.name);
+                        jobs._id = element._id;
+                        jobs.name = element.name;
 
-                    employee = _.clone(editWtrackModel.get('employee'));
-                    department = _.clone(editWtrackModel.get('department'));
+                        changedAttr.jobs = jobs;
 
-                    employee._id = element._id;
-                    employee.name = target.text();
+                        tr.find('[data-content="jobs"]').removeClass('errorContent');
+                    } else if (elementType === '#employee') {
+                        tr.find('[data-content="department"]').text(element.department.name);
 
-                    department._id = element.department._id;
-                    department.departmentName = element.department.name;
+                        employee = _.clone(editWtrackModel.get('employee'));
+                        department = _.clone(editWtrackModel.get('department'));
 
-                    changedAttr.employee = employee;
-                    changedAttr.department = department;
+                        employee._id = element._id;
+                        employee.name = target.text();
 
-                    targetElement.attr("data-id", employee._id);
+                        department._id = element.department._id;
+                        department.departmentName = element.department.name;
 
-                    this.calculateCost(e, wTrackId);
+                        changedAttr.employee = employee;
+                        changedAttr.department = department;
 
-                    tr.find('[data-content="department"]').removeClass('errorContent');
-                } else if (elementType === '#department') {
-                    department = _.clone(editWtrackModel.get('department'));
-                    department._id = element._id;
-                    department.departmentName = element.departmentName;
+                        targetElement.attr("data-id", employee._id);
 
-                    changedAttr.department = department;
-                } else if (elementType === '#week') {
-                    week = $(e.target).text();
+                        this.calculateCost(e, wTrackId);
 
-                    changedAttr.week = week;
-                } else if (elementType === '#year') {
-                    year = $(e.target).text();
+                        tr.find('[data-content="department"]').removeClass('errorContent');
+                    } else if (elementType === '#department') {
+                        department = _.clone(editWtrackModel.get('department'));
+                        department._id = element._id;
+                        department.departmentName = element.departmentName;
 
-                    changedAttr.year = year;
+                        changedAttr.department = department;
+                    } else if (elementType === '#week') {
+                        week = $(e.target).text();
+
+                        changedAttr.week = week;
+                    } else if (elementType === '#year') {
+                        year = $(e.target).text();
+
+                        changedAttr.year = year;
+                    }
+
+                    targetElement.removeClass('errorContent');
+
+                    targetElement.text(target.text());
+
+                } else if (id === 'createJob') {
+                    self.generateJob(e);
                 }
-
-                targetElement.removeClass('errorContent');
-
-                targetElement.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
@@ -637,10 +696,16 @@ define([
             },
 
             checked: function (e) {
+                var $thisEl = this.$el;
+                var rawRows;
+                var $checkedEls;
                 var checkLength;
 
                 if (this.collection.length > 0) {
-                    checkLength = $("input.listCB:checked").length;
+                    $checkedEls = $thisEl.find("input.listCB:checked");
+
+                    checkLength = $checkedEls.length;
+                    rawRows = $checkedEls.closest('#false');
 
                     this.checkProjectId(e, checkLength);
 
@@ -653,6 +718,12 @@ define([
                     } else {
                         $("#top-bar-deleteBtn").hide();
                         $('#check_all').prop('checked', false);
+                    }
+
+                    if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                        this.$saveBtn.hide();
+                    } else {
+                        this.$saveBtn.show();
                     }
                 }
 
@@ -676,10 +747,9 @@ define([
                 this.editCollection.save();
 
                 for (var id in this.changedModels) {
-                   delete this.changedModels[id];
+                    delete this.changedModels[id];
+                    this.editCollection.remove(id);
                 }
-                
-                this.editCollection.remove(id);
             },
 
             savedNewModel: function (modelObject) {
@@ -766,7 +836,7 @@ define([
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
-                           // self.genInvoiceEl.hide();
+                            // self.genInvoiceEl.hide();
                             self.copyEl.hide();
                             $('#check_all').prop('checked', false);
                         }
@@ -817,7 +887,7 @@ define([
 
                 //this.genInvoiceEl = $('#top-bar-generateBtn');
                 this.copyEl = $('#top-bar-copyBtn');
-
+                this.$saveBtn = $('#top-bar-saveBtn');
                 return this;
             },
 
@@ -865,6 +935,11 @@ define([
                     this.editCollection.add(model);
 
                     new createView(startData);
+                } else {
+                    App.render({
+                        type: 'notify',
+                        message: 'Please confirm or discard changes befor create a new item'
+                    });
                 }
 
                 this.createdCopied = true;
@@ -953,7 +1028,7 @@ define([
                     rowTd = row.find('[data-content="' + dataRow + '"]')
 
                     rowTdVal += parseFloat(rowTd.html()) * 100;
-                })
+                });
 
                 if (money) {
                     totalTd.text((rowTdVal / 100).toFixed(2));
@@ -962,7 +1037,9 @@ define([
                 }
             },
 
-            setAllTotalVals: function () {
+            setAllTotalVals: function (e) {
+                //e.stopPropagation();
+
                 this.getAutoCalcField('hours', 'worked');
                 this.getAutoCalcField('monHours', '1');
                 this.getAutoCalcField('tueHours', '2');
@@ -995,7 +1072,6 @@ define([
                 //    newCollection: this.newCollection,
                 //    parrentContentId: this.parrentContentId
                 //});
-
 
                 holder = this.$el;
 
@@ -1144,6 +1220,9 @@ define([
 
                     this.createdCopied = false;
                 }
+
+                self.changedModels = {};
+                self.responseObj['#jobs'] = [];
             }
         });
 

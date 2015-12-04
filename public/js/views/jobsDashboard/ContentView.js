@@ -2,23 +2,27 @@
  * Created by lilya on 09/11/15.
  */
 define([
+        'views/listViewBase',
         "text!templates/jobsDashboard/DashboardHeader.html",
         "text!templates/jobsDashboard/DashboardTemplate.html",
         "text!templates/jobsDashboard/FooterDashboard.html",
         'collections/Projects/projectInfoCollection',
         'collections/salesQuotation/filterCollection',
         'collections/Jobs/filterCollection',
+        'views/Filter/FilterView',
         "custom",
         "dataService",
         "helpers",
         "async"
     ],
-    function (DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, JobsCollection, custom, dataService, helpers, async) {
+    function (listViewBase, DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, JobsCollection, FilterView, custom, dataService, helpers, async) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
+            filterView : FilterView,
             template   : _.template(DashboardHeader),
             el         : '#content-holder',
+
             initialize : function (options) {
                 this.startTime = options.startTime;
 
@@ -48,6 +52,38 @@ define([
                 }
 
             },
+
+            showFilteredPage: function (filter, context) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
+
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+            },
+
+            renderFilter: function (self, baseFilter) {
+                self.filterView = new this.filterView({
+                    contentType: self.contentType
+                });
+
+                self.filterView.bind('filter', function (filter) {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
+                    self.showFilteredPage(filter, self)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterView.render();
+
+            },
+
 
             goSort: function (e) {
                 var target$;
@@ -101,6 +137,11 @@ define([
                 this.collection.bind('reset', this.renderContent, this);
             },
 
+            showMoreContent: function (newModels) {
+                this.collection.reset(newModels)
+            },
+
+
             renderJobs: function () {
                 var self = this;
                 var template = _.template(DashboardTemplate);
@@ -115,6 +156,7 @@ define([
                     jobsCollection.bind('reset', sendCB);
 
                     function sendCB(){
+                        //self.renderContent();
                         cb(null, jobsCollection);
                     }
                 };
@@ -129,10 +171,8 @@ define([
                         currencySplitter   : helpers.currencySplitter
                     }));
 
-                    //self.$el.find('#footer').html(footer({
-                    //    collection      : self.collection.toJSON(),
-                    //    currencySplitter: helpers.currencySplitter
-                    //}));
+                    self.collection.bind('showmore', self.showMoreContent, self);
+
                 });
             },
 
@@ -151,6 +191,8 @@ define([
                 this.$el.html(this.template());
 
                 this.renderJobs();
+
+                this.renderFilter(this);
 
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
