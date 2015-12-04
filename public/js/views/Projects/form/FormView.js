@@ -973,8 +973,10 @@ define([
 
                 jobsCollection.forEach(function (element) {
                     if (element.type === 'Not Quoted') {
-                        jobSum += element.budget.budgetTotal.revenueSum;
-                        jobsCount ++;
+                        if (element.budget.budgetTotal && (element.budget.budgetTotal.revenueSum !== 0)){
+                            jobSum += element.budget.budgetTotal.revenueSum;
+                            jobsCount ++;
+                        }
                     }
                 });
 

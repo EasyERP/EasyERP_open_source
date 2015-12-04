@@ -39,8 +39,8 @@
     </tr>
     <tr>
         <td>Not Quoted</td>
-        <%if (proformValues && proformValues.orders) {%>
-        <td id="jobsCount"><%=proformValues.orders.count%></td>
+        <%if (proformValues && proformValues.jobs) {%>
+        <td id="jobsCount"><%=proformValues.jobs.count%></td>
         <td id="jobsSum" data-value="<%=proformValues.jobs.sum%>"><%=currencySplitter(proformValues.jobs.sum.toFixed(2))%></td>
         <% } else { %>
         <td>0</td>
