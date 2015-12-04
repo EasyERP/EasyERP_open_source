@@ -667,9 +667,7 @@ define([
 
                 var projectTeam = this.jobsCollection.toJSON();
 
-                if (this.jobsCollection.toJSON().length && (formModel._id === this.jobsCollection.toJSON()[0].project._id)) {
-                    App.currectCollection = this.jobsCollection;
-                }
+                App.currectCollection = this.jobsCollection;
 
                 this.projectValues = {
                     revenue: 0,
@@ -954,9 +952,12 @@ define([
 
                 var qCollectionJSON = this.qCollection.toJSON();
                 var ordersCollectionJSON = this.ordersCollection.toJSON();
+                var jobsCollection = this.jobsCollection.toJSON();
 
                 var sum = 0;
                 var orderSum = 0;
+                var jobSum = 0;
+                var jobsCount = 0;
 
                 ordersCollectionJSON.forEach(function (element) {
                     if (element.paymentInfo) {
@@ -970,6 +971,14 @@ define([
                     }
                 });
 
+                jobsCollection.forEach(function (element) {
+                    if (element.type === 'Not Quoted') {
+                        jobSum += element.budget.budgetTotal.revenueSum;
+                        jobsCount ++;
+                    }
+                });
+
+
                 this.proformValues.quotations = {
                     count: qCollectionJSON.length,
                     sum  : sum
@@ -978,6 +987,11 @@ define([
                 this.proformValues.orders = {
                     count: ordersCollectionJSON.length,
                     sum  : orderSum
+                };
+
+                this.proformValues.jobs = {
+                    count: jobsCount,
+                    sum  : jobSum
                 };
 
                 proformContainer.html(this.proformRevenue({
