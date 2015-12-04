@@ -546,6 +546,8 @@ define([
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
+                    } else if (attrId === 'type'){
+                        data = {_id: id, type: $(e.target).text()};
                     }
 
                     dataService.postData("/jobs/update", data, function (err, result) {
@@ -664,8 +666,11 @@ define([
                 var container = this.$el.find('#forInfo');
                 var formModel = this.formModel.toJSON();
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
 
-                var projectTeam = this.jobsCollection.toJSON();
+                var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
+                    return el.project._id === _id
+                });
 
                 App.currectCollection = this.jobsCollection;
 
