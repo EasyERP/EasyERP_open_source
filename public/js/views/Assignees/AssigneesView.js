@@ -238,7 +238,7 @@ define([
         },
         render: function () {
 			var owner = "";
-            var whoCanRW;
+            var whoCanRW = "everyOne";
 
             if (this.model && this.model.toJSON().groups && this.model.toJSON().groups.owner ){
                 owner = this.model.toJSON().groups.owner;
