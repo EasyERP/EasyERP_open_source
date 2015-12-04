@@ -129,8 +129,10 @@ var Quotation = function (models, event) {
                         if (project) {
                             event.emit('fetchJobsCollection', {project: project});
                         }
-                        res.status(200).send({success: 'Quotation updated', result: quotation});
+
                     });
+                } else {
+                    res.status(200).send({success: 'Quotation updated', result: quotation});
                 }
             }
         });
