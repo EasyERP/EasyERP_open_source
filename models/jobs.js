@@ -8,7 +8,7 @@ module.exports = (function () {
             _id : {type: ObjectId, ref: 'workflows', default: null},
             name: String
         },
-        type     : {type: String, enum: ['Quoted', "Ordered", "Invoiced", "Paid", "Not Quoted"], default: 'Not Quoted'},
+        type     : {type: String, enum: ["Not Quoted", 'Quoted', "Ordered", "Invoiced", "Paid"], default: 'Not Quoted'},
         wTracks  : [{type: ObjectId, ref: 'wTrack', default: null}],
         project  : {type: ObjectId, ref: 'Project', default: null},
         budget   : {

@@ -121,6 +121,34 @@ var Jobs = function (models, event) {
             .aggregate([{
                 $match: queryObject
             }, {
+                $project: {
+                    order: {
+                        $cond: {
+                            if: {
+                                $eq: ['$type', 'Not Quoted']
+                            },
+                            then: -1,
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $eq : ['$type', 'Quoted']
+                                    },
+                                    then: 0,
+                                    else: 1
+                                }
+                            }
+                        }
+                    },
+                    name: 1,
+                    workflow: 1,
+                    type: 1,
+                    wTracks  : 1,
+                    project  : 1,
+                    budget   : 1,
+                    quotation: 1,
+                    invoice  : 1
+                }
+            }, {
                 $sort: sort
             }], function (err, jobs) {
                 var parallelTasks = [projectPopulate, invoicePopulate, quotationPopulate];
