@@ -41,7 +41,7 @@ var Jobs = function (models, event) {
         }
     };
 
-    this.create = function(req, res, next){
+    this.create = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var data = req.body;
         var project = req.headers.project;
@@ -53,8 +53,8 @@ var Jobs = function (models, event) {
         data.name = jobName;
         data.project = objectId(project);
         data.workflow = {
-            _id : objectId("56337c705d49d8d6537832eb"),
-                name: "In Progress"
+            _id: objectId("56337c705d49d8d6537832eb"),
+            name: "In Progress"
         };
         data.type = "Not Quoted";
         data.wTracks = [];
@@ -69,7 +69,7 @@ var Jobs = function (models, event) {
             jobId = model._id;
             projectId = model.project;
 
-            if (projectId){
+            if (projectId) {
                 event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
                 event.emit('recollectProjectInfo');
             }
@@ -84,14 +84,12 @@ var Jobs = function (models, event) {
         var queryObject = {};
 
         var data = req.query;
-        var joinWithQuotation = data.joinWithQuotation && data.joinWithQuotation === "true" ? true : false;
         var sort = data.sort ? data.sort : {"budget.budgetTotal.costSum": -1};
-        var query;
 
         var filter = data ? data.filter : {};
 
 
-        if (data ? data.project : null) {
+        if (data && data.project) {
             filter['project'] = {};
             filter['project']['key'] = 'project';
             filter['project']['value'] = objectId(data.project);
@@ -106,54 +104,22 @@ var Jobs = function (models, event) {
             }
         }
 
-        query = JobsModel.find(queryObject).sort(sort);
-        if (!joinWithQuotation) {
-            query
-                .populate('project')
-                .populate('invoice._id')
-                .populate('quotation._id')
-                .exec(function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
+        JobsModel
+            .aggregate([
 
-                    res.status(200).send(result)
-                })
-        } else {
-            query
-                .populate('project')
-                .populate('invoice._id')
-                .populate('quotation._id')
-                .exec(function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
+            ]);
+            /*.find(queryObject)
+            .sort(sort)
+            .populate('project')
+            .populate('invoice._id')
+            .populate('quotation._id')
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-                    res.status(200).send(result)
-
-                    //Quotation.find({}, {products: 1, paymentInfo: 1}, function (err, quots) {
-                    //    if (err) {
-                    //        return next(err);
-                    //    }
-                    //
-                    //    async.each(result, function (job, cb) {
-                    //        async.each(quots, function (quotation) {
-                    //            quotation.products.forEach(function (product) {
-                    //                if (product.jobs && product.jobs.toString() === job._id.toString()) {
-                    //                    job._doc.quotation = quotation.paymentInfo.total;
-                    //                }
-                    //            });
-                    //        });
-                    //        cb();
-                    //    }, function () {
-                    //        res.status(200).send(result)
-                    //    })
-                    //
-                    //});
-                })
-        }
-
-
+                res.status(200).send(result)
+            })*/
     };
 
     this.getForDD = function (req, res, next) {
@@ -161,8 +127,8 @@ var Jobs = function (models, event) {
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
         query.find({type: "Not Quoted", project: objectId(pId)}, {
-            name                           : 1,
-            _id                            : 1,
+            name: 1,
+            _id: 1,
             "budget.budgetTotal.revenueSum": 1
         }, function (err, jobs) {
             if (err) {

@@ -276,7 +276,12 @@ var Invoice = function (models, event) {
             async.each(products, function (result, cb) {
                 var jobs = result.jobs;
 
-                JobsModel.findByIdAndUpdate(jobs, {$set: {invoice: setObj, type: "Invoiced"}}, {new: true}, function (err, inv) {
+                JobsModel.findByIdAndUpdate(jobs, {
+                    $set: {
+                        invoice: setObj,
+                        type: "Invoiced"
+                    }
+                }, {new: true}, function (err, inv) {
                     if (err) {
                         return cb(err);
                     }
@@ -331,7 +336,7 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    if (data.name){
+                    if (data.name) {
                         updateName = true;
                     }
 
@@ -340,35 +345,35 @@ var Invoice = function (models, event) {
                             return next(err);
                         }
 
-                        if (updateName){
+                        if (updateName) {
                             options = {
-                                id : invoice._id,
-                                targetModel : JobsModel,
-                                searchField : "invoice._id",
-                                fieldName : "invoice.name",
-                                fieldValue : invoice.name,
-                                projectId : invoice.project._id
+                                id: invoice._id,
+                                targetModel: JobsModel,
+                                searchField: "invoice._id",
+                                fieldName: "invoice.name",
+                                fieldValue: invoice.name,
+                                projectId: invoice.project._id
                             };
 
                             optionsForPayments = {
-                                id : invoice._id,
-                                targetModel : PaymentModel,
-                                searchField : "invoice._id",
-                                fieldName : "invoice.name",
-                                fieldValue : invoice.name
+                                id: invoice._id,
+                                targetModel: PaymentModel,
+                                searchField: "invoice._id",
+                                fieldName: "invoice.name",
+                                fieldValue: invoice.name
                             };
                             event.emit("updateNames", options);
                             event.emit("updateNames", optionsForPayments);
                         }
 
-                        if(!invoice.journal){
+                        if (!invoice.journal) {
                             Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
                                 if (err) {
                                     return next(err);
                                 }
 
-                                journalEntryComposer(invoice, db, function(err, response){
-                                    if(err){
+                                journalEntryComposer(invoice, db, function (err, response) {
+                                    if (err) {
                                         return next(err);
                                     }
                                     res.status(200).send(invoice);
@@ -1211,6 +1216,145 @@ var Invoice = function (models, event) {
 
                 res.status(200).send(invoices);
             });
+    };
+
+    this.getStatsForProject = function (req, res, next) {
+        var db = req.session.lastDb;
+        var moduleId = 56;
+        var isWtrack;
+        var Invoice;
+
+        if (checkDb(db)) {
+            moduleId = 64;
+            isWtrack = true;
+        }
+
+        if (isWtrack) {
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        }
+
+        if (req.session && req.session.loggedIn && db) {
+            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
+                if (access) {
+                    var query = req.query;
+                    var queryObject = {};
+                    var filter = query.filter;
+
+                    var optionsObject = {};
+
+                    var departmentSearcher;
+                    var contentIdsSearcher;
+                    var contentSearcher;
+                    var waterfallTasks;
+
+                    departmentSearcher = function (waterfallCallback) {
+                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                            {
+                                $match: {
+                                    users: objectId(req.session.uId)
+                                }
+                            }, {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback);
+                    };
+
+                    contentIdsSearcher = function (deps, waterfallCallback) {
+                        var everyOne = rewriteAccess.everyOne();
+                        var owner = rewriteAccess.owner(req.session.uId);
+                        var group = rewriteAccess.group(req.session.uId, deps);
+                        var whoCanRw = [everyOne, owner, group];
+                        var matchQuery = {
+                            $and: [
+                                queryObject,
+                                {
+                                    $or: whoCanRw
+                                }
+                            ]
+                        };
+
+                        Invoice.aggregate(
+                            {
+                                $match: matchQuery
+                            },
+                            {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback
+                        );
+                    };
+
+                    contentSearcher = function (invoicesIds, waterfallCallback) {
+                        var condition = '$and';
+
+                        invoicesIds = _.pluck(invoicesIds, '_id');
+
+                        if (filter && typeof filter === 'object') {
+                            condition = filter.condition || 'and';
+                            condition = '$' + condition;
+                            optionsObject[condition] = caseFilter(filter);
+                        }
+
+                        optionsObject[condition].push({_id: {$in: invoicesIds}});
+                        optionsObject[condition].push({expense: {$exists: false}});
+
+                        Invoice
+                            .aggregate([{
+                                $match: optionsObject
+                            }, {
+                                $project: {
+                                    name: 1,
+                                    paymentInfo: 1,
+                                    status: '$workflow.name',
+                                    ammount: {$divide: ['$paymentInfo.total', 100]},
+                                    paid: {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
+                                    balance: {$divide: ['$paymentInfo.balance', 100]}
+                                }
+                            }, {
+                                $group: {
+                                    _id: null,
+                                    invoices: {
+                                        $push: {
+                                            _id: '$_id',
+                                            name: '$name',
+                                            status: '$status',
+                                            paymentInfo: {
+                                                ammount: '$ammount',
+                                                paid: '$paid',
+                                                balance: '$balance'
+                                            }
+                                        }
+                                    },
+                                    ammount: {$sum: '$ammount'},
+                                    paid: {$sum: '$paid'},
+                                    balance: {$sum: '$balance'}
+                                }
+                            }])
+                            .exec(waterfallCallback);
+                    };
+
+                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+                    async.waterfall(waterfallTasks, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send({success: result[0]});
+                    });
+                } else {
+                    res.status(403).send();
+                }
+            });
+
+        } else {
+            res.status(401).send();
+        }
     }
 
 };
