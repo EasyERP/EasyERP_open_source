@@ -223,8 +223,9 @@ define([
 
                         var filter = {
                             'projectName': {
-                                key: 'project._id',
-                                value: [_id]
+                                key  : 'project._id',
+                                value: [_id],
+                                type: "ObjectId"
                             }
                         };
 
@@ -299,8 +300,9 @@ define([
 
                         var filter = {
                             'projectName': {
-                                key: 'project._id',
-                                value: [_id]
+                                key  : 'project._id',
+                                value: [_id],
+                                type: "ObjectId"
                             }
                         };
 
@@ -550,6 +552,8 @@ define([
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
+                    } else if (attrId === 'type'){
+                        data = {_id: id, type: $(e.target).text()};
                     }
 
                     dataService.postData("/jobs/update", data, function (err, result) {
@@ -658,7 +662,7 @@ define([
                     count: 50
                 });
 
-                this.jobsCollection.bind('reset add remove', self.renderJobs);
+                this.jobsCollection.bind('reset add remove', self.renderJobs, self);
 
                 cb();
             },
@@ -668,10 +672,13 @@ define([
                 var container = this.$el.find('#forInfo');
                 var formModel = this.formModel.toJSON();
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
 
-                var projectTeam = this.jobsCollection.toJSON();
+                var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
+                    return el.project._id === _id
+                });
 
-                if (this.jobsCollection.toJSON().length && (formModel._id === this.jobsCollection.toJSON()[0].project._id)) {
+                if (!App.currectCollection){
                     App.currectCollection = this.jobsCollection;
                 }
 
@@ -722,8 +729,9 @@ define([
 
                 var filter = {
                     'projectName': {
-                        key: 'project._id',
-                        value: [_id]
+                        key  : 'project._id',
+                        value: [_id],
+                        type: "ObjectId"
                     }
                 };
 
@@ -768,8 +776,9 @@ define([
 
                 var filter = {
                     'projectName': {
-                        key: 'project._id',
-                        value: [_id]
+                        key  : 'project._id',
+                        value: [_id],
+                        type: "ObjectId"
                     }
                 };
 
@@ -988,9 +997,12 @@ define([
 
                 var qCollectionJSON = this.qCollection.toJSON();
                 var ordersCollectionJSON = this.ordersCollection.toJSON();
+                var jobsCollection = this.jobsCollection.toJSON();
 
                 var sum = 0;
                 var orderSum = 0;
+                var jobSum = 0;
+                var jobsCount = 0;
 
                 ordersCollectionJSON.forEach(function (element) {
                     if (element.paymentInfo) {
@@ -1004,6 +1016,16 @@ define([
                     }
                 });
 
+                jobsCollection.forEach(function (element) {
+                    if (element.type === 'Not Quoted') {
+                        if (element.budget.budgetTotal && (element.budget.budgetTotal.revenueSum !== 0)){
+                            jobSum += element.budget.budgetTotal.revenueSum;
+                            jobsCount ++;
+                        }
+                    }
+                });
+
+
                 this.proformValues.quotations = {
                     count: qCollectionJSON.length,
                     sum: sum
@@ -1012,6 +1034,11 @@ define([
                 this.proformValues.orders = {
                     count: ordersCollectionJSON.length,
                     sum: orderSum
+                };
+
+                this.proformValues.jobs = {
+                    count: jobsCount,
+                    sum  : jobSum
                 };
 
                 proformContainer.html(this.proformRevenue({

@@ -400,7 +400,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var filter = {
                         'projectName': {
                             key  : 'project._id',
-                            value: [this.modelJSON._id]
+                            value: [_id],
+                            type: "ObjectId"
                         }
                     };
 

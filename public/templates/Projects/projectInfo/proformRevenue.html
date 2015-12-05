@@ -13,7 +13,7 @@
     <tr>
         <th>Resource</th>
         <th>Count</th>
-        <th>Summary</th>
+        <th>Amount</th>
     </tr>
     </thead>
     <tbody id="proformRevenue">
@@ -37,12 +37,22 @@
         <td>0</td>
         <% } %>
     </tr>
+    <tr>
+        <td>Not Quoted</td>
+        <%if (proformValues && proformValues.jobs) {%>
+        <td id="jobsCount"><%=proformValues.jobs.count%></td>
+        <td id="jobsSum" data-value="<%=proformValues.jobs.sum%>"><%=currencySplitter(proformValues.jobs.sum.toFixed(2))%></td>
+        <% } else { %>
+        <td>0</td>
+        <td>0</td>
+        <% } %>
+    </tr>
     </tbody>
     <tfoot>
     <tr>
         <td>Total:</td>
-        <td id="totalCount" data-value="proformValues.orders.count + proformValues.quotations.count"><%=currencySplitter((proformValues.orders.count + proformValues.quotations.count).toString())%></td>
-        <td id="totalSum"  data-value="proformValues.quotations.sum + proformValues.orders.sum"><%=currencySplitter((proformValues.quotations.sum + proformValues.orders.sum).toFixed(2))%></td>
+        <td id="totalCount" data-value="proformValues.orders.count + proformValues.quotations.count + proformValues.jobs.count"><%=currencySplitter((proformValues.orders.count + proformValues.quotations.count  + proformValues.jobs.count).toString())%></td>
+        <td id="totalSum"  data-value="proformValues.quotations.sum + proformValues.orders.sum + proformValues.jobs.sum"><%=currencySplitter((proformValues.quotations.sum + proformValues.orders.sum + proformValues.jobs.sum).toFixed(2))%></td>
     </tr>
 
     </tfoot>
