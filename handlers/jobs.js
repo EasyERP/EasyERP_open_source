@@ -1,14 +1,16 @@
-/**
- * Created by liliya on 22.10.15.
- */
 var mongoose = require('mongoose');
 var async = require('async');
-var _ = require('../node_modules/underscore');
+var _ = require('lodash');
 
 var Jobs = function (models, event) {
+    "use strict";
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var QuotationSchema = mongoose.Schemas['Quotation'];
+    var jobsInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+    var ProjectSchema = mongoose.Schemas['Project'];
+    var PaymentSchema = mongoose.Schemas['Payment'];
+
     var access = require("../Modules/additions/access.js")(models);
     var objectId = mongoose.Types.ObjectId;
 
@@ -81,13 +83,24 @@ var Jobs = function (models, event) {
     this.getData = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', jobsInvoiceSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+
         var queryObject = {};
 
         var data = req.query;
-        var sort = data.sort ? data.sort : {"budget.budgetTotal.costSum": -1};
+        var sort = {"budget.budgetTotal.costSum": -1};
 
         var filter = data ? data.filter : {};
 
+        if(data.sort){
+            sort = {};
+
+            for (var sortKey in data.sort) {
+                sort[sortKey] = parseInt(data.sort[sortKey]);
+            }
+        }
 
         if (data && data.project) {
             filter['project'] = {};
@@ -105,21 +118,106 @@ var Jobs = function (models, event) {
         }
 
         JobsModel
-            .aggregate([
+            .aggregate([{
+                $match: queryObject
+            }, {
+                $sort: sort
+            }], function (err, jobs) {
+                var parallelTasks = [projectPopulate, invoicePopulate, quotationPopulate];
 
-            ]);
-            /*.find(queryObject)
-            .sort(sort)
-            .populate('project')
-            .populate('invoice._id')
-            .populate('quotation._id')
-            .exec(function (err, result) {
+                function projectPopulate(parallelCb) {
+                    Project.populate(jobs, {
+                        path: 'project',
+                        opts: {
+                            lean: true
+                        }
+                    }, parallelCb);
+                };
+
+                function invoicePopulate(parallelCb) {
+                    var invoiceIds;
+
+                    invoiceIds = _.pluck(jobs, 'invoice._id');
+                    invoiceIds = _.compact(invoiceIds);
+
+                    Invoice.populate(jobs, {
+                        path: 'invoice._id',
+                        opts: {
+                            lean: true
+                        }
+                    }, function (err, invoices) {
+                        if (err) {
+                            return parallelCb(err);
+                        }
+
+                        Payment.aggregate([{
+                            $match: {
+                                'invoice._id': {$in: invoiceIds}
+                            }
+                        }, {
+                            $group:{
+                                _id: '$invoice._id',
+                                paid: {$sum: '$paidAmount'},
+                                count: {$sum: 1}
+                            }
+                        }], function (err, payments) {
+                            if(err){
+                                return parallelCb(err);
+                            }
+
+                            async.map(jobs, function(job, cb){
+                                var invoiceId = job.invoice && job.invoice._id ? job.invoice._id._id: null;
+                                var payment = _.filter(payments, '_id', invoiceId);
+
+                                payment = payment[0];
+
+                                job.payment = payment;
+
+                                cb(null, job);
+                            }, function(err, jobs){
+                                if(err){
+                                    return parallelCb(err);
+                                }
+
+                                parallelCb();
+                            });
+                        });
+                    });
+                };
+
+                function quotationPopulate(parallelCb) {
+                    Quotation.populate(jobs, {
+                        path: 'quotation._id',
+                        opts: {
+                            lean: true
+                        }
+                    }, parallelCb);
+                };
+
                 if (err) {
                     return next(err);
                 }
 
-                res.status(200).send(result)
-            })*/
+                async.parallel(parallelTasks, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(jobs)
+                });
+            });
+        /*.find(queryObject)
+         .sort(sort)
+         .populate('project')
+         .populate('invoice._id')
+         .populate('quotation._id')
+         .exec(function (err, result) {
+         if (err) {
+         return next(err);
+         }
+
+         res.status(200).send(result)
+         })*/
     };
 
     this.getForDD = function (req, res, next) {

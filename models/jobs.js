@@ -1,6 +1,3 @@
-/**
- * Created by liliya on 22.10.15.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -23,7 +20,8 @@ module.exports = (function () {
         },
         quotation: {
             _id : {type: ObjectId, ref: 'Quotation', default: null},
-            name: String
+            name: String,
+            status: {type: String, default: ''}
         },
         invoice  : {
             _id : {type: ObjectId, ref: 'Invoice', default: null},
