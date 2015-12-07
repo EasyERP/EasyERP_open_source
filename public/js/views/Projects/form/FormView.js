@@ -325,7 +325,7 @@ define([
             showRemoveButton: function (e) {
                 var target = e.target;
                 var tr = $(target).parents("tr");
-                var removeItem = tr.find(".fa.fa-trash");
+                var removeItem = tr.find(".fa.fa-trash").not('.notRemovable');
 
                 removeItem.removeClass('hidden');
             },

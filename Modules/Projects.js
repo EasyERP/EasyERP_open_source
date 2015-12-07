@@ -552,7 +552,12 @@ var Project = function (models, event) {
         var skip = (parseInt(data.page) - 1) * parseInt(data.count);
         var limit = parseInt(data.count);
         var sort;
+        var obj;
+        var query;
+        var arrOfObjectId;
+
         res['data'] = [];
+
         models.get(req.session.lastDb, "Department", department).aggregate(
             {
                 $match: {
@@ -564,162 +569,134 @@ var Project = function (models, event) {
                 }
             },
             function (err, deps) {
-                if (!err) {
-                    var arrOfObjectId = deps.objectID();
-                    models.get(req.session.lastDb, "Project", projectSchema).aggregate(
-                        {
-                            $match: {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        },
-                        {
-                            $project: {
-                                _id: 1
-                            }
-                        },
-                        function (err, result) {
-                            if (!err) {
-                                var obj = {$and: [{_id: {$in: result}}]};
-
-                                /*if (data && data.filter && data.filter.workflow) {
-                                 data.filter.workflow = data.filter.workflow.map(function (item) {
-                                 return item === "null" ? null : item;
-                                 });
-
-                                 query.where('workflow').in(data.filter.workflow);
-
-                                 } */
-                                if (data && data.filter) {
-                                    obj['$and'].push({$and: caseFilter(data.filter)});
-                                    /*for (var key in data.filter) {
-                                     switch (key) {
-                                     case 'workflow':
-                                     data.filter.workflow = data.filter.workflow.map(function (item) {
-                                     return item === "null" ? null : item;
-                                     });
-                                     query.where('workflow').in(data.filter.workflow);
-                                     break;
-                                     case 'project':
-                                     query.where('projectName').in(data.filter.project);
-                                     break;
-                                     case 'startDate':
-                                     query.where('StartDate').in(data.filter.startDate);
-                                     break;
-                                     case 'endDate':
-                                     query.where('EndDate').in(data.filter.endDate);
-                                     break;
-                                     }
-                                     }*/
-                                }
-                                if (data.sort) {
-                                    sort = data.sort;
-                                } else {
-                                    sort = {"editedBy.date": -1};
-                                }
-
-                                var query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
-
-                                //query.aggregate([{
-                                //    $match: obj
-                                //},{
-                                //    $skip: skip
-                                //},{
-                                //    $limit: limit
-                                //},{
-                                //    $project: {
-                                //        notRemovable : {
-                                //            $size: "$budget.projectTeam"
-                                //        },
-                                //            createdBy    : 1,
-                                //            editedBy     : 1,
-                                //            workflow     : 1,
-                                //            projectName  : 1,
-                                //            health       : 1,
-                                //            customer     : 1,
-                                //            progress     : 1,
-                                //            StartDate    : 1,
-                                //            EndDate      : 1,
-                                //            TargetEndDate: 1
-                                //    }
-                                //
-                                //}, {
-                                //        $sort: sort
-                                //    }], function (error, _res) {
-                                //
-                                //        function populateCreated(cb){
-                                //            Users.populate(_res, {
-                                //                path: 'createdBy.user',
-                                //                select: 'login'
-                                //            }, function(){
-                                //                cb();
-                                //            });
-                                //        }
-                                //
-                                //        function populateEdited(cb){
-                                //            Users.populate(_res, {
-                                //                path: 'editedBy.user',
-                                //                select: 'login'
-                                //            }, function(){
-                                //                cb();
-                                //            });
-                                //        }
-                                //
-                                //        async.parallel([populateCreated, populateEdited], function(err, result){
-                                //            res['data'] = _res;
-                                //            response.send(res);
-                                //        });
-                                //
-                                //});
-
-                                query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
-                                    populate('createdBy.user', 'login').
-                                    populate('editedBy.user', 'login').
-                                    //populate('projectmanager', 'name').
-                                    // populate('customer', 'name').
-                                    // populate('workflow._id', 'status').
-                                    skip((data.page - 1) * data.count).
-                                    limit(data.count).
-                                    exec(function (error, _res) {
-                                        if (!error) {
-                                            res['data'] = _res;
-                                            //res['listLength'] = _res.length;
-                                            response.send(res);
-                                        } else {
-                                            console.log(error);
-                                        }
-                                    });
-                            } else {
-                                console.log(err);
-                            }
-                        }
-                    );
-                } else {
-                    console.log(err);
+                if (err) {
+                    return console.log(err);
                 }
+
+                arrOfObjectId = deps.objectID();
+
+                models.get(req.session.lastDb, "Project", projectSchema).aggregate(
+                    {
+                        $match: {
+                            $or: [
+                                {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'group'},
+                                                {'groups.users': objectId(req.session.uId)}
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'group'},
+                                                {'groups.group': {$in: arrOfObjectId}}
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    $and: [
+                                        {whoCanRW: 'owner'},
+                                        {'groups.owner': objectId(req.session.uId)}
+                                    ]
+                                },
+                                {whoCanRW: "everyOne"}
+                            ]
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1
+                        }
+                    },
+                    function (err, result) {
+                        if (err) {
+                            return console.log(err);
+                        }
+
+                        obj = {$and: [{_id: {$in: result}}]};
+
+                        if (data && data.filter) {
+                            obj['$and'].push({$and: caseFilter(data.filter)});
+                        }
+
+                        if (data.sort) {
+                            sort = data.sort;
+                        } else {
+                            sort = {"editedBy.date": -1};
+                        }
+
+                        query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
+
+                        //query.aggregate([{
+                        //    $match: obj
+                        //},{
+                        //    $skip: skip
+                        //},{
+                        //    $limit: limit
+                        //},{
+                        //    $project: {
+                        //        notRemovable : {
+                        //            $size: "$budget.projectTeam"
+                        //        },
+                        //            createdBy    : 1,
+                        //            editedBy     : 1,
+                        //            workflow     : 1,
+                        //            projectName  : 1,
+                        //            health       : 1,
+                        //            customer     : 1,
+                        //            progress     : 1,
+                        //            StartDate    : 1,
+                        //            EndDate      : 1,
+                        //            TargetEndDate: 1
+                        //    }
+                        //
+                        //}, {
+                        //        $sort: sort
+                        //    }], function (error, _res) {
+                        //
+                        //        function populateCreated(cb){
+                        //            Users.populate(_res, {
+                        //                path: 'createdBy.user',
+                        //                select: 'login'
+                        //            }, function(){
+                        //                cb();
+                        //            });
+                        //        }
+                        //
+                        //        function populateEdited(cb){
+                        //            Users.populate(_res, {
+                        //                path: 'editedBy.user',
+                        //                select: 'login'
+                        //            }, function(){
+                        //                cb();
+                        //            });
+                        //        }
+                        //
+                        //        async.parallel([populateCreated, populateEdited], function(err, result){
+                        //            res['data'] = _res;
+                        //            response.send(res);
+                        //        });
+                        //
+                        //});
+
+                        query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate")
+                            .populate('createdBy.user', 'login')
+                            .populate('editedBy.user', 'login')
+                            .skip((data.page - 1) * data.count)
+                            .limit(data.count)
+                            .exec(function (error, _res) {
+                                if (error) {
+                                    return console.log(error);
+                                }
+
+                                res['data'] = _res;
+                                response.send(res);
+
+                            });
+                    }
+                );
             });
     }
 
