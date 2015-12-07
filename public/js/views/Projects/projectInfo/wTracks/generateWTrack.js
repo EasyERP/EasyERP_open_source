@@ -413,7 +413,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                         if (errors.length) {
                             return App.render({
-                                type: 'notify',
+                                type   : 'notify',
                                 message: 'Please, enter all information first.'
                             });
                         }
@@ -459,14 +459,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                                 },
                                 error  : function () {
                                     App.render({
-                                        type: 'error',
+                                        type   : 'error',
                                         message: 'Some error'
                                     });
                                 }
                             });
                         } else {
                             App.render({
-                                type: 'notify',
+                                type   : 'notify',
                                 message: 'Please, enter correct Job name!'
                             });
                         }
