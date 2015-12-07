@@ -320,7 +320,7 @@
                     content.html(this.template({collection: this.collection.toJSON()}));
                 }
                 this.asyncLoadImgs(newModels);
-                this.filterView.renderFilterContent();
+                // this.filterView.renderFilterContent();
             },
 
             createItem: function () {
