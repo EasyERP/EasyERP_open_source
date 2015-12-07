@@ -284,6 +284,7 @@ define([
             render: function () {
                 var formString = this.template({visible: this.visible, forSales: this.forSales});
                 var self = this;
+                var curDate = new Date();
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -325,6 +326,8 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
 
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+
                 if (App.weTrack && this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
@@ -358,8 +361,9 @@ define([
                 this.$el.find('#orderDate').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
-                }).datepicker('setDate', new Date());
+                    changeYear : true,
+                    maxDate: "+0D"
+                }).datepicker('setDate', curDate);
 
                 this.$el.find('#expectedDate').datepicker({
                     dateFormat : "d M, yy",

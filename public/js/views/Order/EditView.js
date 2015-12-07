@@ -388,7 +388,7 @@ define([
                     }).render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true, true);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
@@ -403,7 +403,8 @@ define([
                 this.$el.find('#expectedDate').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
+                    maxDate: "+0D"
                 })/*.datepicker('setDate', model.expectedDate)*/;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
