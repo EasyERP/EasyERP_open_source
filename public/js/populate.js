@@ -353,9 +353,11 @@ define([
             var data = context.responseObj[".productsDd"];
             var elementVisible = 10;
             var newSel = $(e.target).parent().find(".newSelectList");
+            var id;
             if (prev || next) {
                 newSel = $(e.target).closest(".newSelectList");
-                data = context.responseObj["#" + newSel.parent().find(".current-selected").attr("id")];
+                id = newSel.parent().find(".current-selected").attr("id") || newSel.parent().find(".current-selected").attr("data-id"); // add for Pagination
+                data = context.responseObj["#" + id];
             }
             var parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
             var currentPage = 1;
