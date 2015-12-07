@@ -1102,6 +1102,7 @@ var Invoice = function (models, event) {
     };
 
     this.getStats = function (req, res, next) {
+        var db = req.session.lastDb;
         var Invoice;
         var now = new Date();
         var moduleId;
