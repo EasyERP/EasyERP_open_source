@@ -185,7 +185,10 @@ define([
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
                             if (jobs === "jobs" && this.forSales) {
-                                return alert("Job field can't be empty. Please, choose or create one.");
+                                return App.render({
+                                    type: 'notify',
+                                    message: "Job field can't be empty. Please, choose or create one."
+                                });
                             }
 
                             products.push({
@@ -199,7 +202,10 @@ define([
                                 jobs         : jobs
                             });
                         } else {
-                            return alert("Products can't be empty.");
+                            return App.render({
+                                type: 'notify',
+                                message: "Products can't be empty."
+                            });
                         }
                     }
                 }
@@ -248,7 +254,11 @@ define([
                     });
 
                 } else {
-                    return alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    return App.render({
+                        type: 'notify',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
+
                 }
             },
 
