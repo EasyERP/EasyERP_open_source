@@ -711,12 +711,15 @@ define([
 
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
+                        $("#top-bar-createBtn").hide();
+
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
                     } else {
                         $("#top-bar-deleteBtn").hide();
+                        $("#top-bar-createBtn").show();
                         $('#check_all').prop('checked', false);
                     }
 
@@ -738,7 +741,6 @@ define([
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
-
                 }
 
                 if (errors.length) {
@@ -826,6 +828,7 @@ define([
                         if (checkLength > 0) {
                             $("#top-bar-deleteBtn").show();
                             $("#top-bar-copyBtn").show();
+                            $("#top-bar-createBtn").hide();
 
                             if (checkLength === self.collection.length) {
                                 checkedInputs.each(function (index, element) {
@@ -836,6 +839,7 @@ define([
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
+                            $("#top-bar-createBtn").show();
                             // self.genInvoiceEl.hide();
                             self.copyEl.hide();
                             $('#check_all').prop('checked', false);
@@ -923,7 +927,8 @@ define([
                     year: year,
                     month: month,
                     week: week,
-                    rate: rate
+                    rate: rate,
+                    projectModel: null
                 };
 
                 var model = new currentModel(startData);
