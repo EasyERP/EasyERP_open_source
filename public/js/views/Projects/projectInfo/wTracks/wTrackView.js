@@ -6,6 +6,7 @@ define([
     'text!templates/Projects/projectInfo/wTracks/wTrackHeader.html',
     'text!templates/Pagination/PaginationTemplate.html',
     'text!templates/wTrack/list/cancelEdit.html',
+    'views/wTrack/CreateView',
     'views/wTrack/list/ListView',
     'views/wTrack/list/ListItemView',
     'models/wTrackModel',
@@ -15,7 +16,7 @@ define([
     'populate',
     'async'
 
-], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async) {
+], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async) {
     var wTrackView = listView.extend({
 
         el                      : '#weTracks',
@@ -38,6 +39,7 @@ define([
             "click #top-bar-copyBtn"                                 : "copyRow",
             "click #savewTrack"                                      : "saveItem",
             "click #deletewTrack"                                    : "deleteItems",
+            "click #createBtn"                                       : "createItem",
             "click .oe_sortable :not(span.arrow.down, span.arrow.up)": "goSort",
             "click"                                                  : "removeInputs"
         },
@@ -47,6 +49,7 @@ define([
             this.collection = options.model;
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};
+            this.project = options.project ? options.project : {};
 
             this.startNumber = options.startNumber;
 
@@ -56,6 +59,52 @@ define([
 
             this.render();
         },
+
+        createItem: function (e) {
+            e.preventDefault();
+
+            var projectModel = this.project.toJSON();
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth() + 1;
+            var week = now.getWeek();
+            var rate = 3;
+            this.projectModel = projectModel;
+            var startData = {
+                year: year,
+                month: month,
+                week: week,
+                rate: rate,
+                project: {
+                    _id: projectModel._id,
+                    projectName: projectModel.projectName,
+                    projectmanager: projectModel.projectmanager,
+                    workflow: projectModel.workflow,
+                    customer: projectModel.customer
+                },
+                projectModel: projectModel
+            };
+
+            var model = new currentModel(startData);
+
+            startData.cid = model.cid;
+
+            if (!this.isNewRow()) {
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
+
+                new createView(startData);
+            } else {
+                App.render({
+                    type: 'notify',
+                    message: 'Please confirm or discard changes before create a new item'
+                });
+            }
+
+            this.createdCopied = true;
+            this.changed = true;
+        },
+
 
         stopDefaultEvents: function (e) {
             e.stopPropagation();
@@ -359,7 +408,7 @@ define([
             }
 
             this.hideSaveCancelBtns();
-            // this.resetCollection(modelObject);
+            this.resetCollection(modelObject);
         },
 
         removeInputs: function () {
@@ -473,11 +522,13 @@ define([
         hideSaveCancelBtns: function () {
             var saveBtnEl = $('#savewTrack');
             var cancelBtnEl = $('#deletewTrack');
+            var createBtnEl = $('#createBtn');
 
             this.changed = false;
 
             saveBtnEl.hide();
             cancelBtnEl.hide();
+            createBtnEl.show();
 
             return false;
         },
@@ -492,25 +543,35 @@ define([
             for (var id in this.changedModels) {
                 model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
                 model.changed = this.changedModels[id];
-
             }
 
             if (errors.length) {
                 return
             }
             this.editCollection.save();
-            this.changedModels = {};
-            this.editCollection.remove(id);
+
+            for (var id in this.changedModels) {
+                delete this.changedModels[id];
+                this.editCollection.remove(id);
+            }
         },
 
         checked: function (e) {
             var el = this.$el;
+            var checkLength;
+            var rawRows;
 
             if (this.collection.length > 0) {
-                var checkLength = el.find("input.checkbox:checked").length;
+                var $checkLength = el.find("input.checkbox:checked");
+
+                checkLength = $checkLength.length;
+                rawRows = $checkLength.closest('#false');
 
                 if (el.find("input.checkbox:checked").length > 0) {
+                    this.$createBtn.hide();
+                    this.copyEl.show();
                     $("#deletewTrack").show();
+
                     el.find('#check_all').prop('checked', false);
 
                     if (checkLength === this.collection.length) {
@@ -519,8 +580,16 @@ define([
                 }
                 else {
                     $("#deletewTrack").hide();
+                    this.copyEl.hide();
+                    this.$createBtn.show();
                     el.find('#check_all').prop('checked', false);
                 }
+            }
+
+            if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                this.$saveBtn.hide();
+            } else {
+                this.$saveBtn.show();
             }
 
             this.setAllTotalVals();
@@ -568,9 +637,11 @@ define([
         showSaveCancelBtns: function () {
             var saveBtnEl = $('#savewTrack');
             var cancelBtnEl = $('#deletewTrack');
+            var createBtnEl = $('#createBtn');
 
             saveBtnEl.show();
             cancelBtnEl.show();
+            createBtnEl.hide();
 
             return false;
         },
@@ -581,6 +652,7 @@ define([
         },
 
         copyRow: function (e) {
+            this.stopDefaultEvents(e);
             this.hideGenerateCopy();
 
             this.changed = true;
@@ -626,12 +698,12 @@ define([
 
                 tdsArr = row.find('td');
                 $(tdsArr[0]).find('input').val(cid);
-                $(tdsArr[20]).find('span').text('Unpaid');
-                $(tdsArr[20]).find('span').addClass('unDone');
-                $(tdsArr[24]).text(0);
-                $(tdsArr[22]).text(0);
-                $(tdsArr[21]).text(revenue.toFixed(2));
-                $(tdsArr[1]).text(cid);
+                $(tdsArr[21]).find('span').text('Unpaid');
+                $(tdsArr[21]).find('span').addClass('unDone');
+                $(tdsArr[25]).text(0);
+                $(tdsArr[23]).text(0);
+                $(tdsArr[22]).text(revenue.toFixed(2));
+                $(tdsArr[1]).text("New");
             }
         },
 
@@ -677,10 +749,12 @@ define([
                 this.renderPagination(self.$el, self);
             }
 
-            this.genInvoiceEl = self.$el.find('#top-bar-generateBtn');
-            this.copyEl = self.$el.find('#top-bar-copyBtn');
-            self.genInvoiceEl.hide();
-            self.copyEl.hide();
+            this.genInvoiceEl = this.$el.find('#top-bar-generateBtn');
+            this.copyEl = this.$el.find('#top-bar-copyBtn');
+            this.$saveBtn = this.$el.find('#saveBtn');
+            this.$createBtn = this.$el.find('#createBtn');
+            this.genInvoiceEl.hide();
+            this.copyEl.hide();
 
             $('#savewTrack').hide();
             $('#deletewTrack').hide();
@@ -697,6 +771,7 @@ define([
 
                     if (checkLength > 0) {
                         $("#deletewTrack").show();
+                        self.$createBtn.hide();
 
                         if (checkLength === self.collection.length) {
                             //checkedInputs.each(function (index, element) {
@@ -707,6 +782,7 @@ define([
                         }
                     } else {
                         $("#deletewTrack").hide();
+                        self.$createBtn.show();
 
                         $('#check_all').prop('checked', false);
                     }

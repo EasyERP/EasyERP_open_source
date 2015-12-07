@@ -1091,6 +1091,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
     height: calc(100vh - 190px);
   }
 }
+tr.redBorder {
+  background-color: red;
+}
 #forInfo {
   overflow: hidden;
 }

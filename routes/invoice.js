@@ -10,6 +10,8 @@ module.exports = function (models, event) {
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/generateName', handler.generateName);
     router.get('/stats', handler.getStats);
+    router.get('/stats/project', handler.getStatsForProject);
+    router.get('/chart', handler.chartForProject);
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;
         switch (viewType) {
@@ -23,6 +25,7 @@ module.exports = function (models, event) {
 
     router.delete('/:_id', function (req, res) {
         var id = req.param('_id');
+
         handler.removeInvoice(req, res, id);
     });
 
@@ -31,12 +34,8 @@ module.exports = function (models, event) {
     router.put('/:_id', function (req, res) {
         var data = {};
         var id = req.params._id;
+
         data.invoice = req.body;
-        //data.invoice = req.body;
-        /*var data = {};
-         for (var i in req.query) {
-         data[i] = req.query[i];
-         }*/
 
         handler.updateInvoice(req, res, id, data);
     });

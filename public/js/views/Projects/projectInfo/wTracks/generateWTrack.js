@@ -29,8 +29,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     'mouseover tbody tr:not("#addNewItem")'                           : 'showRemove',
                     'mouseleave tbody tr:not("#addNewItem")'                          : 'hideRemove',
                     'click .remove'                                                   : 'deleteRow',
-                    "keydown input:not(#jobName)"                                                   : "onKeyDownInput",
-                    "keyup input:not(#jobName)"                                                     : "onKeyUpInput"
+                    "keydown input:not(#jobName)"                                     : "onKeyDownInput",
+                    "keyup input:not(#jobName)"                                       : "onKeyUpInput"
                 },
 
                 onKeyDownInput: function (e) {
@@ -297,11 +297,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                         input = this.$el.find('.editing');
 
-                        if (content === "revenue"){
+                        if (content === "revenue") {
                             input.attr({
                                 "maxLength": 6
                             });
-                        }else {
+                        } else {
                             input.attr({
                                 "maxLength": 1
                             });
@@ -382,82 +382,95 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 generateItems: function (e) {
-                    this.setChangedValueToModel(); // add for setChanges by Hours
 
-                    var errors = this.$el.find('.errorContent');
                     var self = this;
-                    var data = JSON.stringify(this.resultArray);
-                    var tabs;
-                    var activeTab;
-                    var dialogHolder;
-                    var jobId = self.jobs ? self.jobs._id : null;
-                    var jobName = self.jobs ? self.jobs.name : $("#jobName").val();
-                    var _id = window.location.hash.split('form/')[1];
-                    //var nameRegExp = /^[\w\.@]{3,100}$/;
-                    var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
-                    //var quotationDialog = $('.edit-dialog');
+                    var once = _.once(generateOnce);
 
-                    var filter = {
-                        'projectName': {
-                            key  : 'project._id',
-                            value: [_id],
-                            type: "ObjectId"
-                        }
-                    };
+                    once();
 
-                    this.stopDefaultEvents(e);
+                    function generateOnce() {
+                        self.setChangedValueToModel();// add for setChanges by Hours
 
-                    if (errors.length) {
-                        return alert("Please, enter all information first.");
-                    }
+                        var errors = self.$el.find('.errorContent');
+                        var data = JSON.stringify(self.resultArray);
+                        var tabs;
+                        var activeTab;
+                        var dialogHolder;
+                        var jobId = self.jobs ? self.jobs._id : null;
+                        var jobName = self.jobs ? self.jobs.name : $("#jobName").val();
+                        var _id = window.location.hash.split('form/')[1];
+                        var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
 
-                    if (nameRegExp.test(jobName)) {
-                        $.ajax({
-                            type       : 'Post',
-                            url        : '/wTrack/generateWTrack',
-                            contentType: "application/json",
-                            data       : data,
-
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader("createJob", self.createJob);
-                                xhr.setRequestHeader("project", self.modelJSON._id);
-                                xhr.setRequestHeader("jobid", jobId);
-                                xhr.setRequestHeader("jobname", jobName);
-                            },
-
-                            success: function () {
-                                self.hideDialog();
-
-                                if (self.wTrackCollection && self.wTrackCollection.wTrackView) {
-                                    self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
-                                }
-
-                                if (self.wTrackCollection) {
-                                    self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
-                                }
-
-                                if (self.quotationDialog) {
-                                    return self.quotationDialog.generatedWtracks();
-                                }
-
-                                tabs = $(".chart-tabs");
-                                activeTab = tabs.find('.active');
-
-                                activeTab.removeClass('active');
-                                tabs.find('#wTrackTab').addClass("active");
-
-                                dialogHolder = $(".dialog-tabs-items");
-                                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                                dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
-                            },
-                            error  : function () {
-                                alert('error');
+                        var filter = {
+                            'projectName': {
+                                key  : 'project._id',
+                                value: [_id],
+                                type : "ObjectId"
                             }
-                        });
-                    } else {
-                        alert("Please, enter correct Job name!");
-                    }
+                        };
 
+                        self.stopDefaultEvents(e);
+
+                        if (errors.length) {
+                            return App.render({
+                                type   : 'notify',
+                                message: 'Please, enter all information first.'
+                            });
+                        }
+
+                        if (nameRegExp.test(jobName)) {
+                            $.ajax({
+                                type       : 'Post',
+                                url        : '/wTrack/generateWTrack',
+                                contentType: "application/json",
+                                data       : data,
+
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("createJob", self.createJob);
+                                    xhr.setRequestHeader("project", self.modelJSON._id);
+                                    xhr.setRequestHeader("jobid", jobId);
+                                    xhr.setRequestHeader("jobname", jobName);
+                                },
+
+                                success: function () {
+                                    self.hideDialog();
+
+                                    if (self.wTrackCollection && self.wTrackCollection.wTrackView) {
+                                        self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
+                                    }
+
+                                    if (self.wTrackCollection) {
+                                        self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                    }
+
+                                    if (self.quotationDialog) {
+                                        return self.quotationDialog.generatedWtracks();
+                                    }
+
+                                    tabs = $(".chart-tabs");
+                                    activeTab = tabs.find('.active');
+
+                                    activeTab.removeClass('active');
+                                    tabs.find('#wTrackTab').addClass("active");
+
+                                    dialogHolder = $(".dialog-tabs-items");
+                                    dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                                    dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
+                                },
+                                error  : function () {
+                                    App.render({
+                                        type   : 'error',
+                                        message: 'Some error'
+                                    });
+                                }
+                            });
+                        } else {
+                            App.render({
+                                type   : 'notify',
+                                message: 'Please, enter correct Job name!'
+                            });
+                        }
+                    }
                 },
 
                 hideDialog: function () {
