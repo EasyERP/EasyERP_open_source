@@ -60,7 +60,7 @@
 
         <tr data-id="<%=element._id%>" id="jobsItem">
 
-            <td class="remove"><a class="fa fa-trash hidden" id="<%=element._id%>"></a></td>
+            <td class="remove"><a class="fa fa-trash hidden <%=(element.quotation._id || element.invoice._id) ? 'notRemovable' : ''%>" id="<%=element._id%>"></a></td>
             <td class="expand">+</td>
             <td class="editableJobs" id="jobsName"><%=element.name%></td>
             <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
@@ -179,6 +179,8 @@
         </table>
     </div>
     <div id="proformRevenueContainer">
+    </div>
+    <div id="invoiceStatsContainer">
     </div>
 </div>
 
