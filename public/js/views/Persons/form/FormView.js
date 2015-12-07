@@ -192,6 +192,7 @@ define([
                 var currentModel = this.model;
                 var newModel = {};
 				var oldvalue = {};
+
                 if (objIndex.length > 1) {
 					for (var i in this.formModel.toJSON()[objIndex[0]]){
 						oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
@@ -223,13 +224,6 @@ define([
 					newModel[objIndex[0]] = oldvalue;
 					this.formModel.set(newModel);
 				}
-            },
-
-
-
-            editItem: function () {
-                //create editView in dialog here
-                new editView({ collection: this.collection });
             },
 
             personsSalesChecked: function (e) {

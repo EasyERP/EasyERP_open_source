@@ -24,9 +24,10 @@ var app;
 mainDb.on('error', console.error.bind(console, 'connection error:'));
 mainDb.once('open', function callback() {
     'use strict';
-
+    var mainDBSchema;
     var port = parseInt(process.env.PORT) || 8089;
     var instance = parseInt(process.env.NODE_APP_INSTANCE) || 0;
+    var main;
 
     port += instance;
     mainDb.dbsObject = dbsObject;
@@ -35,7 +36,7 @@ mainDb.once('open', function callback() {
 
     require('./models/index.js');
 
-    var mainDBSchema = mongoose.Schema({
+    mainDBSchema = mongoose.Schema({
         _id: Number,
         url: {type: String, default: 'localhost'},
         DBname: {type: String, default: ''},
@@ -44,8 +45,7 @@ mainDb.once('open', function callback() {
         port: Number
     }, {collection: 'easyErpDBS'});
 
-    var main = mainDb.model('easyErpDBS', mainDBSchema);
-
+    main = mainDb.model('easyErpDBS', mainDBSchema);
     main.find().exec(function (err, result) {
         if (!err) {
             result.forEach(function (_db, index) {
@@ -64,6 +64,7 @@ mainDb.once('open', function callback() {
                     //mongos: true
                 };
                 var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
+
                 dbObject.on('error', console.error.bind(console, 'connection error:'));
                 dbObject.once('open', function callback() {
                     console.log("Connection to " + _db.DBname + " is success" + index);
@@ -74,7 +75,7 @@ mainDb.once('open', function callback() {
                 });
             });
         } else {
-            console.log(err);
+            process.exit(1, err);
         }
     });
 

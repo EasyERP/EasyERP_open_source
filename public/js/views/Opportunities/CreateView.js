@@ -32,6 +32,7 @@ define([
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect"
             },
+
             notHide: function () {
                 return false;
             },

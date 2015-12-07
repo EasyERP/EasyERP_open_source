@@ -34,19 +34,26 @@ define([
 
 	function fetchJobs(options){
 		var jobsCollection;
+		var projectId = options.project;
+		var key = 'jobs_projectId:' + projectId;
+		var collection = custom.retriveFromCash(key);
 
 		var filter = {
 			"project": {
 				key: "project",
-				value: [options.project]
+				value: [projectId]
 			}
 		};
 
-		jobsCollection = new JobsCollection({
-			viewType: 'list',
-			filter: filter,
-			count: 50
-		});
+		if (collection && collection.length){
+			jobsCollection = new JobsCollection({
+				viewType: 'list',
+				filter: filter,
+				count: 50,
+				projectId: projectId,
+				bySocket: true
+			});
+		}
 
 		return jobsCollection;
 	}

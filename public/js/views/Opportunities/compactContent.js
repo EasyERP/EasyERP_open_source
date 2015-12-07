@@ -16,6 +16,7 @@
             },
 
             template: _.template(compactContentTemplate),
+
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest("a").attr("id");
@@ -24,11 +25,15 @@
                 model.fetch({
                     data: { id: id },
                     success: function (model) {
-                        new editView({ model: model });
+                        new editView({
+                            model: model,
+                            elementId: 'personAttach'
+                        });
                     },
                     error: function () { alert('Please refresh browser'); }
                 });
             },
+
             gotoOpportunitieForm: function (e) {
                 e.preventDefault();
                 var itemIndex = $(e.target).closest("a").attr("id");

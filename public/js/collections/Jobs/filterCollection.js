@@ -1,8 +1,7 @@
-/**
- * Created by liliya on 22.10.15.
- */
-define(['models/jobsModel'
-], function (JobsModel) {
+define([
+    'models/jobsModel',
+    'custom'
+], function (JobsModel, custom) {
     var JobsCollection = Backbone.Collection.extend({
 
         model: JobsModel,
@@ -13,22 +12,38 @@ define(['models/jobsModel'
         viewType: null,
 
         initialize: function (options) {
+            options = options || {};
             this.startTime = new Date();
-            var that = this;
+            var self = this;
 
             this.filter = options ? options.filter : {};
+            this.projectId = options.projectId;
+            this.bySocket = options.bySocket;
 
             this.fetch({
                 data: options,
                 reset: true,
                 success: function (newCollection) {
-                    that.page ++;
+                    var key = 'jobs_projectId:' + self.projectId;
+                    var collection = custom.retriveFromCash(key);
 
-                    if (App.currectCollection){
-                        App.currectCollection.reset(newCollection.models);
+                    self.page++;
+
+                    if (collection && collection.length) {
+
+                        if (!App.projectInfo || (App.projectInfo && App.projectInfo.currentTab !== 'overview')) {
+                            collection.reset(newCollection.models);
+                        } else if (self.bySocket) {
+                            App.render({
+                                type: 'notify',
+                                message: 'Data were changed, please refresh browser'
+                            });
+                        }
+                    } else {
+                        custom.cacheToApp(key, newCollection, true);
                     }
                 },
-                error: function(err, xhr){
+                error: function (err, xhr) {
                     console.log(xhr);
                 }
             });
@@ -44,8 +59,7 @@ define(['models/jobsModel'
             filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
             filterObject['filter'] = (options) ? options.filter : {};
 
-            if (options && options.contentType && !(options.filter))
-            {
+            if (options && options.contentType && !(options.filter)) {
                 options.filter = {};
             }
 

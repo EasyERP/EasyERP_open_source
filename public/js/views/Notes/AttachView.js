@@ -32,6 +32,7 @@ define([
                 this.sendToServer(event, null, this);
             }
         },
+
         hideDialog: function () {
             $(".edit-dialog").remove();
             $(".add-group-dialog").remove();
@@ -64,6 +65,7 @@ define([
                 if (this.$el.find("li .inputAttach").length == 0) {
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(window.location.hash, {trigger: true});
+
                     return;
                 }
                 addInptAttach = fileArr;
