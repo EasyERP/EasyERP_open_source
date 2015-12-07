@@ -223,7 +223,7 @@ define([
                     $(tdsArr[25]).text(0);
                     $(tdsArr[23]).text(0);
                     $(tdsArr[22]).text(revenue.toFixed(2));
-                    $(tdsArr[1]).text(cid);
+                    $(tdsArr[1]).text("New");
                 }
             },
 
