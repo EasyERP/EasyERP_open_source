@@ -69,6 +69,7 @@ define([
             var month = now.getMonth() + 1;
             var week = now.getWeek();
             var rate = 3;
+            this.projectModel = projectModel;
             var startData = {
                 year: year,
                 month: month,

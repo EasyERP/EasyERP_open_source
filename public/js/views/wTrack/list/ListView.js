@@ -18,9 +18,10 @@ define([
         'async',
         'custom',
         'moment',
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment) {
+    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS) {
         var wTrackListView = listViewBase.extend({
             createView: createView,
             listTemplate: listTemplate,
@@ -82,7 +83,7 @@ define([
                 if (!model) {
                     projectsDdContainer.css('color', 'red');
 
-                    App.render({
+                    return App.render({
                         type: 'error',
                         message: CONSTANTS.SELECTP_ROJECT
                     });
