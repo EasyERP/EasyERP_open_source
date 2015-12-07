@@ -352,7 +352,8 @@ define([
                         },
                         wait   : true,
                         patch  : true,
-                        success: function () {
+                        success: function (err, result) {
+                            var $dueDateEl;
                             var url = window.location.hash;
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
@@ -364,6 +365,8 @@ define([
 
                             if (self.redirect) {
                                 Backbone.history.navigate(url, {trigger: true});
+                                $dueDateEl = $('#' + result.id).closest('tr').find('[data-content="dueDate"]');
+                                $dueDateEl.text(result.dueDate);
                             } else {
                                 Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
