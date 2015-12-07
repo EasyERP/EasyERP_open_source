@@ -137,6 +137,8 @@ define([
             var that = this;
             var model;
             var orderId;
+            var id;
+            var tr;
             var listTableCheckedInput;
             var table = this.$el.find('#listTable');
             listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
@@ -144,13 +146,13 @@ define([
             this.collectionLength = this.collection.length;
             async.each(listTableCheckedInput, function (checkbox, cb) {
                 model = that.collection.get(checkbox.value);
-                orderId = model.get("sourceDocument");
-                orderId = orderId && orderId._id ? orderId._id : orderId;
                 model.destroy({
                     wait   : true,
                     success: function (model) {
-                        var id = model.get('_id');
-                        var tr = $("[data-id=" + orderId + "]");
+                        orderId = model.get("sourceDocument");
+                        orderId = orderId && orderId._id ? orderId._id : orderId;
+                        id = model.get('_id');
+                        tr = $("[data-id=" + orderId + "]");
 
                         table.find('[data-id="' + id + '"]').remove();
 
