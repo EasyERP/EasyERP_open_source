@@ -434,6 +434,7 @@ define([
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
+
             deleteItem: function (event) {
                 var mid = 55;
                 event.preventDefault();
@@ -549,7 +550,7 @@ define([
                 });
 
 
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -562,6 +563,8 @@ define([
                         });
 
                     }
+                }
+
                 return this;
             }
 
