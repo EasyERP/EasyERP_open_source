@@ -296,9 +296,7 @@ var JobPosition = function (event, models) {
                         if (err){
                             return response.send(500, {error: "Can't find JobPosition"});
                         }
-
                         for (var i in sort){
-                            console.log(result[1][i]);
                             if (typeof result[0][i] == 'number'){
                                 function compareSort(personA, personB) {
                                     if (sort[i]== 1) {
