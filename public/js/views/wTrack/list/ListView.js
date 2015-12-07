@@ -850,7 +850,7 @@ define([
                     self.setAllTotalVals();
                 });
 
-                dataService.getData("/project/getForWtrack", null, function (projects) {
+                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
                     projects = _.map(projects.data, function (project) {
                         project.name = project.projectName;
 
