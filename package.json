@@ -22,6 +22,7 @@
     "fast-csv": "^0.6.0",
     "geoip-lite": "1.1.6",
     "googleapis": "0.4.6",
+    "grunt": "^0.4.5",
     "isodate": "^0.1.4",
     "lodash": "^3.8.0",
     "money": "^0.2.0",
