@@ -155,7 +155,7 @@ define([
                         tr = $("[data-id=" + orderId + "]");
 
                         table.find('[data-id="' + id + '"]').remove();
-                        
+
                         tr.find('.workflow').html('<a href="javascript:;" class="">Not Invoiced</a>');
 
                         tr.removeClass('notEditable');
