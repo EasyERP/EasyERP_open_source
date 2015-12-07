@@ -76,8 +76,11 @@ define([
                 this.setChangedValueToModel();
             },
 
-            generateJob: function () {
-                var model = this.projectModel;
+            generateJob: function (e) {
+                var target = $(e.target);
+                var id = target.closest('tr').attr('data-id');
+                var wTrackModel = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                var model = this.projectModel ? this.projectModel : wTrackModel.get('project');
                 var projectsDdContainer = $('#projectDd');
 
                 if (!model) {
@@ -90,7 +93,7 @@ define([
                 }
 
                 new CreateJob({
-                    model: this.projectModel,
+                    model: model,
                     wTrackView: this
                 });
 
