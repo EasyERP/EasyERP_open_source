@@ -765,7 +765,8 @@ define([
                     this.wTrackView = new wTrackView({
                         model: self.wCollection,
                         filter: filter,
-                        startNumber: startNumber
+                        startNumber: startNumber,
+                        project: self.formModel
                     }).render();
                 };
 
@@ -799,7 +800,8 @@ define([
                 this.wTrackView = new wTrackView({
                     model: self.wCollection,
                     filter: filter,
-                    startNumber: startNumber
+                    startNumber: startNumber,
+                    project: self.formModel
                 }).render();
 
                 this.wCollection.bind('reset', this.createView);

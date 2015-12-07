@@ -18,9 +18,10 @@ define([
         'async',
         'custom',
         'moment',
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment) {
+    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS) {
         var wTrackListView = listViewBase.extend({
             createView: createView,
             listTemplate: listTemplate,
@@ -75,21 +76,24 @@ define([
                 this.setChangedValueToModel();
             },
 
-            generateJob: function () {
-                var model = this.projectModel;
+            generateJob: function (e) {
+                var target = $(e.target);
+                var id = target.closest('tr').attr('data-id');
+                var wTrackModel = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                var model = this.projectModel ? this.projectModel : wTrackModel.get('project');
                 var projectsDdContainer = $('#projectDd');
 
                 if (!model) {
                     projectsDdContainer.css('color', 'red');
 
-                    App.render({
+                    return App.render({
                         type: 'error',
                         message: CONSTANTS.SELECTP_ROJECT
                     });
                 }
 
                 new CreateJob({
-                    model: this.projectModel,
+                    model: model,
                     wTrackView: this
                 });
 
@@ -222,7 +226,7 @@ define([
                     $(tdsArr[25]).text(0);
                     $(tdsArr[23]).text(0);
                     $(tdsArr[22]).text(revenue.toFixed(2));
-                    $(tdsArr[1]).text(cid);
+                    $(tdsArr[1]).text("New");
                 }
             },
 
@@ -711,12 +715,15 @@ define([
 
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
+                        $("#top-bar-createBtn").hide();
+
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
                     } else {
                         $("#top-bar-deleteBtn").hide();
+                        $("#top-bar-createBtn").show();
                         $('#check_all').prop('checked', false);
                     }
 
@@ -738,7 +745,6 @@ define([
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
-
                 }
 
                 if (errors.length) {
@@ -826,6 +832,7 @@ define([
                         if (checkLength > 0) {
                             $("#top-bar-deleteBtn").show();
                             $("#top-bar-copyBtn").show();
+                            $("#top-bar-createBtn").hide();
 
                             if (checkLength === self.collection.length) {
                                 checkedInputs.each(function (index, element) {
@@ -836,6 +843,7 @@ define([
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
+                            $("#top-bar-createBtn").show();
                             // self.genInvoiceEl.hide();
                             self.copyEl.hide();
                             $('#check_all').prop('checked', false);
@@ -845,7 +853,7 @@ define([
                     self.setAllTotalVals();
                 });
 
-                dataService.getData("/project/getForWtrack", null, function (projects) {
+                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
                     projects = _.map(projects.data, function (project) {
                         project.name = project.projectName;
 
@@ -923,7 +931,8 @@ define([
                     year: year,
                     month: month,
                     week: week,
-                    rate: rate
+                    rate: rate,
+                    projectModel: null
                 };
 
                 var model = new currentModel(startData);

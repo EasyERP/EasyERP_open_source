@@ -352,7 +352,8 @@ define([
                         },
                         wait   : true,
                         patch  : true,
-                        success: function () {
+                        success: function (err, result) {
+                            var $dueDateEl;
                             var url = window.location.hash;
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
@@ -364,6 +365,8 @@ define([
 
                             if (self.redirect) {
                                 Backbone.history.navigate(url, {trigger: true});
+                                $dueDateEl = $('#' + result.id).closest('tr').find('[data-content="dueDate"]');
+                                $dueDateEl.text(result.dueDate);
                             } else {
                                 Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
@@ -534,15 +537,19 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
+                    maxDate: 0,
                     onSelect   : function () {
                         var dueDatePicker = $('#due_date');
                         var endDate = $(this).datepicker('getDate');
+
+                        endDate.setDate(endDate.getDate()+14);
 
                         dueDatePicker.datepicker('option', 'minDate', endDate);
                     }
                 });
 
                 this.$el.find('#due_date').datepicker({
+                    defaultValue: invoiceDate,
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
@@ -551,7 +558,7 @@ define([
 
                         targetInput.removeClass('errorContent');
                     }
-                }).datepicker('option', 'minDate', invoiceDate);
+                }).datepicker('option', 'minDate', "+2W");
 
                 this.delegateEvents(this.events);
 
