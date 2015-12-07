@@ -501,9 +501,9 @@ define([
                 });
 
                 this.filterView.render();
-            } else {
+            } /*else {
                 this.filterView.renderFilterContent();
-            }
+            }*/
 
             if (filter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));

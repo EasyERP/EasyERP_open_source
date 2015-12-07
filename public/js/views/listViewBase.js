@@ -431,9 +431,9 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                if (this.filterView) {
+                /*if (this.filterView) {
                     this.filterView.renderFilterContent();
-                }
+                }*/
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
