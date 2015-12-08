@@ -270,38 +270,52 @@ var JobPosition = function (event, models) {
         query
             .populate('createdBy.user')
             .populate('editedBy.user')
-            .populate('department', 'departmentName')
-            .populate('workflow', 'name _id status');
-        query.sort(sort)
+            .populate('department', '_id departmentName')
+            .populate('workflow', 'name _id status')
+            .sort(sort)
             .skip((data.page - 1) * data.count)
             .limit(data.count)
             .lean()
-       .exec(function (err, result) {
-            if (err) {
-                console.log(err);
-                logWriter.log('JobPosition.js get job.find' + err);
-                response.send(500, {error: "Can't find JobPosition"});
-            } else {
-                async.each(result, function(jp, cb){
-                    models.get(req.session.lastDb, 'Employees', employee).find({"jobPosition._id": jp._id}).count(function(err, count){
+            .exec(function (err, result) {
+                if (err) {
+                    console.log(err);
+                    logWriter.log('JobPosition.js get job.find' + err);
+                    response.send(500, {error: "Can't find JobPosition"});
+                } else {
+                    async.each(result,  function(jp, cb){
+                        models.get(req.session.lastDb, 'Employees', employee).find({"jobPosition._id": jp._id}).count(function(err, count){
+                            if (err){
+                                return cb(err);
+                            } else {
+                                jp.numberOfEmployees = count;
+                                jp.totalForecastedEmployees = count + jp.expectedRecruitment;
+                                cb();
+                            }
+                        });
+                    }, function (err) {
                         if (err){
-                            return cb(err);
-                        } else {
-                            jp.numberOfEmployees = count;
-                            jp.totalForecastedEmployees = count + jp.expectedRecruitment;
-                            cb();
+                            return response.send(500, {error: "Can't find JobPosition"});
                         }
+                        for (var i in sort){
+                            if (typeof result[0][i] == 'number'){
+                                function compareSort(personA, personB) {
+                                    if (sort[i]== 1) {
+                                        return personA[i] - personB[i];
+                                    } else {
+                                        return personB[i] - personA[i];
+                                    }
+                                }
+                                result.sort(compareSort);
+                            }
+                        }
+
+
+                        res['data'] = result;
+                        response.send(res);
                     });
-                }, function (err) {
-                    if (err){
-                       return response.send(500, {error: "Can't find JobPosition"});
-                    }
-                    res['data'] = result;
-                    response.send(res);
-                });
-            }
-        });
-    }; //end get
+                }
+            });
+    } //end get
 
     function caseFilter(queryObj, filter) {
         for (var key in filter) {
