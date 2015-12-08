@@ -403,7 +403,7 @@ var Quotation = function (models, event) {
         if (query.sort) {
             sort = query.sort;
         } else {
-            sort = {"name": 1};
+            sort = {"orderDate": -1};
         }
 
         departmentSearcher = function (waterfallCallback) {
