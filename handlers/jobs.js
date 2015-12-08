@@ -37,6 +37,14 @@ var Jobs = function (models, event) {
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
+                case 'project':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectManager':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
             }
 
             return resArray;
@@ -146,12 +154,47 @@ var Jobs = function (models, event) {
                     project  : 1,
                     budget   : 1,
                     quotation: 1,
-                    invoice  : 1
+                    invoice  : 1,
+                    payments: 1
                 }
             }, {
                 $sort: sort
             }], function (err, jobs) {
-                var parallelTasks = [projectPopulate, invoicePopulate, quotationPopulate];
+                //var parallelTasks = [/*projectPopulate,*/ invoicePopulate/*, quotationPopulate*/];
+
+                    Payment.populate(jobs, {
+                        path: 'payments',
+                        select: '_id paidAmount',
+                        opts: {
+                            lean: true
+                        }
+                    }, function (err, payments) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        async.map(jobs, function(job, cb){
+                            var payments = job.payments;
+                            var amount = 0;
+
+                            payments.forEach(function(payment){
+                                amount += payment.paidAmount;
+                            });
+
+                            job.payment = {};
+                            job.payment.amount = amount;
+
+                            cb(null, job);
+                        }, function(err, jobs){
+                            if(err){
+                                return next(err);
+                            }
+
+                            res.status(200).send(jobs)
+                        });
+                    });
+
+
 
                 function projectPopulate(parallelCb) {
                     Project.populate(jobs, {
@@ -226,13 +269,13 @@ var Jobs = function (models, event) {
                     return next(err);
                 }
 
-                async.parallel(parallelTasks, function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send(jobs)
-                });
+                //async.parallel(parallelTasks, function (err) {
+                //    if (err) {
+                //        return next(err);
+                //    }
+                //
+                //    res.status(200).send(jobs)
+                //});
             });
         /*.find(queryObject)
          .sort(sort)

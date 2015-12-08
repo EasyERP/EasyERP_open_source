@@ -1,4 +1,4 @@
-<!--<div id="searchContainer"></div>-->
+<div id="searchContainer"></div>
 <div>
     <table class="list task-list">
         <colgroup>
@@ -8,8 +8,9 @@
         <thead>
         <tr>
             <th>#</th>
-            <th>Sales Manager</th>
-            <th class="oe_sortable" data-sort="project">Project Name<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="project.projectManager.name">Sales Manager<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="project.name">Project Name<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="name">Job Name<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -19,11 +20,15 @@
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="budget.budgetTotal.costSum">Cost<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th>Quotation</th>
-            <th>Order</th>
-            <th>Invoice</th>
+            <th class="oe_sortable" data-sort="quotation.amount">Quotation<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="quotation.amount">Order<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="invoice.amount">Invoice<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
             <th>Payments</th>
-            <th>Payments Count</th>
+            <th class="oe_sortable" data-sort="payments">Payments Count<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
         </tr>
         </thead>
         <tbody id="jobsContent">

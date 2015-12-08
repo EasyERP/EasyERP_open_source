@@ -19,47 +19,37 @@ define([
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
+            viewType: "list",
             filterView : FilterView,
             template   : _.template(DashboardHeader),
             el         : '#content-holder',
 
             initialize : function (options) {
                 this.startTime = options.startTime;
+                this.filter = options.filter;
 
                 this.render();
             },
 
             events: {
-                //"click .choseDateRange .item": "newRange",
-                "click .oe_sortable": "goSort",
-                "click #project"    : "showJobs"
-            },
-
-            showJobs: function (e) {
-                var target = e.target;
-                var projectId = $(target).parents("tr").attr("data-id");
-                var subId = "subRow" + projectId;
-                var subRowCheck = $('.' + subId);
-                var jobContainer = $(target).parents("tr");
-                var icon = $(jobContainer).find('.expand');
-
-                if (icon.html() === '-') {
-                    icon.html('+');
-                    $(subRowCheck).hide();
-                } else {
-                    icon.html('-');
-                    $(subRowCheck).show();
-                }
-
+                "click .oe_sortable": "goSort"
             },
 
             showFilteredPage: function (filter, context) {
-                var itemsNumber = $("#itemsNumber").text();
+                var url = '#easyErp/jobsDashboard';
 
                 this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
-                context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                if (this.filter) {
+                    url += '/filter=' + encodeURIComponent(JSON.stringify(this.filter));
+
+                    Backbone.history.navigate(url);
+                }
+
+                context.collection = new JobsCollection({
+                    viewType: 'list',
+                    filter: filter
+                });
             },
 
             renderFilter: function (self, baseFilter) {
@@ -84,7 +74,6 @@ define([
 
             },
 
-
             goSort: function (e) {
                 var target$;
                 var currentParrentSortClass;
@@ -92,8 +81,6 @@ define([
                 var sortConst;
                 var sortBy;
                 var sortObject;
-
-                this.collection.unbind('reset');
 
                 target$ = $(e.target);
                 currentParrentSortClass = target$.attr('class');
@@ -129,70 +116,47 @@ define([
 
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
-                this.collection = new JobsCollection({
+                new JobsCollection({
                     sort: sortObject,
-                    joinWithQuotation: true
+                    filter: this.filter,
+                    viewType: 'list'
                 });
-
-                this.collection.bind('reset', this.renderContent, this);
             },
-
-            showMoreContent: function (newModels) {
-                this.collection.reset(newModels)
-            },
-
 
             renderJobs: function () {
                 var self = this;
-                var template = _.template(DashboardTemplate);
-                var footer = _.template(FooterDashboard);
+                this.collection = new JobsCollection({
+                    viewType: 'list',
+                    filter: this.filter
+                });
 
-                function fetchJobs(cb){
-                    var jobsCollection = new JobsCollection({
-                        viewType: 'list',
-                        joinWithQuotation: true
-                    });
+                this.collection.bind('reset', renderContent);
 
-                    jobsCollection.bind('reset', sendCB);
-
-                    function sendCB(){
-                        //self.renderContent();
-                        cb(null, jobsCollection);
-                    }
-                };
-
-                async.parallel([fetchJobs], function(err, result){
-                    self.collection = result[0];
-                   // self.quotationCollection = result[0];
+                function renderContent(){
+                    var template = _.template(DashboardTemplate);
 
                     self.$el.find('#jobsContent').html(template({
                         collection         : self.collection.toJSON(),
                         startNumber        : 0,
                         currencySplitter   : helpers.currencySplitter
                     }));
-
-                    self.collection.bind('showmore', self.showMoreContent, self);
-
-                });
-            },
-
-            renderContent: function () {
-                var self = this;
-                var template = _.template(DashboardTemplate);
-
-                self.$el.find('#jobsContent').html(template({
-                    collection         : self.collection.toJSON(),
-                    startNumber        : 0,
-                    currencySplitter   : helpers.currencySplitter
-                }));
+                }
             },
 
             render: function () {
+                var filter = this.filter;
+                var url = '#easyErp/jobsDashboard';
                 this.$el.html(this.template());
 
                 this.renderJobs();
 
                 this.renderFilter(this);
+
+                if (filter) {
+                    url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+
+                    Backbone.history.navigate(url);
+                }
 
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 

@@ -9,7 +9,7 @@ define([
         contentType: null,
         page: null,
         numberToShow: null,
-        viewType: null,
+        viewType: 'list',
 
         initialize: function (options) {
             options = options || {};
@@ -24,6 +24,7 @@ define([
                 data: options,
                 reset: true,
                 success: function (newCollection) {
+
                     var key = 'jobs_projectId:' + self.projectId;
                     var collection = custom.retriveFromCash(key);
 
