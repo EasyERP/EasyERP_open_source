@@ -38,7 +38,7 @@ var Payment = function (models, event) {
         var moduleId;
         var type = req.params.byType;
 
-       // moduleId = !!body.forSales ? 61 : !!body.salary ? 79 : 60;
+        // moduleId = !!body.forSales ? 61 : !!body.salary ? 79 : 60;
 
         moduleId = (type === 'customers') ? 61 : (type === 'supplier') ? 60 : 79;
 
@@ -482,7 +482,6 @@ var Payment = function (models, event) {
                     composeExpensesAndCache(req);
                 });
 
-
                 /*async.each(body, function (_payment, cb) {
                  var supplierObject = _payment.supplier;
                  var productObject = {};
@@ -570,10 +569,11 @@ var Payment = function (models, event) {
             var paid = payment.paidAmount;
             var isNotFullPaid;
             var wId;
+            var payments;
             var products = invoice.products;
             var paymentDate = new Date(payment.date);
 
-            if(paymentDate === 'Invalid Date'){
+            if (paymentDate === 'Invalid Date') {
                 paymentDate = new Date();
             }
 
@@ -630,6 +630,19 @@ var Payment = function (models, event) {
                     }
 
                     project = invoice ? invoice.get('project._id') : null;
+
+                    payments = invoice ? invoice.get('payments') : [];
+
+                    async.each(products, function (porduct) {
+                        var job = porduct.jobs;
+
+                        JobsModel.findByIdAndUpdate(job, {$set: {payments: payments}}, {new: true}, function(err, result){
+                            if (err){
+                                return next(err);
+                            }
+                        })
+
+                    });
 
                     if (project) {
                         event.emit('fetchInvoiceCollection', {project: project});
@@ -896,8 +909,8 @@ var Payment = function (models, event) {
                         }
 
                         delete data._id;
-                        Payment.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, payment) {
-                            invoiceId = payment ? payment.get('invoice._id'): null;
+                        Payment.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, payment) {
+                            invoiceId = payment ? payment.get('invoice._id') : null;
                             paid = payment ? payment.get('paidAmount') : 0;
 
                             if (invoiceId && (payment._type !== 'salaryPayment')) {
@@ -956,7 +969,7 @@ var Payment = function (models, event) {
                                         paymentInfoNew.taxes = paymentInfo.taxes;
                                         paymentInfoNew.unTaxed = paymentInfoNew.total;
 
-                                        if (paymentInfo.total !== paymentInfo.balance){
+                                        if (paymentInfo.total !== paymentInfo.balance) {
                                             paymentInfoNew.balance = paymentInfo.balance + paid;
                                         } else {
                                             paymentInfoNew.balance = paymentInfo.balance;
@@ -980,7 +993,7 @@ var Payment = function (models, event) {
                                                         return next(err);
                                                     }
 
-                                                    project = result ? result.get('project') : null;
+                                                    project = result ? result.get('project._id') : null;
 
                                                     cb();
                                                 });
@@ -995,16 +1008,16 @@ var Payment = function (models, event) {
                                     });
                                 });
                             }
-                        cb();
-                    }, function (err) {
-                        if (err) {
-                            return next(err);
-                        }
+                            cb();
+                        }, function (err) {
+                            if (err) {
+                                return next(err);
+                            }
 
-                        res.status(200).send({success: 'updated'});
+                            res.status(200).send({success: 'updated'});
+                        });
                     });
-                });
-                }else {
+                } else {
                     res.status(403).send();
                 }
             });
@@ -1032,6 +1045,7 @@ var Payment = function (models, event) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var type = "Invoiced";
         var isNotFullPaid;
+        var payments;
 
         moduleId = parseInt(moduleId);
 
@@ -1044,7 +1058,7 @@ var Payment = function (models, event) {
                         return next(err);
                     }
 
-                    invoiceId = removed ? removed.get('invoice._id'): null;
+                    invoiceId = removed ? removed.get('invoice._id') : null;
                     paid = removed ? removed.get('paidAmount') : 0;
 
                     if (invoiceId && (removed && removed._type !== 'salaryPayment')) {
@@ -1104,7 +1118,7 @@ var Payment = function (models, event) {
                                 paymentInfoNew.taxes = paymentInfo.taxes;
                                 paymentInfoNew.unTaxed = paymentInfoNew.total;
 
-                                if (paymentInfo.total !== paymentInfo.balance){
+                                if (paymentInfo.total !== paymentInfo.balance) {
                                     paymentInfoNew.balance = paymentInfo.balance + paid;
                                 } else {
                                     paymentInfoNew.balance = paymentInfo.balance;
@@ -1120,28 +1134,21 @@ var Payment = function (models, event) {
                                         return next(err);
                                     }
 
-                                    //var products = result.get('products');
-                                    //
-                                    //async.each(products, function (product, cb) {
-                                    //
-                                    //    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
-                                    //        if (err) {
-                                    //            return next(err);
-                                    //        }
-                                    //
-                                    //        project = result ? result.get('project') : null;
-                                    //
-                                    //        cb();
-                                    //    });
-                                    //
-                                    //}, function () {
-                                    //    if (project) {
-                                    //        event.emit('fetchJobsCollection', {project: project});
-                                    //        event.emit('fetchInvoiceCollection', {project: project});
-                                    //    }
-                                    //
-                                    //    res.status(200).send({success: removed});
-                                    //});
+                                    var products = result.get('products');
+
+                                    payments = result.get('payments') ? result.get('payments') : [];
+
+                                    async.each(products, function (product) {
+
+                                        JobsModel.findByIdAndUpdate(product.jobs, {payments: payments}, {new: true}, function (err, result) {
+                                            if (err) {
+                                                return next(err);
+                                            }
+
+                                            project = result ? result.get('project._id') : null;
+                                        });
+
+                                    });
 
                                     if (project) {
                                         event.emit('fetchInvoiceCollection', {project: project});

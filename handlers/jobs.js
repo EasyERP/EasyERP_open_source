@@ -25,10 +25,6 @@ var Jobs = function (models, event) {
             key = filter[filterName]['key'];
 
             switch (filterName) {
-                case 'project':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
                 case 'workflow':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
@@ -54,20 +50,19 @@ var Jobs = function (models, event) {
     this.create = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var data = req.body;
-        var project = req.headers.project;
-        var jobName = req.headers.jobname;
         var newModel;
         var jobId;
         var projectId;
 
-        data.name = jobName;
-        data.project = objectId(project);
         data.workflow = {
             _id: objectId("56337c705d49d8d6537832eb"),
             name: "In Progress"
         };
         data.type = "Not Quoted";
         data.wTracks = [];
+
+        data.project._id = objectId(data.project._id);
+        data.project.projectManager._id = objectId(data.project.projectManager._id);
 
         newModel = new JobsModel(data);
 
@@ -77,7 +72,7 @@ var Jobs = function (models, event) {
             }
 
             jobId = model._id;
-            projectId = model.project;
+            projectId = model.project._id;
 
             if (projectId) {
                 event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
@@ -112,7 +107,7 @@ var Jobs = function (models, event) {
 
         if (data && data.project) {
             filter['project'] = {};
-            filter['project']['key'] = 'project';
+            filter['project']['key'] = 'project._id';
             filter['project']['value'] = objectId(data.project);
         }
 
@@ -295,7 +290,7 @@ var Jobs = function (models, event) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        query.find({type: "Not Quoted", project: objectId(pId)}, {
+        query.find({type: "Not Quoted", 'project._id': objectId(pId)}, {
             name: 1,
             _id: 1,
             "budget.budgetTotal.revenueSum": 1
@@ -324,7 +319,7 @@ var Jobs = function (models, event) {
             }
 
             jobId = result.get('_id');
-            projectId = result.get('project');
+            projectId = result.get('project._id');
 
             wTrack.find({"jobs._id": jobId}, function (err, result) {
                 if (err) {
@@ -409,7 +404,7 @@ var Jobs = function (models, event) {
                         return next(err);
                     }
 
-                    project = result.get('project');
+                    project = result.get('project._id');
 
                     cb();
                 });
@@ -420,11 +415,7 @@ var Jobs = function (models, event) {
                 }
             });
         }
-    }
-
-    this.getJobsForDashboard = function (req, res, next) {
-
-    }
+    };
 };
 
 module.exports = Jobs;
