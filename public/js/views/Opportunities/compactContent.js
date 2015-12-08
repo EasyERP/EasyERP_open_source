@@ -18,9 +18,11 @@
             template: _.template(compactContentTemplate),
 
             goToEditDialog: function (e) {
-                e.preventDefault();
                 var id = $(e.target).closest("a").attr("id");
                 var model = new currentModel({ validate: false });
+
+                e.preventDefault();
+
                 model.urlRoot = '/Opportunities/form';
                 model.fetch({
                     data: { id: id },
@@ -35,8 +37,10 @@
             },
 
             gotoOpportunitieForm: function (e) {
-                e.preventDefault();
                 var itemIndex = $(e.target).closest("a").attr("id");
+
+                e.preventDefault();
+
                 window.location.hash = "#easyErp/Opportunities/form/" + itemIndex;
             },
 
@@ -45,8 +49,8 @@
                     collection: this.collection,
 					options: options
                 }));
+
                 return this;
-                
             }
         });
 

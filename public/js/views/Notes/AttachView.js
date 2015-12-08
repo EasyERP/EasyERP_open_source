@@ -20,7 +20,6 @@ define([
 
         addAttach: function (event) {
             if (this.isCreate) {
-
                 var s = this.$el.find(".inputAttach:last").val().split("\\")[this.$el.find(".inputAttach:last").val().split('\\').length - 1];
                 this.$el.find(".attachContainer").append('<li class="attachFile">' +
                     '<span class="blue">' + s + '</span>' +
@@ -44,6 +43,9 @@ define([
             var elementId = this.elementId || 'addAttachments';
             var currentModelId = currentModel ? currentModel["id"] : null;
             var addFrmAttach = $("#" + elementId);
+            var fileArr = [];
+            var addInptAttach;
+
             if (!self){
                 self = this;
             }
@@ -52,14 +54,16 @@ define([
             if (this.isCreate) {
                 currentModel = model;
                 currentModelId = currentModel["id"];
-                var fileArr = [];
-                var addInptAttach = '';
+
                 this.$el.find("li .inputAttach").each(function () {
                     addInptAttach = $(this)[0].files[0];
                     fileArr.push(addInptAttach);
+
                     if (!self.fileSizeIsAcceptable(addInptAttach)) {
-                        alert('File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay);
-                        return;
+                        return App.render({
+                            type: 'error',
+                            message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+                        });
                     }
                 });
                 if (this.$el.find("li .inputAttach").length == 0) {
@@ -71,12 +75,14 @@ define([
                 addInptAttach = fileArr;
             } else {
                // event.preventDefault();
+                /*addInptAttach = $("#inputAttach")[0].files[0];*/
 
-                var addInptAttach = $("#inputAttach")[0].files[0];
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     this.$el.find('#inputAttach').val('');
-                    alert('File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay);
-                    return;
+                    return App.render({
+                        type: 'error',
+                        message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+                    });
                 }
             }
 
