@@ -9,15 +9,16 @@ var Project = function (models) {
     var moment = require('../public/js/libs/moment/moment');
     var async = require('async');
     var objectId = mongoose.Types.ObjectId;
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     this.getForWtrack = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var data = req.query;
+        var inProgress = data && data.inProgress ? true : false;
+        var filter = inProgress ? {"workflow._id" : CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
 
         Project
-            .find()
-            //.populate('customer._id', '_id name')
-            //.populate('projectmanager._id', '_id name')
-            //.populate('workflow._id', '_id name')
+            .find(filter)
             .sort({projectName: 1})
             .lean()
             .exec(function (err, projects) {

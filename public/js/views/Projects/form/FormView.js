@@ -6,6 +6,7 @@ define([
         'text!templates/Projects/projectInfo/DetailsTemplate.html',
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
+        'text!templates/Projects/projectInfo/invoiceStats.html',
         'views/salesOrder/EditView',
         'views/salesQuotation/EditView',
         'views/salesInvoice/EditView',
@@ -36,36 +37,39 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditViewOrder, editViewQuotation,  editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+        "use strict";
+
         var View = Backbone.View.extend({
-            el            : '#content-holder',
-            contentType   : 'Projects',
+            el: '#content-holder',
+            contentType: 'Projects',
             proformRevenue: _.template(ProformRevenueTemplate),
+            invoiceStatsTmpl: _.template(invoiceStats),
 
             events: {
-                'click .chart-tabs'                                               : 'changeTab',
-                'click .deleteAttach'                                             : 'deleteAttach',
-                "click #health a:not(.disabled)"                                  : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                          : "chooseHealthDd",
+                'click .chart-tabs': 'changeTab',
+                'click .deleteAttach': 'deleteAttach',
+                "click #health a:not(.disabled)": "showHealthDd",
+                "click #health ul li div:not(.disabled)": "chooseHealthDd",
                 "click .newSelectList li:not(.miniStylePagination):not(.disabled)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
+                "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected:not(.disabled)"                          : "showNewSelect",
-                "click #createItem"                                               : "createDialog",
-                "click #createJob"                                                : "createJob",
-                "change input:not(.checkbox, .check_all, .statusCheckbox)"        : "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)" : "renderJobWTracks",
-                "mouseover #jobsItem"                                             : "showRemoveButton",
-                "mouseleave #jobsItem"                                            : "hideRemoveButton",
-                "click .fa.fa-trash"                                              : "removeJobAndWTracks",
-                "dblclick td.editableJobs"                                        : "editRow",
-                "click #saveName"                                                 : "saveNewJobName",
-                "keydown input.editing "                                          : "keyDown",
-                'click'                                                           : 'hideSelect',
-                'keydown'                                                         : 'keydownHandler',
-                "click a.quotation"                                              : "viewQuotation",
-                "click a.invoice"                                                : "viewInvoice"
+                "click .current-selected:not(.disabled)": "showNewSelect",
+                "click #createItem": "createDialog",
+                "click #createJob": "createJob",
+                "change input:not(.checkbox, .check_all, .statusCheckbox)": "showSaveButton",
+                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)": "renderJobWTracks",
+                "mouseover #jobsItem": "showRemoveButton",
+                "mouseleave #jobsItem": "hideRemoveButton",
+                "click .fa.fa-trash": "removeJobAndWTracks",
+                "dblclick td.editableJobs": "editRow",
+                "click #saveName": "saveNewJobName",
+                "keydown input.editing ": "keyDown",
+                'click': 'hideSelect',
+                'keydown': 'keydownHandler',
+                "click a.quotation": "viewQuotation",
+                "click a.invoice": "viewInvoice"
             },
 
             initialize: function (options) {
@@ -77,7 +81,7 @@ define([
                 this.proformValues = {};
             },
 
-            viewQuotation: function(e){
+            viewQuotation: function (e) {
                 e.stopPropagation();
                 var self = this;
 
@@ -87,49 +91,49 @@ define([
                 var type = $(target).closest('tr').find('#type').text();
                 var onlyView = false;
 
-                if (type === "Quoted"){
+                if (type === "Quoted") {
                     model = new quotationModel({validate: false});
 
                     model.urlRoot = '/quotation/form/' + id;
                     model.fetch({
                         success: function (model) {
                             new editViewQuotation({
-                                model   : model,
+                                model: model,
                                 redirect: true,
-                                pId     : self.id,
+                                pId: self.id,
                                 projectManager: self.projectManager
                             })
                         },
-                        error  : function (xhr) {
+                        error: function (xhr) {
                             alert('Please refresh browser');
                         }
                     });
-                } else  {
+                } else {
                     model = new quotationModel({validate: false});
 
                     model.urlRoot = '/Order/form/' + id;
                     model.fetch({
                         success: function (model) {
 
-                            if (type === "Invoiced"){
+                            if (type === "Invoiced") {
                                 onlyView = true;
                             }
 
                             new EditViewOrder({
-                                model     : model,
+                                model: model,
                                 redirect: true,
-                                onlyView  : onlyView,
+                                onlyView: onlyView,
                                 projectManager: self.projectManager
                             });
                         },
-                        error  : function (xhr) {
+                        error: function (xhr) {
                             alert('Please refresh browser');
                         }
                     });
                 }
             },
 
-            viewInvoice: function(e){
+            viewInvoice: function (e) {
                 e.stopPropagation();
 
                 var target = e.target;
@@ -138,8 +142,8 @@ define([
 
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
-                    data   : {
-                        id       : id,
+                    data: {
+                        id: id,
                         currentDb: App.currentDb
                     },
                     success: function (model) {
@@ -149,7 +153,7 @@ define([
                             redirect: true
                         });
                     },
-                    error  : function () {
+                    error: function () {
                         alert('Please refresh browser');
                     }
                 });
@@ -220,7 +224,8 @@ define([
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
-                                value: [_id]
+                                value: [_id],
+                                type: "ObjectId"
                             }
                         };
 
@@ -296,7 +301,8 @@ define([
                         var filter = {
                             'projectName': {
                                 key  : 'project._id',
-                                value: [_id]
+                                value: [_id],
+                                type: "ObjectId"
                             }
                         };
 
@@ -319,7 +325,7 @@ define([
             showRemoveButton: function (e) {
                 var target = e.target;
                 var tr = $(target).parents("tr");
-                var removeItem = tr.find(".fa.fa-trash");
+                var removeItem = tr.find(".fa.fa-trash").not('.notRemovable');
 
                 removeItem.removeClass('hidden');
             },
@@ -347,11 +353,11 @@ define([
                 } else {
                     icon.html('-');
                     $('<tr id=' + subId + ' class="subRow">' +
-                    '<td colspan="13" id="subRow-holder' + jobId + '"></td>' +
-                    '</tr>').insertAfter(jobContainer);
+                        '<td colspan="13" id="subRow-holder' + jobId + '"></td>' +
+                        '</tr>').insertAfter(jobContainer);
                     $('#subRow-holder' + jobId).append(template({
-                        jobStatus       : job.type,
-                        jobItem         : job,
+                        jobStatus: job.type,
+                        jobItem: job,
                         currencySplitter: helpers.currencySplitter
                     }));
 
@@ -371,9 +377,9 @@ define([
                 }
 
                 this.generatedView = new GenerateWTrack({
-                    model           : this.formModel,
+                    model: this.formModel,
                     wTrackCollection: this.wCollection,
-                    jobs            : jobs
+                    jobs: jobs
                 });
             },
 
@@ -387,9 +393,9 @@ define([
                 }
 
                 this.generatedView = new GenerateWTrack({
-                    model           : this.formModel,
+                    model: this.formModel,
                     wTrackCollection: this.wCollection,
-                    createJob       : true
+                    createJob: true
                 });
             },
 
@@ -433,28 +439,28 @@ define([
                 var _targetEndDate = $.trim(thisEl.find("#EndDateTarget").val());
                 var description = $.trim(thisEl.find("#description").val());
                 var data = {
-                    projectName     : projectName,
+                    projectName: projectName,
                     projectShortDesc: projectShortDesc,
-                    customer        : customer ? customer : null,
-                    projectmanager  : projectmanager ? projectmanager : null,
-                    workflow        : workflow ? workflow : null,
-                    projecttype     : projecttype ? projecttype : "",
-                    description     : description,
-                    teams           : {
+                    customer: customer ? customer : null,
+                    projectmanager: projectmanager ? projectmanager : null,
+                    workflow: workflow ? workflow : null,
+                    projecttype: projecttype ? projecttype : "",
+                    description: description,
+                    teams: {
                         users: users
                     },
-                    groups          : {
+                    groups: {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW        : whoCanRW,
-                    health          : health,
-                    StartDate       : startDate,
-                    EndDate         : endDate,
-                    TargetEndDate   : _targetEndDate,
-                    bonus           : bonus,
-                    budget          : budget
+                    whoCanRW: whoCanRW,
+                    health: health,
+                    StartDate: startDate,
+                    EndDate: endDate,
+                    TargetEndDate: _targetEndDate,
+                    bonus: bonus,
+                    budget: budget
                 };
 
                 customer._id = thisEl.find("#customerDd").data("id");
@@ -468,7 +474,7 @@ define([
 
                 $userNodes.each(function (key, val) {
                     users.push({
-                        id  : val.value,
+                        id: val.value,
                         name: val.innerHTML
                     });
                 });
@@ -494,9 +500,9 @@ define([
 
                     bonus.push({
                         employeeId: employeeId,
-                        bonusId   : bonusId,
-                        startDate : startD,
-                        endDate   : endD
+                        bonusId: bonusId,
+                        startDate: startD,
+                        endDate: endD
                     });
                 });
 
@@ -523,7 +529,7 @@ define([
                             Backbone.history.fragment = "";
                             Backbone.history.navigate(url, {trigger: true});
                         },
-                        error  : function (model, xhr) {
+                        error: function (model, xhr) {
                             self.errorNotification(xhr);
                         }
 
@@ -546,7 +552,7 @@ define([
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
-                    } else if (attrId === 'type') {
+                    } else if (attrId === 'type'){
                         data = {_id: id, type: $(e.target).text()};
                     }
 
@@ -645,18 +651,18 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
                     "project": {
-                        key  : "project",
+                        key: "project",
                         value: [_id]
                     }
                 };
 
                 this.jobsCollection = new jobsCollection({
                     viewType: 'list',
-                    filter  : filter,
-                    count   : 50
+                    filter: filter,
+                    count: 50
                 });
 
-                this.jobsCollection.bind('reset add remove', self.renderJobs);
+                this.jobsCollection.bind('reset add remove', self.renderJobs, self);
 
                 cb();
             },
@@ -666,15 +672,20 @@ define([
                 var container = this.$el.find('#forInfo');
                 var formModel = this.formModel.toJSON();
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
 
-                var projectTeam = this.jobsCollection.toJSON();
+                var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
+                    return el.project._id === _id
+                });
 
-                App.currectCollection = this.jobsCollection;
+                if (!App.currectCollection){
+                    App.currectCollection = this.jobsCollection;
+                }
 
                 this.projectValues = {
                     revenue: 0,
-                    profit : 0,
-                    cost   : 0
+                    profit: 0,
+                    cost: 0
                 };
 
                 projectTeam.forEach(function (projectTeam) {
@@ -699,15 +710,16 @@ define([
                 }
 
                 container.html(template({
-                        jobs            : projectTeam,
-                        bonus           : formModel.budget.bonus,
-                        projectValues   : self.projectValues,
+                        jobs: projectTeam,
+                        bonus: formModel.budget.bonus,
+                        projectValues: self.projectValues,
                         currencySplitter: helpers.currencySplitter,
-                        contentType     : self.contentType
+                        contentType: self.contentType
                     })
                 );
 
                 this.renderProformRevenue();
+
             },
 
             getWTrack: function (cb) {
@@ -718,14 +730,15 @@ define([
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [_id]
+                        value: [_id],
+                        type: "ObjectId"
                     }
                 };
 
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
-                    filter  : filter,
-                    count   : 50
+                    filter: filter,
+                    count: 50
                 });
 
                 var callback = _.once(cb);
@@ -740,9 +753,10 @@ define([
                     }
 
                     this.wTrackView = new wTrackView({
-                        model      : self.wCollection,
-                        filter     : filter,
-                        startNumber: startNumber
+                        model: self.wCollection,
+                        filter: filter,
+                        startNumber: startNumber,
+                        project: self.formModel
                     }).render();
                 };
 
@@ -764,7 +778,8 @@ define([
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [_id]
+                        value: [_id],
+                        type: "ObjectId"
                     }
                 };
 
@@ -773,16 +788,47 @@ define([
                 }
 
                 this.wTrackView = new wTrackView({
-                    model      : self.wCollection,
-                    filter     : filter,
-                    startNumber: startNumber
+                    model: self.wCollection,
+                    filter: filter,
+                    startNumber: startNumber,
+                    project: self.formModel
                 }).render();
 
                 this.wCollection.bind('reset', this.createView);
             },
 
-            createView: function () {
+            getInvoiceStats: function (parallelCb) {
+                //ToDo optimize
+                var _id = window.location.hash.split('form/')[1];
+                ;
+                var self = this;
+                var filter = {
+                    "project": {
+                        key: "project._id",
+                        value: [_id]
+                    }
+                };
+                dataService.getData('invoice/stats/project', {filter: filter}, function (response) {
+                    if (response && response.success) {
+                        self.renderInvoiceStats(response.success);
+                    }
+                });
+                parallelCb();
+            },
 
+            renderInvoiceStats: function (data) {
+                var self = this;
+                var statsContainer = this.$el.find('#invoiceStatsContainer');
+
+                statsContainer.html(this.invoiceStatsTmpl({
+                        invoceStats: data.invoices,
+                        invoceStat: data,
+                        currencySplitter: helpers.currencySplitter
+                    })
+                );
+            },
+
+            createView: function () {
                 var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
 
                 if (this.wTrackView) {
@@ -790,8 +836,8 @@ define([
                 }
 
                 this.wTrackView = new wTrackView({
-                    model      : this.wCollection,
-                    filter     : filter,
+                    model: this.wCollection,
+                    filter: filter,
                     startNumber: startNumber
                 }).render();
             },
@@ -801,17 +847,17 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
                     'project': {
-                        key  : 'project._id',
+                        key: 'project._id',
                         value: [_id]
                     }
                 };
                 var callback;
 
                 self.iCollection = new invoiceCollection({
-                    count      : 50,
-                    viewType   : 'list',
+                    count: 50,
+                    viewType: 'list',
                     contentType: 'salesInvoice',
-                    filter     : filter
+                    filter: filter
                 });
 
                 function createView() {
@@ -822,7 +868,7 @@ define([
                     App.invoiceCollection = self.iCollection;
 
                     new InvoiceView({
-                        model : self.iCollection,
+                        model: self.iCollection,
                         filter: filter
                     }).render();
 
@@ -834,16 +880,16 @@ define([
 
                     var filterPayment = {
                         'name': {
-                            key  : '_id',
+                            key: '_id',
                             value: payments
                         }
                     };
 
                     self.pCollection = new paymentCollection({
-                        count      : 50,
-                        viewType   : 'list',
+                        count: 50,
+                        viewType: 'list',
                         contentType: 'customerPayments',
-                        filter     : filterPayment
+                        filter: filterPayment
                     });
 
                     self.pCollection.unbind();
@@ -851,7 +897,7 @@ define([
 
                     function createPayment() {
                         new PaymentView({
-                            model : self.pCollection,
+                            model: self.pCollection,
                             filter: filterPayment
                         });
                     }
@@ -871,30 +917,30 @@ define([
 
                 var filter = {
                     'projectName': {
-                        key  : 'project._id',
+                        key: 'project._id',
                         value: [_id]
                     }
                 };
 
                 this.qCollection = new quotationCollection({
-                    count      : 50,
-                    viewType   : 'list',
+                    count: 50,
+                    viewType: 'list',
                     contentType: 'salesQuotation',
-                    filter     : filter
+                    filter: filter
                 });
 
                 function createView() {
 
                     cb();
                     new QuotationView({
-                        collection      : self.qCollection,
-                        projectId       : _id,
-                        customerId      : self.formModel.toJSON().customer._id,
-                        projectManager  : self.formModel.toJSON().projectmanager,
-                        filter          : filter,
-                        model           : self.formModel,
+                        collection: self.qCollection,
+                        projectId: _id,
+                        customerId: self.formModel.toJSON().customer._id,
+                        projectManager: self.formModel.toJSON().projectmanager,
+                        filter: filter,
+                        model: self.formModel,
                         wTrackCollection: self.wCollection,
-                        createJob       : true
+                        createJob: true
                     }).render();
 
                     // self.renderProformRevenue();
@@ -910,30 +956,30 @@ define([
 
                 var filter = {
                     'projectName': {
-                        key  : 'project._id',
+                        key: 'project._id',
                         value: [_id]
                     },
-                    'isOrder'    : {
-                        key  : 'isOrder',
+                    'isOrder': {
+                        key: 'isOrder',
                         value: ['true']
                     }
                 };
 
                 this.ordersCollection = new quotationCollection({
-                    count      : 50,
-                    viewType   : 'list',
+                    count: 50,
+                    viewType: 'list',
                     contentType: 'salesOrder',
-                    filter     : filter
+                    filter: filter
                 });
 
                 function createView() {
                     cb();
                     new oredrView({
-                        collection    : self.ordersCollection,
-                        projectId     : _id,
-                        customerId    : self.formModel.toJSON().customer._id,
+                        collection: self.ordersCollection,
+                        projectId: _id,
+                        customerId: self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
-                        filter        : filter
+                        filter: filter
                     }).render();
 
                 };
@@ -953,9 +999,12 @@ define([
 
                 var qCollectionJSON = this.qCollection.toJSON();
                 var ordersCollectionJSON = this.ordersCollection.toJSON();
+                var jobsCollection = this.jobsCollection.toJSON();
 
                 var sum = 0;
                 var orderSum = 0;
+                var jobSum = 0;
+                var jobsCount = 0;
 
                 ordersCollectionJSON.forEach(function (element) {
                     if (element.paymentInfo) {
@@ -969,18 +1018,33 @@ define([
                     }
                 });
 
+                jobsCollection.forEach(function (element) {
+                    if (element.type === 'Not Quoted') {
+                        if (element.budget.budgetTotal && (element.budget.budgetTotal.revenueSum !== 0)){
+                            jobSum += element.budget.budgetTotal.revenueSum;
+                            jobsCount ++;
+                        }
+                    }
+                });
+
+
                 this.proformValues.quotations = {
                     count: qCollectionJSON.length,
-                    sum  : sum
+                    sum: sum
                 };
 
                 this.proformValues.orders = {
                     count: ordersCollectionJSON.length,
-                    sum  : orderSum
+                    sum: orderSum
+                };
+
+                this.proformValues.jobs = {
+                    count: jobsCount,
+                    sum  : jobSum
                 };
 
                 proformContainer.html(this.proformRevenue({
-                        proformValues   : self.proformValues,
+                        proformValues: self.proformValues,
                         currencySplitter: helpers.currencySplitter
                     })
                 );
@@ -998,30 +1062,30 @@ define([
                 textArea.attr('readonly', false);
 
                 $('#StartDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
+                    changeYear: true,
+                    onSelect: function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                     }
                 });
                 $('#EndDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
+                    changeYear: true,
+                    onSelect: function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                     }
                 });
                 $('#EndDateTarget').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    minDate    : (self.formModel.StartDate) ? self.formModel.StartDate : 0
+                    changeYear: true,
+                    minDate: (self.formModel.StartDate) ? self.formModel.StartDate : 0
                 });
                 $('#StartDate').datepicker("option", "disabled", false);
                 $('#EndDate').datepicker("option", "disabled", false);
@@ -1065,7 +1129,7 @@ define([
 
                 var atachEl = new attachView({
                     model: this.formModel,
-                    url  : "/uploadProjectsFiles"
+                    url: "/uploadProjectsFiles"
                 }).render().el;
 
                 thisEl.html(templ({
@@ -1102,14 +1166,14 @@ define([
                 });
 
                 thisEl.find('#createBonus').hide();
-                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs');
+                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');
                 /*_.bindAll(this, 'getOrders');
                  _.bindAll(this, 'getWTrack');
                  _.bindAll(this, 'renderProformRevenue');
                  _.bindAll(this, 'renderProjectInfo');
                  _.bindAll(this, 'renderJobs');*/
 
-                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
+                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getInvoiceStats];
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.renderProformRevenue();
@@ -1121,35 +1185,35 @@ define([
                 $("#createBonus").show();
 
                 $('#StartDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
+                    changeYear: true,
+                    onSelect: function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                     }
                 });
                 $('#EndDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
+                    changeYear: true,
+                    onSelect: function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                     }
                 });
                 $('#EndDateTarget').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    minDate    : (self.formModel.StartDate) ? self.formModel.StartDate : 0
+                    changeYear: true,
+                    minDate: (self.formModel.StartDate) ? self.formModel.StartDate : 0
                 });
 
                 return this;
 
-            },
+            }
         });
 
         return View;

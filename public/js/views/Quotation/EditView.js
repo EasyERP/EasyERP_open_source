@@ -157,14 +157,6 @@ define([
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                                 if (self.redirect) {
-                                    var data = {products: JSON.stringify(products), type: "Ordered"};
-
-                                    dataService.postData("/jobs/update", data, function (err, result) {
-                                        if (err) {
-                                            return console.log(err);
-                                        }
-
-                                    });
                                     var filter = {
                                         'projectName': {
                                             key  : 'project._id',
@@ -199,7 +191,7 @@ define([
 
                                     self.ordersCollection.bind('reset', createView);
 
-                                    if (self.collection){
+                                    if (self.collection) {
                                         self.collection.remove(self.currentModel.get('_id'));
 
                                     }
@@ -333,6 +325,11 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
+                var currency = {
+                    _id : thisEl.find('#currencyDd').attr('data-id'),
+                    name: thisEl.find('#currencyDd').text()
+                };
+
                 var wF = this.currentModel.get('workflow');
                 var workflow = {};
                 workflow._id = wF._id;
@@ -380,6 +377,7 @@ define([
 
 
                 data = {
+                    currency         : currency,
                     supplier         : supplier,
                     supplierReference: supplierReference,
                     deliverTo        : deliverTo,
@@ -436,6 +434,7 @@ define([
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
+
             deleteItem: function (event) {
                 var mid = 55;
                 event.preventDefault();
@@ -507,6 +506,8 @@ define([
                     }).render().el
                 );
 
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
@@ -525,7 +526,8 @@ define([
                 this.$el.find('#orderDate').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
+                    maxDate    : "+0D"
                 });
 
                 this.delegateEvents(this.events);
@@ -548,7 +550,7 @@ define([
                 });
 
 
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -561,6 +563,8 @@ define([
                         });
 
                     }
+                }
+
                 return this;
             }
 

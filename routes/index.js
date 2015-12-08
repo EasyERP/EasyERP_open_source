@@ -1,4 +1,3 @@
-
 require('pmx').init();
 
 module.exports = function (app, mainDb) {
@@ -59,6 +58,96 @@ module.exports = function (app, mainDb) {
     var journalRouter = require('./journal')(models);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
+
+    var winston = require('winston');
+    var logger = new (winston.Logger)({
+        transports: [
+            new (winston.transports.Console)({
+                json: false,
+                timestamp: true
+            }),
+            new winston.transports.File({
+                filename: 'debug.log',
+                json: false
+            })
+        ],
+        exceptionHandlers: [
+            new (winston.transports.Console)({
+                json: false,
+                timestamp: true
+            }),
+            new winston.transports.File({
+                filename: 'exceptions.log',
+                json: false
+            })
+        ],
+        exitOnError: false
+    });
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'project':
+                    if (condition) {
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                    }
+                    break;
+                case 'salesPerson':
+                    if (condition) {
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                    }
+                    break;
+                case 'supplier':
+                    if (condition) {
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                    }
+                    break;
+                case 'workflow':
+                    if (condition) {
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                    }
+                    break;
+                case 'forSales':
+                    if (condition) {
+                        condition = ConvertType(condition[0], 'boolean');
+                        filtrElement[key] = condition;
+                        resArray.push(filtrElement);
+                    }
+                    break;
+            }
+        }
+
+        return resArray;
+    };
+
+    //ToDo changeIt in all views
+    function filterObjectComposer(req, res, next) {
+        var query = req.query;
+        var queryObject = {};
+        var filter = query.filter;
+        var condition = '$and';
+
+        if (filter && typeof filter === 'object') {
+            condition = filter.condition || 'and';
+            condition = '$' + condition;
+            queryObject[condition] = caseFilter(filter);
+        }
+
+        req.queryObject = queryObject;
+        next();
+    }
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -181,7 +270,7 @@ module.exports = function (app, mainDb) {
         res.download(__dirname + path);
     });
 
-    function uploadFileArray (req, res, callback) {
+    function uploadFileArray(req, res, callback) {
         var files = [];
         if (req.files && req.files.attachfile && !req.files.attachfile.length) {
             req.files.attachfile = [req.files.attachfile];
@@ -564,7 +653,7 @@ module.exports = function (app, mainDb) {
 
     app.patch('/currentUser', function (req, res) {
         var data = {};
-        if (req.body){
+        if (req.body) {
             data.savedFilters = req.body;
         }
 
@@ -1398,8 +1487,8 @@ module.exports = function (app, mainDb) {
         }
     });
 
-    function notFound (req, res, next) {
-       res.status(404);
+    function notFound(req, res, next) {
+        res.status(404);
 
 
         if (req.accepts('html')) {
@@ -1415,19 +1504,18 @@ module.exports = function (app, mainDb) {
 
     };
 
-    function errorHandler (err, req, res, next) {
+    function errorHandler(err, req, res, next) {
         var status = err.status || 500;
 
         if (process.env.NODE_ENV === 'production') {
             if (status === 401) {
-                logWriter.log('', err.message + '\n' + err.stack);
+                logWriter.log('', err.message + '\n' + err.message);
+                logger.error(err.message);
             }
             res.status(status).send({error: err.message});
         } else {
-            if (status !== 401) {
-                logWriter.log('', err.message + '\n' + err.stack);
-            }
             res.status(status).send({error: err.message + '\n' + err.stack});
+            logger.error(err.message + '\n' + err.stack);
         }
     };
 

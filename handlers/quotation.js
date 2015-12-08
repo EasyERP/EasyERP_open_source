@@ -79,7 +79,12 @@ var Quotation = function (models, event) {
                     async.each(products, function (product, cb) {
                         var jobs = product.jobs;
 
-                        JobsModel.findByIdAndUpdate(jobs, {$set: {quotation: setObj}}, {new: true}, function (err, result) {
+                        JobsModel.findByIdAndUpdate(jobs, {
+                            $set: {
+                                quotation: setObj,
+                                type     : "Quoted"
+                            }
+                        }, {new: true}, function (err, result) {
                             if (err) {
                                 return cb(err);
                             }
@@ -102,13 +107,41 @@ var Quotation = function (models, event) {
 
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var products;
+        var project;
 
         Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
             if (err) {
-                next(err);
+                return next(err);
+            }
+
+            if (data.isOrder) {
+                products = quotation.products;
+
+                async.each(products, function (product, cb) {
+                    var jobs = product.jobs;
+
+                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered"}}, {new: true}, function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+                        project = result.project ? result.project : null;
+                        cb();
+                    });
+
+                }, function () {
+                    if (project) {
+                        event.emit('fetchJobsCollection', {project: project});
+                    }
+
+                    res.status(200).send({success: 'Quotation updated', result: quotation});
+
+                });
             } else {
                 res.status(200).send({success: 'Quotation updated', result: quotation});
             }
+
         });
 
     }

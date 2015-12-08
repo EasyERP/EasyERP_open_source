@@ -24,11 +24,11 @@ define([
 
                 this.filteredCollection = new filterCollection(this.collection.toJSON(), sortOptions);
 
-                this.collection.on('change', function() { 
-                    this.filteredCollection.set(this.collection.toJSON(), {add: false});
+                this.collection.on('change', function() {
+                    this.filteredCollection.set(this.collection.toJSON());
                 }, this);
 
-                this.filteredCollection.on('reset', this.renderContent);             
+                this.filteredCollection.on('reset', this.renderContent);
 
                 this.collectionLength = this.filteredCollection.length;
                 this.paginationBool = this.collectionLength > this.elementToShow;

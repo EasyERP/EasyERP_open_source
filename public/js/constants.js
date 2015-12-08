@@ -6,39 +6,48 @@ define([], function () {
         wTrack          : {
             'Assigned'    : {
                 view   : 'projectManager',
-                backend: 'project.projectmanager._id'
+                backend: 'project.projectmanager._id',
+                type   : 'ObjectId'
             },
             'Employee'    : {
                 view   : 'employee',
-                backend: 'employee._id'
+                backend: 'employee._id',
+                type   : 'ObjectId'
             },
             'Customer'    : {
                 view   : 'customer',
-                backend: 'project.customer._id'
+                backend: 'project.customer._id',
+                type   : 'ObjectId'
             },
             'Project Name': {
                 view   : 'projectName',
-                backend: 'project._id'
+                backend: 'project._id',
+                type   : 'ObjectId'
             },
             'Department'  : {
                 view   : 'department',
-                backend: 'department._id'
+                backend: 'department._id',
+                type   : 'ObjectId'
             },
             'Month'       : {
                 view   : 'month',
-                backend: 'month'
+                backend: 'month',
+                type   : 'integer'
             },
             'Year'        : {
                 view   : 'year',
-                backend: 'year'
+                backend: 'year',
+                type   : 'integer'
             },
             'Week'        : {
                 view   : 'week',
-                backend: 'week'
+                backend: 'week',
+                type   : 'integer'
             },
             'Status'      : {
                 view   : 'isPaid',
-                backend: 'isPaid'
+                backend: 'isPaid',
+                type   : 'boolean'
             }
         },
         Persons         : {
@@ -360,12 +369,12 @@ define([], function () {
                 backend: 'dataKey'
             }
         },
-        "Dashboard" : {
-            "Status" : {
+        "Dashboard"     : {
+            "Status": {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
-            "Type" : {
+            "Type"  : {
                 view   : 'type',
                 backend: 'type'
             }
