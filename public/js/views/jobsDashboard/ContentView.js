@@ -132,12 +132,11 @@ define([
 
                 this.collection.bind('reset', renderContent);
 
-                function renderContent(){
+                function renderContent(models){
                     var template = _.template(DashboardTemplate);
 
-                    self.$el.find('#jobsContent').html(template({
-                        collection         : self.collection.toJSON(),
-                        startNumber        : 0,
+                        self.$el.find('#jobsContent').html(template({
+                        collection         : models.toJSON(),
                         currencySplitter   : helpers.currencySplitter
                     }));
                 }
