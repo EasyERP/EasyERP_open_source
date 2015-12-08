@@ -17,6 +17,7 @@ define([
                 _.bindAll(this, "saveItem");
                 this.responseObj = {};
                 this.elementId = options ? options.elementId : null;
+
                 this.render();
             },
 
@@ -32,6 +33,7 @@ define([
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect"
             },
+
             notHide: function () {
                 return false;
             },

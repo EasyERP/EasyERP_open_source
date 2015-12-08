@@ -397,6 +397,8 @@ define([
                     wTrackCollection: this.wCollection,
                     createJob: true
                 });
+
+                App.projectInfo.currentTab = 'timesheet';
             },
 
             notHide: function () {
@@ -594,8 +596,13 @@ define([
 
             changeTab: function (e) {
                 var target = $(e.target);
+                var $aEllement = target.closest('a');
                 var n;
                 var dialogHolder;
+
+                App.projectInfo = App.projectInfo || {};
+
+                App.projectInfo.currentTab = $aEllement.text().toLocaleLowerCase();
 
                 target.closest(".chart-tabs").find("a.active").removeClass("active");
                 target.addClass("active");
@@ -659,6 +666,7 @@ define([
                 this.jobsCollection = new jobsCollection({
                     viewType: 'list',
                     filter: filter,
+                    projectId: _id,
                     count: 50
                 });
 
@@ -673,13 +681,15 @@ define([
                 var formModel = this.formModel.toJSON();
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
+                var key = 'jobs_projectId:' + _id;
+                var jobsCollection = custom.retriveFromCash(key);
 
                 var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
                     return el.project._id === _id
                 });
 
-                if (!App.currectCollection){
-                    App.currectCollection = this.jobsCollection;
+                if (!jobsCollection || !jobsCollection.length){
+                    custom.cacheToApp(key, this.jobsCollection, true);
                 }
 
                 this.projectValues = {
@@ -1135,6 +1145,9 @@ define([
                 thisEl.html(templ({
                     model: formModel
                 }));
+
+                App.projectInfo = App.projectInfo || {};
+                App.projectInfo.currentTab = 'overview';
 
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);

@@ -258,10 +258,13 @@ define([
         chartControl.showDescProject(true, 'n,d');
     };
 
-    function cacheToApp(key, data) {
+    function cacheToApp(key, data, notSaveInLocalStorage) {
         App.cashedData = App.cashedData || {};
         App.cashedData[key] = data;
-        App.storage.save(key, data);
+
+        if (!notSaveInLocalStorage) {
+            App.storage.save(key, data);
+        }
     }
 
     function retriveFromCash(key) {
@@ -400,19 +403,19 @@ define([
     App.storage = new Store();
 
     return {
-        runApplication          : runApplication,
-        changeContentViewType   : changeContentViewType,
+        runApplication: runApplication,
+        changeContentViewType: changeContentViewType,
         //getCurrentII: getCurrentII,
         //setCurrentII: setCurrentII,
-        getCurrentVT            : getCurrentVT,
-        setCurrentVT            : setCurrentVT,
-        getCurrentCL            : getCurrentCL,
-        setCurrentCL            : setCurrentCL,
-        cacheToApp              : cacheToApp,
-        retriveFromCash         : retriveFromCash,
-        savedFilters            : savedFilters,
+        getCurrentVT: getCurrentVT,
+        setCurrentVT: setCurrentVT,
+        getCurrentCL: getCurrentCL,
+        setCurrentCL: setCurrentCL,
+        cacheToApp: cacheToApp,
+        retriveFromCash: retriveFromCash,
+        savedFilters: savedFilters,
         getFiltersForContentType: getFiltersForContentType,
-        getFilterById           : getFilterById,
-        getWeeks                : getWeeks
+        getFilterById: getFilterById,
+        getWeeks: getWeeks
     };
 });

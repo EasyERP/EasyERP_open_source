@@ -11,31 +11,6 @@ define([
     function (personFormTemplate, editView, opportunitiesCompactContentView, noteView, attachView, createViewOpportunities, common) {
         var personTasksView = Backbone.View.extend({
             el: '#content-holder',
-
-            initialize: function (options) {
-                this.formModel = options.model;
-                this.formModel.on("change", this.render, this);
-				this.formModel.urlRoot = "/Persons";
-                this.pageMini = 1;
-                this.pageCount = 4;
-                this.allMiniOpp = 0;
-                this.allPages = 2;
-                var self = this;
-                var formModel = this.formModel.toJSON();
-                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
-                    self.allMiniOpp = opps.listLength;
-                    self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
-                    if (self.allPages == self.pageMini) {
-                        $(".miniPagination .next").addClass("not-active");
-                        $(".miniPagination .last").addClass("not-active");
-                    }
-                    if (self.allPages === 1 || self.allPages === 0) {
-                        $(".miniPagination").hide();
-                    }
-                });
-
-            },
-
             events: {
                 "click .checkbox": "checked",
                 "click .person-checkbox:not(.disabled)": "personsSalesChecked",
@@ -53,6 +28,32 @@ define([
                 "click .miniPagination .first:not(.not-active)": "firstMiniPage",
                 "click .miniPagination .last:not(.not-active)": "lastMiniPage"
             },
+
+            initialize: function (options) {
+                this.formModel = options.model;
+                this.formModel.on("change", this.render, this);
+				this.formModel.urlRoot = "/Persons";
+                this.pageMini = 1;
+                this.pageCount = 4;
+                this.allMiniOpp = 0;
+                this.allPages = 2;
+                var self = this;
+                var formModel = this.formModel.toJSON();
+
+                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
+                    self.allMiniOpp = opps.listLength;
+                    self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
+                    if (self.allPages == self.pageMini) {
+                        $(".miniPagination .next").addClass("not-active");
+                        $(".miniPagination .last").addClass("not-active");
+                    }
+                    if (self.allPages === 1 || self.allPages === 0) {
+                        $(".miniPagination").hide();
+                    }
+                });
+
+            },
+
             nextMiniPage: function () {
                 this.pageMini += 1;
                 this.renderMiniOpp();
@@ -75,23 +76,27 @@ define([
             renderMiniOpp: function () {
                 var self = this;
                 var formModel = this.formModel.toJSON();
+
                 common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
                     var oppElem = self.$el.find('#opportunities');
+                    var isLast = self.pageMini === self.allPages;
+
                     oppElem.empty();
-                    var isLast = self.pageMini == self.allPages ? true : false;
+
                     oppElem.append(
                         new opportunitiesCompactContentView({
                             collection: collection.data
-                        }).render({ first: self.pageMini == 1 ? true : false, last: isLast, all: self.allPages }).el
+                        }).render({ first: self.pageMini === 1, last: isLast, all: self.allPages }).el
                     );
-
                 });
-
             },
 
             addOpportunities: function (e) {
+                var model;
+
                 e.preventDefault();
-                var model = this.formModel.toJSON();
+
+                model = this.formModel.toJSON();
                 new createViewOpportunities({
                     model: model,
                     elementId: 'personAttach'
@@ -100,6 +105,7 @@ define([
 
             quickEdit: function (e) {
                 var trId = $(e.target).closest("dd");
+
                 if ($("#" + trId.attr("id")).find("#editSpan").length === 0) {
                     $("#" + trId.attr("id")).append('<span id="editSpan" class=""><a href="#">e</a></span>');
                     if ($("#" + trId.attr("id")).width() - 30 < $("#" + trId.attr("id")).find(".no-long").width()) {
@@ -192,6 +198,7 @@ define([
                 var currentModel = this.model;
                 var newModel = {};
 				var oldvalue = {};
+
                 if (objIndex.length > 1) {
 					for (var i in this.formModel.toJSON()[objIndex[0]]){
 						oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
@@ -223,13 +230,6 @@ define([
 					newModel[objIndex[0]] = oldvalue;
 					this.formModel.set(newModel);
 				}
-            },
-
-
-
-            editItem: function () {
-                //create editView in dialog here
-                new editView({ collection: this.collection });
             },
 
             personsSalesChecked: function (e) {
