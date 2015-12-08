@@ -75,7 +75,7 @@ define([
                 addInptAttach = fileArr;
             } else {
                // event.preventDefault();
-                addInptAttach = $(addFrmAttach).find("#inputAttach")[0].files[0];
+                addInptAttach = addFrmAttach.find("#inputAttach")[0].files[0];
 
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     this.$el.find('#inputAttach').val('');
