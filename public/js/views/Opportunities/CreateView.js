@@ -17,6 +17,7 @@ define([
                 _.bindAll(this, "saveItem");
                 this.responseObj = {};
                 this.elementId = options ? options.elementId : null;
+
                 this.render();
             },
 
