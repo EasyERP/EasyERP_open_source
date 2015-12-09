@@ -33,7 +33,7 @@ define([
             "easyErp/DashBoardVacation(/filter=:filter)"                                                    : "dashBoardVacation",
             "easyErp/HrDashboard"                                                                           : "hrDashboard",
             "easyErp/projectDashboard"                                                                      : "goToProjectDashboard",
-            "easyErp/jobsDashboard"                                                                         : "goToJobsDashboard",
+            "easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
             "easyErp/:contentType"                                                                          : "getList",
 
             "*any": "any"
@@ -509,8 +509,12 @@ define([
             }
         },
 
-        goToJobsDashboard: function () {
+        goToJobsDashboard: function (filter) {
             var self = this;
+            if (filter) {
+                filter = JSON.parse(filter);
+            }
+
             this.checkLogin(function (success) {
                 if (success) {
                     goProjectDashboard(self);
@@ -535,8 +539,13 @@ define([
 
                     custom.setCurrentVT('list');
 
-                    var contentview = new contentView({startTime: startTime});
-                    var topbarView = new topBarView({actionType: "Content"});
+                    var contentview = new contentView({
+                        startTime: startTime,
+                        filter   : filter
+                    });
+                    var topbarView = new topBarView({
+                        actionType: "Content"
+                    });
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
                 });

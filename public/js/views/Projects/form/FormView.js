@@ -658,7 +658,7 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
                     "project": {
-                        key: "project",
+                        key: "project._id",
                         value: [_id]
                     }
                 };

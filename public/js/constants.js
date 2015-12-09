@@ -370,6 +370,14 @@ define([], function () {
             }
         },
         "Dashboard"     : {
+            "Sales Manager" : {
+                view   : 'projectManager',
+                backend: 'project.projectManager._id'
+            },
+            "Project" : {
+                view   : 'project',
+                backend: 'project._id'
+            },
             "Status": {
                 view   : 'workflow',
                 backend: 'workflow._id'

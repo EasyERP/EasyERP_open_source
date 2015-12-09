@@ -612,7 +612,7 @@ var requestHandler = function (app, event, mainDb) {
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var count = 0;
 
-        var query = Job.find({project: pId}).lean();
+        var query = Job.find({'project._id': pId}).lean();
 
         query
             .populate('wTracks');
@@ -798,12 +798,12 @@ var requestHandler = function (app, event, mainDb) {
             }, function(){
                 Job.aggregate([{
                     $match: {
-                        project: ObjectId(pId)
+                        'project._id': ObjectId(pId)
                     }
                 },
                     {
                         $group: {
-                            _id: "$project",
+                            _id: "$project._id",
                             jobIds: {$addToSet: '$_id'}
                         }
                     }

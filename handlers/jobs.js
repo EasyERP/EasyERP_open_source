@@ -25,16 +25,20 @@ var Jobs = function (models, event) {
             key = filter[filterName]['key'];
 
             switch (filterName) {
-                case 'project':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
                 case 'workflow':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
                 case 'type':
                     filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'project':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectManager':
+                    filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
             }
@@ -46,20 +50,19 @@ var Jobs = function (models, event) {
     this.create = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var data = req.body;
-        var project = req.headers.project;
-        var jobName = req.headers.jobname;
         var newModel;
         var jobId;
         var projectId;
 
-        data.name = jobName;
-        data.project = objectId(project);
         data.workflow = {
             _id: objectId("56337c705d49d8d6537832eb"),
             name: "In Progress"
         };
         data.type = "Not Quoted";
         data.wTracks = [];
+
+        data.project._id = objectId(data.project._id);
+        data.project.projectManager._id = objectId(data.project.projectManager._id);
 
         newModel = new JobsModel(data);
 
@@ -69,7 +72,7 @@ var Jobs = function (models, event) {
             }
 
             jobId = model._id;
-            projectId = model.project;
+            projectId = model.project._id;
 
             if (projectId) {
                 event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
@@ -104,7 +107,7 @@ var Jobs = function (models, event) {
 
         if (data && data.project) {
             filter['project'] = {};
-            filter['project']['key'] = 'project';
+            filter['project']['key'] = 'project._id';
             filter['project']['value'] = objectId(data.project);
         }
 
@@ -146,12 +149,47 @@ var Jobs = function (models, event) {
                     project  : 1,
                     budget   : 1,
                     quotation: 1,
-                    invoice  : 1
+                    invoice  : 1,
+                    payments: 1
                 }
             }, {
                 $sort: sort
             }], function (err, jobs) {
-                var parallelTasks = [projectPopulate, invoicePopulate, quotationPopulate];
+                //var parallelTasks = [/*projectPopulate,*/ invoicePopulate/*, quotationPopulate*/];
+
+                    Payment.populate(jobs, {
+                        path: 'payments',
+                        select: '_id paidAmount',
+                        opts: {
+                            lean: true
+                        }
+                    }, function (err, payments) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        async.map(jobs, function(job, cb){
+                            var payments = job.payments;
+                            var amount = 0;
+
+                            payments.forEach(function(payment){
+                                amount += payment.paidAmount;
+                            });
+
+                            job.payment = {};
+                            job.payment.amount = amount;
+
+                            cb(null, job);
+                        }, function(err, jobs){
+                            if(err){
+                                return next(err);
+                            }
+
+                            res.status(200).send(jobs)
+                        });
+                    });
+
+
 
                 function projectPopulate(parallelCb) {
                     Project.populate(jobs, {
@@ -226,13 +264,13 @@ var Jobs = function (models, event) {
                     return next(err);
                 }
 
-                async.parallel(parallelTasks, function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send(jobs)
-                });
+                //async.parallel(parallelTasks, function (err) {
+                //    if (err) {
+                //        return next(err);
+                //    }
+                //
+                //    res.status(200).send(jobs)
+                //});
             });
         /*.find(queryObject)
          .sort(sort)
@@ -252,7 +290,7 @@ var Jobs = function (models, event) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        query.find({type: "Not Quoted", project: objectId(pId)}, {
+        query.find({type: "Not Quoted", 'project._id': objectId(pId)}, {
             name: 1,
             _id: 1,
             "budget.budgetTotal.revenueSum": 1
@@ -281,7 +319,7 @@ var Jobs = function (models, event) {
             }
 
             jobId = result.get('_id');
-            projectId = result.get('project');
+            projectId = result.get('project._id');
 
             wTrack.find({"jobs._id": jobId}, function (err, result) {
                 if (err) {
@@ -366,7 +404,7 @@ var Jobs = function (models, event) {
                         return next(err);
                     }
 
-                    project = result.get('project');
+                    project = result.get('project._id');
 
                     cb();
                 });
@@ -377,11 +415,7 @@ var Jobs = function (models, event) {
                 }
             });
         }
-    }
-
-    this.getJobsForDashboard = function (req, res, next) {
-
-    }
+    };
 };
 
 module.exports = Jobs;
