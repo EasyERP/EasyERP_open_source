@@ -626,7 +626,8 @@ define([
                             var element = $(this);
 
                             self.clickSearchResult(element);
-                        })
+                        });
+                        searchInput.html(""); // to prevent appearing previous values by pressing Backspace
                     }
                 });
 
