@@ -102,6 +102,7 @@ define([
             var self = this;
 
             if (filter) {
+                filter = decodeURIComponent(filter);
                 filter = JSON.parse(filter);
             }
 

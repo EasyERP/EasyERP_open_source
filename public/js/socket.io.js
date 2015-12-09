@@ -80,15 +80,23 @@ define([
 	function fetchData() {
 		var dashCollection;
 		var fragment = Backbone.history.fragment;
+		var  filter = fragment.split('/filter=');
 
-		if (fragment && fragment.indexOf('DashBoardVacation') !== -1) {
-			App.render({type: 'notify', message: "Data was updated. Please refresh browser."});
+		filter = decodeURIComponent(filter[1]);
+		filter = filter ? JSON.parse(filter) : {};
+
+		function notifyAndCache(){
+			if (fragment && fragment.indexOf('DashBoardVacation') !== -1) {
+				App.render({type: 'notify', message: "Data was updated. Please refresh browser."});
+			}
+
+			custom.cacheToApp('dashboardVacation', dashCollection);
+
+			return dashCollection;
 		}
 
-		dashCollection = new VacationDashboard();
-		custom.cacheToApp('dashboardVacation', dashCollection);
-
-		return dashCollection;
+		dashCollection = new VacationDashboard({filter: filter});
+		dashCollection.on('reset', notifyAndCache, dashCollection);
 	}
 
 	App.socket = socket;
