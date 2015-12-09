@@ -52,6 +52,7 @@ var Filters = function (models) {
 
             return result;
         }
+
         //end R.Katsala block
 
         function dateRange() {
@@ -116,7 +117,7 @@ var Filters = function (models) {
                 Order           : getOrdersFiltersValues,
                 PayrollExpenses : getPayRollFiltersValues,
                 DashVacation    : getDashVacationFiltersValues,
-                Dashboard    : getDashJobsFiltersValues
+                Dashboard       : getDashJobsFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -543,8 +544,8 @@ var Filters = function (models) {
             wTrackInvoice.aggregate([
                 {
                     $match: {
-                        forSales   : true,
-                        _type: "wTrackInvoice"
+                        forSales: true,
+                        _type   : "wTrackInvoice"
                         //invoiceType: 'wTrack'
                     }
                 },
@@ -923,24 +924,36 @@ var Filters = function (models) {
             });
         }
 
-        function getDashJobsFiltersValues (callback){
+        function getDashJobsFiltersValues(callback) {
             Jobs.aggregate([{
-                    $group: {
-                        _id             : null,
-                        'type': {
-                            $addToSet: {
-                                _id : '$type',
-                                name: '$type'
-                            }
-                        },
-                        'workflow'      : {
-                            $addToSet: {
-                                _id : '$workflow._id',
-                                name: '$workflow.name'
-                            }
+                $group: {
+                    _id       : null,
+                    'type'    : {
+                        $addToSet: {
+                            _id : '$type',
+                            name: '$type'
+                        }
+                    },
+                    'workflow': {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
+                        }
+                    },
+                    'project'    : {
+                        $addToSet: {
+                            _id : '$project._id',
+                            name: '$project.name'
+                        }
+                    },
+                    'projectManager'    : {
+                        $addToSet: {
+                            _id : '$project.projectManager._id',
+                            name: '$project.projectManager.name'
                         }
                     }
                 }
+            }
             ], function (err, result) {
                 if (err) {
                     callback(err);

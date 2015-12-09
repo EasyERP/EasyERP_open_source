@@ -73,7 +73,8 @@ var Quotation = function (models, event) {
                     var products = _quotation.products;
                     var setObj = {
                         _id : id,
-                        name: name
+                        name: name,
+                        amount: _quotation.paymentInfo.total
                     };
 
                     async.each(products, function (product, cb) {
@@ -88,7 +89,7 @@ var Quotation = function (models, event) {
                             if (err) {
                                 return cb(err);
                             }
-                            project = result.project ? result.project : null;
+                            project = result.project ? result.project._id : null;
                             cb();
                         });
 
@@ -126,7 +127,7 @@ var Quotation = function (models, event) {
                         if (err) {
                             return cb(err);
                         }
-                        project = result.project ? result.project : null;
+                        project = result.project ? result.project._id : null;
                         cb();
                     });
 
@@ -402,7 +403,7 @@ var Quotation = function (models, event) {
         if (query.sort) {
             sort = query.sort;
         } else {
-            sort = {"name": 1};
+            sort = {"orderDate": -1};
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -590,13 +591,13 @@ var Quotation = function (models, event) {
 
                 JobsModel.findByIdAndUpdate(product.jobs, {
                     type     : type,
-                    quotation: {_id: null, name: ""}
+                    quotation: {_id: null, name: "", amount: 0}
                 }, {new: true}, function (err, result) {
                     if (err) {
                         return next(err);
                     }
 
-                    project = result ? result.get('project') : null;
+                    project = result ? result.get('project._id') : null;
 
                     cb();
                 });

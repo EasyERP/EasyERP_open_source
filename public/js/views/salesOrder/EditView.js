@@ -254,6 +254,9 @@ define([
                 var productId;
                 var quantity;
                 var price;
+                var taxes;
+                var subtotal;
+                var scheduledDate;
 
                 var supplier = {};
                 var project = {};
@@ -269,6 +272,7 @@ define([
 
                 var total = $.trim(thisEl.find('#totalAmount').text());
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var totalTaxes = $.trim(thisEl.find('#taxes').text());
 
                 var usersId = [];
                 var groupsId = [];
@@ -313,15 +317,21 @@ define([
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
+                        scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
+                        taxes = targetEl.find('.taxes').text();
+                        subtotal = targetEl.find('.subtotal').text();
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
 
                         products.push({
                             product  : productId,
                             unitPrice: price,
+                            taxes: taxes,
+                            subTotal: subtotal,
                             quantity : quantity,
-                            jobs     : jobs
+                            jobs     : jobs,
+                            scheduledDate : scheduledDate
                         });
                     }
                 }
@@ -339,10 +349,11 @@ define([
                     invoiceControl   : invoiceControl ? invoiceControl : null,
                     paymentTerm      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
-                    project          : project,
+                    //project          : project,
                     paymentInfo      : {
                         total  : total,
-                        unTaxed: unTaxed
+                        unTaxed: unTaxed,
+                        taxes: totalTaxes
                     },
                     groups           : {
                         owner: $("#allUsersSelect").attr("data-id"),

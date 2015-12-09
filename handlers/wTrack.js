@@ -786,44 +786,62 @@ var wTrack = function (event, models) {
         });
 
         function createJobFunc(waterfallCB) {
+            var projectName;
+            var projectManager;
             var jobForwTrack = {
                 _id : jobId,
                 name: jobName
             };
 
+
             if (createJob) {
-                job = {
-                    name    : jobName,
-                    workflow: {
-                        _id : objectId("56337c705d49d8d6537832eb"),
-                        name: "In Progress"
-                    },
-                    type    : "Not Quoted",
-                    wTracks : [],
-                    project : objectId(project)
-                };
-
-                var newJob = new Job(job);
-
-                newJob.save(function (err, job) {
-                    if (err) {
-                        return console.log(err);
+                Project.findById(objectId(project), {projectName: 1, projectmanager: 1}, function(err, proj){
+                    if (err){
+                        return next(err);
                     }
 
-                    jobId = job.toJSON()._id;
-                    var jobName = job.get('name');
+                    projectName = proj.projectName;
+                    projectManager = proj.projectmanager;
 
-                    jobForwTrack = {
-                        _id : jobId,
-                        name: jobName
+                    job = {
+                        name    : jobName,
+                        workflow: {
+                            _id : objectId("56337c705d49d8d6537832eb"),
+                            name: "In Progress"
+                        },
+                        type    : "Not Quoted",
+                        wTracks : [],
+                        project : {
+                            _id: objectId(project),
+                            name: projectName,
+                            projectManager: projectManager
+                        }
                     };
 
-                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function () {
+                    var newJob = new Job(job);
 
+                    newJob.save(function (err, job) {
+                        if (err) {
+                            return console.log(err);
+                        }
+                        var jobName;
+
+                        jobId = job.toJSON()._id;
+                        jobName = job.get('name');
+
+                        jobForwTrack = {
+                            _id : jobId,
+                            name: jobName
+                        };
+
+                        Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function () {
+
+                        });
+
+                        waterfallCB(null, jobForwTrack);
                     });
-
-                    waterfallCB(null, jobForwTrack);
                 });
+
             } else {
                 waterfallCB(null, jobForwTrack);
             }

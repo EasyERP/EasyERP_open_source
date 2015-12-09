@@ -74,6 +74,13 @@ define(["text!templates/wTrack/createJob.html"
                     var self = this;
                     var jobName = $("#jobName").val();
                     var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
+                    var data = {};
+
+                    data.project = {};
+                    data.project._id =  self.modelJSON._id;
+                    data.project.name =  self.modelJSON.projectName;
+                    data.project.projectManager =  self.modelJSON.projectmanager;
+                    data.name = jobName;
 
                     this.stopDefaultEvents(e);
 
@@ -82,11 +89,7 @@ define(["text!templates/wTrack/createJob.html"
                             type       : 'Post',
                             url        : '/jobs/',
                             contentType: "application/json",
-
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader("project", self.modelJSON._id);
-                                xhr.setRequestHeader("jobname", jobName);
-                            },
+                            data: JSON.stringify(data),
 
                             success: function () {
                                 self.hideDialog();

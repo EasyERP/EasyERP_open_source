@@ -1,18 +1,18 @@
 <% collection.forEach(function(job, count){ %>
-<tr data-id="<%=job._id%>" class="<%=job.payment && job.invoice._id && job.invoice._id.paymentInfo.total !== job.payment.paid ? 'redBorder' : ''%>">
+<tr data-id="<%=job._id%>" class="<%=job.payments && job.payments.length && job.invoice._id && job.invoice.amount !== job.payment.amount ? 'redBorder' : ''%>">
     <td><%=count + 1%></a></td>
-    <td><%=job.project && job.project.projectmanager? job.project.projectmanager.name : "---"%></td>
+    <td><%=job.project.projectManager? job.project.projectManager.name : "---"%></td>
     <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
-        job.project.projectName : "---"%></a></td>
+        job.project.name : "---"%></a></td>
     <td><%=job.name%></td>
     <td><%=job.workflow.name%></td>
     <td><%=job.type%></td>
-    <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
-    <td><%=currencySplitter(job.quotation._id && job.order === 0 ? job.quotation._id.paymentInfo.total.toFixed(2) : "")%></td>
-    <td><%=currencySplitter(job.quotation._id && job.order === 1? job.quotation._id.paymentInfo.total.toFixed(2) : "")%></td>
-    <td><%=currencySplitter(job.invoice._id ? (job.invoice._id.paymentInfo.total / 100).toFixed(2) : "")%></td>
-    <td><%=currencySplitter(job.payment ? (job.payment.paid / 100).toFixed(2) : "")%></td>
-    <td><%=job.payment ? job.payment.count : ""%></td>
+    <td><%=currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
+    <td><%=currencySplitter(job.quotation._id && job.order === 0 ? job.quotation.amount ? job.quotation.amount.toFixed(2) : "0" : "")%></td>
+    <td><%=currencySplitter(job.quotation._id && job.order === 1? job.quotation.amount ? job.quotation.amount.toFixed(2) : "0" : "")%></td>
+    <td><%=currencySplitter(job.invoice._id ? (job.invoice.amount / 100).toFixed(2) : "")%></td>
+    <td><%=currencySplitter(job.payment ? (job.payment.amount ? (job.payment.amount / 100).toFixed(2) : ""): "")%></td>
+    <td><%=job.payments.length ? job.payments.length : ""%></td>
 </tr>
 <%  }); %>
 

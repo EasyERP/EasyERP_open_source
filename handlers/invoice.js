@@ -255,7 +255,8 @@ var Invoice = function (models, event) {
             var products = result.products;
             var setObj = {
                 _id: invoiceId,
-                name: name
+                name: name,
+                amount: result.paymentInfo.total
             };
 
 
@@ -281,11 +282,11 @@ var Invoice = function (models, event) {
                         invoice: setObj,
                         type: "Invoiced"
                     }
-                }, {new: true}, function (err, inv) {
+                }, {new: true}, function (err, job) {
                     if (err) {
                         return cb(err);
                     }
-                    project = inv.project ? inv.project : null;
+                    project = job.project ? job.project._id : null;
                     cb();
                 });
 
@@ -805,13 +806,13 @@ var Invoice = function (models, event) {
 
                                 JobsModel.findByIdAndUpdate(id, {
                                     type: "Ordered",
-                                    invoice: {_id: null, name: ""}
+                                    invoice: {_id: null, name: "", amount: 0}
                                 }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
 
-                                    project = result ? result.project : null;
+                                    project = result ? result.project._id : null;
                                     array = result ? result.wTracks : [];
 
                                     async.each(array, function (id) {
