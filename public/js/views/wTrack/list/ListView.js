@@ -745,7 +745,7 @@ define([
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
-                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                    model = this.editCollection.get(id);// ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
                 }
 

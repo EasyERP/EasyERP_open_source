@@ -535,10 +535,15 @@ define([
                 }
 
                 pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
+                }
+
+                if (this.editCollection){ // add for reset editCollection after sort
+                    this.editCollection.reset(this.collection.models);
                 }
             },
 
