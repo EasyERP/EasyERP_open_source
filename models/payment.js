@@ -43,6 +43,14 @@ module.exports = (function () {
     }, {collection: 'Payment', discriminatorKey: '_type'});
 
     var PaymentSchema = basePaymentSchema.extend({
+        invoice         : {
+            _id     : {type: ObjectId, ref: 'Invoice', default: null},
+            name    : String,
+            assigned: {
+                _id : {type: ObjectId, ref: 'Employee', default: null},
+                name: String
+            }
+        },
         forSale      : {type: Boolean, default: true},
         paymentRef   : {type: String, default: ''},
         supplier     : {
@@ -58,6 +66,14 @@ module.exports = (function () {
     });
 
     var salaryPaymentSchema = basePaymentSchema.extend({
+        invoice         : {
+            _id     : {type: ObjectId, ref: 'Invoice', default: null},
+            name    : String,
+            assigned: {
+                _id : {type: ObjectId, ref: 'Employee', default: null},
+                name: String
+            }
+        },
         isExpense    : {type: Boolean, default: true},
         supplier     : [{
             _id             : {type: ObjectId, ref: 'Employees', default: null},
