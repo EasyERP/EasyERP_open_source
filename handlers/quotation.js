@@ -150,9 +150,10 @@ var Quotation = function (models, event) {
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
+        var mid = parseInt(req.headers.mid);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 55, function (access) {
+            access.getEditWritAccess(req, req.session.uId, mid, function (access) {
                 if (access) {
                     data.editedBy = {
                         user: req.session.uId,
@@ -171,9 +172,10 @@ var Quotation = function (models, event) {
     this.updateModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
+        var mid = parseInt(req.headers.mid);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 55, function (access) {
+            access.getEditWritAccess(req, req.session.uId, mid, function (access) {
                 if (access) {
                     data.editedBy = {
                         user: req.session.uId,
