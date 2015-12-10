@@ -82,7 +82,7 @@ define([
 		var fragment = Backbone.history.fragment;
 		var  filter = fragment.split('/filter=');
 
-		filter = decodeURIComponent(filter[1]);
+		filter = filter[1] ? decodeURIComponent(filter[1]) : '';
 		filter = filter ? JSON.parse(filter) : {};
 
 		function notifyAndCache(){
