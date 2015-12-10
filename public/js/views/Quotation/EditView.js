@@ -116,12 +116,15 @@ define([
 
                 var self = this;
                 var wId;
+                var mid;
                 var id = self.currentModel.get('_id');
 
                 if (this.forSales) {
                     wId = 'Sales Order';
+                    mid = 63
                 } else {
                     wId = 'Purchase Order';
+                    mid = 57
                 }
 
                 populate.fetchWorkflow({
@@ -150,7 +153,7 @@ define([
                             //type: "Not Invoiced"
                         }, {
                             headers: {
-                                mid: 57
+                                mid: mid
                             },
                             patch  : true,
                             success: function () {
@@ -283,7 +286,7 @@ define([
             saveItem: function () {
 
                 var self = this;
-                var mid = 55;
+                var mid = this.forSales ? 62 : 55;
                 var thisEl = this.$el;
                 var selectedProducts = thisEl.find('.productItem');
                 var products = [];

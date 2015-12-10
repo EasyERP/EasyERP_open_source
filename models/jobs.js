@@ -18,8 +18,7 @@ module.exports = (function () {
         budget   : {
             _id          : false,
             projectTeam  : {type: Array, default: []},
-            projectValues: {type: Array, default: []},
-            budget       : {type: Array, default: []},
+            budget       : {type: Array, default: []},//weetrackInfo
             budgetTotal  : {type: Object, default: {}}
         },
         quotation: {

@@ -163,82 +163,82 @@ var wTrack = function (event, models) {
     };
 
     /*function ConvertType(array, type) {
-        if (type === 'integer') {
-            for (var i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i]);
-            }
-        } else if (type === 'boolean') {
-            for (var i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    };
+     if (type === 'integer') {
+     for (var i = array.length - 1; i >= 0; i--) {
+     array[i] = parseInt(array[i]);
+     }
+     } else if (type === 'boolean') {
+     for (var i = array.length - 1; i >= 0; i--) {
+     if (array[i] === 'true') {
+     array[i] = true;
+     } else if (array[i] === 'false') {
+     array[i] = false;
+     } else {
+     array[i] = null;
+     }
+     }
+     }
+     };
 
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
+     function caseFilter(filter) {
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
 
-        for (var filterName in filter) {
-            condition = filter[filterName]['value'];
-            key = filter[filterName]['key'];
+     for (var filterName in filter) {
+     condition = filter[filterName]['value'];
+     key = filter[filterName]['key'];
 
-            switch (filterName) {
-                case 'projectManager':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'projectName':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'customer':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'employee':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'department':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'year':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'month':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'week':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'isPaid':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'jobs':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-            }
-        }
+     switch (filterName) {
+     case 'projectManager':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'projectName':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'customer':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'employee':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'department':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'year':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'month':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'week':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'isPaid':
+     ConvertType(condition, 'boolean');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'jobs':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -250,12 +250,12 @@ var wTrack = function (event, models) {
         var queryObject = filter ? filterMapper.mapFilter(filter) : {};
 
         /*if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                queryObject['$or'] = caseFilter(filter);
-            } else {
-                queryObject['$and'] = caseFilter(filter);
-            }
-        }*/
+         if (filter.condition === 'or') {
+         queryObject['$or'] = caseFilter(filter);
+         } else {
+         queryObject['$and'] = caseFilter(filter);
+         }
+         }*/
         var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
@@ -344,14 +344,13 @@ var wTrack = function (event, models) {
         var sort = {};
         var queryObject = filter ? filterMapper.mapFilter(filter) : {};
 
-
         /*if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                queryObject['$or'] = filterObject; //caseFilter(filter);
-            } else {
-                queryObject['$and'] = filterObject; //caseFilter(filter);
-            }
-        }*/
+         if (filter.condition === 'or') {
+         queryObject['$or'] = filterObject; //caseFilter(filter);
+         } else {
+         queryObject['$and'] = filterObject; //caseFilter(filter);
+         }
+         }*/
 
         var count = query.count ? query.count : 100;
         var page = query.page;
@@ -793,10 +792,9 @@ var wTrack = function (event, models) {
                 name: jobName
             };
 
-
             if (createJob) {
-                Project.findById(objectId(project), {projectName: 1, projectmanager: 1}, function(err, proj){
-                    if (err){
+                Project.findById(objectId(project), {projectName: 1, projectmanager: 1}, function (err, proj) {
+                    if (err) {
                         return next(err);
                     }
 
@@ -812,8 +810,8 @@ var wTrack = function (event, models) {
                         type    : "Not Quoted",
                         wTracks : [],
                         project : {
-                            _id: objectId(project),
-                            name: projectName,
+                            _id           : objectId(project),
+                            name          : projectName,
                             projectManager: projectManager
                         }
                     };
@@ -1512,12 +1510,17 @@ var wTrack = function (event, models) {
                                 diff = endWeek;
 
                                 var year = moment(startDate).year();
+                                var endYear = moment(endDate).year();
 
-                                startDate = moment(endDate).year(year + 1).isoWeek(1).date(1);
+                                if (diffYear > 0){
+                                    endYear ++;
+                                }
+
+                                startDate = moment().year(endYear).isoWeek(1).day(1);
                                 startWeek = moment(startDate).isoWeek();
-                                endDate = moment(endDate).isoWeek(endWeek).date(endDay);
+                                endDate = moment(endDate).isoWeek(endWeek - 1).date(endDay);
 
-                                setObj(parallelCb, diff, endWeek, startDate, year + 1, false)
+                                setObj(parallelCb, diff, endWeek - 1, startDate, endYear, false)
                             }
 
                             function thirdPart(parallelCb) {
@@ -1596,6 +1599,7 @@ var wTrack = function (event, models) {
 
                                             obj.month = moment(newDate).month() + 1;
                                             obj.year = year;
+                                            obj.week = moment(newDate).isoWeek();
 
                                             lastMonth = obj.month;
 
@@ -1645,24 +1649,39 @@ var wTrack = function (event, models) {
                                                         obj.weekValues[k] = 0;
                                                     }
                                                 } else {
-                                                    for (var k = 1; k <= 7; k++) {
-                                                        if (k <= day) {
-                                                            obj.weekValues[k] = parseInt(opt[k]);
-                                                        } else {
-                                                            obj.weekValues[k] = 0;
+
+                                                    obj.month = moment(newDate).month() + 1;
+                                                    obj.year = year;
+                                                    obj.week = moment(newDate).isoWeek();
+
+
+                                                    if ((obj.week === 53) && (obj.month === 1)){
+                                                       // day = moment(newDate).day();
+                                                        for (var k = 1; k <= 7; k++) {
+                                                            if (k >= moment(newDate).day()) {
+                                                                obj.weekValues[k] = parseInt(opt[k]);
+                                                            } else {
+                                                                obj.weekValues[k] = 0;
+                                                            }
+                                                        }
+                                                    } else {
+                                                        for (var k = 1; k <= 7; k++) {
+                                                            if (k <= day) {
+                                                                obj.weekValues[k] = parseInt(opt[k]);
+                                                            } else {
+                                                                obj.weekValues[k] = 0;
+                                                            }
                                                         }
                                                     }
+
                                                 }
                                             }
 
-                                            if (weekValidate && !(diffYear > 0)) {
-                                                obj.month = moment(newDate).month();
-                                            } else {
-                                                obj.month = moment(newDate).month() + 1;
-                                            }
-
-                                            obj.year = year;
-
+                                            //if (weekValidate && !(diffYear > 0)) {
+                                            //    obj.month = moment(newDate).month();
+                                            //} else {
+                                            //    obj.month = moment(newDate).month() + 1;
+                                            //}
                                             result.push(obj);
                                         }
 
@@ -1681,7 +1700,7 @@ var wTrack = function (event, models) {
 
                                         dayOfWeek = moment(newDate).day();
 
-                                        if ((dayOfWeek !== 0) && (dayOfWeek !== 6)) {
+                                        if ((dayOfWeek !== 0) && (dayOfWeek !== 6) /*&& obj.week > 0*/) {
 
                                             var endOfMonth = moment(newDate).endOf('month').date();
 
@@ -1711,6 +1730,7 @@ var wTrack = function (event, models) {
 
                                                     obj.month = moment(newDate).month() + 1;
                                                     obj.year = year;
+                                                    obj.week = moment(newDate).isoWeek();
 
                                                     lastMonth = obj.month;
 
@@ -1743,6 +1763,7 @@ var wTrack = function (event, models) {
 
                                                     obj.month = moment(newDate).month() + 1;
                                                     obj.year = year;
+                                                    obj.week = moment(newDate).isoWeek();
 
                                                     result.push(obj);
                                                 }
@@ -1763,65 +1784,71 @@ var wTrack = function (event, models) {
 
                                         var endOfMonth = moment(newDate).endOf('month').date();
 
-                                        if (moment(newDate).date() + 7 > endOfMonth) {
-                                            day = moment(newDate).day();
+                                        if (obj.week > 0) {
 
-                                            for (var k = 5; k >= 1; k--) {
-                                                if (k <= moment(newDate).endOf('month').day()) {
-                                                    obj.weekValues[k] = parseInt(opt[k]);
-                                                    objNext.weekValues[k] = 0;
-                                                    total += parseInt(opt[k]);
-                                                } else {
-                                                    obj.weekValues[k] = 0;
-                                                    objNext.weekValues[k] = parseInt(opt[k]);
-                                                    total += parseInt(opt[k]);
+                                            if (moment(newDate).date() + 7 > endOfMonth) {
+                                                day = moment(newDate).day();
+
+                                                for (var k = 5; k >= 1; k--) {
+                                                    if (k <= moment(newDate).endOf('month').day()) {
+                                                        obj.weekValues[k] = parseInt(opt[k]);
+                                                        objNext.weekValues[k] = 0;
+                                                        total += parseInt(opt[k]);
+                                                    } else {
+                                                        obj.weekValues[k] = 0;
+                                                        objNext.weekValues[k] = parseInt(opt[k]);
+                                                        total += parseInt(opt[k]);
+                                                    }
                                                 }
-                                            }
-                                            obj.weekValues[6] = 0;
-                                            obj.weekValues[7] = 0;
-                                            objNext.weekValues[6] = parseInt(opt['6']);
-                                            objNext.weekValues[7] = parseInt(opt['7']);
-                                            total += parseInt(opt['6']);
-                                            total += parseInt(opt['7']);
+                                                obj.weekValues[6] = 0;
+                                                obj.weekValues[7] = 0;
+                                                objNext.weekValues[6] = parseInt(opt['6']);
+                                                objNext.weekValues[7] = parseInt(opt['7']);
+                                                total += parseInt(opt['6']);
+                                                total += parseInt(opt['7']);
 
-                                            obj.month = moment(newDate).month() + 1;
-                                            obj.year = year;
+                                                obj.month = moment(newDate).month() + 1;
+                                                obj.year = year;
+                                                obj.week = moment(newDate).isoWeek();
 
-                                            lastMonth = obj.month;
+                                                lastMonth = obj.month;
 
-                                            if (lastMonth + 1 > 12) {
-                                                objNext.month = 1;
-                                                objNext.week = obj.week;
-                                                objNext.year = year;
+                                                if (lastMonth + 1 > 12) {
+                                                    objNext.month = 1;
+                                                    objNext.week = obj.week;
+                                                    objNext.year = year;
+                                                } else {
+                                                    objNext.month = lastMonth + 1;
+                                                    objNext.week = obj.week;
+                                                    objNext.year = year;
+                                                }
+
+                                                result.push(obj);
+                                                result.push(objNext);
                                             } else {
-                                                objNext.month = lastMonth + 1;
-                                                objNext.week = obj.week;
-                                                objNext.year = year;
-                                            }
+                                                day = moment(newDate).day();
 
-                                            result.push(obj);
-                                            result.push(objNext);
-                                        } else {
-                                            day = moment(newDate).day();
+                                                for (var k = 5; k >= 1; k--) {
+                                                    if (k >= day) {
+                                                        obj.weekValues[k] = parseInt(opt[k]);
+                                                        total += parseInt(opt[k]);
+                                                    } else {
+                                                        obj.weekValues[k] = 0;
+                                                    }
 
-                                            for (var k = 5; k >= 1; k--) {
-                                                if (k >= day) {
-                                                    obj.weekValues[k] = parseInt(opt[k]);
-                                                    total += parseInt(opt[k]);
-                                                } else {
-                                                    obj.weekValues[k] = 0;
                                                 }
+                                                obj.weekValues[6] = parseInt(opt['6']);
+                                                obj.weekValues[7] = parseInt(opt['7']);
+                                                total += parseInt(opt['6']);
+                                                total += parseInt(opt['7']);
 
+                                                obj.month = moment(newDate).month() + 1;
+                                                obj.week = moment(newDate).isoWeek();
+                                                obj.year = year;
+
+                                                result.push(obj);
                                             }
-                                            obj.weekValues[6] = parseInt(opt['6']);
-                                            obj.weekValues[7] = parseInt(opt['7']);
-                                            total += parseInt(opt['6']);
-                                            total += parseInt(opt['7']);
 
-                                            obj.month = moment(newDate).month() + 1;
-                                            obj.year = year;
-
-                                            result.push(obj);
                                         }
                                     }
                                 }

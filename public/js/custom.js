@@ -248,7 +248,6 @@ define([
         return length;
     };
 
-
     function applyDefaultSettings(chartControl) {
         chartControl.setImagePath("/crm_backbone_repo/images/");
         chartControl.setEditable(false);
@@ -365,30 +364,20 @@ define([
         var startWeek;
         var endWeek;
         var diff;
-        var isoWeeks = moment(parseInt(year)).isoWeeksInYear();
-        var startDate = moment([year, parseInt(month) - 1]);
-        var endDate = moment(startDate).endOf('month');
+        var isoWeeksInYear;
+        var startDate;
+        var endDate;
         var daysCount;
         var curWeek;
+        var direction = -1;
 
-        startWeek = moment(startDate).isoWeeks();
-        endWeek = moment(endDate).isoWeeks();
-
-        diff = endWeek - startWeek;
-
-        if (diff < 0) {
-            diff = isoWeeks - startWeek;
-            endWeek = isoWeeks;
-        } else {
-            endWeek = endWeek;
-        }
-
-        for (var i = diff; i >= 0; i--) {
-            curWeek = endWeek - i;
+        function iterator(i, diff) {
+            curWeek = endWeek - isoWeeksInYear + i * direction;
 
             if (i === diff) {
                 daysCount = moment(startDate).endOf('isoWeek').date();
             } else if (i === 0) {
+                curWeek = endWeek;
                 daysCount = (moment(endDate).date() - moment(endDate).startOf('isoWeek').date() + 1);
             } else {
                 daysCount = 7;
@@ -397,25 +386,52 @@ define([
             result.push({week: curWeek, daysCount: daysCount});
         }
 
+        year = parseInt(year);
+        month = parseInt(month);
+
+        isoWeeksInYear = 0;
+        startDate = moment([year, month - 1]);
+        endDate = moment(startDate).endOf('month');
+
+        startWeek = startDate.isoWeeks();
+        endWeek = endDate.isoWeeks();
+
+        diff = endWeek - startWeek;
+
+        if (diff < 0) {
+            direction = 1;
+            isoWeeksInYear = moment().year(year - 1).isoWeeksInYear();
+            diff += startWeek;
+            endWeek = startWeek;
+
+            for (var i = 0; i <= diff; i++) {
+                iterator(i, diff);
+            }
+        } else {
+            for (var i = diff; i >= 0; i--) {
+                iterator(i, diff);
+            }
+        }
+
         return result;
     };
 
     App.storage = new Store();
 
     return {
-        runApplication: runApplication,
-        changeContentViewType: changeContentViewType,
+        runApplication          : runApplication,
+        changeContentViewType   : changeContentViewType,
         //getCurrentII: getCurrentII,
         //setCurrentII: setCurrentII,
-        getCurrentVT: getCurrentVT,
-        setCurrentVT: setCurrentVT,
-        getCurrentCL: getCurrentCL,
-        setCurrentCL: setCurrentCL,
-        cacheToApp: cacheToApp,
-        retriveFromCash: retriveFromCash,
-        savedFilters: savedFilters,
+        getCurrentVT            : getCurrentVT,
+        setCurrentVT            : setCurrentVT,
+        getCurrentCL            : getCurrentCL,
+        setCurrentCL            : setCurrentCL,
+        cacheToApp              : cacheToApp,
+        retriveFromCash         : retriveFromCash,
+        savedFilters            : savedFilters,
         getFiltersForContentType: getFiltersForContentType,
-        getFilterById: getFilterById,
-        getWeeks: getWeeks
+        getFilterById           : getFilterById,
+        getWeeks                : getWeeks
     };
 });

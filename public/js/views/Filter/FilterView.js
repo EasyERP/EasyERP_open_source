@@ -327,6 +327,7 @@ define([
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
                     groupName = self.$el.find('#' + key).text();
+
                     if (groupName.length > 0) {
                         filterIc.addClass('active');
                         filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
@@ -335,6 +336,7 @@ define([
                             groupName = 'Letter';
                             filterIc.addClass('active');
                             filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                            console.log(key, typeof key, key === 'department', key === 'name');
                         }
                     }
                 });
