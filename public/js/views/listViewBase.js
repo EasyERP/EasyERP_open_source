@@ -246,7 +246,17 @@ define([
             //<editor-fold desc="Pagination">
 
             previousPage: function (event) {
+                var newRows = this.$el.find('#false');
+
                 event.preventDefault();
+
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
+                }
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.prevP({
@@ -264,7 +274,16 @@ define([
             },
 
             nextPage: function (event) {
+                var newRows = this.$el.find('#false');
+
                 event.preventDefault();
+
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
+                }
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -283,7 +302,17 @@ define([
             },
 
             firstPage: function (event) {
+                var newRows = this.$el.find('#false');
+
                 event.preventDefault();
+
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
+                }
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.firstP({
@@ -300,7 +329,17 @@ define([
             },
 
             lastPage: function (event) {
+                var newRows = this.$el.find('#false');
+
                 event.preventDefault();
+
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
+                }
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.lastP({
@@ -317,7 +356,16 @@ define([
             },
 
             switchPageCounter: function (event) {
+                var newRows = this.$el.find('#false');
+
                 event.preventDefault();
+
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
+                }
 
                 var targetEl = $(event.target);
                 var itemsNumber;
@@ -401,7 +449,16 @@ define([
             },
 
             showPage: function (event) {
+                var newRows = this.$el.find('#false');
+
                 event.preventDefault();
+
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
+                }
                 this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
 

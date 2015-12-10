@@ -67,7 +67,7 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc": "autoCalc",
                 "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown",
+                "keydown input.editing ": "keyDown"
                 //"change .listCB": "setAllTotalVals"
                 // "click"                                                           : "removeInputs"
             },
@@ -173,6 +173,7 @@ define([
             hideGenerateCopy: function () {
                 //$('#top-bar-generateBtn').hide();
                 $('#top-bar-copyBtn').hide();
+                $('#top-bar-createBtn').show();
             },
 
             copyRow: function (e) {
@@ -716,6 +717,7 @@ define([
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
                         $("#top-bar-createBtn").hide();
+                        $("#top-bar-saveBtn").hide();
 
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
@@ -727,11 +729,11 @@ define([
                         $('#check_all').prop('checked', false);
                     }
 
-                    if (rawRows.length !== 0 && rawRows.length !== checkLength) {
-                        this.$saveBtn.hide();
-                    } else {
-                        this.$saveBtn.show();
-                    }
+                    //if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                    //    this.$saveBtn.hide();
+                    //} else {
+                    //    this.$saveBtn.show();
+                    //}
                 }
 
                 this.setAllTotalVals();

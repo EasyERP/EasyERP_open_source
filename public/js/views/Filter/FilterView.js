@@ -357,6 +357,8 @@ define([
                 var groupName = target.prev().text();
                 var filterView = target.prev().attr('data-value');
 
+                $('#searchInput').empty();
+
                 var valuesArray;
                 var collectionElement;
 
