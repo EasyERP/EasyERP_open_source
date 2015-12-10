@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose');
 var async = require('async');
 
@@ -6,10 +5,10 @@ var MonthHours = function (event, models) {
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     var access = require("../Modules/additions/access.js")(models);
 
-    this.create = function(req, res, next){
+    this.create = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var body = req.body;
-        var monthHours = new  MonthHoursModel(body);
+        var monthHours = new MonthHoursModel(body);
 
         access.getEditWritAccess(req, req.session.uId, 68, function (access) {
             if (access) {
@@ -21,12 +20,12 @@ var MonthHours = function (event, models) {
 
                     event.emit('dropHoursCashes', req);
                     var params = {
-                        req: req,
-                        year: monthHours.year,
-                        month: monthHours.month,
-                        fixedExpense: monthHours.fixedExpense,
+                        req               : req,
+                        year              : monthHours.year,
+                        month             : monthHours.month,
+                        fixedExpense      : monthHours.fixedExpense,
                         expenseCoefficient: monthHours.expenseCoefficient,
-                        hours: monthHours.hours
+                        hours             : monthHours.hours
                     };
                     event.emit('updateCost', params);
                     res.status(200).send(monthHours);
@@ -49,17 +48,17 @@ var MonthHours = function (event, models) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
                         delete data._id;
-                        monthHoursModel.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, result){
-                            if (err){
+                        monthHoursModel.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
+                            if (err) {
                                 return cb(err);
                             }
                             var params = {
-                                req: req,
-                                year: result.year,
-                                month: result.month,
-                                fixedExpense: result.fixedExpense,
+                                req               : req,
+                                year              : result.year,
+                                month             : result.month,
+                                fixedExpense      : result.fixedExpense,
                                 expenseCoefficient: result.expenseCoefficient,
-                                hours: result.hours
+                                hours             : result.hours
                             };
                             event.emit('updateCost', params);
                             cb(null, result);
@@ -83,7 +82,7 @@ var MonthHours = function (event, models) {
     };
 
     this.getList = function (req, res, next) {
-        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema );
+        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var sort = {};
         var count = req.query.count ? req.query.count : 100;
         var page = req.query.page;
@@ -92,7 +91,9 @@ var MonthHours = function (event, models) {
 
         if (query.sort) {
             sort = query.sort;
-        } else sort = {};
+        } else {
+            sort = {};
+        }
 
         access.getReadAccess(req, req.session.uId, 68, function (access) {
             if (access) {
@@ -115,53 +116,52 @@ var MonthHours = function (event, models) {
     };
 
     this.getData = function (req, res, next) {
-        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema );
+        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var queryObj = {};
 
         var query = req.query;
 
-
-            if (query.month) {
-                queryObj.month = Number(query.month);
-            }
-            if (query.year) {
-                queryObj.year = Number(query.year);
-            }
+        if (query.month) {
+            queryObj.month = Number(query.month);
+        }
+        if (query.year) {
+            queryObj.year = Number(query.year);
+        }
 
         //access.getReadAccess(req, req.session.uId, 68, function (access) { // commented for PM profile for create wTracks
         //    if (access) {
-                MonthHoursModel
-                    .aggregate(
-                    [{
-                        $match: queryObj
-                    }]
-                )
-                    .exec(function (err, data) {
-                        if (err) {
-                            return next(err);
-                        } else {
-                            res.status(200).send(data);
-                        }
-                    });
+        MonthHoursModel
+            .aggregate(
+            [{
+                $match: queryObj
+            }]
+        )
+            .exec(function (err, data) {
+                if (err) {
+                    return next(err);
+                } else {
+                    res.status(200).send(data);
+                }
+            });
         //    } else {
         //        res.status(403).send();
         //    }
         //});
     };
 
-    this.totalCollectionLength = function(req, res, next) {
+    this.totalCollectionLength = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-        MonthHoursModel.find().count(function(err, count){
-            if (err){
+        MonthHoursModel.find().count(function (err, count) {
+            if (err) {
                 next(err)
             }
-            res.status(200).send( {count: count});
+            res.status(200).send({count: count});
 
         });
     };
 
-    this.remove = function(req, res, id, next) {
-       var MonthHoursModel = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+    this.remove = function (req, res, id, next) {
+        var MonthHoursModel = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
 
         access.getDeleteAccess(req, req.session.uId, 68, function (access) {
             if (access) {
