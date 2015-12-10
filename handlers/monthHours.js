@@ -128,8 +128,8 @@ var MonthHours = function (event, models) {
                 queryObj.year = Number(query.year);
             }
 
-        access.getReadAccess(req, req.session.uId, 68, function (access) {
-            if (access) {
+        //access.getReadAccess(req, req.session.uId, 68, function (access) { // commented for PM profile for create wTracks
+        //    if (access) {
                 MonthHoursModel
                     .aggregate(
                     [{
@@ -143,10 +143,10 @@ var MonthHours = function (event, models) {
                             res.status(200).send(data);
                         }
                     });
-            } else {
-                res.status(403).send();
-            }
-        });
+        //    } else {
+        //        res.status(403).send();
+        //    }
+        //});
     };
 
     this.totalCollectionLength = function(req, res, next) {
