@@ -961,12 +961,14 @@ define([
                 var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
+                var createBtnEl = $('#top-bar-createBtn');
 
                 if (!this.changed) {
                     createBtnEl.hide();
                 }
                 saveBtnEl.show();
                 cancelBtnEl.show();
+                createBtnEl.hide();
 
                 return false;
             },
