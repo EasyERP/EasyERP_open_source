@@ -427,17 +427,8 @@ define([
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(url, {trigger: true});
 
-                            if (self.redirect){
-                                tabs = $(".chart-tabs");
-                                activeTab = tabs.find('.active');
-
-                                activeTab.removeClass('active');
-                                tabs.find('#quotationTab').addClass("active");
-
-                                dialogHolder = $(".dialog-tabs-items");
-                                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                                dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
-                            }
+                            App.projectInfo = App.projectInfo || {};
+                            App.projectInfo.currentTab = 'quotation'
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
