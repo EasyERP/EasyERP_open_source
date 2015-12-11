@@ -528,6 +528,8 @@ define([
             },
 
             clickSearchResult: function (e) {
+                var intVal;
+                var value;
                 var $currentElement = e.target ? $(e.target).closest("li") : e;
 
                 var container = $currentElement.closest('.ui-autocomplete');
@@ -546,10 +548,17 @@ define([
 
                 if (checkOnGroup) {
                     $.each(elements, function (index, element) {
-                        App.filter[filterObjectName]['value'].push($(element).attr('data-content'));
+                        value = $(element).attr('data-content');
+                        intVal = parseInt(value);
+                        value = (isNaN(intVal) || value.length === 24) ? value : intVal;
+
+                        App.filter[filterObjectName]['value'].push(value);
                     });
                 } else {
-                    App.filter[filterObjectName]['value'].push($currentElement.attr('data-content'));
+                    value = $currentElement.attr('data-content');
+                    intVal = parseInt(value);
+                    value = (isNaN(intVal) || value.length === 24) ? value : intVal;
+                    App.filter[filterObjectName]['value'].push(value);
                 }
 
                 this.setDbOnce();
@@ -636,7 +645,7 @@ define([
 
                 searchInput.catcomplete({
                     source  : this.searchRessult,
-                    appendTo: searchInput.closest('#searchGlobalContainer'),
+                    appendTo: searchInput.closest('#searchGlobalContainer')
                     /*focus : function (event, ui) {
                      $(this).closest("#mainSearch").text(ui.item.label);
                      return false;
