@@ -71,18 +71,13 @@ var Quotation = function (models, event) {
                     var id = _quotation._id;
                     var name = _quotation.name;
                     var products = _quotation.products;
-                    var setObj = {
-                        _id : id,
-                        name: name,
-                        amount: _quotation.paymentInfo.total
-                    };
 
                     async.each(products, function (product, cb) {
                         var jobs = product.jobs;
 
                         JobsModel.findByIdAndUpdate(jobs, {
                             $set: {
-                                quotation: setObj,
+                                quotation: id,
                                 type     : "Quoted"
                             }
                         }, {new: true}, function (err, result) {
@@ -593,7 +588,7 @@ var Quotation = function (models, event) {
 
                 JobsModel.findByIdAndUpdate(product.jobs, {
                     type     : type,
-                    quotation: {_id: null, name: "", amount: 0}
+                    quotation: null
                 }, {new: true}, function (err, result) {
                     if (err) {
                         return next(err);

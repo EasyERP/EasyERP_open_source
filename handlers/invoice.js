@@ -253,12 +253,6 @@ var Invoice = function (models, event) {
             var invoiceId = result._id;
             var name = result.name;
             var products = result.products;
-            var setObj = {
-                _id: invoiceId,
-                name: name,
-                amount: result.paymentInfo.total
-            };
-
 
             Order.findByIdAndUpdate(id, {
                 $set: {
@@ -279,7 +273,7 @@ var Invoice = function (models, event) {
 
                 JobsModel.findByIdAndUpdate(jobs, {
                     $set: {
-                        invoice: setObj,
+                        invoice: invoiceId,
                         type: "Invoiced"
                     }
                 }, {new: true}, function (err, job) {
@@ -312,7 +306,6 @@ var Invoice = function (models, event) {
         var updateName = false;
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
-        var options;
         var optionsForPayments;
 
         if (checkDb(db)) {
@@ -347,15 +340,6 @@ var Invoice = function (models, event) {
                         }
 
                         if (updateName) {
-                            options = {
-                                id: invoice._id,
-                                targetModel: JobsModel,
-                                searchField: "invoice._id",
-                                fieldName: "invoice.name",
-                                fieldValue: invoice.name,
-                                projectId: invoice.project._id
-                            };
-
                             optionsForPayments = {
                                 id: invoice._id,
                                 targetModel: PaymentModel,
@@ -363,7 +347,6 @@ var Invoice = function (models, event) {
                                 fieldName: "invoice.name",
                                 fieldValue: invoice.name
                             };
-                            event.emit("updateNames", options);
                             event.emit("updateNames", optionsForPayments);
                         }
 
@@ -806,7 +789,7 @@ var Invoice = function (models, event) {
 
                                 JobsModel.findByIdAndUpdate(id, {
                                     type: "Ordered",
-                                    invoice: {_id: null, name: "", amount: 0}
+                                    invoice: null
                                 }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
