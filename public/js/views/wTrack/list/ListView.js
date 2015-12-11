@@ -18,10 +18,11 @@ define([
         'async',
         'custom',
         'moment',
-        'constants'
+        'constants',
+        'helpers/keyCodeHelper'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS) {
+    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS,  keyCodes) {
         var wTrackListView = listViewBase.extend({
             createView: createView,
             listTemplate: listTemplate,
@@ -114,10 +115,15 @@ define([
             },
 
             keyDown: function (e) {
-                if (e.which === 13) {
+                var code = e.keyCode;
+
+                if (keyCodes.isEnter(code)) {
+
                     this.autoCalc(e);
                     this.calculateCost(e, this.wTrackId);
-                    this.setChangedValueToModel();
+                    this.setChangedValueToModel()
+                } else if ( !keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code) ){
+                    e.preventDefault();
                 }
             },
 
@@ -391,18 +397,19 @@ define([
                 var isYear = el.attr("data-content") === 'year';
                 var isMonth = el.attr("data-content") === 'month';
                 var isDay = el.hasClass("autoCalc");
+                var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+                var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
+                var maxValue = 100;
                 var tempContainer;
                 var width;
                 var value;
                 var insertedInput;
                 var weeks;
-                var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
-                var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                 var template;
                 var currentYear;
                 var previousYear;
                 var nextYear;
-                var maxValue;
+
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -460,13 +467,15 @@ define([
                         if (isDay) {
                             maxValue = 24;
                         }
-                        insertedInput.keyup( function(e) {
-                            if( insertedInput.val() > maxValue ) {
-                                e.preventDefault();
-                                insertedInput.val("" + maxValue);
-                            }
-                        });
                     }
+
+                    insertedInput.keyup( function(e) {
+                        if( insertedInput.val() > maxValue  ) {
+                            e.preventDefault();
+                            insertedInput.val("" + maxValue);
+                        }
+                    });
+
                     // end
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
@@ -479,6 +488,10 @@ define([
 
             calculateCost: function (e, wTrackId) {
                 var self = this;
+                var tr = $(e.target).closest('tr');
+                var profit = tr.find('[data-content="profit"]');
+                var revenueVal = tr.find('[data-content="revenue"]').text();
+                var profitVal = tr.find('[data-content="profit"]').text();
                 var expenseCoefficient;
                 var baseSalaryValue;
                 var editWtrackModel;
@@ -490,10 +503,7 @@ define([
                 var hours;
                 var calc;
                 var year;
-                var tr = $(e.target).closest('tr');
-                var profit = tr.find('[data-content="profit"]');
-                var revenueVal = tr.find('[data-content="revenue"]').text();
-                var profitVal = tr.find('[data-content="profit"]').text();
+
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};

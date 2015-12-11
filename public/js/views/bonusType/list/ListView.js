@@ -140,9 +140,15 @@ define([
                 var Ids = tr.data('id');
                 var colType = el.data('type');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var self = this;
+                var isName = false;
                 var prevValue;
                 var width;
-                var self = this;
+
+
+                if (el.attr('data-content') === 'name') {
+                    isName = true;
+                }
 
                 if (Ids && el.prop('tagName') !== 'INPUT') {
                     if (this.Ids) {
@@ -161,15 +167,15 @@ define([
                     prevValue = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + prevValue + '"   style="width:' + width + 'px">');
-                    el.find('.editing').on('keydown', function (e) {
+                    el.find('.editing').keydown( function (e) {
                         var code = e.keyCode;
 
                         if (keyCodes.isEnter(code)) {
                             self.setChangedValueToModel();
-                        } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBackspace(code)) {
+                        } else if ( !isName && !keyCodes.isDigit(code) && !keyCodes.isBspaceAndDelete(code) ){
                             e.preventDefault();
                         }
-                    })
+                    });
                 }
 
                 return false;
