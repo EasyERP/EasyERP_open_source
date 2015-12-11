@@ -41,23 +41,25 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .confirmOrder"                                             : "confirmOrder",
                 "click .cancelQuotation"                                          : "cancelQuotation",
                 "click .setDraft"                                                 : "setDraft"
             },
 
-
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
-
             },
+
             notHide      : function () {
                 return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
+
             chooseOption : function (e) {
                 var target = $(e.target);
                 var id = target.attr("id");
@@ -77,6 +79,7 @@ define([
             nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
