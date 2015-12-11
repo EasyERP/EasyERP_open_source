@@ -417,7 +417,7 @@ define([
         rerenderNumbers: function () {
             var tableTr = $("#listTable").find('tr');
 
-            $.each(tableTr, function(index, tr){
+            tableTr.each(function(index, tr){
                 $(this).find('[data-content="number"]').text(index + 1);
             });
 
