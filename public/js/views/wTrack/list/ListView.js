@@ -388,6 +388,8 @@ define([
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var isWeek = el.attr("data-content") === 'week';
                 var isYear = el.attr("data-content") === 'year';
+                var isMonth = el.attr("data-content") === 'month';
+                var isDay = el.hasClass("autoCalc");
                 var tempContainer;
                 var width;
                 var value;
@@ -399,6 +401,7 @@ define([
                 var currentYear;
                 var previousYear;
                 var nextYear;
+                var maxValue;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -446,6 +449,24 @@ define([
 
                     insertedInput = el.find('input');
                     insertedInput.focus();
+
+                    // validation for month and days of week
+                    if(isMonth || isDay) {
+                        insertedInput.attr("maxLength", "2");
+                        if (isMonth) {
+                            maxValue = 12;
+                        }
+                        if (isDay) {
+                            maxValue = 24;
+                        }
+                        insertedInput.keyup( function(e) {
+                            if( insertedInput.val() > maxValue ) {
+                                e.preventDefault();
+                                insertedInput.val("" + maxValue);
+                            }
+                        });
+                    }
+                    // end
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
@@ -478,11 +499,13 @@ define([
                 }
 
                 costElement = $(e.target).closest('tr').find('[data-content="cost"]');
+                month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+
 
                 if (wTrackId.length < 24) {
                     employeeId = this.changedModels[wTrackId].employee ? this.changedModels[wTrackId].employee._id : $(e.target).attr("data-id");
 
-                    month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
 
@@ -491,7 +514,6 @@ define([
                     this.editCollection.add(editWtrackModel);
 
                     employeeId = editWtrackModel.attributes.employee._id;
-                    month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
                 }
