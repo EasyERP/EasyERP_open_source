@@ -210,14 +210,20 @@ define([
 
             saveItem: function () {
                 var model;
+                // validation for empty fields
+                var filled = true;
 
-                var filled = _.every($(".editable").get(), function (index){
-                   return ($(index).html());
+                 $(".editable").each(function (){
+                     if (!$(this).html()){
+                         return filled = false;
+                     }
                 });
+
 
                 if(!filled){
                     return  App.render({type: 'error', message: 'Fill all fields please'});
                 }
+                // end
 
                 this.setChangedValueToModel();
                 for (var id in this.changedModels) {
