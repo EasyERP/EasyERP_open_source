@@ -448,7 +448,8 @@ define([
             },
 
             deleteItem: function (event) {
-                var mid = 55;
+                var mid = this.forSales ? 62 : 55;
+                var url;
                 event.preventDefault();
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
@@ -459,7 +460,14 @@ define([
                         },
                         success: function () {
                             $('.edit-product-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                           // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                            url = window.location.hash;
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
+
+                            App.projectInfo = App.projectInfo || {};
+                            App.projectInfo.currentTab = 'quotation';
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
