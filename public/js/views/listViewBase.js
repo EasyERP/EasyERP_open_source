@@ -623,6 +623,10 @@ define([
                 $(document).on("click", function (e) {
                     self.hidePagesPopup(e);
                 });
+
+                // This is for counterPages at start
+                this.previouslySelected = $('.itemsNumber').last();
+                this.previouslySelected.addClass('selectedItemsNumber');
             },
 
             renderFilter: function (self, baseFilter) {

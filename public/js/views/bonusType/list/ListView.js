@@ -211,6 +211,14 @@ define([
             saveItem: function () {
                 var model;
 
+                var filled = _.every($(".editable").get(), function (index){
+                   return ($(index).html());
+                });
+
+                if(!filled){
+                    return  App.render({type: 'error', message: 'Fill all fields please'});
+                }
+
                 this.setChangedValueToModel();
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);

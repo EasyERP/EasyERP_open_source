@@ -537,10 +537,15 @@ define([
                 var groupType = $currentElement.attr('data-back');
                 var elements = container.find('.' + filterObjectName);
 
+                var groupName = this.$el.find('#' + filterObjectName).text(); //  added groupname for finding constantsObject filter
+                var filterType = this.constantsObject[groupName].type; // filterType searches in types of constantsObject filters
+
+
                 if (!App.filter[filterObjectName]) {
                     App.filter[filterObjectName] = {
                         key  : groupType,
-                        value: []
+                        value: [],
+                        type : filterType ? filterType : null // added type for filterMapper (bug of no searching in searchfield on wTrack)
                     };
                 }
 
@@ -630,7 +635,8 @@ define([
                             var element = $(this);
 
                             self.clickSearchResult(element);
-                        })
+                        });
+                        searchInput.html(""); // to prevent appearing previous values by pressing Backspace
                     }
                 });
 
