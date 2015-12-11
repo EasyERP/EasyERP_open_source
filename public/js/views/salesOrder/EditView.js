@@ -244,7 +244,7 @@ define([
             saveItem: function (invoiceCb) {
 
                 var self = this;
-                var mid = 55;
+                var mid = this.forSales ? 62 : 55;
                 var thisEl = this.$el;
                 var selectedProducts = thisEl.find('.productItem');
                 var products = [];

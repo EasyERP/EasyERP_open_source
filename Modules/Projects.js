@@ -627,6 +627,7 @@ var Project = function (models, event) {
                             sort = {"editedBy.date": -1};
                         }
 
+                        //query = models.get(req.session.lastDb, "Project", projectSchema)//.find(obj).sort(sort);
                         query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
 
                         //query.aggregate([{

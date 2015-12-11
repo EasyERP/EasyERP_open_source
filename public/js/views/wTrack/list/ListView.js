@@ -67,7 +67,7 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc": "autoCalc",
                 "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown",
+                "keydown input.editing ": "keyDown"
                 //"change .listCB": "setAllTotalVals"
                 // "click"                                                           : "removeInputs"
             },
@@ -173,6 +173,7 @@ define([
             hideGenerateCopy: function () {
                 //$('#top-bar-generateBtn').hide();
                 $('#top-bar-copyBtn').hide();
+                $('#top-bar-createBtn').show();
             },
 
             copyRow: function (e) {
@@ -388,6 +389,8 @@ define([
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var isWeek = el.attr("data-content") === 'week';
                 var isYear = el.attr("data-content") === 'year';
+                var isMonth = el.attr("data-content") === 'month';
+                var isDay = el.hasClass("autoCalc");
                 var tempContainer;
                 var width;
                 var value;
@@ -399,6 +402,7 @@ define([
                 var currentYear;
                 var previousYear;
                 var nextYear;
+                var maxValue;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -446,6 +450,24 @@ define([
 
                     insertedInput = el.find('input');
                     insertedInput.focus();
+
+                    // validation for month and days of week
+                    if(isMonth || isDay) {
+                        insertedInput.attr("maxLength", "2");
+                        if (isMonth) {
+                            maxValue = 12;
+                        }
+                        if (isDay) {
+                            maxValue = 24;
+                        }
+                        insertedInput.keyup( function(e) {
+                            if( insertedInput.val() > maxValue ) {
+                                e.preventDefault();
+                                insertedInput.val("" + maxValue);
+                            }
+                        });
+                    }
+                    // end
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
@@ -478,11 +500,13 @@ define([
                 }
 
                 costElement = $(e.target).closest('tr').find('[data-content="cost"]');
+                month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+
 
                 if (wTrackId.length < 24) {
                     employeeId = this.changedModels[wTrackId].employee ? this.changedModels[wTrackId].employee._id : $(e.target).attr("data-id");
 
-                    month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
 
@@ -491,7 +515,6 @@ define([
                     this.editCollection.add(editWtrackModel);
 
                     employeeId = editWtrackModel.attributes.employee._id;
-                    month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
                 }
@@ -716,6 +739,7 @@ define([
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
                         $("#top-bar-createBtn").hide();
+                        $("#top-bar-saveBtn").hide();
 
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
@@ -727,11 +751,11 @@ define([
                         $('#check_all').prop('checked', false);
                     }
 
-                    if (rawRows.length !== 0 && rawRows.length !== checkLength) {
-                        this.$saveBtn.hide();
-                    } else {
-                        this.$saveBtn.show();
-                    }
+                    //if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                    //    this.$saveBtn.hide();
+                    //} else {
+                    //    this.$saveBtn.show();
+                    //}
                 }
 
                 this.setAllTotalVals();
@@ -743,7 +767,7 @@ define([
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
-                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                    model = this.editCollection.get(id);// ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
                 }
 
@@ -959,12 +983,14 @@ define([
                 var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
+                var createBtnEl = $('#top-bar-createBtn');
 
                 if (!this.changed) {
                     createBtnEl.hide();
                 }
                 saveBtnEl.show();
                 cancelBtnEl.show();
+                createBtnEl.hide();
 
                 return false;
             },

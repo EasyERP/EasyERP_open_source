@@ -41,23 +41,25 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .confirmOrder"                                             : "confirmOrder",
                 "click .cancelQuotation"                                          : "cancelQuotation",
                 "click .setDraft"                                                 : "setDraft"
             },
 
-
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
-
             },
+
             notHide      : function () {
                 return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
+
             chooseOption : function (e) {
                 var target = $(e.target);
                 var id = target.attr("id");
@@ -77,6 +79,7 @@ define([
             nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
@@ -116,12 +119,15 @@ define([
 
                 var self = this;
                 var wId;
+                var mid;
                 var id = self.currentModel.get('_id');
 
                 if (this.forSales) {
                     wId = 'Sales Order';
+                    mid = 63
                 } else {
                     wId = 'Purchase Order';
+                    mid = 57
                 }
 
                 populate.fetchWorkflow({
@@ -150,7 +156,7 @@ define([
                             //type: "Not Invoiced"
                         }, {
                             headers: {
-                                mid: 57
+                                mid: mid
                             },
                             patch  : true,
                             success: function () {
@@ -283,7 +289,7 @@ define([
             saveItem: function () {
 
                 var self = this;
-                var mid = 55;
+                var mid = this.forSales ? 62 : 55;
                 var thisEl = this.$el;
                 var selectedProducts = thisEl.find('.productItem');
                 var products = [];

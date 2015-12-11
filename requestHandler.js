@@ -1128,13 +1128,13 @@ var requestHandler = function (app, event, mainDb) {
 
     function updateUser(req, res, id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 7, function (access) {
-                if (access) {
+            //access.getEditWritAccess(req, req.session.uId, 7, function (access) { //commented access for saving filters
+            //    if (access) {
                     users.updateUser(req, id, data.user, res);
-                } else {
-                    res.send(403);
-                }
-            });
+            //    } else {
+            //        res.send(403);
+            //    }
+            //});
         } else {
             res.send(401);
         }
