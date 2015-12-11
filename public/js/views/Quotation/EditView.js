@@ -330,6 +330,9 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
+                var tabs;
+                var activeTab;
+                var dialogHolder;
 
                 var currency = {
                     _id : thisEl.find('#currencyDd').attr('data-id'),
@@ -423,6 +426,18 @@ define([
 
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(url, {trigger: true});
+
+                            if (self.redirect){
+                                tabs = $(".chart-tabs");
+                                activeTab = tabs.find('.active');
+
+                                activeTab.removeClass('active');
+                                tabs.find('#quotationTab').addClass("active");
+
+                                dialogHolder = $(".dialog-tabs-items");
+                                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                                dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
+                            }
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);

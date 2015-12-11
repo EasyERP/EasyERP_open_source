@@ -1180,17 +1180,11 @@ define([
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');
-                /*_.bindAll(this, 'getOrders');
-                 _.bindAll(this, 'getWTrack');
-                 _.bindAll(this, 'renderProformRevenue');
-                 _.bindAll(this, 'renderProjectInfo');
-                 _.bindAll(this, 'renderJobs');*/
 
                 paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getInvoiceStats];
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.renderProformRevenue();
-                    //self.getDataForDetails(result);
                 });
 
                 $("#top-bar-deleteBtn").hide();
