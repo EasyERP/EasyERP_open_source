@@ -114,7 +114,7 @@ define([
                             status = '';
                         }
 
-                        if (element._id) {
+                        if (element._id || element._id === 0) {
                             ulElement.append('<li data-value="' + element._id + '"' + status + '>' + element.name + '</li>');
                         }
                     }

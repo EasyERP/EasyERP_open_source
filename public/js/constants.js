@@ -372,7 +372,7 @@ define([], function () {
         "Dashboard"     : {
             "Sales Manager" : {
                 view   : 'projectManager',
-                backend: 'project.projectManager._id'
+                backend: 'project.projectmanager._id'
             },
             "Project" : {
                 view   : 'project',
@@ -385,6 +385,10 @@ define([], function () {
             "Type"  : {
                 view   : 'type',
                 backend: 'type'
+            },
+            "Payment Count"  : {
+                view   : 'paymentsCount',
+                backend: 'payment.count'
             }
         }
     };

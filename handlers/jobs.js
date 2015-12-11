@@ -41,6 +41,10 @@ var Jobs = function (models, event) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                case 'paymentsCount':
+                    filtrElement[key] = {$in: condition.toNumber()};
+                    resArray.push(filtrElement);
+                    break;
             }
 
             return resArray;
