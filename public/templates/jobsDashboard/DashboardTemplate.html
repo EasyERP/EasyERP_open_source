@@ -1,5 +1,5 @@
 <<% collection.forEach(function(job, count){ %>
-<tr data-id="<%=job._id%>" class="<%=job.payment && job.invoice && job.invoice.paymentInfo.total !== job.payment.paid ? 'redBorder' : ''%>">
+<tr data-id="<%=job._id%>" class="<%=getClass(job)%>">
     <td><%=count + 1%></a></td>
     <td><%=job.project && job.project.projectmanager? job.project.projectmanager.name : "---"%></td>
     <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?

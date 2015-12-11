@@ -1,14 +1,7 @@
-/**
- * Created by Roman on 17.08.2015.
- */
-/**
- * Created by Roman on 23.12.2014.
- */
 "use strict";
 var cluster = require('cluster');
 
 if (cluster.isMaster) {
-
     var cpuCount = require('os').cpus().length;
 
     for (var i = 0; i < cpuCount; i += 1) {

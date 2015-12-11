@@ -147,7 +147,7 @@ var Jobs = function (models, event) {
             }, {
                 $project: {
                     name     : 1,
-                    workflow: 1,
+                    workflow: {$arrayElemAt: ["$workflow", 0]},
                     type    : 1,
                     wTracks : 1,
                     project : {$arrayElemAt: ["$project", 0]},

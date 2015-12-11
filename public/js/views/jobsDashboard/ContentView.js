@@ -19,12 +19,12 @@ define([
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
-            viewType: "list",
+            viewType   : "list",
             filterView : FilterView,
             template   : _.template(DashboardHeader),
             el         : '#content-holder',
 
-            initialize : function (options) {
+            initialize: function (options) {
                 this.startTime = options.startTime;
                 this.filter = options.filter;
 
@@ -48,7 +48,7 @@ define([
 
                 context.collection = new JobsCollection({
                     viewType: 'list',
-                    filter: filter
+                    filter  : filter
                 });
             },
 
@@ -117,27 +117,36 @@ define([
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
                 new JobsCollection({
-                    sort: sortObject,
+                    sort    : sortObject,
                     filter: this.filter,
                     viewType: 'list'
                 });
             },
 
+            //
+
+            getClass: function (job) {
+                "use strict";
+                return job.payment && job.invoice && job.invoice.paymentInfo.total !== job.payment.paid && job.workflow.name !== 'In Progress' ? 'redBorder' : '';
+            },
+
             renderJobs: function () {
                 var self = this;
+
                 this.collection = new JobsCollection({
                     viewType: 'list',
-                    filter: this.filter
+                    filter  : this.filter
                 });
 
                 this.collection.bind('reset', renderContent);
 
-                function renderContent(models){
+                function renderContent(models) {
                     var template = _.template(DashboardTemplate);
 
-                        self.$el.find('#jobsContent').html(template({
-                        collection         : models.toJSON(),
-                        currencySplitter   : helpers.currencySplitter
+                    self.$el.find('#jobsContent').html(template({
+                        collection      : models.toJSON(),
+                        currencySplitter: helpers.currencySplitter,
+                        getClass        : self.getClass
                     }));
                 }
             },
