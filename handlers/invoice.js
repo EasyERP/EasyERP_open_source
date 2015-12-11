@@ -274,14 +274,14 @@ var Invoice = function (models, event) {
                 JobsModel.findByIdAndUpdate(jobs, {
                     $set: {
                         invoice: invoiceId,
-                        type: "Invoiced"
+                        type: "Invoiced",
                         workflow: CONSTANTS.JOBSFINISHED
                     }
                 }, {new: true}, function (err, job) {
                     if (err) {
                         return cb(err);
                     }
-                    project = job.project ? job.project._id : null;
+                    project = job.project ? job.project : null;
                     cb();
                 });
 
@@ -790,15 +790,14 @@ var Invoice = function (models, event) {
 
                                 JobsModel.findByIdAndUpdate(id, {
                                     type: "Ordered",
-                                    invoice: null
-                                    invoice: {_id: null, name: "", amount: 0},
+                                    invoice: null,
                                     workflow:  CONSTANTS.JOBSINPROGRESS
                                 }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
 
-                                    project = result ? result.project._id : null;
+                                    project = result ? result.project : null;
                                     array = result ? result.wTracks : [];
 
                                     async.each(array, function (id) {

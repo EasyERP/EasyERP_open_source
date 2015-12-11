@@ -84,7 +84,7 @@ var Quotation = function (models, event) {
                             if (err) {
                                 return cb(err);
                             }
-                            project = result.project ? result.project._id : null;
+                            project = result.project ? result.project : null;
                             cb();
                         });
 
@@ -122,7 +122,7 @@ var Quotation = function (models, event) {
                         if (err) {
                             return cb(err);
                         }
-                        project = result.project ? result.project._id : null;
+                        project = result.project ? result.project : null;
                         cb();
                     });
 
@@ -594,7 +594,7 @@ var Quotation = function (models, event) {
                         return next(err);
                     }
 
-                    project = result ? result.get('project._id') : null;
+                    project = result ? result.get('project') : null;
 
                     cb();
                 });

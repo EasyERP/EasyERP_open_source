@@ -553,7 +553,7 @@ define([
                     var id = $(e.target).parents("td").closest('tr').attr('data-id');
 
                     if (attrId === 'workflow') {
-                        data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
+                        data = {_id: id, workflowId: $(e.target).attr("id")};
                     } else if (attrId === 'type'){
                         data = {_id: id, type: $(e.target).text()};
                     }
@@ -658,7 +658,7 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
                     "project": {
-                        key: "project._id",
+                        key: "project",
                         value: [_id]
                     }
                 };
@@ -685,7 +685,7 @@ define([
                 var jobsCollection = custom.retriveFromCash(key);
 
                 var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
-                    return el.project._id === _id
+                    return el.project === _id
                 });
 
                 if (!jobsCollection || !jobsCollection.length){

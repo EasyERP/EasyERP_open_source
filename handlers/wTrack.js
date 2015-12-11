@@ -20,6 +20,7 @@ var wTrack = function (event, models) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var moment = require('../public/js/libs/moment/moment');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var FilterMapper = require('../helpers/filterMapper');
     var filterMapper = new FilterMapper();
@@ -785,59 +786,41 @@ var wTrack = function (event, models) {
         });
 
         function createJobFunc(waterfallCB) {
-            var projectName;
-            var projectManager;
             var jobForwTrack = {
                 _id : jobId,
                 name: jobName
             };
 
             if (createJob) {
-                Project.findById(objectId(project), {projectName: 1, projectmanager: 1}, function (err, proj) {
+                job = {
+                    name    : jobName,
+                    workflow: CONSTANTS.JOBSINPROGRESS,
+                    type    : "Not Quoted",
+                    wTracks : [],
+                    project : objectId(project)
+                };
+
+                var newJob = new Job(job);
+
+                newJob.save(function (err, job) {
                     if (err) {
-                        return next(err);
+                        return console.log(err);
                     }
+                    var jobName;
 
-                    projectName = proj.projectName;
-                    projectManager = proj.projectmanager;
+                    jobId = job.toJSON()._id;
+                    jobName = job.get('name');
 
-                    job = {
-                        name    : jobName,
-                        workflow: {
-                            _id : objectId("56337c705d49d8d6537832eb"),
-                            name: "In Progress"
-                        },
-                        type    : "Not Quoted",
-                        wTracks : [],
-                        project : {
-                            _id           : objectId(project),
-                            name          : projectName,
-                            projectManager: projectManager
-                        }
+                    jobForwTrack = {
+                        _id : jobId,
+                        name: jobName
                     };
 
-                    var newJob = new Job(job);
+                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function () {
 
-                    newJob.save(function (err, job) {
-                        if (err) {
-                            return console.log(err);
-                        }
-                        var jobName;
-
-                        jobId = job.toJSON()._id;
-                        jobName = job.get('name');
-
-                        jobForwTrack = {
-                            _id : jobId,
-                            name: jobName
-                        };
-
-                        Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function () {
-
-                        });
-
-                        waterfallCB(null, jobForwTrack);
                     });
+
+                    waterfallCB(null, jobForwTrack);
                 });
 
             } else {
@@ -1512,8 +1495,8 @@ var wTrack = function (event, models) {
                                 var year = moment(startDate).year();
                                 var endYear = moment(endDate).year();
 
-                                if (diffYear > 0){
-                                    endYear ++;
+                                if (diffYear > 0) {
+                                    endYear++;
                                 }
 
                                 startDate = moment().year(endYear).isoWeek(1).day(1);
@@ -1654,9 +1637,8 @@ var wTrack = function (event, models) {
                                                     obj.year = year;
                                                     obj.week = moment(newDate).isoWeek();
 
-
-                                                    if ((obj.week === 53) && (obj.month === 1)){
-                                                       // day = moment(newDate).day();
+                                                    if ((obj.week === 53) && (obj.month === 1)) {
+                                                        // day = moment(newDate).day();
                                                         for (var k = 1; k <= 7; k++) {
                                                             if (k >= moment(newDate).day()) {
                                                                 obj.weekValues[k] = parseInt(opt[k]);

@@ -10,6 +10,7 @@ var Jobs = function (models, event) {
     var jobsInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var ProjectSchema = mongoose.Schemas['Project'];
     var PaymentSchema = mongoose.Schemas['Payment'];
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var access = require("../Modules/additions/access.js")(models);
     var objectId = mongoose.Types.ObjectId;
@@ -58,15 +59,11 @@ var Jobs = function (models, event) {
         var jobId;
         var projectId;
 
-        data.workflow = {
-            _id : objectId("56337c705d49d8d6537832eb"),
-            name: "In Progress"
-        };
+        data.workflow = CONSTANTS.JOBSINPROGRESS;
         data.type = "Not Quoted";
         data.wTracks = [];
 
-        data.project._id = objectId(data.project._id);
-        data.project.projectManager._id = objectId(data.project.projectManager._id);
+        data.project = objectId(data.project._id);
 
         newModel = new JobsModel(data);
 
@@ -76,7 +73,7 @@ var Jobs = function (models, event) {
             }
 
             jobId = model._id;
-            projectId = model.project._id;
+            projectId = model.project;
 
             if (projectId) {
                 event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
@@ -111,7 +108,7 @@ var Jobs = function (models, event) {
 
         if (data && data.project) {
             filter['project'] = {};
-            filter['project']['key'] = 'project._id';
+            filter['project']['key'] = 'project';
             filter['project']['value'] = objectId(data.project);
         }
 
@@ -213,7 +210,7 @@ var Jobs = function (models, event) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        query.find({type: "Not Quoted", 'project._id': objectId(pId)}, {
+        query.find({type: "Not Quoted", 'project': objectId(pId)}, {
             name                           : 1,
             _id                            : 1,
             "budget.budgetTotal.revenueSum": 1
@@ -242,7 +239,7 @@ var Jobs = function (models, event) {
             }
 
             jobId = result.get('_id');
-            projectId = result.get('project._id');
+            projectId = result.get('project');
 
             wTrack.find({"jobs._id": jobId}, function (err, result) {
                 if (err) {
@@ -282,7 +279,7 @@ var Jobs = function (models, event) {
 
         if (id) {
             if (data.workflowId) {
-                query = {workflow: {_id: data.workflowId, name: data.workflowName}};
+                query = {workflow: data.workflowId};
             } else if (data.name) {
                 query = {name: data.name};
                 updatewTracks = true;
@@ -326,7 +323,7 @@ var Jobs = function (models, event) {
                         return next(err);
                     }
 
-                    project = result.get('project._id');
+                    project = result.get('project');
 
                     cb();
                 });

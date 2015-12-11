@@ -40,7 +40,7 @@ define([
 
 		var filter = {
 			"project": {
-				key: "project._id",
+				key: "project",
 				value: [projectId]
 			}
 		};

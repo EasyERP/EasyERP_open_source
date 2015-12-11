@@ -993,7 +993,7 @@ var Payment = function (models, event) {
                                                         return next(err);
                                                     }
 
-                                                    project = result ? result.get('project._id') : null;
+                                                    project = result ? result.get('project') : null;
 
                                                     cb();
                                                 });
