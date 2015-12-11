@@ -275,6 +275,7 @@ var Invoice = function (models, event) {
                     $set: {
                         invoice: invoiceId,
                         type: "Invoiced"
+                        workflow: CONSTANTS.JOBSFINISHED
                     }
                 }, {new: true}, function (err, job) {
                     if (err) {
@@ -790,6 +791,8 @@ var Invoice = function (models, event) {
                                 JobsModel.findByIdAndUpdate(id, {
                                     type: "Ordered",
                                     invoice: null
+                                    invoice: {_id: null, name: "", amount: 0},
+                                    workflow:  CONSTANTS.JOBSINPROGRESS
                                 }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
