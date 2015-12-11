@@ -627,75 +627,75 @@ var Project = function (models, event) {
                             sort = {"editedBy.date": -1};
                         }
 
-                        query = models.get(req.session.lastDb, "Project", projectSchema)//.find(obj).sort(sort);
-                        //query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
+                        //query = models.get(req.session.lastDb, "Project", projectSchema)//.find(obj).sort(sort);
+                        query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
 
-                        query.aggregate([{
-                            $match: obj
-                        },{
-                            $skip: skip
-                        },{
-                            $limit: limit
-                        },{
-                            $project: {
-                                notRemovable : {
-                                    $size: "$budget.projectTeam"
-                                },
-                                    createdBy    : 1,
-                                    editedBy     : 1,
-                                    workflow     : 1,
-                                    projectName  : 1,
-                                    health       : 1,
-                                    customer     : 1,
-                                    progress     : 1,
-                                    StartDate    : 1,
-                                    EndDate      : 1,
-                                    TargetEndDate: 1
-                            }
-
-                        }, {
-                                $sort: sort
-                            }], function (error, _res) {
-
-                                function populateCreated(cb){
-                                    Users.populate(_res, {
-                                        path: 'createdBy.user',
-                                        select: 'login'
-                                    }, function(){
-                                        cb();
-                                    });
-                                }
-
-                                function populateEdited(cb){
-                                    Users.populate(_res, {
-                                        path: 'editedBy.user',
-                                        select: 'login'
-                                    }, function(){
-                                        cb();
-                                    });
-                                }
-
-                                async.parallel([populateCreated, populateEdited], function(err, result){
-                                    res['data'] = _res;
-                                    response.send(res);
-                                });
-
-                        });
-
-                        //query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate")
-                        //    .populate('createdBy.user', 'login')
-                        //    .populate('editedBy.user', 'login')
-                        //    .skip((data.page - 1) * data.count)
-                        //    .limit(data.count)
-                        //    .exec(function (error, _res) {
-                        //        if (error) {
-                        //            return console.log(error);
+                        //query.aggregate([{
+                        //    $match: obj
+                        //},{
+                        //    $skip: skip
+                        //},{
+                        //    $limit: limit
+                        //},{
+                        //    $project: {
+                        //        notRemovable : {
+                        //            $size: "$budget.projectTeam"
+                        //        },
+                        //            createdBy    : 1,
+                        //            editedBy     : 1,
+                        //            workflow     : 1,
+                        //            projectName  : 1,
+                        //            health       : 1,
+                        //            customer     : 1,
+                        //            progress     : 1,
+                        //            StartDate    : 1,
+                        //            EndDate      : 1,
+                        //            TargetEndDate: 1
+                        //    }
+                        //
+                        //}, {
+                        //        $sort: sort
+                        //    }], function (error, _res) {
+                        //
+                        //        function populateCreated(cb){
+                        //            Users.populate(_res, {
+                        //                path: 'createdBy.user',
+                        //                select: 'login'
+                        //            }, function(){
+                        //                cb();
+                        //            });
                         //        }
                         //
-                        //        res['data'] = _res;
-                        //        response.send(res);
+                        //        function populateEdited(cb){
+                        //            Users.populate(_res, {
+                        //                path: 'editedBy.user',
+                        //                select: 'login'
+                        //            }, function(){
+                        //                cb();
+                        //            });
+                        //        }
                         //
-                        //    });
+                        //        async.parallel([populateCreated, populateEdited], function(err, result){
+                        //            res['data'] = _res;
+                        //            response.send(res);
+                        //        });
+                        //
+                        //});
+
+                        query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate")
+                            .populate('createdBy.user', 'login')
+                            .populate('editedBy.user', 'login')
+                            .skip((data.page - 1) * data.count)
+                            .limit(data.count)
+                            .exec(function (error, _res) {
+                                if (error) {
+                                    return console.log(error);
+                                }
+
+                                res['data'] = _res;
+                                response.send(res);
+
+                            });
                     }
                 );
             });
