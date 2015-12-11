@@ -71,16 +71,16 @@ define([
             var rate = 3;
             this.projectModel = projectModel;
             var startData = {
-                year: year,
-                month: month,
-                week: week,
-                rate: rate,
-                project: {
-                    _id: projectModel._id,
-                    projectName: projectModel.projectName,
+                year        : year,
+                month       : month,
+                week        : week,
+                rate        : rate,
+                project     : {
+                    _id           : projectModel._id,
+                    projectName   : projectModel.projectName,
                     projectmanager: projectModel.projectmanager,
-                    workflow: projectModel.workflow,
-                    customer: projectModel.customer
+                    workflow      : projectModel.workflow,
+                    customer      : projectModel.customer
                 },
                 projectModel: projectModel
             };
@@ -96,7 +96,7 @@ define([
                 new createView(startData);
             } else {
                 App.render({
-                    type: 'notify',
+                    type   : 'notify',
                     message: 'Please confirm or discard changes before create a new item'
                 });
             }
@@ -104,7 +104,6 @@ define([
             this.createdCopied = true;
             this.changed = true;
         },
-
 
         stopDefaultEvents: function (e) {
             e.stopPropagation();
@@ -415,6 +414,15 @@ define([
             this.setChangedValueToModel();
         },
 
+        rerenderNumbers: function () {
+            var tableTr = $("#listTable").find('tr');
+
+            $.each(tableTr, function(index, tr){
+                $(this).find('[data-content="number"]').text(index + 1);
+            });
+
+        },
+
         deleteItems: function (e) {
             e.preventDefault();
 
@@ -430,7 +438,7 @@ define([
                 var value;
 
                 if (answer === true) {
-                    $.each($("#listTable input:checked"), function (index, checkbox) {
+                    async.each($("#listTable input:checked"), function (checkbox, cb) {
                         value = checkbox.value;
 
                         model = that.collection.get(value);
@@ -445,19 +453,24 @@ define([
                                 table.find('[data-id="' + id + '"]').remove();
 
                                 that.$el.find('#check_all').prop('checked', false);
-                                that.setAllTotalVals();
-                                that.hideSaveCancelBtns();
 
-                                that.copyEl.hide();
-                                that.genInvoiceEl.hide();
-
+                                cb();
                             },
                             error  : function (model, res) {
-                                if (res.status === 403 && index === 0) {
+                                if (res.status === 403) {
                                     alert("You do not have permission to perform this action");
                                 }
+                                cb();
                             }
                         });
+                    }, function(){
+                        that.setAllTotalVals();
+                        that.hideSaveCancelBtns();
+                        that.rerenderNumbers();
+                        that.getTotalLength(null, that.defaultItemsNumber, that.filter);
+
+                        that.copyEl.hide();
+                        that.genInvoiceEl.hide();
                     });
                 }
             } else {
