@@ -658,7 +658,7 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
                     "project": {
-                        key: "project",
+                        key: "project._id",
                         value: [_id]
                     }
                 };
@@ -685,7 +685,7 @@ define([
                 var jobsCollection = custom.retriveFromCash(key);
 
                 var projectTeam = _.filter(this.jobsCollection.toJSON(), function(el){
-                    return el.project === _id
+                    return el.project._id === _id
                 });
 
                 if (!jobsCollection || !jobsCollection.length){
