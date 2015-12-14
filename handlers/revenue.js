@@ -2842,37 +2842,180 @@ var wTrack = function (models) {
     };
 
     this.synthetic = function (req, res, next) {
-        //var Jobs = models.get(req.session.lastDb, 'jobs', jobsSchema);
+        var query = req.query;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
         var matchObject = {
             _type   : 'wTrackInvoice',
             forSales: true
         };
+        var projectionObject = {
+            salesPerson: 1,
+            paymentInfo: 1,
+            payments   : 1,
+            year       : {$year: "$invoiceDate"},
+            month      : {$month: "$invoiceDate"},
+            day        : {$dayOfMonth: "$invoiceDate"},
+            week       : {$week: "$invoiceDate"}
+        };
+        var projectionObjectStage2 = {
+            salesPerson : 1,
+            paymentInfo : 1,
+            payments    : 1,
+            year        : 1,
+            month       : 1,
+            day         : 1,
+            week        : 1,
+            paymentYear : {$year: "$payments.date"},
+            paymentMonth: {$month: "$payments.date"},
+            paymentDay  : {$dayOfMonth: "$payments.date"},
+            paymentWeek : {$week: "$payments.date"}
+        };
+        var groupedKey = query.byWeek ? 'week' : 'month';
+
+        var groupObject = {
+            _id          : {},
+            paymentsTotal: {$sum: '$payments.paidAmount'},
+            invoiceTotal : {$sum: '$paymentInfo.total'}/*,
+             root: {$push: '$$ROOT'}*/
+        };
+
+        var dateByMonthAggr = {
+            $let: {
+                vars: {
+                    total: {$multiply: [{$year: "$invoiceDate"}, 100]}
+                },
+                in  : {$add: ["$$total", {$week: "$invoiceDate"}]}
+            }
+        };
+        var dateByMonthAggrPayment = {
+            $let: {
+                vars: {
+                    total: {$multiply: [{$year: "$payments.date"}, 100]}
+                },
+                in  : {$add: ["$$total", {$week: "$payments.date"}]}
+            }
+        };
+
+        var dateByWeekAggr = {
+            $let: {
+                vars: {
+                    total: {$multiply: [{$year: "$invoiceDate"}, 100]}
+                },
+                in  : {$add: ["$$total", {$week: "$invoiceDate"}]}
+            }
+        };
+        var dateByWeekAggrPayment = {
+            $let: {
+                vars: {
+                    total: {$multiply: [{$year: "$payments.date"}, 100]}
+                },
+                in  : {$add: ["$$total", {$week: "$payments.date"}]}
+            }
+        };
+
+        //groupObject._id[groupedKey] = '$' + groupedKey;
+
+        if (groupedKey === 'week') {
+            groupObject._id = {
+                dateByWeek       : '$dateByWeek',
+                dateByWeekPayment: '$dateByWeekPayment'
+            };
+            projectionObject.dateByWeek = dateByWeekAggr;
+            projectionObjectStage2.dateByWeek = 1;
+            projectionObjectStage2.dateByWeekPayment = dateByWeekAggrPayment;
+        } else {
+            groupObject._id = {
+                dateByMonth       : '$dateByMonth',
+                dateByMonthPayment: '$dateByMonthPayment'
+            };
+            projectionObject.dateByMonth = dateByMonthAggr;
+            projectionObjectStage2.dateByMonth = 1;
+            projectionObjectStage2.dateByMonthPayment = dateByMonthAggrPayment;
+        }
 
         Invoice.aggregate([{
             $match: matchObject
         }, {
-            $project: {
-                salesPerson: 1,
-                paymentInfo: 1,
-                payments   : 1,
-                year       : {$year: "$invoiceDate"},
-                month      : {$month: "$invoiceDate"},
-                day        : {$dayOfMonth: "$invoiceDate"},
-                week       : {$week: "$invoiceDate"}
+            $project: projectionObject
+        }, {
+            $unwind: {
+                path                      : "$payments",
+                preserveNullAndEmptyArrays: true
+            }
+        }, {
+            $match: {
+                payments: {$exists: true}
+            }
+        }, {
+            $lookup: {
+                from        : "Payment",
+                localField  : "_id",
+                foreignField: "invoice._id", as: "payments"
             }
         }, {
             $unwind: {
                 path                      : "$payments",
                 preserveNullAndEmptyArrays: true
             }
+        }, {
+            $project: projectionObjectStage2
+        }, {
+            $group: groupObject
+        }, {
+            $group: {
+                _id     : '$_id.dateByWeek',
+                root    : {$push: '$$ROOT'},
+                invoiced: {$sum: '$invoiceTotal'}
+            }
+        }, {
+            $unwind: '$root'
+        }, {
+            $project: {
+                dateByWeekPayment: '$root._id.dateByWeekPayment',
+                dateByWeek       : '$root._id.dateByWeek',
+                paymentsTotal    : '$root.paymentsTotal',
+                invoiceTotal     : '$root.invoiceTotal',
+                invoiced         : 1
+            }
+        }, {
+            $group: {
+                _id         : '$dateByWeekPayment',
+                paidPayments: {$sum: '$paymentsTotal'},
+                root        : {$push: '$$ROOT'}
+            }
+        }, {
+            $unwind: '$root'
+        }, {
+            $group: {
+                _id     : {
+                    paymentDate: '$_id',
+                    invoiceDate: '$root._id'
+                },
+                invoiced: {$addToSet: '$root.invoiced'},
+                paid    : {$addToSet: '$paidPayments'}
+            }
+        }, {
+            $project: {
+                equalDate: {
+                    $cond: { if: {$eq: ['$_id.paymentDate', '$_id.invoiceDate']}, then: 1, else: 0 }
+                },
+                date: '$_id.invoiceDate',
+                invoiced : {$arrayElemAt: ["$invoiced", 0]},
+                paid : {$arrayElemAt: ["$paid", 0]}
+            }
+        }, {
+            $match: {
+                equalDate: 1
+            }
+        }, {
+            $sort: {
+                date: 1
+            }
         }], function (err, result) {
-            var count;
-
             if (err) {
                 return next(err);
             }
-            count = result.length;
+
             res.status(200).send(result);
         });
 
