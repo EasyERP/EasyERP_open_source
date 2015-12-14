@@ -1471,17 +1471,6 @@ var wTrack = function (event, models) {
 
                                     fCb(null, resultArray);
                                 });
-                            } else if ((diff > 0) && (diffYear === 2)) {
-                                diff = moment(startYear).isoWeeksInYear() - startWeek;
-                                parallelTasks = [firstPart, secondYear, thirdYear];
-
-                                async.parallel(parallelTasks, function (err, result) {
-                                    resultArray = result[0].concat(result[1]);
-
-                                    resultArray.concat(result[2]);
-
-                                    fCb(null, resultArray);
-                                });
                             }
 
                             function firstPart(parallelCb) {
@@ -1508,16 +1497,6 @@ var wTrack = function (event, models) {
 
                             function thirdPart(parallelCb) {
                                 setObj(parallelCb, diff, endWeek, startDate, startYear, true)
-                            }
-
-                            function secondYear(parallelCb) {
-                                diff = moment(startYear + 1).isoWeeksInYear();
-                                setObj(parallelCb, diff, endWeek, endDate, startYear + 1)
-                            }
-
-                            function thirdYear(parallelCb) {
-                                diff = endWeek;
-                                setObj(parallelCb, diff, endWeek, endDate, startYear + 2)
                             }
 
                             function setObj(parallelCb, diff, endWeek, date, year, checkFirstWeek) {
@@ -1638,7 +1617,7 @@ var wTrack = function (event, models) {
                                                 } else {
 
                                                     obj.month = moment(newDate).month() + 1;
-                                                    obj.year = year;
+                                                    obj.year = moment(newDate).year();
                                                     obj.week = moment(newDate).isoWeek();
 
                                                     if ((obj.week === 53) && (obj.month === 1)) {
