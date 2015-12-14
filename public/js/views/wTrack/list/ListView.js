@@ -800,6 +800,7 @@ define([
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
+                    savedRow.removeClass('false');
                 }
 
                 this.hideSaveCancelBtns();
@@ -986,7 +987,6 @@ define([
             },
 
             showSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var createBtnEl = $('#top-bar-createBtn');
