@@ -5,7 +5,7 @@
     <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
         job.project.projectName : "---"%></a></td>
     <td><%=job.name%></td>
-    <td><%=job.workflow.name%></td>
+    <td><%=job.workflow ? job.workflow.name : ''%></td>
     <td><%=job.type%></td>
     <td><%= currencySplitter(job.budget.budgetTotal ? job.budget.budgetTotal.costSum.toFixed(2) : "0")%></td>
     <td><%=currencySplitter(job.quotation && job.order === 0 ? job.quotation.paymentInfo.total.toFixed(2) : "")%></td>

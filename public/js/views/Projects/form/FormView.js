@@ -1143,6 +1143,9 @@ define([
                     } else if (tabId === 'orders'){
                         tabs.find('#ordersTab').addClass("active");
                         dialogHolder.find('#orders').closest('.dialog-tabs-item').addClass("active");
+                    } else if (tabId === 'invoice'){
+                        tabs.find('#invoiceTab').addClass("active");
+                        dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
                     }
                 }
             },
