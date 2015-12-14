@@ -165,7 +165,7 @@ define([
                 }
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
                 var self = this;
 
                 var el = $(e.target);
