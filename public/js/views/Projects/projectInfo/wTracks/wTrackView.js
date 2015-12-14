@@ -150,9 +150,13 @@ define([
             var sortBy;
             var sortObject;
 
-            var newRows = this.$el.find('.false');
+            var newRows = this.$el.find('#false').length;
 
-            if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
+            if (this.isNewRow){
+                newRows = this.isNewRow();
+            }
+
+            if ((this.changedModels && Object.keys(this.changedModels).length) || newRows) {
                 return App.render({
                     type   : 'notify',
                     message: 'Please, save previous changes or cancel them!'
@@ -404,6 +408,7 @@ define([
                 savedRow.attr("data-id", modelId);
                 checkbox.val(modelId);
                 savedRow.removeAttr('id');
+                savedRow.removeClass('false');
             }
 
             this.hideSaveCancelBtns();

@@ -1603,6 +1603,10 @@ var wTrack = function (event, models) {
                                                 var i = 1;
                                                 var hoursInWeek = 0;
 
+                                                obj.month = moment(newDate).month() + 1;
+                                                obj.year = year;
+                                                obj.week = moment(newDate).isoWeek();
+
                                                 if (opt.hours) {
                                                     while (opt.hours - total >= hoursInWeek) {
                                                         if (i <= 5) {
@@ -1657,6 +1661,7 @@ var wTrack = function (event, models) {
                                                     }
 
                                                 }
+                                                result.push(obj);
                                             }
 
                                             //if (weekValidate && !(diffYear > 0)) {
@@ -1664,7 +1669,7 @@ var wTrack = function (event, models) {
                                             //} else {
                                             //    obj.month = moment(newDate).month() + 1;
                                             //}
-                                            result.push(obj);
+
                                         }
 
                                     } else if (y === diff) {
