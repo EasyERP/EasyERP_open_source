@@ -721,7 +721,7 @@ define([
 
                 container.html(template({
                         jobs: projectTeam,
-                        bonus: formModel.budget.bonus,
+                        bonus: formModel.budget.bonus ? formModel.budget.bonus : [],
                         projectValues: self.projectValues,
                         currencySplitter: helpers.currencySplitter,
                         contentType: self.contentType
@@ -1195,17 +1195,17 @@ define([
                     }).render().el
                 );
 
-                bonus = this.$el.find('#bonus-container');
-                bonusView = new BonusView({
-                    model: this.formModel
-                });
-                bonus.html(
-                    bonusView.render().el
-                );
-
-                bonusView.bind('save', function () {
-                    self.saveItem();
-                });
+                //bonus = this.$el.find('#bonus-container');
+                //bonusView = new BonusView({
+                //    model: this.formModel
+                //});
+                //bonus.html(
+                //    bonusView.render().el
+                //);
+                //
+                //bonusView.bind('save', function () {
+                //    self.saveItem();
+                //});
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');
