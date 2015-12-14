@@ -15,7 +15,7 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
         var inProgress = data && data.inProgress ? true : false;
-        var filter = inProgress ? {"workflow._id" : CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
+        var filter = inProgress ? {"workflow" : CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
 
         Project
             .find(filter)
@@ -321,7 +321,9 @@ var Project = function (models) {
 
         var query = Project.find({}).sort(sort).lean();
 
-        query.populate('budget.projectTeam');
+        query
+            .populate('budget.projectTeam')
+            .populate('projectmanager');
 
         query.exec(function (err, result) {
             if (err) {

@@ -1,7 +1,7 @@
 <% collection.forEach(function(project, index){ %>
 <tr>
     <td><%=startNumber + index + 1 %></td>
-    <td><a href='#easyErp/Employees/form/<%=project.projectmanager._id%>'><%=project.projectmanager.name%></a></td>
+    <td><a href='#easyErp/Employees/form/<%=project.projectmanager._id%>'><%=project.projectmanager.name.first + ' ' + project.projectmanager.name.last%></a></td>
     <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
     <td><%=(project.total && project.total.revenueSum) ? currencySplitter(project.total.revenueSum.toFixed()) : '&nbsp'%></td>
     <td><%=(project.total && project.total.costSum) ? currencySplitter(project.total.costSum.toFixed()) : '&nbsp'%></td>
