@@ -552,7 +552,7 @@ var Project = function (models, event) {
         var skip = (parseInt(data.page) - 1) * parseInt(data.count);
         var limit = parseInt(data.count);
         var sort;
-        var obj;
+        var obj = {};
         var query;
         var arrOfObjectId;
         var resultIds = [];

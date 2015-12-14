@@ -783,7 +783,7 @@ define([
             },
 
             savedNewModel: function (modelObject) {
-                var savedRow = this.$listTable.find('#false');
+                var savedRow = this.$listTable.find('.false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -940,7 +940,7 @@ define([
             },
 
             isNewRow: function () {
-                var newRow = $('#false');
+                var newRow = $('.false');
 
                 return !!newRow.length;
             },
@@ -1247,11 +1247,13 @@ define([
                 });
 
                 if (this.createdCopied) {
-                    copiedCreated = this.$el.find('#false');
-                    dataId = copiedCreated.attr('data-id');
-                    this.editCollection.remove(dataId);
-                    delete this.changedModels[dataId];
-                    copiedCreated.remove();
+                    copiedCreated = this.$el.find('.false');
+                    copiedCreated.each(function(){
+                        dataId = $(this).attr('data-id');
+                        self.editCollection.remove(dataId);
+                        delete self.changedModels[dataId];
+                        $(this).remove();
+                    });
 
                     this.createdCopied = false;
                 }
