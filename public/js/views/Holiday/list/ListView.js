@@ -16,16 +16,16 @@ define([
 
     function (listViewBase, listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var HolidayListView = listViewBase.extend({
-            page:null,
-            sort: null,
+            page                    : null,
+            sort                    : null,
             createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
-            contentType: CONSTANTS.HOLIDAY,//needs in view.prototype.changeLocationHash
-            changedModels: {},
+            contentType             : CONSTANTS.HOLIDAY,//needs in view.prototype.changeLocationHash
+            changedModels           : {},
             totalCollectionLengthUrl: '/holiday/totalCollectionLength',
-            holidayId: null,
-            editCollection: null,
+            holidayId               : null,
+            editCollection          : null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -44,14 +44,14 @@ define([
 
             events: {
 
-                "click .checkbox": "checked",
-                "click td.editable": "editRow",
-                "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable",
+                "click .checkbox"      : "checked",
+                "click td.editable"    : "editRow",
+                "click .oe_sortable"   : "goSort",
+                "change .editable "    : "setEditable",
                 "keydown input.editing": "setChanges"
             },
 
-            setChanges: function(e){
+            setChanges: function (e) {
                 if (e.which === 13) {
                     this.setChangedValueToModel();
                 }
@@ -84,7 +84,7 @@ define([
                     model = new holidayModel(model);
                     this.collection.add(model);
                 } else {
-                    this.collection.set(this.editCollection.models, { remove: false });
+                    this.collection.set(this.editCollection.models, {remove: false});
                 }
             },
 
@@ -130,7 +130,7 @@ define([
                 this.editCollection.save();
             },
 
-            setChangedValueToModel: function(){
+            setChangedValueToModel: function () {
                 var editedElement = this.$listTable.find('.editing');
                 var editedCol;
                 var editedElementRowId;
@@ -138,7 +138,7 @@ define([
                 var editedElementValue;
                 var editHolidayModel;
 
-                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(editedElement);
                 }
 
@@ -151,7 +151,7 @@ define([
                     editHolidayModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
-                        if(!editHolidayModel.id){
+                        if (!editHolidayModel.id) {
                             this.changedModels[editedElementRowId] = editHolidayModel.attributes;
                         } else {
                             this.changedModels[editedElementRowId] = {};
@@ -183,15 +183,14 @@ define([
                     this.holidayId = holidayId;
                 }
 
-
                 if (isDTPicker) {
                     tempContainer = (el.text()).trim();
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255">');
-                    $('.editing').datepicker({
-                        dateFormat: "d M, yy",
+                    this.$el.find('.editing').datepicker({
+                        dateFormat : "d M, yy",
                         changeMonth: true,
-                        changeYear: true
-                    }).addClass('datepicker');
+                        changeYear : true
+                    });
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -249,7 +248,6 @@ define([
                 return false;
             },
 
-
             render: function () {
                 $('.ui-dialog ').remove();
                 var self = this;
@@ -258,8 +256,8 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
                 $currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
+                    collection : this.collection,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -275,7 +273,6 @@ define([
 
                 this.renderPagination($currentEl, this);
 
-
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
@@ -286,8 +283,8 @@ define([
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
-                    collection: this.collection,
-                    page: $currentEl.find("#currentShowPage").val(),
+                    collection : this.collection,
+                    page       : $currentEl.find("#currentShowPage").val(),
                     itemsNumber: $currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
@@ -306,7 +303,7 @@ define([
                     date: now
                 };
 
-                var model = new holidayModel(startData, { parse: true });
+                var model = new holidayModel(startData, {parse: true});
 
                 startData._id = model.cid;
 
@@ -329,14 +326,14 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
                 this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
 
@@ -345,8 +342,8 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -384,7 +381,8 @@ define([
                     if (answer === true) {
                         $.each($("#listTable input:checked"), function (index, checkbox) {
                             value = checkbox.value;
-                            that.changedModels = {};;
+                            that.changedModels = {};
+                            ;
 
                             if (value.length < 24) {
                                 that.editCollection.remove(value);
@@ -404,7 +402,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait: true,
+                                    wait   : true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -413,7 +411,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error: function (model, res) {
+                                    error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }

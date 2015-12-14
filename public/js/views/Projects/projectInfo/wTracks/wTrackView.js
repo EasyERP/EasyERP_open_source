@@ -555,6 +555,7 @@ define([
 
         saveItem: function (e) {
             e.preventDefault();
+            e.stopPropagation();
 
             var model;
 
