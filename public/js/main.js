@@ -20,7 +20,7 @@ require.config({
         jqueryui     : './libs/jquery-ui.min',
         spinJs       : './libs/spin.min',
         Underscore   : './libs/underscore-min',
-        Backbone     : './libs/backbone-min',
+        Backbone     : './libs/backbone/backbone-min',
         less         : './libs/less.min',
         templates    : '../templates',
         text         : './libs/text',
