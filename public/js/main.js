@@ -14,7 +14,7 @@ var App = App ||
 require.config({
     paths: {
         async        : './libs/async/lib/async',
-        jQuery       : './libs/jquery/dist/jquery.min',
+        jQuery       : './libs/jquery-2.1.0.min.map',
         ajaxForm     : './libs/jquery.form',
         imageCrop    : './libs/jquery.Jcrop.min',
         jqueryui     : './libs/jquery-ui.min',
