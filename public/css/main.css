@@ -1789,7 +1789,7 @@ input::-ms-clear {
   margin-left: -3px;
   text-indent: -99999px;
   overflow: hidden;
-  background: url("http://localhost:8088/images/datepicker-sprite.png") no-repeat;
+  background: url("../images/datepicker-sprite.png") no-repeat;
   display: block;
   position: absolute;
   left: 50%;
@@ -5868,7 +5868,7 @@ ul.dialog-tabs li.right button {
   margin-left: -3px;
   text-indent: -99999px;
   overflow: hidden;
-  background: url("http://localhost:8088/images/datepicker-sprite.png") no-repeat;
+  background: url("../images/datepicker-sprite.png") no-repeat;
   display: block;
   position: absolute;
   left: 50%;

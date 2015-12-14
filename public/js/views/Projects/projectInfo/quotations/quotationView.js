@@ -189,7 +189,8 @@ define([
                         redirect  : true,
                         pId       : self.projectID,
                         customerId: self.customerId,
-                        collection: self.collection
+                        collection: self.collection,
+                        hidePrAndCust: true
                     });
 
 
