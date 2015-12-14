@@ -1121,6 +1121,29 @@ define([
 
             },
 
+            activeTab: function (){
+                var tabs;
+                var activeTab;
+                var dialogHolder;
+                var tabId;
+
+                if (App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview'){
+                    tabId = App.projectInfo.currentTab;
+                    tabs = $(".chart-tabs");
+                    activeTab = tabs.find('.active');
+
+                    activeTab.removeClass('active');
+                    tabs.find('#' + tabId).addClass("active");
+
+                    dialogHolder = $(".dialog-tabs-items");
+                    dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+
+                    if (tabId === 'quotation'){
+                        dialogHolder.find('#quotations').closest('.dialog-tabs-item').addClass("active");
+                    }
+                }
+            },
+
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
@@ -1147,7 +1170,7 @@ define([
                 }));
 
                 App.projectInfo = App.projectInfo || {};
-                App.projectInfo.currentTab = 'overview';
+                App.projectInfo.currentTab = App.projectInfo.currentTab ? App.projectInfo.currentTab : 'overview';
 
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
@@ -1180,17 +1203,12 @@ define([
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');
-                /*_.bindAll(this, 'getOrders');
-                 _.bindAll(this, 'getWTrack');
-                 _.bindAll(this, 'renderProformRevenue');
-                 _.bindAll(this, 'renderProjectInfo');
-                 _.bindAll(this, 'renderJobs');*/
 
                 paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getInvoiceStats];
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.renderProformRevenue();
-                    //self.getDataForDetails(result);
+                    self.activeTab();
                 });
 
                 $("#top-bar-deleteBtn").hide();
