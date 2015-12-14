@@ -150,7 +150,7 @@ define([
             var sortBy;
             var sortObject;
 
-            var newRows = this.$el.find('#false');
+            var newRows = this.$el.find('.false');
 
             if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
                 return App.render({
@@ -393,7 +393,7 @@ define([
         },
 
         savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find('#false');
+            var savedRow = this.$listTable.find('.false');
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -519,11 +519,13 @@ define([
             });
 
             if (this.createdCopied) {
-                copiedCreated = this.$el.find('#false');
-                dataId = copiedCreated.attr('data-id');
-                this.editCollection.remove(dataId);
-                delete this.changedModels[dataId];
-                copiedCreated.remove();
+                copiedCreated = this.$el.find('.false');
+                copiedCreated.each(function() {
+                    dataId = $(this).attr('data-id');
+                    self.editCollection.remove(dataId);
+                    delete self.changedModels[dataId];
+                    $(this).remove();
+                });
 
                 this.createdCopied = false;
             }
@@ -578,7 +580,7 @@ define([
                 var $checkLength = el.find("input.checkbox:checked");
 
                 checkLength = $checkLength.length;
-                rawRows = $checkLength.closest('#false');
+                rawRows = $checkLength.closest('.false');
 
                 if (el.find("input.checkbox:checked").length > 0) {
                     this.$createBtn.hide();
@@ -706,8 +708,8 @@ define([
                     this.changedModels[cid] = model;
                 }
 
-                this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
-                row = this.$el.find('#false');
+                this.$el.find('#listTable').prepend('<tr class="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                row = this.$el.find('.false');
 
                 tdsArr = row.find('td');
                 $(tdsArr[0]).find('input').val(cid);
