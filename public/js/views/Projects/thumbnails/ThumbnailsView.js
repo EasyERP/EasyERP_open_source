@@ -268,6 +268,9 @@
                 var id = $(e.target).closest('.thumbnail').attr("id");
                 window.location.hash = "#easyErp/Projects/form/" + id;
 
+                App.projectInfo = App.projectInfo || {};
+                App.projectInfo.currentTab = 'overview';
+
                 //var clas = $(e.target).parent().attr("class");
                 //if ((clas === "dropDown") || (clas === "inner")) {
                 //} else {
