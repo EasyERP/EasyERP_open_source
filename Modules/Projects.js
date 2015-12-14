@@ -555,6 +555,8 @@ var Project = function (models, event) {
         var obj;
         var query;
         var arrOfObjectId;
+        var resultIds = [];
+        var keys;
 
         res['data'] = [];
 
@@ -615,87 +617,93 @@ var Project = function (models, event) {
                             return console.log(err);
                         }
 
-                        obj = {$and: [{_id: {$in: result}}]};
+                        result.forEach(function(el){
+                            resultIds.push(el._id);
+                        });
+
+                        obj = {'$and': [{_id: {$in: resultIds}}]};
 
                         if (data && data.filter) {
                             obj['$and'].push({$and: caseFilter(data.filter)});
                         }
 
                         if (data.sort) {
+                            keys = Object.keys(data.sort)[0];
+                            data.sort[keys] = parseInt(data.sort[keys]);
                             sort = data.sort;
                         } else {
                             sort = {"editedBy.date": -1};
                         }
 
-                        //query = models.get(req.session.lastDb, "Project", projectSchema)//.find(obj).sort(sort);
-                        query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
+                        query = models.get(req.session.lastDb, "Project", projectSchema);//.find(obj).sort(sort);
+                        //query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
 
-                        //query.aggregate([{
-                        //    $match: obj
-                        //},{
-                        //    $skip: skip
-                        //},{
-                        //    $limit: limit
-                        //},{
-                        //    $project: {
-                        //        notRemovable : {
-                        //            $size: "$budget.projectTeam"
-                        //        },
-                        //            createdBy    : 1,
-                        //            editedBy     : 1,
-                        //            workflow     : 1,
-                        //            projectName  : 1,
-                        //            health       : 1,
-                        //            customer     : 1,
-                        //            progress     : 1,
-                        //            StartDate    : 1,
-                        //            EndDate      : 1,
-                        //            TargetEndDate: 1
-                        //    }
-                        //
-                        //}, {
-                        //        $sort: sort
-                        //    }], function (error, _res) {
-                        //
-                        //        function populateCreated(cb){
-                        //            Users.populate(_res, {
-                        //                path: 'createdBy.user',
-                        //                select: 'login'
-                        //            }, function(){
-                        //                cb();
-                        //            });
-                        //        }
-                        //
-                        //        function populateEdited(cb){
-                        //            Users.populate(_res, {
-                        //                path: 'editedBy.user',
-                        //                select: 'login'
-                        //            }, function(){
-                        //                cb();
-                        //            });
-                        //        }
-                        //
-                        //        async.parallel([populateCreated, populateEdited], function(err, result){
-                        //            res['data'] = _res;
-                        //            response.send(res);
-                        //        });
-                        //
-                        //});
+                        query.aggregate([{
+                            $match: obj
+                        },{
+                            $skip: skip
+                        },{
+                            $limit: limit
+                        },{
+                            $project: {
+                                notRemovable : {
+                                    $size: "$budget.projectTeam"
+                                },
+                                    createdBy    : 1,
+                                    editedBy     : 1,
+                                    workflow     : 1,
+                                    projectName  : 1,
+                                    health       : 1,
+                                    customer     : 1,
+                                    progress     : 1,
+                                    StartDate    : 1,
+                                    EndDate      : 1,
+                                    TargetEndDate: 1
+                            }
 
-                        query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate")
-                            .populate('createdBy.user', 'login')
-                            .populate('editedBy.user', 'login')
-                            .skip((data.page - 1) * data.count)
-                            .limit(data.count)
-                            .exec(function (error, _res) {
-                                if (error) {
-                                    return console.log(error);
+                        }, {
+                                $sort: sort
+                            }], function (error, _res) {
+
+                                function populateCreated(cb){
+                                    Users.populate(_res, {
+                                        path: 'createdBy.user',
+                                        select: 'login'
+                                    }, function(){
+                                        cb();
+                                    });
                                 }
 
-                                res['data'] = _res;
-                                response.send(res);
+                                function populateEdited(cb){
+                                    Users.populate(_res, {
+                                        path: 'editedBy.user',
+                                        select: 'login'
+                                    }, function(){
+                                        cb();
+                                    });
+                                }
 
-                            });
+                                async.parallel([populateCreated, populateEdited], function(err, result){
+                                    res['data'] = _res;
+                                    response.send(res);
+                                });
+
+                        });
+
+                        //query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate")
+                        //    .populate('createdBy.user', 'login')
+                        //    .populate('editedBy.user', 'login')
+                        //    .skip((data.page - 1) * data.count)
+                        //    .limit(data.count)
+                        //    .exec(function (error, _res) {
+                        //        if (error) {
+                        //            return console.log(error);
+                        //        }
+                        //
+                        //        res['data'] = _res;
+                        //        response.send(res);
+                        //
+                        //    });
                     }
                 );
             });
