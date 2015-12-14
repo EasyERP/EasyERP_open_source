@@ -727,6 +727,7 @@ define([
                 var rawRows;
                 var $checkedEls;
                 var checkLength;
+                var changedRows = Object.keys(this.changedModels);
 
                 if (this.collection.length > 0) {
                     $checkedEls = $thisEl.find("input.listCB:checked");
@@ -739,7 +740,6 @@ define([
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
                         $("#top-bar-createBtn").hide();
-                        $("#top-bar-saveBtn").hide();
 
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
@@ -751,11 +751,17 @@ define([
                         $('#check_all').prop('checked', false);
                     }
 
-                    //if (rawRows.length !== 0 && rawRows.length !== checkLength) {
-                    //    this.$saveBtn.hide();
-                    //} else {
-                    //    this.$saveBtn.show();
-                    //}
+                    if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                        this.$saveBtn.hide();
+                    } else {
+                        this.$saveBtn.show();
+                    }
+
+                    if (changedRows.length){
+                        this.$saveBtn.show();
+                    } else {
+                        this.$saveBtn.hide();
+                    }
                 }
 
                 this.setAllTotalVals();
