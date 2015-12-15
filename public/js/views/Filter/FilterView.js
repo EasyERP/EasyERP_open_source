@@ -655,7 +655,10 @@ define([
 
                             self.clickSearchResult(element);
                         });
-                        searchInput.html(""); // to prevent appearing previous values by pressing Backspace
+
+                        allResults.remove(); // to prevent appearing last filters after selecting new
+                        searchInput.html(""); // to prevent appearing value in Search after selecting
+                        e.preventDefault();; // to prevent appearing previous values by pressing Backspace
                     }
                 });
 

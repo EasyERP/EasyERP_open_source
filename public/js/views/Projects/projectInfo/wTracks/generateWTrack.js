@@ -24,7 +24,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click a.generateType"                                            : "generateType",
                     "click td.editable"                                               : "editRow",
                     "change .editable "                                               : "setEditable",
-                    "click"                                                           : "confirmtEditing", // added new event for dissapearing red frame after hours
+                    "click"                                                           : "confirmEditing", // added new event for dissapearing red frame after hours
                     //'keydown input.editing'                                           : 'keyDown',
                     'mouseover tbody tr:not("#addNewItem")'                           : 'showRemove',
                     'mouseleave tbody tr:not("#addNewItem")'                          : 'hideRemove',
@@ -47,7 +47,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
                 },
                 // added new handler function for dissapearing red frame after hours
-                confirmtEditing : function (e) {
+                confirmEditing : function (e) {
                     if (this.$listTable.find('.editing').val()){
 
                         this.setChangedValueToModel();
