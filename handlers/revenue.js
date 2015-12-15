@@ -2856,11 +2856,23 @@ var wTrack = function (models) {
             month      : {$month: "$invoiceDate"},
             week       : {$week: "$invoiceDate"}
         };
+        var projectionPaymentObject = {
+            paidAmount: 1,
+            date      : 1,
+            year      : {$year: "$date"},
+            month     : {$month: "$date"},
+            week      : {$week: "$date"}
+        };
         var groupedKey = query.byWeek ? 'week' : 'month';
 
         var groupObject = {
             invoiced: {$sum: '$paymentInfo.total'},
             root    : {$push: '$$ROOT'}
+        };
+
+        var groupPaymentObject = {
+            paid: {$sum: '$paidAmount'}/*,
+             root    : {$push: '$$ROOT'}*/
         };
 
         var dateByMonthAggr = {
@@ -2881,12 +2893,34 @@ var wTrack = function (models) {
             }
         };
 
+        var dateByMonthAggrPayment = {
+            $let: {
+                vars: {
+                    total: {$multiply: [{$year: "$date"}, 100]}
+                },
+                in  : {$add: ["$$total", {$month: "$date"}]}
+            }
+        };
+
+        var dateByWeekAggrPayment = {
+            $let: {
+                vars: {
+                    total: {$multiply: [{$year: "$date"}, 100]}
+                },
+                in  : {$add: ["$$total", {$week: "$date"}]}
+            }
+        };
+
         if (groupedKey === 'week') {
             groupObject._id = '$dateByWeek';
+            groupPaymentObject._id = '$dateByWeek';
             projectionObject.dateByWeek = dateByWeekAggr;
+            projectionPaymentObject.dateByWeek = dateByWeekAggrPayment;
         } else {
             groupObject._id = '$dateByMonth';
+            groupPaymentObject._id = '$dateByMonth';
             projectionObject.dateByMonth = dateByMonthAggr;
+            projectionPaymentObject.dateByMonth = dateByMonthAggrPayment;
         }
 
         function invoiceGrouper(parallelCb) {
@@ -2894,6 +2928,23 @@ var wTrack = function (models) {
                 $match: matchObject
             }, {
                 $project: projectionObject
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPerson',
+                    foreignField: '_id',
+                    as          : 'salesPerson'
+                }
+            }, {
+                $project: {
+                    salesPerson: {$arrayElemAt: ["$salesPerson", 0]},
+                    paymentInfo: 1,
+                    year       : 1,
+                    month      : 1,
+                    week       : 1,
+                    dateByWeek : 1,
+                    dateByMonth: 1
+                }
             }, {
                 $group: groupObject
             }, {
@@ -2915,7 +2966,7 @@ var wTrack = function (models) {
                     _id            : 0,
                     salesPerson    : {
                         _id : '$_id._id',
-                        name: '$_id.name'
+                        name: {$concat: ['$_id.name.first', ' ', '$_id.name.last']}
                     },
                     invoicedBySales: 1,
                     date           : '$_id.date',
@@ -2940,8 +2991,9 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     date    : '$_id.date',
-                    invoiced: '$invoiced',
-                    sales   : 1
+                    invoiced: '$_id.invoiced',
+                    sales   : 1,
+                    _id: 0
                 }
             }], parallelCb);
 
@@ -2951,64 +3003,48 @@ var wTrack = function (models) {
             Payment.aggregate([{
                 $match: {
                     forSale: true,
-                    _type: 'Payment'
+                    _type  : 'Payment'
                 }
+            }, {
+                $project: projectionPaymentObject
+            }, {
+                $group: groupPaymentObject
             }, {
                 $project: {
-
-                }
-            }, {
-                $group: groupObject
-            }, {
-                $unwind: '$root'
-            }, {
-                $group: {
-                    _id            : {
-                        _id : '$root.salesPerson._id',
-                        name: '$root.salesPerson.name',
-                        date: '$_id'
-                    },
-                    invoicedBySales: {$sum: '$root.paymentInfo.total'},
-                    root           : {$push: '$$ROOT'}
-                }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    _id            : 0,
-                    salesPerson    : {
-                        _id : '$_id._id',
-                        name: '$_id.name'
-                    },
-                    invoicedBySales: 1,
-                    date           : '$_id.date',
-                    invoiced       : '$root.invoiced',
-                    year           : '$root.root.year',
-                    month          : '$root.root.month',
-                    week           : '$root.root.week'
-                }
-            }, {
-                $group: {
-                    _id  : {
-                        date    : '$date',
-                        invoiced: '$invoiced'
-                    },
-                    sales: {
-                        $addToSet: {
-                            salesPerson    : '$$ROOT.salesPerson',
-                            invoicedBySales: '$$ROOT.invoicedBySales'
-                        }
-                    }
-                }
-            }, {
-                $project: {
-                    date    : '$_id.date',
-                    invoiced: '$invoiced',
-                    sales   : 1
+                    _id : 0,
+                    date: '$_id',
+                    paid: 1
                 }
             }], parallelCb);
 
         };
+
+        async.parallel({
+            invoiced: invoiceGrouper,
+            paid: paymentGrouper
+        }, function(err, response){
+            var result;
+
+            function mergeByProperty(arr1, arr2, prop) {
+                _.each(arr2, function(arr2obj) {
+                    var arr1obj = _.find(arr1, function(arr1obj) {
+                        return arr1obj[prop] === arr2obj[prop];
+                    });
+
+                    if(arr1obj) {
+                        _.extend(arr1obj, arr2obj)
+                    } else {
+                        arr1.push(arr2obj)
+                    };
+                });
+            }
+            if(err){
+                return next(err);
+            }
+
+            mergeByProperty(response.invoiced, response.paid, 'date');
+            res.status(200).send(response.invoiced);
+        });
     }
 };
 
