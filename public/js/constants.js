@@ -370,23 +370,23 @@ define([], function () {
             }
         },
         "Dashboard"     : {
-            "Sales Manager" : {
+            "Sales Manager": {
                 view   : 'projectManager',
                 backend: 'project.projectmanager._id'
             },
-            "Project" : {
+            "Project"      : {
                 view   : 'project',
                 backend: 'project._id'
             },
-            "Status": {
+            "Status"       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
-            "Type"  : {
+            "Type"         : {
                 view   : 'type',
                 backend: 'type'
             },
-            "Payment Count"  : {
+            "Payment Count": {
                 view   : 'paymentsCount',
                 backend: 'payment.count'
             }
@@ -441,6 +441,7 @@ define([], function () {
         CHARTOFACCOUNT    : "ChartOfAccount",
         JOURNAL           : "journal",
         JOURNALENTRY      : "journalEntry",
+        INVOICECHARTS     : "invoiceCharts",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
