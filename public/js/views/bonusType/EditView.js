@@ -44,6 +44,20 @@ define([
                 var value =  thisEl.find('#value').val();
                 var bonusType =  thisEl.find('#bonusType').val();
                 var isPercent = thisEl.find('#isPercent').val();
+                // added Validation for empty fields
+                var filled = true;
+
+                $(".editable").each(function (index, elem){
+                    if (!$(elem).html()){
+                        return filled = false;
+                    }
+                });
+
+
+                if(!filled){
+                    return  App.render({type: 'error', message: 'Fill all fields please'});
+                }
+                //end
 
                 this.model.save({
                     name: name,

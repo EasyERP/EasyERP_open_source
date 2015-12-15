@@ -219,11 +219,11 @@ define([
                 // validation for empty fields
                 var filled = true;
 
-                 $(".editable").each(function (){
-                     if (!$(this).html()){
+                 $(".editable").each(function (index, elem){
+                     if (!$(elem).html()){
                          return filled = false;
                      }
-                });
+                 });
 
 
                 if(!filled){
