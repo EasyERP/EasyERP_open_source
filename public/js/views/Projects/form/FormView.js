@@ -1195,17 +1195,17 @@ define([
                     }).render().el
                 );
 
-                //bonus = this.$el.find('#bonus-container');
-                //bonusView = new BonusView({
-                //    model: this.formModel
-                //});
-                //bonus.html(
-                //    bonusView.render().el
-                //);
-                //
-                //bonusView.bind('save', function () {
-                //    self.saveItem();
-                //});
+                bonus = this.$el.find('#bonus-container');
+                bonusView = new BonusView({
+                    model: this.formModel
+                });
+                bonus.html(
+                    bonusView.render().el
+                );
+
+                bonusView.bind('save', function () {
+                    self.saveItem();
+                });
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');

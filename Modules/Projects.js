@@ -968,111 +968,29 @@ var Project = function (models, event) {
     };
 
     function getById(req, data, response) {
-        var query = models.get(req.session.lastDb, 'Project', projectSchema);
-        query
-            .aggregate([{
-                $lookup: {
-                    from        : "Employees",
-                    localField  : "projectmanager",
-                    foreignField: "_id", as: "projectmanager"
-                }
-            }, {
-                $lookup: {
-                    from        : "Customers",
-                    localField  : "customer",
-                    foreignField: "_id", as: "customer"
-                }
-            }, {
-                $lookup: {
-                    from        : "workflows",
-                    localField  : "workflow",
-                    foreignField: "_id", as: "workflow"
-                }
-            }, {
-                $lookup: {
-                    from        : "Users",
-                    localField  : "createdBy.user",
-                    foreignField: "_id", as: "createdBy.user"
-                }
-            }, {
-                $lookup: {
-                    from        : "Users",
-                    localField  : "editedBy.user",
-                    foreignField: "_id", as: "editedBy.user"
-                }
-            }, {
-                $lookup: {
-                    from        : "jobs",
-                    localField  : "budget.projectTeam",
-                    foreignField: "_id", as: "budget.projectTeam"
-                }
-            }, {
-                $lookup: {
-                    from        : "Employees",
-                    localField  : "bonus.employeeId",
-                    foreignField: "_id", as: "bonus.employeeId"
-                }
-            }, {
-                $lookup: {
-                    from        : "bonusType",
-                    localField  : "bonus.bonusId",
-                    foreignField: "_id", as: "bonus.bonusId"
-                }
-            }, {
-                $project: {
-                    projectmanager      : {$arrayElemAt: ["$projectmanager", 0]},
-                    workflow            : {$arrayElemAt: ["$workflow", 0]},
-                    customer            : {$arrayElemAt: ["$customer", 0]},
-                    'createdBy.user'    : {$arrayElemAt: ["$createdBy.user", 0]},
-                    'editedBy.user'     : {$arrayElemAt: ["$editedBy.user", 0]},
-                    'bonus.employeeId'  : {$arrayElemAt: ["$bonus.employeeId", 0]},
-                    'bonus.bonusId'     : {$arrayElemAt: ["$bonus.bonusId", 0]},
-                    'createdBy.date'    : 1,
-                    'editedBy.date'     : 1,
-                    projectName         : 1,
-                    health              : 1,
-                    progress            : 1,
-                    StartDate           : 1,
-                    EndDate             : 1,
-                    TargetEndDate       : 1,
-                    projectShortDesc    : 1,
-                    'budget.projectTeam': 1,
-                    'budget.bonus'      : 1,
-                    'bonus.startDate'   : 1,
-                    'bonus.endDate'     : 1
-                }
-            }, {
-                $project: {
-                    workflow            : 1,
-                    projectName         : 1,
-                    health              : 1,
-                    customer            : 1,
-                    progress            : 1,
-                    StartDate           : 1,
-                    EndDate             : 1,
-                    TargetEndDate       : 1,
-                    'createdBy.date'    : 1,
-                    'editedBy.date'     : 1,
-                    'createdBy.user'    : 1,
-                    'editedBy.user'     : 1,
-                    projectShortDesc    : 1,
-                    'budget.projectTeam': 1,
-                    'bonus.employeeId'  : 1,
-                    'bonus.bonusId'     : 1,
-                    projectmanager      : 1,
-                    'bonus.startDate'   : 1,
-                    'bonus.endDate'     : 1,
-                    'budget.bonus'      : 1
-                }
-            }, {
-                $match: {_id: objectId(data.id)}
-            }], function (err, project) {
-                if (err) {
-                    return console.log(err);
-                }
+        var query = models.get(req.session.lastDb, 'Project', projectSchema).findById(data.id);
 
-                response.send(project.length ? project[0] : {});
-            });
+        query.populate('bonus.employeeId', '_id name')
+            .populate('bonus.bonusId', '_id name value isPercent')
+            .populate('createdBy.user', '_id login')
+            .populate('editedBy.user', '_id login')
+            .populate('groups.owner', '_id name')
+            .populate('groups.users', '_id login')
+            .populate('groups.group', '_id departmentName')
+            .populate('groups.owner', '_id login')
+            .populate('budget.projectTeam')
+            .populate('projectmanager', '_id name fullName')
+            .populate('customer', '_id name fullName')
+            .populate('workflow', '_id name');
+
+        query.exec(function (err, project) {
+            if (err) {
+                logWriter.log("Project.js getProjectById project.find " + err);
+                response.send(500, {error: "Can't find Project"});
+            } else {
+                response.send(project);
+            }
+        });
     };
 
     function getTotalCount(req, response) {
