@@ -39,7 +39,7 @@ require.config({
         'imageCrop' : ['jQuery'],
         'spinJs'    : ['jQuery'],
         'Backbone'  : ['Underscore', 'jQuery'],
-        'app'       : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop'],
+        'app'       : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3'],
         'd3'        : {
             exports: 'd3'
         },

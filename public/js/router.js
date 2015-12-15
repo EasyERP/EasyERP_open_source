@@ -31,6 +31,7 @@ define([
             "easyErp/Workflows"                                                                             : "goToWorkflows",
             "easyErp/Dashboard"                                                                             : "goToDashboard",
             "easyErp/DashBoardVacation(/filter=:filter)"                                                    : "dashBoardVacation",
+            "easyErp/invoiceCharts(/filter=:filter)"                                                        : "invoiceCharts",
             "easyErp/HrDashboard"                                                                           : "hrDashboard",
             "easyErp/projectDashboard"                                                                      : "goToProjectDashboard",
             "easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
@@ -38,7 +39,6 @@ define([
 
             "*any": "any"
         },
-
 
         initialize: function () {
             var self = this;
@@ -145,6 +145,64 @@ define([
 
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
+        invoiceCharts: function (filter) {
+            var self = this;
+
+            if (filter) {
+                filter = decodeURIComponent(filter);
+                filter = JSON.parse(filter);
+            }
+
+            if (!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        render();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                render();
+            }
+
+            function render() {
+                var startTime = new Date();
+                var contentViewUrl = "views/invoiceCharts/index";
+                var collectionUrl = 'collections/invoiceCharts/invoiceCharts';
+                var topBarViewUrl = "views/invoiceCharts/TopBarView";
+
+                if (self.mainView === null) {
+                    self.main("invoiceCharts");
+                } else {
+                    self.mainView.updateMenu("invoiceCharts");
+                }
+
+                require([collectionUrl, contentViewUrl, topBarViewUrl], function (ChartCollection, contentView, TopBarView) {
+                    var collection = new ChartCollection();
+                    var contentview;
+                    var topbarView;
+
+                    custom.setCurrentVT('list');
+
+                    collection.on('reset', renderChart);
+
+                    function renderChart() {
+                        topbarView = new TopBarView();
+                        contentview = new contentView({
+                            startTime: startTime,
+                            filter   : filter,
+                            collection: collection
+                        });
+                        topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
+
+                        self.changeView(contentview);
+                        self.changeTopBarView(topbarView);
+                    }
                 });
             }
         },
@@ -701,7 +759,6 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-
                 //savedFilter = custom.savedFilters(contentType, filter);
                 savedFilter = filter;
 
@@ -818,7 +875,6 @@ define([
                     contentFormViewUrl = "views/" + contentType + "/form/FormView";
                     topBarViewUrl = "views/" + contentType + "/TopBarView";
                 }
-
 
                 custom.setCurrentVT('form');
 
