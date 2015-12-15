@@ -45,7 +45,7 @@
 
                                         <dt><label for="supplier">Supplier</label></dt>
                                         <dd>
-                                            <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier)?model.supplier.name:"Select"%></a>
+                                            <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first + ' ' + model.supplier.name.last:"Select"%></a>
                                         </dd>
 
                                         <!--<dt><label for="fiscal_pos">Fiscal Position</label></dt>
@@ -113,7 +113,7 @@
 
                                         <dt><label for="supplier">Supplier</label></dt>
                                         <dd>
-                                            <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" href="javascript:;"><%=(model.supplier)?model.supplier.name:""%></span>
+                                            <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first + ' ' + model.supplier.name.last:""%></span>
                                         </dd>
 
                                         <dt><label for="source_document">Source Document</label></dt>
@@ -347,7 +347,7 @@
 
                                             <dt><label for="salesPerson">Responsible</label></dt>
                                             <dd>
-                                                <a id="salesPerson" data-id="<%=(model.salesPerson)? model.salesPerson._id : ''%>" class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name):"Select"%></a>
+                                                <a id="salesPerson" data-id="<%=(model.salesPerson)? model.salesPerson._id : ''%>" class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name.first + ' ' + model.salesPerson.name.last):"Select"%></a>
                                             </dd>
 
                                             <dt><label for="payment_terms">Payment Terms</label></dt>

@@ -85,7 +85,7 @@
                 var model = this.collection.get(id);
                 var filter;
 
-                model.save({'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text()}, {
+                model.save({'workflow': $(e.target).attr("id")}, {
                     headers : {
                         mid: 39
                     },

@@ -5,10 +5,10 @@ class="canceledListItem"
 <%}%>>
 <td class = "notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox" /></td>
 <td class="centerCell"><%=startNumber + index + 1%></td>
-<td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name : ''%></td>
+<td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' + invoice.supplier.name.last: ''%></td>
 <td><%=invoice.name%></td>
 <td><%=invoice.paymentDate%></td>
-<td><%=(invoice.salesPerson) ? invoice.salesPerson.name : ''%></td>
+<td><%=(invoice.salesPerson) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
 <td><%=invoice.dueDate%></td>
 <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
 <td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%></td>

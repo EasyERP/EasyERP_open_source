@@ -160,9 +160,18 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         hours     : '',
                         project   : {
                             projectName   : this.modelJSON.projectName,
-                            workflow      : this.modelJSON.workflow,
-                            customer      : this.modelJSON.customer,
-                            projectmanager: this.modelJSON.projectmanager,
+                            workflow      : {
+                                _id : this.modelJSON.workflow._id,
+                                name: this.modelJSON.workflow.name
+                            },
+                            customer      : {
+                                _id : this.modelJSON.customer._id,
+                                name: this.modelJSON.customer.fullName
+                            },
+                            projectmanager: {
+                                _id : this.modelJSON.projectmanager._id,
+                                name: this.modelJSON.projectmanager.fullName
+                            },
                             _id           : this.modelJSON._id
                         },
                         employee  : {},

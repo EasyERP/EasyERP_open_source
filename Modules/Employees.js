@@ -1025,8 +1025,6 @@ var Employee = function (event, models) {
     function updateRefs(result, dbName, _id) {
         var EmployeeSchema;
         var EmployeeModel;
-        var ProjectSchema;
-        var ProjectModel;
         var InvoiceSchema;
         var Invoice;
         var PaymentSchema;
@@ -1043,9 +1041,6 @@ var Employee = function (event, models) {
         if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === 'production') || ((dbName === 'development'))) {
             EmployeeSchema = mongoose.Schemas['Employee'];
             EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
-
-            ProjectSchema = mongoose.Schemas['Project'];
-            ProjectModel = models.get(dbName, 'Project', ProjectSchema);
 
             InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
             Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
@@ -1065,8 +1060,6 @@ var Employee = function (event, models) {
             fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
             event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
-            event.emit('updateName', _id, ProjectModel, 'projectmanager._id', 'projectmanager.name', fullName);
-            event.emit('updateName', _id, ProjectModel, 'customer._id', 'customer.name', fullName);
             event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
             event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
             event.emit('updateName', _id, Salary, 'employee._id', 'employee.name', fullName);

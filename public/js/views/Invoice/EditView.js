@@ -126,11 +126,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id   : workflow._id,
-                            name  : workflow.name,
-                            status: workflow.status
-                        }
+                        workflow:  workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -165,11 +161,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id   : workflow._id,
-                            name  : workflow.name,
-                            status: workflow.status
-                        }
+                        workflow:  workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -253,7 +245,7 @@ define([
                 var invoiceDate = $thisEl.find("#invoice_date").val();
                 var dueDate = $thisEl.find("#due_date").val();
 
-                var supplier = {};
+                var supplier = $thisEl.find('#supplier').attr("data-id");
 
                 var total = parseFloat($thisEl.find("#totalAmount").text());
                 var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text());
@@ -277,10 +269,6 @@ define([
                 if (errors.length) {
                     return
                 }
-
-                supplier._id = $thisEl.find('#supplier').attr("data-id");
-                supplier.name = $thisEl.find('#supplier').text();
-
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
@@ -563,26 +551,6 @@ define([
                 this.delegateEvents(this.events);
 
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
-
-                //if currentDb = 'weTrack' render wTrackRows instead of ProductItems
-                //if (!this.isWtrack) {
-                //    invoiceItemContainer.append(
-                //        new InvoiceItemView({balanceVisible: true, forSales: self.forSales}).render({model: model}).el
-                //    );
-                //} else {
-                //    //wTracksDom = new wTrackRows({stopRender: true}).render({
-                //    //    wTracks: wTracks,
-                //    //    project: project,
-                //    //    assigned: assigned,
-                //    //    customer: customer,
-                //    //    total: total
-                //    //}).el;
-                //    //
-                //    //invoiceItemContainer.append(wTracksDom);
-                //    invoiceItemContainer.append(
-                //        new InvoiceItemView({balanceVisible: true}).render({model: model}).el
-                //    );
-                //}
 
                 invoiceItemContainer.append(
                     new InvoiceItemView({

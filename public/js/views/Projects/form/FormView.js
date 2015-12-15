@@ -553,7 +553,7 @@ define([
                     var id = $(e.target).parents("td").closest('tr').attr('data-id');
 
                     if (attrId === 'workflow') {
-                        data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
+                        data = {_id: id, workflowId: $(e.target).attr("id")};
                     } else if (attrId === 'type'){
                         data = {_id: id, type: $(e.target).text()};
                     }
@@ -721,7 +721,7 @@ define([
 
                 container.html(template({
                         jobs: projectTeam,
-                        bonus: formModel.budget.bonus,
+                        bonus: formModel.budget.bonus ? formModel.budget.bonus : [],
                         projectValues: self.projectValues,
                         currencySplitter: helpers.currencySplitter,
                         contentType: self.contentType
@@ -1140,6 +1140,12 @@ define([
 
                     if (tabId === 'quotation'){
                         dialogHolder.find('#quotations').closest('.dialog-tabs-item').addClass("active");
+                    } else if (tabId === 'orders'){
+                        tabs.find('#ordersTab').addClass("active");
+                        dialogHolder.find('#orders').closest('.dialog-tabs-item').addClass("active");
+                    } else if (tabId === 'invoice'){
+                        tabs.find('#invoiceTab').addClass("active");
+                        dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
                     }
                 }
             },

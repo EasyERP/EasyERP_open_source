@@ -11,7 +11,7 @@
                         <dd>
                             <%if(invoice && invoice.supplier && invoice.supplier._id){%>
                             <a id="supplierDd" class="" href="javascript:;"
-                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name%></a>
+                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name.first + ' ' + invoice.supplier.name.last%></a>
                             <%} else {%>
                             <a id="supplierDd" class="" href="javascript:;">Select</a>
                             <%}%>

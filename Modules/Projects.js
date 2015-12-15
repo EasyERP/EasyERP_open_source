@@ -11,6 +11,7 @@ var Project = function (models, event) {
     var userSchema = mongoose.Schemas['User'];
     var fs = require('fs');
     var async = require('async');
+    var _ = require('underscore');
 
     var CONSTANTS = require('../constants/mainConstants');
 
@@ -287,17 +288,14 @@ var Project = function (models, event) {
                     if (data.projecttype) {
                         _project.projecttype = data.projecttype;
                     }
-                    if (data.workflow._id) {
-                        _project.workflow._id = data.workflow._id;
-                        _project.workflow.name = data.workflow.name;
+                    if (data.workflow) {
+                        _project.workflow = data.workflow;
                     }
-                    if (data.customer._id) {
-                        _project.customer._id = data.customer._id;
-                        _project.customer.name = data.customer.name;
+                    if (data.customer) {
+                        _project.customer = data.customer;
                     }
-                    if (data.projectmanager._id) {
-                        _project.projectmanager._id = data.projectmanager._id;
-                        _project.projectmanager.name = data.projectmanager.name;
+                    if (data.projectmanager) {
+                        _project.projectmanager = data.projectmanager;
                     }
 
                     if (data.notes) {
@@ -552,9 +550,10 @@ var Project = function (models, event) {
         var skip = (parseInt(data.page) - 1) * parseInt(data.count);
         var limit = parseInt(data.count);
         var sort;
-        var obj;
+        var obj = {};
         var query;
         var arrOfObjectId;
+        var keys;
 
         res['data'] = [];
 
@@ -615,87 +614,106 @@ var Project = function (models, event) {
                             return console.log(err);
                         }
 
-                        obj = {$and: [{_id: {$in: result}}]};
+                        obj = {'$and': [{_id: {$in: _.pluck(result, '_id')}}]};
 
                         if (data && data.filter) {
                             obj['$and'].push({$and: caseFilter(data.filter)});
                         }
 
                         if (data.sort) {
+                            keys = Object.keys(data.sort)[0];
+                            data.sort[keys] = parseInt(data.sort[keys]);
                             sort = data.sort;
                         } else {
                             sort = {"editedBy.date": -1};
                         }
 
-                        //query = models.get(req.session.lastDb, "Project", projectSchema)//.find(obj).sort(sort);
-                        query = models.get(req.session.lastDb, "Project", projectSchema).find(obj).sort(sort);
+                        query = models.get(req.session.lastDb, "Project", projectSchema);
 
-                        //query.aggregate([{
-                        //    $match: obj
-                        //},{
-                        //    $skip: skip
-                        //},{
-                        //    $limit: limit
-                        //},{
-                        //    $project: {
-                        //        notRemovable : {
-                        //            $size: "$budget.projectTeam"
-                        //        },
-                        //            createdBy    : 1,
-                        //            editedBy     : 1,
-                        //            workflow     : 1,
-                        //            projectName  : 1,
-                        //            health       : 1,
-                        //            customer     : 1,
-                        //            progress     : 1,
-                        //            StartDate    : 1,
-                        //            EndDate      : 1,
-                        //            TargetEndDate: 1
-                        //    }
-                        //
-                        //}, {
-                        //        $sort: sort
-                        //    }], function (error, _res) {
-                        //
-                        //        function populateCreated(cb){
-                        //            Users.populate(_res, {
-                        //                path: 'createdBy.user',
-                        //                select: 'login'
-                        //            }, function(){
-                        //                cb();
-                        //            });
-                        //        }
-                        //
-                        //        function populateEdited(cb){
-                        //            Users.populate(_res, {
-                        //                path: 'editedBy.user',
-                        //                select: 'login'
-                        //            }, function(){
-                        //                cb();
-                        //            });
-                        //        }
-                        //
-                        //        async.parallel([populateCreated, populateEdited], function(err, result){
-                        //            res['data'] = _res;
-                        //            response.send(res);
-                        //        });
-                        //
-                        //});
-
-                        query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate")
-                            .populate('createdBy.user', 'login')
-                            .populate('editedBy.user', 'login')
-                            .skip((data.page - 1) * data.count)
-                            .limit(data.count)
-                            .exec(function (error, _res) {
-                                if (error) {
-                                    return console.log(error);
+                        query
+                            .aggregate([{
+                                $lookup: {
+                                    from        : "Employees",
+                                    localField  : "projectmanager",
+                                    foreignField: "_id", as: "projectmanager"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Customers",
+                                    localField  : "customer",
+                                    foreignField: "_id", as: "customer"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "workflows",
+                                    localField  : "workflow",
+                                    foreignField: "_id", as: "workflow"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Users",
+                                    localField  : "createdBy.user",
+                                    foreignField: "_id", as: "createdBy.user"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Users",
+                                    localField  : "editedBy.user",
+                                    foreignField: "_id", as: "editedBy.user"
+                                }
+                            }, {
+                                $project: {
+                                    //notRemovable : {
+                                    //    $size: "$budget.projectTeam"
+                                    //},
+                                    projectmanager  : {$arrayElemAt: ["$projectmanager", 0]},
+                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                    customer        : {$arrayElemAt: ["$customer", 0]},
+                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                    'createdBy.date': 1,
+                                    'editedBy.date' : 1,
+                                    projectName     : 1,
+                                    health          : 1,
+                                    progress        : 1,
+                                    StartDate       : 1,
+                                    EndDate         : 1,
+                                    TargetEndDate   : 1
+                                }
+                            }, {
+                                $project: {
+                                    projectmanager  : 1,
+                                    notRemovable    : 1,
+                                    workflow        : 1,
+                                    projectName     : 1,
+                                    health          : 1,
+                                    customer        : 1,
+                                    progress        : 1,
+                                    StartDate       : 1,
+                                    EndDate         : 1,
+                                    TargetEndDate   : 1,
+                                    'createdBy.date': 1,
+                                    'editedBy.date' : 1,
+                                    'createdBy.user': 1,
+                                    'editedBy.user' : 1
+                                }
+                            }, {
+                                $match: obj
+                            }, {
+                                $skip: skip
+                            }, {
+                                $limit: limit
+                            }, {
+                                $sort: sort
+                            }], function (err, projects) {
+                                if (err) {
+                                    return console.log(err);
                                 }
 
-                                res['data'] = _res;
+                                res['data'] = projects;
                                 response.send(res);
-
                             });
+
                     }
                 );
             });
@@ -819,7 +837,11 @@ var Project = function (models, event) {
     }
 
     function get(req, data, response) {
+        var skip = (parseInt(data.page ? data.page : 1) - 1) * parseInt(data.count);
+        var limit = parseInt(data.count);
         var res = {};
+        var qObj = {};
+
         res['data'] = [];
         models.get(req.session.lastDb, "Department", department).aggregate(
             {
@@ -873,30 +895,65 @@ var Project = function (models, event) {
                         function (err, result) {
                             if (!err) {
 
-                                var qObj = {$and: [{_id: {$in: result}}]};
-                                //var condition;
+                                qObj = {$and: [{_id: {$in: _.pluck(result, '_id')}}]};
 
                                 if (data && data.filter) {
-
                                     qObj['$and'].push({$and: caseFilter(data.filter)});
                                 }
 
-                                var query = models.get(req.session.lastDb, "Project", projectSchema).find(qObj);
+                                var Project = models.get(req.session.lastDb, "Project", projectSchema);
 
-                                /*if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                 query.where('workflow').in([]);
-                                 }*/
-
-                                query.select("_id projectName task workflow projectmanager customer health").
-                                    skip((data.page - 1) * data.count).
-                                    limit(data.count).
-                                    exec(function (error, _res) {
-                                        if (!error) {
-                                            res['data'] = _res;
-                                            response.send(res);
-                                        } else {
-                                            console.log(error);
+                                Project
+                                    .aggregate([{
+                                        $lookup: {
+                                            from        : "Employees",
+                                            localField  : "projectmanager",
+                                            foreignField: "_id", as: "projectmanager"
                                         }
+                                    }, {
+                                        $lookup: {
+                                            from        : "Customers",
+                                            localField  : "customer",
+                                            foreignField: "_id", as: "customer"
+                                        }
+                                    }, {
+                                        $lookup: {
+                                            from        : "workflows",
+                                            localField  : "workflow",
+                                            foreignField: "_id", as: "workflow"
+                                        }
+                                    }, {
+                                        $project: {
+                                            projectName   : 1,
+                                            workflow      : {$arrayElemAt: ["$workflow", 0]},
+                                            task          : 1,
+                                            customer      : {$arrayElemAt: ["$customer", 0]},
+                                            health        : 1,
+                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                                        }
+                                    }, {
+                                        $project: {
+                                            _id           : 1,
+                                            projectName   : 1,
+                                            task          : 1,
+                                            workflow      : 1,
+                                            projectmanager: 1,
+                                            customer      : 1,
+                                            health        : 1
+                                        }
+                                    }, {
+                                        $match: qObj
+                                    }, {
+                                        $skip: skip
+                                    }, {
+                                        $limit: limit
+                                    }], function (err, projects) {
+                                        if (err) {
+                                            return console.log(err);
+                                        }
+
+                                        res['data'] = projects;
+                                        response.send(res);
                                     });
                             } else {
                                 console.log(err);
@@ -912,18 +969,20 @@ var Project = function (models, event) {
 
     function getById(req, data, response) {
         var query = models.get(req.session.lastDb, 'Project', projectSchema).findById(data.id);
-        //query.//populate('projectmanager', 'name _id');
-        //query.populate('customer', 'name _id');
-        query.//populate('workflow._id').
-            populate('bonus.employeeId', '_id name').
-            populate('bonus.bonusId', '_id name value isPercent').
-            populate('createdBy.user', '_id login').
-            populate('editedBy.user', '_id login').
-            populate('groups.owner', '_id name').
-            populate('groups.users', '_id login').
-            populate('groups.group', '_id departmentName').
-            populate('groups.owner', '_id login').
-            populate('budget.projectTeam');
+
+        query.populate('bonus.employeeId', '_id name')
+            .populate('bonus.bonusId', '_id name value isPercent')
+            .populate('createdBy.user', '_id login')
+            .populate('editedBy.user', '_id login')
+            .populate('groups.owner', '_id name')
+            .populate('groups.users', '_id login')
+            .populate('groups.group', '_id departmentName')
+            .populate('groups.owner', '_id login')
+            .populate('budget.projectTeam')
+            .populate('projectmanager', '_id name fullName')
+            .populate('customer', '_id name fullName')
+            .populate('workflow', '_id name');
+
         query.exec(function (err, project) {
             if (err) {
                 logWriter.log("Project.js getProjectById project.find " + err);
@@ -1212,18 +1271,10 @@ var Project = function (models, event) {
                 });
             }
         }
-        if (data.workflow && data.workflow._id) {
-            data.workflow._id = data.workflow._id;
-            data.workflow.name = data.workflow.name;
+        if (data.workflow) {
+            data.workflow = data.workflow;
         }
-        //if (data.workflowForList || data.workflowForKanban) {//may be for delete
-        //    data = {
-        //        $set: {
-        //            'workflow._id': data.workflow._id,
-        //            'workflow.name': data.workflow.name
-        //        }
-        //    };
-        //}
+
         if (data.notes && data.notes.length != 0 && !remove) {
             var obj = data.notes[data.notes.length - 1];
             obj._id = mongoose.Types.ObjectId();
@@ -1777,7 +1828,6 @@ var Project = function (models, event) {
                                 query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
                                     populate('project', 'projectShortDesc').
-                                    // populate('workflow._id', '_id').
                                     sort({'sequence': -1}).
                                     limit(req.session.kanbanSettings.tasks.countPerPage).
                                     exec(function (err, result) {

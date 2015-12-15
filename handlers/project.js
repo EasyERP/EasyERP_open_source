@@ -15,12 +15,15 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
         var inProgress = data && data.inProgress ? true : false;
-        var filter = inProgress ? {"workflow._id" : CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
+        var filter = inProgress ? {"workflow" : CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
 
         Project
             .find(filter)
             .sort({projectName: 1})
             .lean()
+            .populate('workflow', '_id name')
+            .populate('customer', '_id name')
+            .populate('projectmanager', '_id name')
             .exec(function (err, projects) {
                 if (err) {
                     return next(err);
@@ -321,7 +324,9 @@ var Project = function (models) {
 
         var query = Project.find({}).sort(sort).lean();
 
-        query.populate('budget.projectTeam');
+        query
+            .populate('budget.projectTeam')
+            .populate('projectmanager');
 
         query.exec(function (err, result) {
             if (err) {

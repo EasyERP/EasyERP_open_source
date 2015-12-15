@@ -33,12 +33,11 @@ define([
                 this.redirect = options.redirect;
                 this.collection = options.collection;
 
-                this.render();
-
                 if (!this.forSales) {
-                    // this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
                     this.forSales = App.weTrack;
                 }
+
+                this.render();
             },
 
             events: {
@@ -125,7 +124,6 @@ define([
                 var invoiceModel = this.invoiceModel.toJSON();
                 var supplier = thisEl.find('#supplierDd');
                 var supplierId = supplier.attr('data-id');
-                var supplierName = supplier.text();
                 var paidAmount = thisEl.find('#paidAmount').val();
                 var paymentMethod = thisEl.find('#paymentMethod');
                 var paymentMethodID = paymentMethod.attr('data-id');
@@ -140,18 +138,8 @@ define([
                 data = {
                     mid             : mid,
                     forSale         : this.forSales,
-                    invoice         : {
-                        _id     : invoiceModel._id,
-                        name    : invoiceModel.name ? invoiceModel.name : invoiceModel.sourceDocument,
-                        assigned: {
-                            _id : invoiceModel.salesPerson ? invoiceModel.salesPerson._id : null,
-                            name: invoiceModel.salesPerson ? invoiceModel.salesPerson.name : ""
-                        }
-                    },
-                    supplier        : {
-                        _id     : supplierId,
-                        fullName: supplierName
-                    },
+                    invoice         :  invoiceModel._id,
+                    supplier        : supplierId,
                     paymentMethod   : {
                         _id : paymentMethodID,
                         name: paymentMethodName
@@ -257,7 +245,7 @@ define([
                     autoOpen     : true,
                     resizable    : true,
                     dialogClass  : "edit-dialog",
-                    title        : "Cretae Payment",
+                    title        : "Create Payment",
                     buttons      : [
                         {
                             id   : "create-payment-dialog",
@@ -282,7 +270,7 @@ define([
                 this.$el.find('#paymentDate').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
+                    changeYear : true
                 }).datepicker('setDate', new Date())
                     .datepicker('option', 'minDate', model.invoiceDate);
 

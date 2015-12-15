@@ -20,7 +20,6 @@ var requestHandler = function (app, event, mainDb) {
     var campaigns = require("./Modules/Campaigns.js")(models);
     var opportunities = require("./Modules/Opportunities.js")(models, event);
     var modules = require("./Modules/Module.js")(models);
-    var modules = require("./Modules/Module.js")(models);
     var sources = require("./Modules/Sources.js")(models);
     var languages = require("./Modules/Languages.js")(models);
     var jobType = require("./Modules/JobType.js")(models);
@@ -602,7 +601,7 @@ var requestHandler = function (app, event, mainDb) {
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var count = 0;
 
-        var query = Job.find({'project._id': pId}).lean();
+        var query = Job.find({'project': pId}).lean();
 
         query
             .populate('wTracks');
@@ -717,8 +716,9 @@ var requestHandler = function (app, event, mainDb) {
                     });
                     budgetTotal.rateSum = {};
                     var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                    budgetTotal.rateSum.byQA = value ? value : 0;
-                    budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA));
+                    var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
+                    budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
+                    budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;;
 
                     projectValues.revenue = budgetTotal.revenueSum;
                     projectValues.profit = budgetTotal.profitSum;
@@ -785,12 +785,12 @@ var requestHandler = function (app, event, mainDb) {
             }, function () {
                 Job.aggregate([{
                     $match: {
-                        'project._id': ObjectId(pId)
+                        'project': ObjectId(pId)
                     }
                 },
                     {
                         $group: {
-                            _id   : "$project._id",
+                            _id   : "$project",
                             jobIds: {$addToSet: '$_id'}
                         }
                     }

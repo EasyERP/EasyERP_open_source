@@ -102,7 +102,7 @@ define([
 
             generatedWtracks: function () {
                 var self = this;
-                var tr = this.$listTable.find('#false');
+                var tr = this.$listTable.find('.false');
                 var projectId = tr.find('[data-content="project"]').attr('data-id');
 
                 dataService.getData("/jobs/getForDD", {"projectId": projectId}, function (jobs) {
@@ -217,8 +217,8 @@ define([
                         this.changedModels[cid] = model;
                     }
 
-                    this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
-                    row = this.$el.find('#false');
+                    this.$el.find('#listTable').prepend('<tr class="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                    row = this.$el.find('.false');
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
@@ -634,7 +634,7 @@ define([
                     if (elementType === '#project') {
                         this.projectModel = element;
 
-                        projectManager = element.projectmanager.name;
+                        projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
                         assignedContainer = tr.find('[data-content="assigned"]');
                         assignedContainer.text(projectManager);
                         targetElement.attr('data-id', id);
@@ -642,7 +642,7 @@ define([
                         tr.find('[data-content="jobs"]').text("");
 
                         tr.find('[data-content="workflow"]').text(element.workflow.name);
-                        tr.find('[data-content="customer"]').text(element.customer.name);
+                        tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
 
                         project = _.clone(editWtrackModel.get('project'));
                         project._id = element._id;
@@ -650,9 +650,9 @@ define([
                         project.workflow._id = element.workflow._id;
                         project.workflow.name = element.workflow.name;
                         project.customer._id = element.customer._id;
-                        project.customer.name = element.customer.name;
+                        project.customer.name = element.customer.name.first + ' ' + element.customer.name.last;
 
-                        project.projectmanager.name = element.projectmanager.name;
+                        project.projectmanager.name = projectManager;
                         project.projectmanager._id = element.projectmanager._id;
 
                         changedAttr.project = project;
@@ -727,19 +727,19 @@ define([
                 var rawRows;
                 var $checkedEls;
                 var checkLength;
+                var changedRows = Object.keys(this.changedModels);
 
                 if (this.collection.length > 0) {
                     $checkedEls = $thisEl.find("input.listCB:checked");
 
                     checkLength = $checkedEls.length;
-                    rawRows = $checkedEls.closest('#false');
+                    rawRows = $checkedEls.closest('.false');
 
                     this.checkProjectId(e, checkLength);
 
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
                         $("#top-bar-createBtn").hide();
-                        $("#top-bar-saveBtn").hide();
 
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
@@ -751,11 +751,17 @@ define([
                         $('#check_all').prop('checked', false);
                     }
 
-                    //if (rawRows.length !== 0 && rawRows.length !== checkLength) {
-                    //    this.$saveBtn.hide();
-                    //} else {
-                    //    this.$saveBtn.show();
-                    //}
+                    if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                        this.$saveBtn.hide();
+                    } else {
+                        this.$saveBtn.show();
+                    }
+
+                    if (changedRows.length){
+                        this.$saveBtn.show();
+                    } else {
+                        this.$saveBtn.hide();
+                    }
                 }
 
                 this.setAllTotalVals();
@@ -783,7 +789,7 @@ define([
             },
 
             savedNewModel: function (modelObject) {
-                var savedRow = this.$listTable.find('#false');
+                var savedRow = this.$listTable.find('.false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -794,6 +800,7 @@ define([
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
+                    savedRow.removeClass('false');
                 }
 
                 this.hideSaveCancelBtns();
@@ -940,7 +947,7 @@ define([
             },
 
             isNewRow: function () {
-                var newRow = $('#false');
+                var newRow = $('.false');
 
                 return !!newRow.length;
             },
@@ -980,7 +987,6 @@ define([
             },
 
             showSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var createBtnEl = $('#top-bar-createBtn');
@@ -1247,11 +1253,13 @@ define([
                 });
 
                 if (this.createdCopied) {
-                    copiedCreated = this.$el.find('#false');
-                    dataId = copiedCreated.attr('data-id');
-                    this.editCollection.remove(dataId);
-                    delete this.changedModels[dataId];
-                    copiedCreated.remove();
+                    copiedCreated = this.$el.find('.false');
+                    copiedCreated.each(function(){
+                        dataId = $(this).attr('data-id');
+                        self.editCollection.remove(dataId);
+                        delete self.changedModels[dataId];
+                        $(this).remove();
+                    });
 
                     this.createdCopied = false;
                 }

@@ -20,6 +20,7 @@ var wTrack = function (event, models) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var moment = require('../public/js/libs/moment/moment');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var FilterMapper = require('../helpers/filterMapper');
     var filterMapper = new FilterMapper();
@@ -785,59 +786,41 @@ var wTrack = function (event, models) {
         });
 
         function createJobFunc(waterfallCB) {
-            var projectName;
-            var projectManager;
             var jobForwTrack = {
                 _id : jobId,
                 name: jobName
             };
 
             if (createJob) {
-                Project.findById(objectId(project), {projectName: 1, projectmanager: 1}, function (err, proj) {
+                job = {
+                    name    : jobName,
+                    workflow: CONSTANTS.JOBSINPROGRESS,
+                    type    : "Not Quoted",
+                    wTracks : [],
+                    project : objectId(project)
+                };
+
+                var newJob = new Job(job);
+
+                newJob.save(function (err, job) {
                     if (err) {
-                        return next(err);
+                        return console.log(err);
                     }
+                    var jobName;
 
-                    projectName = proj.projectName;
-                    projectManager = proj.projectmanager;
+                    jobId = job.toJSON()._id;
+                    jobName = job.get('name');
 
-                    job = {
-                        name    : jobName,
-                        workflow: {
-                            _id : objectId("56337c705d49d8d6537832eb"),
-                            name: "In Progress"
-                        },
-                        type    : "Not Quoted",
-                        wTracks : [],
-                        project : {
-                            _id           : objectId(project),
-                            name          : projectName,
-                            projectManager: projectManager
-                        }
+                    jobForwTrack = {
+                        _id : jobId,
+                        name: jobName
                     };
 
-                    var newJob = new Job(job);
+                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function () {
 
-                    newJob.save(function (err, job) {
-                        if (err) {
-                            return console.log(err);
-                        }
-                        var jobName;
-
-                        jobId = job.toJSON()._id;
-                        jobName = job.get('name');
-
-                        jobForwTrack = {
-                            _id : jobId,
-                            name: jobName
-                        };
-
-                        Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function () {
-
-                        });
-
-                        waterfallCB(null, jobForwTrack);
                     });
+
+                    waterfallCB(null, jobForwTrack);
                 });
 
             } else {
@@ -1488,17 +1471,6 @@ var wTrack = function (event, models) {
 
                                     fCb(null, resultArray);
                                 });
-                            } else if ((diff > 0) && (diffYear === 2)) {
-                                diff = moment(startYear).isoWeeksInYear() - startWeek;
-                                parallelTasks = [firstPart, secondYear, thirdYear];
-
-                                async.parallel(parallelTasks, function (err, result) {
-                                    resultArray = result[0].concat(result[1]);
-
-                                    resultArray.concat(result[2]);
-
-                                    fCb(null, resultArray);
-                                });
                             }
 
                             function firstPart(parallelCb) {
@@ -1512,8 +1484,8 @@ var wTrack = function (event, models) {
                                 var year = moment(startDate).year();
                                 var endYear = moment(endDate).year();
 
-                                if (diffYear > 0){
-                                    endYear ++;
+                                if (diffYear > 0) {
+                                    endYear++;
                                 }
 
                                 startDate = moment().year(endYear).isoWeek(1).day(1);
@@ -1525,16 +1497,6 @@ var wTrack = function (event, models) {
 
                             function thirdPart(parallelCb) {
                                 setObj(parallelCb, diff, endWeek, startDate, startYear, true)
-                            }
-
-                            function secondYear(parallelCb) {
-                                diff = moment(startYear + 1).isoWeeksInYear();
-                                setObj(parallelCb, diff, endWeek, endDate, startYear + 1)
-                            }
-
-                            function thirdYear(parallelCb) {
-                                diff = endWeek;
-                                setObj(parallelCb, diff, endWeek, endDate, startYear + 2)
                             }
 
                             function setObj(parallelCb, diff, endWeek, date, year, checkFirstWeek) {
@@ -1620,6 +1582,10 @@ var wTrack = function (event, models) {
                                                 var i = 1;
                                                 var hoursInWeek = 0;
 
+                                                obj.month = moment(newDate).month() + 1;
+                                                obj.year = year;
+                                                obj.week = moment(newDate).isoWeek();
+
                                                 if (opt.hours) {
                                                     while (opt.hours - total >= hoursInWeek) {
                                                         if (i <= 5) {
@@ -1651,12 +1617,11 @@ var wTrack = function (event, models) {
                                                 } else {
 
                                                     obj.month = moment(newDate).month() + 1;
-                                                    obj.year = year;
+                                                    obj.year = moment(newDate).year();
                                                     obj.week = moment(newDate).isoWeek();
 
-
-                                                    if ((obj.week === 53) && (obj.month === 1)){
-                                                       // day = moment(newDate).day();
+                                                    if ((obj.week === 53) && (obj.month === 1)) {
+                                                        // day = moment(newDate).day();
                                                         for (var k = 1; k <= 7; k++) {
                                                             if (k >= moment(newDate).day()) {
                                                                 obj.weekValues[k] = parseInt(opt[k]);
@@ -1675,6 +1640,7 @@ var wTrack = function (event, models) {
                                                     }
 
                                                 }
+                                                result.push(obj);
                                             }
 
                                             //if (weekValidate && !(diffYear > 0)) {
@@ -1682,7 +1648,7 @@ var wTrack = function (event, models) {
                                             //} else {
                                             //    obj.month = moment(newDate).month() + 1;
                                             //}
-                                            result.push(obj);
+
                                         }
 
                                     } else if (y === diff) {

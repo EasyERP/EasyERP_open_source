@@ -95,21 +95,15 @@ define([
                 var self = this;
                 var value;
                 var mid = 39;
-                var customer = {};
                 var validation = true;
                 var custom = this.$el.find("#customerDd").text();
 
-                customer._id = this.$el.find("#customerDd").attr("data-id");
-                customer.name = this.$el.find("#customerDd").text();
+                var customer = this.$el.find("#customerDd").attr("data-id");
 
-                var projectmanager = {};
-                projectmanager._id = this.$el.find("#projectManagerDD").data("id");
-                projectmanager.name = this.$el.find("#projectManagerDD").text();
+                var projectmanager = this.$el.find("#projectManagerDD").data("id");
 
                 var projecttype = this.$el.find("#projectTypeDD").data("id");
-                var workflow = {};
-                workflow._id = this.$el.find("#workflowsDd").data("id");
-                workflow.name = this.$el.find("#workflowsDd").text();
+                var workflow = this.$el.find("#workflowsDd").data("id");
 
                 var bonusContainer = $('#bonusTable');
                 var bonusRow = bonusContainer.find('tr');

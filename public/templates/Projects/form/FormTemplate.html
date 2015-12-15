@@ -32,7 +32,7 @@
                             <label for="projectManagerDD">Sales Manager</label>
                         </dt>
                         <dd>
-                            <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.name):'Select'%></a>
+                            <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):'Select'%></a>
                         </dd>
 
                         <dt><label for="projectTypeDD">Project Type </label></dt>
@@ -43,7 +43,7 @@
                             <label for="customerDd">Project Customer </label>
                         </dt>
                         <dd>
-                            <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected " href="javascript:;"><%=model.customer?(model.customer.name):'Select'%></a>
+                            <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected " href="javascript:;"><%=model.customer?(model.customer.fullName):'Select'%></a>
                         </dd>
                         <dt><label for="StartDate">Start / End Date </label></dt>
                         <dd>

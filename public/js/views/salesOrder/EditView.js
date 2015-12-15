@@ -173,6 +173,9 @@ define([
 
                                     tr.find('.workflow').find('a').text("Invoiced");
 
+                                    App.projectInfo = App.projectInfo || {};
+                                    App.projectInfo.currentTab = 'invoices';
+
                                     var filter = {
                                         'project': {
                                             key  : 'project._id',
