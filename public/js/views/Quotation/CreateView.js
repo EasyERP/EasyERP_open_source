@@ -25,19 +25,19 @@ define([
                 this.model = new QuotationModel();
                 this.responseObj = {};
                 this.forSales = false;
+
                 this.render();
             },
 
             events: {
                 'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click #projectDd"    : "showNewSelect",
-                "click a.current-selected:not(#projectDd,.jobs)": "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"                    : "notHide",
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click #projectDd"                                                : "showNewSelect",
+                "click a.current-selected:not(#projectDd,.jobs)"                  : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination,#generateJobs)" : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                //"click :not(#generateJobs)"                                                           : "hideNewSelect"
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
 
             showNewSelect: function (e, prev, next) {
@@ -126,28 +126,18 @@ define([
                 var quantity;
                 var price;
                 var scheduledDate;
-
                 var forSales = (this.forSales) ? true : false;
-
-                var supplier = {};
-                supplier._id = thisEl.find('#supplierDd').attr('data-id');
-                supplier.name = thisEl.find('#supplierDd').text();
-
-                var project = {};
-                project._id = thisEl.find('#projectDd').attr('data-id');
-                project.projectName = thisEl.find('#projectDd').text();
-                project.projectmanager = this.projectManager;
-
+                var supplier = thisEl.find('#supplierDd').attr('data-id');
+                var project = thisEl.find('#projectDd').attr('data-id');
                 var destination = $.trim(thisEl.find('#destination').attr('data-id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').attr('data-id'));
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').attr('data-id'));
                 var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
                 var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
-
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
-
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var total = $.trim(thisEl.find('#totalAmount').text());
                 var totalTaxes = $.trim(thisEl.find('#taxes').text());
                 var taxes;
@@ -155,7 +145,6 @@ define([
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
                 var subTotal;
                 var jobs;
-
                 var usersId = [];
                 var groupsId = [];
 
@@ -168,8 +157,6 @@ define([
                     }
 
                 });
-
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
@@ -186,15 +173,15 @@ define([
 
                             if (jobs === "jobs" && this.forSales) {
                                 return App.render({
-                                    type: 'notify',
+                                    type   : 'notify',
                                     message: "Job field can't be empty. Please, choose or create one."
                                 });
                             }
 
                             products.push({
                                 product      : productId,
-                                unitPrice: price,
-                                quantity : quantity,
+                                unitPrice    : price,
+                                quantity     : quantity,
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
                                 description  : description,
@@ -203,24 +190,23 @@ define([
                             });
                         } else {
                             return App.render({
-                                type: 'notify',
+                                type   : 'notify',
                                 message: "Products can't be empty."
                             });
                         }
                     }
                 }
 
-
                 data = {
                     forSales      : forSales,
-                    supplier: supplier,
-                    project : project,
-                    deliverTo: deliverTo,
-                    products : products,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination : destination,
-                    incoterm    : incoterm,
+                    supplier      : supplier,
+                    project       : project,
+                    deliverTo     : deliverTo,
+                    products      : products,
+                    orderDate     : orderDate,
+                    expectedDate  : expectedDate,
+                    destination   : destination,
+                    incoterm      : incoterm,
                     invoiceControl: invoiceControl,
                     paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
@@ -239,7 +225,7 @@ define([
                     workflow      : this.defaultWorkflow
                 };
 
-                if (supplier._id && selectedLength) {
+                if (supplier && selectedLength) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
@@ -255,7 +241,7 @@ define([
 
                 } else {
                     return App.render({
-                        type: 'notify',
+                        type   : 'notify',
                         message: CONSTANTS.RESPONSES.CREATE_QUOTATION
                     });
 
@@ -306,7 +292,7 @@ define([
                     buttons      : [
                         {
                             id   : "create-person-dialog",
-                            text: "Create",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
@@ -358,13 +344,11 @@ define([
 
                 populate.fetchWorkflow({
                     wId         : 'Purchase Order',
-                    source: 'purchase',
+                    source      : 'purchase',
                     targetSource: 'quotation'
                 }, function (response) {
                     if (!response.error) {
-                        self.defaultWorkflow = {};
-                        self.defaultWorkflow._id = response._id;
-                        self.defaultWorkflow.name = response.name;
+                        self.defaultWorkflow = response._id;
                     }
                 });
 
@@ -372,7 +356,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                    maxDate: "+0D"
+                    maxDate    : "+0D"
                 }).datepicker('setDate', curDate);
 
                 this.$el.find('#expectedDate').datepicker({
