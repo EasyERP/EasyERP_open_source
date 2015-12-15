@@ -131,7 +131,8 @@ var Invoice = function (models, event) {
 
             query//.populate('supplier', 'name')
                 .populate('products.product')
-                .populate('products.jobs');
+                .populate('products.jobs')
+                .populate('project', '_id projectName projectmanager');
 
             query.exec(callback)
         };
@@ -183,10 +184,10 @@ var Invoice = function (models, event) {
                 }
             }
 
-            invoice.supplier = order['supplier']._id;
+            invoice.supplier = order['supplier'];
 
             if (forSales === "true") {
-                invoice.salesPerson = order.project.projectmanager ? order.project.projectmanager._id : null;
+                invoice.salesPerson = order.project.projectmanager ? order.project.projectmanager : null;
 
                 invoice.save(callback);
 
@@ -276,6 +277,7 @@ var Invoice = function (models, event) {
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
         var optionsForPayments;
+        var Customer = models.get(db, 'Customers', CustomerSchema);
 
         if (checkDb(db)) {
             moduleId = 64;
@@ -299,24 +301,9 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    if (data.name) {
-                        updateName = true;
-                    }
-
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
                             return next(err);
-                        }
-
-                        if (updateName) {
-                            optionsForPayments = {
-                                id         : invoice._id,
-                                targetModel: PaymentModel,
-                                searchField: "invoice._id",
-                                fieldName  : "invoice.name",
-                                fieldValue : invoice.name
-                            };
-                            event.emit("updateNames", optionsForPayments);
                         }
 
                         if (!invoice.journal) {
@@ -329,11 +316,31 @@ var Invoice = function (models, event) {
                                     if (err) {
                                         return next(err);
                                     }
-                                    res.status(200).send(invoice);
+
+                                    Customer.populate(invoice, {
+                                        path  : 'supplier',
+                                        select: '_id name fullName'
+                                    }, function (err, resp) {
+                                        if (err) {
+                                            return next(err);
+                                        }
+
+                                        res.status(200).send(invoice);
+                                    });
+
                                 }, req.session.uId);
                             });
                         } else {
-                            res.status(200).send(invoice);
+                            Customer.populate(invoice, {
+                                path  : 'supplier',
+                                select: '_id name fullName'
+                            }, function (err, resp) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.status(200).send(invoice);
+                            });
                         }
                     });
                 } else {

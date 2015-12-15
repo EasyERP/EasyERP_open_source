@@ -38,7 +38,7 @@
             <td class = "notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
             <td class="centerCell"><%=startNumber + index + 1%></td>
             <td><%=(payment && payment.assigned) ? payment.assigned.name.first + ' ' +  payment.assigned.name.last: ''%></td>
-            <td><%=payment.supplier.name.first + ' ' + payment.supplier.name.last%></td>
+            <td><%=payment.supplier &&  payment.supplier.name ? payment.supplier.name.first + ' ' + payment.supplier.name.last : ''%></td>
             <td><%=payment.invoice ? payment.invoice.name : ''%></td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
             <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=(parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)).toFixed(2)%></td>

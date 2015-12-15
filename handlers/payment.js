@@ -576,7 +576,7 @@ var Payment = function (models, event) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var workflowHandler = new WorkflowHandler(models);
-        var invoiceId = body.invoice._id;
+        var invoiceId = body.invoice;
         var DbName = req.session.lastDb;
         var mid = body.mid;
         var data = body;
@@ -658,11 +658,7 @@ var Payment = function (models, event) {
                     return waterfallCallback(err);
                 }
 
-                invoice.workflow = {
-                    _id   : workflow._id,
-                    name  : workflow.name,
-                    status: workflow.status
-                };
+                invoice.workflow = workflow._id;
                 invoice.paymentInfo.balance = (totalToPay - paid) / 100;
                 // invoice.paymentInfo.unTaxed += paid / 100;// commented by Liliya forRoman
                 // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
@@ -677,7 +673,7 @@ var Payment = function (models, event) {
                         return waterfallCallback(err);
                     }
 
-                    project = invoice ? invoice.get('project._id') : null;
+                    project = invoice ? invoice.get('project') : null;
 
                     payments = invoice ? invoice.get('payments') : [];
 
@@ -1102,7 +1098,7 @@ var Payment = function (models, event) {
                         return next(err);
                     }
 
-                    invoiceId = removed ? removed.get('invoice._id') : null;
+                    invoiceId = removed ? removed.get('invoice') : null;
                     paid = removed ? removed.get('paidAmount') : 0;
 
                     if (invoiceId && (removed && removed._type !== 'salaryPayment')) {
@@ -1120,7 +1116,7 @@ var Payment = function (models, event) {
 
                             paymentInfo = invoice.get('paymentInfo');
 
-                            project = invoice ? invoice.get('project._id') : null;
+                            project = invoice ? invoice.get('project') : null;
 
                             if (invoice._type === 'wTrackInvoice') {
                                 wId = 'Sales Invoice';
@@ -1152,11 +1148,7 @@ var Payment = function (models, event) {
                                     return next(err);
                                 }
 
-                                workflowObj = {
-                                    _id   : workflow._id,
-                                    name  : workflow.name,
-                                    status: workflow.status
-                                };
+                                workflowObj = workflow._id;
 
                                 paymentInfoNew.total = paymentInfo.total;
                                 paymentInfoNew.taxes = paymentInfo.taxes;
@@ -1189,7 +1181,7 @@ var Payment = function (models, event) {
                                                 return next(err);
                                             }
 
-                                            project = result ? result.get('project._id') : null;
+                                            project = result ? result.get('project') : null;
                                         });
 
                                     });

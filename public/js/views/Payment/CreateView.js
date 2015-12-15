@@ -127,7 +127,6 @@ define([
                 var paidAmount = thisEl.find('#paidAmount').val();
                 var paymentMethod = thisEl.find('#paymentMethod');
                 var paymentMethodID = paymentMethod.attr('data-id');
-                var paymentMethodName = paymentMethod.text();
                 var date = thisEl.find('#paymentDate').val();
                 var paymentRef = thisEl.find('#paymentRef').val();
                 var period = thisEl.find('#period').attr('data-id');
@@ -138,12 +137,9 @@ define([
                 data = {
                     mid             : mid,
                     forSale         : this.forSales,
-                    invoice         :  invoiceModel._id,
+                    invoice         : invoiceModel._id,
                     supplier        : supplierId,
-                    paymentMethod   : {
-                        _id : paymentMethodID,
-                        name: paymentMethodName
-                    },
+                    paymentMethod   : paymentMethodID,
                     date            : date,
                     period          : period,
                     paymentRef      : paymentRef,

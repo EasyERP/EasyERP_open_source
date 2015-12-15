@@ -509,9 +509,7 @@ var Quotation = function (models, event) {
                 }, {
                     $sort: sort
                 }
-            ], function (err, result) {
-                waterfallCallback(err, result);
-            });
+            ], waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
