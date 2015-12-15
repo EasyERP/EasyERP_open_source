@@ -87,23 +87,6 @@ var Invoice = function (models, event) {
 
             res.status(201).send(result);
         });
-
-        /*invoice = new Invoice(body);
-
-         if (req.session.uId) {
-         invoice.createdBy.user = req.session.uId;
-         invoice.editedBy.user = req.session.uId;
-         }
-
-         invoice.save(function (err, result) {
-         if (err) {
-         return next(err);
-         }
-
-
-
-         res.status(200).send(result);
-         });*/
     };
 
     this.receive = function (req, res, next) {
@@ -122,18 +105,18 @@ var Invoice = function (models, event) {
         function fetchFirstWorkflow(callback) {
             if (forSales === "true") {
                 request = {
-                    query: {
-                        wId: 'Sales Invoice',
-                        source: 'purchase',
+                    query  : {
+                        wId         : 'Sales Invoice',
+                        source      : 'purchase',
                         targetSource: 'invoice'
                     },
                     session: req.session
                 };
             } else {
                 request = {
-                    query: {
-                        wId: 'Purchase Invoice',
-                        source: 'purchase',
+                    query  : {
+                        wId         : 'Purchase Invoice',
+                        source      : 'purchase',
                         targetSource: 'invoice'
                     },
                     session: req.session
@@ -163,8 +146,6 @@ var Invoice = function (models, event) {
             var err;
             var invoice;
             var supplier;
-            var company;
-            var project;
             var query;
 
             if (parallelResponse && parallelResponse.length) {
@@ -193,34 +174,24 @@ var Invoice = function (models, event) {
             // invoice.sourceDocument = order.name;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
-            invoice.workflow = {};
-            invoice.workflow._id = workflow._id;
-            invoice.workflow.name = workflow.name;
-            invoice.workflow.status = workflow.status;
+            invoice.workflow = workflow._id;
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
             if (forSales === "true") {
                 if (!invoice.project) {
-                    invoice.project = {};
+                    invoice.project = order.project ? order.project._id : null;
                 }
-                invoice.project.name = order.project ? order.project.projectName : "";
             }
 
-            supplier = order['supplier'];
-
-            //if (supplier) {
-            //    invoice.supplier.name = supplier.name.first + ' ' + supplier.name.last;
-            //}
+            invoice.supplier = order['supplier']._id;
 
             if (forSales === "true") {
-                invoice.salesPerson = {};
-                invoice.salesPerson._id = order.project.projectmanager ? order.project.projectmanager._id : null;
-                invoice.salesPerson.name = order.project.projectmanager ? order.project.projectmanager.name : "";
+                invoice.salesPerson = order.project.projectmanager ? order.project.projectmanager._id : null;
 
                 invoice.save(callback);
 
             } else {
-                query = Company.findById(invoice.supplier._id).lean();
+                query = Company.findById(invoice.supplier).lean();
 
                 query.populate('salesPurchases.salesPerson', 'name');
 
@@ -230,9 +201,7 @@ var Invoice = function (models, event) {
                     }
 
                     if (result && result.salesPurchases.salesPerson) {
-                        invoice.salesPerson = {};
-                        invoice.salesPerson._id = result.salesPurchases.salesPerson._id;
-                        invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;
+                        invoice.salesPerson = result.salesPurchases.salesPerson._id;
                     }
 
                     invoice.save(callback);
@@ -258,7 +227,7 @@ var Invoice = function (models, event) {
                 $set: {
                     workflow: {
                         name: "Invoiced",
-                        _id: CONSTANTS.ORDERDONE
+                        _id : CONSTANTS.ORDERDONE
                     }
                 }
             }, {new: true}, function (err, result) {
@@ -267,14 +236,13 @@ var Invoice = function (models, event) {
                 }
             });
 
-
             async.each(products, function (result, cb) {
                 var jobs = result.jobs;
 
                 JobsModel.findByIdAndUpdate(jobs, {
                     $set: {
-                        invoice: invoiceId,
-                        type: "Invoiced",
+                        invoice : invoiceId,
+                        type    : "Invoiced",
                         workflow: CONSTANTS.JOBSFINISHED
                     }
                 }, {new: true}, function (err, job) {
@@ -342,11 +310,11 @@ var Invoice = function (models, event) {
 
                         if (updateName) {
                             optionsForPayments = {
-                                id: invoice._id,
+                                id         : invoice._id,
                                 targetModel: PaymentModel,
                                 searchField: "invoice._id",
-                                fieldName: "invoice.name",
-                                fieldValue: invoice.name
+                                fieldName  : "invoice.name",
+                                fieldValue : invoice.name
                             };
                             event.emit("updateNames", optionsForPayments);
                         }
@@ -469,8 +437,8 @@ var Invoice = function (models, event) {
 
                     var optionsObject = {};
                     var sort = {};
-                    var count = query.count ? query.count : 100;
-                    var page = query.page;
+                    var count = parseInt(query.count) ? parseInt(query.count) : 100;
+                    var page = parseInt(query.page);
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     var departmentSearcher;
@@ -479,9 +447,11 @@ var Invoice = function (models, event) {
                     var waterfallTasks;
 
                     if (req.query.sort) {
+                        var key = Object.keys(req.query.sort)[0];
+                        req.query.sort[key] = parseInt(req.query.sort[key]);
                         sort = req.query.sort;
-                        //} else {
-                        //    sort = {"supplier": 1};
+                    } else {
+                        sort = {"workflow": -1};
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -537,27 +507,119 @@ var Invoice = function (models, event) {
                             }
                         }
 
-                        optionsObject.$and.push({_id: {$in: invoicesIds}});
+                        optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
                         optionsObject.$and.push({expense: {$exists: false}});
 
+                        Invoice
+                            .aggregate([{
+                                $lookup: {
+                                    from        : "Employees",
+                                    localField  : "salesPerson",
+                                    foreignField: "_id", as: "salesPerson"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Customers",
+                                    localField  : "supplier",
+                                    foreignField: "_id", as: "supplier"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "workflows",
+                                    localField  : "workflow",
+                                    foreignField: "_id", as: "workflow"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Users",
+                                    localField  : "createdBy.user",
+                                    foreignField: "_id", as: "createdBy.user"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Users",
+                                    localField  : "editedBy.user",
+                                    foreignField: "_id", as: "editedBy.user"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Quotation",
+                                    localField  : "sourceDocument",
+                                    foreignField: "_id", as: "sourceDocument"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Project",
+                                    localField  : "project",
+                                    foreignField: "_id", as: "project"
+                                }
+                            }, {
+                                $project: {
+                                    sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
+                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                    supplier        : {$arrayElemAt: ["$supplier", 0]},
+                                    salesPerson     : {$arrayElemAt: ["$salesPerson", 0]},
+                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                    project         : {$arrayElemAt: ["$project", 0]},
+                                    expense         : 1,
+                                    forSales        : 1,
+                                    paymentInfo     : 1,
+                                    invoiceDate     : 1,
+                                    name            : 1,
+                                    paymentDate     : 1,
+                                    dueDate         : 1,
+                                    payments: 1
+                                }
+                            }, {
+                                $project: {
+                                    sourceDocument  : 1,
+                                    workflow        : 1,
+                                    supplier        : 1,
+                                    salesPerson     : 1,
+                                    'editedBy.user' : 1,
+                                    'createdBy.user': 1,
+                                    project         : 1,
+                                    expense         : 1,
+                                    forSales        : 1,
+                                    paymentInfo     : 1,
+                                    invoiceDate     : 1,
+                                    name            : 1,
+                                    paymentDate     : 1,
+                                    dueDate         : 1,
+                                    payments: 1
+                                }
+                            }, {
+                                $match: optionsObject
+                            }, {
+                                $skip: skip
+                            }, {
+                                $limit: count
+                            }, {
+                                $sort: sort
+                            }
 
-                        var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
+                            ], function (err, result) {
+                                waterfallCallback(null, result)
+                            });
 
-                        query
-                        //.populate('supplier', 'name _id')
-                        //.populate('salesPerson', 'name _id')
-                            .populate('department', '_id departmentName')
-                            .populate('createdBy.user')
-                            .populate('editedBy.user')
-                            .populate('groups.users')
-                            .populate('groups.group')
-                            .populate('groups.owner', '_id login')
-                            .populate('products.jobs')
-                            .populate('sourceDocument');
-                        /*.populate('project', '_id projectName').
-                         populate('workflow._id', '-sequence');*/
+                        //var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                        query.lean().exec(waterfallCallback);
+                        //query
+                        ////.populate('supplier', 'name _id')
+                        ////.populate('salesPerson', 'name _id')
+                        //    .populate('department', '_id departmentName')
+                        //    .populate('createdBy.user')
+                        //    .populate('editedBy.user')
+                        //    .populate('groups.users')
+                        //    .populate('groups.group')
+                        //    .populate('groups.owner', '_id login')
+                        //    .populate('products.jobs')
+                        //    .populate('sourceDocument');
+                        ///*.populate('project', '_id projectName').
+                        // populate('workflow._id', '-sequence');*/
+                        //
+                        //query.lean().exec(waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -677,7 +739,7 @@ var Invoice = function (models, event) {
                     contentSearcher = function (invoicesIds, waterfallCallback) {
 
                         optionsObject = {
-                            _id: id,
+                            _id     : id,
                             forSales: forSales
                         };
 
@@ -752,7 +814,7 @@ var Invoice = function (models, event) {
                             $set: {
                                 workflow: {
                                     name: "Not Invoiced",
-                                    _id: CONSTANTS.ORDERDRAFT
+                                    _id : CONSTANTS.ORDERDRAFT
                                 }
                             }
                         }, {new: true}, function (err, result) {
@@ -789,9 +851,9 @@ var Invoice = function (models, event) {
                                 };
 
                                 JobsModel.findByIdAndUpdate(id, {
-                                    type: "Ordered",
-                                    invoice: null,
-                                    workflow:  CONSTANTS.JOBSINPROGRESS
+                                    type    : "Ordered",
+                                    invoice : null,
+                                    workflow: CONSTANTS.JOBSINPROGRESS
                                 }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
@@ -866,15 +928,6 @@ var Invoice = function (models, event) {
         if (req.session && req.session.loggedIn && db) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    //Invoice = models.get(db, 'Invoice', InvoiceSchema);
-                    //data.editedBy = {
-                    //    user: req.session.uId,
-                    //    date: new Date().toISOString()
-                    //}
-
-                    //if (data.supplier && data.supplier._id) {
-                    //    data.supplier = data.supplier._id;
-                    //}
 
                     Invoice.findByIdAndUpdate(_id, data.invoice, {new: true}, function (err, result) {
 
@@ -899,7 +952,6 @@ var Invoice = function (models, event) {
     this.totalCollectionLength = function (req, res, next) {
         var data = req.query;
         var filter = data.filter;
-        //var forSales = data.forSales;
 
         var optionsObject = {};
         var result = {};
@@ -920,13 +972,6 @@ var Invoice = function (models, event) {
                 optionsObject['$and'] = caseFilter(filter);
             }
         }
-
-        //if (forSales){
-        //    optionsObject['$and'].push({forSales: false});
-        //} else {
-        //    optionsObject['$and'].push({forSales: true });
-        //
-        //}
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
@@ -999,8 +1044,8 @@ var Invoice = function (models, event) {
         var date = moment().format('DD/MM/YYYY');
 
         db.collection('settings').findOneAndUpdate({
-                dbName: currentDbName,
-                name: 'invoice',
+                dbName : currentDbName,
+                name   : 'invoice',
                 project: project
             },
             {
@@ -1008,7 +1053,7 @@ var Invoice = function (models, event) {
             },
             {
                 returnOriginal: false,
-                upsert: true
+                upsert        : true
             },
             function (err, rate) {
                 var resultName;
@@ -1033,13 +1078,10 @@ var Invoice = function (models, event) {
                     .aggregate([
                         {
                             $group: {
-                                _id: null,
+                                _id       : null,
                                 'Due date': {
                                     $addToSet: '$dueDate'
-                                }/*,
-                                 'salesPerson': {
-                                 $addToSet: '$salesPerson'
-                                 }*/
+                                }
                             }
                         }
                     ], function (err, invoice) {
@@ -1051,24 +1093,7 @@ var Invoice = function (models, event) {
                         }
 
                     })
-            }/*,
-             function (invoice, cb) {
-             Employee
-             .populate(invoice , {
-             path: 'salesPerson',
-             model: Employee,
-             select: 'name _id'
-             },
-             function (err, invoice) {
-             if (err) {
-             return cb(err)
-
-             }
-             cb(null, invoice)
-
-             })
-             }*/
-
+            }
         ], function (err, result) {
             if (err) {
                 return next(err)
@@ -1108,46 +1133,46 @@ var Invoice = function (models, event) {
 
         Invoice.aggregate([{
             $match: {
-                forSales: true,
+                forSales             : true,
                 'paymentInfo.balance': {
                     $gt: 0
                 }
             }
         }, {
             $project: {
-                dueDate: 1,
-                project: 1,
-                supplier: 1,
-                name: 1,
+                dueDate    : 1,
+                project    : 1,
+                supplier   : 1,
+                name       : 1,
                 paymentInfo: 1,
                 salesPerson: 1,
-                diffStatus: {
+                diffStatus : {
                     $cond: {
-                        if: {
+                        if  : {
                             $lt: [{$subtract: [now, '$dueDate']}, 0]
                         },
                         then: -1,
                         else: {
                             $cond: {
-                                if: {
+                                if  : {
                                     $lt: [{$subtract: [now, '$dueDate']}, 1296000000]
                                 },
                                 then: 0,
                                 else: {
                                     $cond: {
-                                        if: {
+                                        if  : {
                                             $lt: [{$subtract: [now, '$dueDate']}, 2592000000]
                                         },
                                         then: 1,
                                         else: {
                                             $cond: {
-                                                if: {
+                                                if  : {
                                                     $lt: [{$subtract: [now, '$dueDate']}, 5184000000]
                                                 },
                                                 then: 2,
                                                 else: {
                                                     $cond: {
-                                                        if: {
+                                                        if  : {
                                                             $lt: [{$subtract: [now, '$dueDate']}, 7776000000]
                                                         },
                                                         then: 3,
@@ -1195,7 +1220,6 @@ var Invoice = function (models, event) {
                     dueDate: {$gte: startDate, $lte: endDate}
                 }
             }])
-            /*.allowDiskUse(true)*/
             .exec(function (err, invoices) {
                 if (err) {
                     return next(err);
@@ -1296,31 +1320,31 @@ var Invoice = function (models, event) {
                                 $match: optionsObject
                             }, {
                                 $project: {
-                                    name: 1,
+                                    name       : 1,
                                     paymentInfo: 1,
-                                    status: '$workflow.name',
-                                    ammount: {$divide: ['$paymentInfo.total', 100]},
-                                    paid: {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
-                                    balance: {$divide: ['$paymentInfo.balance', 100]}
+                                    status     : '$workflow.name',
+                                    ammount    : {$divide: ['$paymentInfo.total', 100]},
+                                    paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
+                                    balance    : {$divide: ['$paymentInfo.balance', 100]}
                                 }
                             }, {
                                 $group: {
-                                    _id: null,
+                                    _id     : null,
                                     invoices: {
                                         $push: {
-                                            _id: '$_id',
-                                            name: '$name',
-                                            status: '$status',
+                                            _id        : '$_id',
+                                            name       : '$name',
+                                            status     : '$status',
                                             paymentInfo: {
                                                 ammount: '$ammount',
-                                                paid: '$paid',
+                                                paid   : '$paid',
                                                 balance: '$balance'
                                             }
                                         }
                                     },
-                                    ammount: {$sum: '$ammount'},
-                                    paid: {$sum: '$paid'},
-                                    balance: {$sum: '$balance'}
+                                    ammount : {$sum: '$ammount'},
+                                    paid    : {$sum: '$paid'},
+                                    balance : {$sum: '$balance'}
                                 }
                             }])
                             .exec(waterfallCallback);

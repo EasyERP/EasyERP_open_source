@@ -19,10 +19,7 @@ module.exports = (function () {
         ID              : Number,
         name            : {type: String, default: ''},
         forSales        : {type: Boolean, default: true},
-        supplier        : {
-            _id : {type: ObjectId, ref: 'Customers', default: null},
-            name: String
-        },
+        supplier        : {type: ObjectId, ref: 'Customers', default: null},
         sourceDocument  : {type: ObjectId, ref: 'Quotation', default: null},//should be order in invoice case
         paymentReference: {type: String, default: 'free'},
 
@@ -36,20 +33,13 @@ module.exports = (function () {
             rate: {type: Number, default: 1}
         },
 
-        salesPerson : {
-            _id : {type: ObjectId, ref: 'Employees', default: null},
-            name: String
-        },
+        salesPerson : {type: ObjectId, ref: 'Employees', default: null},
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
         paymentInfo: payments,
         payments   : [{type: ObjectId, ref: 'Payment', default: null}],
 
-        workflow: {
-            _id   : {type: ObjectId, ref: 'workflows', default: null},
-            name  : String,
-            status: String
-        },
+        workflow: {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 
         groups: {
@@ -67,9 +57,7 @@ module.exports = (function () {
         editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
-        },
-        validated: {type: String, enum: ["Draft", "Done"], default: "Draft"}
-
+        }
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({
@@ -84,10 +72,7 @@ module.exports = (function () {
             taxes      : {type: Number, default: 0},
             subTotal   : Number
         }],
-        project : {
-            _id : {type: ObjectId, ref: 'Project', default: null},
-            name: String
-        }
+        project : {type: ObjectId, ref: 'Project', default: null}
     });
 
     var payRollInvoiceSchema = baseSchema.extend({
