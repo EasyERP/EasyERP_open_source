@@ -240,7 +240,7 @@ var Payment = function (models, event) {
                     };
 
                     contentSearcher = function (paymentsIds, waterfallCallback) {
-                        optionsObject._id = {$in: _.pluck(paymentsIds, '_id')};
+                        optionsObject['$and'].push({_id: {$in: _.pluck(paymentsIds, '_id')}});
 
                         Payment.aggregate([{
                             $lookup: {
