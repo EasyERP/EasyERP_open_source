@@ -70,7 +70,7 @@ module.exports = (function () {
         budget: {
             _id: false,
             bonus: Array,
-            projectTeam: [{ type: ObjectId, ref: "jobs", default: null }],
+            projectTeam: [{ type: ObjectId, ref: "jobs", default: null }]
            // budget: Array,
            // projectValues: JSON,
            // budgetTotal: JSON

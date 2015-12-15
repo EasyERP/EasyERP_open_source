@@ -103,7 +103,7 @@ define([
 
             generatedWtracks: function () {
                 var self = this;
-                var tr = this.$listTable.find('#false');
+                var tr = this.$listTable.find('.false');
                 var projectId = tr.find('[data-content="project"]').attr('data-id');
 
                 dataService.getData("/jobs/getForDD", {"projectId": projectId}, function (jobs) {
@@ -223,8 +223,8 @@ define([
                         this.changedModels[cid] = model;
                     }
 
-                    this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
-                    row = this.$el.find('#false');
+                    this.$el.find('#listTable').prepend('<tr class="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                    row = this.$el.find('.false');
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
@@ -742,7 +742,7 @@ define([
                     $checkedEls = $thisEl.find("input.listCB:checked");
 
                     checkLength = $checkedEls.length;
-                    rawRows = $checkedEls.closest('#false');
+                    rawRows = $checkedEls.closest('.false');
 
                     this.checkProjectId(e, checkLength);
 
@@ -761,11 +761,11 @@ define([
                         $('#check_all').prop('checked', false);
                     }
 
-                    //if (rawRows.length !== 0 && rawRows.length !== checkLength) {
-                    //    this.$saveBtn.hide();
-                    //} else {
-                    //    this.$saveBtn.show();
-                    //}
+                    if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                        this.$saveBtn.hide();
+                    } else {
+                        this.$saveBtn.show();
+                    }
                 }
 
                 this.setAllTotalVals();
@@ -793,7 +793,7 @@ define([
             },
 
             savedNewModel: function (modelObject) {
-                var savedRow = this.$listTable.find('#false');
+                var savedRow = this.$listTable.find('.false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -950,7 +950,7 @@ define([
             },
 
             isNewRow: function () {
-                var newRow = $('#false');
+                var newRow = $('.false');
 
                 return !!newRow.length;
             },
@@ -1257,11 +1257,13 @@ define([
                 });
 
                 if (this.createdCopied) {
-                    copiedCreated = this.$el.find('#false');
-                    dataId = copiedCreated.attr('data-id');
-                    this.editCollection.remove(dataId);
-                    delete this.changedModels[dataId];
-                    copiedCreated.remove();
+                    copiedCreated = this.$el.find('.false');
+                    copiedCreated.each(function(){
+                        dataId = $(this).attr('data-id');
+                        self.editCollection.remove(dataId);
+                        delete self.changedModels[dataId];
+                        $(this).remove();
+                    });
 
                     this.createdCopied = false;
                 }
