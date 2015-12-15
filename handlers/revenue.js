@@ -3043,6 +3043,8 @@ var wTrack = function (models) {
             }
 
             mergeByProperty(response.invoiced, response.paid, 'date');
+            response.invoiced = _.sortBy(response.invoiced, 'date');
+
             res.status(200).send(response.invoiced);
         });
     }
