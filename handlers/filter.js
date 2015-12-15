@@ -669,7 +669,7 @@ var Filters = function (models) {
                     $lookup: {
                         from        : "Invoice",
                         localField  : "invoice",
-                        foreignField: "_id", as: "assigned"
+                        foreignField: "_id", as: "invoice"
                     }
                 }, {
                     $lookup: {
@@ -680,20 +680,20 @@ var Filters = function (models) {
                 }, {
                     $project: {
                         supplier: {$arrayElemAt: ["$supplier", 0]},
-                        assigned: {$arrayElemAt: ["$assigned", 0]},
+                        invoice: {$arrayElemAt: ["$invoice", 0]},
                         name    : 1
                     }
                 }, {
                     $project: {
                         supplier: 1,
-                        assigned: 1,
+                        invoice: 1,
                         name    : 1
                     }
                 }, {
                     $lookup: {
                         from        : "Employees",
-                        localField  : "salesPerson",
-                        foreignField: "salesPerson", as: "assigned"
+                        localField  : "invoice.salesPerson",
+                        foreignField: "_id", as: "assigned"
                     }
                 }, {
                     $project: {

@@ -261,13 +261,14 @@ var Payment = function (models, event) {
                                 paidAmount      : 1,
                                 workflow        : 1,
                                 date            : 1,
-                                paymentMethod   : 1
+                                paymentMethod   : 1,
+                                isExpense       : 1
                             }
                         }, {
                             $lookup: {
                                 from        : "Employees",
                                 localField  : "invoice.salesPerson",
-                                foreignField: "invoice.salesPerson", as: "assigned"
+                                foreignField: "_id", as: "assigned"
                             }
                         }, {
                             $project: {
@@ -279,7 +280,8 @@ var Payment = function (models, event) {
                                 paidAmount      : 1,
                                 workflow        : 1,
                                 date            : 1,
-                                paymentMethod   : 1
+                                paymentMethod   : 1,
+                                isExpense       : 1
                             }
                         }, {
                             $match: optionsObject
@@ -941,7 +943,7 @@ var Payment = function (models, event) {
 
                         delete data._id;
                         Payment.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, payment) {
-                            invoiceId = payment ? payment.get('invoice._id') : null;
+                            invoiceId = payment ? payment.get('invoice') : null;
                             paid = payment ? payment.get('paidAmount') : 0;
 
                             if (invoiceId && (payment._type !== 'salaryPayment')) {
@@ -990,11 +992,7 @@ var Payment = function (models, event) {
                                             return next(err);
                                         }
 
-                                        workflowObj = {
-                                            _id   : workflow._id,
-                                            name  : workflow.name,
-                                            status: workflow.status
-                                        };
+                                        workflowObj = workflow._id;
 
                                         paymentInfoNew.total = paymentInfo.total;
                                         paymentInfoNew.taxes = paymentInfo.taxes;
@@ -1017,7 +1015,7 @@ var Payment = function (models, event) {
 
                                             var products = result.get('products');
 
-                                            async.each(products, function (product, cb) {
+                                            async.each(products, function (product, callBack) {
 
                                                 JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
                                                     if (err) {
@@ -1026,7 +1024,7 @@ var Payment = function (models, event) {
 
                                                     project = result ? result.get('project') : null;
 
-                                                    cb();
+                                                    callBack();
                                                 });
 
                                             }, function () {
@@ -1040,13 +1038,13 @@ var Payment = function (models, event) {
                                 });
                             }
                             cb();
-                        }, function (err) {
-                            if (err) {
-                                return next(err);
-                            }
-
-                            res.status(200).send({success: 'updated'});
                         });
+                    }, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'updated'});
                     });
                 } else {
                     res.status(403).send();
