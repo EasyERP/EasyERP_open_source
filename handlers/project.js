@@ -21,6 +21,9 @@ var Project = function (models) {
             .find(filter)
             .sort({projectName: 1})
             .lean()
+            .populate('workflow', '_id name')
+            .populate('customer', '_id name')
+            .populate('projectmanager', '_id name')
             .exec(function (err, projects) {
                 if (err) {
                     return next(err);

@@ -634,7 +634,7 @@ define([
                     if (elementType === '#project') {
                         this.projectModel = element;
 
-                        projectManager = element.projectmanager.name;
+                        projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
                         assignedContainer = tr.find('[data-content="assigned"]');
                         assignedContainer.text(projectManager);
                         targetElement.attr('data-id', id);
@@ -642,7 +642,7 @@ define([
                         tr.find('[data-content="jobs"]').text("");
 
                         tr.find('[data-content="workflow"]').text(element.workflow.name);
-                        tr.find('[data-content="customer"]').text(element.customer.name);
+                        tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
 
                         project = _.clone(editWtrackModel.get('project'));
                         project._id = element._id;
@@ -650,9 +650,9 @@ define([
                         project.workflow._id = element.workflow._id;
                         project.workflow.name = element.workflow.name;
                         project.customer._id = element.customer._id;
-                        project.customer.name = element.customer.name;
+                        project.customer.name = element.customer.name.first + ' ' + element.customer.name.last;
 
-                        project.projectmanager.name = element.projectmanager.name;
+                        project.projectmanager.name = projectManager;
                         project.projectmanager._id = element.projectmanager._id;
 
                         changedAttr.project = project;
