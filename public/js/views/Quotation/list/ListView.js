@@ -60,10 +60,8 @@ define([
                 var model = this.collection.get(id);
 
                 model.save({
-                    workflow: {
-                        _id: target$.attr("id"),
-                        name:target$.text()
-                    }}, {
+                    workflow: target$.attr("id")
+                    }, {
                     headers : {
                         mid: 55
                     },
@@ -95,7 +93,6 @@ define([
             render: function () {
                 var self;
                 var $currentEl;
-                var FilterView = filterView;
                 $('.ui-dialog ').remove();
 
                 self = this;

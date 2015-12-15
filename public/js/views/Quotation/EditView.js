@@ -52,7 +52,7 @@ define([
                 return false;
             },
 
-            notHide      : function () {
+            notHide: function () {
                 return false;
             },
 
@@ -60,7 +60,7 @@ define([
                 $(".newSelectList").hide();
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 var target = $(e.target);
                 var id = target.attr("id");
                 var type = target.attr('data-level');
@@ -76,11 +76,11 @@ define([
                     this.$el.find('#supplierDd').attr('data-id', element.customer._id);
                 }
             },
-            nextSelect   : function (e) {
+            nextSelect  : function (e) {
                 this.showNewSelect(e, false, true);
             },
 
-            prevSelect   : function (e) {
+            prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -147,13 +147,8 @@ define([
                     if (products && products.length) {
                         self.currentModel.save({
                             isOrder : true,
-                            //for purchase orders to be clickable
                             type    : 'Not Invoiced',
-                            workflow: {
-                                _id : workflow._id,
-                                name: workflow.name
-                            }
-                            //type: "Not Invoiced"
+                            workflow: workflow._id
                         }, {
                             headers: {
                                 mid: mid
@@ -234,10 +229,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -268,10 +260,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -299,16 +288,8 @@ define([
                 var productId;
                 var quantity;
                 var price;
-
-                var supplier = {};
-                supplier._id = thisEl.find('#supplierDd').attr('data-id');
-                supplier.name = thisEl.find('#supplierDd').text();
-
-                var project = {};
-                project._id = thisEl.find('#projectDd').attr('data-id');
-                project.projectName = thisEl.find('#projectDd').text();
-                project.projectmanager = this.projectManager;
-
+                var supplier = thisEl.find('#supplierDd').attr('data-id');
+                var project = thisEl.find('#projectDd').attr('data-id');
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
@@ -330,9 +311,6 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
-                var tabs;
-                var activeTab;
-                var dialogHolder;
 
                 var currency = {
                     _id : thisEl.find('#currencyDd').attr('data-id'),
@@ -340,9 +318,7 @@ define([
                 };
 
                 var wF = this.currentModel.get('workflow');
-                var workflow = {};
-                workflow._id = wF._id;
-                workflow.name = wF.name;
+                var workflow = wF._id;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -383,7 +359,6 @@ define([
                         }
                     }
                 }
-
 
                 data = {
                     currency         : currency,
@@ -460,7 +435,7 @@ define([
                         },
                         success: function () {
                             $('.edit-product-dialog').remove();
-                           // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                            // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                             url = window.location.hash;
 
                             Backbone.history.fragment = '';
@@ -568,7 +543,6 @@ define([
 
                     self.responseObj['#project'] = projects;
                 });
-
 
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {

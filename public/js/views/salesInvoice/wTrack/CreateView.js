@@ -96,7 +96,6 @@
                 var editedElement;
                 var editedCol;
                 var editedElementValue;
-                var paymentInfo;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -221,39 +220,22 @@
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
-                    supplier: {
-                        _id: supplierId,
-                        name: supplierName
-                    },
+                    supplier: supplierId,
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
-                    project: {
-                        _id: projectId,
-                        name: projectName
-                    },
-
-                    salesPerson: {
-                        _id: salesPersonId,
-                        name: salesPersonName
-                    },
+                    project: projectId,
+                    salesPerson: salesPersonId,
                     paymentTerms: paymentTermId,
-
                     products: products,
                     paymentInfo: payments,
-
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
                     whoCanRW: whoCanRW,
-                    workflow: {
-                        _id: this.defaultWorkflow._id,
-                        name: this.defaultWorkflow.name,
-                        status: this.defaultWorkflow.status
-                    },
+                    workflow: this.defaultWorkflow._id,
                     name: name
-
                 };
 
                 if (supplier) {
@@ -292,7 +274,6 @@
                 var dueDate = moment().add(15, 'days').toDate();
                 var formString = this.template(options);
                 var self = this;
-                var invoiceItemContainer;
                 var paymentContainer;
                 var invoiceContainer;
 
@@ -303,7 +284,6 @@
                     dialogClass: "edit-dialog",
                     title: "Create Invoice",
                     width: '1200',
-                    //width: 'auto',
                     position: {within: $("#wrapper")},
                     buttons: [
                         {
@@ -320,7 +300,6 @@
                                 self.hideDialog();
                             }
                         }]
-
                 });
 
                 notDiv = this.$el.find('.assignees-container');

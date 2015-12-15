@@ -424,7 +424,7 @@ var Quotation = function (models, event) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                   // queryObject,
+                    // queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -490,14 +490,14 @@ var Quotation = function (models, event) {
                     }
                 }, {
                     $project: {
-                        name       : 1,
-                        paymentInfo: 1,
-                        orderDate  : 1,
-                        forSales   : 1,
-                        workflow   : 1,
-                        supplier   : 1,
-                        project    : 1,
-                        isOrder    : 1,
+                        name          : 1,
+                        paymentInfo   : 1,
+                        orderDate     : 1,
+                        forSales      : 1,
+                        workflow      : 1,
+                        supplier      : 1,
+                        project       : 1,
+                        isOrder       : 1,
                         projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
                     }
                 }, {
@@ -582,19 +582,19 @@ var Quotation = function (models, event) {
             //queryObject.isOrder = isOrder;
             query = Quotation.findOne(queryObject);
 
-            // query.populate('supplier', '_id name fullName');
-            query.populate('destination');
-            query.populate('incoterm');
-            query.populate('invoiceControl');
-            query.populate('paymentTerm');
-            query.populate('products.product', '_id, name');
-            query.populate('products.jobs', '_id, name');
-            query.populate('groups.users');
-            query.populate('groups.group');
-            query.populate('groups.owner', '_id login');
-            //query.populate('workflow', '-sequence');
-            query.populate('deliverTo', '_id, name');
-            //query.populate('project', '_id projectName');
+            query
+                .populate('supplier', '_id name fullName')
+                .populate('destination')
+                .populate('incoterm')
+                .populate('invoiceControl')
+                .populate('paymentTerm')
+                .populate('products.product', '_id, name')
+                .populate('products.jobs', '_id, name')
+                .populate('groups.users')
+                .populate('groups.group')
+                .populate('groups.owner', '_id login')
+                .populate('deliverTo', '_id, name')
+                .populate('project', '_id projectName');
 
             query.exec(waterfallCallback);
         };
