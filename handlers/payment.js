@@ -149,6 +149,7 @@ var Payment = function (models, event) {
         var bonus = options ? !!options.bonus : false;
         var salary = options ? !!options.salary : false;
         var Payment;
+        var supplier = 'Customers';
 
         options.isWtrack = isWtrack;
         Payment = returnModel(req, options);
@@ -176,10 +177,6 @@ var Payment = function (models, event) {
                         sort = {"date": -1};
                     }
 
-                    if (bonus) {
-                        optionsObject.bonus = bonus;
-                    }
-
                     optionsObject.$and = [];
 
                     if (filter && typeof filter === 'object') {
@@ -194,6 +191,11 @@ var Payment = function (models, event) {
                         optionsObject.$and.push({forSale: forSale});
                     } else {
                         optionsObject.$and.push({isExpense: true});
+                    }
+
+                    if (bonus) {
+                        optionsObject.$and.push({bonus: bonus});
+                        supplier = "Employees"
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -242,7 +244,7 @@ var Payment = function (models, event) {
 
                         Payment.aggregate([{
                             $lookup: {
-                                from        : "Customers",
+                                from        : supplier,
                                 localField  : "supplier",
                                 foreignField: "_id", as: "supplier"
                             }
@@ -262,7 +264,11 @@ var Payment = function (models, event) {
                                 workflow        : 1,
                                 date            : 1,
                                 paymentMethod   : 1,
-                                isExpense       : 1
+                                isExpense       : 1,
+                                bonus           : 1,
+                                paymentRef: 1,
+                                year: 1,
+                                month: 1
                             }
                         }, {
                             $lookup: {
@@ -281,7 +287,12 @@ var Payment = function (models, event) {
                                 workflow        : 1,
                                 date            : 1,
                                 paymentMethod   : 1,
-                                isExpense       : 1
+                                isExpense       : 1,
+                                bonus           : 1,
+                                paymentRef: 1,
+                                year: 1,
+                                month: 1
+
                             }
                         }, {
                             $match: optionsObject
@@ -316,6 +327,7 @@ var Payment = function (models, event) {
     this.getById = function (req, res, next) {
         var id = req.params.id;
         var Payment;
+        var query;
         var moduleId = returnModuleId(req);
 
         Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
@@ -323,7 +335,10 @@ var Payment = function (models, event) {
         access.getReadAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
 
-                Payment.findById(id, function (err, payment) {
+                query.findById(id);
+
+                query.populate('supplier', '_id name fullName');
+                query.exec(function (err, payment) {
                     if (err) {
                         return next(err);
                     }

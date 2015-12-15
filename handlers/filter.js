@@ -680,13 +680,13 @@ var Filters = function (models) {
                 }, {
                     $project: {
                         supplier: {$arrayElemAt: ["$supplier", 0]},
-                        invoice: {$arrayElemAt: ["$invoice", 0]},
+                        invoice : {$arrayElemAt: ["$invoice", 0]},
                         name    : 1
                     }
                 }, {
                     $project: {
                         supplier: 1,
-                        invoice: 1,
+                        invoice : 1,
                         name    : 1
                     }
                 }, {
@@ -701,7 +701,7 @@ var Filters = function (models) {
                         assigned: {$arrayElemAt: ["$assigned", 0]},
                         name    : 1
                     }
-                },{
+                }, {
                     $group: {
                         _id       : null,
                         'assigned': {
@@ -739,47 +739,70 @@ var Filters = function (models) {
         };
 
         function getSupplierPaymentsFiltersValues(callback) {
-            customerPayments.aggregate([
-                {
-                    $match: {
-                        forSale: false,
-                        bonus  : true
-                    }
-                }, {
-                    $group: {
-                        _id         : null,
-                        'supplier'  : {
-                            $addToSet: {
-                                _id : '$supplier._id',
-                                name: '$supplier.fullName'
+            customerPayments.aggregate([{
+                $match: {
+                    forSale: false,
+                    bonus  : true
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    supplier  : {$arrayElemAt: ["$supplier", 0]},
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $project: {
+                    supplier  : 1,
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $group: {
+                    _id         : null,
+                    'supplier'  : {
+                        $addToSet: {
+                            _id : '$supplier._id',
+                            name: {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                             }
-                        },
-                        'paymentRef': {
-                            $addToSet: {
-                                _id : '$paymentRef',
-                                name: {'$ifNull': ['$paymentRef', 'None']}
-                            }
-                        },
-                        'year'      : {
-                            $addToSet: {
-                                _id : '$year',
-                                name: {'$ifNull': ['$year', 'None']}
-                            }
-                        },
-                        'month'     : {
-                            $addToSet: {
-                                _id : '$month',
-                                name: {'$ifNull': ['$month', 'None']}
-                            }
-                        },
-                        'workflow'  : {
-                            $addToSet: {
-                                _id : '$workflow',
-                                name: {'$ifNull': ['$workflow', 'None']}
-                            }
+                        }
+                    },
+                    'paymentRef': {
+                        $addToSet: {
+                            _id : '$paymentRef',
+                            name: {'$ifNull': ['$paymentRef', 'None']}
+                        }
+                    },
+                    'year'      : {
+                        $addToSet: {
+                            _id : '$year',
+                            name: {'$ifNull': ['$year', 'None']}
+                        }
+                    },
+                    'month'     : {
+                        $addToSet: {
+                            _id : '$month',
+                            name: {'$ifNull': ['$month', 'None']}
+                        }
+                    },
+                    'workflow'  : {
+                        $addToSet: {
+                            _id : '$workflow',
+                            name: {'$ifNull': ['$workflow', 'None']}
                         }
                     }
                 }
+            }
             ], function (err, result) {
                 if (err) {
                     callback(err);

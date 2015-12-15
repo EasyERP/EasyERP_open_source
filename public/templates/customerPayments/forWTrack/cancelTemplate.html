@@ -1,8 +1,8 @@
 <tr data-id="<%=model._id%>">
     <td class = "notForm centerCell"><input type="checkbox" value="<%=model._id%>" class="checkbox" /></td>
     <td class="centerCell"><%=model.startNumber%></td>
-    <td><%=(model.invoice && model.invoice.assigned) ? model.invoice.assigned.name: ''%></td>
-    <td><%=model.supplier[0] ? model.supplier[0].fullName : model.supplier.fullName%></td>
+    <td><%=(model && model.assigned) ? model.assigned.name.first + ' ' + model.assigned.name.last : ''%></td>
+    <td><%=(model.supplier && model.supplier.name) ? model.supplier.name.first + ' ' + model.supplier.name.last : '' %></td>
     <td><%=model.invoice ? model.invoice.name : ''%></td>
     <td><%=(model.paymentMethod) ? model.paymentMethod.name : ''%></td>
     <td class="total money <%= model.paidAmount != model.invoiced ? 'red' :''%>"><%=currencySplitter(model.invoiced)%></td>
