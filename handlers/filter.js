@@ -673,26 +673,18 @@ var Filters = function (models) {
                     }
                 }, {
                     $lookup: {
-                        from        : "workflows",
-                        localField  : "workflow",
-                        foreignField: "_id", as: "workflow"
-                    }
-                }, {
-                    $lookup: {
                         from        : "Customers",
                         localField  : "supplier",
                         foreignField: "_id", as: "supplier"
                     }
                 }, {
                     $project: {
-                        workflow: {$arrayElemAt: ["$workflow", 0]},
                         supplier: {$arrayElemAt: ["$supplier", 0]},
                         assigned: {$arrayElemAt: ["$assigned", 0]},
                         name    : 1
                     }
                 }, {
                     $project: {
-                        workflow: 1,
                         supplier: 1,
                         assigned: 1,
                         name    : 1
@@ -705,7 +697,6 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        workflow: 1,
                         supplier: 1,
                         assigned: {$arrayElemAt: ["$assigned", 0]},
                         name    : 1
@@ -713,12 +704,6 @@ var Filters = function (models) {
                 },{
                     $group: {
                         _id       : null,
-                        'workflow': {
-                            $addToSet: {
-                                _id : '$workflow._id',
-                                name: '$workflow.name'
-                            }
-                        },
                         'assigned': {
                             $addToSet: {
                                 _id : '$assigned._id',

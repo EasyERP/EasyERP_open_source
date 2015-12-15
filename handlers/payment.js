@@ -156,12 +156,11 @@ var Payment = function (models, event) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
                     var optionsObject = {}; //{forSale: forSale};
                     var sort = {};
-                    var count = req.query.count ? req.query.count : 100;
-                    var page = req.query.page;
+                    var count = parseInt(req.query.count) ? parseInt(req.query.count) : 100;
+                    var page = parseInt(req.query.page);
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     var departmentSearcher;
@@ -170,6 +169,8 @@ var Payment = function (models, event) {
                     var waterfallTasks;
 
                     if (req.query.sort) {
+                        var key = Object.keys(req.query.sort)[0];
+                        req.query.sort[key] = parseInt(req.query.sort[key]);
                         sort = req.query.sort;
                     } else {
                         sort = {"date": -1};
@@ -237,29 +238,59 @@ var Payment = function (models, event) {
                     };
 
                     contentSearcher = function (paymentsIds, waterfallCallback) {
-                        var query;
+                        optionsObject._id = {$in: _.pluck(paymentsIds, '_id')};
 
-                        optionsObject._id = {$in: paymentsIds};
-
-                        query = Payment.find(optionsObject).limit(count).skip(skip).sort(sort);
-
-                        /* query
-                         .populate('invoice._id', '_id name');
-                         /!*.populate('paymentMethod', '_id name');*!/*/
-
-                        query.exec(function (err, result) {
-                            if (err) {
-                                return waterfallCallback(err);
+                        Payment.aggregate([{
+                            $lookup: {
+                                from        : "Customers",
+                                localField  : "supplier",
+                                foreignField: "_id", as: "supplier"
                             }
-
-                            /*Employee.populate(result, {
-                             path   : 'invoice.salesPerson',
-                             select : '_id name',
-                             options: {lean: true}
-                             }, function () {*/
-                            waterfallCallback(null, result);
-                            /*});*/
-                        });
+                        }, {
+                            $lookup: {
+                                from        : "Invoice",
+                                localField  : "invoice",
+                                foreignField: "_id", as: "invoice"
+                            }
+                        }, {
+                            $project: {
+                                supplier        : {$arrayElemAt: ["$supplier", 0]},
+                                invoice         : {$arrayElemAt: ["$invoice", 0]},
+                                forSale         : 1,
+                                differenceAmount: 1,
+                                paidAmount      : 1,
+                                workflow        : 1,
+                                date            : 1,
+                                paymentMethod   : 1
+                            }
+                        }, {
+                            $lookup: {
+                                from        : "Employees",
+                                localField  : "invoice.salesPerson",
+                                foreignField: "invoice.salesPerson", as: "assigned"
+                            }
+                        }, {
+                            $project: {
+                                supplier        : 1,
+                                invoice         : 1,
+                                assigned        : {$arrayElemAt: ["$assigned", 0]},
+                                forSale         : 1,
+                                differenceAmount: 1,
+                                paidAmount      : 1,
+                                workflow        : 1,
+                                date            : 1,
+                                paymentMethod   : 1
+                            }
+                        }, {
+                            $match: optionsObject
+                        }, {
+                            $skip: skip
+                        }, {
+                            $limit: count
+                        }, {
+                            $sort: sort
+                        }
+                        ], waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -636,8 +667,8 @@ var Payment = function (models, event) {
                     async.each(products, function (porduct) {
                         var job = porduct.jobs;
 
-                        JobsModel.findByIdAndUpdate(job, {$set: {payments: payments}}, {new: true}, function(err, result){
-                            if (err){
+                        JobsModel.findByIdAndUpdate(job, {$set: {payments: payments}}, {new: true}, function (err, result) {
+                            if (err) {
                                 return next(err);
                             }
                         })

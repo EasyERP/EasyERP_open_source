@@ -602,24 +602,6 @@ var Invoice = function (models, event) {
                             ], function (err, result) {
                                 waterfallCallback(null, result)
                             });
-
-                        //var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
-
-                        //query
-                        ////.populate('supplier', 'name _id')
-                        ////.populate('salesPerson', 'name _id')
-                        //    .populate('department', '_id departmentName')
-                        //    .populate('createdBy.user')
-                        //    .populate('editedBy.user')
-                        //    .populate('groups.users')
-                        //    .populate('groups.group')
-                        //    .populate('groups.owner', '_id login')
-                        //    .populate('products.jobs')
-                        //    .populate('sourceDocument');
-                        ///*.populate('project', '_id projectName').
-                        // populate('workflow._id', '-sequence');*/
-                        //
-                        //query.lean().exec(waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
