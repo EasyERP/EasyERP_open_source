@@ -1,17 +1,28 @@
-﻿define([],
-    function () {
+﻿define(['moment'],
+    function (moment) {
         "use strict";
         var Model = Backbone.Model.extend({
             idAttribute: '_id',
 
             parse: function (response) {
-                var sales;
                 var Model = Backbone.Model.extend({
                     idAttribute: 'salesPerson'
                 });
                 var Collection = Backbone.Collection.extend({
                     model: Model
                 });
+                var collection = this.collection || {};
+                var sales;
+                var year = response.date.toString().substr(0, 4);
+                var monthOrWeek = response.date.toString().substr(4);
+
+                this.byWeek = !!collection.byWeek;
+
+                if(!this.byWeek){
+                    response.date = moment([year, monthOrWeek - 1]).format('MMM, YYYY');
+                } else {
+                    response.date = monthOrWeek + ', ' + year;
+                }
 
                 response.invoiced = response.invoiced || 0;
                 response.invoiced /= 100;
@@ -32,6 +43,10 @@
             url: 'revenue/synthetic',
 
             initialize: function (options) {
+                options = options || {};
+
+                this.byWeek = !!options.byWeek;
+
                 this.fetch({
                     data : options,
                     reset: true
