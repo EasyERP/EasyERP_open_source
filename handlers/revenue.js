@@ -2946,6 +2946,29 @@ var wTrack = function (models) {
                     dateByMonth: 1
                 }
             }, {
+                $group: {
+                    _id: null,
+                    salesArray: {$addToSet: {
+                        _id: '$salesPerson._id',
+                        name: '$salesPerson.name'
+                    }},
+                    root: {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id:0,
+                    salesArray: 1,
+                    salesPerson: '$root.salesPerson',
+                    paymentInfo: '$root.paymentInfo',
+                    year       : '$root.year',
+                    month      : '$root.month',
+                    week       : '$root.week',
+                    dateByWeek : '$root.dateByWeek',
+                    dateByMonth: '$root.dateByMonth'
+                }
+            }, {
                 $group: groupObject
             }, {
                 $unwind: '$root'
@@ -2957,18 +2980,20 @@ var wTrack = function (models) {
                         date: '$_id'
                     },
                     invoicedBySales: {$sum: '$root.paymentInfo.total'},
-                    root           : {$push: '$$ROOT'}
+                    salesArray: {$first: '$root.salesArray'},
+                    root           : {$push: '$$ROOT'},
                 }
             }, {
                 $unwind: '$root'
             }, {
                 $project: {
                     _id            : 0,
-                    salesPerson    : {
+                    salesPerson    : '$_id._id'/*{
                         _id : '$_id._id',
                         name: {$concat: ['$_id.name.first', ' ', '$_id.name.last']}
-                    },
+                    }*/,
                     invoicedBySales: 1,
+                    salesArray: 1,
                     date           : '$_id.date',
                     invoiced       : '$root.invoiced',
                     year           : '$root.root.year',
@@ -2986,12 +3011,14 @@ var wTrack = function (models) {
                             salesPerson    : '$$ROOT.salesPerson',
                             invoicedBySales: '$$ROOT.invoicedBySales'
                         }
-                    }
+                    },
+                    salesArray: {$first: '$salesArray'}
                 }
             }, {
                 $project: {
                     date    : '$_id.date',
                     invoiced: '$_id.invoiced',
+                    salesArray: 1,
                     sales   : 1,
                     _id: 0
                 }
@@ -3023,7 +3050,7 @@ var wTrack = function (models) {
             invoiced: invoiceGrouper,
             paid: paymentGrouper
         }, function(err, response){
-            var result;
+            var sales;
 
             function mergeByProperty(arr1, arr2, prop) {
                 _.each(arr2, function(arr2obj) {
@@ -3043,9 +3070,10 @@ var wTrack = function (models) {
             }
 
             mergeByProperty(response.invoiced, response.paid, 'date');
+            sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
-            res.status(200).send(response.invoiced);
+            res.status(200).send({payments: response.invoiced, sales: sales});
         });
     }
 };

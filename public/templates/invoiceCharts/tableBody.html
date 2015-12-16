@@ -1,0 +1,34 @@
+<thead>
+    <tr>
+        <th width="<%=tdWidth%>">#</th>
+        <%var _class = count > 17 ? 'rotated' : ''%>
+        <% for (var i = 0; i < count; i++){%>
+            <th width="<%=tdWidth%>" class="<%= _class%>"><%=collection.at(i).get('date')%></th>
+        <%}%>
+    </tr>
+</thead>
+<tbody>
+    <%collection.sales.forEach(function(sales){%>
+        <tr>
+            <td data-id="<%=sales._id%>"><%=sales.name.first + ' ' + sales.name.last%></td>
+            <% collection.forEach(function(payments){%>
+                <td ><%=currencySplitter(payments.get('sales') ? (payments.get('sales').get(sales._id) ? (payments.get('sales').get(sales._id).get('invoicedBySales') / 100).toFixed(2): '') : '')%></td>
+            <%})%>
+        </tr>
+    <%})%>
+    <tr class="boldHead">
+        <td>Invoiced</td>
+        <% collection.forEach(function(payments){%>
+                <td ><%=currencySplitter(payments.get('invoiced').toFixed(2))%></td>
+        <%})%>
+    </tr>
+    <tr class="boldHead">
+        <td>Paid</td>
+        <% collection.forEach(function(payments){%>
+                <td ><%=currencySplitter(payments.get('paid').toFixed(2))%></td>
+        <%})%>
+    </tr>
+</tbody>
+<tfoot>
+
+</tfoot>

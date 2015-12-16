@@ -1,12 +1,14 @@
 define([
     'text!templates/invoiceCharts/index.html',
+    'text!templates/invoiceCharts/tableBody.html',
     'collections/invoiceCharts/invoiceCharts',
     'dataService',
+    'helpers',
     'async',
     'custom',
     'moment',
     'constants'
-], function (mainTemplate, InvoiceCharts, dataService, async, custom, moment, CONSTANTS) {
+], function (mainTemplate, tableBodyTemplate, InvoiceCharts, dataService, helpers, async, custom, moment, CONSTANTS) {
     "use strict";
     var View = Backbone.View.extend({
         el: '#content-holder',
@@ -14,6 +16,8 @@ define([
         contentType: CONSTANTS.DASHBOARD_VACATION,
 
         template : _.template(mainTemplate),
+        tableBodyTemplate : _.template(tableBodyTemplate),
+
         expandAll: false,
 
         events: {
@@ -50,16 +54,28 @@ define([
             this.render();
         },
 
-        byWeek: function () {
+        byWeek: function (e) {
+            var $currentEl = $(e.target);
+            var $div = $currentEl.closest('div');
+
+            $div.find('.active').removeClass('active');
+            $currentEl.addClass('active');
+
             this.byWeek = true;
             this.collection = new InvoiceCharts({byWeek: true});
-            this.collection.on('reset', this.renderByFilter, this);
+            this.collection.on('reset', this.renderContent, this);
         },
 
-        byMonth: function () {
+        byMonth: function (e) {
+            var $currentEl = $(e.target);
+            var $div = $currentEl.closest('div');
+
+            $div.find('.active').removeClass('active');
+            $currentEl.addClass('active');
+
             this.byWeek = false;
             this.collection = new InvoiceCharts();
-            this.collection.on('reset', this.renderByFilter, this);
+            this.collection.on('reset', this.renderContent, this);
         },
 
         renderByFilter: function () {
@@ -120,40 +136,40 @@ define([
                 .attr("fill", "#01579B")//lighBlue
                 .attr("opacity", 0.4)
                 .on('mouseover', function (d) {
-                   /* var current = d3.select(this);
-                    var i = current.attr('data-index');
-                    var svgToolTip = d3.select('#' + $scope.myid);
+                    /* var current = d3.select(this);
+                     var i = current.attr('data-index');
+                     var svgToolTip = d3.select('#' + $scope.myid);
 
-                    var value = (d[$scope.y[i - 1]] % 1) ? d[$scope.y[i - 1]].toFixed(2) : d[$scope.y[i - 1]];
+                     var value = (d[$scope.y[i - 1]] % 1) ? d[$scope.y[i - 1]].toFixed(2) : d[$scope.y[i - 1]];
 
-                    var xPosition = parseFloat(current.attr("x")) + 60 + (x.rangeBand() - 200) / 2;
-                    var yPosition = parseFloat(current.attr("y"));
-                    if (xPosition < 10) {
-                        xPosition = 10;
-                    }
-                    if ((width - xPosition) < 110) {
-                        xPosition = width - 120;
-                    }
-                    if (yPosition > 300) {
-                        yPosition = 300;
-                    }
-                    current.attr('class', 'mouseOverBar');
-                    svgToolTip
-                        .select("#tooltip")
-                        .style("left", xPosition + "px")
-                        .style("top", yPosition + "px")
-                        .select(".value")
-                        .text(/!* d[$scope.y[i - 1]] *!/value);
-                    svgToolTip
-                        .select(".lable")
-                        .text($scope.lables[i - 1]);
-                    svgToolTip
-                        .select(".dateValue")
-                        .text(
-                            $scope.x == "date" ? moment(d[$scope.x]).format('dddd, MMMM Do YYYY') : d[$scope.x]);
-                    svgToolTip
-                        .select("#tooltip")
-                        .classed("hidden", false);*/
+                     var xPosition = parseFloat(current.attr("x")) + 60 + (x.rangeBand() - 200) / 2;
+                     var yPosition = parseFloat(current.attr("y"));
+                     if (xPosition < 10) {
+                     xPosition = 10;
+                     }
+                     if ((width - xPosition) < 110) {
+                     xPosition = width - 120;
+                     }
+                     if (yPosition > 300) {
+                     yPosition = 300;
+                     }
+                     current.attr('class', 'mouseOverBar');
+                     svgToolTip
+                     .select("#tooltip")
+                     .style("left", xPosition + "px")
+                     .style("top", yPosition + "px")
+                     .select(".value")
+                     .text(/!* d[$scope.y[i - 1]] *!/value);
+                     svgToolTip
+                     .select(".lable")
+                     .text($scope.lables[i - 1]);
+                     svgToolTip
+                     .select(".dateValue")
+                     .text(
+                     $scope.x == "date" ? moment(d[$scope.x]).format('dddd, MMMM Do YYYY') : d[$scope.x]);
+                     svgToolTip
+                     .select("#tooltip")
+                     .classed("hidden", false);*/
 
                 });
 
@@ -198,7 +214,6 @@ define([
                 .scale(x)
                 .ticks(0)
                 .tickSize(0);
-
 
             var yAxis = d3.svg.axis()
                 .scale(y)
@@ -245,15 +260,29 @@ define([
             return this;
         },
 
+        renderContent: function(){
+            var self = this;
+            var count = this.collection.length;
+            var tdWidth = Math.floor(100 / (count + 1));
+            var $tableContainer = this.$el.find('#results');
+
+            $tableContainer.html(this.tableBodyTemplate({
+                collection: self.collection,
+                currencySplitter: helpers.currencySplitter,
+                tdWidth: tdWidth,
+                count: count
+            }));
+
+            this.renderByFilter();
+        },
+
         render: function (options) {
             var self = this;
             var $currentEl = this.$el;
 
-            $currentEl.html(self.template({
-                collection: self.collection
-            }));
+            $currentEl.html(self.template());
 
-            this.renderByFilter();
+            this.renderContent();
 
             return this;
         }

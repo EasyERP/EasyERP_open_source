@@ -1,12 +1,31 @@
 <div class="grid-conatiner revenue">
+    <style>
+        button.active {
+            background: #66b5d4;
+        }
+
+        th.rotated {
+            transform: rotate(-90deg);
+        }
+
+        tr.boldHead > td {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        tr.boldHead {
+            background-color: #01579B;
+            opacity: 0.8;
+        }
+    </style>
     <div class="clear"></div>
     <div id="chartContainer" class="chartContainer">
-        <svg id="chart" style="height: 400px">
+        <svg id="chart" style="height: 500px">
 
         </svg>
         <div class="legend">
             <div>
-                <button id="byMonth">M</button>
+                <button id="byMonth" class="active">M</button>
                 <button id="byWeek">W</button>
             </div>
             <div><img src="images/chart1.png">&nbsp;Invoiced</div>
@@ -14,9 +33,9 @@
         </div>
     </div>
     <br>
+    <div class="tableResponsive">
+        <table class="list" id="results">
 
-    <div class="divTable" id="results">
-
+        </table>
     </div>
-
 </div>
