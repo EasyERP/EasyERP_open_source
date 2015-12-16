@@ -1,8 +1,6 @@
-<%debugger;%>
 <% total.forEach(function(el, count){ %>
 <% var key = Object.keys(el)[0];%>
 <% var totalObj = el[key]; %>
-<%debugger;%>
 <tr class="mainRow" id="<%=key%>">
     <td class="expand centerCell"><%=count + 1%></td>
     <td class="centerCell notForm"><input type="checkbox" data-id="<%=key%>" class="totalRowCB checkbox" /></td>

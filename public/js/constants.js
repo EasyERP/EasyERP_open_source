@@ -280,10 +280,6 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Type'    : {
-                view   : 'type',
-                backend: 'type'
-            },
             'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow._id'
@@ -300,11 +296,7 @@ define([], function () {
             },
             'Sales Manager': {
                 view   : 'projectmanager',
-                backend: 'project.projectmanager._id'
-            },
-            'Type'         : {
-                view   : 'type',
-                backend: 'type'
+                backend: 'projectmanager._id'
             },
             'Status'       : {
                 view   : 'workflow',
@@ -322,11 +314,7 @@ define([], function () {
             },
             'Sales Manager': {
                 view   : 'projectmanager',
-                backend: 'project.projectmanager._id'
-            },
-            'Type'         : {
-                view   : 'type',
-                backend: 'type'
+                backend: 'projectmanager._id'
             },
             'Status'       : {
                 view   : 'workflow',
@@ -337,10 +325,6 @@ define([], function () {
             'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
-            },
-            'Type'    : {
-                view   : 'type',
-                backend: 'type'
             },
             'Status'  : {
                 view   : 'workflow',

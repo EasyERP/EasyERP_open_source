@@ -12,7 +12,6 @@ var Payment = function (models, event) {
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
     var rewriteAccess = require('../helpers/rewriteAccess');
-    var EmployeeSchema = mongoose.Schemas['Employee'];
     var wTrackPayOutSchema = mongoose.Schemas['wTrackPayOut'];
     var PaymentSchema = mongoose.Schemas['Payment'];
     var salaryPaymentSchema = mongoose.Schemas['salaryPayment'];
@@ -37,8 +36,6 @@ var Payment = function (models, event) {
         var body = req.body;
         var moduleId;
         var type = req.params.byType;
-
-        // moduleId = !!body.forSales ? 61 : !!body.salary ? 79 : 60;
 
         moduleId = (type === 'customers') ? 61 : (type === 'supplier') ? 60 : 79;
 
@@ -150,6 +147,7 @@ var Payment = function (models, event) {
         var salary = options ? !!options.salary : false;
         var Payment;
         var supplier = 'Customers';
+        var paymentMethod = "PaymentMethod";
 
         options.isWtrack = isWtrack;
         Payment = returnModel(req, options);
@@ -191,6 +189,7 @@ var Payment = function (models, event) {
                         optionsObject.$and.push({forSale: forSale});
                     } else {
                         optionsObject.$and.push({isExpense: true});
+                        paymentMethod = 'ProductCategory';
                     }
 
                     if (bonus) {
@@ -255,20 +254,26 @@ var Payment = function (models, event) {
                                 foreignField: "_id", as: "invoice"
                             }
                         }, {
+                            $lookup: {
+                                from        : paymentMethod,
+                                localField  : "paymentMethod",
+                                foreignField: "_id", as: "paymentMethod"
+                            }
+                        }, {
                             $project: {
                                 supplier        : {$arrayElemAt: ["$supplier", 0]},
                                 invoice         : {$arrayElemAt: ["$invoice", 0]},
+                                paymentMethod   : {$arrayElemAt: ["$paymentMethod", 0]},
                                 forSale         : 1,
                                 differenceAmount: 1,
                                 paidAmount      : 1,
                                 workflow        : 1,
                                 date            : 1,
-                                paymentMethod   : 1,
                                 isExpense       : 1,
                                 bonus           : 1,
-                                paymentRef: 1,
-                                year: 1,
-                                month: 1
+                                paymentRef      : 1,
+                                year            : 1,
+                                month           : 1
                             }
                         }, {
                             $lookup: {
@@ -289,9 +294,9 @@ var Payment = function (models, event) {
                                 paymentMethod   : 1,
                                 isExpense       : 1,
                                 bonus           : 1,
-                                paymentRef: 1,
-                                year: 1,
-                                month: 1
+                                paymentRef      : 1,
+                                year            : 1,
+                                month           : 1
 
                             }
                         }, {
@@ -337,7 +342,10 @@ var Payment = function (models, event) {
 
                 query.findById(id);
 
-                query.populate('supplier', '_id name fullName');
+                query
+                    .populate('supplier', '_id name fullName')
+                    .populate('paymentMethod', '_id name');
+
                 query.exec(function (err, payment) {
                     if (err) {
                         return next(err);
@@ -529,42 +537,6 @@ var Payment = function (models, event) {
                     res.status(201).send({success: 'success'});
                     composeExpensesAndCache(req);
                 });
-
-                /*async.each(body, function (_payment, cb) {
-                 var supplierObject = _payment.supplier;
-                 var productObject = {};
-
-                 productObject.product = _payment._id;
-                 productObject.paid = _payment.paidAmount;
-                 productObject.diff = _payment.diff;
-
-                 supplierObject.paidAmount = _payment.paidAmount;
-                 supplierObject.differenceAmount = _payment.differenceAmount;
-
-                 totalAmount += _payment.paidAmount;
-                 suppliers.push(supplierObject);
-                 products.push(productObject);
-
-                 payrollExpensUpdater(_payment, cb);
-                 }, function (err) {
-                 var payment;
-
-                 if (err) {
-                 return next(err);
-                 }
-
-                 salaryPayment.supplier = suppliers;
-                 salaryPayment.paidAmount = totalAmount;
-
-                 payment = new Payment(salaryPayment);
-                 payment.save(function (err) {
-                 if (err) {
-                 return next(err);
-                 }
-                 res.status(201).send({success: 'success'});
-                 composeExpensesAndCache(req);
-                 });
-                 });*/
             } else {
                 res.status(403).send();
             }
@@ -630,7 +602,6 @@ var Payment = function (models, event) {
             } else {
                 wId = 'Purchase Invoice';
             }
-            //  var wId = ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ? 'Sales Invoice' : 'Purchase Invoice';
             var request = {
                 query  : {
                     wId         : wId,
@@ -718,11 +689,7 @@ var Payment = function (models, event) {
                     var revenue;
                     var differance;
                     var isPaid;
-                    var amount;
-                    var err;
-
                     if (!wTrackDoc) {
-                        //err = new Error('wTracks are missing');
 
                         return innerWaterfallCb();
                     }
@@ -913,7 +880,6 @@ var Payment = function (models, event) {
         var isNotFullPaid;
         var workflowObj = {};
         var paymentInfoNew = {};
-        //var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var forSale = contentType === 'customers';
         var bonus = contentType === 'supplier';
         var salary = contentType === 'salary';
@@ -972,7 +938,6 @@ var Payment = function (models, event) {
 
                                     paymentInfo = invoice.get('paymentInfo');
 
-                                    //if (invoice.invoiceType === 'wTrack') {
                                     if (invoice._type === 'wTrackInvoice') {
                                         wId = 'Sales Invoice';
                                     } else {

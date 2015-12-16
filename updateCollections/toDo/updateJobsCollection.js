@@ -33,43 +33,10 @@ query.exec(function(err, jobs){
     async.each(jobs, function(job, callBack){
         var jobId = job._id;
 
-        var parallelTasks = [findQuot, findInv];
+            var invObj = job.workflow._id ? job.workflow._id : null;
+            var project = job.project._id ? job.project._id : null;
 
-        function findQuot(cb){
-            Quotation.find({"products.jobs": jobId}, {name: 1}, function(err, quot){
-              if (err){
-                  return cb(err);
-              }
-
-                cb(null, quot ? quot[0] : null);
-            })
-        }
-
-        function findInv(cb){
-            Invoice.find({"products.jobs": jobId}, {name: 1}, function(err, inv){
-                if (err){
-                    return cb(err);
-                }
-
-                cb(null, inv ? inv[0] : null);
-            })
-        }
-
-        async.parallel(parallelTasks, function(err, result){
-            var quot = result[0];
-            var inv = result[1];
-
-            var quotObj = {
-                _id: quot ? quot._id : null,
-                name: quot ? quot.name : ""
-            };
-
-            var invObj = {
-                _id: inv ? inv._id : null,
-                name: inv ? inv.name : ""
-            };
-
-            Jobs.findByIdAndUpdate(jobId, {$set: {invoice: invObj, quotation: quotObj}}, function(err, result){
+            Jobs.findByIdAndUpdate(jobId, {$set: {workflow: invObj, project: project}}, function(err, result){
                 console.log(count++);
                 callBack();
             })
@@ -78,4 +45,3 @@ query.exec(function(err, jobs){
     }, function(){
         console.log('Success');
     });
-});

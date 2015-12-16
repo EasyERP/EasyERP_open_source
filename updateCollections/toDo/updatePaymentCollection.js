@@ -121,7 +121,9 @@ query.exec(function (error, _res) {
             objectToSave = {
                 invoice: invoice.invoice ? invoice.invoice._id : null,
 
-                supplier: invoice.supplier ? invoice.supplier._id : null
+                supplier: invoice.supplier ? invoice.supplier._id : null,
+
+                paymentMethod: invoice.paymentMethod ? invoice.paymentMethod._id : null
             };
         }
 

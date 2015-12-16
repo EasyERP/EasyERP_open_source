@@ -6,10 +6,9 @@ class="canceledListItem"
     <td class = "notForm"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
     <td><%=quotation.name%></td>
-    <td><%=(quotation.supplier) ? quotation.supplier.fullName : ''%></td>
-    <td><%=(quotation.salesPerson) ? quotation.salesPerson.fullName : ''%></td>
+    <td><%=(quotation.supplier) ? quotation.supplier.name.first + ' ' + quotation.supplier.name.last : ''%></td>
+    <td><%=(quotation.projectmanager) ? quotation.projectmanager.name.first + ' ' + quotation.projectmanager.name.last  : ''%></td>
     <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total.toFixed(2) : '0'%></td>
-    <!--<td class="type"><%=quotation.type%></td>-->
     <td id='<%=quotation._id%>'>
         <a href="javascript:;" class="stageSelect"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
     </td>

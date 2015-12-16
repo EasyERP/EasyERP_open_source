@@ -933,8 +933,44 @@ var Filters = function (models) {
                         forSales: true,
                         isOrder : false
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "project",
+                        foreignField: "_id", as: "project"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customers",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $project: {
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        project : {$arrayElemAt: ["$project", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.projectmanager",
+                        foreignField: "_id", as: "projectmanager"
+                    }
+                }, {
+                    $project: {
+                        workflow      : 1,
+                        project       : 1,
+                        supplier      : 1,
+                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                    }
+                }, {
                     $group: {
                         _id             : null,
                         'projectName'   : {
@@ -946,21 +982,19 @@ var Filters = function (models) {
                         'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: '$supplier.name'
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
                         'projectmanager': {
                             $addToSet: {
-                                _id : '$project.projectmanager._id',
-                                name: '$project.projectmanager.name'
+                                _id : '$projectmanager._id',
+                                name: {
+                                    $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                                }
                             }
                         },
-                        //'type': {
-                        //    $addToSet: {
-                        //        _id : '$type',
-                        //        name: '$type'
-                        //    }
-                        //},
                         'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
@@ -991,8 +1025,44 @@ var Filters = function (models) {
                         forSales: true,
                         isOrder : true
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "project",
+                        foreignField: "_id", as: "project"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customers",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $project: {
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        project : {$arrayElemAt: ["$project", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.projectmanager",
+                        foreignField: "_id", as: "projectmanager"
+                    }
+                }, {
+                    $project: {
+                        workflow      : 1,
+                        project       : 1,
+                        supplier      : 1,
+                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                    }
+                }, {
                     $group: {
                         _id             : null,
                         'projectName'   : {
@@ -1004,21 +1074,19 @@ var Filters = function (models) {
                         'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: '$supplier.name'
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
                         'projectmanager': {
                             $addToSet: {
-                                _id : '$project.projectmanager._id',
-                                name: '$project.projectmanager.name'
+                                _id : '$projectmanager._id',
+                                name: {
+                                    $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                                }
                             }
                         },
-                        //'type': {
-                        //    $addToSet: {
-                        //        _id : '$type',
-                        //        name: '$type'
-                        //    }
-                        //},
                         'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
