@@ -6426,3 +6426,62 @@ textarea#editInput {
 //}
 
 //--------------- invoiceCharts -------------
+
+.invoiceChart-legend-box {
+  position: relative;
+  .list {
+    thead {
+      th {
+        height: 60px;
+        text-align: center;
+        padding: 20px 0;
+        &.rotated {
+          transform: rotate(-90deg);
+        }
+      }
+    }
+    tbody {
+      .boldInvoiced, .boldPaid {
+        background-color: #565658;
+      }
+    }
+  }
+  .chartContainer {
+    .domain {
+      stroke: #fff !important;
+    }
+  }
+}
+
+
+.invoiceChart-legend {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  .choseDateItem,  .legend-box {
+    display: inline-block;
+    float: none;
+    vertical-align: top;
+  }
+  .legend-box {
+    margin-top: 0;
+    padding: 3px;
+    .invoiced {
+      .square {
+        background-color: @invoiced;
+        opacity: .4;
+      }
+    }
+    .paid {
+      .square {
+        background-color: @paid;
+        opacity: .4;
+      }
+    }
+  }
+  .choseDateItem {
+    border: 1px solid @list-border-color;
+  }
+}
