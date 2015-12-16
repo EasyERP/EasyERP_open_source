@@ -592,7 +592,7 @@ th {
 }
 .ui-spinner .ui-spinner-input {
   float: left;
-  border: none ;
+  border: none;
 }
 .ui-spinner span {
   display: block;
@@ -9555,4 +9555,16 @@ textarea#editInput {
 }
 .invoiceChart-legend .choseDateItem {
   border: 1px solid #7f7f80;
+}
+.invoiceChart-legend .choseDateItem button {
+  background: #fff;
+  color: #4d5a75;
+}
+.invoiceChart-legend .choseDateItem button:hover {
+  background-color: #66b5d4;
+  color: white;
+}
+.invoiceChart-legend .choseDateItem .active {
+  background-color: #66b5d4;
+  color: white;
 }
