@@ -13,6 +13,7 @@ var Quotation = function (models, event) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var workflowHandler = new WorkflowHandler(models);
+    var _ = require('../node_modules/underscore');
 
     this.create = function (req, res, next) {
         var db = req.session.lastDb;
@@ -69,7 +70,6 @@ var Quotation = function (models, event) {
                     }
 
                     var id = _quotation._id;
-                    var name = _quotation.name;
                     var products = _quotation.products;
 
                     async.each(products, function (product, cb) {
@@ -268,7 +268,6 @@ var Quotation = function (models, event) {
 
             queryObject['$and'] = [];
             queryObject.$and.push({_id: {$in: quotationsIds}});
-            //queryObject.$and.push({isOrder: isOrder});
 
             query = Quotation.count(queryObject);
             query.count(waterfallCallback);
@@ -360,22 +359,20 @@ var Quotation = function (models, event) {
 
     this.getByViewType = function (req, res, next) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-
         var query = req.query;
         var queryObject = {};
-
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
-
         var contentType = query.contentType;
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
-        var count = query.count ? query.count : 100;
-        var page = query.page;
+        var count = parseInt(query.count) ? parseInt(query.count) : 100;
+        var page = parseInt(query.page);
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var filter = query.filter || {};
+        var key;
 
         if (isOrder) {
             filter.isOrder = {
@@ -398,6 +395,8 @@ var Quotation = function (models, event) {
         }
 
         if (query.sort) {
+            key = Object.keys(query.sort)[0];
+            query.sort[key] = parseInt(query.sort[key]);
             sort = query.sort;
         } else {
             sort = {"orderDate": -1};
@@ -425,7 +424,7 @@ var Quotation = function (models, event) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    queryObject,
+                    // queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -447,31 +446,70 @@ var Quotation = function (models, event) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var query;
             var newQueryObj = {};
 
             newQueryObj.$and = [];
-            //
-            newQueryObj.$and.push({_id: {$in: quotationsIds}});
-            //newQueryObj.$and.push({isOrder: isOrder});
+            newQueryObj.$and.push(queryObject);
+            newQueryObj.$and.push({_id: {$in: _.pluck(quotationsIds, '_id')}});
 
-            query = Quotation
-                .find(newQueryObj)
-                .limit(count)
-                .skip(skip)
-                .sort(sort);
-
-            //query.populate('supplier', '_id name fullName');
-            query.populate('destination');
-            query.populate('incoterm');
-            query.populate('invoiceControl');
-            query.populate('paymentTerm');
-            query.populate('products.product', '_id, name');
-            query.populate('products.jobs', '_id, name');
-            //query.populate('workflow', '-sequence');
-            //query.populate('project', 'projectName projectmanager customer');
-
-            query.exec(waterfallCallback);
+            Quotation.aggregate([{
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            },
+                {
+                    $project: {
+                        workflow   : {$arrayElemAt: ["$workflow", 0]},
+                        supplier   : {$arrayElemAt: ["$supplier", 0]},
+                        project    : {$arrayElemAt: ["$project", 0]},
+                        name       : 1,
+                        paymentInfo: 1,
+                        orderDate  : 1,
+                        forSales   : 1,
+                        isOrder    : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.projectmanager",
+                        foreignField: "_id", as: "projectmanager"
+                    }
+                }, {
+                    $project: {
+                        name          : 1,
+                        paymentInfo   : 1,
+                        orderDate     : 1,
+                        forSales      : 1,
+                        workflow      : 1,
+                        supplier      : 1,
+                        project       : 1,
+                        isOrder       : 1,
+                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                    }
+                }, {
+                    $match: newQueryObj
+                }, {
+                    $skip: skip
+                }, {
+                    $limit: count
+                }, {
+                    $sort: sort
+                }
+            ], waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -542,19 +580,19 @@ var Quotation = function (models, event) {
             //queryObject.isOrder = isOrder;
             query = Quotation.findOne(queryObject);
 
-            // query.populate('supplier', '_id name fullName');
-            query.populate('destination');
-            query.populate('incoterm');
-            query.populate('invoiceControl');
-            query.populate('paymentTerm');
-            query.populate('products.product', '_id, name');
-            query.populate('products.jobs', '_id, name');
-            query.populate('groups.users');
-            query.populate('groups.group');
-            query.populate('groups.owner', '_id login');
-            //query.populate('workflow', '-sequence');
-            query.populate('deliverTo', '_id, name');
-            //query.populate('project', '_id projectName');
+            query
+                .populate('supplier', '_id name fullName')
+                .populate('destination')
+                .populate('incoterm')
+                .populate('invoiceControl')
+                .populate('paymentTerm')
+                .populate('products.product', '_id, name')
+                .populate('products.jobs', '_id, name')
+                .populate('groups.users')
+                .populate('groups.group')
+                .populate('groups.owner', '_id login')
+                .populate('deliverTo', '_id, name')
+                .populate('project', '_id projectName');
 
             query.exec(waterfallCallback);
         };

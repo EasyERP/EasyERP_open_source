@@ -50,18 +50,23 @@ define([
                 return false;
 
             },
+
             notHide      : function () {
                 return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
+
             chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
+
             nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
@@ -113,10 +118,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -170,10 +172,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -198,9 +197,7 @@ define([
                 var productId;
                 var quantity;
                 var price;
-                var supplier = {};
-                supplier._id = thisEl.find('#supplierDd').data('id');
-                supplier.name = thisEl.find('#supplierDd').text();
+                var supplier = thisEl.find('#supplierDd').data('id');
 
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
@@ -320,7 +317,9 @@ define([
             },
             deleteItem: function (event) {
                 var mid = 55;
+
                 event.preventDefault();
+
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
                 if (answer == true) {

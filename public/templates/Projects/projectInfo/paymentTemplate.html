@@ -11,9 +11,9 @@
         <tr>
             <th class="centerCell"><input type="checkbox" id="check_all_payments" class="check_all"/></th>
             <th class="centerCell">N</th>
-            <th class="oe_sortable" data-sort="invoice.assigned.name">Assigned<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="assigned.name.first">Assigned<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="supplier.fullName">Company<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th class="oe_sortable" data-sort="supplier.name.first">Company<span class="arrow down">7</span><span class="arrow up">v</span>
             </th>
             <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -37,8 +37,8 @@
         <tr data-id="<%=payment._id%>">
             <td class = "notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
             <td class="centerCell"><%=startNumber + index + 1%></td>
-            <td><%=(payment.invoice && payment.invoice.assigned) ? payment.invoice.assigned.name: ''%></td>
-            <td><%=payment.supplier.fullName%></td>
+            <td><%=(payment && payment.assigned) ? payment.assigned.name.first + ' ' +  payment.assigned.name.last: ''%></td>
+            <td><%=payment.supplier &&  payment.supplier.name ? payment.supplier.name.first + ' ' + payment.supplier.name.last : ''%></td>
             <td><%=payment.invoice ? payment.invoice.name : ''%></td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
             <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=(parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)).toFixed(2)%></td>

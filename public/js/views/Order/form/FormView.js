@@ -22,6 +22,7 @@ define([
                 this.allPages = 2;
                 var self = this;
                 var formModel = this.formModel.toJSON();
+
                 common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
                     self.allMiniOpp = opps.listLength;
                     self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
@@ -53,10 +54,12 @@ define([
                 "click .miniPagination .first:not(.not-active)": "firstMiniPage",
                 "click .miniPagination .last:not(.not-active)": "lastMiniPage"
             },
+
             nextMiniPage: function () {
                 this.pageMini += 1;
                 this.renderMiniOpp();
             },
+
             prevMiniPage: function () {
                 this.pageMini -= 1;
                 this.renderMiniOpp();
@@ -75,6 +78,7 @@ define([
             renderMiniOpp: function () {
                 var self = this;
                 var formModel = this.formModel.toJSON();
+
                 common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
                     var oppElem = self.$el.find('#opportunities');
                     oppElem.empty();
@@ -86,7 +90,6 @@ define([
                     );
 
                 });
-
             },
 
             addOpportunities: function (e) {
@@ -119,8 +122,11 @@ define([
 
             editClick: function (e) {
                 var maxlength = $("#" + $(e.target).parent().parent()[0].id).find(".no-long").attr("data-maxlength") || 32;
+                var parent = $(e.target).parent().parent();
+                var objIndex = parent[0].id.split('_');
 
                 e.preventDefault();
+
                 $('.quickEdit #editInput').remove();
                 $('.quickEdit #cancelSpan').remove();
                 $('.quickEdit #saveSpan').remove();
@@ -137,10 +143,10 @@ define([
                         }
                     }
                 }
-                var parent = $(e.target).parent().parent();
+
                 $("#" + parent[0].id).addClass('quickEdit');
                 $('#editSpan').remove();
-                var objIndex = parent[0].id.split('_');
+
                 if (objIndex.length > 1) {
                     this.text = this.formModel.get(objIndex[0])[objIndex[1]];
                 } else {

@@ -198,23 +198,15 @@ define([], function () {
         customerPayments: {
             'Assigned'   : {
                 view   : 'assigned',
-                backend: 'invoice.assigned._id'
+                backend: 'assigned._id'
             },
             'Company'    : {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Payment Way': {
-                view   : 'paymentMethod',
-                backend: 'paymentMethod._id'
-            },
             'Name'       : {
                 view   : 'name',
                 backend: '_id'
-            },
-            'Status'     : {
-                view   : 'workflow',
-                backend: 'workflow'
             }
         },
         supplierPayments: {
