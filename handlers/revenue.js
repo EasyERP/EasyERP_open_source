@@ -1686,8 +1686,8 @@ var wTrack = function (models) {
 
                 Employees
                     .find({},
-                        {_id: 1}
-                    )
+                    {_id: 1}
+                )
                     .lean()
                     .exec(function (err, result) {
                         if (err) {
@@ -1790,9 +1790,9 @@ var wTrack = function (models) {
                 function monthHourRetriver(parallelCb) {
                     MonthHours
                         .find(
-                            match,
-                            {year: 1, month: 1, hours: 1}
-                        )
+                        match,
+                        {year: 1, month: 1, hours: 1}
+                    )
                         .lean()
                         .exec(parallelCb)
                 };
@@ -2390,8 +2390,8 @@ var wTrack = function (models) {
 
                 Employees
                     .find({},
-                        {_id: 1}
-                    )
+                    {_id: 1}
+                )
                     .lean()
                     .exec(function (err, result) {
                         if (err) {
@@ -2494,9 +2494,9 @@ var wTrack = function (models) {
                 function monthHourRetriver(parallelCb) {
                     MonthHours
                         .find(
-                            match,
-                            {year: 1, month: 1, hours: 1}
-                        )
+                        match,
+                        {year: 1, month: 1, hours: 1}
+                    )
                         .lean()
                         .exec(parallelCb)
                 };
@@ -2993,7 +2993,7 @@ var wTrack = function (models) {
                     date    : '$_id.date',
                     invoiced: '$_id.invoiced',
                     sales   : 1,
-                    _id: 0
+                    _id     : 0
                 }
             }], parallelCb);
 
@@ -3021,24 +3021,26 @@ var wTrack = function (models) {
 
         async.parallel({
             invoiced: invoiceGrouper,
-            paid: paymentGrouper
-        }, function(err, response){
+            paid    : paymentGrouper
+        }, function (err, response) {
             var result;
 
             function mergeByProperty(arr1, arr2, prop) {
-                _.each(arr2, function(arr2obj) {
-                    var arr1obj = _.find(arr1, function(arr1obj) {
+                _.each(arr2, function (arr2obj) {
+                    var arr1obj = _.find(arr1, function (arr1obj) {
                         return arr1obj[prop] === arr2obj[prop];
                     });
 
-                    if(arr1obj) {
+                    if (arr1obj) {
                         _.extend(arr1obj, arr2obj)
                     } else {
                         arr1.push(arr2obj)
-                    };
+                    }
+                    ;
                 });
             }
-            if(err){
+
+            if (err) {
                 return next(err);
             }
 

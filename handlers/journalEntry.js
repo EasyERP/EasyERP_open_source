@@ -51,7 +51,7 @@ var Module = function (models) {
                 var debitObject;
                 var creditObject;
                 var parallelTasks = {
-                    debitSaver: function (parallelCb) {
+                    debitSaver : function (parallelCb) {
                         var journalEntry;
 
                         debitObject.debit = amount;
@@ -139,19 +139,19 @@ var Module = function (models) {
                 Model
                     .aggregate([{
                         $project: {
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            credit: {$divide: ['$credit', '$currency.rate']},
+                            debit   : {$divide: ['$debit', '$currency.rate']},
+                            credit  : {$divide: ['$credit', '$currency.rate']},
                             currency: 1,
-                            name: 1,
-                            journal: 1,
-                            date: 1
+                            name    : 1,
+                            journal : 1,
+                            date    : 1
                         }
                     }], function (err, result) {
                         if (err) {
                             return next(err);
                         }
                         Journal.populate(result, {
-                            path: 'journal',
+                            path  : 'journal',
                             select: '_id name'
                         }, function (err, journals) {
                             if (err) {

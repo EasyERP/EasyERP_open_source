@@ -124,42 +124,42 @@ var Jobs = function (models, event) {
             .aggregate([{
                 $lookup: {
                     from        : "Project",
-                    localField: "project",
+                    localField  : "project",
                     foreignField: "_id", as: "project"
                 }
             }, {
                 $lookup: {
                     from        : "Invoice",
-                    localField: "invoice",
+                    localField  : "invoice",
                     foreignField: "_id", as: "invoice"
                 }
             }, {
                 $lookup: {
                     from        : "workflows",
-                    localField: "workflow",
+                    localField  : "workflow",
                     foreignField: "_id", as: "workflow"
                 }
             }, {
                 $lookup: {
                     from        : "Quotation",
-                    localField: "quotation",
+                    localField  : "quotation",
                     foreignField: "_id", as: "quotation"
                 }
             }, {
                 $project: {
                     name     : 1,
-                    workflow: {$arrayElemAt: ["$workflow", 0]},
-                    type    : 1,
-                    wTracks : 1,
-                    project : {$arrayElemAt: ["$project", 0]},
-                    budget  : 1,
+                    workflow : {$arrayElemAt: ["$workflow", 0]},
+                    type     : 1,
+                    wTracks  : 1,
+                    project  : {$arrayElemAt: ["$project", 0]},
+                    budget   : 1,
                     quotation: {$arrayElemAt: ["$quotation", 0]},
                     invoice  : {$arrayElemAt: ["$invoice", 0]}
                 }
             }, {
                 $lookup: {
                     from        : "Payment",
-                    localField: "invoice._id",
+                    localField  : "invoice._id",
                     foreignField: "invoice._id", as: "payments"
                 }
             }, {
@@ -181,17 +181,17 @@ var Jobs = function (models, event) {
                             }
                         }
                     },
-                    name : 1,
-                    workflow: 1,
-                    type    : 1,
-                    wTracks : 1,
-                    project : 1,
-                    budget  : 1,
+                    name     : 1,
+                    workflow : 1,
+                    type     : 1,
+                    wTracks  : 1,
+                    project  : 1,
+                    budget   : 1,
                     quotation: 1,
                     invoice  : 1,
-                    payment : {
-                        paid: {$sum: '$payments.paidAmount'},
-                        count    : {$size: '$payments'}
+                    payment  : {
+                        paid : {$sum: '$payments.paidAmount'},
+                        count: {$size: '$payments'}
                     }
                 }
             }, {

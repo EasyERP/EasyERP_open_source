@@ -685,17 +685,17 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        supplier: {$arrayElemAt: ["$supplier", 0]},
-                        invoice : {$arrayElemAt: ["$invoice", 0]},
-                        paymentMethod : {$arrayElemAt: ["$paymentMethod", 0]},
-                        name    : 1
+                        supplier     : {$arrayElemAt: ["$supplier", 0]},
+                        invoice      : {$arrayElemAt: ["$invoice", 0]},
+                        paymentMethod: {$arrayElemAt: ["$paymentMethod", 0]},
+                        name         : 1
                     }
                 }, {
                     $project: {
-                        supplier: 1,
-                        invoice : 1,
-                        name    : 1,
-                        paymentMethod : 1
+                        supplier     : 1,
+                        invoice      : 1,
+                        name         : 1,
+                        paymentMethod: 1
                     }
                 }, {
                     $lookup: {
@@ -705,15 +705,15 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        supplier: 1,
-                        assigned: {$arrayElemAt: ["$assigned", 0]},
-                        name    : 1,
-                        paymentMethod : 1
+                        supplier     : 1,
+                        assigned     : {$arrayElemAt: ["$assigned", 0]},
+                        name         : 1,
+                        paymentMethod: 1
                     }
                 }, {
                     $group: {
-                        _id       : null,
-                        'assigned': {
+                        _id            : null,
+                        'assigned'     : {
                             $addToSet: {
                                 _id : '$assigned._id',
                                 name: {
@@ -721,7 +721,7 @@ var Filters = function (models) {
                                 }
                             }
                         },
-                        'supplier': {
+                        'supplier'     : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: {
@@ -729,13 +729,13 @@ var Filters = function (models) {
                                 }
                             }
                         },
-                        'name'    : {
+                        'name'         : {
                             $addToSet: {
                                 _id : '$_id',
                                 name: '$name'
                             }
                         },
-                        'paymentMethod'    : {
+                        'paymentMethod': {
                             $addToSet: {
                                 _id : '$paymentMethod._id',
                                 name: '$paymentMethod.name'

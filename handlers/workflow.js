@@ -36,7 +36,7 @@ var workflows = function (models) {
         }
 
         query = {
-            wId: wId,
+            wId   : wId,
             status: status
         };
 
@@ -86,7 +86,7 @@ var workflows = function (models) {
         }
 
         query = {
-            wId: wId,
+            wId    : wId,
             visible: true
         };
 

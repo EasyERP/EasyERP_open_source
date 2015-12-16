@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose');
 var Categories = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
@@ -10,7 +9,7 @@ var Categories = function (models, event) {
 
     var async = require('async');
 
-    this.getExpenses = function(req, res, next){
+    this.getExpenses = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
 
         var parentId = MAINCONSTANTS.EXPENSESCAREGORY;
@@ -101,7 +100,9 @@ var Categories = function (models, event) {
                     });
                 });
             } else {
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             }
         });
     }
@@ -128,12 +129,16 @@ var Categories = function (models, event) {
                 objChange[sequenceField] = inc;
                 query = model.update(objFind, {$inc: objChange}, {multi: true});
                 query.exec(function (err, res) {
-                    if (callback) callback((inc == -1) ? end : start);
+                    if (callback) {
+                        callback((inc == -1) ? end : start);
+                    }
                 });
             } else {
                 if (isCreate) {
                     query = model.count({"parent": parentDepartmentStart}).exec(function (err, res) {
-                        if (callback) callback(res);
+                        if (callback) {
+                            callback(res);
+                        }
                     });
                 }
                 if (isDelete) {
@@ -143,7 +148,9 @@ var Categories = function (models, event) {
                     objChange[sequenceField] = -1;
                     query = model.update(objFind, {$inc: objChange}, {multi: true});
                     query.exec(function (err, res) {
-                        if (callback) callback(res);
+                        if (callback) {
+                            callback(res);
+                        }
                     });
                 }
             }
@@ -159,31 +166,31 @@ var Categories = function (models, event) {
             objChange[sequenceField] = 1;
             query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec(function (err, res) {
-                if (callback) callback(end);
+                if (callback) {
+                    callback(end);
+                }
             });
-
 
         }
     }
 
-    function updateFullName(id, Model, cb){
+    function updateFullName(id, Model, cb) {
         var fullName;
         var parrentFullName;
 
         Model
             .findById(id)
             .populate('parent')
-            .exec(function(err, category){
-                parrentFullName = category.parent ? category.parent.fullName: null;
+            .exec(function (err, category) {
+                parrentFullName = category.parent ? category.parent.fullName : null;
 
-                if (parrentFullName){
+                if (parrentFullName) {
                     fullName = parrentFullName + ' / ' + category.name;
                 } else {
                     fullName = category.name;
                 }
 
-
-                if(!err){
+                if (!err) {
                     Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, {new: true}, cb);
                 }
             });
@@ -212,8 +219,8 @@ var Categories = function (models, event) {
                         next(err);
                     } else {
                         //ToDo update fullName
-                        ProductCategory.populate(result, {path: 'parent'}, function(err, result){
-                            if(err){
+                        ProductCategory.populate(result, {path: 'parent'}, function (err, result) {
+                            if (err) {
                                 return next(err);
                             }
                             if (data.isAllUpdate) {
@@ -224,8 +231,8 @@ var Categories = function (models, event) {
                                 res.send(200, {success: 'Category updated success'});
                             }
 
-                            updateFullName(_id, ProductCategory, function(){
-                               console.log("fullName was updated");
+                            updateFullName(_id, ProductCategory, function () {
+                                console.log("fullName was updated");
                             });
 
                             event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
@@ -236,25 +243,26 @@ var Categories = function (models, event) {
             });
         } else {
             ProductCategory.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
-                ProductCategory.populate(result, {path: 'parent'}, function(err, result){
-                    if(err){
+                ProductCategory.populate(result, {path: 'parent'}, function (err, result) {
+                    if (err) {
                         console.log(err);
                     }
                     //console.log(result);
                 });
 
-                updateFullName(_id, ProductCategory, function(){
+                updateFullName(_id, ProductCategory, function () {
                     console.log("fullName was updated");
                 });
 
                 if (err) {
-                   return next(err);
+                    return next(err);
                 }
                 if (data.isAllUpdate) {
                     updateNestingLevel(req, _id, data.nestingLevel, function () {
-                        res.send(200, {success: 'Category updated success'});});
-                } else {
                         res.send(200, {success: 'Category updated success'});
+                    });
+                } else {
+                    res.send(200, {success: 'Category updated success'});
                 }
 
                 event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
@@ -277,11 +285,13 @@ var Categories = function (models, event) {
 
             });
         } else {
-            if (callback) callback();
+            if (callback) {
+                callback();
+            }
         }
     }
 
-    this.remove = function(req, res, next){
+    this.remove = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var _id = req.param('id');
 

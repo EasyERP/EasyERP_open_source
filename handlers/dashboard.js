@@ -491,7 +491,7 @@ var wTrack = function (models) {
                         {
                             $match: {
                                 'employee._id'  : {$in: employeesArray},
-                                dateByWeek    : {$gte: startDate, $lte: endDate},
+                                dateByWeek      : {$gte: startDate, $lte: endDate},
                                 'department._id': departmentQuery
                             }
                         }, {
@@ -526,8 +526,8 @@ var wTrack = function (models) {
                         }, {
                             $project: {
                                 department : '$_id.department',
-                                employee  : '$_id.employee',
-                                dateByWeek: '$_id.dateByWeek',
+                                employee   : '$_id.employee',
+                                dateByWeek : '$_id.dateByWeek',
                                 projectRoot: 1,
                                 projects   : {$size: '$projectRoot'},
                                 hours      : 1,
@@ -545,8 +545,8 @@ var wTrack = function (models) {
                         }, {
                             $project: {
                                 department : '$_id.department',
-                                employee  : '$_id.employee',
-                                weekData  : 1,
+                                employee   : '$_id.employee',
+                                weekData   : 1,
                                 maxProjects: 1,
                                 _id        : 0
                             }
@@ -687,7 +687,7 @@ var wTrack = function (models) {
                         }, {
                             $group: {
                                 _id           : '$hireDate',
-                                hiredCount: {$sum: 1},
+                                hiredCount    : {$sum: 1},
                                 hiredEmployees: {$addToSet: '$$ROOT'}
                             }
                         }, {
@@ -761,7 +761,7 @@ var wTrack = function (models) {
                         }, {
                             $group: {
                                 _id           : '$fireDate',
-                                firedCount: {$sum: 1},
+                                firedCount    : {$sum: 1},
                                 firedEmployees: {$addToSet: '$$ROOT'}
                             }
                         }, {
@@ -775,7 +775,7 @@ var wTrack = function (models) {
 
                         Department.populate(employees, {
                             path   : 'firedEmployees.department._id',
-                            select: '_id departmentName',
+                            select : '_id departmentName',
                             options: {
                                 lean: true
                             }

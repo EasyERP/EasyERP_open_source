@@ -158,7 +158,7 @@ var Vacation = function (event, models) {
             length = result.length;
             lastEl = result[length - 1];
 
-            if(lastEl._id === curDate.getFullYear()) {
+            if (lastEl._id === curDate.getFullYear()) {
                 result[length] = {};
                 result[length]._id = lastEl._id + 1;
                 result[length].name = lastEl._id + 1;
@@ -365,7 +365,7 @@ var Vacation = function (event, models) {
                             data.vacations = calculateWeeks(data.vacArray, data.month, data.year);
                         }
 
-                        Vacation.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, result) {
+                        Vacation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
                             if (err) {
                                 return cb(err);
                             }
@@ -397,10 +397,8 @@ var Vacation = function (event, models) {
         var id = req.params.id;
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
 
-
         access.getDeleteAccess(req, req.session.uId, 72, function (access) {
             if (access) {
-
 
                 Vacation.remove({_id: id}, function (err, vacation) {
                     if (err) {

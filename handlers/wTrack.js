@@ -49,7 +49,7 @@ var wTrack = function (event, models) {
                     event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                     event.emit('recollectProjectInfo');
 
                     res.status(200).send({success: wTrack});
@@ -240,9 +240,9 @@ var wTrack = function (event, models) {
         };
 
         var sort = {};
-        var queryObject = filter ? filterMapper.mapFilter(filter) : {};
-        var count = query.count ? query.count : 100;
-        var page = query.page;
+        var filterObj = filter ? filterMapper.mapFilter(filter) : {};
+        var count = parseInt(query.count) ? parseInt(query.count) : 100;
+        var page = parseInt(query.page);
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
@@ -250,8 +250,9 @@ var wTrack = function (event, models) {
             keyForDay = sortObj[key];
 
             if (key in sortObj) {
-                sort[keyForDay] = query.sort[key];
+                sort[keyForDay] = parseInt(query.sort[key]);
             } else {
+                query.sort[key] = parseInt(query.sort[key]);
                 sort = query.sort;
             }
         } else {
@@ -300,15 +301,115 @@ var wTrack = function (event, models) {
         };
 
         contentSearcher = function (wtrackIds, waterfallCallback) {
-            var queryObject = {_id: {$in: wtrackIds}};
+            var queryObject = {};
+            queryObject['$and'] = [];
+            queryObject['$and'].push({_id: {$in: _.pluck(wtrackIds, '_id')}});
+            queryObject['$and'].push(filterObj);
 
-            WTrack
-                .find(queryObject)
-                .limit(count)
-                .skip(skip)
-                .sort(sort)
-                .lean()
-                .exec(waterfallCallback);
+            WTrack.aggregate([{
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "employee",
+                    foreignField: "_id", as: "employee"
+                }
+            }, {
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id", as: "department"
+                }
+            }, {
+                $lookup: {
+                    from        : "jobs",
+                    localField  : "jobs",
+                    foreignField: "_id", as: "jobs"
+                }
+            }, {
+                $project: {
+                    project   : {$arrayElemAt: ["$project", 0]},
+                    jobs      : {$arrayElemAt: ["$jobs", 0]},
+                    employee  : {$arrayElemAt: ["$employee", 0]},
+                    department: {$arrayElemAt: ["$department", 0]},
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    revenue   : 1,
+                    amount    : 1,
+                    rate      : 1,
+                    hours     : 1,
+                    cost      : 1,
+                    worked    : 1,
+                    isPaid    : 1,
+                    "1"       : 1,
+                    "2"       : 1,
+                    "3"       : 1,
+                    "4"       : 1,
+                    "5"       : 1,
+                    "6"       : 1,
+                    "7"       : 1
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "project.customer",
+                    foreignField: "_id", as: "customer"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "project.workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $project: {
+                    customer      : {$arrayElemAt: ["$customer", 0]},
+                    workflow      : {$arrayElemAt: ["$workflow", 0]},
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    project       : 1,
+                    jobs          : 1,
+                    employee      : 1,
+                    department    : 1,
+                    month         : 1,
+                    year          : 1,
+                    week          : 1,
+                    revenue       : 1,
+                    amount        : 1,
+                    rate          : 1,
+                    hours         : 1,
+                    cost          : 1,
+                    worked        : 1,
+                    isPaid        : 1,
+                    "1"           : 1,
+                    "2"           : 1,
+                    "3"           : 1,
+                    "4"           : 1,
+                    "5"           : 1,
+                    "6"           : 1,
+                    "7"           : 1
+                }
+            }, {
+                $match: queryObject
+            }, {
+                $skip: skip
+            }, {
+                $limit: count
+            }, {
+                $sort: sort
+            }], function (err, result) {
+                waterfallCallback(err, result);
+            })
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -709,11 +810,11 @@ var wTrack = function (event, models) {
                 function generate(opt, call) {
                     var employee = opt.employee;
                     var project = opt.project;
-                    var projectWorkflowId = project.workflow._id;
+                    var projectWorkflowId = project.workflow;
                     var department = opt.department;
                     var revenue = opt.revenue;
                     var currentUser = req.session.uId;
-                    var employeeId = employee._id;
+                    var employeeId = employee;
                     var dateArray;
                     var wTrackObj;
                     var monthsArr = [];
@@ -785,7 +886,7 @@ var wTrack = function (event, models) {
                                         var query = Salary
                                             .find(
                                             {
-                                                'employee._id': objectId(employee._id),
+                                                'employee._id': objectId(employee),
                                                 month         : m,
                                                 year          : y
                                             }, {
@@ -1145,7 +1246,7 @@ var wTrack = function (event, models) {
                         var query = Vacation.find({
                             month         : {$in: uniqMonths},
                             year          : {$in: uniqYears},
-                            "employee._id": employee._id
+                            "employee._id": employee
                         }, {month: 1, year: 1, vacArray: 1}).lean();
 
                         query.exec(function (err, result) {
