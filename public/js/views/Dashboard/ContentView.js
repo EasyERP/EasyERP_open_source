@@ -318,9 +318,8 @@ define([
                             return item.source;
                         }));
                         for (var i = 1; i < 8; i++) {
-                            if (dt.indexOf(i) === -1) {
+                            if (dt.indexOf(i) === -1)
                                 data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
-                            }
                             data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                         }
                         data.sort(function (a, b) {
@@ -333,9 +332,8 @@ define([
                             return item.source;
                         }));
                         for (var i = 1; i < 32; i++) {
-                            if (dt.indexOf(i) === -1) {
+                            if (dt.indexOf(i) === -1)
                                 data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
-                            }
                             data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                         }
                         data.sort(function (a, b) {
@@ -348,9 +346,8 @@ define([
                             return item.source;
                         }));
                         for (var i = 1; i < 13; i++) {
-                            if (dt.indexOf(i) === -1) {
+                            if (dt.indexOf(i) === -1)
                                 data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
-                            }
                             data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                         }
                         data.sort(function (a, b) {
@@ -369,15 +366,14 @@ define([
                             var diff = now - start;
                             var oneDay = 1000 * 60 * 60 * 24;
                             var dayofYera = Math.floor(diff / oneDay);
-                            if (dt.indexOf(dayofYera) === -1) {
+                            if (dt.indexOf(dayofYera) === -1)
                                 data.push({
-                                    count : 0,
-                                    date  : [now],
-                                    isOpp : true,
+                                    count: 0,
+                                    date: [now],
+                                    isOpp: true,
                                     source: dayofYera,
-                                    year  : now.getFullYear()
+                                    year: now.getFullYear()
                                 });
-                            }
                             data.push({count: 0, date: [now], source: dayofYera, isOpp: true, year: now.getFullYear()});
                         }
                         data = _.map(data, function (item) {
@@ -449,9 +445,7 @@ define([
                     var maxval2 = d3.max(percent, function (d) {
                         return d.count;
                     });
-                    if (maxval2 == 0) {
-                        maxval2 = 1;
-                    }
+                    if (maxval2 == 0)maxval2 = 1;
                     percent = _.map(percent, function (item) {
                         item.count = (item.count) / maxval2 * 100;
                         return item;

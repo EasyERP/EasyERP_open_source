@@ -1,22 +1,64 @@
+<style>
+    button.active {
+        background: #66b5d4;
+    }
+
+    th.rotated {
+        transform: rotate(-90deg);
+    }
+
+    tr.boldHead > td {
+        color: #fff;
+        font-weight: 700;
+    }
+
+    tr.boldInvoiced {
+        background-color: #adacad;
+        opacity: 0.8;
+    }
+    tr.boldInvoiced > td {
+        color: #01579B;
+    }
+
+    tr.boldPaid {
+        background-color: #7f7e7f;
+        opacity: 0.8;
+    }
+    tr.boldPaid > td {
+        color: #40C4FF;
+    }
+</style>
+
 <div class="grid-conatiner revenue">
+
     <div class="clear"></div>
     <div id="chartContainer" class="chartContainer">
-        <svg id="chart">
+        <!--<div>-->
+            <!--<button id="byMonth" class="active">M</button>-->
+            <!--<button id="byWeek">W</button>-->
+        <!--</div>-->
+        <div class="choseDateItem">
+            <button id="byMonth" class="active">M</button>
+            <button id="byWeek">W</button>
+        </div>
+       <!-- <div class="legend-box">
+            <div class="invoiced">
+                <div class="square"></div>
+                <div class="text">Invoiced</div>
+            </div>
+            <div class="piad">
+                <div class="square"></div>
+                <div class="text">Paid</div>
+            </div>
+        </div>-->
+        <svg id="chart" style="height: 500px">
 
         </svg>
-        <div class="legend">
-            <div>
-                <button id="byMonth">M</button>
-                <button id="byWeek">W</button>
-            </div>
-            <div><img src="images/chart1.png">&nbsp;Invoiced</div>
-            <div><img src="images/chart2.png">&nbsp;Paid</div>
-        </div>
     </div>
     <br>
+    <div class="tableResponsive">
+        <table class="list" id="results">
 
-    <div class="divTable" id="results">
-
+        </table>
     </div>
-
 </div>
