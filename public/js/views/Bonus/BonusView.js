@@ -15,27 +15,27 @@ define([
             this.selectedBonus = [];
             this.startDate = this.model.get('StartDate');
             this.endDate = this.model.get('EndDate');
-           // this.render();
+            // this.render();
         },
 
         template: _.template(bonusTemplate),
 
         events: {
-            'click #createBonus': 'addBonus',
-            'click #removeBonus': 'removeBonus',
+            'click #createBonus'                                              : 'addBonus',
+            'click #removeBonus'                                              : 'removeBonus',
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            'click .choseType': 'showSelect',
-            'click .choseEmployee': 'showSelect',
-            'click .bonus-checkbox': 'checkBonus',
-            'click #check_all_bonus': 'checkAllBonus',
-            'click .startDate div': 'showDatepicker',
-            'click .endDate div': 'showDatepicker',
-            'click': 'hideDatepicker'
+            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+            'click .choseType'                                                : 'showSelect',
+            'click .choseEmployee'                                            : 'showSelect',
+            'click .bonus-checkbox'                                           : 'checkBonus',
+            'click #check_all_bonus'                                          : 'checkAllBonus',
+            'click .startDate div'                                            : 'showDatepicker',
+            'click .endDate div'                                              : 'showDatepicker',
+            'click'                                                           : 'hideDatepicker'
         },
 
-        hideDatepicker: function() {
+        hideDatepicker: function () {
             //ToDO Hide Datepicker
         },
 
@@ -201,10 +201,10 @@ define([
             var endDate = this.$el.find(selectedEnd);
 
             startDate.datepicker({
-                dateFormat: "d M, yy",
+                dateFormat : "d M, yy",
                 changeMonth: true,
-                changeYear: true,
-                onSelect: function () {
+                changeYear : true,
+                onSelect   : function () {
                     var startDate = $(self.$el).find(selectedStart).datepicker('getDate');
                     var parrent = $(selectedStart).parent('td');
                     var value = $(self.$el).find(selectedStart).val();
@@ -219,10 +219,10 @@ define([
             });
 
             endDate.datepicker({
-                dateFormat: "d M, yy",
+                dateFormat : "d M, yy",
                 changeMonth: true,
-                changeYear: true,
-                onSelect: function () {
+                changeYear : true,
+                onSelect   : function () {
                     var endDate = $(self.$el).find(selectedEnd).datepicker('getDate');
                     var parrent = $(selectedEnd).parent('td');
                     var value = $(self.$el).find(selectedEnd).val();
@@ -240,7 +240,7 @@ define([
             $(selectedEnd).datepicker('setDate', self.endDate);
         },
 
-        formatingDate: function(oldDate) {
+        formatingDate: function (oldDate) {
             if (!oldDate) {
                 return '';
             }
@@ -255,10 +255,10 @@ define([
             var endDate = this.model.get('EndDate');
 
             self.$el.html(this.template({
-                bonus: bonus,
+                bonus        : bonus,
                 formatingDate: self.formatingDate,
-                startDate: startDate,
-                endDate: endDate
+                startDate    : startDate,
+                endDate      : endDate
             }));
 
             self.$el.find('#removeBonus').hide();

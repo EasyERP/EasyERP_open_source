@@ -1,7 +1,6 @@
-
 <% monthHoursCollection.forEach(function(monthHours, index){ %>
-<tr  data-id="<%=monthHours._id%>">
-    <td class = "notForm centerCell"><input type="checkbox" value="<%=monthHours._id%>" class="checkbox" /></td>
+<tr data-id="<%=monthHours._id%>">
+    <td class="notForm centerCell"><input type="checkbox" value="<%=monthHours._id%>" class="checkbox"/></td>
 
     <td data-content="number" class="centerCell"><%=startNumber + index +1 %></td>
     <td data-content="month"><%=monthHours.month%></td>

@@ -53,7 +53,7 @@ define([
 
         keyDown: function (e) {
             if (e.which === 13) {
-                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(e);
                 }
 

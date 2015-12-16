@@ -7,9 +7,9 @@ define([
     ],
     function (ContentTopBarTemplate, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: CONSTANTS.ATTENDANCE,
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
             initialize: function () {
                 this.render();

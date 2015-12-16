@@ -283,7 +283,7 @@ define([
                     // depForTransfer: depForTransfer
                 };
                 if (department._id !== depForTransfer._id) {
-                    data.depForTransfer=depForTransfer.name;
+                    data.depForTransfer = depForTransfer.name;
                 }
                 //if (!relatedUser){
                 //    data['currentUser']= App.currentUser._id;

@@ -542,7 +542,6 @@ define([
                 var groupName = this.$el.find('#' + filterObjectName).text(); //  added groupname for finding constantsObject filter
                 var filterType = this.constantsObject[groupName].type; // filterType searches in types of constantsObject filters
 
-
                 if (!App.filter[filterObjectName]) {
                     App.filter[filterObjectName] = {
                         key  : groupType,

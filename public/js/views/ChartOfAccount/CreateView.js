@@ -7,7 +7,7 @@ define([
     function (CreateTemplate) {
 
         var CreateView = Backbone.View.extend({
-            el: '#chartOfAccount',
+            el      : '#chartOfAccount',
             template: _.template(CreateTemplate),
 
             initialize: function (options) {

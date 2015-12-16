@@ -8,8 +8,8 @@ var Task = function (models) {
 
         task.aggregate([
             {
-                $group:{
-                    _id: null,
+                $group: {
+                    _id : null,
                     type: {
                         $addToSet: '$type'
                     }

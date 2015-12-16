@@ -9,20 +9,19 @@ define([
     ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var topBarView = Backbone.View.extend({
-            el: '#top-bar',
-            contentType: CONSTANTS.MONTHHOURS,
-            contentHeader:"MonthHours",
-            viewType: null,
-            template: _.template(ContentTopBarTemplate),
+            el           : '#top-bar',
+            contentType  : CONSTANTS.MONTHHOURS,
+            contentHeader: "MonthHours",
+            viewType     : null,
+            template     : _.template(ContentTopBarTemplate),
 
             events: {
                 "click a.changeContentView": 'changeContentViewType',
-                "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-saveBtn": "saveEvent"
+                "click #top-bar-deleteBtn" : "deleteEvent",
+                "click #top-bar-editBtn"   : "editEvent",
+                "click #top-bar-createBtn" : "createEvent",
+                "click #top-bar-saveBtn"   : "saveEvent"
             },
-
 
             changeContentViewType: function (e) {
                 Custom.changeContentViewType(e, this.contentType, this.collection);
@@ -58,7 +57,11 @@ define([
             render: function () {
                 $('title').text(this.contentHeader);
                 var viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({ viewType: viewType, contentType: this.contentType, contentHeader:this.contentHeader}));
+                this.$el.html(this.template({
+                    viewType     : viewType,
+                    contentType  : this.contentType,
+                    contentHeader: this.contentHeader
+                }));
                 Common.displayControlBtnsByActionType('Content', viewType);
                 return this;
             }

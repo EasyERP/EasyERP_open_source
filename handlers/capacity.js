@@ -96,7 +96,7 @@ var Capacity = function (models) {
                         return next(err);
                     }
 
-                    _.map(result, function(model) {
+                    _.map(result, function (model) {
                         model = model.toJSON();
                         departmentsObject[model.department.name] = model.department;
                     })

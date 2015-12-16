@@ -60,10 +60,13 @@
 
         <tr data-id="<%=element._id%>" id="jobsItem">
 
-            <td class="remove"><a class="fa fa-trash hidden <%=((element.quotation && element.quotation._id) || (element.invoice && element.invoice._id)) ? 'notRemovable' : ''%>" id="<%=element._id%>"></a></td>
+            <td class="remove"><a
+                    class="fa fa-trash hidden <%=((element.quotation && element.quotation._id) || (element.invoice && element.invoice._id)) ? 'notRemovable' : ''%>"
+                    id="<%=element._id%>"></a></td>
             <td class="expand">+</td>
             <td class="editableJobs" id="jobsName"><%=element.name%></td>
-            <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
+            <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
+            </td>
             <td class="selects"><a data-id="<%=element.type%>" id="type" class="current-selected"><%=element.type%></a>
                 <ul class="newSelectList" style="display: none;">
                     <li>Ordered</li>
@@ -72,14 +75,18 @@
                     <li>Not Quoted</li>
                 </ul>
             </td>
-            <td><a data-id="<%=element.quotation ? element.quotation._id : null%>" class="quotation"><%=element.quotation ? element.quotation.name: ''%></a></td>
-            <td><a data-id="<%=element.invoice ? element.invoice._id : null%>" class="invoice"><%=element.invoice ? element.invoice.name : ''%></a></td>
+            <td><a data-id="<%=element.quotation ? element.quotation._id : null%>" class="quotation"><%=element.quotation
+                ? element.quotation.name: ''%></a></td>
+            <td><a data-id="<%=element.invoice ? element.invoice._id : null%>" class="invoice"><%=element.invoice ?
+                element.invoice.name : ''%></a></td>
             <td><%=element.budget.projectTeam.length%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal ? isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2)) : 0%></td>
+            <td><%= budgetTotal ? isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 :
+                currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2)) : 0%>
+            </td>
 
         </tr>
         <% count++ %>
@@ -87,7 +94,8 @@
         <% totalCost += budgetTotal.costSum %>
         <% totalRevenue += budgetTotal.revenueSum%>
         <% totalProfit += budgetTotal.profitSum%>
-        <% totalRate += isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : (budgetTotal.revenueSum / budgetTotal.hoursSum) %>
+        <% totalRate += isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : (budgetTotal.revenueSum /
+        budgetTotal.hoursSum) %>
         <% } %>
         <% })%>
 
@@ -111,7 +119,6 @@
         </tr>
 
         </tfoot>
-
 
 
     </table>

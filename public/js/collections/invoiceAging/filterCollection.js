@@ -4,12 +4,12 @@ define([
     ],
     function (InvoiceAging, common) {
         var Collection = Backbone.Collection.extend({
-            model: InvoiceAging,
-            url: "/invoice/stats/",
-            page: null,
+            model       : InvoiceAging,
+            url         : "/invoice/stats/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
+            viewType    : null,
+            contentType : null,
 
             initialize: function (options) {
                 var that = this;
@@ -22,13 +22,15 @@ define([
                 this.page = options.page || 1;
 
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
@@ -43,15 +45,15 @@ define([
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
 
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function (model, xhr) {
+                    error  : function (model, xhr) {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: xhr ? xhr.text : 'Some error'
                         });
                     }

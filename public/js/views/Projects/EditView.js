@@ -1,20 +1,20 @@
 define([
-    "text!templates/Projects/EditTemplate.html",
-    'views/Notes/NoteView',
-    'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
-    'views/Bonus/BonusView',
-    "custom",
-    "common",
-    "dataService",
-	"populate"
-],
+        "text!templates/Projects/EditTemplate.html",
+        'views/Notes/NoteView',
+        'views/Notes/AttachView',
+        'views/Assignees/AssigneesView',
+        'views/Bonus/BonusView',
+        "custom",
+        "common",
+        "dataService",
+        "populate"
+    ],
     function (EditTemplate, noteView, attachView, AssigneesView, BonusView, custom, common, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             contentType: "Projects",
-            template: _.template(EditTemplate),
-            initialize: function (options) {
+            template   : _.template(EditTemplate),
+            initialize : function (options) {
                 _.bindAll(this, "render", "saveItem", "deleteItem");
                 this.currentModel = options.model;
                 this.currentModel.urlRoot = '/Projects/';
@@ -22,19 +22,19 @@ define([
                 this.render();
             },
 
-            events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click #health a": "showHealthDd",
-                "click #health ul li div": "chooseHealthDd",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+            events       : {
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click #health a"                                                 : "showHealthDd",
+                "click #health ul li div"                                         : "chooseHealthDd",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click": "hideNewSelect",
-                "click .current-selected": "showNewSelect"
+                "click"                                                           : "hideNewSelect",
+                "click .current-selected"                                         : "showNewSelect"
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             showNewSelect: function (e, prev, next) {
@@ -42,7 +42,7 @@ define([
                 return false;
 
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
             },
@@ -52,21 +52,21 @@ define([
 
             },
 
-            nextSelect: function (e) {
+            nextSelect    : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect    : function (e) {
                 this.showNewSelect(e, true, false);
             },
             chooseHealthDd: function (e) {
                 var target = $(e.target);
                 target.parents("#health").find("a").attr("class", target.attr("class")).attr("data-value", target.attr("class").replace("health", "")).parent().find("ul").toggle();
             },
-            showHealthDd: function (e) {
+            showHealthDd  : function (e) {
                 $(e.target).parent().find("ul").toggle();
                 return false;
             },
-            changeTab: function (e) {
+            changeTab     : function (e) {
                 var target = $(e.target);
                 target.closest(".dialog-tabs").find("a.active").removeClass("active");
                 target.addClass("active");
@@ -101,9 +101,9 @@ define([
                 var mid = 39;
                 var projectName = $.trim(this.$el.find("#projectName").val());
                 var projectShortDesc = $.trim(this.$el.find("#projectShortDesc").val());
-                var customer  = this.$el.find("#customerDd").data("id");
+                var customer = this.$el.find("#customerDd").data("id");
                 var projectmanager = this.$el.find("#projectManagerDD").data("id");
-                var workflow  = this.$el.find("#workflowsDd").data("id");
+                var workflow = this.$el.find("#workflowsDd").data("id");
                 var projecttype = this.$el.find("#projectTypeDD").data("id");
                 var $userNodes = $("#usereditDd option:selected");
                 var startDate = $.trim(this.$el.find("#StartDate").val());
@@ -114,7 +114,7 @@ define([
                 var bonus = [];
                 $userNodes.each(function (key, val) {
                     users.push({
-                        id: val.value,
+                        id  : val.value,
                         name: val.innerHTML
                     });
                 });
@@ -124,25 +124,25 @@ define([
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
                     var value;
 
-                    if (!employeeId || !bonusId){
-                        if (!employeeId){
+                    if (!employeeId || !bonusId) {
+                        if (!employeeId) {
                             value = 'Employee';
                             alert('Please, choose ' + value + ' first.');
-                        } else if (!bonusId){
+                        } else if (!bonusId) {
                             value = 'Bonus';
                             alert('Please, choose ' + value + ' first.');
                         }
                         validation = false;
                     }
 
-                    var startD =  $(val).find(".startDate input").val() || null;
-                    var endD =  $(val).find(".endDate input").val() || null;
+                    var startD = $(val).find(".startDate input").val() || null;
+                    var endD = $(val).find(".endDate input").val() || null;
 
                     bonus.push({
                         employeeId: employeeId,
-                        bonusId: bonusId,
-                        startDate: startD,
-                        endDate: endD
+                        bonusId   : bonusId,
+                        startDate : startD,
+                        endDate   : endD
                     });
                 });
 
@@ -165,28 +165,28 @@ define([
                 var currentTargetEndDate = this.currentModel.get('TargetEndDate');
                 //var TargetEndDate = _targetEndDate || currentTargetEndDate;
                 var data = {
-                    projectName: projectName,
+                    projectName     : projectName,
                     projectShortDesc: projectShortDesc,
-                    customer: customer ? customer : null,
-                    projectmanager: projectmanager ? projectmanager : null,
-                    workflow: workflow ? workflow : null,
-                    projecttype: projecttype ? projecttype : "",
-                    description: description,
-                    teams: {
+                    customer        : customer ? customer : null,
+                    projectmanager  : projectmanager ? projectmanager : null,
+                    workflow        : workflow ? workflow : null,
+                    projecttype     : projecttype ? projecttype : "",
+                    description     : description,
+                    teams           : {
                         users: users
                     },
-                    groups: {
-						owner: $("#allUsersSelect").data("id"),
+                    groups          : {
+                        owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW,
-                    health: health,
-                    StartDate: startDate,
-                    EndDate: endDate,
-                    TargetEndDate:  _targetEndDate,
-                    bonus: bonus,
-                    budget: budget
+                    whoCanRW        : whoCanRW,
+                    health          : health,
+                    StartDate       : startDate,
+                    EndDate         : endDate,
+                    TargetEndDate   : _targetEndDate,
+                    bonus           : bonus,
+                    budget          : budget
                 };
                 var workflowStart = this.currentModel.get('workflow');
 
@@ -219,23 +219,26 @@ define([
                                 var currentModel_holder = $("#" + self.currentModel.toJSON()._id);
                                 currentModel_holder.find(".project-text span").eq(0).text(projectName);
                                 currentModel_holder.find(".project-text span").eq(1).find("a").attr("class", "health" + health).attr("data-value", health);
-                                if (customer)
+                                if (customer) {
                                     $("#" + self.currentModel.toJSON()._id).find(".project-text span").eq(2).text(self.$el.find("#customerDd").text());
+                                }
                                 currentModel_holder.find(".bottom .stageSelect").text(self.$el.find("#workflowsDd").text()).attr("class", "stageSelect " + self.$el.find("#workflowsDd").text().toLowerCase().replace(" ", ''));
-                                if (projectmanager)
+                                if (projectmanager) {
                                     common.getImagesPM([projectmanager._id], "/getEmployeesImages", "#" + self.currentModel.toJSON()._id);
+                                }
                             }
                             if (data.workflow._id != workflowStart._id) {
                                 var filter = window.location.hash.split('filter=')[1];
                                 var url = "#easyErp/Projects/thumbnails";
-                                if (filter)
+                                if (filter) {
                                     url += '/filter=' + filter;
+                                }
                                 Backbone.history.fragment = "";
                                 Backbone.history.navigate(url, {trigger: true});
 
                             }
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
 
@@ -258,22 +261,22 @@ define([
                             var viewType = custom.getCurrentVT();
                             switch (viewType) {
                                 case 'list':
-                                    {
-                                        $("tr[data-id='" + model._id + "'] td").remove();
-                                    }
+                                {
+                                    $("tr[data-id='" + model._id + "'] td").remove();
+                                }
                                     break;
                                 case 'thumbnails':
-                                    {
-                                        $("#" + model._id).remove();
-                                        $('.edit-project-dialog').remove();
-                                        $(".add-group-dialog").remove();
-                                        $(".add-user-dialog").remove();
-                                    }
+                                {
+                                    $("#" + model._id).remove();
+                                    $('.edit-project-dialog').remove();
+                                    $(".add-group-dialog").remove();
+                                    $(".add-user-dialog").remove();
+                                }
                             }
                             self.hideDialog();
                         },
-                        error: function (model, xhr) {
-    						self.errorNotification(xhr);
+                        error  : function (model, xhr) {
+                            self.errorNotification(xhr);
                         }
                     });
                 }
@@ -286,24 +289,24 @@ define([
                 var self = this;
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: false,
-                    title: "Edit Project",
-                    dialogClass: "edit-project-dialog",
-                    width: "900px",
-                    buttons: {
-                        save: {
-                            text: "Save",
+                    autoOpen     : true,
+                    resizable    : false,
+                    title        : "Edit Project",
+                    dialogClass  : "edit-project-dialog",
+                    width        : "900px",
+                    buttons      : {
+                        save  : {
+                            text : "Save",
                             class: "btn",
                             click: self.saveItem
                         },
                         cancel: {
-                            text: "Cancel",
+                            text : "Cancel",
                             class: "btn",
                             click: self.hideDialog
                         },
                         delete: {
-                            text: "Delete",
+                            text : "Delete",
                             class: "btn",
                             click: self.deleteItem
                         }
@@ -311,16 +314,16 @@ define([
                 });
                 var notDiv = this.$el.find('#divForNote');
                 notDiv.append(
-                 new noteView({
-                     model: this.currentModel
-                 }).render().el);
+                    new noteView({
+                        model: this.currentModel
+                    }).render().el);
                 notDiv.append(
                     new attachView({
                         model: this.currentModel,
-						url:"/uploadProjectsFiles"
+                        url  : "/uploadProjectsFiles"
                     }).render().el
                 );
-				notDiv = this.$el.find('.assignees-container');
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
@@ -332,7 +335,7 @@ define([
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
                 populate.get2name("#customerDd", "/Customer", {}, this, false, false);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", { id: "Projects" }, "name", this);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this);
                 var model = this.currentModel.toJSON();
                 //if (model.groups)
                 //    if (model.groups.users.length > 0 || model.groups.group.length) {
@@ -348,10 +351,10 @@ define([
                 //
                 //    }
                 $('#StartDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    onSelect: function () {
+                    changeYear : true,
+                    onSelect   : function () {
                         //Setting minimum of endDate to picked startDate
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
@@ -359,10 +362,10 @@ define([
                     }
                 });
                 $('#EndDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    onSelect: function () {
+                    changeYear : true,
+                    onSelect   : function () {
                         //Setting minimum of endDate to picked startDate
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
@@ -370,10 +373,10 @@ define([
                     }
                 });
                 $('#EndDateTarget').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    minDate: (model.StartDate) ? model.StartDate : 0
+                    changeYear : true,
+                    minDate    : (model.StartDate) ? model.StartDate : 0
                 });
                 this.delegateEvents(this.events);
 

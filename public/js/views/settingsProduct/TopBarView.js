@@ -6,18 +6,17 @@ define([
     ],
     function (TopBarTemplate, Custom, dataService, Common) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: "Product Categories",
-            actionType: null, //Content, Edit, Create
-            template: _.template(TopBarTemplate),
+            actionType : null, //Content, Edit, Create
+            template   : _.template(TopBarTemplate),
 
             events: {
                 "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-editBtn": "editEvent",
+                "click #top-bar-editBtn"  : "editEvent",
                 "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-saveBtn": "saveEvent"
+                "click #top-bar-saveBtn"  : "saveEvent"
             },
-
 
             createEvent: function (event) {
                 event.preventDefault();

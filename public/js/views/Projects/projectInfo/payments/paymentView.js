@@ -32,13 +32,13 @@ define([
         template: _.template(paymentTemplate),
 
         events: {
-            "click .checkbox": "checked",
-            "click #savePayment": "saveItem",
-            "click #removePayment": "deleteItems",
+            "click .checkbox"               : "checked",
+            "click #savePayment"            : "saveItem",
+            "click #removePayment"          : "deleteItems",
             "click td:not(.checkbox, .date)": "goToEditDialog"
         },
 
-        goToEditDialog: function(e){
+        goToEditDialog: function (e) {
             e.preventDefault();
 
             var id = $(e.target).closest('tr').data("id");
@@ -83,18 +83,18 @@ define([
             });
         },
 
-        recalcTotal: function(){
+        recalcTotal: function () {
             var self = this;
             var collection = this.collection.toJSON();
             var totalPaidAmount = 0;
             var total = 0;
 
-            async.forEach(collection, function(model, cb){
-                totalPaidAmount +=  parseFloat(model.paidAmount);
+            async.forEach(collection, function (model, cb) {
+                totalPaidAmount += parseFloat(model.paidAmount);
                 total += parseFloat(model.paidAmount) + parseFloat(model.differenceAmount);
 
                 cb();
-            }, function(){
+            }, function () {
                 self.$el.find("#totalPaidAmount").text(helpers.currencySplitter(totalPaidAmount.toFixed(2)));
                 self.$el.find("#total").text(helpers.currencySplitter(total.toFixed(2)));
             });

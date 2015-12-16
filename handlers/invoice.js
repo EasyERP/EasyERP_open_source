@@ -576,7 +576,7 @@ var Invoice = function (models, event) {
                                     name            : 1,
                                     paymentDate     : 1,
                                     dueDate         : 1,
-                                    payments: 1
+                                    payments        : 1
                                 }
                             }, {
                                 $project: {
@@ -594,7 +594,7 @@ var Invoice = function (models, event) {
                                     name            : 1,
                                     paymentDate     : 1,
                                     dueDate         : 1,
-                                    payments: 1
+                                    payments        : 1
                                 }
                             }, {
                                 $match: optionsObject

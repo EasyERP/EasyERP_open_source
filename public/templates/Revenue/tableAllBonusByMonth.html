@@ -11,28 +11,28 @@
     <div class="divCell th th-trend"><span>Trend</span></div>
 </div>
 <% employees.forEach(function(employee){ %>
-<div class="divRow" >
+<div class="divRow">
     <div data-value="<%= employee._id %>" class="divCell left-cell" data-cont="<%=content%>">
         <span class="rowChecked clickToShow">+</span><span class="clickToShow"><%= employee.name %></span>
 
     </div>
     <div data-id="<%= employee._id%>" id="<%= employee._id%>">
 
-        </div>
+    </div>
 
 
 </div>
 
-    <% employee.bonus.forEach(function(bonus){ %>
+<% employee.bonus.forEach(function(bonus){ %>
 <div class="divRow subRow" data-value="<%= employee._id + 'bonus'%>" data-val="<%=content%>">
     <div class="divCell left-cell" data-val="<%=content%>">
 
         <span class="bonusCell"><%= bonus %></span>
-            </div>
-
-
     </div>
-    <% }); %>
+
+
+</div>
+<% }); %>
 </div>
 <% }) %>
 <div data-content="<%=content%>" class="divRow <%=className%>">

@@ -15,12 +15,12 @@ define([
 
         var CompaniesListView = listViewBase.extend({
 
-            createView              : createView,
-            listTemplate            : listTemplate,
-            listItemView            : listItemView,
-            contentCollection       : contentCollection,
-            filterView              : filterView,
-            contentType             : "Companies",
+            createView       : createView,
+            listTemplate     : listTemplate,
+            listItemView     : listItemView,
+            contentCollection: contentCollection,
+            filterView       : filterView,
+            contentType      : "Companies",
 
             totalCollectionLengthUrl: '/totalCollectionLength/Companies',
             formUrl                 : "#easyErp/Companies/form/",

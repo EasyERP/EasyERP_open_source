@@ -71,7 +71,6 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
             },
 
-
             setChangedValueToModel: function () {
                 var editedElement = this.$listTable.find('.editing');
                 var editedCol;
@@ -213,15 +212,14 @@ define([
                 // validation for empty fields
                 var filled = true;
 
-                 $(".editable").each(function (){
-                     if (!$(this).html()){
-                         return filled = false;
-                     }
+                $(".editable").each(function () {
+                    if (!$(this).html()) {
+                        return filled = false;
+                    }
                 });
 
-
-                if(!filled){
-                    return  App.render({type: 'error', message: 'Fill all fields please'});
+                if (!filled) {
+                    return App.render({type: 'error', message: 'Fill all fields please'});
                 }
                 // end
 
@@ -735,7 +733,7 @@ define([
                     var answer = confirm("Really DELETE items ?!");
                     var value;
 
-                    if (answer){
+                    if (answer) {
                         $.each(checkboxes$, function (index, checkbox) {
                             value = checkbox.value;
 

@@ -6,12 +6,12 @@ define([
     ],
     function (PayRollModel) {
         var PayRollCollection = Backbone.Collection.extend({
-            model       : PayRollModel,
-            url         : "/payroll/",
+            model: PayRollModel,
+            url  : "/payroll/",
 
             initialize: function (options) {
                 this.startTime = new Date();
-                this.sort = options ? options.sort: {"employee.name": 1};
+                this.sort = options ? options.sort : {"employee.name": 1};
 
                 this.fetch({
                     data   : options,
@@ -19,7 +19,9 @@ define([
                     success: function () {
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             }

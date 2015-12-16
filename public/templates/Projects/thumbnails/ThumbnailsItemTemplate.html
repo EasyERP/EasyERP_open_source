@@ -40,6 +40,7 @@
 
                     <a id="<%=project._id%>" class="tasksByProject" href="#easyErp/Tasks/kanban/<%= project._id %>"><%=project.task.length%> Tasks</a>
                 </p>
+
                 <div class="inner">
 				  <div class="left"><label>Status: </label>&nbsp;</div>
 				  <div class="left"><a href="javascript:;" class="stageSelect <%=(project.workflow) ? (project.workflow.name.toLowerCase().replace(" ","") === "closed" ? 'projectClosed' : project.workflow.name.toLowerCase().replace(" ","") ) : ''%>"><%=(project.workflow) ? project.workflow.name : ''%></a></div>
@@ -47,7 +48,7 @@
             </div>
             <div class="half-block right">
                 <div class="avatar right" data-id="<%=(project.projectmanager._id) ? project.projectmanager._id: ''%>">
-                    <img alt="" src="" />
+                    <img alt="" src=""/>
                 </div>
             </div>
         </div>

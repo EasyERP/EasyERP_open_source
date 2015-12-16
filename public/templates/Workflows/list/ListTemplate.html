@@ -1,8 +1,9 @@
 <div class="inner-holder">
     <div class="workflow-list-wrapper left">
         <ul class="workflow-list">
-            <% workflowsWIds.forEach(function(wId, index){ %> 
-            		<li data-id="<%=wId%>"><a href="javascript;" data-id="<%=wId%>" title="<%=wId%>" class="workflow"><%=wId%></a></li>
+            <% workflowsWIds.forEach(function(wId, index){ %>
+            <li data-id="<%=wId%>"><a href="javascript;" data-id="<%=wId%>" title="<%=wId%>"
+                                      class="workflow"><%=wId%></a></li>
             <% }) %>
         </ul>
     </div>
@@ -23,9 +24,9 @@
                   </div>-->
                 <div id="sub-details" class="workflow-details">
                     <div class="listWorkflow">
-                    <div id="workflows"></div>
-                    <div id="addedStatus">
-					</div>
+                        <div id="workflows"></div>
+                        <div id="addedStatus">
+                        </div>
                         <button class="btn" id="addNewStatus"><span>Add</span></button>
                     </div>
                 </div>

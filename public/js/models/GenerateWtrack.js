@@ -35,8 +35,9 @@ define(['Validation', 'common', 'moment'], function (Validation, common, moment)
             Validation.checkNumberField(errors, true, attrs.weekDefault['7'], "Seventh day value");
             Validation.checkMoneyField(errors, false, attrs.revenue, "Revenue");
 
-            if (errors.length > 0)
+            if (errors.length > 0) {
                 return errors;
+            }
         },
     });
 

@@ -8,9 +8,9 @@ define([
     function (CreateTemplate, Model, common, Custom, populate) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Departments",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
@@ -19,16 +19,16 @@ define([
                 this.responseObj = {};
                 this.render();
             },
-            events: {
-                'click .dialog-tabs a': 'changeTab',
-                'click #sourceUsers li': 'addUsers',
-                'click #targetUsers li': 'removeUsers',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .prevUserList": "prevUserList",
-                "click .nextUserList": "nextUserList",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+            events    : {
+                'click .dialog-tabs a'                                            : 'changeTab',
+                'click #sourceUsers li'                                           : 'addUsers',
+                'click #targetUsers li'                                           : 'removeUsers',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .prevUserList"                                             : "prevUserList",
+                "click .nextUserList"                                             : "nextUserList",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 // 'keydown': 'keydownHandler'
@@ -98,7 +98,7 @@ define([
                 $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) - 1);
                 this.updateAssigneesPagination($(e.target).closest(".left"));
             },
-            chooseUser: function (e) {
+            chooseUser  : function (e) {
                 $(e.target).toggleClass("choosen");
             },
 
@@ -144,30 +144,29 @@ define([
                     return item.parentCategory === parentCategory;
                 });
 
-                if (fullName){
+                if (fullName) {
                     fullName += ' / ' + categoryName;
                 } else {
                     fullName = categoryName;
                 }
 
-
                 this.model.save({
-                        name: categoryName,
-                        parent: parentCategory,
+                        name        : categoryName,
+                        parent      : parentCategory,
                         nestingLevel: ++nestingLevel,
-                        sequence: res.length,
-                        fullName: fullName
+                        sequence    : res.length,
+                        fullName    : fullName
                     },
                     {
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function (model) {
                             Backbone.history.fragment = '';
                             Backbone.history.navigate("easyErp/productSettings", {trigger: true});
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -195,19 +194,19 @@ define([
                 var formString = this.template({});
 
                 this.$el = $(formString).dialog({
-                    autoOpen: true,
-                    resizable: true,
+                    autoOpen   : true,
+                    resizable  : true,
                     dialogClass: "create-dialog",
-                    width: "900px",
-                    buttons: [
+                    width      : "900px",
+                    buttons    : [
                         {
-                            text: "Create",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }

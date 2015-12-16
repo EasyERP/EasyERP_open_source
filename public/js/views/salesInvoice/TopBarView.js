@@ -4,19 +4,19 @@ define([
         'common',
         'constants',
         'dataService'
-],
+    ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS, dataService) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: CONSTANTS.SALESINVOICE,
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
             events: {
                 "click a.changeContentView": 'changeContentViewType',
-                "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-saveBtn": "saveEvent"
+                "click #top-bar-deleteBtn" : "deleteEvent",
+                "click #top-bar-editBtn"   : "editEvent",
+                "click #top-bar-createBtn" : "createEvent",
+                "click #top-bar-saveBtn"   : "saveEvent"
             },
 
             changeContentViewType: function (e) {
@@ -24,8 +24,9 @@ define([
             },
 
             initialize: function (options) {
-                if (options.collection)
+                if (options.collection) {
                     this.collection = options.collection;
+                }
                 this.render();
             },
 
@@ -45,7 +46,7 @@ define([
                 var viewType = Custom.getCurrentVT();
                 var self = this;
 
-                this.$el.html(this.template({ viewType: viewType, contentType: this.contentType }));
+                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 
                 Common.displayControlBtnsByActionType('Content', viewType);
 
@@ -94,7 +95,9 @@ define([
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) this.trigger('deleteEvent');
+                if (answer == true) {
+                    this.trigger('deleteEvent');
+                }
             }
         });
 

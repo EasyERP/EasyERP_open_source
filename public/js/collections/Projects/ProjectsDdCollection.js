@@ -4,22 +4,21 @@
     });
     var ProjectsDdCollection = Backbone.Collection.extend({
         model: ProjectModelDd,
-        url: function () {
+        url  : function () {
             var mid = 39;
             return "/getProjectsForDd?mid=" + mid;
         },
 
-
         initialize: function () {
             this.fetch({
-                type: 'GET',
-                reset: true,
+                type   : 'GET',
+                reset  : true,
                 success: this.fetchSuccess,
-                error: this.fetchError
+                error  : this.fetchError
             });
         },
-        parse: true,
-        parse: function (response) {
+        parse     : true,
+        parse     : function (response) {
             return response.data;
         },
     });

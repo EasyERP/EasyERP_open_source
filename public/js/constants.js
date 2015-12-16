@@ -6,7 +6,7 @@ define([], function () {
         wTrack          : {
             'Assigned'    : {
                 view   : 'projectManager',
-                backend: 'project.projectmanager._id',
+                backend: 'projectmanager._id',
                 type   : 'ObjectId'
             },
             'Employee'    : {
@@ -16,7 +16,7 @@ define([], function () {
             },
             'Customer'    : {
                 view   : 'customer',
-                backend: 'project.customer._id',
+                backend: 'customer._id',
                 type   : 'ObjectId'
             },
             'Project Name': {
@@ -204,6 +204,10 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
+            'Payment way': {
+                view   : 'paymentMethod',
+                backend: 'paymentMethod._id'
+            },
             'Name'       : {
                 view   : 'name',
                 backend: '_id'
@@ -280,10 +284,6 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Type'    : {
-                view   : 'type',
-                backend: 'type'
-            },
             'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow._id'
@@ -300,11 +300,7 @@ define([], function () {
             },
             'Sales Manager': {
                 view   : 'projectmanager',
-                backend: 'project.projectmanager._id'
-            },
-            'Type'         : {
-                view   : 'type',
-                backend: 'type'
+                backend: 'projectmanager._id'
             },
             'Status'       : {
                 view   : 'workflow',
@@ -322,11 +318,7 @@ define([], function () {
             },
             'Sales Manager': {
                 view   : 'projectmanager',
-                backend: 'project.projectmanager._id'
-            },
-            'Type'         : {
-                view   : 'type',
-                backend: 'type'
+                backend: 'projectmanager._id'
             },
             'Status'       : {
                 view   : 'workflow',
@@ -337,10 +329,6 @@ define([], function () {
             'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
-            },
-            'Type'    : {
-                view   : 'type',
-                backend: 'type'
             },
             'Status'  : {
                 view   : 'workflow',

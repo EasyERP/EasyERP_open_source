@@ -1,11 +1,17 @@
 <tr class="false" data-id="<%=cid%>">
-    <td class = "notForm"><input type="checkbox" class="checkbox listCB" value="<%=cid%>"/></td>
+    <td class="notForm"><input type="checkbox" class="checkbox listCB" value="<%=cid%>"/></td>
     <td>New</td>
     <td data-content="jobs" class="<%= projectModel ? 'editable' : ''%> errorContent"></td>
-    <td data-content="assigned"><%= projectModel ? projectModel.projectmanager.name : ''%></td>
-    <td class="editable <%= projectModel ? '' : 'errorContent'%>" data-content="project" data-id="<%= projectModel ? projectModel._id : '' %>"><%= projectModel ? projectModel.projectName : '' %></td>
+    <td data-content="assigned"><%= projectModel ? projectModel.projectmanager.name.first + ' ' +
+        projectModel.projectmanager.name.last : ''%>
+    </td>
+    <td class="editable <%= projectModel ? '' : 'errorContent'%>" data-content="project"
+        data-id="<%= projectModel ? projectModel._id : '' %>"><%= projectModel ? projectModel.projectName : '' %>
+    </td>
     <td data-content="workflow"><%= projectModel ? projectModel.workflow.name : ''%></td>
-    <td data-content="customer"><%= projectModel ? projectModel.customer.name : ''%></td>
+    <td data-content="customer"><%= projectModel ? projectModel.customer.name.first + ' ' +
+        projectModel.customer.name.last : ''%>
+    </td>
     <td class="editable errorContent" data-content="employee"></td>
     <td class="editable errorContent" data-content="department"></td>
     <td data-type="input" class="editable" data-content="year"><%=year%></td>

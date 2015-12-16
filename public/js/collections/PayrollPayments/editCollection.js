@@ -18,16 +18,16 @@ define(['./filterCollection'], function (ParentCollection) {
 
             syncObject = {
                 trigger: this.trigger,
-                url: this.url,
-                toJSON: function () {
+                url    : this.url,
+                toJSON : function () {
                     return models;
                 }
             };
 
             saveObject = {
                 trigger: this.trigger,
-                url: this.url,
-                toJSON: function () {
+                url    : this.url,
+                toJSON : function () {
                     return newModels;
                 }
             };
@@ -44,23 +44,23 @@ define(['./filterCollection'], function (ParentCollection) {
                 }
             };
 
-            for (var i = this.models.length - 1; i >=0; i--){
+            for (var i = this.models.length - 1; i >= 0; i--) {
                 model = this.models[i];
 
-                if(model && model.id && model.hasChanged()){
+                if (model && model.id && model.hasChanged()) {
                     modelObject = model.changed;
                     modelObject._id = model.id;
                     models.push(modelObject);
-                } else if (model && !model.id){
+                } else if (model && !model.id) {
                     newModels.push(model.toJSON());
                 }
             }
 
-            if(newModels.length){
+            if (newModels.length) {
                 Backbone.sync("create", saveObject, options);
             }
 
-            if(models.length) {
+            if (models.length) {
                 Backbone.sync("patch", syncObject, updatedOptions);
             }
         }

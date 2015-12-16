@@ -44,14 +44,13 @@ define([
                 "click .setDraft"                                                 : "setDraft"
             },
 
-
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
 
             },
 
-            notHide      : function () {
+            notHide: function () {
                 return false;
             },
 
@@ -59,15 +58,15 @@ define([
                 $(".newSelectList").hide();
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            nextSelect   : function (e) {
+            nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
 
-            prevSelect   : function (e) {
+            prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -255,7 +254,6 @@ define([
                     }
                 }
 
-
                 data = {
                     currency         : currency,
                     supplier         : supplier,
@@ -403,7 +401,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                    maxDate: "+0D"
+                    maxDate    : "+0D"
                 })/*.datepicker('setDate', model.expectedDate)*/;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
@@ -412,8 +410,7 @@ define([
                     new ProductItemView({editable: false, balanceVissible: false}).render({model: model}).el
                 );
 
-
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -426,6 +423,7 @@ define([
                         });
 
                     }
+                }
                 return this;
             }
 

@@ -262,7 +262,6 @@ require(['app'], function (app) {
         }
     };
 
-
     Backbone.View.prototype.changeLocationHash = function (page, count, filter) {
         var location = window.location.hash;
 
@@ -614,7 +613,6 @@ require(['app'], function (app) {
             _.extend(serchObject, dataObject);
         }
 
-
         if (!disableChangeHash) {
             this.changeLocationHash(page, itemsNumber);
         }
@@ -665,7 +663,6 @@ require(['app'], function (app) {
         if (dataObject) {
             _.extend(serchObject, dataObject);
         }
-
 
         if (!disableChangeHash) {
             this.changeLocationHash(page, itemsNumber);

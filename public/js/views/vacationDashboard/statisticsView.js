@@ -5,7 +5,7 @@ define([
     'text!templates/vacationDashboard/statisticsTemplate.html'
 ], function (statiscticsBlock) {
     var StatisticsView = Backbone.View.extend({
-        el: '#statistics',
+        el        : '#statistics',
         initialize: function (options) {
             this.free = options.free;
             this.almostFree = options.almostFree;
@@ -22,11 +22,11 @@ define([
             var startTime = options.startTime;
 
             self.$el.html(_.template(statiscticsBlock, {
-                free: options.free,
-                almostFree: options.almostFree,
+                free         : options.free,
+                almostFree   : options.almostFree,
                 partiallyBusy: options.partiallyBusy,
-                fullyBusy: options.fullyBusy,
-                overworked: options.overworked,
+                fullyBusy    : options.fullyBusy,
+                overworked   : options.overworked,
                 freedNextWeek: options.freedNextWeek
             }));
 

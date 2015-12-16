@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose');
 var Holiday = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);

@@ -8,15 +8,15 @@
         <%}%>
     </td>
     <% if (forSales) {%>
-       <td data-name="jobs" data-content="<%=product.jobs._id%>">
-           <a class="<%=editable ? 'current-selected' : ''%>" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
-       </td>
+    <td data-name="jobs" data-content="<%=product.jobs._id%>">
+        <a class="<%=editable ? 'current-selected' : ''%>" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
+    </td>
     <% } else {%>
-       <td data-name="productDescr">
+    <td data-name="productDescr">
           <span>
             <%=product.description%>
           </span>
-       </td>
+    </td>
     <% } %>
     <td data-name="scheduledDate" class="<%=editable ? 'editable' : ''%>">
         <span class="datepicker">
@@ -29,7 +29,7 @@
             <%=product.quantity%>
         </span>
     </td>
-    <td data-name="price"  class="<%=editable ? 'editable' : ''%>">
+    <td data-name="price" class="<%=editable ? 'editable' : ''%>">
         <span>
             <%=product.unitPrice%>
         </span>

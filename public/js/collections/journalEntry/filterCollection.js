@@ -4,7 +4,7 @@ define([
     function (JournalEntryModel) {
         var JournalEntryCollection = Backbone.Collection.extend({
             model: JournalEntryModel,
-            url: "/journal/journalEntry/",
+            url  : "/journal/journalEntry/",
 
             showMore: function (options) {
                 var that = this;
@@ -16,13 +16,13 @@ define([
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
 
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
+                    error  : function () {
                         alert('Some Error');
                     }
                 });
@@ -41,12 +41,12 @@ define([
                 }
 
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
+                    error  : function (models, xhr) {
                         if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }

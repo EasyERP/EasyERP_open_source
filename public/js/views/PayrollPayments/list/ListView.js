@@ -193,7 +193,6 @@ define([
                     }
                 }
 
-
                 return false;
             },
 
@@ -671,7 +670,6 @@ define([
                 }).render());
 
                 $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
-
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);

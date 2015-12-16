@@ -1,9 +1,9 @@
 define([
-    'text!templates/Invoice/form/FormTemplate.html',
-    'views/Invoice/EditView',
-    //'views/Notes/NoteView',
-    'common'
-],
+        'text!templates/Invoice/form/FormTemplate.html',
+        'views/Invoice/EditView',
+        //'views/Notes/NoteView',
+        'common'
+    ],
 
     function (invoiceFormTemplate, editView /*attachView,*/, common) {
         var invoiceTasksView = Backbone.View.extend({
@@ -12,7 +12,7 @@ define([
             initialize: function (options) {
                 this.formModel = options.model;
                 this.formModel.on("change", this.render, this);
-				this.formModel.urlRoot = "/Invoice";
+                this.formModel.urlRoot = "/Invoice";
                 this.pageMini = 1;
                 this.pageCount = 4;
                 this.allMiniOpp = 0;
@@ -22,23 +22,23 @@ define([
 
             },
 
-            events: {
-                "click .checkbox": "checked",
+            events      : {
+                "click .checkbox"                                                         : "checked",
                 //"click .person-checkbox:not(.disabled)": "personsSalesChecked",
-                "click .details": "toggle",
-                "click .company": "gotoCompanyForm",
+                "click .details"                                                          : "toggle",
+                "click .company"                                                          : "gotoCompanyForm",
                 "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
-                "mouseleave .editable": "removeEdit",
-                "click #editSpan": "editClick",
-                "click #cancelSpan": "cancelClick",
-                "click #saveSpan": "saveClick",
+                "mouseleave .editable"                                                    : "removeEdit",
+                "click #editSpan"                                                         : "editClick",
+                "click #cancelSpan"                                                       : "cancelClick",
+                "click #saveSpan"                                                         : "saveClick",
                 //"click .btnHolder .add.opportunities": "addOpportunities",
                 //"change .sale-purchase input": "saveCheckboxChange",
-                "click .miniPagination .next:not(.not-active)": "nextMiniPage",
-                "click .miniPagination .prev:not(.not-active)": "prevMiniPage",
-                "click .miniPagination .first:not(.not-active)": "firstMiniPage",
-                "click .miniPagination .last:not(.not-active)": "lastMiniPage",
-                'click .dialog-tabs a': 'changeTab'
+                "click .miniPagination .next:not(.not-active)"                            : "nextMiniPage",
+                "click .miniPagination .prev:not(.not-active)"                            : "prevMiniPage",
+                "click .miniPagination .first:not(.not-active)"                           : "firstMiniPage",
+                "click .miniPagination .last:not(.not-active)"                            : "lastMiniPage",
+                'click .dialog-tabs a'                                                    : 'changeTab'
             },
             nextMiniPage: function () {
                 this.pageMini += 1;
@@ -70,27 +70,27 @@ define([
             },
 
             /*renderMiniOpp: function () {
-                var self = this;
-                var formModel = this.formModel.toJSON();
-                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
-                    var oppElem = self.$el.find('#opportunities');
-                    oppElem.empty();
-                    var isLast = self.pageMini == self.allPages ? true : false;
-                    oppElem.append(
-                        new opportunitiesCompactContentView({
-                            collection: collection.data
-                        }).render({ first: self.pageMini == 1 ? true : false, last: isLast, all: self.allPages }).el
-                    );
+             var self = this;
+             var formModel = this.formModel.toJSON();
+             common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
+             var oppElem = self.$el.find('#opportunities');
+             oppElem.empty();
+             var isLast = self.pageMini == self.allPages ? true : false;
+             oppElem.append(
+             new opportunitiesCompactContentView({
+             collection: collection.data
+             }).render({ first: self.pageMini == 1 ? true : false, last: isLast, all: self.allPages }).el
+             );
 
-                });
+             });
 
-            },*/
+             },*/
 
             /*addOpportunities: function (e) {
-                e.preventDefault();
-                var model = this.formModel.toJSON();
-                new createViewOpportunities({ model: model });
-            },*/
+             e.preventDefault();
+             var model = this.formModel.toJSON();
+             new createViewOpportunities({ model: model });
+             },*/
 
             quickEdit: function (e) {
                 var trId = $(e.target).closest("dd");
@@ -104,14 +104,14 @@ define([
 
             removeEdit: function (e) {
                 $('#editSpan').remove();
-                $("dd .no-long").css({ width: "auto" });
+                $("dd .no-long").css({width: "auto"});
             },
 
             cancelClick: function (e) {
                 e.preventDefault();
 
                 Backbone.history.fragment = "";
-                Backbone.history.navigate("#easyErp/Invoice/form/" + this.formModel.id, { trigger: true });
+                Backbone.history.navigate("#easyErp/Invoice/form/" + this.formModel.id, {trigger: true});
             },
 
             editClick: function (e) {
@@ -148,11 +148,11 @@ define([
                     $("#" + parent[0].id).text('');
                     $("#" + parent[0].id).append('<input id="editInput" maxlength="48" type="text" readonly class="left has-datepicker"/>');
                     $('.has-datepicker').datepicker({
-                        dateFormat: "d M, yy",
+                        dateFormat : "d M, yy",
                         changeMonth: true,
-                        changeYear: true,
-                        yearRange: '-100y:c+nn',
-                        maxDate: '-18y'
+                        changeYear : true,
+                        yearRange  : '-100y:c+nn',
+                        maxDate    : '-18y'
                     });
                 } else if ($("#" + parent[0].id).hasClass('with-checkbox')) {
                     $("#" + parent[0].id + " input").removeAttr('disabled');
@@ -176,69 +176,70 @@ define([
                     headers: {
                         mid: 56
                     },
-                    patch: true
+                    patch  : true
                 });
             },
 
             saveClick: function (e) {
                 e.preventDefault();
-				var self = this;
+                var self = this;
                 var parent = $(e.target).parent().parent();
                 var objIndex = parent[0].id.split('_'); //replace change to split;
                 var currentModel = this.model;
                 var newModel = {};
-				var oldvalue = {};
+                var oldvalue = {};
                 if (objIndex.length > 1) {
-					for (var i in this.formModel.toJSON()[objIndex[0]]){
-						oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
+                    for (var i in this.formModel.toJSON()[objIndex[0]]) {
+                        oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
 
-					}
+                    }
 
                     var param = currentModel.get(objIndex[0]) || {};
                     param[objIndex[1]] = $('#editInput').val();
                     newModel[objIndex[0]] = param;
                 } else {
-					oldvalue = this.formModel.toJSON()[objIndex[0]];
+                    oldvalue = this.formModel.toJSON()[objIndex[0]];
                     newModel[objIndex[0]] = $('#editInput').val();
                 }
                 var valid = this.formModel.save(newModel, {
                     headers: {
                         mid: 39
                     },
-                    patch: true,
+                    patch  : true,
                     success: function (model) {
                         Backbone.history.fragment = "";
-                        Backbone.history.navigate("#easyErp/Invoice/form/" + model.id, { trigger: true });
+                        Backbone.history.navigate("#easyErp/Invoice/form/" + model.id, {trigger: true});
                     },
-                    error: function (model, response) {
-                        if (response)
+                    error  : function (model, response) {
+                        if (response) {
                             alert(response.error);
+                        }
                     }
                 });
-				if (!valid){
-					newModel[objIndex[0]] = oldvalue;
-					this.formModel.set(newModel);
-				}
+                if (!valid) {
+                    newModel[objIndex[0]] = oldvalue;
+                    this.formModel.set(newModel);
+                }
             },
 
             /*editItem: function () {
-                //create editView in dialog here
-                new editView({ collection: this.collection });
-            },*/
+             //create editView in dialog here
+             new editView({ collection: this.collection });
+             },*/
 
             /*personsSalesChecked: function (e) {
-                if ($(e.target).get(0).tagName.toLowerCase() == "span") {
-                    $(e.target).parent().toggleClass("active");
-                } else {
-                    $(e.target).toggleClass("active");
-                }
-            },*/
+             if ($(e.target).get(0).tagName.toLowerCase() == "span") {
+             $(e.target).parent().toggleClass("active");
+             } else {
+             $(e.target).toggleClass("active");
+             }
+             },*/
 
             /*gotoCompanyForm: function (e) {
-                e.preventDefault();
-                var id = $(e.target).closest("a").attr("data-id");
-                window.location.hash = "#easyErp/Companies/form/" + id;
-            },*/
+             e.preventDefault();
+             var id = $(e.target).closest("a").attr("data-id");
+             window.location.hash = "#easyErp/Companies/form/" + id;
+             },*/
 
             toggle: function () {
                 this.$('#details').animate({
@@ -259,20 +260,20 @@ define([
                 //    }).render().el
                 //);
                 /*el.find('.formLeftColumn').append(
-                    new attachView({
-                        model: this.formModel
-                    }).render().el
-                );*/
-				$(window).on("resize",function(){
-					$("#editInput").width($("#editInput").parent().width() - 55);
+                 new attachView({
+                 model: this.formModel
+                 }).render().el
+                 );*/
+                $(window).on("resize", function () {
+                    $("#editInput").width($("#editInput").parent().width() - 55);
 
-				});
+                });
                 return this;
             },
 
             editItem: function () {
                 //create editView in dialog here
-                new editView({ model: this.formModel });
+                new editView({model: this.formModel});
             },
 
             deleteItems: function () {
@@ -282,9 +283,9 @@ define([
                     //    mid: mid
                     //},
                     success: function () {
-                        Backbone.history.navigate("#easyErp/Invoice/list", { trigger: true });
+                        Backbone.history.navigate("#easyErp/Invoice/list", {trigger: true});
                     },
-                    error: function (model, err) {
+                    error  : function (model, err) {
                         if (err.status === 403) {
                             alert("You do not have permission to perform this action");
                         }

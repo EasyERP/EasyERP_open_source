@@ -69,7 +69,7 @@ module.exports = (function () {
     var payOutSchema = basePaymentSchema.extend({
         forSale      : {type: Boolean, default: false},
         supplier     : {type: ObjectId, ref: 'Employees', default: null},
-        paymentMethod: {type: ObjectId, ref: 'ProductCategory', default: null},
+        paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         paymentRef   : {type: String, default: ''},
         period       : {type: Date, default: null}
     });

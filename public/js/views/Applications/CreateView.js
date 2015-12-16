@@ -283,7 +283,7 @@ define([
                         proposedSalary: proposedSalary,
 
                         /// otherInfo: otherInfo,
-                        workflow: workflow,
+                        workflow      : workflow,
 
                     },
                     {

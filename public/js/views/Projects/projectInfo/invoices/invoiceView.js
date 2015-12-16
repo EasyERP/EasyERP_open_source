@@ -177,8 +177,8 @@ define([
                     }
                 });
 
-            }, function(){
-                if (that.collection.length){
+            }, function () {
+                if (that.collection.length) {
                     that.recalcTotal();
                 } else {
                     that.$el.find('#listTotal').hide();
@@ -186,20 +186,20 @@ define([
             });
         },
 
-        recalcTotal: function(){
+        recalcTotal: function () {
             var self = this;
             var collection = this.collection.toJSON();
             var balance = 0;
             var paid = 0;
             var total = 0;
 
-            async.forEach(collection, function(model, cb){
+            async.forEach(collection, function (model, cb) {
                 balance += parseInt(model.paymentInfo.balance);
                 paid += parseInt(model.paymentInfo.unTaxed);
                 total += parseInt(model.paymentInfo.total);
 
                 cb();
-            }, function(){
+            }, function () {
                 self.$el.find("#balance").text(helpers.currencySplitter(balance.toFixed(2)));
                 self.$el.find("#paid").text(helpers.currencySplitter(paid.toFixed(2)));
                 self.$el.find("#total").text(helpers.currencySplitter(total.toFixed(2)));
@@ -330,7 +330,7 @@ define([
             var checkAll$;
             var removeBtnEl;
 
-            if($targetEl.hasClass('notRemovable')){
+            if ($targetEl.hasClass('notRemovable')) {
                 $targetEl.prop('checked', false);
 
                 return false;

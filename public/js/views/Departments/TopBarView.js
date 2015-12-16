@@ -12,13 +12,13 @@ define([
             template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click a.changeContentView"    : 'changeContentViewType',
-                "click ul.changeContentIndex a": 'changeItemIndex',
-                "click #top-bar-deleteBtn"     : "deleteEvent",
-                "click #top-bar-discardBtn"    : "discardEvent",
-                "click #top-bar-editBtn"       : "editEvent",
-                "click #top-bar-createBtn"     : "createEvent",
-                "click #top-bar-exportToCsvBtn": "exportToCsv",
+                "click a.changeContentView"     : 'changeContentViewType',
+                "click ul.changeContentIndex a" : 'changeItemIndex',
+                "click #top-bar-deleteBtn"      : "deleteEvent",
+                "click #top-bar-discardBtn"     : "discardEvent",
+                "click #top-bar-editBtn"        : "editEvent",
+                "click #top-bar-createBtn"      : "createEvent",
+                "click #top-bar-exportToCsvBtn" : "exportToCsv",
                 "click #top-bar-exportToXlsxBtn": "exportToXlsx",
             },
 

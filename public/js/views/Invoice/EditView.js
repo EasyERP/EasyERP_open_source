@@ -126,7 +126,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow:  workflow._id
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -161,7 +161,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow:  workflow._id
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -305,17 +305,17 @@ define([
                 });
 
                 data = {
-                    currency             : currency,
-                    supplier             : supplier,
-                    fiscalPosition       : null,
+                    currency        : currency,
+                    supplier        : supplier,
+                    fiscalPosition  : null,
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     //supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
-                    name                 : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
-                    paymentReference     : $.trim(this.$el.find('#payment_reference').val()),
-                    invoiceDate          : invoiceDate,
-                    dueDate              : dueDate,
-                    account              : null,
-                    journal              : journalId,
+                    name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
+                    paymentReference: $.trim(this.$el.find('#payment_reference').val()),
+                    invoiceDate     : invoiceDate,
+                    dueDate         : dueDate,
+                    account         : null,
+                    journal         : journalId,
 
                     salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
@@ -525,12 +525,12 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                    maxDate: 0,
+                    maxDate    : 0,
                     onSelect   : function () {
                         var dueDatePicker = $('#due_date');
                         var endDate = $(this).datepicker('getDate');
 
-                        endDate.setDate(endDate.getDate()+14);
+                        endDate.setDate(endDate.getDate() + 14);
 
                         dueDatePicker.datepicker('option', 'minDate', endDate);
                     }
@@ -538,10 +538,10 @@ define([
 
                 this.$el.find('#due_date').datepicker({
                     defaultValue: invoiceDate,
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
+                    dateFormat  : "d M, yy",
+                    changeMonth : true,
+                    changeYear  : true,
+                    onSelect    : function () {
                         var targetInput = $(this);
 
                         targetInput.removeClass('errorContent');

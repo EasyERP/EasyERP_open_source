@@ -1,14 +1,14 @@
 ﻿define([
-    "text!templates/Opportunities/compactContentTemplate.html",
-    'views/Opportunities/EditView',
-    'models/OpportunitiesModel'
-],
+        "text!templates/Opportunities/compactContentTemplate.html",
+        'views/Opportunities/EditView',
+        'models/OpportunitiesModel'
+    ],
     function (compactContentTemplate, editView, currentModel) {
         var compactContentView = Backbone.View.extend({
-			className:"form",
+            className: "form",
 
             initialize: function (options) {
-            	this.personsCollection = (options && options.personsCollection) ? options.personsCollection : null;
+                this.personsCollection = (options && options.personsCollection) ? options.personsCollection : null;
             },
 
             events: {
@@ -19,20 +19,22 @@
 
             goToEditDialog: function (e) {
                 var id = $(e.target).closest("a").attr("id");
-                var model = new currentModel({ validate: false });
+                var model = new currentModel({validate: false});
 
                 e.preventDefault();
 
                 model.urlRoot = '/Opportunities/form';
                 model.fetch({
-                    data: { id: id },
+                    data   : {id: id},
                     success: function (model) {
                         new editView({
-                            model: model,
+                            model    : model,
                             elementId: 'personAttach'
                         });
                     },
-                    error: function () { alert('Please refresh browser'); }
+                    error  : function () {
+                        alert('Please refresh browser');
+                    }
                 });
             },
 
@@ -47,7 +49,7 @@
             render: function (options) {
                 this.$el.html(this.template({
                     collection: this.collection,
-					options: options
+                    options   : options
                 }));
 
                 return this;

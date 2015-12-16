@@ -2,9 +2,9 @@ define([
     'models/Capacity'
 ], function (CapacityModel) {
     var CapacityCollection = Backbone.Collection.extend({
-        model: CapacityModel,
-        url: "/capacity/",
-        viewType: null,
+        model      : CapacityModel,
+        url        : "/capacity/",
+        viewType   : null,
         contentType: null,
 
         comparator: function (modelA, modelB) {
@@ -32,7 +32,7 @@ define([
             }
         },
 
-        sortByOrder: function(order) {
+        sortByOrder: function (order) {
             this.sortOrder = order;
             this.sort();
         },

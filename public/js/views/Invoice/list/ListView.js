@@ -36,7 +36,7 @@ define([
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
                 this.forSales = false;
-                this.filter = {'forSales' : {key:'forSales',value:['false']}};
+                this.filter = {'forSales': {key: 'forSales', value: ['false']}};
 
                 this.render();
 
@@ -59,11 +59,13 @@ define([
                 var status = target$.attr("data-status");
                 var model = this.collection.get(id);
 
-                model.save({workflow: {
-                    _id: target$.attr("id"),
-                    name: target$.text(),
-                    status: status
-                }}, {
+                model.save({
+                    workflow: {
+                        _id   : target$.attr("id"),
+                        name  : target$.text(),
+                        status: status
+                    }
+                }, {
                     headers : {
                         mid: 55
                     },
@@ -164,11 +166,11 @@ define([
                 self.filterView = new this.filterView({collection: stages, customCollection: values});
 
                 self.filterView.bind('filter', function (filter) {
-                    filter.forSales = {key:'forSales',value:false};
+                    filter.forSales = {key: 'forSales', value: false};
                     self.showFilteredPage(filter, self)
                 });
                 self.filterView.bind('defaultFilter', function () {
-                    filter.forSales = {key:'forSales',value:false};
+                    filter.forSales = {key: 'forSales', value: false};
                     self.showFilteredPage({}, self);
                 });
 

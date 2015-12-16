@@ -1,16 +1,16 @@
 define([
-    "text!templates/Degrees/CreateTemplate.html",
-    "collections/Degrees/DegreesCollection",
-    "models/DegreeModel",
-    "custom",
-    "common"
-],
+        "text!templates/Degrees/CreateTemplate.html",
+        "collections/Degrees/DegreesCollection",
+        "models/DegreeModel",
+        "custom",
+        "common"
+    ],
     function (CreateTemplate, DegreesCollection, DegreeModel, Custom, common) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Degrees",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 this.bind('reset', _.bind(this.render, this));
@@ -27,17 +27,17 @@ define([
                 var degreeModel = new DegreeModel();
                 var name = $.trim($("#name").val());
                 degreeModel.save({
-                    name:name
-                },
-                {
-                    headers: {
-                        mid: mid
-                    }
-                });
-                Backbone.history.navigate("home/content-" + this.contentType, { trigger: true });
+                        name: name
+                    },
+                    {
+                        headers: {
+                            mid: mid
+                        }
+                    });
+                Backbone.history.navigate("home/content-" + this.contentType, {trigger: true});
 
             },
-            render: function () {
+            render  : function () {
                 this.$el.html(this.template());
                 return this;
             }

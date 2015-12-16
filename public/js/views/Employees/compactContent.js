@@ -1,7 +1,7 @@
 ﻿define([
-    "text!templates/Employees/compactContentTemplate.html",
-    "common"
-],
+        "text!templates/Employees/compactContentTemplate.html",
+        "common"
+    ],
     function (compactContentTemplate, common) {
         var compactContentView = Backbone.View.extend({
 
@@ -15,7 +15,7 @@
 
             render: function () {
                 var collection = this.collection.toJSON();
-                this.$el.html(this.template({ collection: collection }));
+                this.$el.html(this.template({collection: collection}));
                 return this;
             }
         });

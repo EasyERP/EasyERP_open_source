@@ -3,15 +3,15 @@ define([
     ],
     function (wTrackModel) {
         var wTrackCollection = Backbone.Collection.extend({
-            model: wTrackModel,
-            url: "/wTrack/",
-            viewType: null,
+            model      : wTrackModel,
+            url        : "/wTrack/",
+            viewType   : null,
             contentType: null,
 
             initialize: function (options) {
             },
 
-            save: function() {
+            save: function () {
                 var self = this;
                 var model;
                 var newModel;
@@ -21,7 +21,7 @@ define([
                 var month;
                 var week;
 
-                for (var i = this.models.length - 1; i >=0; i--) {
+                for (var i = this.models.length - 1; i >= 0; i--) {
                     model = this.models[i];
 
                     var saveObject = {

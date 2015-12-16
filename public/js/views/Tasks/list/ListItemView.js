@@ -1,20 +1,23 @@
 ﻿define([
-    'text!templates/Tasks/list/ListTemplate.html'
-],
+        'text!templates/Tasks/list/ListTemplate.html'
+    ],
 
- function (ListTemplate) {
-     var TasksListItemView = Backbone.View.extend({
-         el: '#listTable',
+    function (ListTemplate) {
+        var TasksListItemView = Backbone.View.extend({
+            el: '#listTable',
 
-         initialize: function (options) {
-             this.collection = options.collection;
-             this.startNumber = (options.page < 1) ? 0 : (options.page - 1) * options.itemsNumber;//Counting the start index of list items
-         },
+            initialize: function (options) {
+                this.collection = options.collection;
+                this.startNumber = (options.page < 1) ? 0 : (options.page - 1) * options.itemsNumber;//Counting the start index of list items
+            },
 
-         render: function () {
-             this.$el.append(_.template(ListTemplate, { tasksCollection: this.collection.toJSON(), startNumber: this.startNumber }));
-         }
-     });
+            render: function () {
+                this.$el.append(_.template(ListTemplate, {
+                    tasksCollection: this.collection.toJSON(),
+                    startNumber    : this.startNumber
+                }));
+            }
+        });
 
-     return TasksListItemView;
- });
+        return TasksListItemView;
+    });

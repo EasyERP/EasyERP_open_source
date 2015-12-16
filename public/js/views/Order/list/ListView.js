@@ -34,7 +34,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = {
-                    key: 'forSales',
+                    key  : 'forSales',
                     value: ['false']
                 };
                 this.forSales = false;
@@ -58,7 +58,8 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({ workflow: target$.attr("id")
+                model.save({
+                    workflow: target$.attr("id")
                 }, {
                     headers : {
                         mid: 55
@@ -132,7 +133,7 @@ define([
                 var notEditable = tr.hasClass('notEditable');
                 var model = new quotationModel({validate: false});
 
-                if (notEditable){
+                if (notEditable) {
                     return false;
                 }
 

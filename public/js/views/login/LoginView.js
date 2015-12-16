@@ -7,23 +7,23 @@ define([
     var LoginView = Backbone.View.extend({
         el: '#wrapper',
 
-        initialize: function (options) {
+        initialize   : function (options) {
             if (options && options.dbs) {
                 this.render(options);
             } else {
                 this.render();
             }
         },
-        events: {
-            "submit #loginForm": "login",
+        events       : {
+            "submit #loginForm"  : "login",
             "click .login-button": "login",
-            "focus #ulogin": "usernameFocus",
-            "focus #upass": "passwordFocus",
-            "focusout #ulogin": "usernameFocus",
-            "focusout #upass": "passwordFocus",
-            "click .remember-me": "checkClick"
+            "focus #ulogin"      : "usernameFocus",
+            "focus #upass"       : "passwordFocus",
+            "focusout #ulogin"   : "usernameFocus",
+            "focusout #upass"    : "passwordFocus",
+            "click .remember-me" : "checkClick"
         },
-        render: function (options) {
+        render       : function (options) {
             $('title').text('Login');
             if (options) {
                 this.$el.html(_.template(LoginTemplate, {options: options.dbs}));
@@ -58,7 +58,7 @@ define([
 
             App.currentDb = currentDb;
 
-            if ((currentDb === "weTrack") || (currentDb === "production") || (currentDb === "development")){
+            if ((currentDb === "weTrack") || (currentDb === "production") || (currentDb === "development")) {
                 App.weTrack = true;
             } else {
                 App.weTrack = false;
@@ -69,8 +69,8 @@ define([
 
             var data = {
                 login: this.$("#ulogin").val(),
-                pass: this.$("#upass").val(),
-                dbId: currentDb
+                pass : this.$("#upass").val(),
+                dbId : currentDb
             };
 
             if (data.login.length < 4) {
@@ -88,13 +88,13 @@ define([
                 $("#loginForm").addClass("notRegister");
             }
             $.ajax({
-                url: "/login",
-                type: "POST",
-                data: data,
+                url    : "/login",
+                type   : "POST",
+                data   : data,
                 success: function () {
                     Custom.runApplication(true);
                 },
-                error: function () {
+                error  : function () {
                     //Custom.runApplication(false, "Server is unavailable...");
                     $("#loginForm").addClass("notRegister");
                     $("#loginForm .error").text("Such user doesn't registered");

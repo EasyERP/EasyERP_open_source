@@ -9,16 +9,16 @@ define([
     function (DashboardTemplate, projectTemplate, contentCollection, custom, dataService, helpers) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
-            actionType: "Content",
-            template: _.template(DashboardTemplate),
-            el: '#content-holder',
-            initialize: function (options) {
+            actionType : "Content",
+            template   : _.template(DashboardTemplate),
+            el         : '#content-holder',
+            initialize : function (options) {
                 this.startTime = options.startTime;
                 this.render();
             },
-            events: {
+            events     : {
                 "click .choseDateRange .item": "newRange",
-                "click .oe_sortable": "goSort"
+                "click .oe_sortable"         : "goSort"
             },
 
             goSort: function (e) {
@@ -60,7 +60,7 @@ define([
                 }
                 sortObject[sortBy] = sortConst;
 
-                 this.fetchSortCollection(sortObject);
+                this.fetchSortCollection(sortObject);
             },
 
             fetchSortCollection: function (sortObject) {
@@ -86,10 +86,10 @@ define([
                     this.collection = custom.retriveFromCash('projectInfo');
 
                     $("#ProjectPMContent").html(template({
-                        collection: this.collection.toJSON(),
-                        startNumber: 0,
+                        collection      : this.collection.toJSON(),
+                        startNumber     : 0,
                         currencySplitter: helpers.currencySplitter,
-                        weekSplitter: helpers.weekSplitter
+                        weekSplitter    : helpers.weekSplitter
                     }));
                     if (this.collection.length == 0) {
                         $(".projectInProgress").hide();
@@ -112,10 +112,10 @@ define([
                 custom.cacheToApp('projectInfo', this.collection);
 
                 $("#ProjectPMContent").html(template({
-                    collection: this.collection.toJSON(),
-                    startNumber: 0,
+                    collection      : this.collection.toJSON(),
+                    startNumber     : 0,
                     currencySplitter: helpers.currencySplitter,
-                    weekSplitter: helpers.weekSplitter
+                    weekSplitter    : helpers.weekSplitter
                 }));
                 if (this.collection.length == 0) {
                     $(".projectInProgress").hide();
@@ -146,18 +146,18 @@ define([
                         $("#projectStatus tr").eq(1).append("<td>" + s + "</td>");
                     }
 
-
                 });
             },
-            renderProjectEnd: function () {
+            renderProjectEnd   : function () {
                 var self = this;
                 this.populateProjectForDashboard("/getProjectByEndDateForDashboard", function (data) {
                     data = data.data;
                     var k = 0;
                     data.This.forEach(function (item) {
                         k++;
-                        if (item.projectmanager)
+                        if (item.projectmanager) {
                             $("#projectEndTW").find("tr").eq(0).after("<tr><td>" + k + "</td><td><a href='#easyErp/Employees/form/" + item.projectmanager._id + "'>" + item.projectmanager.name + "</a></td><td><a href='#easyErp/Tasks/list/pId=" + item._id + "'>" + item.projectName + "</a></td><td class='health-wrapper'><a href='javascript:;' class='center health" + item.health + "'></a></td></tr>");
+                        }
                     });
                     if (data.This.length === 0) {
                         $("#projectEndTW").hide();

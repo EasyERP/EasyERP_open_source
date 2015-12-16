@@ -6,21 +6,21 @@ define([
     ],
     function (ProjectModel) {
         var ProjectsCollection = Backbone.Collection.extend({
-            model: ProjectModel,
-            url: function () {
+            model     : ProjectModel,
+            url       : function () {
                 return "project/getProjectPMForDashboard";
             },
             initialize: function (options) {
                 this.sort = (options && options.sort) ? options.sort : {};
 
                 this.fetch({
-                    data: {
-                      sort: this.sort
+                    data   : {
+                        sort: this.sort
                     },
-                    type: 'GET',
-                    reset: true,
+                    type   : 'GET',
+                    reset  : true,
                     success: this.fetchSuccess,
-                    error: this.fetchError
+                    error  : this.fetchError
                 });
             },
 

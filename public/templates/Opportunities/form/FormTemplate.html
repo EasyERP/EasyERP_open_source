@@ -5,67 +5,101 @@
 	 </ul> 
 </div>-->
 <div class="form-holder">
-  <form class="form notDialog" id="leadForm" data-id="<%=_id%>">
-    <div class="formTitle">
-      <h3><%=name%> <%=expectedRevenue.value%> <%=expectedRevenue.currency%> at <%=expectedRevenue.progress%>%</h3>
-      <div class="clearfix">
-      </div>
-    </div>
-    <div class="inner">
-      <div class="half-block left">
-        <dl class="person-info">
-		  <dt>Email </dt><dd><span><%=email%></span></dd>
-		  <dt>Phone </dt><dd><span><%=phones.phone%></span></dd>
-		  <dt>Salesperson </dt><dd><span><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></span></dd>
-		  <dt>Sales Team </dt><dd><span><%=(salesTeam) ? salesTeam.departmentName : ''%></span></dd>
-		  <dt>Status </dt><dd><span><%=(workflow) ? workflow.name : ''%></span></dd>
-		</dl>
-	  </div>
-	  <div class="half-block left">
-        <dl class="person-info">
-          <dt>Next Action </dt><dd><span><%(nextAction && nextAction.date) ? nextAction.date : ''%> - <%(nextAction && nextAction.desc) ? nextAction.desc : ''%></span></dd>
-		  <dt>Expected Closing </dt><dd><span><%=expectedClosing%></span></dd>
-		  <dt>Priority </dt><dd><span><%=priority%></span></dd>
-		</dl>
-	  </div>
-	  <div class="clearfix"></div>
-	  <div class="half-block left withPaddingLeft">
-		<div class="formTitle">
-		  <h3>Lead</h3>
-		  <div class="clearfix">
-		  </div>
-		</div>
-        <dl class="person-info">
-		  <dt>Customer Name </dt><dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
-		  <dt>Address :</dt><dd><span><%=address.street%></span></dd>
-		  <dt>&nbsp;</dt><dd><span><%=address.city%></span></dd>
-		  <dt>&nbsp;</dt><dd><span><%=address.state%></span></dd>
-		  <dt>&nbsp;</dt><dd><span><%=address.zip%></span></dd>
-		  <dt>&nbsp;</dt><dd><span><%=address.country%></span></dd>
-		  <dt>Contact Name </dt><dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
-		  <dt>Function </dt><dd><span><%=func%></span></dd>
-		  <dt>Mobile </dt><dd><span><%=phones.mobile%></span></dd>
-		  <dt><h4>Mailings</h4></dt><dd>&nbsp;</dd>
-		  <dt>Opt-Out </dt><dd class="withCheckbox"><input type="checkbox" <%= (optout)? checked='checked':''%> id="optout" /></dd>
-		  <dt><h4>Misc</h4></dt><dd>&nbsp;</dd>
-		  <dt>Active </dt><dd  class="withCheckbox"><input type="checkbox" <%= (active)? checked='checked':''%> id="active" /></dd>
-		  <dt>Days To Open </dt><dd><span>0.00</span></dd>
-		  <dt>Days To Close </dt><dd><span>0.00</span></dd>
-		  <dt>Referred By </dt><dd><span><%=reffered%></span></dd>
-		  <dt>Converted Date </dt><dd><span><%=convertedDate%></span></dd>
-		</dl>		  
-	  </div>		
-	  <div class="half-block left">
-		<div class="formTitle">
-		  <h3>Internal Notes</h3>
-		  <div class="clearfix">
-		  </div>
-		</div>
-		<textarea id="internalNotes"><%=internalNotes%></textarea>	  
-	  </div>		
+    <form class="form notDialog" id="leadForm" data-id="<%=_id%>">
+        <div class="formTitle">
+            <h3><%=name%> <%=expectedRevenue.value%> <%=expectedRevenue.currency%> at
+                <%=expectedRevenue.progress%>%</h3>
 
-	</div>
-	<div class="clearfix"></div> 
-  </form>
+            <div class="clearfix">
+            </div>
+        </div>
+        <div class="inner">
+            <div class="half-block left">
+                <dl class="person-info">
+                    <dt>Email</dt>
+                    <dd><span><%=email%></span></dd>
+                    <dt>Phone</dt>
+                    <dd><span><%=phones.phone%></span></dd>
+                    <dt>Salesperson</dt>
+                    <dd><span><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></span></dd>
+                    <dt>Sales Team</dt>
+                    <dd><span><%=(salesTeam) ? salesTeam.departmentName : ''%></span></dd>
+                    <dt>Status</dt>
+                    <dd><span><%=(workflow) ? workflow.name : ''%></span></dd>
+                </dl>
+            </div>
+            <div class="half-block left">
+                <dl class="person-info">
+                    <dt>Next Action</dt>
+                    <dd><span><%(nextAction && nextAction.date) ? nextAction.date : ''%> - <%(nextAction && nextAction.desc) ? nextAction.desc : ''%></span>
+                    </dd>
+                    <dt>Expected Closing</dt>
+                    <dd><span><%=expectedClosing%></span></dd>
+                    <dt>Priority</dt>
+                    <dd><span><%=priority%></span></dd>
+                </dl>
+            </div>
+            <div class="clearfix"></div>
+            <div class="half-block left withPaddingLeft">
+                <div class="formTitle">
+                    <h3>Lead</h3>
+
+                    <div class="clearfix">
+                    </div>
+                </div>
+                <dl class="person-info">
+                    <dt>Customer Name</dt>
+                    <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
+                    <dt>Address :</dt>
+                    <dd><span><%=address.street%></span></dd>
+                    <dt>&nbsp;</dt>
+                    <dd><span><%=address.city%></span></dd>
+                    <dt>&nbsp;</dt>
+                    <dd><span><%=address.state%></span></dd>
+                    <dt>&nbsp;</dt>
+                    <dd><span><%=address.zip%></span></dd>
+                    <dt>&nbsp;</dt>
+                    <dd><span><%=address.country%></span></dd>
+                    <dt>Contact Name</dt>
+                    <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
+                    <dt>Function</dt>
+                    <dd><span><%=func%></span></dd>
+                    <dt>Mobile</dt>
+                    <dd><span><%=phones.mobile%></span></dd>
+                    <dt>
+                    <h4>Mailings</h4></dt>
+                    <dd>&nbsp;</dd>
+                    <dt>Opt-Out</dt>
+                    <dd class="withCheckbox"><input type="checkbox" <%= (optout)? checked='checked':''%> id="optout" />
+                    </dd>
+                    <dt>
+                    <h4>Misc</h4></dt>
+                    <dd>&nbsp;</dd>
+                    <dt>Active</dt>
+                    <dd class="withCheckbox"><input type="checkbox" <%= (active)? checked='checked':''%> id="active" />
+                    </dd>
+                    <dt>Days To Open</dt>
+                    <dd><span>0.00</span></dd>
+                    <dt>Days To Close</dt>
+                    <dd><span>0.00</span></dd>
+                    <dt>Referred By</dt>
+                    <dd><span><%=reffered%></span></dd>
+                    <dt>Converted Date</dt>
+                    <dd><span><%=convertedDate%></span></dd>
+                </dl>
+            </div>
+            <div class="half-block left">
+                <div class="formTitle">
+                    <h3>Internal Notes</h3>
+
+                    <div class="clearfix">
+                    </div>
+                </div>
+                <textarea id="internalNotes"><%=internalNotes%></textarea>
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+    </form>
 </div>
 

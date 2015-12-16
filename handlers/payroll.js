@@ -534,7 +534,6 @@ var PayRoll = function (models) {
                             defObj.employee._id = empl._id;
                             defObj.employee.name = empl.name.first + ' ' + empl.name.last;
 
-
                             PRoll = new Payroll(defObj);
 
                             PRoll.save(function (err, result) {

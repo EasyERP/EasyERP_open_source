@@ -1,11 +1,11 @@
 define([
-    'models/ApplicationsModel',
-    'common'
-],
+        'models/ApplicationsModel',
+        'common'
+    ],
     function (ApplicationModel, common) {
         var ApplicationsCollection = Backbone.Collection.extend({
             model: ApplicationModel,
-            url: function () {
+            url  : function () {
                 return "/Applications";
             },
 
@@ -18,12 +18,15 @@ define([
                     _.map(response.data, function (application) {
 
                         application.creationDate = common.utcDateToLocaleDate(application.creationDate);
-                        if (application.nextAction)
+                        if (application.nextAction) {
                             application.nextAction = common.utcDateToLocaleDate(application.nextAction);
-						if (application.createdBy)
+                        }
+                        if (application.createdBy) {
                             application.createdBy.date = common.utcDateToLocaleDateTime(application.createdBy.date);
-						if (application.editedBy)
+                        }
+                        if (application.editedBy) {
                             application.editedBy.date = common.utcDateToLocaleDateTime(application.editedBy.date);
+                        }
                         return application;
                     });
                 }

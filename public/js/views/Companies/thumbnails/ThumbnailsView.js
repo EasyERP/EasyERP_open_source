@@ -55,7 +55,7 @@
             importFiles: function () {
                 new attachView({
                     modelName: this.contentType,
-                    import: true
+                    import   : true
                 });
             },
 

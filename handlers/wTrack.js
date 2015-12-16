@@ -49,7 +49,7 @@ var wTrack = function (event, models) {
                     event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                     event.emit('recollectProjectInfo');
 
                     res.status(200).send({success: wTrack});
@@ -67,22 +67,6 @@ var wTrack = function (event, models) {
         var department;
         var employee;
         var project;
-
-        if (data) {
-            department = data.department;
-            employee = data.employee;
-            project = data.project;
-
-            if (department && !department._id) {
-                delete data.department;
-            }
-            if (employee && !employee._id) {
-                delete data.employee;
-            }
-            if (project && !project._id) {
-                delete data.project;
-            }
-        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -163,84 +147,6 @@ var wTrack = function (event, models) {
         }
     };
 
-    /*function ConvertType(array, type) {
-     if (type === 'integer') {
-     for (var i = array.length - 1; i >= 0; i--) {
-     array[i] = parseInt(array[i]);
-     }
-     } else if (type === 'boolean') {
-     for (var i = array.length - 1; i >= 0; i--) {
-     if (array[i] === 'true') {
-     array[i] = true;
-     } else if (array[i] === 'false') {
-     array[i] = false;
-     } else {
-     array[i] = null;
-     }
-     }
-     }
-     };
-
-     function caseFilter(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var key;
-
-     for (var filterName in filter) {
-     condition = filter[filterName]['value'];
-     key = filter[filterName]['key'];
-
-     switch (filterName) {
-     case 'projectManager':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'projectName':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'customer':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'employee':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'department':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'year':
-     ConvertType(condition, 'integer');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'month':
-     ConvertType(condition, 'integer');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'week':
-     ConvertType(condition, 'integer');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'isPaid':
-     ConvertType(condition, 'boolean');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'jobs':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     }
-     }
-
-     return resArray;
-     }*/
-
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var departmentSearcher;
@@ -249,14 +155,6 @@ var wTrack = function (event, models) {
         var query = req.query;
         var filter = query.filter;
         var queryObject = filter ? filterMapper.mapFilter(filter) : {};
-
-        /*if (filter && typeof filter === 'object') {
-         if (filter.condition === 'or') {
-         queryObject['$or'] = caseFilter(filter);
-         } else {
-         queryObject['$and'] = caseFilter(filter);
-         }
-         }*/
         var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
@@ -281,7 +179,7 @@ var wTrack = function (event, models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    queryObject,
+                    //queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -324,7 +222,6 @@ var wTrack = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         var query = req.query;
-        //var queryObject = {};
         var filter = query.filter;
         var departmentSearcher;
         var contentIdsSearcher;
@@ -343,18 +240,9 @@ var wTrack = function (event, models) {
         };
 
         var sort = {};
-        var queryObject = filter ? filterMapper.mapFilter(filter) : {};
-
-        /*if (filter && typeof filter === 'object') {
-         if (filter.condition === 'or') {
-         queryObject['$or'] = filterObject; //caseFilter(filter);
-         } else {
-         queryObject['$and'] = filterObject; //caseFilter(filter);
-         }
-         }*/
-
-        var count = query.count ? query.count : 100;
-        var page = query.page;
+        var filterObj = filter ? filterMapper.mapFilter(filter) : {};
+        var count = parseInt(query.count) ? parseInt(query.count) : 100;
+        var page = parseInt(query.page);
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
@@ -362,8 +250,9 @@ var wTrack = function (event, models) {
             keyForDay = sortObj[key];
 
             if (key in sortObj) {
-                sort[keyForDay] = query.sort[key];
+                sort[keyForDay] = parseInt(query.sort[key]);
             } else {
+                query.sort[key] = parseInt(query.sort[key]);
                 sort = query.sort;
             }
         } else {
@@ -392,7 +281,7 @@ var wTrack = function (event, models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    queryObject,
+                    //queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -412,15 +301,115 @@ var wTrack = function (event, models) {
         };
 
         contentSearcher = function (wtrackIds, waterfallCallback) {
-            var queryObject = {_id: {$in: wtrackIds}};
+            var queryObject = {};
+            queryObject['$and'] = [];
+            queryObject['$and'].push({_id: {$in: _.pluck(wtrackIds, '_id')}});
+            queryObject['$and'].push(filterObj);
 
-            WTrack
-                .find(queryObject)
-                .limit(count)
-                .skip(skip)
-                .sort(sort)
-                .lean()
-                .exec(waterfallCallback);
+            WTrack.aggregate([{
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "employee",
+                    foreignField: "_id", as: "employee"
+                }
+            }, {
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id", as: "department"
+                }
+            }, {
+                $lookup: {
+                    from        : "jobs",
+                    localField  : "jobs",
+                    foreignField: "_id", as: "jobs"
+                }
+            }, {
+                $project: {
+                    project   : {$arrayElemAt: ["$project", 0]},
+                    jobs      : {$arrayElemAt: ["$jobs", 0]},
+                    employee  : {$arrayElemAt: ["$employee", 0]},
+                    department: {$arrayElemAt: ["$department", 0]},
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    revenue   : 1,
+                    amount    : 1,
+                    rate      : 1,
+                    hours     : 1,
+                    cost      : 1,
+                    worked    : 1,
+                    isPaid    : 1,
+                    "1"       : 1,
+                    "2"       : 1,
+                    "3"       : 1,
+                    "4"       : 1,
+                    "5"       : 1,
+                    "6"       : 1,
+                    "7"       : 1
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "project.customer",
+                    foreignField: "_id", as: "customer"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "project.workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $project: {
+                    customer      : {$arrayElemAt: ["$customer", 0]},
+                    workflow      : {$arrayElemAt: ["$workflow", 0]},
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    project       : 1,
+                    jobs          : 1,
+                    employee      : 1,
+                    department    : 1,
+                    month         : 1,
+                    year          : 1,
+                    week          : 1,
+                    revenue       : 1,
+                    amount        : 1,
+                    rate          : 1,
+                    hours         : 1,
+                    cost          : 1,
+                    worked        : 1,
+                    isPaid        : 1,
+                    "1"           : 1,
+                    "2"           : 1,
+                    "3"           : 1,
+                    "4"           : 1,
+                    "5"           : 1,
+                    "6"           : 1,
+                    "7"           : 1
+                }
+            }, {
+                $match: queryObject
+            }, {
+                $skip: skip
+            }, {
+                $limit: count
+            }, {
+                $sort: sort
+            }], function (err, result) {
+                waterfallCallback(err, result);
+            })
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -578,7 +567,7 @@ var wTrack = function (event, models) {
                         return next(err);
                     }
 
-                    var id = wTrack ? wTrack.project._id : null;
+                    var id = wTrack ? wTrack.project : null;
 
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
@@ -600,7 +589,7 @@ var wTrack = function (event, models) {
         var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
 
         var query = req.query;
-        var queryObject = {};
+        var queryObject = filter ? filterMapper.mapFilter(filter) : {};
         var filter = query.filter;
         var departmentSearcher;
         var contentIdsSearcher;
@@ -623,15 +612,6 @@ var wTrack = function (event, models) {
         };
 
         var sort = {};
-
-        if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                queryObject['$or'] = caseFilter(filter);
-            } else {
-                queryObject['$and'] = caseFilter(filter);
-            }
-        }
-
         var count = query.count ? query.count : 100;
         var page = query.page ? query.page : 1;
 
@@ -672,7 +652,7 @@ var wTrack = function (event, models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    queryObject,
+                    //queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -692,7 +672,7 @@ var wTrack = function (event, models) {
         };
 
         contentSearcher = function (wtrackIds, waterfallCallback) {
-            var queryObject = {_id: {$in: wtrackIds}};
+            var queryObject = {_id: {$in: _.pluck(wtrackIds, '_id')}};
 
             WTrack
                 .find(queryObject)
@@ -786,10 +766,7 @@ var wTrack = function (event, models) {
         });
 
         function createJobFunc(waterfallCB) {
-            var jobForwTrack = {
-                _id : jobId,
-                name: jobName
-            };
+            var jobForwTrack = jobId;
 
             if (createJob) {
                 job = {
@@ -811,10 +788,7 @@ var wTrack = function (event, models) {
                     jobId = job.toJSON()._id;
                     jobName = job.get('name');
 
-                    jobForwTrack = {
-                        _id : jobId,
-                        name: jobName
-                    };
+                    jobForwTrack = jobId;
 
                     Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function () {
 
@@ -836,11 +810,11 @@ var wTrack = function (event, models) {
                 function generate(opt, call) {
                     var employee = opt.employee;
                     var project = opt.project;
-                    var projectWorkflowId = project.workflow._id;
+                    var projectWorkflowId = project.workflow;
                     var department = opt.department;
                     var revenue = opt.revenue;
                     var currentUser = req.session.uId;
-                    var employeeId = employee._id;
+                    var employeeId = employee;
                     var dateArray;
                     var wTrackObj;
                     var monthsArr = [];
@@ -912,7 +886,7 @@ var wTrack = function (event, models) {
                                         var query = Salary
                                             .find(
                                             {
-                                                'employee._id': objectId(employee._id),
+                                                'employee._id': objectId(employee),
                                                 month         : m,
                                                 year          : y
                                             }, {
@@ -1272,7 +1246,7 @@ var wTrack = function (event, models) {
                         var query = Vacation.find({
                             month         : {$in: uniqMonths},
                             year          : {$in: uniqYears},
-                            "employee._id": employee._id
+                            "employee._id": employee
                         }, {month: 1, year: 1, vacArray: 1}).lean();
 
                         query.exec(function (err, result) {

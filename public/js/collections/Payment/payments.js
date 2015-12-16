@@ -7,27 +7,27 @@ define([
     function (PaymentModel) {
         var PaymentCollection = Backbone.Collection.extend({
             model: PaymentModel,
-            url: "/payment/",
+            url  : "/payment/",
 
             initialize: function (options) {
 
                 this.fetch({
-                    reset: true,
+                    reset  : true,
                     success: function () {
                     },
-                    error: function (models, xhr) {
+                    error  : function (models, xhr) {
                         if (xhr.status == 401) {
-                            Backbone.history.navigate('#login', { trigger: true });
+                            Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
                 });
             },
             /*parse: function(model){
-                if (model.date) {
-                    model.date = common.utcDateToLocaleDate(model.date);
-                }
-                return model;
-            }*/
+             if (model.date) {
+             model.date = common.utcDateToLocaleDate(model.date);
+             }
+             return model;
+             }*/
         });
         return PaymentCollection;
     });

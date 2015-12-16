@@ -29,7 +29,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = {
-                    key: 'forSales',
+                    key  : 'forSales',
                     value: ['false']
                 };
                 this.forSales = false;
@@ -61,7 +61,7 @@ define([
 
                 model.save({
                     workflow: target$.attr("id")
-                    }, {
+                }, {
                     headers : {
                         mid: 55
                     },
@@ -112,7 +112,6 @@ define([
                 this.renderPagination($currentEl, this);
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
 
                 this.renderFilter(self);
 

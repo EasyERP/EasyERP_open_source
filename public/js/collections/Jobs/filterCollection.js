@@ -4,12 +4,12 @@ define([
 ], function (JobsModel, custom) {
     var JobsCollection = Backbone.Collection.extend({
 
-        model: JobsModel,
-        url: '/jobs/',
-        contentType: null,
-        page: null,
+        model       : JobsModel,
+        url         : '/jobs/',
+        contentType : null,
+        page        : null,
         numberToShow: null,
-        viewType: 'list',
+        viewType    : 'list',
 
         initialize: function (options) {
             options = options || {};
@@ -21,8 +21,8 @@ define([
             this.bySocket = options.bySocket;
 
             this.fetch({
-                data: options,
-                reset: true,
+                data   : options,
+                reset  : true,
                 success: function (newCollection) {
 
                     var key = 'jobs_projectId:' + self.projectId;
@@ -36,7 +36,7 @@ define([
                             collection.reset(newCollection.models);
                         } else if (self.bySocket) {
                             App.render({
-                                type: 'notify',
+                                type   : 'notify',
                                 message: 'Data were changed, please refresh browser'
                             });
                         }
@@ -44,7 +44,7 @@ define([
                         custom.cacheToApp(key, newCollection, true);
                     }
                 },
-                error: function (err, xhr) {
+                error  : function (err, xhr) {
                     console.log(xhr);
                 }
             });
@@ -65,13 +65,13 @@ define([
             }
 
             this.fetch({
-                data: filterObject,
-                waite: true,
+                data   : filterObject,
+                waite  : true,
                 success: function (models) {
                     that.page += 1;
                     that.trigger('showmore', models);
                 },
-                error: function () {
+                error  : function () {
                     alert('Some Error');
                 }
             });

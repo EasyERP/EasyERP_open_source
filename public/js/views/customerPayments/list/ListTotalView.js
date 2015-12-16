@@ -10,26 +10,26 @@ define([
         var supplierPaymentsListTotalView = Backbone.View.extend({
             el: '#listTotal',
 
-            initialize: function(options) {
+            initialize: function (options) {
                 this.element = options.element;
                 this.cellSpan = options.cellSpan;
             },
 
             getTotal: function () {
                 var result = {
-                    total: 0,
-                    totalPaidAmount: 0,
-                    cellSpan: this.cellSpan,
+                    total           : 0,
+                    totalPaidAmount : 0,
+                    cellSpan        : this.cellSpan,
                     currencySplitter: helpers.currencySplitter
                 };
 
-                this.element.find(".total").each(function() {
+                this.element.find(".total").each(function () {
                     var currentText = $(this).text().replace(' ', '');
 
                     result.total += parseFloat(currentText);
                 });
 
-                this.element.find(".totalPaidAmount").each(function() {
+                this.element.find(".totalPaidAmount").each(function () {
                     var currentText = $(this).text().replace(' ', '');
 
                     result.totalPaidAmount += parseFloat(currentText);
@@ -41,10 +41,10 @@ define([
                 return result;
             },
 
-            render: function() {
+            render: function () {
                 var totalObject;
 
-                if (this.$el.find("tr").length>0){
+                if (this.$el.find("tr").length > 0) {
                     totalObject = this.getTotal();
 
                     this.$el.find("#total").text(helpers.currencySplitter(totalObject.total));

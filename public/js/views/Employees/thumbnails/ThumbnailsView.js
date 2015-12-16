@@ -43,15 +43,13 @@
                 //this.filterView;
             },
 
-            events: {
+            events        : {
                 "click #showMore"           : "showMore",
                 "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)" : "alpabeticalRender",
                 "click .saveFilterButton"   : "saveFilter",
                 "click .removeFilterButton" : "removeFilter"
             },
-
-
 
             //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
@@ -74,7 +72,7 @@
                 }, this);
             },
 
-            asyncLoadImgs: function (collection) {
+            asyncLoadImgs    : function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
@@ -230,7 +228,7 @@
                 }
             },
 
-            showMore: function (event) {
+            showMore       : function (event) {
                 event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },

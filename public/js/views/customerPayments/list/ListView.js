@@ -28,7 +28,7 @@ define([
             modelId                 : null,
             $listTable              : null,
             editCollection          : null,
-            contentCollection: paymentCollection,
+            contentCollection       : paymentCollection,
             totalCollectionLengthUrl: '/payment/customers/totalCollectionLength',
             changedModels           : {},
             responseObj             : {},
@@ -38,7 +38,7 @@ define([
                 "click td.editable"                                : "editRow",
                 "change .editable "                                : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click td:not(.checkbox, .date)": "goToEditDialog"
+                "click td:not(.checkbox, .date)"                   : "goToEditDialog"
             },
 
             initialize: function (options) {
@@ -59,7 +59,7 @@ define([
                 this.filterView;
             },
 
-            goToEditDialog: function(e){
+            goToEditDialog: function (e) {
                 e.preventDefault();
 
                 var id = $(e.target).closest('tr').data("id");
@@ -207,7 +207,6 @@ define([
 
                 self.changedModels = {};
             },
-
 
             editRow: function (e, prev, next) {
                 var self = this;

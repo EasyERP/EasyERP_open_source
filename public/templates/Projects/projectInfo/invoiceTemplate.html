@@ -17,7 +17,8 @@
 
             <th class="oe_sortable" data-sort="supplierInvoiceNumber">Payment Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="salesPerson.name.first">Sales Person<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="salesPerson.name.first">Sales Person<span
+                    class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -32,7 +33,7 @@
             <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <!--<th class="oe_sortable" data-sort="validated">Validated<span class="arrow down">7</span><span-->
-                    <!--class="arrow up">v</span></th>-->
+            <!--class="arrow up">v</span></th>-->
         </tr>
         </thead>
         <tbody id="listTable">
@@ -42,48 +43,51 @@
         <%var total = 0;%>
         <% collection.forEach(function(invoice, index){ %>
         <tr data-id="<%=invoice._id%>"
-            <%if (invoice.workflow && invoice.workflow.status === 'Cancelled') { %>
-                class="canceledListItem"
-            <%} else if (invoice.workflow && invoice.workflow.status !== 'New'){ %>
-                class="notRemovable"
-             <% } %>>
-            <td class = "notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
+        <%if (invoice.workflow && invoice.workflow.status === 'Cancelled') { %>
+        class="canceledListItem"
+        <%} else if (invoice.workflow && invoice.workflow.status !== 'New'){ %>
+        class="notRemovable"
+        <% } %>>
+        <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
                 notRemovable
-                <% } %>" />
-            </td>
-            <td class="centerCell"><%=startNumber + index + 1%></td>
-            <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' + invoice.supplier.name.last : ''%></td>
-            <td><%=invoice.name%></td>
-            <td><%=invoice.paymentDate%></td>
-            <td><%=(invoice.salesPerson) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
-            <td data-content="dueDate"><%=invoice.dueDate%></td>
-            <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
-            <td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%></td>
-            <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
-            <td id='<%=invoice._id%>'>
-                <%if(invoice.workflow){%>
-                <%if(invoice.workflow.status !== 'Done'){%>
-                <a href="javascript:;" class="stageSelect <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></a>
-                <% } else {%>
-                <span class="done"><%=invoice.workflow.name%></span>
-                <%}%>
-                <% } else {%>
-                <span> </span>
-                <%}%>
-            </td>
+                <% } %>"/>
+        </td>
+        <td class="centerCell"><%=startNumber + index + 1%></td>
+        <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' +
+            invoice.supplier.name.last : ''%>
+        </td>
+        <td><%=invoice.name%></td>
+        <td><%=invoice.paymentDate%></td>
+        <td><%=(invoice.salesPerson) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
+        <td data-content="dueDate"><%=invoice.dueDate%></td>
+        <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
+        <td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%>
+        </td>
+        <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
+        <td id='<%=invoice._id%>'>
+            <%if(invoice.workflow){%>
+            <%if(invoice.workflow.status !== 'Done'){%>
+            <a href="javascript:;" class="stageSelect <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></a>
+            <% } else {%>
+            <span class="done"><%=invoice.workflow.name%></span>
+            <%}%>
+            <% } else {%>
+            <span> </span>
+            <%}%>
+        </td>
         <td><%=invoice.invoiceDate%></td>
         <!--<td class="validated"><a href="javascript:;" class="selectList <%=invoice.validated%>"><%=invoice.validated%></a>-->
-            <!--<ul class="newSelectList" style="display: none;">-->
-                <!--<li>Draft</li>-->
-                <!--<li>Done</li>-->
-            <!--</ul>-->
+        <!--<ul class="newSelectList" style="display: none;">-->
+        <!--<li>Draft</li>-->
+        <!--<li>Done</li>-->
+        <!--</ul>-->
         <!--</td>-->
 
         <%balance += parseFloat(invoice.paymentInfo.balance)%>
-    <%paid += parseFloat(invoice.paymentInfo.unTaxed)%>
-    <%total += parseFloat(invoice.paymentInfo.total)%>
-</tr>
-<% }) %>
+        <%paid += parseFloat(invoice.paymentInfo.unTaxed)%>
+        <%total += parseFloat(invoice.paymentInfo.total)%>
+        </tr>
+        <% }) %>
 
         </tbody>
         <% if (collection.length) {%>

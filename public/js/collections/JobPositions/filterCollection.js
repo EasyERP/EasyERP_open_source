@@ -1,17 +1,17 @@
 ﻿define([
-    'models/JobPositionsModel',
-    'common'
-],
-function (JobPositionsModel, common) {
+        'models/JobPositionsModel',
+        'common'
+    ],
+    function (JobPositionsModel, common) {
         var JobPositionsCollection = Backbone.Collection.extend({
-            model: JobPositionsModel,
-            url: "/JobPositions/",
-            page:null,
+            model       : JobPositionsModel,
+            url         : "/JobPositions/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
-            initialize: function (options) {
-				this.startTime = new Date();
+            viewType    : null,
+            contentType : null,
+            initialize  : function (options) {
+                this.startTime = new Date();
                 this.namberToShow = options.count;
                 this.page = options.page || 1;
                 var that = this;
@@ -23,41 +23,45 @@ function (JobPositionsModel, common) {
                     this.page = options.page || 1;
                 }
                 this.fetch({
-                    data: options,
-                    reset: true,
-                    success: function() {
-                        that.page ++;
+                    data   : options,
+                    reset  : true,
+                    success: function () {
+                        that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
-            showMore: function (options) {
+            showMore    : function (options) {
                 var that = this;
                 var filterObject = options || {};
                 filterObject['page'] = (options && options.page) ? options.page : this.page;
                 filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
-                        that.page ++;
+                        that.page++;
                         that.trigger('showmore', models);
                     },
-                    error: function() {
+                    error  : function () {
                         alert('Some Error');
                     }
                 });
             },
-            parse: true,
-            parse: function (response) {
+            parse       : true,
+            parse       : function (response) {
                 if (response.data) {
                     _.map(response.data, function (jopPosition) {
-						if (jopPosition.createdBy)
-							jopPosition.createdBy.date = common.utcDateToLocaleDateTime(jopPosition.createdBy.date);
-						if (jopPosition.editedBy)
-							jopPosition.editedBy.date = common.utcDateToLocaleDateTime(jopPosition.editedBy.date);
+                        if (jopPosition.createdBy) {
+                            jopPosition.createdBy.date = common.utcDateToLocaleDateTime(jopPosition.createdBy.date);
+                        }
+                        if (jopPosition.editedBy) {
+                            jopPosition.editedBy.date = common.utcDateToLocaleDateTime(jopPosition.editedBy.date);
+                        }
                         return jopPosition;
                     });
                 }
@@ -65,4 +69,4 @@ function (JobPositionsModel, common) {
             }
         });
         return JobPositionsCollection;
-});
+    });

@@ -6,12 +6,12 @@ define([
     'common'
 ], function (HolidayModel, common) {
     var HolidayCollection = Backbone.Collection.extend({
-        model: HolidayModel,
-        url: "/holiday/",
-        page: null,
+        model       : HolidayModel,
+        url         : "/holiday/",
+        page        : null,
         namberToShow: null,
-        viewType: null,
-        contentType: null,
+        viewType    : null,
+        contentType : null,
 
         showMore: function (options) {
             var that = this;
@@ -21,13 +21,13 @@ define([
             filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
             filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
             this.fetch({
-                data: filterObject,
-                waite: true,
+                data   : filterObject,
+                waite  : true,
                 success: function (models) {
                     that.page += 1;
                     that.trigger('showmore', models);
                 },
-                error: function () {
+                error  : function () {
                     alert('Some Error');
                 }
             });
@@ -45,13 +45,15 @@ define([
                 this.url += options.viewType;
             }
             this.fetch({
-                data: options,
-                reset: true,
+                data   : options,
+                reset  : true,
                 success: function () {
                     that.page++;
                 },
-                error: function (models, xhr) {
-                    if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                error  : function (models, xhr) {
+                    if (xhr.status == 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
+                    }
                 }
             });
         },
@@ -59,11 +61,11 @@ define([
         parse: true,
         parse: function (response) {
             var holidays = response.success;
-/*            _.map(holidays, function (holiday) {
-                holiday.date = common.utcDateToLocaleDate(holiday.date);
+            /*            _.map(holidays, function (holiday) {
+             holiday.date = common.utcDateToLocaleDate(holiday.date);
 
-                return holiday;
-            });*/
+             return holiday;
+             });*/
 
             return holidays;
         }

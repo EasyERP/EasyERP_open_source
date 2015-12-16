@@ -1,18 +1,18 @@
 define([
-    'text!templates/Leads/form/FormTemplate.html',
-    'views/Leads/EditView'
-],
+        'text!templates/Leads/form/FormTemplate.html',
+        'views/Leads/EditView'
+    ],
 
     function (FormTemplate, EditView) {
         var FormView = Backbone.View.extend({
-            el: '#content-holder',
+            el        : '#content-holder',
             initialize: function (options) {
                 this.formModel = options.model;
             },
 
             events: {
                 "click .breadcrumb a, #cancelCase, #reset": "changeWorkflow",
-                "click #convertToOpportunity": "openDialog"
+                "click #convertToOpportunity"             : "openDialog"
             },
 
             render: function () {
@@ -21,24 +21,24 @@ define([
                 var that = this;
                 $("#dialog-form").dialog({
                     autoOpen: false,
-                    height: 150,
-                    width: 350,
-                    modal: true,
-                    title: "Convert to opportunity",
-                    buttons: {
+                    height  : 150,
+                    width   : 350,
+                    modal   : true,
+                    title   : "Convert to opportunity",
+                    buttons : {
                         "Create opportunity": function () {
                             var self = this;
                             var id = $("form").data("id");
                             var createCustomer = ($("select#createCustomerOrNot option:selected").val()) ? true : false;
                             that.formModel.save({
-                                isOpportunitie: true,
-                                isConverted: true,
-								convertedDate:new Date(),
-                                createCustomer: createCustomer,
+                                isOpportunitie : true,
+                                isConverted    : true,
+                                convertedDate  : new Date(),
+                                createCustomer : createCustomer,
                                 expectedRevenue: {
                                     currency: null,
                                     progress: null,
-                                    value: null
+                                    value   : null
                                 }
                             }, {
                                 headers: {
@@ -47,13 +47,13 @@ define([
                                 success: function (model) {
                                     $(self).dialog("close");
                                     //that.opportunitiesCollection.add(model);
-                                    Backbone.history.navigate("easyErp/Opportunities", { trigger: true });
+                                    Backbone.history.navigate("easyErp/Opportunities", {trigger: true});
                                 }
 
                             });
 
                         },
-                        Cancel: function () {
+                        Cancel              : function () {
                             $(this).dialog('close');
                         }
                     },
@@ -67,7 +67,7 @@ define([
 
             editItem: function () {
                 //create editView in dialog here
-                new EditView({ model: this.formModel });
+                new EditView({model: this.formModel});
             },
 
             openDialog: function () {
@@ -82,13 +82,13 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate("easyErp/Leads/list", { trigger: true });
+                        Backbone.history.navigate("easyErp/Leads/list", {trigger: true});
                     },
-					error:function(model,err){
-						if (err.status===403){
-							alert("You do not have permission to perform this action");
-						}
-					}
+                    error  : function (model, err) {
+                        if (err.status === 403) {
+                            alert("You do not have permission to perform this action");
+                        }
+                    }
                 });
 
             }

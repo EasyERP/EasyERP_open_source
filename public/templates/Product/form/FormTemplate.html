@@ -1,51 +1,69 @@
 <div class="form-holder">
     <form class="form notDialog" id="productForm" data-id="<%=_id%>">
         <div class="clearfix"></div>
-                <div class="avatar left">
-                    <img alt="" src="<%=imageSrc%>" />
-                </div>
-                <div class="mainInfo product">
-                    <div class="formTitle withMargin">
-                        <h3>
+        <div class="avatar left">
+            <img alt="" src="<%=imageSrc%>"/>
+        </div>
+        <div class="mainInfo product">
+            <div class="formTitle withMargin">
+                <h3>
                             <span title="<%=name%>">
                                 <%=(name.length>16)?(name.substring(0,16)+"...").toUpperCase():name.toUpperCase()%>
                             </span>
-                        </h3>
-                    </div>
-                    <div class="half-block left">
-                        <dl class="product-info">
-                            <dt><label>Can be Solid</label></dt><dd><input type="checkbox" disabled class="checkbox left" <% if(canBeSold) { %> checked <% } %>/></dd>
-                            <dt><label>Can be Expensed</label></dt><dd><input type="checkbox" disabled class="checkbox left" <% if(canBeExpensed) { %> checked <% } %>/></dd>
-                            <dt><label>Can be Purchased</label></dt><dd><input type="checkbox" disabled class="checkbox left" <% if(canBePurchased) { %> checked <% } %>/></dd>
-                            <dt><label>Active</label></dt><dd><input type="checkbox" disabled class="checkbox left" <% if(info.isActive) { %> checked <% } %>/></dd>
-                        </dl>
+                </h3>
+            </div>
+            <div class="half-block left">
+                <dl class="product-info">
+                    <dt><label>Can be Solid</label></dt>
+                    <dd><input type="checkbox" disabled class="checkbox left" <% if(canBeSold) { %> checked <% } %>/>
+                    </dd>
+                    <dt><label>Can be Expensed</label></dt>
+                    <dd><input type="checkbox" disabled class="checkbox left" <% if(canBeExpensed) { %> checked <% }
+                        %>/>
+                    </dd>
+                    <dt><label>Can be Purchased</label></dt>
+                    <dd><input type="checkbox" disabled class="checkbox left" <% if(canBePurchased) { %> checked <% }
+                        %>/>
+                    </dd>
+                    <dt><label>Active</label></dt>
+                    <dd><input type="checkbox" disabled class="checkbox left" <% if(info.isActive) { %> checked <% }
+                        %>/>
+                    </dd>
+                </dl>
 
-                    </div>
-                    <div class="half-block left withPaddingLeft">
-                        <dl class="product-info">
-                            <dt><label>Product Type</label></dt><dd><span><%=(info.productType)?(info.productType.name):""%></span></dd>
-                            <dt><label>Sale Price</label></dt><dd><span><%=(info.salePrice)?(info.salePrice.toFixed(2)):"0.00"%></span></dd>
-                            <!--<dt><label>Barcode</label></dt><dd><span><%=info.barcode%></span></dd>-->
-                            <dt><label>Barcode</label></dt><dd><div id="bcTarget"></div></dd>
-                        </dl>
+            </div>
+            <div class="half-block left withPaddingLeft">
+                <dl class="product-info">
+                    <dt><label>Product Type</label></dt>
+                    <dd><span><%=(info.productType)?(info.productType.name):""%></span></dd>
+                    <dt><label>Sale Price</label></dt>
+                    <dd><span><%=(info.salePrice)?(info.salePrice.toFixed(2)):"0.00"%></span></dd>
+                    <!--<dt><label>Barcode</label></dt><dd><span><%=info.barcode%></span></dd>-->
+                    <dt><label>Barcode</label></dt>
+                    <dd>
+                        <div id="bcTarget"></div>
+                    </dd>
+                </dl>
 
-                    </div>
+            </div>
 
-                    <div class="full-width left">
-                        <div class="inner">
-                            <dl class="product-info">
-                                <dt><label>Description:</label></dt>
-                                <dd><span><%=info.description%></span></dd>
-                            </dl>
-                        </div>
-                    </div>
+            <div class="full-width left">
+                <div class="inner">
+                    <dl class="product-info">
+                        <dt><label>Description:</label></dt>
+                        <dd><span><%=info.description%></span></dd>
+                    </dl>
                 </div>
-                <div class="clearfix">
-                </div>
-                <div class="edited-block">
-                    <p style="text-align:center;"><%if(editedBy.date){%><span style="font-style: italic;">Last Edited <%=editedBy.date%> by <%=editedBy.user ?  editedBy.user.login:""%></span>| <%}%><span style="font-style: italic;">Created On <%=createdBy.date %> by <%=createdBy.user ? createdBy.user.login:"Incognito"%></span></p>
-                </div>
-            <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="edited-block">
+            <p style="text-align:center;"><%if(editedBy.date){%><span style="font-style: italic;">Last Edited <%=editedBy.date%> by <%=editedBy.user ?  editedBy.user.login:""%></span>|
+                <%}%><span style="font-style: italic;">Created On <%=createdBy.date %> by <%=createdBy.user ? createdBy.user.login:"Incognito"%></span>
+            </p>
+        </div>
+        <div class="clearfix"></div>
     </form>
 </div>
 </div>

@@ -4,7 +4,7 @@
 define([], function () {
     var VacationModel = Backbone.Model.extend({
         idAttribute: "_id",
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/Vacation";
         }
     });

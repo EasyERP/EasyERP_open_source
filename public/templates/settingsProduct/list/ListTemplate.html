@@ -1,10 +1,11 @@
-        
 <% departmentsCollection.forEach(function(department, index){ %>
-    <tr data-id="<%=department._id%>">
-        <td><input type="checkbox" value="<%=department._id%>" class="checkbox"/></td>
-        <td><%=index +1 %></td>
-        <td><%=department.departmentName%></td>
-        <td><%= (department.departmentManager) ? department.departmentManager.name.first + ' ' + department.departmentManager.name.last : '' %></td>
-        <td><a href="javascript;"><%=department.users.length  %></a></td>
-    </tr>
+<tr data-id="<%=department._id%>">
+    <td><input type="checkbox" value="<%=department._id%>" class="checkbox"/></td>
+    <td><%=index +1 %></td>
+    <td><%=department.departmentName%></td>
+    <td><%= (department.departmentManager) ? department.departmentManager.name.first + ' ' +
+        department.departmentManager.name.last : '' %>
+    </td>
+    <td><a href="javascript;"><%=department.users.length %></a></td>
+</tr>
 <% }) %> 

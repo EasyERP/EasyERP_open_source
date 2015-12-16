@@ -15,7 +15,7 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
         var inProgress = data && data.inProgress ? true : false;
-        var filter = inProgress ? {"workflow" : CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
+        var filter = inProgress ? {"workflow": CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
 
         Project
             .find(filter)
@@ -277,7 +277,7 @@ var Project = function (models) {
 
                             budget = {
                                 // projectTeam: response,
-                                bonus: bonus,
+                                bonus: bonus
                                 // budget: sortBudget,
                                 // projectValues: projectValues,
                                 //budgetTotal: budgetTotal
@@ -319,16 +319,73 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, "Project", ProjectSchema);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var data = {};
-        var sort = req.query.sort ? req.query.sort : {projectName: 1};
+        var sort = req.query.sort;
+        var key;
         var collection;
 
-        var query = Project.find({}).sort(sort).lean();
+        if (sort) {
+            key = Object.keys(sort)[0];
+            sort[key] = parseInt(sort[key]);
+        } else {
+            sort = {'projectmanager.name.first': 1};
+        }
 
-        query
-            .populate('budget.projectTeam')
-            .populate('projectmanager');
-
-        query.exec(function (err, result) {
+        Project.aggregate([{
+            $unwind: '$budget.projectTeam'
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "projectmanager",
+                foreignField: "_id", as: "projectmanager"
+            }
+        }, {
+            $lookup: {
+                from        : "jobs",
+                localField  : "budget.projectTeam",
+                foreignField: "_id", as: "budget.projectTeam"
+            }
+        }, {
+            $project: {
+                'budget.projectTeam': {$arrayElemAt: ["$budget.projectTeam", 0]},
+                projectmanager      : {$arrayElemAt: ["$projectmanager", 0]},
+                'budget.budgetTotal': 1,
+                projectName         : 1
+            }
+        }, {
+            $project: {
+                projectmanager      : 1,
+                projectName         : 1,
+                'budget.projectTeam': 1,
+                'budget.budgetTotal': 1
+            }
+        }, {
+            $group: {
+                _id           : '$_id',
+                projectmanager: {
+                    $addToSet: '$projectmanager'
+                },
+                projectTeam   : {
+                    $push: '$budget.projectTeam'
+                },
+                budgetTotal   : {
+                    $addToSet: '$budget.budgetTotal'
+                },
+                projectName   : {
+                    $addToSet: '$projectName'
+                }
+            }
+        }, {
+            $project: {
+                _id                 : 1,
+                projectmanager      : {$arrayElemAt: ["$projectmanager", 0]},
+                projectName         : {$arrayElemAt: ["$projectName", 0]},
+                'budget.projectTeam': '$projectTeam',
+                'budget.budgetTotal': '$budgetTotal'
+            }
+        }, {
+            $sort: sort
+        }
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -337,7 +394,6 @@ var Project = function (models) {
 
             collection.forEach(function (project) {
                 var totalInPr = 0;
-                // var totalNew = 0;
                 var totalFinished = 0;
                 var total = 0;
                 var totalObj = {};
@@ -358,7 +414,7 @@ var Project = function (models) {
                 totalObj.markUp = 0;
                 totalObj.radio = 0;
                 minDate = 1000000;
-                maxDate =  0;
+                maxDate = 0;
                 totalObj.rateSum = {
                     byDev: 0,
                     byQA : 0
@@ -371,15 +427,15 @@ var Project = function (models) {
                         totalFinished += job.budget.budgetTotal.costSum;
                     }
 
-                   if (job.budget.budgetTotal && job.budget.budgetTotal.minDate){
-                       if (job.budget.budgetTotal.minDate <= minDate){
-                           totalObj.minDate = job.budget.budgetTotal.minDate;
-                           minDate = totalObj.minDate;
-                       }
-                   }
+                    if (job.budget.budgetTotal && job.budget.budgetTotal.minDate) {
+                        if (job.budget.budgetTotal.minDate <= minDate) {
+                            totalObj.minDate = job.budget.budgetTotal.minDate;
+                            minDate = totalObj.minDate;
+                        }
+                    }
 
-                    if (job.budget.budgetTotal && job.budget.budgetTotal.maxDate){
-                        if (job.budget.budgetTotal.maxDate >= maxDate){
+                    if (job.budget.budgetTotal && job.budget.budgetTotal.maxDate) {
+                        if (job.budget.budgetTotal.maxDate >= maxDate) {
                             totalObj.maxDate = job.budget.budgetTotal.maxDate;
                             maxDate = totalObj.maxDate;
                         }
@@ -415,23 +471,26 @@ var Project = function (models) {
 
                 var parallelTasks = [getMinWTrack, getMaxWTrack];
 
-                function getMinWTrack(cb){
-                    WTrack.find({"project._id": project._id, dateByWeek: minDate}).sort({worked: -1}).exec(function(err, result){
-                        if (err){
-                          return cb(err);
+                function getMinWTrack(cb) {
+                    WTrack.find({
+                        "project" : project._id,
+                        dateByWeek: minDate
+                    }).sort({worked: -1}).exec(function (err, result) {
+                        if (err) {
+                            return cb(err);
                         }
 
                         var wTrack = result ? result[0] : null;
                         var newDate;
-                        if (wTrack){
+                        if (wTrack) {
                             newDate = moment([wTrack.year, wTrack.month - 1]).isoWeek(wTrack.week);
 
-                           for (var i = 1 ; i <= 7; i++){
-                               var day = wTrack[i];
-                               if (day){
-                                   break;
-                               }
-                           }
+                            for (var i = 1; i <= 7; i++) {
+                                var day = wTrack[i];
+                                if (day) {
+                                    break;
+                                }
+                            }
 
                             newDate = newDate.day(i);
                             cb(null, newDate);
@@ -439,36 +498,39 @@ var Project = function (models) {
                     });
                 }
 
-                function getMaxWTrack(cb){
-                    WTrack.find({"project._id": project._id, dateByWeek: maxDate}).sort({worked: 1}).exec(function(err, result){
-                        if (err){
+                function getMaxWTrack(cb) {
+                    WTrack.find({
+                        "project" : project._id,
+                        dateByWeek: maxDate
+                    }).sort({worked: 1}).exec(function (err, result) {
+                        if (err) {
                             return cb(err);
                         }
 
                         var wTrack = result ? result[0] : null;
                         var newDate;
-                        if (wTrack){
+                        if (wTrack) {
                             newDate = moment([wTrack.year, wTrack.month - 1]).isoWeek(wTrack.week);
 
-                            if (wTrack['7']){  //need refactor
+                            if (wTrack['7']) {  //need refactor
                                 newDate = newDate.day(7);
                                 return cb(null, newDate);
-                            } else if (wTrack['6']){
+                            } else if (wTrack['6']) {
                                 newDate = newDate.day(6);
                                 return cb(null, newDate);
-                            } else if (wTrack['5']){
+                            } else if (wTrack['5']) {
                                 newDate = newDate.day(5);
                                 return cb(null, newDate);
-                            } else if (wTrack['4']){
+                            } else if (wTrack['4']) {
                                 newDate = newDate.day(4);
                                 return cb(null, newDate);
-                            } else if (wTrack['3']){
+                            } else if (wTrack['3']) {
                                 newDate = newDate.day(3);
                                 return cb(null, newDate);
-                            } else if (wTrack['2']){
+                            } else if (wTrack['2']) {
                                 newDate = newDate.day(2);
                                 return cb(null, newDate);
-                            } else if (wTrack['1']){
+                            } else if (wTrack['1']) {
                                 newDate = newDate.day(1);
                                 return cb(null, newDate);
                             }
@@ -476,12 +538,16 @@ var Project = function (models) {
                     });
                 }
 
-
-                async.parallel(parallelTasks, function(err, result){
+                async.parallel(parallelTasks, function (err, result) {
                     var startDate = result[0];
                     var endDate = result[1];
 
-                    Project.findByIdAndUpdate(project._id, {$set: {StartDate: startDate, EndDate: endDate}}, {new: true}, function(err, result){
+                    Project.findByIdAndUpdate(project._id, {
+                        $set: {
+                            StartDate: startDate,
+                            EndDate  : endDate
+                        }
+                    }, {new: true}, function (err, result) {
 
                     });
                 });

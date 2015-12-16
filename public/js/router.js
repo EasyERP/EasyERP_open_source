@@ -65,8 +65,9 @@ define([
             });
             $(document).on("keypress", ".onlyNumber", function (e) {
                 var charCode = (e.which) ? e.which : e.keyCode;
-                if (charCode > 31 && (charCode < 48 || charCode > 57))
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
                     return false;
+                }
                 return true;
             });
             $(window).on("resize", function (e) {
@@ -194,8 +195,8 @@ define([
                     function renderChart() {
                         topbarView = new TopBarView();
                         contentview = new contentView({
-                            startTime: startTime,
-                            filter   : filter,
+                            startTime : startTime,
+                            filter    : filter,
                             collection: collection
                         });
                         topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);

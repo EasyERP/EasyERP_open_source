@@ -12,8 +12,8 @@ define([
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
-            imageSrc: '',
-            template: _.template(EditTemplate),
+            imageSrc   : '',
+            template   : _.template(EditTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -30,37 +30,36 @@ define([
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .confirmOrder": "confirmOrder",
-                "click .cancelQuotation": "cancelQuotation",
-                "click .setDraft": "setDraft"
+                "click .confirmOrder"                                             : "confirmOrder",
+                "click .cancelQuotation"                                          : "cancelQuotation",
+                "click .setDraft"                                                 : "setDraft"
             },
-
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
 
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            nextSelect: function (e) {
+            nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -100,9 +99,9 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Order',
-                    source: 'purchase',
-                    status: 'In Progress',
+                    wId         : 'Purchase Order',
+                    source      : 'purchase',
+                    status      : 'In Progress',
                     targetSource: 'order'
                 }, function (workflow) {
                     var products;
@@ -115,13 +114,13 @@ define([
 
                     if (products && products.length) {
                         self.currentModel.save({
-                            isOrder: true,
+                            isOrder : true,
                             workflow: workflow._id
                         }, {
                             headers: {
                                 mid: 57
                             },
-                            patch: true,
+                            patch  : true,
                             success: function () {
                                 Backbone.history.navigate("easyErp/Order", {trigger: true});
                             }
@@ -138,11 +137,11 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Order',
-                    source: 'purchase',
+                    wId         : 'Purchase Order',
+                    source      : 'purchase',
                     targetSource: 'quotation',
-                    status: 'Cancelled',
-                    order: 1
+                    status      : 'Cancelled',
+                    order       : 1
                 }, function (workflow) {
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -154,7 +153,7 @@ define([
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
                             Backbone.history.navigate("easyErp/Quotation", {trigger: true});
                         }
@@ -180,7 +179,7 @@ define([
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
                             Backbone.history.navigate("easyErp/Quotation", {trigger: true});
                         }
@@ -252,43 +251,42 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
 
                             products.push({
-                                product: productId,
-                                unitPrice: price,
-                                quantity: quantity,
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
                                 scheduledDate: scheduledDate,
-                                taxes: taxes,
-                                description: description,
-                                subTotal: subTotal
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal
                             });
                         }
                     }
                 }
 
-
                 data = {
-                    supplier: supplier,
+                    supplier         : supplier,
                     supplierReference: supplierReference,
-                    deliverTo: deliverTo,
-                    products: products,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination: destination,
-                    incoterm: incoterm,
-                    invoiceControl: invoiceControl,
-                    paymentTerm: paymentTerm,
-                    fiscalPosition: fiscalPosition,
-                    paymentInfo: {
-                        total: total,
+                    deliverTo        : deliverTo,
+                    products         : products,
+                    orderDate        : orderDate,
+                    expectedDate     : expectedDate,
+                    destination      : destination,
+                    incoterm         : incoterm,
+                    invoiceControl   : invoiceControl,
+                    paymentTerm      : paymentTerm,
+                    fiscalPosition   : fiscalPosition,
+                    paymentInfo      : {
+                        total  : total,
                         unTaxed: unTaxed,
-                        taxes: totalTaxes
+                        taxes  : totalTaxes
                     },
-                    groups: {
+                    groups           : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW,
-                    workflow: workflow
+                    whoCanRW         : whoCanRW,
+                    workflow         : workflow
                 };
 
                 if (supplier) {
@@ -296,12 +294,12 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             self.hideDialog();
                             Backbone.history.navigate("easyErp/Quotation", {trigger: true});
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -331,7 +329,7 @@ define([
                             $('.edit-product-dialog').remove();
                             Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         },
-                        error: function (model, err) {
+                        error  : function (model, err) {
                             if (err.status === 403) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -344,7 +342,7 @@ define([
             render: function () {
                 var self = this;
                 var formString = this.template({
-                    model: this.currentModel.toJSON(),
+                    model  : this.currentModel.toJSON(),
                     visible: this.visible
                 });
                 var notDiv;
@@ -353,27 +351,27 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Edit Quotation",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Quotation",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            text: "Save",
+                            text : "Save",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         },
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
                         }
                     ]
@@ -395,9 +393,9 @@ define([
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
 
                 this.$el.find('#orderDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 });
 
                 this.delegateEvents(this.events);
@@ -409,8 +407,7 @@ define([
                     new ProductItemView({editable: true}).render({model: model}).el
                 );
 
-
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -423,6 +420,7 @@ define([
                         });
 
                     }
+                }
                 return this;
             }
 

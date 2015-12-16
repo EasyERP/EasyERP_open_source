@@ -168,7 +168,6 @@ define([
                                     }
                                 };
 
-
                                 self.collection = new invoiceCollection({
                                     count      : 50,
                                     viewType   : 'list',
@@ -202,7 +201,6 @@ define([
                                         contentType: 'customerPayments',
                                         filter     : filterPayment
                                     });
-
 
                                     self.pCollection.unbind();
                                     self.pCollection.bind('reset', createPayment);

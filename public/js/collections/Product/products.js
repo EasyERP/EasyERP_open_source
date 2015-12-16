@@ -1,26 +1,26 @@
 ﻿define([
-    'models/ProductModel'
-],
+        'models/ProductModel'
+    ],
     function (ProductModel) {
         var ProductCollection = Backbone.Collection.extend({
             model: ProductModel,
-            url: "/product/",
-           
+            url  : "/product/",
+
             initialize: function (options) {
 
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                     },
-                    error: function (models, xhr) {
+                    error  : function (models, xhr) {
                         if (xhr.status == 401) {
-                            Backbone.history.navigate('#login', { trigger: true });
+                            Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
                 });
             },
-            parse: function(response){
+            parse     : function (response) {
                 return response.success;
             }
         });

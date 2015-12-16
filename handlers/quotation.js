@@ -7,6 +7,8 @@ var Quotation = function (models, event) {
     var QuotationSchema = mongoose.Schemas['Quotation'];
     var CustomerSchema = mongoose.Schemas['Customer'];
     var WorkflowSchema = mongoose.Schemas['workflow'];
+    var EmployeesSchema = mongoose.Schemas['Employees'];
+    var ProjectSchema = mongoose.Schemas['Project'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var JobsSchema = mongoose.Schemas['jobs'];
     var objectId = mongoose.Types.ObjectId;
@@ -19,6 +21,8 @@ var Quotation = function (models, event) {
         var db = req.session.lastDb;
         var project;
         var Customer = models.get(db, 'Customers', CustomerSchema);
+        var Employee = models.get(db, 'Employees', EmployeesSchema);
+        var Project = models.get(db, 'Project', ProjectSchema);
         var Workflow = models.get(db, 'workflows', WorkflowSchema);
         var Quotation = models.get(db, 'Quotation', QuotationSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
@@ -42,7 +46,7 @@ var Quotation = function (models, event) {
                 async.parallel([
                     function (callback) {
                         Customer.populate(_quotation, {
-                            path  : 'supplier._id',
+                            path  : 'supplier',
                             select: '_id name fullName'
                         }, function (err, resp) {
                             if (err) {
@@ -54,7 +58,7 @@ var Quotation = function (models, event) {
                     },
                     function (callback) {
                         Workflow.populate(_quotation, {
-                            path  : 'workflow._id',
+                            path  : 'workflow',
                             select: '-sequence'
                         }, function (err, resp) {
                             if (err) {
@@ -62,6 +66,27 @@ var Quotation = function (models, event) {
                             }
 
                             callback(null, resp);
+                        });
+                    },
+                    function (callback) {
+                        Project.populate(_quotation, {
+                            path  : 'project',
+                            select: '_id projectName projectmanager'
+                        }, function (err, resp) {
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            Employee.populate(_quotation, {
+                                path  : 'project.projectmanager',
+                                select: '_id name'
+                            }, function (err, resp) {
+                                if (err) {
+                                    return callback(err);
+                                }
+
+                                callback(null, resp);
+                            });
                         });
                     }
                 ], function (err) {

@@ -2,8 +2,8 @@ define([
     'models/PayRollModel'
 ], function (PayRollModel) {
     var payRollCollection = Backbone.Collection.extend({
-        model: PayRollModel,
-        viewType: null,
+        model      : PayRollModel,
+        viewType   : null,
         contentType: null,
 
         comparator: function (modelA, modelB) {
@@ -31,7 +31,7 @@ define([
             }
         },
 
-        sortByOrder: function(order) {
+        sortByOrder: function (order) {
             this.sortOrder = order;
             this.sort();
         },

@@ -1,77 +1,116 @@
 ﻿<div class="form-holder">
-  <form method="post" action="" id="editOpportunities" class="form" data-id="<%=model._id%>">
-    <fieldset>
-      <div class="inner">
-        <ul class="dialog-tabs">
-          <li><a class="active" href="javascript:;">Main</a></li>
-          <li><a href="javascript:;">Lead</a></li>
-          <li><a href="javascript:;">Assignees</a></li>
-        </ul>
-        <div class="clearfix"></div>
-        <div class="dialog-tabs-items">
-          <div class="dialog-tabs-item active">
-            <dl class="subject-info">
-              <dt><label for="name">Subject </label></dt><dd><input type="text" class="title-input" id="name" value="<%=model.name%>" placeholder="Subject" required maxlength="48"/></dd>
-			</dl>
-            <div class="half-block left withPaddingLeft">
-              <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500" class="opp-internal"><%=model.internalNotes%></textarea>
-            </div>
-            <div class="half-block left">
-              <dl class="opprtunitie-info">
-                <dt><label for="expectedRevenueValue">Expected Revenue</label></dt><dd><input type="text"  class="date-min" id="expectedRevenueValue" value="<%=(model.expectedRevenue) ? model.expectedRevenue.value : ''%>" maxlength="12"/></dd>
-                <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="<%=model.expectedRevenue.progress%>" maxlength="32"/>%</dd>-->
-                <dt><label for="customerDd">Customer</label></dt><dd>
-				  <a id="customerDd" data-id="<%=(model.customer)?model.customer._id:''%>" class="current-selected" href="javascript:;"><%=(model.customer)?(model.customer.name.first+" "+model.customer.name.last):"Select"%></a>
-				</dd>
-                <dt><label for="salesPersonDd">Assigned to</label></dt><dd>
-				  <a id="salesPersonDd" data-id="<%=(model.salesPerson)?model.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name.first+" "+model.salesPerson.name.last):"Select"%></a>
-				</dd>
-                <dt><label for="salesTeamDd">Sales Team</label></dt><dd>
-				  <a id="salesTeamDd" data-id="<%=(model.salesTeam)?model.salesTeam._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesTeam)?(model.salesTeam.departmentName):"Select"%></a>
-				</dd>
-                <dt><label for="workflowDd">Stage </label></dt><dd>
-				  <a id="workflowDd" data-id="<%=(model.workflow)?model.workflow._id:''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?(model.workflow.name):"Undefinded"%></a>
-				</dd>
-                <dt><label for="nextActionDate">Next Action </label></dt><dd><input type="text" class="date" id="nextActionDate" value="<%=(model.nextAction) ? model.nextAction.date : ''%>" maxlength="32" placeholder="Date" readonly /></dd>
-                <dt><label for="nextActionDescription">Next Action Description</label></dt><dd><input type="text" id="nextActionDescription" value="<%=(model.nextAction) ? model.nextAction.desc : ''%>" placeholder="Description"  maxlength="32"/></dd>
-                <dt><label for="expectedClosing">Expected Closing </label></dt><dd><input type="text" id="expectedClosing"  class="date" value="<%=model.expectedClosing%>" maxlength="32" placeholder="Date" readonly/></dd>
-                <dt><label for="priorityDd">Priority </label></dt><dd>
-				  <a id="priorityDd" data-id="<%=(model.priority)?model.priority:''%>" class="current-selected" href="javascript:;"><%=(model.priority)?(model.priority):"Select"%></a>
-				</dd>
+    <form method="post" action="" id="editOpportunities" class="form" data-id="<%=model._id%>">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Lead</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <dl class="subject-info">
+                            <dt><label for="name">Subject </label></dt>
+                            <dd><input type="text" class="title-input" id="name" value="<%=model.name%>"
+                                       placeholder="Subject" required maxlength="48"/></dd>
+                        </dl>
+                        <div class="half-block left withPaddingLeft">
+                            <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
+                                      class="opp-internal"><%=model.internalNotes%></textarea>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opprtunitie-info">
+                                <dt><label for="expectedRevenueValue">Expected Revenue</label></dt>
+                                <dd><input type="text" class="date-min" id="expectedRevenueValue"
+                                           value="<%=(model.expectedRevenue) ? model.expectedRevenue.value : ''%>"
+                                           maxlength="12"/></dd>
+                                <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="<%=model.expectedRevenue.progress%>" maxlength="32"/>%</dd>-->
+                                <dt><label for="customerDd">Customer</label></dt>
+                                <dd>
+                                    <a id="customerDd" data-id="<%=(model.customer)?model.customer._id:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.customer)?(model.customer.name.first+"
+                                        "+model.customer.name.last):"Select"%></a>
+                                </dd>
+                                <dt><label for="salesPersonDd">Assigned to</label></dt>
+                                <dd>
+                                    <a id="salesPersonDd" data-id="<%=(model.salesPerson)?model.salesPerson._id:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name.first+"
+                                        "+model.salesPerson.name.last):"Select"%></a>
+                                </dd>
+                                <dt><label for="salesTeamDd">Sales Team</label></dt>
+                                <dd>
+                                    <a id="salesTeamDd" data-id="<%=(model.salesTeam)?model.salesTeam._id:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.salesTeam)?(model.salesTeam.departmentName):"Select"%></a>
+                                </dd>
+                                <dt><label for="workflowDd">Stage </label></dt>
+                                <dd>
+                                    <a id="workflowDd" data-id="<%=(model.workflow)?model.workflow._id:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.workflow)?(model.workflow.name):"Undefinded"%></a>
+                                </dd>
+                                <dt><label for="nextActionDate">Next Action </label></dt>
+                                <dd><input type="text" class="date" id="nextActionDate"
+                                           value="<%=(model.nextAction) ? model.nextAction.date : ''%>" maxlength="32"
+                                           placeholder="Date" readonly/></dd>
+                                <dt><label for="nextActionDescription">Next Action Description</label></dt>
+                                <dd><input type="text" id="nextActionDescription"
+                                           value="<%=(model.nextAction) ? model.nextAction.desc : ''%>"
+                                           placeholder="Description" maxlength="32"/></dd>
+                                <dt><label for="expectedClosing">Expected Closing </label></dt>
+                                <dd><input type="text" id="expectedClosing" class="date"
+                                           value="<%=model.expectedClosing%>" maxlength="32" placeholder="Date"
+                                           readonly/></dd>
+                                <dt><label for="priorityDd">Priority </label></dt>
+                                <dd>
+                                    <a id="priorityDd" data-id="<%=(model.priority)?model.priority:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.priority)?(model.priority):"Select"%></a>
+                                </dd>
 
-              </dl>
-            </div>
-            <div class="clearfix"></div>
-            <div id="divForNote">
-			  
-		    </div>
-			
-            <div class="clearfix"></div>
-          </div>
-          <div class="clearfix"></div>
-          <div class="dialog-tabs-item">
-            <div class="half-block left withPaddingLeft">
-              <dl class="opprtunitie-lead-info">
-				<!--                       <dt><label for="company">Company Name</label></dt><dd><input type="text" id="company" value="<%=(model.company && model.company.name) ? model.company.name.first : ''%>" disabled maxlength="32" /></dd> -->
-                <dt><label for="street">Street</label></dt><dd><input type="text" id="street" class="address" name="street" value="<%=model.address.street%>" placeholder="Street..." maxlength="32"/></dd>
-				<dt><label for="city">City</label></dt><dd><input type="text" id="city" class="address" name="city" value="<%=model.address.city%>" placeholder="City" maxlength="32"/></dd>
-				<dt><label for="state">State</label></dt><dd><input type="text" id="state" class="address" name="state" value="<%=model.address.state%>" placeholder="State" maxlength="32"/></dd>
-              </dl>
-            </div>
-            <div class="half-block left">
-              <dl class="opprtunitie-lead-info">
-                <dt><label for="zip">Zip</label></dt><dd><input type="text" id="zip" class="address" name="zip" value="<%=model.address.zip%>" placeholder="Zip" maxlength="32"/></dd>
-                <dt><label for="country">Country</label></dt><dd><input type="text" id="country" class="address" name="country" value="<%=model.address.country%>" placeholder="Country" maxlength="32"/></dd>
-              </dl>
-            </div>
+                            </dl>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="divForNote">
 
-		  </div>
-          <div class="dialog-tabs-item">
-			<div class="assignees-container"></div>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-    </fieldset>
-  </form>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="dialog-tabs-item">
+                        <div class="half-block left withPaddingLeft">
+                            <dl class="opprtunitie-lead-info">
+                                <!--                       <dt><label for="company">Company Name</label></dt><dd><input type="text" id="company" value="<%=(model.company && model.company.name) ? model.company.name.first : ''%>" disabled maxlength="32" /></dd> -->
+                                <dt><label for="street">Street</label></dt>
+                                <dd><input type="text" id="street" class="address" name="street"
+                                           value="<%=model.address.street%>" placeholder="Street..." maxlength="32"/>
+                                </dd>
+                                <dt><label for="city">City</label></dt>
+                                <dd><input type="text" id="city" class="address" name="city"
+                                           value="<%=model.address.city%>" placeholder="City" maxlength="32"/></dd>
+                                <dt><label for="state">State</label></dt>
+                                <dd><input type="text" id="state" class="address" name="state"
+                                           value="<%=model.address.state%>" placeholder="State" maxlength="32"/></dd>
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opprtunitie-lead-info">
+                                <dt><label for="zip">Zip</label></dt>
+                                <dd><input type="text" id="zip" class="address" name="zip"
+                                           value="<%=model.address.zip%>" placeholder="Zip" maxlength="32"/></dd>
+                                <dt><label for="country">Country</label></dt>
+                                <dd><input type="text" id="country" class="address" name="country"
+                                           value="<%=model.address.country%>" placeholder="Country" maxlength="32"/>
+                                </dd>
+                            </dl>
+                        </div>
+
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="assignees-container"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
 </div>

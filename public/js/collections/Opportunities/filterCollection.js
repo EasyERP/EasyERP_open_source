@@ -1,16 +1,16 @@
 ﻿define([
-    'models/OpportunitiesModel',
-    'common'
-],
-function (OpportunityModel, common) {
+        'models/OpportunitiesModel',
+        'common'
+    ],
+    function (OpportunityModel, common) {
         var OpportunitiesCollection = Backbone.Collection.extend({
-            model: OpportunityModel,
-            url: "/Opportunities/",
-            page: null,
+            model       : OpportunityModel,
+            url         : "/Opportunities/",
+            page        : null,
             namberToShow: null,
-            contentType: null,
-            initialize: function (options) {
-				this.startTime = new Date();
+            contentType : null,
+            initialize  : function (options) {
+                this.startTime = new Date();
                 this.contentType = options.contentType;
                 this.parrentContentId = (options) ? options.parrentContentId : null;
                 if (options && options.count) {
@@ -22,13 +22,15 @@ function (OpportunityModel, common) {
                     this.url += options.viewType;
                 }
                 this.fetch({
-                    data: options,
-                    reset: true,
-                    success: function() {
+                    data   : options,
+                    reset  : true,
+                    success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
@@ -50,23 +52,23 @@ function (OpportunityModel, common) {
                 filterObject['page'] = this.page;
                 filterObject['count'] = this.namberToShow;
                 filterObject['filter'] = (options) ? options.filter : {};
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType: this.contentType;
+                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
-                        that.page ++;
+                        that.page++;
                         that.trigger('showmore', models);
                     },
-                    error: function() {
+                    error  : function () {
                         alert('Some Error');
                     }
                 });
             },
-            parse: true,
-            parse: function (response) {
+            parse   : true,
+            parse   : function (response) {
                 return response.data;
             }
         });
         return OpportunitiesCollection;
-});
+    });

@@ -6,12 +6,12 @@ define([
 ], function (common) {
     var HolidayModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize: function () {
+        initialize : function () {
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/Holiday";
         },
-        parse: function (holiday) {
+        parse      : function (holiday) {
             holiday.date = common.utcDateToLocaleDate(holiday.date);
 
             return holiday;

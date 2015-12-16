@@ -198,7 +198,7 @@ define([
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            deleteItem   : function (event) {
+            deleteItem: function (event) {
                 var mid = 58;
                 var id = this.currentModel.get('_id');
                 var self = this;
@@ -206,7 +206,7 @@ define([
 
                 event.preventDefault();
 
-                if (CONSTANTS.PRODUCRSERVICE !== id.toString()){
+                if (CONSTANTS.PRODUCRSERVICE !== id.toString()) {
                     if (answer == true) {
                         this.currentModel.destroy({
                             headers: {
@@ -228,7 +228,7 @@ define([
                 }
             },
 
-            render       : function () {
+            render: function () {
                 var self = this;
                 var formString = this.template({
                     model: this.currentModel.toJSON()
@@ -259,7 +259,6 @@ define([
                     }
                 });
 
-
                 var model = this.currentModel.toJSON();
                 this.$el.find("#bcTarget").barcode(model.info.barcode, "code128");
 
@@ -283,7 +282,7 @@ define([
 
                 this.delegateEvents(this.events);
 
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -296,6 +295,7 @@ define([
                         });
 
                     }
+                }
                 return this;
             }
 

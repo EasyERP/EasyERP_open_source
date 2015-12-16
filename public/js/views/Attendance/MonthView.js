@@ -29,7 +29,7 @@ define([
                     number = self.startMonth + i;
                 }
                 self.monthArray[i] = {
-                    label: self.labels[number],
+                    label   : self.labels[number],
                     daysData: new Array(42)
                 };
             }
@@ -112,7 +112,7 @@ define([
                     var vacArray = self.monthCur[0].vacArray;
                     for (var j = 0; j < countVacation; j++) {
                         for (var k = j + startOfMonth - 1; k <= j + startOfMonth - 1; k++) {
-                            self.monthArray[i].daysData[k+1].type = vacArray[j] ? vacArray[j] : '';
+                            self.monthArray[i].daysData[k + 1].type = vacArray[j] ? vacArray[j] : '';
                             switch (vacArray[j]) {
                                 case 'V':
                                     self.vacationDays++;
@@ -159,19 +159,19 @@ define([
             }));
 
             var statictics = new StatisticsView({
-                leaveDays: self.daysLeave,
+                leaveDays  : self.daysLeave,
                 workingDays: self.workingDays,
-                vacation: self.vacationDays,
-                personal: self.personalDays,
-                sick: self.sickDays,
-                education: self.educationDays,
+                vacation   : self.vacationDays,
+                personal   : self.personalDays,
+                sick       : self.sickDays,
+                education  : self.educationDays,
 
-                lastLeave: stat.leaveDays,
+                lastLeave      : stat.leaveDays,
                 lastWorkingDays: stat.workingDays,
-                lastVacation: stat.vacation,
-                lastPersonal: stat.personal,
-                lastSick: stat.sick,
-                lastEducation: stat.education
+                lastVacation   : stat.vacation,
+                lastPersonal   : stat.personal,
+                lastSick       : stat.sick,
+                lastEducation  : stat.education
             });
             self.$el.html(statictics.render({startTime: startTime}));
         }

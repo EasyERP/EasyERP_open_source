@@ -22,8 +22,8 @@ define([
             listItemView            : listItemView,
             contentCollection       : contentCollection,
             filterView              : filterView,
-            contentType: 'salesOrder',//needs in view.prototype.changeLocationHash
-            totalCollectionLengthUrl:'/order/totalCollectionLength',
+            contentType             : 'salesOrder',//needs in view.prototype.changeLocationHash
+            totalCollectionLengthUrl: '/order/totalCollectionLength',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -31,7 +31,7 @@ define([
 
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = {
-                    key: 'forSales',
+                    key  : 'forSales',
                     value: ['true']
                 };
 
@@ -66,7 +66,7 @@ define([
                 this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
                 this.filter.forSales = {
-                    key: 'forSales',
+                    key  : 'forSales',
                     value: ['true']
                 };
 
@@ -77,9 +77,9 @@ define([
 
             events: {
 
-                "click .stageSelect": "showNewSelect",
+                "click .stageSelect"                 : "showNewSelect",
                 "click  .list tbody td:not(.notForm)": "goToEditDialog",
-                "click .newSelectList li": "chooseOption"
+                "click .newSelectList li"            : "chooseOption"
             },
 
             chooseOption: function (e) {
@@ -89,15 +89,15 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({ workflow:target$.attr("id")
-                 }, {
-                    headers:
-                    {
+                model.save({
+                    workflow: target$.attr("id")
+                }, {
+                    headers : {
                         mid: 55
                     },
-                    patch: true,
+                    patch   : true,
                     validate: false,
-                    success: function () {
+                    success : function () {
                         self.showFilteredPage(self.filter, self);
                     }
                 });
@@ -111,7 +111,7 @@ define([
                     this.hideNewSelect();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
                 }
             },
@@ -133,15 +133,15 @@ define([
                 if (App.weTrack) {
                     $currentEl.append(_.template(listForWTrack));
                     $currentEl.append(new listItemView({
-                        collection: this.collection,
-                        page: this.page,
+                        collection : this.collection,
+                        page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
-                }else {
+                } else {
                     $currentEl.append(_.template(listTemplate));
                     $currentEl.append(new listItemView({
-                        collection: this.collection,
-                        page: this.page,
+                        collection : this.collection,
+                        page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
                 }
@@ -155,8 +155,8 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 dataService.getData("/workflow/fetch", {
-                    wId: 'Sales Order',
-                    source: 'purchase',
+                    wId         : 'Sales Order',
+                    source      : 'purchase',
                     targetSource: 'order'
                 }, function (stages) {
                     self.stages = stages;
@@ -170,25 +170,25 @@ define([
                 var id = tr.data("id");
                 var notEditable = tr.hasClass('notEditable');
                 var onlyView;
-                var model = new quotationModel({ validate: false });
+                var model = new quotationModel({validate: false});
 
-                if (notEditable){
+                if (notEditable) {
                     onlyView = true;
                 }
 
                 model.urlRoot = '/Order/form/' + id;
                 model.fetch({
-                    data: {contentType: this.contentType},
+                    data   : {contentType: this.contentType},
                     success: function (model) {
-                        new editView({ model: model, onlyView: onlyView});
+                        new editView({model: model, onlyView: onlyView});
                     },
-                    error: function () {
+                    error  : function () {
                         alert('Please refresh browser');
                     }
                 });
             }
 
-      });
+        });
 
         return OrdersListView;
     });

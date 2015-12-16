@@ -13,9 +13,9 @@
                 <span>IsLead</span>
             </th>
             <% weeks.forEach(function(week){ %>
-                <th id="<%= week.number %>" class="<%=getHeadClass(week, self)%>">
-                    <span><%= week.lastDate %> (<%= week.week %>)</span>
-                </th>
+            <th id="<%= week.number %>" class="<%=getHeadClass(week, self)%>">
+                <span><%= week.lastDate %> (<%= week.week %>)</span>
+            </th>
             <% }) %>
         </tr>
         </thead>

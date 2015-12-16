@@ -1,9 +1,9 @@
 <% if(isSelect){%>
-    <ul class="newSelectList">
-        <% optionsArray.forEach(function(option, index){ %>
-            <li id="<%= option._id %>" data-value="<%= option.value %>"><%= option.value %></li>
-        <%})%>
-    </ul>
+<ul class="newSelectList">
+    <% optionsArray.forEach(function(option, index){ %>
+    <li id="<%= option._id %>" data-value="<%= option.value %>"><%= option.value %></li>
+    <%})%>
+</ul>
 <%} else {%>
-    <input type="text" id="<%= option._id %> data-value="<%= option.value %>">" value="<%= option.value %>">
+<input type="text" id="<%= option._id %> data-value="<%= option.value %>">" value="<%= option.value %>">
 <% } %>

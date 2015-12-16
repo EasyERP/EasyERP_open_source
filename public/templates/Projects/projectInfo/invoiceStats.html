@@ -21,23 +21,23 @@
     </tr>
     </thead>
     <tbody id="proformRevenue">
-        <%invoceStats.forEach(function(stat){%>
-            <tr>
-                <td><%=stat.name%></td>
-                <td><%=stat.status%></td>
-                <td><%=stat.paymentInfo.ammount%></td>
-                <td><%=stat.paymentInfo.paid%></td>
-                <td><%=stat.paymentInfo.balance%></td>
-            </tr>
-        <%})%>
+    <%invoceStats.forEach(function(stat){%>
+    <tr>
+        <td><%=stat.name%></td>
+        <td><%=stat.status%></td>
+        <td><%=stat.paymentInfo.ammount%></td>
+        <td><%=stat.paymentInfo.paid%></td>
+        <td><%=stat.paymentInfo.balance%></td>
+    </tr>
+    <%})%>
     </tbody>
     <tfoot>
-        <tr>
-            <td colspan="2">Total:</td>
-            <td><%=invoceStat.ammount%></td>
-            <td><%=invoceStat.paid%></td>
-            <td><%=invoceStat.balance%></td>
-        </tr>
+    <tr>
+        <td colspan="2">Total:</td>
+        <td><%=invoceStat.ammount%></td>
+        <td><%=invoceStat.paid%></td>
+        <td><%=invoceStat.balance%></td>
+    </tr>
 
     </tfoot>
 </table>

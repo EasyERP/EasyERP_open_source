@@ -21,40 +21,54 @@
                             <div class="half-block left">
                                 <dl class="person-info">
                                     <dt><label for="name">Company </label></dt>
-                                    <dd><input type="text" name="name" id="name" required value="<%=model.name.first%>" placeholder="Name" maxlength="32"/></dd>
+                                    <dd><input type="text" name="name" id="name" required value="<%=model.name.first%>"
+                                               placeholder="Name" maxlength="32"/></dd>
                                     <dt><label for="website">Website </label></dt>
-                                    <dd><input type="text" name="website" id="website" value="<%=model.website%>" placeholder="e.g. www.site.com" maxlength="32" /></dd>
+                                    <dd><input type="text" name="website" id="website" value="<%=model.website%>"
+                                               placeholder="e.g. www.site.com" maxlength="32"/></dd>
                                     <dt><label for="email">Email </label></dt>
-                                    <dd><input type="text" name="mail" id="email" value="<%=model.email%>" placeholder="e.g. email@site.com" maxlength="48" /></dd>
+                                    <dd><input type="text" name="mail" id="email" value="<%=model.email%>"
+                                               placeholder="e.g. email@site.com" maxlength="48"/></dd>
                                     <dt><label for="LI">LinkedIn</label></dt>
                                     <dd><input type="text" id="LI" value="<%=model.social.LI%>" placeholder="LinkedIn"
-                                               maxlength="50"/></dd>
+                                               maxlength="256"/></dd>
                                     <dt><label for="LI">Facebook</label></dt>
                                     <dd><input type="text" id="FB" value="<%=model.social.FB%>" placeholder="Facebook"
-                                               maxlength="50"/></dd>
+                                               maxlength="256"/></dd>
                                     <dt><label for="phone">Phone </label></dt>
-                                    <dd><input type="text" name="phone" id="phone" value="<%=model.phones.phone%>" placeholder="Phone Number" maxlength="20" /></dd>
+                                    <dd><input type="text" name="phone" id="phone" value="<%=model.phones.phone%>"
+                                               placeholder="Phone Number" maxlength="20"/></dd>
                                     <dt><label for="mobile">Mobile </label></dt>
-                                    <dd><input type="text" name="mobile" id="mobile" value="<%=model.phones.mobile%>" placeholder="Mobile Number" maxlength="20" /></dd>
+                                    <dd><input type="text" name="mobile" id="mobile" value="<%=model.phones.mobile%>"
+                                               placeholder="Mobile Number" maxlength="20"/></dd>
                                 </dl>
                                 <dt><label for="employeesDd">Assigned to</label></dt>
                                 <dd>
-                                    <a id="employeesDd" data-id="<%=(model.salesPurchases.salesPerson)?model.salesPurchases.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPurchases.salesPerson)?(model.salesPurchases.salesPerson.name.first+" "+model.salesPurchases.salesPerson.name.last):"Select"%></a>
+                                    <a id="employeesDd"
+                                       data-id="<%=(model.salesPurchases.salesPerson)?model.salesPurchases.salesPerson._id:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.salesPurchases.salesPerson)?(model.salesPurchases.salesPerson.name.first+"
+                                        "+model.salesPurchases.salesPerson.name.last):"Select"%></a>
                                 </dd>
                             </div>
                             <div class="half-block left">
 
                                 <dl class="person-info">
                                     <dt><label for="street">Street </label></dt>
-                                    <dd><input type="text" name="street" id="street" value="<%=model.address.street%>" placeholder="Street..." maxlength="32" /></dd>
+                                    <dd><input type="text" name="street" id="street" value="<%=model.address.street%>"
+                                               placeholder="Street..." maxlength="32"/></dd>
                                     <dt><label for="city">City </label></dt>
-                                    <dd><input type="text" name="city" id="city" value="<%=model.address.city%>" placeholder="City" maxlength="32" /></dd>
+                                    <dd><input type="text" name="city" id="city" value="<%=model.address.city%>"
+                                               placeholder="City" maxlength="32"/></dd>
                                     <dt><label for="state">State </label></dt>
-                                    <dd><input type="text" name="state" id="state" value="<%=model.address.state%>" placeholder="State" maxlength="32" /></dd>
+                                    <dd><input type="text" name="state" id="state" value="<%=model.address.state%>"
+                                               placeholder="State" maxlength="32"/></dd>
                                     <dt><label for="zip">Zip </label></dt>
-                                    <dd><input type="text" name="zip" id="zip" value="<%=model.address.zip%>" placeholder="Zip" maxlength="32" /></dd>
+                                    <dd><input type="text" name="zip" id="zip" value="<%=model.address.zip%>"
+                                               placeholder="Zip" maxlength="32"/></dd>
                                     <dt><label for="country">Country </label></dt>
-                                    <dd><input type="text" name="country" id="country" value="<%=model.address.country%>" placeholder="Country" maxlength="32" /></dd>
+                                    <dd><input type="text" name="country" id="country"
+                                               value="<%=model.address.country%>" placeholder="Country" maxlength="32"/>
+                                    </dd>
                                 </dl>
 
                             </div>
@@ -67,10 +81,14 @@
                         <div class="cropImages form" style="display:none;">
                             <div class="formTitle">
                                 <h3 class="left">Crop Images</h3>
+
                                 <div class="clearfix"></div>
-                            </div><br />
+                            </div>
+                            <br/>
+
                             <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                            <img class="image_output" />
+                            <img class="image_output"/>
+
                             <div class="clearfix"></div>
                         </div>
                     </div>

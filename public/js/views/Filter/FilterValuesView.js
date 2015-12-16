@@ -24,7 +24,7 @@ define([
 
                 this.filteredCollection = new filterCollection(this.collection.toJSON(), sortOptions);
 
-                this.collection.on('change', function() {
+                this.collection.on('change', function () {
                     this.filteredCollection.set(this.collection.toJSON());
                 }, this);
 

@@ -1,56 +1,56 @@
 define([
-    "text!templates/JobPositions/CreateTemplate.html",
-    "collections/Departments/DepartmentsCollection",
-    "collections/Workflows/WorkflowsCollection",
-    "models/JobPositionsModel",
-    'views/Assignees/AssigneesView',
-    "common",
-    "populate"
-],
+        "text!templates/JobPositions/CreateTemplate.html",
+        "collections/Departments/DepartmentsCollection",
+        "collections/Workflows/WorkflowsCollection",
+        "models/JobPositionsModel",
+        'views/Assignees/AssigneesView',
+        "common",
+        "populate"
+    ],
     function (CreateTemplate, DepartmentsCollection, WorkflowsCollection, JobPositionsModel, AssigneesView, common, populate) {
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
-            contentType: "JobPositions",
-            template: _.template(CreateTemplate),
-            initialize: function () {
+            el            : "#content-holder",
+            contentType   : "JobPositions",
+            template      : _.template(CreateTemplate),
+            initialize    : function () {
                 _.bindAll(this, "saveItem", "render");
                 this.model = new JobPositionsModel();
                 this.responseObj = {};
                 this.render();
             },
-            events: {
-                "change #workflowNames": "changeWorkflows",
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-				"click .current-selected": "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+            events        : {
+                "change #workflowNames"                                           : "changeWorkflows",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .current-selected"                                         : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click": "hideNewSelect"
+                "click"                                                           : "hideNewSelect"
             },
-            notHide: function () {
+            notHide       : function () {
                 return false;
             },
-            showNewSelect: function (e, prev, next) {
+            showNewSelect : function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
             },
-            chooseOption: function (e) {
+            chooseOption  : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
             },
-            nextSelect: function (e) {
+            nextSelect    : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect    : function (e) {
                 this.showNewSelect(e, true, false);
             },
-            hideNewSelect: function () {
+            hideNewSelect : function () {
                 $(".newSelectList").hide();
             },
-            keydownHandler: function(e){
-                switch (e.which){
+            keydownHandler: function (e) {
+                switch (e.which) {
                     case 27:
                         this.hideDialog();
                         break;
@@ -59,7 +59,7 @@ define([
                 }
             },
 
-            changeTab:function(e){
+            changeTab       : function (e) {
                 var holder = $(e.target);
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
@@ -71,17 +71,17 @@ define([
             getWorkflowValue: function (value) {
                 var workflows = [];
                 for (var i = 0; i < value.length; i++) {
-                    workflows.push({ name: value[i].name, status: value[i].status });
+                    workflows.push({name: value[i].name, status: value[i].status});
                 }
                 return workflows;
             },
 
             changeWorkflows: function () {
                 var name = this.$("#workflowNames option:selected").val();
-                var value = this.workflowsCollection.findWhere({ name: name }).toJSON().value;
+                var value = this.workflowsCollection.findWhere({name: name}).toJSON().value;
             },
 
-            saveItem: function () {
+            saveItem  : function () {
                 var afterPage = '';
                 var location = window.location.hash;
                 var pageSplited = location.split('/p=')[1];
@@ -96,46 +96,46 @@ define([
                 var description = $.trim($("#description").val());
                 var requirements = $.trim($("#requirements").val());
                 var workflow = this.$("#workflowsDd").data("id");
-                var department = this.$("#departmentDd").data("id")?this.$("#departmentDd").data("id"):null;
-                var usersId=[];
-                var groupsId=[];
-                $(".groupsAndUser tr").each(function(){
-                    if ($(this).data("type")=="targetUsers"){
+                var department = this.$("#departmentDd").data("id") ? this.$("#departmentDd").data("id") : null;
+                var usersId = [];
+                var groupsId = [];
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type")=="targetGroups"){
+                    if ($(this).data("type") == "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
                 });
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 this.model.save({
-                    name: name,
-                    expectedRecruitment: expectedRecruitment,
-                    description: description,
-                    requirements: requirements,
-                    department: department,
-                    workflow: workflow,
-                    groups: {
-						owner: $("#allUsersSelect").data("id"),
-                        users: usersId,
-                        group: groupsId
+                        name               : name,
+                        expectedRecruitment: expectedRecruitment,
+                        description        : description,
+                        requirements       : requirements,
+                        department         : department,
+                        workflow           : workflow,
+                        groups             : {
+                            owner: $("#allUsersSelect").data("id"),
+                            users: usersId,
+                            group: groupsId
+                        },
+                        whoCanRW           : whoCanRW
                     },
-                    whoCanRW: whoCanRW
-                },
-                {
-                    headers: {
-                        mid: mid
-                    },
-                    wait: true,
-                    success: function () {
-						self.hideDialog();
-						Backbone.history.fragment = "";
-						Backbone.history.navigate(location, { trigger: true });
-                    },
-                    error: function (model, xhr) {
-    					self.errorNotification(xhr);
-                    }
-                });
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function () {
+                            self.hideDialog();
+                            Backbone.history.fragment = "";
+                            Backbone.history.navigate(location, {trigger: true});
+                        },
+                        error  : function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
             },
             hideDialog: function () {
                 $(".create-dialog").remove();
@@ -144,24 +144,28 @@ define([
             },
 
             render: function () {
-				var self = this;
+                var self = this;
                 var formString = this.template({});
                 this.$el = $(formString).dialog({
-					closeOnEscape: false,
-                    autoOpen:true,
-                    resizable:true,
-                    dialogClass:"edit-dialog",
-                    title: "Edit Job position",
-                    width:"900",
-                    buttons: [
+                    closeOnEscape: false,
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Job position",
+                    width        : "900",
+                    buttons      : [
                         {
-                            text: "Create",
-                            click: function () { self.saveItem(); }
+                            text : "Create",
+                            click: function () {
+                                self.saveItem();
+                            }
                         },
 
                         {
-                            text: "Cancel",
-                            click: function () { $(this).dialog().remove(); }
+                            text : "Cancel",
+                            click: function () {
+                                $(this).dialog().remove();
+                            }
                         }]
 
                 });
@@ -169,14 +173,14 @@ define([
                     min: 0,
                     max: 9999
                 });
-				var notDiv = this.$el.find('.assignees-container');
+                var notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
                     }).render().el
                 );
-				populate.get("#departmentDd", "/DepartmentsForDd", {}, "departmentName", this, true, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", { id: "Job positions" }, "name", this, true);
+                populate.get("#departmentDd", "/DepartmentsForDd", {}, "departmentName", this, true, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Job positions"}, "name", this, true);
                 this.delegateEvents(this.events);
                 return this;
             }

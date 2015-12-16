@@ -23,24 +23,24 @@ define([
 
     function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS) {
         var wTrackListView = listViewBase.extend({
-            createView: createView,
-            listTemplate: listTemplate,
-            listItemView: listItemView,
-            contentCollection: contentCollection,
-            filterView: filterView,
-            contentType: 'wTrack',
-            viewType: 'list',
-            responseObj: {},
-            wTrackId: null, //need for edit rows in listView
+            createView              : createView,
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            filterView              : filterView,
+            contentType             : 'wTrack',
+            viewType                : 'list',
+            responseObj             : {},
+            wTrackId                : null, //need for edit rows in listView
             totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable: null, //cashedJqueryEllemnt
-            editCollection: null,
-            selectedProjectId: [],
-            genInvoiceEl: null,
-            copyEl: null,
-            changedModels: {},
-            exportToCsvUrl: '/wTrack/exportToCsv',
-            exportToXlsxUrl: '/wTrack/exportToXlsx',
+            $listTable              : null, //cashedJqueryEllemnt
+            editCollection          : null,
+            selectedProjectId       : [],
+            genInvoiceEl            : null,
+            copyEl                  : null,
+            changedModels           : {},
+            exportToCsvUrl          : '/wTrack/exportToCsv',
+            exportToXlsxUrl         : '/wTrack/exportToXlsx',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -60,14 +60,14 @@ define([
             },
 
             events: {
-                "click .stageSelect": "showNewSelect",
+                "click .stageSelect"                                              : "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable": "editRow",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "change .autoCalc": "autoCalc",
-                "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown"
+                "click td.editable"                                               : "editRow",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "change .autoCalc"                                                : "autoCalc",
+                "change .editable "                                               : "setEditable",
+                "keydown input.editing "                                          : "keyDown"
                 //"change .listCB": "setAllTotalVals"
                 // "click"                                                           : "removeInputs"
             },
@@ -87,13 +87,13 @@ define([
                     projectsDdContainer.css('color', 'red');
 
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.SELECTP_ROJECT
                     });
                 }
 
                 new CreateJob({
-                    model: model,
+                    model     : model,
                     wTrackView: this
                 });
 
@@ -160,11 +160,11 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks: wTracks,
-                            project: project,
+                            wTracks : wTracks,
+                            project : project,
                             assigned: assigned,
                             customer: customer,
-                            total: total
+                            total   : total
                         });
                     }
                 });
@@ -413,7 +413,7 @@ define([
                 }
 
                 if (isSelect) {
-                    if (content === 'jobs'){
+                    if (content === 'jobs') {
                         dataService.getData("/jobs/getForDD", {"projectId": tr.find('[data-content="project"]').attr('data-id')}, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
@@ -452,7 +452,7 @@ define([
                     insertedInput.focus();
 
                     // validation for month and days of week
-                    if(isMonth || isDay) {
+                    if (isMonth || isDay) {
                         insertedInput.attr("maxLength", "2");
                         if (isMonth) {
                             maxValue = 12;
@@ -460,8 +460,8 @@ define([
                         if (isDay) {
                             maxValue = 24;
                         }
-                        insertedInput.keyup( function(e) {
-                            if( insertedInput.val() > maxValue ) {
+                        insertedInput.keyup(function (e) {
+                            if (insertedInput.val() > maxValue) {
                                 e.preventDefault();
                                 insertedInput.val("" + maxValue);
                             }
@@ -502,10 +502,8 @@ define([
                 costElement = $(e.target).closest('tr').find('[data-content="cost"]');
                 month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
 
-
                 if (wTrackId.length < 24) {
                     employeeId = this.changedModels[wTrackId].employee ? this.changedModels[wTrackId].employee._id : $(e.target).attr("data-id");
-
 
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
@@ -563,8 +561,8 @@ define([
                     dataService.getData('/payroll/getByMonth',
                         {
                             month: month,
-                            year: year,
-                            _id: employeeId
+                            year : year,
+                            _id  : employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -644,20 +642,11 @@ define([
                         tr.find('[data-content="workflow"]').text(element.workflow.name);
                         tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
 
-                        project = _.clone(editWtrackModel.get('project'));
-                        project._id = element._id;
-                        project.projectName = element.projectName;
-                        project.workflow._id = element.workflow._id;
-                        project.workflow.name = element.workflow.name;
-                        project.customer._id = element.customer._id;
-                        project.customer.name = element.customer.name.first + ' ' + element.customer.name.last;
-
-                        project.projectmanager.name = projectManager;
-                        project.projectmanager._id = element.projectmanager._id;
+                        project = element._id;
 
                         changedAttr.project = project;
 
-                        dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
+                        dataService.getData("/jobs/getForDD", {"projectId": project}, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
 
@@ -666,8 +655,7 @@ define([
 
                     } else if (elementType === '#jobs') {
 
-                        jobs._id = element._id;
-                        jobs.name = element.name;
+                        jobs = element._id;
 
                         changedAttr.jobs = jobs;
 
@@ -675,14 +663,9 @@ define([
                     } else if (elementType === '#employee') {
                         tr.find('[data-content="department"]').text(element.department.name);
 
-                        employee = _.clone(editWtrackModel.get('employee'));
-                        department = _.clone(editWtrackModel.get('department'));
+                        employee = element._id;
 
-                        employee._id = element._id;
-                        employee.name = target.text();
-
-                        department._id = element.department._id;
-                        department.departmentName = element.department.name;
+                        department = element.department._id;
 
                         changedAttr.employee = employee;
                         changedAttr.department = department;
@@ -693,9 +676,7 @@ define([
 
                         tr.find('[data-content="department"]').removeClass('errorContent');
                     } else if (elementType === '#department') {
-                        department = _.clone(editWtrackModel.get('department'));
-                        department._id = element._id;
-                        department.departmentName = element.departmentName;
+                        department = element._id;
 
                         changedAttr.department = department;
                     } else if (elementType === '#week') {
@@ -757,7 +738,7 @@ define([
                         this.$saveBtn.show();
                     }
 
-                    if (changedRows.length){
+                    if (changedRows.length) {
                         this.$saveBtn.show();
                     } else {
                         this.$saveBtn.hide();
@@ -841,8 +822,8 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
                 $currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
+                    collection : this.collection,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -959,10 +940,10 @@ define([
                 var week = now.getWeek();
                 var rate = 3;
                 var startData = {
-                    year: year,
-                    month: month,
-                    week: week,
-                    rate: rate,
+                    year        : year,
+                    month       : month,
+                    week        : week,
+                    rate        : rate,
                     projectModel: null
                 };
 
@@ -977,7 +958,7 @@ define([
                     new createView(startData);
                 } else {
                     App.render({
-                        type: 'notify',
+                        type   : 'notify',
                         message: 'Please confirm or discard changes befor create a new item'
                     });
                 }
@@ -1100,7 +1081,7 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -1119,8 +1100,8 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1180,7 +1161,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait: true,
+                                    wait   : true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -1189,7 +1170,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error: function (model, res) {
+                                    error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }
@@ -1254,7 +1235,7 @@ define([
 
                 if (this.createdCopied) {
                     copiedCreated = this.$el.find('.false');
-                    copiedCreated.each(function(){
+                    copiedCreated.each(function () {
                         dataId = $(this).attr('data-id');
                         self.editCollection.remove(dataId);
                         delete self.changedModels[dataId];

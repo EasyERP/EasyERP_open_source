@@ -13,7 +13,8 @@ var Salary = function (event, models) {
     var self = this;
     var objectId = mongoose.Types.ObjectId;
 
-    /*Done*/this.remove = function (req, res, next) {
+    /*Done*/
+    this.remove = function (req, res, next) {
         var id = req.params.id;
         var data = req.headers;
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
@@ -22,7 +23,6 @@ var Salary = function (event, models) {
 
         access.getDeleteAccess(req, req.session.uId, 66, function (access) {
             if (access) {
-
 
                 if (data) {
                     if (data.month) {
@@ -60,7 +60,8 @@ var Salary = function (event, models) {
         });
     };
 
-    /*Done*/this.putchModel = function (req, res, next) {
+    /*Done*/
+    this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
@@ -79,9 +80,9 @@ var Salary = function (event, models) {
                         self.recalculateCashSalary(req, function () {
                         });
                         var params = {
-                            req: req,
+                            req            : req,
                             monthFromSalary: response.month,
-                            yearFromSalary: response.year
+                            yearFromSalary : response.year
                         };
                         event.emit('updateCost', params);
                         res.status(200).send({success: 'updated'});
@@ -95,7 +96,8 @@ var Salary = function (event, models) {
         }
     };
 
-    /*Done*/this.putchBulk = function (req, res, next) {
+    /*Done*/
+    this.putchBulk = function (req, res, next) {
         var body = req.body;
         var uId;
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
@@ -113,14 +115,14 @@ var Salary = function (event, models) {
                         };
                         delete data._id;
                         data.baseSalary = data.calc['salary'];
-                        Salary.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, result){
-                            if(err){
+                        Salary.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
+                            if (err) {
                                 return cb(err);
                             }
                             var params = {
-                                req: req,
+                                req            : req,
                                 monthFromSalary: result.month,
-                                yearFromSalary: result.year
+                                yearFromSalary : result.year
                             };
                             event.emit('updateCost', params);
                             cb(null, result);
@@ -144,7 +146,8 @@ var Salary = function (event, models) {
         }
     };
 
-    /*Done*/this.create = function (req, res, next) {
+    /*Done*/
+    this.create = function (req, res, next) {
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
         var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
         var body = req.body;
@@ -190,9 +193,9 @@ var Salary = function (event, models) {
                             }
                             if (results[1]) {
                                 var params = {
-                                    req: req,
+                                    req            : req,
                                     monthFromSalary: month,
-                                    yearFromSalary: year
+                                    yearFromSalary : year
                                 };
                                 event.emit('updateCost', params);
                                 res.status(200).send({success: results[1]});
@@ -280,7 +283,7 @@ var Salary = function (event, models) {
                                 query.exec(waterfallCallback);
                             } else {
                                 async.series({
-                                    first: function (callback) {
+                                    first : function (callback) {
                                         self.recalculateCashSalary(req, callback);
                                     },
                                     second: function (callback) {
@@ -370,7 +373,7 @@ var Salary = function (event, models) {
 
             baseSalary = result ? result.baseSalary : null;
             //res.header('Content-Type', 'application/json');
-            if (result){
+            if (result) {
                 res.status(200).send({data: result.baseSalary});
             } else {
                 res.status(200).send({data: 0});
@@ -409,15 +412,15 @@ var Salary = function (event, models) {
                 [
                     {
                         $group: {
-                            _id: {month: "$month", year: "$year"},
-                            calcSalary: {$sum: "$calc.salary"},
-                            calcOnCash: {$sum: "$calc.onCash"},
-                            calcOnCard: {$sum: "$calc.onCard"},
-                            paidOnCash: {$sum: "$paid.onCash"},
-                            paidOnCard: {$sum: "$paid.onCard"},
-                            diffOnCash: {$sum: "$diff.onCash"},
-                            diffOnCard: {$sum: "$diff.onCard"},
-                            diffTotal: {$sum: "$diff.total"},
+                            _id           : {month: "$month", year: "$year"},
+                            calcSalary    : {$sum: "$calc.salary"},
+                            calcOnCash    : {$sum: "$calc.onCash"},
+                            calcOnCard    : {$sum: "$calc.onCard"},
+                            paidOnCash    : {$sum: "$paid.onCash"},
+                            paidOnCard    : {$sum: "$paid.onCard"},
+                            diffOnCash    : {$sum: "$diff.onCash"},
+                            diffOnCard    : {$sum: "$diff.onCard"},
+                            diffTotal     : {$sum: "$diff.total"},
                             employeesArray: {$push: "$$ROOT"},
                         }
                     }
@@ -434,22 +437,22 @@ var Salary = function (event, models) {
 
                 if (fetchedSalary) {
                     objectToSave = {
-                        dataKey: momentMonth + "/" + momentYear,
-                        month: fetchedSalary._id.month,
-                        year: fetchedSalary._id.year,
-                        calc: {
+                        dataKey       : momentMonth + "/" + momentYear,
+                        month         : fetchedSalary._id.month,
+                        year          : fetchedSalary._id.year,
+                        calc          : {
                             salary: fetchedSalary.calcSalary,
                             onCash: fetchedSalary.calcOnCash,
                             onCard: fetchedSalary.calcOnCard
                         },
-                        paid: {
+                        paid          : {
                             onCash: fetchedSalary.paidOnCash,
                             onCard: fetchedSalary.paidOnCard
                         },
-                        diff: {
+                        diff          : {
                             onCash: fetchedSalary.diffOnCash,
                             onCard: fetchedSalary.diffOnCard,
-                            total: fetchedSalary.diffTotal
+                            total : fetchedSalary.diffTotal
                         },
                         employeesArray: fetchedSalary.employeesArray
                     }
@@ -502,8 +505,8 @@ var Salary = function (event, models) {
         Salary.aggregate([
             {
                 $group: {
-                    _id: null,
-                    'Year': {
+                    _id    : null,
+                    'Year' : {
                         $addToSet: '$year'
                     },
                     'Month': {
@@ -535,7 +538,6 @@ var Salary = function (event, models) {
                 queryObj.year = Number(data.year);
             }
         }
-
 
         query = SalaryCash.aggregate([
             {

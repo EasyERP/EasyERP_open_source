@@ -414,7 +414,7 @@ define([
 
                 self.renderCheckboxes();
 
-                self.renderPagination($currentEl,self);
+                self.renderPagination($currentEl, self);
 
                 dataService.getData("/employee/getForDD", null, function (employees) {
                     employees = _.map(employees.data, function (employee) {

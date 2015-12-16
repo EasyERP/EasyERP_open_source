@@ -11,10 +11,10 @@ define([
     ],
     function (EditTemplate, CompaniesCollection, EmployeesCollection, PersonsCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, common, populate) {
         var EditView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Companies",
-            imageSrc: '',
-            initialize: function (options) {
+            imageSrc   : '',
+            initialize : function (options) {
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
@@ -23,43 +23,43 @@ define([
                 this.render();
             },
 
-            events: {
-                "click #tabList a": "switchTab",
-                "click #contacts": "editContacts",
-                "click #saveBtn": "saveItem",
-                "click #cancelBtn": "hideDialog",
-                "mouseenter .avatar": "showEdit",
-                "mouseleave .avatar": "hideEdit",
-                "click .current-selected": "showNewSelect",
-                "click .newSelectList li": "chooseOption",
-                "click": "hideNewSelect",
-                "click .details": "toggleDetails",
-                'click .dialog-tabs a': 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+            events       : {
+                "click #tabList a"                                                : "switchTab",
+                "click #contacts"                                                 : "editContacts",
+                "click #saveBtn"                                                  : "saveItem",
+                "click #cancelBtn"                                                : "hideDialog",
+                "mouseenter .avatar"                                              : "showEdit",
+                "mouseleave .avatar"                                              : "hideEdit",
+                "click .current-selected"                                         : "showNewSelect",
+                "click .newSelectList li"                                         : "chooseOption",
+                "click"                                                           : "hideNewSelect",
+                "click .details"                                                  : "toggleDetails",
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            nextSelect: function (e) {
+            nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            changeTab: function (e) {
+            changeTab    : function (e) {
                 var holder = $(e.target);
                 var n;
                 var dialog_holder;
@@ -72,33 +72,33 @@ define([
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
-            chooseUser: function (e) {
+            chooseUser   : function (e) {
                 $(e.target).toggleClass("choosen");
             },
             toggleDetails: function () {
                 $("#details-dialog").toggle();
             },
-            hideDialog: function () {
+            hideDialog   : function () {
                 $(".edit-companies-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
-            showEdit: function () {
+            showEdit     : function () {
                 $(".upload").animate({
-                    height: "20px",
+                    height : "20px",
                     display: "block"
                 }, 250);
 
             },
-            hideEdit: function () {
+            hideEdit     : function () {
                 $(".upload").animate({
-                    height: "0px",
+                    height : "0px",
                     display: "block"
                 }, 250);
 
             },
-            switchTab: function (e) {
+            switchTab    : function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -117,7 +117,7 @@ define([
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
-            saveItem: function (event) {
+            saveItem    : function (event) {
                 var self = this;
                 var mid = 39;
                 var usersId = [];
@@ -163,60 +163,60 @@ define([
 
                 website.replace('http://', '');
                 data = {
-                    name: {
+                    name         : {
                         first: this.$el.find("#name").val(),
-                        last: ''
+                        last : ''
                     },
-                    imageSrc: this.imageSrc,
-                    social: {
+                    imageSrc     : this.imageSrc,
+                    social       : {
                         LI: $.trim(thisEl.find('#LI').val()),
                         FB: $.trim(thisEl.find('#FB').val())
                     },
-                    email: this.$el.find("#email").val(),
-                    phones: {
-                        phone: this.$el.find("#phone").val(),
+                    email        : this.$el.find("#email").val(),
+                    phones       : {
+                        phone : this.$el.find("#phone").val(),
                         mobile: this.$el.find("#mobile").val(),
-                        fax: this.$el.find("#fax").val()
+                        fax   : this.$el.find("#fax").val()
                     },
-                    address: {
-                        street: this.$el.find('#street').val(),
-                        city: this.$el.find('#city').val(),
-                        state: this.$el.find('#state').val(),
-                        zip: this.$el.find('#zip').val(),
+                    address      : {
+                        street : this.$el.find('#street').val(),
+                        city   : this.$el.find('#city').val(),
+                        state  : this.$el.find('#state').val(),
+                        zip    : this.$el.find('#zip').val(),
                         country: this.$el.find('#country').val()
                     },
-                    website: this.$el.find('#website').val(),
+                    website      : this.$el.find('#website').val(),
                     internalNotes: $.trim(this.$el.find("#internalNotes").val()),
 
                     salesPurchases: {
-                        isCustomer: isCustomer,
-                        isSupplier: isSupplier,
-                        active: active,
-                        salesPerson: salesPerson,
-                        salesTeam: salesTeam,
+                        isCustomer   : isCustomer,
+                        isSupplier   : isSupplier,
+                        active       : active,
+                        salesPerson  : salesPerson,
+                        salesTeam    : salesTeam,
                         implementedBy: implementedBy,
-                        reference: reference,
-                        language: language
+                        reference    : reference,
+                        language     : language
                     },
-                    groups: {
+                    groups        : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW      : whoCanRW
                 };
 
                 this.currentModel.save(data, {
                     headers: {
                         mid: mid
                     },
-                    wait: true,
+                    wait   : true,
                     success: function (model) {
                         $(".edit-companies-dialog").remove();
                         Backbone.history.fragment = "";
                         Backbone.history.navigate("#easyErp/Companies/form/" + model.id, {trigger: true});
                     },
-                    error: function (model, xhr) {
+                    error  : function (model, xhr) {
                         self.errorNotification(xhr);
                     }
                 });
@@ -239,7 +239,7 @@ define([
                             $('.edit-companies-dialog').remove();
                             Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         },
-                        error: function (models, err) {
+                        error  : function (models, err) {
                             if (err.status === 403) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -261,30 +261,30 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: false,
-                    dialogClass: "edit-companies-dialog",
-                    width: "80%",
-                    title: 'Edit Company',
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : false,
+                    dialogClass  : "edit-companies-dialog",
+                    width        : "80%",
+                    title        : 'Edit Company',
+                    buttons      : [
                         {
-                            text: "Save",
+                            text : "Save",
                             click: function () {
                                 self.saveItem();
                             }
                         },
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         },
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
                         }
                     ],
-                    modal: true
+                    modal        : true
                 });
 
                 thisEl = this.$el;
@@ -299,8 +299,8 @@ define([
 
                 salesPurchasesEl.append(
                     new SalesPurchasesView({
-                        parrent: self,
-                        model: this.currentModel,
+                        parrent  : self,
+                        model    : this.currentModel,
                         editState: true
                     }).render().el
                 );

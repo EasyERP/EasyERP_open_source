@@ -9,10 +9,10 @@ define([
 
             getTotal: function () {
                 var result = {
-                    total: 0,
-                    totalPaid: 0,
-                    totalAmount: 0,
-                    cellSpan: this.cellSpan,
+                    total           : 0,
+                    totalPaid       : 0,
+                    totalAmount     : 0,
+                    cellSpan        : this.cellSpan,
                     currencySplitter: helpers.currencySplitter
                 };
 

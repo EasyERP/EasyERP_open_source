@@ -68,17 +68,9 @@ define([
                     name: thisEl.find('#currencyDd').text()
                 };
 
-                var supplier = {};
-                var project = {};
+                var supplier = thisEl.find('#supplierDd').attr('data-id');
 
-                supplier._id = thisEl.find('#supplierDd').attr('data-id');
-                supplier.name = thisEl.find('#supplierDd').text();
-
-
-                project._id = thisEl.find('#projectDd').attr('data-id');
-                project.projectName = thisEl.find('#projectDd').text();
-                project.projectmanager = this.projectManager;
-
+                var project = thisEl.find('#projectDd').attr('data-id');
                 var destination = $.trim(thisEl.find('#destination').attr('data-id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').attr('data-id'));
@@ -145,7 +137,6 @@ define([
                     }
                 }
 
-
                 data = {
                     currency      : currency,
                     forSales      : forSales,
@@ -175,7 +166,7 @@ define([
                     workflow      : this.defaultWorkflow
                 };
 
-                if (supplier._id && selectedLength) {
+                if (supplier && selectedLength) {
                     this.model.save(data, {
                         headers: {
                             mid: mid

@@ -1,56 +1,66 @@
 <div class="form-holder">
-  <form method="post" action="" id="createDepartmentForm" class="form">
-    <fieldset>
-      <div class="inner">
-        <ul class="dialog-tabs">
-          <li><a class="active" href="javascript:;">Main Info</a></li>
-          <li><a href="javascript:;">Second Info</a></li>
-        </ul>
-        <div class="clearfix">
-        </div>
-        <div class="dialog-tabs-items">
-          <div class="dialog-tabs-item active">
-            <div class="half-block left">
-              <dl class="department-info">
-                <dt><label for="departmentName">Department Name</label></dt>
-                <dd><input type="text" class="title-input blueback" name="departmentName" id="departmentName" maxlength="32" value="<%=model.departmentName%>"/><input type="text" hidden required value="<%=model.departmentName%>" /></dd>
-                <dt><label for="parentDepartment">Parent Department</label></dt>
-                <dd>								  
-				  <a id="parentDepartment"  data-level="<%=(model.parentDepartment)?model.parentDepartment.nestingLevel:""%>" data-id="<%=(model.parentDepartment)?model.parentDepartment._id:""%>" class="current-selected" href="javascript:;"><%=(model.parentDepartment)?model.parentDepartment.departmentName:"Select"%></a>
-				</dd>
-              </dl>
-            </div>
-            <div class="half-block left">
-              <dl class="department-info">
-                <dt><label for="departmentManager">Manager</label></dt>
-                <dd>
-				  <a id="departmentManager" data-id="<%=(model.departmentManager)?model.departmentManager._id:""%>" class="current-selected" href="javascript:;"><%=(model.departmentManager)?(model.departmentManager.name.first+" "+model.departmentManager.name.last):"Select"%></a>
-				</dd>
-              </dl>
-            </div>
-          </div>
-          <div class="dialog-tabs-item">
-			<div class="groupsChooser">
-			  <div class="left">
-                <ul id="sourceUsers">
-				  
+    <form method="post" action="" id="createDepartmentForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Main Info</a></li>
+                    <li><a href="javascript:;">Second Info</a></li>
                 </ul>
-			  </div>
-			  <div class="left">
-				<div class="swich"></div>
-			  </div>
-			  <div class="left">
-                <ul id="targetUsers">
-				  
-                </ul>
-			  </div>
-			</div>
+                <div class="clearfix">
+                </div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div class="half-block left">
+                            <dl class="department-info">
+                                <dt><label for="departmentName">Department Name</label></dt>
+                                <dd><input type="text" class="title-input blueback" name="departmentName"
+                                           id="departmentName" maxlength="32" value="<%=model.departmentName%>"/><input
+                                        type="text" hidden required value="<%=model.departmentName%>"/></dd>
+                                <dt><label for="parentDepartment">Parent Department</label></dt>
+                                <dd>
+                                    <a id="parentDepartment"
+                                       data-level="<%=(model.parentDepartment)?model.parentDepartment.nestingLevel:""%>"
+                                    data-id="<%=(model.parentDepartment)?model.parentDepartment._id:""%>"
+                                    class="current-selected"
+                                    href="javascript:;"><%=(model.parentDepartment)?model.parentDepartment.departmentName:"Select"%></a>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="department-info">
+                                <dt><label for="departmentManager">Manager</label></dt>
+                                <dd>
+                                    <a id="departmentManager"
+                                       data-id="<%=(model.departmentManager)?model.departmentManager._id:""%>"
+                                    class="current-selected"
+                                    href="javascript:;"><%=(model.departmentManager)?(model.departmentManager.name.first+"
+                                    "+model.departmentManager.name.last):"Select"%></a>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="groupsChooser">
+                            <div class="left">
+                                <ul id="sourceUsers">
 
-          </div>
-        </div>
-        <div class="clearfix">
-        </div>
-      </div>
-    </fieldset>
-  </form>
+                                </ul>
+                            </div>
+                            <div class="left">
+                                <div class="swich"></div>
+                            </div>
+                            <div class="left">
+                                <ul id="targetUsers">
+
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+        </fieldset>
+    </form>
 </div>

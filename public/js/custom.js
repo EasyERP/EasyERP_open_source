@@ -24,15 +24,18 @@ define([
         }
         if (success) {
             var url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
-            if ((url === "") || (url === "login")) url = 'easyErp';
+            if ((url === "") || (url === "login")) {
+                url = 'easyErp';
+            }
 
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
             getFiltersValues();
 
         } else {
-            if (App.requestedURL === null)
+            if (App.requestedURL === null) {
                 App.requestedURL = Backbone.history.fragment;
+            }
             Backbone.history.fragment = "";
             Backbone.history.navigate("login", {trigger: true});
         }
@@ -62,7 +65,9 @@ define([
             if (viewtype != "list" && (viewtype != "thumbnails")) {
                 url += "/" + id;
             }
-            if (collection) collection.setElement(id);
+            if (collection) {
+                collection.setElement(id);
+            }
         } else {
 
             if (viewtype == "form" && collection) {
@@ -241,8 +246,9 @@ define([
     var setCurrentCL = function (length) {
         var testLength = new RegExp(/^[0-9]{1}[0-9]*$/);
 
-        if (testLength.test(length) == false)
+        if (testLength.test(length) == false) {
             length = 0;
+        }
         App.currentContentLength = length;
 
         return length;

@@ -1,19 +1,27 @@
-    <% applicationsCollection.forEach(function(application, index){ %>
-        <tr data-index="<%= index + 1 %>" data-id="<%=application._id%>" class="stage-<%=(application.workflow) ? application.workflow.status.toLowerCase().replace(' ','') : ''%>">
-            <td class = "notForm centerCell"><input type="checkbox" value="<%=application._id%>" class="checkbox" /></td>
-            <td class="centerCell"><%=startNumber + index + 1 %></td>
-            <!-- <td><%=application.creationDate%></td> -->
-            <!--<td><%=application.subject%></td>-->
-            <td><%=application.name.first%> <%=application.name.last%></td>
-            <td><%=application.personalEmail%></td>
-            <td class = "notForm"><a href="skype:<%=application.workPhones.phone%>?call"><%=application.workPhones.phone%></a></td>
-            <td><%=(application.jobPosition) ? application.jobPosition.name : ''%></td>
-			<td id='<%=application._id%>' data-sequence='<%=application.sequence%>'>
-			  <a href="javascript:;" class="stageSelect" data-id="<%=(application.workflow) ? application.workflow._id : ''%>"><%=(application.workflow) ? application.workflow.name : 'Undefinded'%></a>
-			</td>
-            <td><%=application.jobType%></td>
-			<td><%=(application.createdBy&&application.createdBy.date)?( application.createdBy.date + ((application.createdBy.user) ?(' (' + application.createdBy.user.login + ')') : '')):''%></td>
-			<td><%=(application.editedBy&&application.editedBy.date)?( application.editedBy.date + ((application.editedBy.user) ?(' (' + application.editedBy.user.login + ')') : '')):''%></td>
+<% applicationsCollection.forEach(function(application, index){ %>
+<tr data-index="<%= index + 1 %>" data-id="<%=application._id%>"
+    class="stage-<%=(application.workflow) ? application.workflow.status.toLowerCase().replace(' ','') : ''%>">
+    <td class="notForm centerCell"><input type="checkbox" value="<%=application._id%>" class="checkbox"/></td>
+    <td class="centerCell"><%=startNumber + index + 1 %></td>
+    <!-- <td><%=application.creationDate%></td> -->
+    <!--<td><%=application.subject%></td>-->
+    <td><%=application.name.first%> <%=application.name.last%></td>
+    <td><%=application.personalEmail%></td>
+    <td class="notForm"><a href="skype:<%=application.workPhones.phone%>?call"><%=application.workPhones.phone%></a>
+    </td>
+    <td><%=(application.jobPosition) ? application.jobPosition.name : ''%></td>
+    <td id='<%=application._id%>' data-sequence='<%=application.sequence%>'>
+        <a href="javascript:;" class="stageSelect"
+           data-id="<%=(application.workflow) ? application.workflow._id : ''%>"><%=(application.workflow) ?
+            application.workflow.name : 'Undefinded'%></a>
+    </td>
+    <td><%=application.jobType%></td>
+    <td><%=(application.createdBy&&application.createdBy.date)?( application.createdBy.date +
+        ((application.createdBy.user) ?(' (' + application.createdBy.user.login + ')') : '')):''%>
+    </td>
+    <td><%=(application.editedBy&&application.editedBy.date)?( application.editedBy.date + ((application.editedBy.user)
+        ?(' (' + application.editedBy.user.login + ')') : '')):''%>
+    </td>
 
-        </tr>
-    <% }) %>
+</tr>
+<% }) %>
