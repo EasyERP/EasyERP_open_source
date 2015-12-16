@@ -277,7 +277,7 @@ var Project = function (models) {
 
                             budget = {
                                 // projectTeam: response,
-                                bonus: bonus,
+                                bonus: bonus
                                 // budget: sortBudget,
                                 // projectValues: projectValues,
                                 //budgetTotal: budgetTotal
@@ -319,16 +319,73 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, "Project", ProjectSchema);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var data = {};
-        var sort = req.query.sort ? req.query.sort : {projectName: 1};
+        var sort = req.query.sort;
+        var key;
         var collection;
 
-        var query = Project.find({}).sort(sort).lean();
+        if (sort) {
+            key = Object.keys(sort)[0];
+            sort[key] = parseInt(sort[key]);
+        } else {
+            sort = {'projectmanager.name.first': 1};
+        }
 
-        query
-            .populate('budget.projectTeam')
-            .populate('projectmanager');
-
-        query.exec(function (err, result) {
+        Project.aggregate([{
+            $unwind: '$budget.projectTeam'
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "projectmanager",
+                foreignField: "_id", as: "projectmanager"
+            }
+        }, {
+            $lookup: {
+                from        : "jobs",
+                localField  : "budget.projectTeam",
+                foreignField: "_id", as: "budget.projectTeam"
+            }
+        }, {
+            $project: {
+                'budget.projectTeam': {$arrayElemAt: ["$budget.projectTeam", 0]},
+                projectmanager      : {$arrayElemAt: ["$projectmanager", 0]},
+                'budget.budgetTotal': 1,
+                projectName         : 1
+            }
+        }, {
+            $project: {
+                projectmanager      : 1,
+                projectName         : 1,
+                'budget.projectTeam': 1,
+                'budget.budgetTotal': 1
+            }
+        }, {
+            $group: {
+                _id           : '$_id',
+                projectmanager: {
+                    $addToSet: '$projectmanager'
+                },
+                projectTeam   : {
+                    $push: '$budget.projectTeam'
+                },
+                budgetTotal   : {
+                    $addToSet: '$budget.budgetTotal'
+                },
+                projectName   : {
+                    $addToSet: '$projectName'
+                }
+            }
+        }, {
+            $project: {
+                _id                 : 1,
+                projectmanager      : {$arrayElemAt: ["$projectmanager", 0]},
+                projectName         : {$arrayElemAt: ["$projectName", 0]},
+                'budget.projectTeam': '$projectTeam',
+                'budget.budgetTotal': '$budgetTotal'
+            }
+        }, {
+            $sort: sort
+        }
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -337,7 +394,6 @@ var Project = function (models) {
 
             collection.forEach(function (project) {
                 var totalInPr = 0;
-                // var totalNew = 0;
                 var totalFinished = 0;
                 var total = 0;
                 var totalObj = {};
@@ -417,8 +473,8 @@ var Project = function (models) {
 
                 function getMinWTrack(cb) {
                     WTrack.find({
-                        "project._id": project._id,
-                        dateByWeek   : minDate
+                        "project" : project._id,
+                        dateByWeek: minDate
                     }).sort({worked: -1}).exec(function (err, result) {
                         if (err) {
                             return cb(err);
@@ -444,8 +500,8 @@ var Project = function (models) {
 
                 function getMaxWTrack(cb) {
                     WTrack.find({
-                        "project._id": project._id,
-                        dateByWeek   : maxDate
+                        "project" : project._id,
+                        dateByWeek: maxDate
                     }).sort({worked: 1}).exec(function (err, result) {
                         if (err) {
                             return cb(err);

@@ -106,7 +106,9 @@ define([
                     $(nameId).text(content.responseObj[nameId][0].name).attr("data-id", content.responseObj[nameId][0]._id);
                     $(statusId).text(content.responseObj[statusId][0].name).attr("data-id", content.responseObj[statusId][0]._id);
                 }
-                if (callback)callback(content.responseObj[nameId]);
+                if (callback) {
+                    callback(content.responseObj[nameId]);
+                }
             });
         };
 
@@ -250,7 +252,6 @@ define([
                     });
                 }
 
-
             } else if (attr === 'jobs') {
                 parent.append(s);
             }
@@ -374,8 +375,12 @@ define([
                 newSel.show();
                 return;
             }
-            if (prev) currentPage--;
-            if (next) currentPage++;
+            if (prev) {
+                currentPage--;
+            }
+            if (next) {
+                currentPage++;
+            }
             var s = "<ul class='newSelectList' data-page='" + currentPage + "'>";
             var start = (currentPage - 1) * elementVisible;
             var end = Math.min(currentPage * elementVisible, data.length);
@@ -415,8 +420,12 @@ define([
                 newSel.show();
                 return;
             }
-            if (prev) currentPage--;
-            if (next) currentPage++;
+            if (prev) {
+                currentPage--;
+            }
+            if (next) {
+                currentPage++;
+            }
             var s = "<ul class='newSelectList' data-page='" + currentPage + "'>";
             var start = (currentPage - 1) * elementVisible;
             var end = Math.min(currentPage * elementVisible, data.length);

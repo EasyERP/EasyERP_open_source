@@ -17,8 +17,8 @@ define([
 
         events: {
             'change #currentEmployee': 'changeEmployee',
-            'change #currentStatus': 'changeStatus',
-            'change #currentTime': 'changeTime'
+            'change #currentStatus'  : 'changeStatus',
+            'change #currentTime'    : 'changeTime'
         },
 
         initialize: function () {
@@ -57,9 +57,9 @@ define([
 
                 self.model.set({
                     currentEmployee: self.currentEmployee,
-                    currentStatus: self.currentStatus,
-                    currentTime: self.currentTime,
-                    years: years
+                    currentStatus  : self.currentStatus,
+                    currentTime    : self.currentTime,
+                    years          : years
                 });
 
             });
@@ -80,7 +80,7 @@ define([
             }
 
             dataService.getData("/vacation/attendance", {
-                year: self.currentTime,
+                year    : self.currentTime,
                 employee: self.currentEmployee
             }, function (result) {
                 labels = self.model.get('labelMonth');
@@ -94,11 +94,11 @@ define([
                 });
 
                 self.$el.append(month.render({
-                    labels: labels,
-                    year: self.currentTime,
+                    labels    : labels,
+                    year      : self.currentTime,
                     attendance: data,
-                    statistic: result.stat,
-                    startTime: startTime
+                    statistic : result.stat,
+                    startTime : startTime
                 }));
             });
         },
@@ -127,7 +127,7 @@ define([
             }
 
             dataService.getData("/vacation/attendance", {
-                year: self.currentTime,
+                year    : self.currentTime,
                 employee: self.currentEmployee
             }, function (result) {
                 labels = self.model.get('labelMonth');
@@ -141,11 +141,11 @@ define([
                 });
 
                 self.$el.append(month.render({
-                    labels: labels,
-                    year: self.currentTime,
+                    labels    : labels,
+                    year      : self.currentTime,
                     attendance: data,
-                    statistic: result.stat,
-                    startTime: startTime
+                    statistic : result.stat,
+                    startTime : startTime
                 }));
             });
         },

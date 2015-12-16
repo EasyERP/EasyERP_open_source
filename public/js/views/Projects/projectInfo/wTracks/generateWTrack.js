@@ -441,15 +441,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                                         return self.quotationDialog.generatedWtracks();
                                     }
 
-                                    tabs = $(".chart-tabs");
-                                    activeTab = tabs.find('.active');
+                                    App.projectInfo = App.projectInfo || {};
+                                    App.projectInfo.currentTab = 'timesheet';
 
-                                    activeTab.removeClass('active');
-                                    tabs.find('#wTrackTab').addClass("active");
-
-                                    dialogHolder = $(".dialog-tabs-items");
-                                    dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                                    dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
                                 },
                                 error  : function () {
                                     App.render({
@@ -474,23 +468,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 showNewSelect: function (e, prev, next) {
                     var targetEl = $(e.target);
                     var content = targetEl.closest('td').attr('data-content');
-                    var tr;
-                    var department;
-
-                    /*if(content === 'employee'){
-                     tr = targetEl.closest('tr');
-                     department = tr.find('td[data-content="department"]').attr('data-id');
-
-                     populate.employeesByDep({
-                     e: e,
-                     prev: prev,
-                     next: next,
-                     context: this,
-                     department: department
-                     });
-
-                     return false;
-                     }*/
 
                     populate.showSelect(e, prev, next, this);
 

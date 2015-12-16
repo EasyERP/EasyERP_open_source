@@ -32,9 +32,8 @@ define([
             itemsContainer = thisEl.find('#paymentsList');
             itemsContainer.append(_.template(listTemplate, {
                 paymentCollection: payments,
-                currencySplitter: helpers.currencySplitter
+                currencySplitter : helpers.currencySplitter
             }));
-
 
             return this;
         }

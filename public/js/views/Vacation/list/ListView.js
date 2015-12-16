@@ -418,7 +418,7 @@ define([
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
                 daysNumRow = '<tr class="subHeaderHolder borders"><th class="oe_sortable" data-sort="employee.name">Employee Name</th>' +
-                    '<th class="oe_sortable" data-sort="department.name">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
+                '<th class="oe_sortable" data-sort="department.name">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
 
                 this.daysCount = daysInMonth;
 

@@ -6,7 +6,7 @@ define([], function () {
         wTrack          : {
             'Assigned'    : {
                 view   : 'projectManager',
-                backend: 'project.projectmanager._id',
+                backend: 'projectmanager._id',
                 type   : 'ObjectId'
             },
             'Employee'    : {
@@ -16,7 +16,7 @@ define([], function () {
             },
             'Customer'    : {
                 view   : 'customer',
-                backend: 'project.customer._id',
+                backend: 'customer._id',
                 type   : 'ObjectId'
             },
             'Project Name': {
@@ -204,7 +204,7 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Payment way' : {
+            'Payment way': {
                 view   : 'paymentMethod',
                 backend: 'paymentMethod._id'
             },

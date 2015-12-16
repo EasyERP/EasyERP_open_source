@@ -76,7 +76,6 @@ define([
                 });
                 itemView.bind('incomingStages', this.pushStages, this);
 
-
                 $currentEl.prepend(itemView.render());//added two parameters page and items number
 
                 this.renderCheckboxes();

@@ -1,32 +1,34 @@
 define([
-    'text!templates/Employees/form/FormTemplate.html',
-    'views/Employees/EditView',
-    'text!templates/Notes/AddAttachments.html',
-    "common"
-],
+        'text!templates/Employees/form/FormTemplate.html',
+        'views/Employees/EditView',
+        'text!templates/Notes/AddAttachments.html',
+        "common"
+    ],
 
     function (EmployeesFormTemplate, EditView, addAttachTemplate, common) {
         var FormEmployeesView = Backbone.View.extend({
-            el: '#content-holder',
-            initialize: function (options) {
+            el                  : '#content-holder',
+            initialize          : function (options) {
                 this.formModel = options.model;
                 this.formModel.urlRoot = "/Employees";
             },
-            events: {
-                'click .chart-tabs a': 'changeTab',
+            events              : {
+                'click .chart-tabs a'                                  : 'changeTab',
                 'click .endContractReasonList, .withEndContract .arrow': 'showEndContractSelect',
-                'click .withEndContract .newSelectList li': 'endContract',
-                "click .deleteAttach": "deleteAttach",
-                "change .inputAttach": "addAttach",
+                'click .withEndContract .newSelectList li'             : 'endContract',
+                "click .deleteAttach"                                  : "deleteAttach",
+                "change .inputAttach"                                  : "addAttach",
 
                 'click': 'hideSelect'
             },
             fileSizeIsAcceptable: function (file) {
-                if (!file) { return false; }
+                if (!file) {
+                    return false;
+                }
                 return file.size < App.File.MAXSIZE;
             },
 
-            addAttach: function (event) {
+            addAttach   : function (event) {
                 event.preventDefault();
                 var currentModel = this.formModel;
                 var currentModelID = currentModel.id;
@@ -42,11 +44,11 @@ define([
                     var formURL = "http://" + window.location.host + "/uploadEmployeesFiles";
                     e.preventDefault();
                     addFrmAttach.ajaxSubmit({
-                        url: formURL,
-                        type: "POST",
+                        url        : formURL,
+                        type       : "POST",
                         processData: false,
                         contentType: false,
-                        data: [addInptAttach],
+                        data       : [addInptAttach],
 
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("id", currentModelID);
@@ -69,12 +71,12 @@ define([
                             data.data.attachments.forEach(function (item) {
                                 var date = common.utcDateToLocaleDate(item.uploadDate);
                                 attachments.push(item);
-                                $('.attachContainer').prepend(_.template(addAttachTemplate, { data: item, date: date }));
+                                $('.attachContainer').prepend(_.template(addAttachTemplate, {data: item, date: date}));
                             });
                             addFrmAttach[0].reset();
                             status.hide();
                         },
-                        error: function () {
+                        error  : function () {
                             console.log("Attach file error");
                         }
                     });
@@ -96,20 +98,20 @@ define([
                             return attach;
                         }
                     });
-                    currentModel.save({ 'attachments': new_attachments },
-                                      {
-                                          headers: {
-                                              mid: 39
-                                          },
-                                          patch: true,
-                                          success: function (model, response, options) {
-                                              $('.attachFile_' + id).remove();
-                                          }
-                                      });
+                    currentModel.save({'attachments': new_attachments},
+                        {
+                            headers: {
+                                mid: 39
+                            },
+                            patch  : true,
+                            success: function (model, response, options) {
+                                $('.attachFile_' + id).remove();
+                            }
+                        });
                 }
             },
 
-            hideSelect: function () {
+            hideSelect           : function () {
                 $(".newSelectList").hide();
             },
             showEndContractSelect: function (e) {
@@ -117,21 +119,21 @@ define([
                 $(e.target).parent().find(".newSelectList").toggle();
                 return false;
             },
-            endContract: function (e) {
+            endContract          : function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
-                this.formModel.set({ workflow: wfId, contractEndReason: contractEndReason, fired: true});
+                this.formModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: true});
                 this.formModel.save(this.formModel.changed, {
-                    patch: true,
+                    patch  : true,
                     success: function () {
-                        Backbone.history.navigate("easyErp/Applications/kanban", { trigger: true });
+                        Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
                     },
-                    error: function () {
-                        Backbone.history.navigate("home", { trigger: true });
+                    error  : function () {
+                        Backbone.history.navigate("home", {trigger: true});
                     }
                 });
             },
-            changeTab: function (e) {
+            changeTab            : function (e) {
                 $(e.target).closest(".chart-tabs").find("a.active").removeClass("active");
                 $(e.target).addClass("active");
                 var n = $(e.target).parents(".chart-tabs").find("li").index($(e.target).parent());
@@ -150,7 +152,7 @@ define([
 
             editItem: function () {
                 //create editView in dialog here
-                new EditView({ model: this.formModel });
+                new EditView({model: this.formModel});
             },
 
             deleteItems: function () {
@@ -161,7 +163,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate("#easyErp/Employees/list", { trigger: true });
+                        Backbone.history.navigate("#easyErp/Employees/list", {trigger: true});
                     }
                 });
 

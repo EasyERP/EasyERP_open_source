@@ -253,7 +253,6 @@ define([
                     }
                 }
 
-
                 if (this.forPayments.length) {
                     new paymentCreateView({
                         redirect  : this.redirect,
@@ -344,7 +343,6 @@ define([
                 var elDiff = parseFloat(this.editCollection.get(id).get("diff"));
                 var elCalc = parseFloat(this.editCollection.get(id).get("calc"));
                 var elPaid = parseFloat(this.editCollection.get(id).get("paid"));
-
 
                 totalNew = totalDiffOld + elDiff;
                 totalNewCalc = totalCalcOld + elCalc;
@@ -681,7 +679,6 @@ define([
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var payBtnEl = $('#topBarPaymentGenerate');
 
-
                 createBtnEl.hide();
 
                 saveBtnEl.show();
@@ -827,8 +824,8 @@ define([
                 } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
-                        tempContainer + '" value="' + tempContainer +
-                        '"  maxLength="4" style="display: block;" />';
+                    tempContainer + '" value="' + tempContainer +
+                    '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -841,7 +838,6 @@ define([
 
                 return false;
             },
-
 
             checked: function (e) {
                 if (this.$el.find('#false').length) {
@@ -871,7 +867,6 @@ define([
                 totalNew = totalDiffOld + elDiff;
                 totalNewCalc = totalCalcOld + elCalc;
                 totalNewPaid = totalPaidOld + elPaid;
-
 
                 if (this.editCollection.length > 0) {
                     checkLength = $("input.checkbox:checked").length;
@@ -1138,13 +1133,11 @@ define([
                     }
                 });
 
-
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.models);
 
                     self.forPayments = new PaymentCollection();
                 }, 10);
-
 
                 return this;
             }

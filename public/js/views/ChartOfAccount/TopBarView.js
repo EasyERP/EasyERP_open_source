@@ -6,19 +6,20 @@ define([
     ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: CONSTANTS.CHARTOFACCOUNT,
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click #top-bar-deleteBtn"      : "deleteEvent",
-                "click #top-bar-saveBtn"        : "saveEvent",
-                "click #top-bar-createBtn"      : "createEvent"
+                "click #top-bar-deleteBtn": "deleteEvent",
+                "click #top-bar-saveBtn"  : "saveEvent",
+                "click #top-bar-createBtn": "createEvent"
             },
 
             initialize: function (options) {
-                if (options.collection)
+                if (options.collection) {
                     this.collection = options.collection;
+                }
                 this.render();
             },
 

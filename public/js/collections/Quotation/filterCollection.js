@@ -4,12 +4,12 @@
     ],
     function (QuotationModel, common) {
         var QuotationCollection = Backbone.Collection.extend({
-            model: QuotationModel,
-            url: "/quotation/",
-            page: null,
+            model       : QuotationModel,
+            url         : "/quotation/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
+            viewType    : null,
+            contentType : null,
 
             initialize: function (options) {
                 this.startTime = new Date();
@@ -23,20 +23,19 @@
                 this.count = options.count;
                 this.page = options.page || 1;
 
-                if (options && options.contentType && !(options.filter))
-                {
+                if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
                         options.filter = {
                             'forSales': {
-                                key: 'forSales',
+                                key  : 'forSales',
                                 value: ['true']
                             }
                         }
                     } else {
                         options.filter = {
                             'forSales': {
-                                key: 'forSales',
+                                key  : 'forSales',
                                 value: ['false']
                             }
                         }
@@ -50,13 +49,15 @@
                 }
 
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function (collection) {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
@@ -77,14 +78,14 @@
                     if (regex.test(this.contentType)) {
                         filterObject.filter = {
                             'forSales': {
-                                key: 'forSales',
+                                key  : 'forSales',
                                 value: ['true']
                             }
                         }
                     } else {
                         options.filter = {
                             'forSales': {
-                                key: 'forSales',
+                                key  : 'forSales',
                                 value: ['false']
                             }
                         }
@@ -92,13 +93,13 @@
                 }
 
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
+                    error  : function () {
                         alert('Some Error');
                     }
                 });
@@ -107,7 +108,7 @@
             parse: function (quotations) {
                 _.map(quotations, function (quotation) {
                     quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
-                    if(quotation.expectedDate){
+                    if (quotation.expectedDate) {
                         quotation.expectedDate = common.utcDateToLocaleDate(quotation.expectedDate);
                     }
 

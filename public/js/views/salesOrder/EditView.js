@@ -53,7 +53,6 @@ define([
                 "click .setDraft"                                                 : "setDraft"
             },
 
-
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
@@ -183,7 +182,6 @@ define([
                                         }
                                     };
 
-
                                     self.collection = new invoiceCollection({
                                         count      : 50,
                                         viewType   : 'list',
@@ -295,7 +293,6 @@ define([
                     }
                 }
 
-
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -310,7 +307,6 @@ define([
 
                 supplier._id = thisEl.find('#supplierDd').attr('data-id');
                 supplier.name = thisEl.find('#supplierDd').text();
-
 
                 project._id = thisEl.find('#projectDd').attr('data-id');
                 project.projectName = thisEl.find('#projectDd').text();
@@ -328,17 +324,16 @@ define([
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
 
                         products.push({
-                            product  : productId,
-                            unitPrice: price,
-                            taxes: taxes,
-                            subTotal: subtotal,
-                            quantity : quantity,
-                            jobs     : jobs,
-                            scheduledDate : scheduledDate
+                            product      : productId,
+                            unitPrice    : price,
+                            taxes        : taxes,
+                            subTotal     : subtotal,
+                            quantity     : quantity,
+                            jobs         : jobs,
+                            scheduledDate: scheduledDate
                         });
                     }
                 }
-
 
                 data = {
                     currency         : currency,
@@ -356,7 +351,7 @@ define([
                     paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed,
-                        taxes: totalTaxes
+                        taxes  : totalTaxes
                     },
                     groups           : {
                         owner: $("#allUsersSelect").attr("data-id"),
@@ -429,8 +424,8 @@ define([
                 var self = this;
                 this.template = !this.onlyView ? _.template(EditTemplate) : _.template(ViewTemplate);
                 var formString = this.template({
-                    model  : this.currentModel.toJSON(),
-                    visible: this.visible,
+                    model   : this.currentModel.toJSON(),
+                    visible : this.visible,
                     onlyView: this.onlyView
                 });
                 var service = true;
@@ -469,7 +464,6 @@ define([
                         }
                     ]
                 }
-
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -522,8 +516,7 @@ define([
                     }).render({model: model}).el
                 );
 
-
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -536,6 +529,7 @@ define([
                         });
 
                     }
+                }
                 return this;
             }
 

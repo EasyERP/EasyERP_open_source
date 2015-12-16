@@ -1,6 +1,6 @@
 <% leadsCollection.forEach(function(lead, index){ %>
 <tr data-id="<%=lead._id%>" class="stage-<%=(lead.workflow) ? lead.workflow.status.toLowerCase() : ''%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=lead._id%>" class="checkbox" /></td>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=lead._id%>" class="checkbox"/></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=lead.name%></td>
     <td><%=lead.contactName.first%> <%=lead.contactName.last%></td>
@@ -9,10 +9,14 @@
     <td><%=lead.campaign%></td>
     <td><%=lead.source%></td>
     <td id='<%=lead._id%>' class="centerCell">
-      <a href="javascript:;" class="stageSelect"><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></a>
+        <a href="javascript:;" class="stageSelect"><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></a>
     </td>
-    <td><%=lead.createdBy.user?(lead.createdBy.date + ' (' + lead.createdBy.user.login + ')'):(lead.createdBy.date?lead.createdBy.date:'')%></td>
-    <td><%=(lead.editedBy&&lead.editedBy.date)?( lead.editedBy.date + ((lead.editedBy.user) ?(' (' + lead.editedBy.user.login + ')') : '')):''%></td>
+    <td><%=lead.createdBy.user?(lead.createdBy.date + ' (' + lead.createdBy.user.login +
+        ')'):(lead.createdBy.date?lead.createdBy.date:'')%>
+    </td>
+    <td><%=(lead.editedBy&&lead.editedBy.date)?( lead.editedBy.date + ((lead.editedBy.user) ?(' (' +
+        lead.editedBy.user.login + ')') : '')):''%>
+    </td>
 
 </tr>
 <% }) %>

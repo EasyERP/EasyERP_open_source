@@ -6,7 +6,7 @@
     <% employees.forEach(function(employee){ %>
     <%var byMonthData = employee.hoursSold%>
     <% if (byMonthData && byMonthData[key]) {%>
-    <% totalForDep +=  byMonthData[key]; %>
+    <% totalForDep += byMonthData[key]; %>
     <% } %>
     <% }) %>
     <span id="totalForDep"><%= totalForDep ? currencySplitter(totalForDep.toFixed()) : '&nbsp' %></span>
@@ -15,9 +15,9 @@
     <%var byMonthData = employee.hoursSold%>
     <div class="divRow" data-val="<%=content%>">
         <% if (byMonthData && byMonthData[key]) {%>
-        <span class="divCell forBonus" ><%= byMonthData[key] ? currencySplitter(byMonthData[key].toFixed()) : '&nbsp'%></span>
+        <span class="divCell forBonus"><%= byMonthData[key] ? currencySplitter(byMonthData[key].toFixed()) : '&nbsp'%></span>
         <% } else {%>
-        <span class="divCell forBonus" ><%= '&nbsp'%></span>
+        <span class="divCell forBonus"><%= '&nbsp'%></span>
         <% }%>
     </div>
     <% }) %>

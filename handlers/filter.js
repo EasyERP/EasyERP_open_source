@@ -132,8 +132,59 @@ var Filters = function (models) {
             });
 
         function getWtrackFiltersValues(callback) {
-            WTrack.aggregate([
-                {
+            WTrack.aggregate([{
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "employee",
+                    foreignField: "_id", as: "employee"
+                }
+            }, {
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id", as: "department"
+                }
+            }, {
+                $project: {
+                    project   : {$arrayElemAt: ["$project", 0]},
+                    employee  : {$arrayElemAt: ["$employee", 0]},
+                    department: {$arrayElemAt: ["$department", 0]},
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    isPaid    : 1,
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "project.customer",
+                    foreignField: "_id", as: "customer"
+                }
+            }, {
+                $project: {
+                    customer      : {$arrayElemAt: ["$customer", 0]},
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    project: 1,
+                    employee      : 1,
+                    department    : 1,
+                    month         : 1,
+                    year          : 1,
+                    week          : 1,
+                    isPaid        : 1
+                }
+            }, {
                     $group: {
                         _id             : null,
                         'jobs'          : {
@@ -144,8 +195,10 @@ var Filters = function (models) {
                         },
                         'projectManager': {
                             $addToSet: {
-                                _id : '$project.projectmanager._id',
-                                name: '$project.projectmanager.name'
+                                _id : '$projectmanager._id',
+                                name: {
+                                    $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                                }
                             }
                         },
                         'projectName'   : {
@@ -156,12 +209,19 @@ var Filters = function (models) {
                         },
                         'customer'      : {
                             $addToSet: {
-                                _id : '$project.customer._id',
-                                name: '$project.customer.name'
+                                _id : '$customer._id',
+                                name : {
+                                    $concat: ['$customer.name.first', ' ', '$customer.name.last']
+                                }
                             }
                         },
                         'employee'      : {
-                            $addToSet: '$employee'
+                            $addToSet: {
+                                _id: '$employee._id',
+                                name : {
+                                    $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                                }
+                            }
                         },
                         'department'    : {
                             $addToSet: {

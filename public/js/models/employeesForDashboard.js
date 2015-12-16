@@ -5,8 +5,8 @@ define(['collections/Dashboard/employeeByDepartment'], function (employeeDashboa
     var Model = Backbone.Model.extend({
         idAttribute: "department",
 
-        parse: function(model){
-            if(model.employeeData){
+        parse: function (model) {
+            if (model.employeeData) {
                 model.employeeData = new employeeDashboardData(model.employees);
             }
 

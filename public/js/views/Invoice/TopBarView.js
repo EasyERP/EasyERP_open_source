@@ -1,20 +1,20 @@
 define([
-    'text!templates/Invoice/TopBarTemplate.html',
-    'custom',
-    'common',
-    'constants'
-],
+        'text!templates/Invoice/TopBarTemplate.html',
+        'custom',
+        'common',
+        'constants'
+    ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: CONSTANTS.INVOICE,
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
             events: {
                 "click a.changeContentView": 'changeContentViewType',
-                "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click #top-bar-deleteBtn" : "deleteEvent",
+                "click #top-bar-editBtn"   : "editEvent",
+                "click #top-bar-createBtn" : "createEvent"
             },
 
             changeContentViewType: function (e) {
@@ -22,8 +22,9 @@ define([
             },
 
             initialize: function (options) {
-                if (options.collection)
+                if (options.collection) {
                     this.collection = options.collection;
+                }
                 this.render();
             },
 
@@ -35,7 +36,7 @@ define([
             render: function () {
                 $('title').text(this.contentType);
                 var viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({ viewType: viewType, contentType: this.contentType }));
+                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 
                 Common.displayControlBtnsByActionType('Content', viewType);
                 return this;
@@ -49,7 +50,9 @@ define([
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) this.trigger('deleteEvent');
+                if (answer == true) {
+                    this.trigger('deleteEvent');
+                }
             }
         });
 

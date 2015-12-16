@@ -11,22 +11,22 @@ define([
         var PaymentListItemView = Backbone.View.extend({
             el: '#listTable',
 
-            initialize: function(options) {
+            initialize: function (options) {
                 this.collection = options.collection;
                 this.startNumber = (options.page - 1 ) * options.itemsNumber;//Counting the start index of list items
             },
-            render: function() {
+            render    : function () {
                 if (App.weTrack) {
                     this.$el.append(_.template(forWTrackListTemplate, {
                         paymentCollection: this.collection.toJSON(),
-                        startNumber: this.startNumber,
-                        currencySplitter: helpers.currencySplitter
+                        startNumber      : this.startNumber,
+                        currencySplitter : helpers.currencySplitter
                     }));
                 } else {
                     this.$el.append(_.template(PaymentListTemplate, {
                         paymentCollection: this.collection.toJSON(),
-                        startNumber: this.startNumber,
-                        currencySplitter: helpers.currencySplitter
+                        startNumber      : this.startNumber,
+                        currencySplitter : helpers.currencySplitter
                     }));
                 }
             }

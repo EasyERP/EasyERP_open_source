@@ -1,41 +1,47 @@
 //----------------------------------------------
-* html .ui-autocomplete { width:1px; }
+* html .ui-autocomplete {
+  width: 1px;
+}
+
 #searchGlobalContainer {
   display: block;
   position: relative;
   border: 1px solid @border-color-main;
   padding: 2px 0px 2px 26px;
 }
+
 #searchFilterContainer {
   float: left;
   width: auto;
   height: 20px;
   overflow: hidden;
 }
+
 .ui-autocomplete {
   position: absolute;
   cursor: default;
   left: -1px !important;
   width: 100% !important;
 }
+
 .ui-menu {
-  list-style:none;
+  list-style: none;
   margin: 0;
   padding: 0;
-  display:block;
+  display: block;
   float: left;
   .ui-menu-item {
     float: left;
-    margin:0;
+    margin: 0;
     padding: 0;
     zoom: 1;
     clear: left;
     width: 100%;
     line-height: 18px;
     a {
-      text-decoration:none;
-      display:block;
-      padding:.2em .4em;
+      text-decoration: none;
+      display: block;
+      padding: .2em .4em;
     }
   }
   .ui-autocomplete-category {
@@ -83,14 +89,16 @@
     }
   }
 }
+
 .ui-autocomplete-input {
-  &:empty:not(:focus):before{
-    content:attr(data-text)
+  &:empty:not(:focus):before {
+    content: attr(data-text)
   }
   height: 20px;
   overflow: hidden;
   display: block;
 }
+
 .ui-helper-hidden-accessible {
   border: 0;
   height: 1px;
@@ -100,8 +108,9 @@
   width: 1px;
   position: absolute !important;
   clip: rect(1px 1px 1px 1px);
-  clip: rect(1px,1px,1px,1px);
+  clip: rect(1px, 1px, 1px, 1px);
 }
+
 .ui-widget-content {
   border: 1px solid @border-color-main;
   background-color: @bg-main;

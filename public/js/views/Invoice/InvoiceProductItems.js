@@ -37,7 +37,8 @@ define([
                 this.visible = !!options.balanceVisible;
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
-            };
+            }
+            ;
 
             this.forSales = options.forSales;
 
@@ -61,7 +62,6 @@ define([
             var parrentRow = parrent.find('.productItem').last();
             var rowId = parrentRow.attr("data-id");
             var trEll = parrent.find('tr.productItem');
-
 
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
@@ -120,7 +120,6 @@ define([
                     $('.quickEdit').text(this.text ? this.text : "").removeClass('quickEdit');
                 }
             }
-
 
             parent.addClass('quickEdit');
 
@@ -192,7 +191,6 @@ define([
             var taxes;
             var price;
             var amount;
-
 
             trEl.attr('data-id', model.id);
             //trEl.find('.datepicker').removeClass('notVisible');
@@ -295,18 +293,18 @@ define([
                 products = options.model.products;
 
                 thisEl.html(_.template(productItemTemplate, {
-                    model   : options.model,
-                    forSales: self.forSales,
-                    isPaid  : self.isPaid,
+                    model     : options.model,
+                    forSales  : self.forSales,
+                    isPaid    : self.isPaid,
                     notAddItem: this.notAddItem
                 }));
 
                 if (products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {
-                        products: products,
-                        forSales: self.forSales,
-                        isPaid  : self.isPaid,
+                        products  : products,
+                        forSales  : self.forSales,
+                        isPaid    : self.isPaid,
                         notAddItem: this.notAddItem
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
@@ -318,10 +316,10 @@ define([
                 }
             } else {
                 this.$el.html(this.template({
-                    forSales: self.forSales,
+                    forSales  : self.forSales,
                     /*collection: this.collection,
                      options: options*/
-                    isPaid  : self.isPaid,
+                    isPaid    : self.isPaid,
                     notAddItem: this.notAddItem
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');

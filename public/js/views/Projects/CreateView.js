@@ -9,9 +9,9 @@ define([
     function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Projects",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function () {
                 _.bindAll(this, "saveItem");
@@ -20,22 +20,22 @@ define([
                 this.render();
             },
 
-            events: {
-                'click #workflowNamesDd': 'chooseUser',
-                "submit form": "formSubmitHandler",
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click #health a": "showHealthDd",
-                "click #health ul li div": "chooseHealthDd",
-                "click": "hideHealth",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+            events       : {
+                'click #workflowNamesDd'                                          : 'chooseUser',
+                "submit form"                                                     : "formSubmitHandler",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click #health a"                                                 : "showHealthDd",
+                "click #health ul li div"                                         : "chooseHealthDd",
+                "click"                                                           : "hideHealth",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected": "showNewSelect"
+                "click .current-selected"                                         : "showNewSelect"
 
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             showNewSelect: function (e, prev, next) {
@@ -43,17 +43,17 @@ define([
 
                 return false;
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
             },
-            nextSelect: function (e) {
+            nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
-            hideHealth: function () {
+            hideHealth   : function () {
                 $(".newSelectList").hide();
                 $("#health ul").hide();
 
@@ -109,34 +109,33 @@ define([
                 var bonusRow = bonusContainer.find('tr');
                 var bonus = [];
 
-                if (custom === 'Select'){
+                if (custom === 'Select') {
                     value = 'Customer';
                     return alert('Please, choose ' + value + ' first.');
                 }
-
 
                 bonusRow.each(function (key, val) {
                     var employeeId = $(val).find("[data-content='employee']").attr('data-id');
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
 
-                    if (!employeeId || !bonusId || custom === 'Select'){
+                    if (!employeeId || !bonusId || custom === 'Select') {
                         validation = false;
                     }
 
                     var startDate = $(val).find(".startDate input").val();
                     var endDate = $(val).find(".endDate input").val();
-                   // var startDate = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
-                   // var endDate = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
+                    // var startDate = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
+                    // var endDate = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
 
                     bonus.push({
                         employeeId: employeeId,
-                        bonusId: bonusId,
-                        startDate: startDate,
-                        endDate: endDate
+                        bonusId   : bonusId,
+                        startDate : startDate,
+                        endDate   : endDate
                     });
                 });
 
-                if (!validation){
+                if (!validation) {
                     return alert('Employee and bonus fields must not be empty.');
                 }
 
@@ -144,7 +143,7 @@ define([
                 var $userNodes = this.$el.find("#usereditDd option:selected"), users = [];
                 $userNodes.each(function (key, val) {
                     users.push({
-                        id: val.value,
+                        id  : val.value,
                         name: val.innerHTML
                     });
                 });
@@ -166,33 +165,33 @@ define([
 
                 if (validation) {
                     this.model.save({
-                            projectName: $.trim(this.$el.find("#projectName").val()),
+                            projectName     : $.trim(this.$el.find("#projectName").val()),
                             projectShortDesc: $.trim(this.$el.find("#projectShortDesc").val()),
-                            customer: customer ? customer : "",
-                            projectmanager: projectmanager ? projectmanager : "",
-                            workflow: workflow ? workflow : "",
-                            projecttype: projecttype ? projecttype : "",
-                            description: description,
-                            groups: {
+                            customer        : customer ? customer : "",
+                            projectmanager  : projectmanager ? projectmanager : "",
+                            workflow        : workflow ? workflow : "",
+                            projecttype     : projecttype ? projecttype : "",
+                            description     : description,
+                            groups          : {
                                 owner: $("#allUsersSelect").data("id"),
                                 users: usersId,
                                 group: groupsId
                             },
-                            whoCanRW: whoCanRW,
-                            health: health,
-                            StartDate: startDate,
-                            TargetEndDate: targetEndDate,
-                            bonus: bonus
+                            whoCanRW        : whoCanRW,
+                            health          : health,
+                            StartDate       : startDate,
+                            TargetEndDate   : targetEndDate,
+                            bonus           : bonus
                         },
                         {
                             headers: {
                                 mid: mid
                             },
-                            wait: true,
+                            wait   : true,
                             success: function (model, response) {
                                 self.attachView.sendToServer(null, model.changed);
                             },
-                            error: function (model, xhr) {
+                            error  : function (model, xhr) {
                                 self.errorNotification(xhr);
                             }
                         });
@@ -210,19 +209,19 @@ define([
                 var self = this;
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    dialogClass: "edit-dialog",
-                    width: "900",
-                    title: "Create Project",
-                    buttons: {
-                        save: {
-                            text: "Create",
+                    dialogClass  : "edit-dialog",
+                    width        : "900",
+                    title        : "Create Project",
+                    buttons      : {
+                        save  : {
+                            text : "Create",
                             class: "btn",
                             click: function () {
                                 self.saveItem();
                             }
                         },
                         cancel: {
-                            text: "Cancel",
+                            text : "Cancel",
                             class: "btn",
                             click: function () {
                                 self.hideDialog();
@@ -232,8 +231,8 @@ define([
                 });
                 var notDiv = this.$el.find('.attach-container');
                 this.attachView = new attachView({
-                    model: new ProjectModel(),
-                    url: "/uploadProjectsFiles",
+                    model   : new ProjectModel(),
+                    url     : "/uploadProjectsFiles",
                     isCreate: true
                 });
                 notDiv.append(this.attachView.render().el);
@@ -253,19 +252,19 @@ define([
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this, true);
 
                 $('#StartDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    onSelect: function () {
+                    changeYear : true,
+                    onSelect   : function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                     }
                 });
                 $('#EndDateTarget').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 });
                 this.delegateEvents(this.events);
                 return this;

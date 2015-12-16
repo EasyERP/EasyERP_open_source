@@ -1,14 +1,26 @@
 <tr data-id="<%=capacity._id%>" class="<%=subClass%>" data-key="<%=depKey%>">
-    <td class="notForm"><input style="display: block;" class="checkbox" type="checkbox" id="<%=capacity._id%>" /></td>
+    <td class="notForm"><input style="display: block;" class="checkbox" type="checkbox" id="<%=capacity._id%>"/></td>
     <td colspan="2" class="editable" data-content="employee" data-type="employeeSelect">
         <%=capacity.employee ? capacity.employee.name : ''%>
     </td>
     <% for (var i=0; i<=capacity.capacityArray.length - 1; i++) {
-        if (typeof capacity.capacityArray[i] === 'string') {%>
-            <%=capacity.capacityArray[i] ? '<td data-dayID="' + (i) + '" class="' + capacity.capacityArray[i] + '" data-content="vacType">' + capacity.capacityArray[i] + '</td>' : '<td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue"></td>'%>
-        <%  } else { %>
-            <%=capacity.capacityArray[i] ? '<td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue">' + capacity.capacityArray[i] + '</td>' : '<td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue"></td>'%>
-    <%  } }%>
+    if (typeof capacity.capacityArray[i] === 'string') {%>
+    <%=capacity.capacityArray[i] ? '
+    <td data-dayID="' + (i) + '" class="' + capacity.capacityArray[i] + '" data-content="vacType">' +
+        capacity.capacityArray[i] + '
+    </td>
+    ' : '
+    <td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue"></td>
+    '%>
+    <% } else { %>
+    <%=capacity.capacityArray[i] ? '
+    <td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue">' +
+        capacity.capacityArray[i] + '
+    </td>
+    ' : '
+    <td data-dayID="' + (i) + '" class="editable" data-type="input" data-content="capacityValue"></td>
+    '%>
+    <% } }%>
     <td class="totalHours">
         <%=capacity.capacityMonthTotal%>
     </td>

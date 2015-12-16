@@ -5,7 +5,7 @@
         var Colection = Backbone.Collection.extend({
             model: Model,
 
-            initialize: function(){
+            initialize: function () {
 
             },
             /*comparator: 'name'*/

@@ -13,10 +13,10 @@ define([
 
             getTotal: function () {
                 var result = {
-                    total: 0,
-                    totalPaid: 0,
-                    totalAmount: 0,
-                    cellSpan: this.cellSpan,
+                    total           : 0,
+                    totalPaid       : 0,
+                    totalAmount     : 0,
+                    cellSpan        : this.cellSpan,
                     currencySplitter: helpers.currencySplitter
                 };
 
@@ -56,7 +56,7 @@ define([
                 this.cellSpan = options.cellSpan;
                 this.wTrack = options.wTrack;
             },
-            render: function () {
+            render    : function () {
                 var result = this.getTotal();
 
                 if (this.$el.find("tr").length > 0) {

@@ -5,24 +5,24 @@ define([
     ],
     function (ProfileListTemplate, ModulesAccessView, CreateView) {
         var ContentView = Backbone.View.extend({
-            el: '#content-holder',
-            contentType: "Profiles",
-            actionType: "Content",
-            initialize: function (options) {
+            el                : '#content-holder',
+            contentType       : "Profiles",
+            actionType        : "Content",
+            initialize        : function (options) {
                 this.startTime = options.startTime;
                 this.profilesCollection = options.collection;
                 this.profilesCollection.bind('add', _.bind(this.render, this));
                 this.profilesCollection.bind('reset', _.bind(this.render, this));
                 this.render();
             },
-            events: {
-                "click .profile-list li a": "viewProfileDetails",
-                "click .editProfile": "editProfile",
-                "click #newProfileBtn": "createProfile",
-                "click #modulesAccessTable tr th input": "checkUncheck",
-                "click #modulesAccessTable tr.parent": "showChild",
+            events            : {
+                "click .profile-list li a"                    : "viewProfileDetails",
+                "click .editProfile"                          : "editProfile",
+                "click #newProfileBtn"                        : "createProfile",
+                "click #modulesAccessTable tr th input"       : "checkUncheck",
+                "click #modulesAccessTable tr.parent"         : "showChild",
                 "click #modulesAccessTable tr.parent td input": "checkUncheckChild",
-                "click #modulesAccessTable tr.child td input": "checkUncheckParent"
+                "click #modulesAccessTable tr.child td input" : "checkUncheckParent"
             },
             checkUncheckParent: function (e) {
                 var td = $(e.target).parent();
@@ -46,7 +46,7 @@ define([
                     }
                 }
             },
-            checkUncheckChild: function (e) {
+            checkUncheckChild : function (e) {
                 var n = $(e.target).parent().parent().find("td").index($(e.target).parent());
                 var cur = $(e.target).closest(".parent");
                 while (cur.next().hasClass("child")) {
@@ -80,7 +80,7 @@ define([
                 }
             },
 
-            showChild: function (e) {
+            showChild         : function (e) {
                 if (!$(e.target).is("input")) {
                     var cur = $(e.target).closest(".parent");
                     while (cur.next().hasClass("child")) {
@@ -89,14 +89,14 @@ define([
                     }
                 }
             },
-            checkUncheck: function (e) {
+            checkUncheck      : function (e) {
                 var n = $("#modulesAccessTable tr th").index($(e.target).parent());
                 $("#modulesAccessTable tr").each(function () {
                     $(this).find("td").eq(n).find("input").prop("checked", $(e.target).prop("checked"));
                 });
 
             },
-            createItem: function () {
+            createItem        : function () {
                 new CreateView({collection: this.profilesCollection});
             },
             editProfileDetails: function () {
@@ -199,8 +199,8 @@ define([
                 var selectedProfile = $('.profile li.active a').text().replace(' Profile', '');
                 if (selectedProfile) {
                     this.modulesView = new ModulesAccessView({
-                        action: "edit",
-                        profileName: selectedProfile,
+                        action            : "edit",
+                        profileName       : selectedProfile,
                         profilesCollection: this.profilesCollection
                     });
                 }
@@ -234,7 +234,7 @@ define([
                         headers: {
                             mid: 39
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             $('#top-bar-saveBtn').hide();
                             $('#top-bar-editBtn').show();
@@ -253,7 +253,7 @@ define([
                             }
 
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
 
@@ -263,23 +263,26 @@ define([
             deleteItems: function () {
                 var self = this;
                 var selectedProfileId = $('#profilesList > li.active > a').data('id');
-                if (!selectedProfileId) throw new Error("Could not delete profile. Id is undefined");
+                if (!selectedProfileId) {
+                    throw new Error("Could not delete profile. Id is undefined");
+                }
                 var model = this.profilesCollection.get(selectedProfileId);
-                if (model)
+                if (model) {
                     model.destroy({
                         headers: {
                             mid: 39
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             self.profilesCollection.trigger('reset');
                             Backbone.history.fragment = "";
                             Backbone.history.navigate("#easyErp/Profiles", {trigger: true});
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
+                }
                 //Navigate to page to hide the edit and delete buttons
 
             },
@@ -288,7 +291,7 @@ define([
                 this.$el.html(_.template(ProfileListTemplate,
                     {
                         profilesCollection: this.profilesCollection.toJSON(),
-                        contentType: this.contentType
+                        contentType       : this.contentType
                     }));
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 return this;

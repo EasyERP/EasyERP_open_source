@@ -201,7 +201,8 @@
   font-family: @lucida-font;
   width: 100%;
 
-  td, th {  //main themse for all list
+  td, th {
+    //main themse for all list
     height: 20px;
     padding: 0 6px;
     white-space: nowrap;
@@ -250,13 +251,14 @@
   }
 
   .notForm {
-    input{
+    input {
       margin-top: 2px;
       cursor: pointer;
     }
   }
 
-  .oe_sortable, .oe_sortable_sub { //style for sort arrows in thead
+  .oe_sortable, .oe_sortable_sub {
+    //style for sort arrows in thead
     cursor: pointer;
     position: relative;
     padding-right: 15px;
@@ -282,7 +284,8 @@
 
   }
 
-  .enableTableOdd { // class to enabled table odd color (add to tbody)
+  .enableTableOdd {
+    // class to enabled table odd color (add to tbody)
     tr {
       &:nth-child(odd) {
         background-color: @defaultBgColorOdd-color;
@@ -293,11 +296,13 @@
     }
   }
 
-  .centerCell { //������������ ����������� ������ (add to td)
+  .centerCell {
+    //������������ ����������� ������ (add to td)
     text-align: center;
   }
 
-  &.enable_hover { // enable hover in table (add to table)
+  &.enable_hover {
+    // enable hover in table (add to table)
     tbody {
       tr {
         &:hover {
@@ -308,9 +313,6 @@
   }
 
 }
-
-
-
 
 .salary-list {
   tbody#listTable {
@@ -352,13 +354,15 @@
   margin: @arguments;
 }
 
-.tableFixed  { //  for table layout FIXED
+.tableFixed {
+  //  for table layout FIXED
   table-layout: fixed;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.invisible_border { // invisible border for td
+.invisible_border {
+  // invisible border for td
   border: 1px solid transparent !important;
 }
 

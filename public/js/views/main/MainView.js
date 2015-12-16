@@ -7,18 +7,18 @@ define([
 ], function (MainTemplate, LeftMenuView, MenuItemsCollection, TopMenuView, dataService) {
 
     var MainView = Backbone.View.extend({
-        el: '#wrapper',
-        events: {
+        el             : '#wrapper',
+        events         : {
             'click #loginPanel': 'showSelect',
-            'click': 'hideProp'
+            'click'            : 'hideProp'
         },
-        initialize: function (options) {
+        initialize     : function (options) {
             this.contentType = options ? options.contentType : null;
             this.render();
             this.collection = new MenuItemsCollection();
             this.collection.bind('reset', this.createMenuViews, this);
         },
-        hideProp: function (e) {
+        hideProp       : function (e) {
             if ($(e.target).closest("#loginPanel").length === 0) {
                 var select = this.$el.find('#loginSelect');
                 select.hide();
@@ -30,30 +30,30 @@ define([
             var currentChildren = null;
             if (this.contentType) {
                 currentChildren = this.collection.where({href: this.contentType});
-                var currentRootId = currentChildren[0] ?  currentChildren[0].get("parrent") : null;
+                var currentRootId = currentChildren[0] ? currentChildren[0].get("parrent") : null;
                 currentRoot = this.collection.where({_id: currentRootId});
             }
             this.leftMenu = new LeftMenuView({
-                collection: this.collection,
+                collection     : this.collection,
                 currentChildren: currentChildren,
-                currentRoot: currentRoot
+                currentRoot    : currentRoot
             });
             this.topMenu = new TopMenuView({
-                collection: this.collection.getRootElements(),
+                collection : this.collection.getRootElements(),
                 currentRoot: currentRoot,
-                leftMenu: this.leftMenu
+                leftMenu   : this.leftMenu
             });
             this.topMenu.bind('changeSelection', this.leftMenu.setCurrentSection, {leftMenu: this.leftMenu});
             this.topMenu.bind('mouseOver', this.leftMenu.mouseOver, {leftMenu: this.leftMenu});
         },
-        updateMenu: function (contentType) {
+        updateMenu     : function (contentType) {
             var currentChildren = this.collection.where({href: contentType});
-            var currentRootId = currentChildren[0] ?  currentChildren[0].get("parrent") : null;
+            var currentRootId = currentChildren[0] ? currentChildren[0].get("parrent") : null;
             var currentRoot = this.collection.where({_id: currentRootId});
             this.leftMenu.updateLeftMenu(currentChildren, currentRoot);
             this.topMenu.updateTopMenu(currentRoot);
         },
-        showSelect: function (e) {
+        showSelect     : function (e) {
             var select = this.$el.find('#loginSelect');
             if (select.prop('hidden')) {
                 select.show();
@@ -63,7 +63,7 @@ define([
                 select.prop('hidden', true);
             }
         },
-        render: function () {
+        render         : function () {
             var currentUser;
             if (!App || !App.currentUser || !App.currentUser.login) {
                 dataService.getData('/currentUser', null, function (response, context) {

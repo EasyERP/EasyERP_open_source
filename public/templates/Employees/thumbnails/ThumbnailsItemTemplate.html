@@ -1,28 +1,31 @@
 <div id="searchContainer"></div>
 <% collection.forEach(function(employee){ %>
-    <div class="thumbnailwithavatar employee" id="<%=employee._id%>">
-        <div class="inner">
-            <div class="avatar" style="line-height: 140px;">
-               <!-- <a href="#easyErp/Employees/form/<%=employee._id%>" class="title gotoForm" title="<%=employee.name.first%> <%=employee.name.last%>">-->
-                    <img src="" />
-                <!--</a>-->
-            </div>
-        </div>
-        <div class="info">
-          <div><h4>
-           <!-- <a class = "gotoForm title" href="#easyErp/Employees/form/<%=employee._id%>" title="<%=employee.name.first%> <%=employee.name.last%>">-->
-              <span class="fullName"><%=employee.name.first%> <%=employee.name.last%></span>
-              <% if(employee.relatedUser) { %>
-               <span class="relUser">(<%= employee.relatedUser.login %>)</span>
-                <% } else { %>
-                <span class="relUser"></span></h4>
-                <% } %><!--</a>-->
-          </div>
-            <p class="jobPos"><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></p>
-            <p><label>Age: </label><span class="age"><%=employee.age%></span>
-                <span class="empDateBirth">(<%= employee.dateBirth %>)</span>
-            </p>
-            <p class="telephone"><label>Tel: </label><a href="skype:<%=employee.workPhones.mobile%>?call"><%=employee.workPhones.mobile%></a></p>
+<div class="thumbnailwithavatar employee" id="<%=employee._id%>">
+    <div class="inner">
+        <div class="avatar" style="line-height: 140px;">
+            <!-- <a href="#easyErp/Employees/form/<%=employee._id%>" class="title gotoForm" title="<%=employee.name.first%> <%=employee.name.last%>">-->
+            <img src=""/>
+            <!--</a>-->
         </div>
     </div>
-    <% }) %>
+    <div class="info">
+        <div><h4>
+            <!-- <a class = "gotoForm title" href="#easyErp/Employees/form/<%=employee._id%>" title="<%=employee.name.first%> <%=employee.name.last%>">-->
+            <span class="fullName"><%=employee.name.first%> <%=employee.name.last%></span>
+            <% if(employee.relatedUser) { %>
+            <span class="relUser">(<%= employee.relatedUser.login %>)</span>
+            <% } else { %>
+            <span class="relUser"></span></h4>
+            <% } %><!--</a>-->
+        </div>
+        <p class="jobPos"><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></p>
+
+        <p><label>Age: </label><span class="age"><%=employee.age%></span>
+            <span class="empDateBirth">(<%= employee.dateBirth %>)</span>
+        </p>
+
+        <p class="telephone"><label>Tel: </label><a href="skype:<%=employee.workPhones.mobile%>?call"><%=employee.workPhones.mobile%></a>
+        </p>
+    </div>
+</div>
+<% }) %>

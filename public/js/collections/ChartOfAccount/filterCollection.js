@@ -8,12 +8,12 @@ define(['models/chartOfAccount'
 ], function (JobsModel) {
     var JobsCollection = Backbone.Collection.extend({
 
-        model: JobsModel,
-        url: '/chartOfAccount/',
-        contentType: null,
-        page: null,
+        model       : JobsModel,
+        url         : '/chartOfAccount/',
+        contentType : null,
+        page        : null,
         numberToShow: null,
-        viewType: null,
+        viewType    : null,
 
         initialize: function (options) {
             this.startTime = new Date();
@@ -22,16 +22,16 @@ define(['models/chartOfAccount'
             this.filter = options ? options.filter : {};
 
             this.fetch({
-                data: options,
-                reset: true,
+                data   : options,
+                reset  : true,
                 success: function (newCollection) {
-                    that.page ++;
+                    that.page++;
 
-                    if (App.currectCollection){
+                    if (App.currectCollection) {
                         App.currectCollection.reset(newCollection.models);
                     }
                 },
-                error: function(err, xhr){
+                error  : function (err, xhr) {
                     console.log(xhr);
                 }
             });

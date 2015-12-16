@@ -371,7 +371,7 @@
                 var depForTransfer = this.currentModel.get('department');
 
                 if (department._id !== depForTransfer._id) {
-                    data.depForTransfer=depForTransfer.name;
+                    data.depForTransfer = depForTransfer.name;
                 }
 
                 var workflowId = el.find("#workflowsDd").data("id");

@@ -217,12 +217,12 @@
                 //};
             },
 
-            showMore       : function (event) {
+            showMore        : function (event) {
                 //event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
             //modified for filter Vasya
-            showMoreContent: function (newModels) {
+            showMoreContent : function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');

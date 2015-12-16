@@ -1,15 +1,15 @@
-﻿define(['Validation','common'],function (Validation,common) {
+﻿define(['Validation', 'common'], function (Validation, common) {
     var LeadModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize: function(){
-            this.on('invalid', function(model, errors){
-                if(errors.length > 0){
+        initialize : function () {
+            this.on('invalid', function (model, errors) {
+                if (errors.length > 0) {
                     var msg = errors.join('\n');
                     alert(msg);
                 }
             });
         },
-        validate: function(attrs){
+        validate   : function (attrs) {
             var errors = [];
             Validation.checkGroupsNameField(errors, true, attrs.name, "Subject");
             Validation.checkNameField(errors, false, attrs.contactName.first, "Contact first name");
@@ -24,74 +24,77 @@
             Validation.checkStreetField(errors, false, attrs.address.street, "Street");
             Validation.checkEmailField(errors, false, attrs.email, "Email");
             Validation.checkNotesField(errors, false, attrs.internalNotes, "Notes");
-            if(errors.length > 0)
+            if (errors.length > 0) {
                 return errors;
+            }
         },
-        parse:true,
-        parse: function (response) {
+        parse      : true,
+        parse      : function (response) {
             if (!response.data) {
-                if (response.createdBy)
+                if (response.createdBy) {
                     response.createdBy.date = common.utcDateToLocaleDateTime(response.createdBy.date);
-                if (response.editedBy)
+                }
+                if (response.editedBy) {
                     response.editedBy.date = common.utcDateToLocaleDateTime(response.editedBy.date);
+                }
                 return response;
             }
         },
-        defaults: {
+        defaults   : {
             isOpportunitie: false,
             createCustomer: false,
-            name: 'New Lead',
-            company: {
-                id: '',
+            name          : 'New Lead',
+            company       : {
+                id  : '',
                 name: ''
             },
-            customer: {
-                id: '',
+            customer      : {
+                id  : '',
                 name: ''
             },
-            address: {
-                street: '',
-                city: '',
-                state: '',
-                zip: '',
+            address       : {
+                street : '',
+                city   : '',
+                state  : '',
+                zip    : '',
                 country: ''
             },
-            salesPerson: {
-                id: '',
+            salesPerson   : {
+                id  : '',
                 name: ''
             },
-            salesTeam: {
-                id: '',
+            salesTeam     : {
+                id  : '',
                 name: ''
             },
-            contactName: {
+            contactName   : {
                 first: '',
-                last: ''
+                last : ''
             },
-            email: '',
-            func: '',
-            phones: {
+            email         : '',
+            func          : '',
+            phones        : {
                 mobile: '',
-                phone: '',
-                fax: ''
+                phone : '',
+                fax   : ''
             },
 
-            priority: 'Trivial',
-            categories: {
-                id: '',
+            priority     : 'Trivial',
+            categories   : {
+                id  : '',
                 name: ''
             },
             internalNotes: '',
-            active: true,
-            optout: false,
-            reffered: '',
-            workflow: {
-                wName: 'lead',
-                name: 'New',
+            active       : true,
+            optout       : false,
+            reffered     : '',
+            workflow     : {
+                wName : 'lead',
+                name  : 'New',
                 status: 'New'
             }
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/Leads";
         }
     });

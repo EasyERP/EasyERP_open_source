@@ -21,7 +21,7 @@
                                     <dt><label for="product">Product Name</label></dt>
                                     <dd>
                                         <input type="text" id="product" required maxlength="32"
-                                               placeholder="Product Name" />
+                                               placeholder="Product Name"/>
                                     </dd>
                                     <dt><label for="sold">Can be Sold</label></dt>
                                     <dd>
@@ -30,7 +30,7 @@
                                         <%}%> class="checkbox left"/>
                                     </dd>
                                     <dt><label for="expensed">Can be Expensed</label></dt>
-                                    <dd><input type="checkbox" id="expensed" class="checkbox left" /></dd>
+                                    <dd><input type="checkbox" id="expensed" class="checkbox left"/></dd>
                                     <!--
                                                         <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>-->
                                     <dt><label for="purchased">Can be Purchased</label></dt>
@@ -53,34 +53,39 @@
                                 <div class="half-block left">
                                     <dl class="product-info">
                                         <dt><label for="productType">Product Type</label></dt>
-                                        <dd><a id="productType" class="current-selected" href="javascript:;">Select</a></dd>
+                                        <dd><a id="productType" class="current-selected" href="javascript:;">Select</a>
+                                        </dd>
                                         <!--                    <dl id="typeOfEvent" class="hidden">
                                                                 <dt><label for="eventType">Type of Event</label></dt><dd><a id="eventType" class="current-selected" href="javascript:;">Select</a></dd>
                                                             </dl>-->
                                         <dt><label for="salePrice">Sale Price</label></dt>
-                                    <dd>
-                                        <input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                               placeholder="0.00" />
-                                    </dd>
+                                        <dd>
+                                            <input type="text" id="salePrice" class="extra-info" maxlength="10"
+                                                   placeholder="0.00"/>
+                                        </dd>
                                     </dl>
                                 </div>
                                 <div class="half-block left">
                                     <dt><label for="active">Active</label></dt>
-                                    <dd><input type="checkbox" id="active" checked class="checkbox left" /></dd>
+                                    <dd><input type="checkbox" id="active" checked class="checkbox left"/></dd>
                                     <dt><label for="barcode">Barcode</label></dt>
                                     <dd>
                                         <input type="text" id="barcode" class="extra-info" maxlength="20"
-                                               placeholder="" />
+                                               placeholder=""/>
                                     </dd>
-                                    <dt></dt><dd><div id="bcTarget"></div></dd>
+                                    <dt></dt>
+                                    <dd>
+                                        <div id="bcTarget"></div>
+                                    </dd>
                                 </div>
                                 <div class="clearfix"></div>
                                 <div class="full-width left">
                                     <div class="inner">
                                         <div class="textarea-wrapper">
                                             <textarea type="text" class="full-width productDescriptionCreate"
-                                                      name="description" placeholder="Add a Description..." id="description"
-                                                      maxlength="500" required />
+                                                      name="description" placeholder="Add a Description..."
+                                                      id="description"
+                                                      maxlength="500" required/>
                                         </div>
                                     </div>
                                 </div>
@@ -91,28 +96,29 @@
                                 <div class="full-width left">
                                     <dl class="product-info">
                                         <dt><label for="productCategory">Product Category</label></dt>
-                                        <dd><a id="productCategory" class="current-selected" href="javascript:;">All</a></dd>
-                                       <!-- <dt><label for="assetType">Asset Type</label></dt>
-                                        <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a></dd>
-                                        <dt><label for="deferredRevenueType">Deferred Revenue Type</label></dt>
-                                        <dd><a id="deferredRevenueType" class="current-selected" href="javascript:;">Select</a></dd>-->
+                                        <dd><a id="productCategory" class="current-selected" href="javascript:;">All</a>
+                                        </dd>
+                                        <!-- <dt><label for="assetType">Asset Type</label></dt>
+                                         <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a></dd>
+                                         <dt><label for="deferredRevenueType">Deferred Revenue Type</label></dt>
+                                         <dd><a id="deferredRevenueType" class="current-selected" href="javascript:;">Select</a></dd>-->
                                     </dl>
                                 </div>
-                               <!-- <div class="clearfix"></div>
-                                <div class="bottomLine">
-                                    <div class="half-block left">
-                                        <dt><label for="incomeAccount">Income Account</label></dt>
-                                        <dd><a id="incomeAccount" class="current-selected" href="javascript:;">Select</a></dd>
-                                        <dt><label for="customerTaxes">Customer Taxes</label></dt>
-                                        <dd><a id="customerTaxes" class="current-selected" href="javascript:;">Select</a></dd>
-                                    </div>
-                                    <div class="half-block left">
-                                        <dt><label for="expenseAccount">Expense Account</label></dt>
-                                        <dd><a id="expenseAccount" class="current-selected" href="javascript:;">Select</a></dd>
-                                        <dt><label for="supplierTaxes">Supplier Taxes</label></dt>
-                                        <dd><a id="supplierTaxes" class="current-selected" href="javascript:;">Select</a></dd>
-                                    </div>
-                                </div>-->
+                                <!-- <div class="clearfix"></div>
+                                 <div class="bottomLine">
+                                     <div class="half-block left">
+                                         <dt><label for="incomeAccount">Income Account</label></dt>
+                                         <dd><a id="incomeAccount" class="current-selected" href="javascript:;">Select</a></dd>
+                                         <dt><label for="customerTaxes">Customer Taxes</label></dt>
+                                         <dd><a id="customerTaxes" class="current-selected" href="javascript:;">Select</a></dd>
+                                     </div>
+                                     <div class="half-block left">
+                                         <dt><label for="expenseAccount">Expense Account</label></dt>
+                                         <dd><a id="expenseAccount" class="current-selected" href="javascript:;">Select</a></dd>
+                                         <dt><label for="supplierTaxes">Supplier Taxes</label></dt>
+                                         <dd><a id="supplierTaxes" class="current-selected" href="javascript:;">Select</a></dd>
+                                     </div>
+                                 </div>-->
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -123,10 +129,10 @@
 
                                     <div class="clearfix"></div>
                                 </div>
-                                <br />
+                                <br/>
 
                                 <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                                <img class="image_output" />
+                                <img class="image_output"/>
 
                                 <div class="clearfix"></div>
                             </div>

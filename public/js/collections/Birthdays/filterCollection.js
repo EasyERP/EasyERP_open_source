@@ -1,22 +1,22 @@
 ﻿define([
-    'models/EmployeesModel',
-    'common'
-],
+        'models/EmployeesModel',
+        'common'
+    ],
     function (EmployeeModel, common) {
         var EmployeesCollection = Backbone.Collection.extend({
-            model: EmployeeModel,
-            url: "/Birthdays",
+            model     : EmployeeModel,
+            url       : "/Birthdays",
             initialize: function (options) {
-				this.startTime = new Date();
+                this.startTime = new Date();
                 this.fetch({
-                    reset: true,
-                    success: function() {
+                    reset  : true,
+                    success: function () {
                     },
-                    error: this.fetchError
+                    error  : this.fetchError
                 });
             },
-            parse: true,
-            parse: function (response) {
+            parse     : true,
+            parse     : function (response) {
                 if (response.data) {
                     if (response.data.weekly) {
                         _.map(response.data.weekly, function (employee) {

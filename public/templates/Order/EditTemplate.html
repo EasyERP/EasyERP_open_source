@@ -12,7 +12,7 @@
                             <span>Receive Invoice</span>
                         </button>
                         <!--<button class="btn cancelOrder">-->
-                            <!--<span>Cancel</span>-->
+                        <!--<span>Cancel</span>-->
                         <!--</button>-->
                         <%} else {%>
                         <button class="btn setDraft">
@@ -30,7 +30,9 @@
                                     <dt><label>Supplier</label></dt>
                                     <dd>
                                         <%if(model.supplier){%>
-                                            <a id="supplierDd" data-id="<%=model.supplier._id%>" href="#easyErp/Companies/form/<%=model.supplier._id%>"><%=model.supplier.name.first + ' ' + model.supplier.name.last%></a>
+                                        <a id="supplierDd" data-id="<%=model.supplier._id%>"
+                                           href="#easyErp/Companies/form/<%=model.supplier._id%>"><%=model.supplier.name.first
+                                            + ' ' + model.supplier.name.last%></a>
                                         <%}%>
                                     </dd>
                                     <!--<dt><label>Supplier Reference</label></dt>-->
@@ -52,7 +54,10 @@
 
                                     <dt><label for="currencyDd">Currency</label></dt>
                                     <dd>
-                                        <a id="currencyDd" class="current-selected" data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>" href="javascript:;"><%= model.currency && model.currency.name ? model.currency.name : ''%></a>
+                                        <a id="currencyDd" class="current-selected"
+                                           data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>"
+                                           href="javascript:;"><%= model.currency && model.currency.name ?
+                                            model.currency.name : ''%></a>
                                     </dd>
                                 </dl>
                             </div>
@@ -76,22 +81,26 @@
                                     <div class="half-block left">
                                         <dl class="quotation-info">
                                             <dt><label for="expectedDate">Expected Date</label></dt>
-                                            <dd><input id="expectedDate" placeholder="" type="text" value="<%=model.expectedDate%>" readonly/>
+                                            <dd><input id="expectedDate" placeholder="" type="text"
+                                                       value="<%=model.expectedDate%>" readonly/>
                                             </dd>
                                             <dt><label for="destination">Destination</label></dt>
                                             <dd>
                                                 <%if(model.destination){%>
-                                                    <a id="destination" class="current-selected"
+                                                <a id="destination" class="current-selected"
                                                    href="javascript:;" data-id="<%=model.destination._id%>"><%=model.destination.name%></a>
                                                 <%} else {%>
-                                                    <a id="destination" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <a id="destination" class="current-selected" href="javascript:;"
+                                                   data-id="">Select</a>
                                                 <%}%>
                                             <dt><label for="incoterm">Incoterm</label></dt>
                                             <dd>
                                                 <%if(model.incoterm){%>
-                                                <a id="incoterm" class="current-selected" href="javascript:;" data-id="<%= model.incoterm._id%>"><%=model.incoterm.name %></a>
+                                                <a id="incoterm" class="current-selected" href="javascript:;"
+                                                   data-id="<%= model.incoterm._id%>"><%=model.incoterm.name %></a>
                                                 <%} else {%>
-                                                <a id="incoterm" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <a id="incoterm" class="current-selected" href="javascript:;"
+                                                   data-id="">Select</a>
                                                 <%}%>
                                             </dd>
                                             </dd>
@@ -102,9 +111,11 @@
                                             <dt><label for="invoicingControl">Invoicing Control</label></dt>
                                             <dd>
                                                 <%if(model.invoiceControl){%>
-                                                <a id="invoicingControl" class="current-selected" href="javascript:;" data-id="<%= model.invoiceControl._id %>"><%=model.invoiceControl.name%></a>
+                                                <a id="invoicingControl" class="current-selected" href="javascript:;"
+                                                   data-id="<%= model.invoiceControl._id %>"><%=model.invoiceControl.name%></a>
                                                 <%} else {%>
-                                                <a id="invoicingControl" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <a id="invoicingControl" class="current-selected" href="javascript:;"
+                                                   data-id="">Select</a>
                                                 <%}%>
                                             </dd>
                                             </dd>
@@ -114,14 +125,17 @@
                                             <dd>
                                                 <%if(model.paymentTerm){%>
                                                 <a id="paymentTerm" class="current-selected"
-                                                   href="javascript:;" data-id="<%= model.paymentTerm._id %>"><%= model.paymentTerm.name %></a>
+                                                   href="javascript:;" data-id="<%= model.paymentTerm._id %>"><%=
+                                                    model.paymentTerm.name %></a>
                                                 <%} else {%>
-                                                <a id="paymentTerm" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <a id="paymentTerm" class="current-selected" href="javascript:;"
+                                                   data-id="">Select</a>
                                                 <%}%>
                                             </dd>
                                             <dt><label for="fiscalPosition">Fiscal Position</label></dt>
                                             <dd>
-                                                <a id="fiscalPosition" class="current-selected" href="javascript:;">Fiscal Position</a>
+                                                <a id="fiscalPosition" class="current-selected" href="javascript:;">Fiscal
+                                                    Position</a>
                                             </dd>
                                         </dl>
                                     </div>

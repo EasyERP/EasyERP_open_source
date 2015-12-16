@@ -118,7 +118,7 @@ define([
                 this.sort = sortObject;
                 new JobsCollection({
                     sort    : sortObject,
-                    filter: this.filter,
+                    filter  : this.filter,
                     viewType: 'list'
                 });
             },

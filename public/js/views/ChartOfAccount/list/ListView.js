@@ -196,7 +196,7 @@ define([
                 var checkLength;
                 var newRows = this.$listTable.find('#false');
 
-                if (newRows.length){
+                if (newRows.length) {
                     return false;
                 }
 
@@ -318,10 +318,10 @@ define([
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                    if (editedElementContent === 'code'){
+                    if (editedElementContent === 'code') {
                         editedElementValue = parseInt(editedElementValue);
 
-                        if (isNaN(editedElementValue)){
+                        if (isNaN(editedElementValue)) {
                             editedCol.addClass('errorContent');
                             editedElementValue = '';
                         } else {
@@ -458,7 +458,7 @@ define([
                 this.resetCollection(modelObject);
             },
 
-            errorFunction: function(){
+            errorFunction: function () {
                 alert("ERROR");
             },
 

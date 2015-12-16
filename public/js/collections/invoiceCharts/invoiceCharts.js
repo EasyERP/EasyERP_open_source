@@ -10,11 +10,10 @@
 
             initialize: function (options) {
                 this.fetch({
-                    data: options,
+                    data : options,
                     reset: true
                 });
             }
-
 
         });
 

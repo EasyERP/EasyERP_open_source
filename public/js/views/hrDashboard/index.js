@@ -17,9 +17,7 @@ define([
 
         template: _.template(mainTemplate),
 
-        events: {
-
-        },
+        events: {},
 
         initialize: function (options) {
             var dashCollection = this.dashCollection = custom.retriveFromCash('hrDashboard');
@@ -51,7 +49,7 @@ define([
             var hired = this.dashCollection.get('hired');
             var fired = this.dashCollection.get('fired');
 
-            if(!arrOfDates || !arrOfDates.length) {
+            if (!arrOfDates || !arrOfDates.length) {
                 for (var i = 0; i < 12; i++) {
                     month = startMonth + i;
 
@@ -63,8 +61,8 @@ define([
                     }
 
                     arrOfDates.push({
-                        month: month,
-                        year: year,
+                        month      : month,
+                        year       : year,
                         dateByMonth: year * 100 + month
                     });
                 }
@@ -74,7 +72,7 @@ define([
 
             $currentEl.html(this.template({arrOfDates: arrOfDates, hired: hired, fired: fired}));
 
-            arrOfDates.forEach(function(dateObject){
+            arrOfDates.forEach(function (dateObject) {
                 var totalContainer = self.$el.find('#total_' + dateObject.dateByMonth);
                 var hiredContainer = self.$el.find('#hired_' + dateObject.dateByMonth);
                 var firedContainer = self.$el.find('#fired_' + dateObject.dateByMonth);

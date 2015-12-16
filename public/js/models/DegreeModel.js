@@ -1,10 +1,10 @@
 ﻿define(function () {
     var DegreeModel = Backbone.Model.extend({
         idAttribute: "_id",
-        defaults: {
+        defaults   : {
             name: ''
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/Degrees";
         }
     });

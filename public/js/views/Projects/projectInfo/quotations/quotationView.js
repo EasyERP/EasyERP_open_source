@@ -165,7 +165,6 @@ define([
             }, this);
         },
 
-
         goToEditDialog: function (e) {
             e.preventDefault();
             var self = this;
@@ -191,7 +190,6 @@ define([
                         customerId: self.customerId,
                         collection: self.collection
                     });
-
 
                     //self.collection.remove(id);
 
@@ -341,7 +339,6 @@ define([
                 self.stages = stages;
             });
         }
-
 
     });
 

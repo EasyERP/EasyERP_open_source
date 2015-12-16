@@ -3,15 +3,13 @@
     'helpers'
 ], function (wTrackRowsHeader, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
-        el: '#linwoiceGenerateTable',
+        el      : '#linwoiceGenerateTable',
         template: _.template(wTrackRowsHeader),
 
-        events: {
-           
-        },
+        events: {},
 
         initialize: function (options) {
-            if(!options.stopRender) {
+            if (!options.stopRender) {
                 this.render(options);
             }
         },

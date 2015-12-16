@@ -1,22 +1,27 @@
 <div class="inner" id="<%=model._id%>" data-id="<%=model._id%>" data-sequence="<%=model.sequence%>">
     <div class="opportunity-header">
         <h4 class="bold left" style="max-width:56%"><%=model.name%></h4>
+
         <h3>$<%=(model.expectedRevenue.value)%></h3>
+
         <div class="clearfix">
         </div>
     </div>
     <div class="opportunity-content">
         <div class="half-block left">
             <p class="left"><%=(model.customer) ? model.customer.name.first + ' ' + model.customer.name.last : ''%></p>
-            <p class="left"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last : ''%></p>
-			<%if (model.nextAction&&model.nextAction.desc){%>
-			<br/>
-         	<p class="left" style="text-align:left;"><%=model.nextAction?model.nextAction.desc:''%> </p>
-			<%}%>
+
+            <p class="left"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last :
+                ''%></p>
+            <%if (model.nextAction&&model.nextAction.desc){%>
+            <br/>
+
+            <p class="left" style="text-align:left;"><%=model.nextAction?model.nextAction.desc:''%> </p>
+            <%}%>
         </div>
         <div class="half-block right">
-		  <%if (model.nextAction&&model.nextAction.desc){%>
-		  <%}%>
+            <%if (model.nextAction&&model.nextAction.desc){%>
+            <%}%>
             <p class="right" style="text-align:right;"> <%=model.nextAction?model.nextAction.date:''%></p>
         </div>
         <div class="clearfix"></div>

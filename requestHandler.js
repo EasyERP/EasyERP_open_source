@@ -726,7 +726,7 @@ var requestHandler = function (app, event, mainDb) {
                         var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
                         var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
                         budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
-                        budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;;
+                        budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;
 
                         projectValues.revenue = budgetTotal.revenueSum;
                         projectValues.profit = budgetTotal.profitSum;

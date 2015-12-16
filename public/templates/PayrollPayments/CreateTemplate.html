@@ -55,31 +55,36 @@
                         </colgroup>
                         <tbody id="payRoll-TableBody">
                         <% var total = 0;%>
-                            <% collection.forEach(function(model, index){ %>
+                        <% collection.forEach(function(model, index){ %>
                         <%var cid = model.cid;%>
                         <%model = model.toJSON();%>
 
-                                <tr data-id="<%=cid%>">
-                                    <td data-content="number" class="centerCell"><%=index+1%></td>
-                                    <!--<td class="notForm centerCell"><input id="<%=cid%>" type="checkbox" value="<%=cid%>"-->
-                                                               <!--class="checkbox"/></td>-->
-                                    <td class="editable" data-content="supplier"><%=model.supplier ? model.supplier.fullName : ''%></td>
-                                    <td><%=model.month + '/' + model.year%></td>
-                                    <td class="editable" data-content="paymentMethod"><%=model.paymentMethod ? model.paymentMethod.name : ''%></td>
+                        <tr data-id="<%=cid%>">
+                            <td data-content="number" class="centerCell"><%=index+1%></td>
+                            <!--<td class="notForm centerCell"><input id="<%=cid%>" type="checkbox" value="<%=cid%>"-->
+                            <!--class="checkbox"/></td>-->
+                            <td class="editable" data-content="supplier"><%=model.supplier ? model.supplier.fullName :
+                                ''%>
+                            </td>
+                            <td><%=model.month + '/' + model.year%></td>
+                            <td class="editable" data-content="paymentMethod"><%=model.paymentMethod ?
+                                model.paymentMethod.name : ''%>
+                            </td>
 
-                                    <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
-                                        data-cash="<%=model.paidAmount%>"><%=currencySplitter(model.paidAmount.toString())%>
-                                    </td>
+                            <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
+                                data-cash="<%=model.paidAmount%>"><%=currencySplitter(model.paidAmount.toString())%>
+                            </td>
 
-                                    <td data-content="onCash" class="differenceAmount money">0</td>
+                            <td data-content="onCash" class="differenceAmount money">0</td>
 
-                                    <td data-type="input" data-content="onCash" data-cash="<%=model.paidAmount%>" class="editable autoCalc cash paidAmount money">
-                                        <%=currencySplitter(model.paidAmount.toString())%>
-                                    </td>
+                            <td data-type="input" data-content="onCash" data-cash="<%=model.paidAmount%>"
+                                class="editable autoCalc cash paidAmount money">
+                                <%=currencySplitter(model.paidAmount.toString())%>
+                            </td>
 
-                                    <%total += model.paidAmount;%>
-                                </tr>
-                            <% }) %>
+                            <%total += model.paidAmount;%>
+                        </tr>
+                        <% }) %>
                         </tbody>
                     </table>
                 </div>

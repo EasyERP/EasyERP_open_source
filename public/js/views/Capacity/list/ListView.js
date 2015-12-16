@@ -850,13 +850,13 @@ define([
                 }
             },
 
-            checked: function(e) {
+            checked: function (e) {
                 var target = $(e.target);
                 var tr = target.closest('tr');
                 var dataName = tr.attr('data-name');
                 var subRowsCheckboxes = this.$el.find('.subRows' + dataName).find('.checkbox:checked');
                 var length = this.departmentsCollections[dataName] ? this.departmentsCollections[dataName].length : 0;
-                var depRow = this.$el.find('.departmentRow[data-name="'+ dataName +'"]');
+                var depRow = this.$el.find('.departmentRow[data-name="' + dataName + '"]');
                 var checkDepartment = depRow.find('.departmentCB');
 
                 if (length > 0) {

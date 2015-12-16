@@ -11,21 +11,21 @@ define([
 
             getTotal: function () {
                 var result = {unTaxed: 0, total: 0, cellSpan: this.cellSpan};
-                this.element.find(".unTaxed").each(function() {
+                this.element.find(".unTaxed").each(function () {
                     result.unTaxed += parseFloat($(this).text());
                 })
-                this.element.find(".total").each(function() {
+                this.element.find(".total").each(function () {
                     result.total += parseFloat($(this).text());
                 })
                 return result
             },
 
-            initialize: function(options) {
+            initialize: function (options) {
                 this.element = options.element;
                 this.cellSpan = options.cellSpan;
             },
-            render: function() {
-                if (this.$el.find("tr").length>0){
+            render    : function () {
+                if (this.$el.find("tr").length > 0) {
                     this.$el.find("#unTaxed").text(this.getTotal().unTaxed.toFixed(2));
                     this.$el.find("#total").text(this.getTotal().total.toFixed(2));
                 } else {

@@ -44,7 +44,6 @@ define([
                 this.render();
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                
 
                 this.filterView;
             },

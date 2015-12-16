@@ -89,14 +89,18 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true, projectManager: self.projectManager, onlyView: onlyView});
+                    new editView({
+                        model         : model,
+                        redirect      : true,
+                        projectManager: self.projectManager,
+                        onlyView      : onlyView
+                    });
                 },
                 error  : function () {
                     alert('Please refresh browser');
                 }
             });
         },
-
 
         showPage: function (event) {
 
@@ -234,7 +238,6 @@ define([
                 pagenation.show();
             }
         },
-
 
         goSort: function (e) {
             var target$;
@@ -459,7 +462,6 @@ define([
             }, function (stages) {
                 self.stages = stages;
             });
-
 
         }
     });

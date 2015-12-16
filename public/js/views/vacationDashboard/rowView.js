@@ -6,9 +6,7 @@ define([
 
         template: _.template(mainTemplate),
 
-        events: {
-
-        },
+        events: {},
 
         initialize: function (inputData) {
             this.render(inputData);

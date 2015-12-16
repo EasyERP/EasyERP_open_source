@@ -1,14 +1,14 @@
 ﻿define([
-    'models/ApplicationsModel'
-],
+        'models/ApplicationsModel'
+    ],
     function (ApplicationModel) {
         var TasksCollection = Backbone.Collection.extend({
-            model: ApplicationModel,
-            url: "/Applications/",
-            page: null,
+            model       : ApplicationModel,
+            url         : "/Applications/",
+            page        : null,
             namberToShow: null,
-            contentType: null,
-            viewType: null,
+            contentType : null,
+            viewType    : null,
 
             initialize: function (options) {
                 var that = this;
@@ -16,7 +16,7 @@
                 this.contentType = options.contentType;
                 this.viewType = options.viewType;
                 this.wfStatus = options.status || [];
-                
+
                 if (options && options.viewType) {
                     this.url += options.viewType;
                 }
@@ -26,14 +26,16 @@
                     this.page = options.page || 1;
                 }
                 this.fetch({
-                    data: options,
-                    reset: true,
-                    success: function() {
-                        that.page ++;
+                    data   : options,
+                    reset  : true,
+                    success: function () {
+                        that.page++;
 
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
@@ -43,18 +45,18 @@
 
                 var filterObject = options || {};
 
-                filterObject['page'] = (options && options.page) ? options.page: this.page;
-                filterObject['count'] = (options && options.count) ? options.count: this.namberToShow;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType: this.contentType;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType: this.viewType;
+                filterObject['page'] = (options && options.page) ? options.page : this.page;
+                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
+                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
-                        that.page ++;
+                        that.page++;
                         that.trigger('showmore', models);
                     },
-                    error: function() {
+                    error  : function () {
                         alert('Some Error');
                     }
                 });
@@ -67,4 +69,4 @@
         });
 
         return TasksCollection;
-});
+    });

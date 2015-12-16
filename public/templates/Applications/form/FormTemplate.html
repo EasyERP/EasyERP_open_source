@@ -1,92 +1,111 @@
 <div class="formHeader">
-  <button class="red hireEmployee"><span>Hire & Create Employee</span></button>
-  <button class="red refuseEmployee"><span>Refuse</span></button>
-  <ul class="breadcrumb"></ul>
+    <button class="red hireEmployee"><span>Hire & Create Employee</span></button>
+    <button class="red refuseEmployee"><span>Refuse</span></button>
+    <ul class="breadcrumb"></ul>
 </div>
 <div class="form-holder">
-  <form class="form" id="applicationForm" data-id="<%=_id%>">
-    <div class="inner overflovHidden">
-      <div class="avatar-wrapper left">
-        <div class="avatar">
-		  <img class="person" src="<%=imageSrc%>" />
-        </div>
-      </div>
-      <div class="mainInfo">
-        <h3>
+    <form class="form" id="applicationForm" data-id="<%=_id%>">
+        <div class="inner overflovHidden">
+            <div class="avatar-wrapper left">
+                <div class="avatar">
+                    <img class="person" src="<%=imageSrc%>"/>
+                </div>
+            </div>
+            <div class="mainInfo">
+                <h3>
           <span title='<%=name.first%> <%=name.last%>'>
             <%=(name.first.length>16)?(name.first.substring(0,16)+"..."):name.first%> <%=(name.last.length>16)?(name.last.substring(0,16)+"..."):name.last%>
           </span>
-        </h3>
-        <div class="half-block left">
-		  <dl class="app-info">
-			<dt>Email </dt><dd><span><%=personalEmail%></span></dd>
-			<dt>Phone </dt><dd><span><a href="skype:<%=workPhones.phone%>?call"><%=workPhones.phone%></a></span></dd>
-			<dt>Mobile </dt><dd><span><a href="skype:<%=workPhones.mobile%>?call"><%=workPhones.mobile%></a></span></dd>
-		  </dl>
-		</div>
-        <div class="half-block left">
-		  <dl class="app-info">
-			<dt>Created By </dt><dd><%=createdBy.user ?  createdBy.user.login + " (" + createdBy.date +  ")" : " "%></dd>
-			<dt>Edited By </dt><dd><%=editedBy.user ?  editedBy.user.login + " (" + editedBy.date +  ")" : " "%></dd>
-			<dt>&nbsp;</dt><dd>&nbsp;</dd>
-		  </dl>
+                </h3>
 
-        </div>
-	  <div class="formTitle">
-		<h3 class="left">Job</h3>
-		<div class="clearfix"></div>
-	  </div>
-      <div class="half-block left">
-		<dl class="app-info">
-		  <dt>Applied Job </dt><dd><%=(jobPosition..name) ? jobPosition.name : ''%></dd>
-		  <dt>Department </dt><dd><%=(department.name) ? department.name : ''%></dd>
-		</dl>
-	  </div>	
-      <div class="half-block left">
-		<dl class="app-info">
-		  <dt>Tags </dt><dd><%=tags%></dd>
-		</dl>
-	  </div>	
-	  <div class="clearfix">
-	  </div>
-	  <div class="formTitle">
-		<h3 class="left">Application Summary</h3>
-		<div class="clearfix"></div>
-	  </div>
-      <div class="half-block left">
-		<dl class="app-info">
-		  <dt>Responsible </dt><dd><%=(relatedUser) ? relatedUser.login : ''%></dd>
-		  <dt>Next Action </dt><dd><%=(nextAction) ? nextAction : ''%></dd>
-		</dl>
-	  </div>	
-      <div class="half-block left">
-		<dl class="app-info">
-		  <dt>Source </dt><dd><%=(source) ? source.name : ''%></dd>
-		  <dt>Referred By </dt><dd><%=referredBy%></dd>
-		</dl>
-	  </div>	
-	  <div class="clearfix">
-	  </div>
-	  <div class="formTitle">
-		<h3 class="left">Contract</h3>
-		<div class="clearfix"></div>
-	  </div>
-      <div class="half-block left">
-		<dl class="app-info">
-		  <dt>Expected Salary </dt><dd><%=expectedSalary%></dd>
-		</dl>
-	  </div>	
-      <div class="half-block left">
-		<dl class="app-info">
-		  <dt>Proposed Salary </dt><dd><%=proposedSalary%></dd>
-		</dl>
-	  </div>
-      </div>
-      <div class="clearfix">
-      </div>
-	
-	  <div class="clearfix">
-	  </div>
-  </form>
-  </div>
+                <div class="half-block left">
+                    <dl class="app-info">
+                        <dt>Email</dt>
+                        <dd><span><%=personalEmail%></span></dd>
+                        <dt>Phone</dt>
+                        <dd><span><a href="skype:<%=workPhones.phone%>?call"><%=workPhones.phone%></a></span></dd>
+                        <dt>Mobile</dt>
+                        <dd><span><a href="skype:<%=workPhones.mobile%>?call"><%=workPhones.mobile%></a></span></dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="app-info">
+                        <dt>Created By</dt>
+                        <dd><%=createdBy.user ? createdBy.user.login + " (" + createdBy.date + ")" : " "%></dd>
+                        <dt>Edited By</dt>
+                        <dd><%=editedBy.user ? editedBy.user.login + " (" + editedBy.date + ")" : " "%></dd>
+                        <dt>&nbsp;</dt>
+                        <dd>&nbsp;</dd>
+                    </dl>
+
+                </div>
+                <div class="formTitle">
+                    <h3 class="left">Job</h3>
+
+                    <div class="clearfix"></div>
+                </div>
+                <div class="half-block left">
+                    <dl class="app-info">
+                        <dt>Applied Job</dt>
+                        <dd><%=(jobPosition..name) ? jobPosition.name : ''%></dd>
+                        <dt>Department</dt>
+                        <dd><%=(department.name) ? department.name : ''%></dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="app-info">
+                        <dt>Tags</dt>
+                        <dd><%=tags%></dd>
+                    </dl>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="formTitle">
+                    <h3 class="left">Application Summary</h3>
+
+                    <div class="clearfix"></div>
+                </div>
+                <div class="half-block left">
+                    <dl class="app-info">
+                        <dt>Responsible</dt>
+                        <dd><%=(relatedUser) ? relatedUser.login : ''%></dd>
+                        <dt>Next Action</dt>
+                        <dd><%=(nextAction) ? nextAction : ''%></dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="app-info">
+                        <dt>Source</dt>
+                        <dd><%=(source) ? source.name : ''%></dd>
+                        <dt>Referred By</dt>
+                        <dd><%=referredBy%></dd>
+                    </dl>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="formTitle">
+                    <h3 class="left">Contract</h3>
+
+                    <div class="clearfix"></div>
+                </div>
+                <div class="half-block left">
+                    <dl class="app-info">
+                        <dt>Expected Salary</dt>
+                        <dd><%=expectedSalary%></dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="app-info">
+                        <dt>Proposed Salary</dt>
+                        <dd><%=proposedSalary%></dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="clearfix">
+            </div>
+
+            <div class="clearfix">
+            </div>
+    </form>
+</div>
 

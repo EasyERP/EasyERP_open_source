@@ -29,7 +29,8 @@ define([
 
         sortBy: function (options) {
             this.sortName = options.key ? options.key : 'name';
-            this.sortOrder = options.order ? options.order : 1;;
+            this.sortOrder = options.order ? options.order : 1;
+            ;
             this.int = options.int ? true : false;
 
             this.sort();

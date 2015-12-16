@@ -16,7 +16,7 @@ define([
                 "click #cancelBtn" : "cancel"
             },
 
-            cancel: function(e){
+            cancel: function (e) {
                 var targetEl = $(e.target);
                 var ul = targetEl.closest('ul.frameDetail');
 
@@ -38,8 +38,8 @@ define([
                 endTime.text(endDate);
 
                 custom.cacheToApp('vacationDashDateRange', {
-                    startDate  : startDate,
-                    endDate    : endDate
+                    startDate: startDate,
+                    endDate  : endDate
                 });
 
                 this.trigger('changeDateRange');
@@ -114,8 +114,8 @@ define([
                 this.bindDataPickers(startDate, endDate);
 
                 custom.cacheToApp('vacationDashDateRange', {
-                    startDate  : startDate,
-                    endDate    : endDate
+                    startDate: startDate,
+                    endDate  : endDate
                 });
 
                 return this;

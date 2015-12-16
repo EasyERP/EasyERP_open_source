@@ -78,7 +78,7 @@ define([
                 projectsDdContainer.css('color', 'red');
 
                 App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: CONSTANTS.SELECTP_ROJECT
                 });
             }
@@ -135,7 +135,7 @@ define([
                     aEl.text("Select");
                 }
 
-                if (!self.projectModel){
+                if (!self.projectModel) {
                     dataService.getData("/project/getForQuotation", {"projectId": $("#projectDd").attr("data-id")}, function (project) {
                         self.projectModel = project;
                     })
@@ -160,7 +160,6 @@ define([
             var products = this.products ? this.products.toJSON() : [];
 
             var templ = _.template(ProductInputContent);
-
 
             if (rowId === undefined || /*rowId !== 'false'*/ !hasError) {
                 if (!trEll.length) {
@@ -289,8 +288,9 @@ define([
             var targetEl = $(e.target);
             var parent = targetEl.closest('td');
             var inputEl = parent.find('input');
-            if (!inputEl.length)
+            if (!inputEl.length) {
                 inputEl = parent.find('textarea');
+            }
             var val = inputEl.val();
 
             if (!val.length) {
@@ -398,9 +398,7 @@ define([
                     $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
                 }
 
-
                 //trEl.find('.datepicker').removeClass('notVisible');
-
 
                 //$(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
                 $(parrents[2]).find('.datepicker.notVisible').datepicker({

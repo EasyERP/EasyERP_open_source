@@ -1,13 +1,13 @@
 ﻿define([
-    'models/LeadsModel'
-],
+        'models/LeadsModel'
+    ],
     function (LeadsModel) {
         var LeadsCollection = Backbone.Collection.extend({
-            model: LeadsModel,
-            url: "/Leads/",
-            page: null,
+            model       : LeadsModel,
+            url         : "/Leads/",
+            page        : null,
             namberToShow: null,
-            contentType: null,
+            contentType : null,
 
             initialize: function (options) {
                 this.startTime = new Date();
@@ -22,13 +22,15 @@
                 }
 
                 this.fetch({
-                    data: options,
-                    reset: true,
-                    success: function() {
+                    data   : options,
+                    reset  : true,
+                    success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
@@ -51,20 +53,20 @@
                 filterObject['page'] = this.page;
                 filterObject['count'] = this.namberToShow;
                 filterObject['filter'] = (options) ? options.filter : {};
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType: this.contentType;
+                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
-                        that.page ++;
+                        that.page++;
                         that.trigger('showmore', models);
                     },
-                    error: function() {
+                    error  : function () {
                         alert('Some Error');
                     }
                 });
             },
-            parse: function (response) {
+            parse   : function (response) {
                 return response.data;
             }
         });

@@ -1,17 +1,18 @@
 <tr class="productItem" data-id="<%= products[0] ? products[0]._id : 'false'%>" data-error="true">
     <td data-name="productName">
-        <a class="current-selected productsDd" href="javascript:;" data-id="<%= products[0] ? products[0]._id : null%>"><%= products[0] ? products[0].name : 'Select'%></a>
+        <a class="current-selected productsDd" href="javascript:;" data-id="<%= products[0] ? products[0]._id : null%>"><%=
+            products[0] ? products[0].name : 'Select'%></a>
     </td>
     <% if (forSales) {%>
-       <td data-name="jobs" class="jobs">
-          <a class="current-selected jobs" data-id="jobs" href="javascript:;">Select</a>
-       </td>
+    <td data-name="jobs" class="jobs">
+        <a class="current-selected jobs" data-id="jobs" href="javascript:;">Select</a>
+    </td>
     <% } else { %>
-       <td data-name="productDescr" >
-          <!--<span class="textarea">-->
+    <td data-name="productDescr">
+        <!--<span class="textarea">-->
 
-          <!--</span>-->
-       </td>
+        <!--</span>-->
+    </td>
     <% } %>
     <td data-name="scheduledDate">
         <span class="datepicker">

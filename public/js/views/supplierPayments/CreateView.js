@@ -7,16 +7,14 @@ define([
     function (CreateTemplate) {
 
         var CreateView = Backbone.View.extend({
-            el: '#listTable',
+            el      : '#listTable',
             template: _.template(CreateTemplate),
 
             initialize: function (options) {
                 this.render(options);
             },
 
-            events: {
-
-            },
+            events: {},
 
             render: function (options) {
                 this.$el.prepend(this.template(options));

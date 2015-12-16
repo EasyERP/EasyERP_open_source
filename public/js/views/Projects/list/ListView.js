@@ -141,7 +141,6 @@ define([
                 }
             },
 
-
             pushStages: function (stages) {
                 this.stages = stages;
             },

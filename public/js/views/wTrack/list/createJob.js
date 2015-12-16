@@ -6,8 +6,8 @@ define(["text!templates/wTrack/createJob.html"
     function (generateTemplate) {
         "use strict";
         var CreateView = Backbone.View.extend({
-                template                 : _.template(generateTemplate),
-                responseObj              : {},
+                template   : _.template(generateTemplate),
+                responseObj: {},
 
                 events: {},
 
@@ -85,7 +85,7 @@ define(["text!templates/wTrack/createJob.html"
                             type       : 'Post',
                             url        : '/jobs/',
                             contentType: "application/json",
-                            data: JSON.stringify(data),
+                            data       : JSON.stringify(data),
 
                             success: function () {
                                 self.hideDialog();

@@ -34,7 +34,7 @@
                                 <dt><label for="invoiceName">Invoice Name</label></dt>
                                 <dd>
                                     <input type="text" id="invoiceName" name="invoiceName" placeholder="Invoice Name"
-                                           maxlength="32" value="<%= name%>" />
+                                           maxlength="32" value="<%= name%>"/>
                                 </dd>
                                 <dt><label for="invoiceDate">Invoice Date</label></dt>
                                 <dd>
@@ -59,63 +59,63 @@
                                 <div>
                                     <table class="list task-list">
                                         <thead>
-                                            <tr>
-                                                <th>N</th>
-                                                <th>
-                                                    Project
-                                                </th>
-                                                <th >
-                                                    Employee
-                                                </th>
-                                                <th>
-                                                    Department
-                                                </th>
-                                                <th>
-                                                    Year
-                                                </th>
-                                                <th>
-                                                    Month
-                                                </th>
-                                                <th>
-                                                    Week
-                                                </th>
-                                                <th>
-                                                    Rate
-                                                </th>
-                                                <th>
-                                                    Hours
-                                                </th>
-                                                <th>
-                                                    Mo
-                                                </th>
-                                                <th>
-                                                    Tu
-                                                </th>
-                                                <th>
-                                                    We
-                                                </th>
-                                                <th>
-                                                    Th
-                                                </th>
-                                                <th>
-                                                    Fr
-                                                </th>
-                                                <th>
-                                                    Sa
-                                                </th>
-                                                <th>
-                                                    Su
-                                                </th>
-                                                <th>
-                                                    Status
-                                                </th>
-                                                <th>
-                                                    Revenue
-                                                </th>
-                                                <th>
-                                                    Amount
-                                                </th>
-                                            </tr>
+                                        <tr>
+                                            <th>N</th>
+                                            <th>
+                                                Project
+                                            </th>
+                                            <th>
+                                                Employee
+                                            </th>
+                                            <th>
+                                                Department
+                                            </th>
+                                            <th>
+                                                Year
+                                            </th>
+                                            <th>
+                                                Month
+                                            </th>
+                                            <th>
+                                                Week
+                                            </th>
+                                            <th>
+                                                Rate
+                                            </th>
+                                            <th>
+                                                Hours
+                                            </th>
+                                            <th>
+                                                Mo
+                                            </th>
+                                            <th>
+                                                Tu
+                                            </th>
+                                            <th>
+                                                We
+                                            </th>
+                                            <th>
+                                                Th
+                                            </th>
+                                            <th>
+                                                Fr
+                                            </th>
+                                            <th>
+                                                Sa
+                                            </th>
+                                            <th>
+                                                Su
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                            <th>
+                                                Revenue
+                                            </th>
+                                            <th>
+                                                Amount
+                                            </th>
+                                        </tr>
                                         </thead>
                                         <tbody id="linwoiceGenerateTable"></tbody>
                                     </table>
@@ -124,13 +124,13 @@
                                 <div id="totalAmountContainer" class="half-block right">
                                     <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <label>
-                                                        Untaxed Amount
-                                                    </label>
-                                                </td>
-                                                <td>
+                                        <tr>
+                                            <td>
+                                                <label>
+                                                    Untaxed Amount
+                                                </label>
+                                            </td>
+                                            <td>
                                                     <span>
                                                         <span id="totalUntaxes" class="currency">
                                                             <%if (total) {%>
@@ -140,25 +140,25 @@
                                                             <%}%>
                                                         </span>
                                                     </span>
-                                                </td>
-                                            </tr>
-                                            <tr class="taxes">
-                                                <td>
-                                                    <label>Taxes</label>
-                                                </td>
-                                                <td>
+                                            </td>
+                                        </tr>
+                                        <tr class="taxes">
+                                            <td>
+                                                <label>Taxes</label>
+                                            </td>
+                                            <td>
                                                     <span>
                                                         <span id="taxes" class="currency">
                                                             0.00
                                                         </span>
                                                     </span>
-                                                </td>
-                                            </tr>
-                                            <tr class="totalAmount">
-                                                <td>
-                                                    <label class="" data-original-title="" title="">Total</label>
-                                                </td>
-                                                <td>
+                                            </td>
+                                        </tr>
+                                        <tr class="totalAmount">
+                                            <td>
+                                                <label class="" data-original-title="" title="">Total</label>
+                                            </td>
+                                            <td>
                                                     <span class="">
                                                         <span id="totalAmount" class="currency">
                                                             <%if (total) {%>
@@ -168,14 +168,14 @@
                                                             <%}%>
                                                         </span>
                                                     </span>
-                                                </td>
-                                            </tr>
-                                            <%if (balanceVisible) {%>
-                                            <tr class="balance">
-                                                <td>
-                                                    <label>Balance</label>
-                                                </td>
-                                                <td>
+                                            </td>
+                                        </tr>
+                                        <%if (balanceVisible) {%>
+                                        <tr class="balance">
+                                            <td>
+                                                <label>Balance</label>
+                                            </td>
+                                            <td>
                                                     <span class="">
                                                         <span id="balance">
                                                             <%if (model && model.paymentInfo && model.paymentInfo.balance) {%>
@@ -185,9 +185,9 @@
                                                             <%}%>
                                                         </span>
                                                     </span>
-                                                </td>
-                                            </tr>
-                                            <%}%>
+                                            </td>
+                                        </tr>
+                                        <%}%>
                                         </tbody>
                                     </table>
                                 </div>

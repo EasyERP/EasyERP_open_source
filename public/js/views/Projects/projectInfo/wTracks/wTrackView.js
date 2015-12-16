@@ -19,7 +19,7 @@ define([
 ], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async) {
     var wTrackView = listView.extend({
 
-        el                      : '#weTracks',
+        el                      : '#timesheet',
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
         templateHeader          : _.template(wTrackTopBar),
         listItemView            : listItemView,
@@ -143,7 +143,7 @@ define([
 
             var newRows = this.$el.find('#false').length;
 
-            if (this.isNewRow){
+            if (this.isNewRow) {
                 newRows = this.isNewRow();
             }
 
@@ -401,7 +401,7 @@ define([
         rerenderNumbers: function () {
             var tableTr = $("#listTable").find('tr');
 
-            tableTr.each(function(index){
+            tableTr.each(function (index) {
                 $(this).find('[data-content="number"]').text(index + 1);
             });
 
@@ -447,7 +447,7 @@ define([
                                 cb();
                             }
                         });
-                    }, function(){
+                    }, function () {
                         that.setAllTotalVals();
                         that.hideSaveCancelBtns();
                         that.rerenderNumbers();
@@ -504,7 +504,7 @@ define([
 
             if (this.createdCopied) {
                 copiedCreated = this.$el.find('.false');
-                copiedCreated.each(function() {
+                copiedCreated.each(function () {
                     dataId = $(this).attr('data-id');
                     self.editCollection.remove(dataId);
                     delete self.changedModels[dataId];

@@ -11,7 +11,6 @@ define(function () {
         });
     };
 
-
     var postData = function (url, data, callback) {
         sendData(url, data, 'POST', callback);
     };
@@ -28,19 +27,18 @@ define(function () {
         sendData(url, data, 'DELETE', callback, contentType);
     };
 
-
     var sendData = function (url, data, method, callback, contentType) {
         var ajaxObject;
         method = method.toUpperCase() || 'POST';
 
         ajaxObject = {
-            url        : url,
-            data       : data,
-            type       : method,
-            success    : function (response) {
+            url    : url,
+            data   : data,
+            type   : method,
+            success: function (response) {
                 callback(null, response)
             },
-            error      : function (jxhr) {
+            error  : function (jxhr) {
                 callback(jxhr)
             }
         };

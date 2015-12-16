@@ -280,7 +280,6 @@ define([
                 self.statisticsView$.render(result);
             });
 
-
         },
 
         getWtrackInfo: function (e) {
@@ -501,9 +500,10 @@ define([
                 });
 
                 this.filterView.render();
-            } /*else {
-                this.filterView.renderFilterContent();
-            }*/
+            }
+            /*else {
+             this.filterView.renderFilterContent();
+             }*/
 
             if (filter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));

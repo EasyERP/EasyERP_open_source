@@ -6,21 +6,21 @@ define([
     ],
     function (TopBarTemplate, Custom, dataService, Common) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: "Profiles",
-            actionType: null, //Content, Edit, Create
-            template: _.template(TopBarTemplate),
+            actionType : null, //Content, Edit, Create
+            template   : _.template(TopBarTemplate),
 
             events: {
-                "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-nextBtn": "nextEvent",
+                "click #top-bar-deleteBtn" : "deleteEvent",
+                "click #top-bar-nextBtn"   : "nextEvent",
                 "click #top-bar-discardBtn": "discardEvent",
-                "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-saveBtn": "saveEvent"
+                "click #top-bar-editBtn"   : "editEvent",
+                "click #top-bar-createBtn" : "createEvent",
+                "click #top-bar-saveBtn"   : "saveEvent"
             },
 
-            nextEvent: function (event) {
+            nextEvent  : function (event) {
                 event.preventDefault();
                 this.trigger('nextEvent');
             },
@@ -34,14 +34,16 @@ define([
                 }
                 dataService.getData('/UserWithProfile', {_id: selectedProfileId}, function (res) {
                     if (res.count == 0) {
-                        if (confirm('Delete profile?'))
+                        if (confirm('Delete profile?')) {
                             self.trigger('deleteEvent');
+                        }
                     } else {
 
                         if (confirm('Delete profile? Users ' + res.data.join(', ') + ' will be assigned to banned profile!')) {
                             self.trigger('deleteEvent');
-                            if (res.isOwnProfile)
+                            if (res.isOwnProfile) {
                                 window.location = "/logout";
+                            }
 
                         }
                     }
@@ -50,21 +52,21 @@ define([
 
             },
 
-            createEvent: function (event) {
+            createEvent  : function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
             },
-            discardEvent: function () {
+            discardEvent : function () {
                 Backbone.history.navigate("home/content-" + this.contentType, {trigger: true});
             },
-            editEvent: function (event) {
+            editEvent    : function (event) {
                 event.preventDefault();
                 this.trigger('editEvent');
 
                 /*var id = this.getIdFromHash(window.location.hash);
                  Backbone.history.navigate("#home/action-Profiles/Edit/" + id, { trigger: true });*/
             },
-            saveEvent: function (event) {
+            saveEvent    : function (event) {
                 event.preventDefault();
                 this.trigger('saveEvent');
             },
@@ -72,7 +74,7 @@ define([
                 var hashItems = hash.split('/');
                 return hashItems[hashItems.length - 1];
             },
-            initialize: function (options) {
+            initialize   : function (options) {
                 this.actionType = options.actionType;
                 this.render();
             },

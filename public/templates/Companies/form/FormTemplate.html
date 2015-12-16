@@ -13,7 +13,7 @@
             <div class="inner">
                 <div class="avatar-wrapper left">
                     <div class="avatar">
-                        <img alt="" src="<%=imageSrc%>" />
+                        <img alt="" src="<%=imageSrc%>"/>
                     </div>
                     <div class="social">
                         <% if (social.FB){%><a class="facebook" href="<%=social.FB%>"></a><%}%>
@@ -25,22 +25,40 @@
                 </div>
                 <div class="mainInfo">
                     <h3><span title='<%=name.first%>'><%=name.first%></span></h3>
+
                     <div class="half-block left">
                         <dl class="customer-info company">
                             <dt><span>Website</span></dt>
-                            <dd id="website" class="editable" title="<%=website%>"><a class="no-long" href="http://<%=website%>"><%=website%></a></dd>
+                            <dd id="website" class="editable" title="<%=website%>"><a class="no-long"
+                                                                                      href="http://<%=website%>"><%=website%></a>
+                            </dd>
                             <dt><span>LinkedIn</span></dt>
-                            <dd id="social_LI" class="editable" title="<%=social.LI%>"><a class="no-long" id="socialLi" data-maxlength="256" href="<%=social.LI%>"><%=social.LI%></a></dd>
+                            <dd id="social_LI" class="editable" title="<%=social.LI%>"><a class="no-long" id="socialLi"
+                                                                                          data-maxlength="256"
+                                                                                          href="<%=social.LI%>"><%=social.LI%></a>
+                            </dd>
                             <dt><span>Facebook</span></dt>
-                            <dd id="social_FB" class="editable" title="<%=social.Fb%>"><a class="no-long" id="socialFb" data-maxlength="256" href="<%=social.FB%>"><%=social.FB%></a></dd>
+                            <dd id="social_FB" class="editable" title="<%=social.Fb%>"><a class="no-long" id="socialFb"
+                                                                                          data-maxlength="256"
+                                                                                          href="<%=social.FB%>"><%=social.FB%></a>
+                            </dd>
                             <dt><span>Phone</span></dt>
-                            <dd id="phones_phone" class="editable" data-maxlength="20" title="<%=phones.phone%>"><a id="phones_phone" href="skype:<%=phones.phone%>?call"  class="no-long"><%=phones.phone%></a></dd>
+                            <dd id="phones_phone" class="editable" data-maxlength="20" title="<%=phones.phone%>"><a
+                                    id="phones_phone" href="skype:<%=phones.phone%>?call" class="no-long"><%=phones.phone%></a>
+                            </dd>
                             <dt><span>Mobile</span></dt>
-                            <dd id="phones_mobile" class="editable" data-maxlength="20" title="<%=phones.mobile%>"><a id="phones_mobile" href="skype:<%=phones.mobile%>?call"  class="no-long"><%=phones.mobile%></a></dd>
+                            <dd id="phones_mobile" class="editable" data-maxlength="20" title="<%=phones.mobile%>"><a
+                                    id="phones_mobile" href="skype:<%=phones.mobile%>?call" class="no-long"><%=phones.mobile%></a>
+                            </dd>
                             <dt><span>Email</span></dt>
-                            <dd id="email" class="editable" title="<%=email%>"><a class="no-long" href="javascript:;" data-maxlength="48"><%=email%></a></dd>
+                            <dd id="email" class="editable" title="<%=email%>"><a class="no-long" href="javascript:;"
+                                                                                  data-maxlength="48"><%=email%></a>
+                            </dd>
                             <dt><span>Assigned to</span></dt>
-                            <dd title="<%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' + salesPurchases.salesPerson.name.last: ''%>"><%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' + salesPurchases.salesPerson.name.last: ''%></dd>
+                            <dd title="<%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' + salesPurchases.salesPerson.name.last: ''%>">
+                                <%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' +
+                                salesPurchases.salesPerson.name.last: ''%>
+                            </dd>
 
                         </dl>
 
@@ -48,19 +66,24 @@
                     <div class="half-block left">
                         <dl class="customer-info company">
                             <dt><span>Street</span></dt>
-                            <dd id="address_street" class="editable" title="<%=address.street%>"><span class="no-long"><%=address.street%></span></dd>
+                            <dd id="address_street" class="editable" title="<%=address.street%>"><span class="no-long"><%=address.street%></span>
+                            </dd>
 
                             <dt><span>City</span></dt>
-                            <dd id="address_city" class="editable" title="<%=address.city%>"><span class="no-long"><%=address.city%></span></dd>
+                            <dd id="address_city" class="editable" title="<%=address.city%>"><span class="no-long"><%=address.city%></span>
+                            </dd>
 
                             <dt><span>State</span></dt>
-                            <dd id="address_state" class="editable" title="<%=address.state%>"><span class="no-long"><%=address.state%></span></dd>
+                            <dd id="address_state" class="editable" title="<%=address.state%>"><span class="no-long"><%=address.state%></span>
+                            </dd>
 
                             <dt><span>Zip</span></dt>
-                            <dd id="address_zip" class="editable" title="<%=address.zip%>"><span class="no-long"><%=address.zip%></span></dd>
+                            <dd id="address_zip" class="editable" title="<%=address.zip%>"><span class="no-long"><%=address.zip%></span>
+                            </dd>
 
                             <dt><span>Country</span></dt>
-                            <dd id="address_country" class="editable" title="<%=address.country%>"><span class="no-long"><%=address.country%></span></dd>
+                            <dd id="address_country" class="editable" title="<%=address.country%>"><span
+                                    class="no-long"><%=address.country%></span></dd>
                         </dl>
 
                     </div>
@@ -68,44 +91,47 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="edited-block">
-                    <p style="text-align:center;"><%if(editedBy.date){%><span style="font-style: italic;">Last Edited <%=editedBy.date%> by <%=editedBy.user ?  editedBy.user.login:""%></span>| <%}%><span style="font-style: italic;">Created On <%=createdBy.date %> by <%=createdBy.user ? createdBy.user.login:""%></span></p>
+                    <p style="text-align:center;"><%if(editedBy.date){%><span style="font-style: italic;">Last Edited <%=editedBy.date%> by <%=editedBy.user ?  editedBy.user.login:""%></span>|
+                        <%}%><span style="font-style: italic;">Created On <%=createdBy.date %> by <%=createdBy.user ? createdBy.user.login:""%></span>
+                    </p>
                 </div>
                 <div class="clearfix"></div>
-<!--                <div class="details right person">...</div>-->
+                <!--                <div class="details right person">...</div>-->
 
 
             </div>
-<!--            <div id="details">
-                <div class="formTitle">
-                    <h3 class="left">Sales &amp; Purchases</h3>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="inner sales-purchases">
-                    <div class="half-block left">
-                        <dl class="customer-info company long">
-                            <dt>Sales Team</dt><dd title="<%=(salesPurchases.salesTeam) ? salesPurchases.salesTeam.departmentName : ''%>"><%=(salesPurchases.salesTeam) ? salesPurchases.salesTeam.departmentName : ''%></dd>
+            <!--            <div id="details">
+                            <div class="formTitle">
+                                <h3 class="left">Sales &amp; Purchases</h3>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="inner sales-purchases">
+                                <div class="half-block left">
+                                    <dl class="customer-info company long">
+                                        <dt>Sales Team</dt><dd title="<%=(salesPurchases.salesTeam) ? salesPurchases.salesTeam.departmentName : ''%>"><%=(salesPurchases.salesTeam) ? salesPurchases.salesTeam.departmentName : ''%></dd>
 
-                        </dl>
-                    </div>
-                    <div class="half-block left">
+                                    </dl>
+                                </div>
+                                <div class="half-block left">
 
-                        <dl class="customer-info company long">
-                            <dt>Reference</dt>
-                            <dd title="<%=salesPurchases.reference%>"><%=salesPurchases.reference%></dd>
-                            <dt>Language</dt>
-								<dd title="<%=salesPurchases.language%>"><%=salesPurchases.language%></dd>
-                        </dl>
-                    </div>
-                    <div class="clearfix"></div>
+                                    <dl class="customer-info company long">
+                                        <dt>Reference</dt>
+                                        <dd title="<%=salesPurchases.reference%>"><%=salesPurchases.reference%></dd>
+                                        <dt>Language</dt>
+                                            <dd title="<%=salesPurchases.language%>"><%=salesPurchases.language%></dd>
+                                    </dl>
+                                </div>
+                                <div class="clearfix"></div>
 
-                </div>
-            </div>-->
+                            </div>
+                        </div>-->
         </form>
     </div>
     <div class="formRightColumn">
         <div class="form">
             <div class="formTitle">
                 <h3 class="left">Opportunities</h3>
+
                 <div class="btnHolder">
                     <a href="javascript;" class="icon add opportunities" title="Add">5</a>
                 </div>
@@ -117,6 +143,7 @@
         <div class="form">
             <div class="formTitle">
                 <h3 class="left">Persons</h3>
+
                 <div class="btnHolder">
                     <a href="javascript;" class="icon add persons" title="Add">5</a>
                 </div>

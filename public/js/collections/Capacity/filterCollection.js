@@ -2,9 +2,9 @@ define([
     'models/Capacity'
 ], function (CapacityModel) {
     var CapacityCollection = Backbone.Collection.extend({
-        model: CapacityModel,
-        url: "/capacity/",
-        viewType: null,
+        model      : CapacityModel,
+        url        : "/capacity/",
+        viewType   : null,
         contentType: null,
 
         showMore: function (options) {
@@ -15,12 +15,12 @@ define([
             filterObject['year'] = (options && options.year) ? options.year : this.year;
 
             this.fetch({
-                data: filterObject,
-                waite: true,
+                data   : filterObject,
+                waite  : true,
                 success: function (models) {
                     that.trigger('showmore', models);
                 },
-                error: function () {
+                error  : function () {
                     alert('Some Error');
                 }
             });
@@ -51,12 +51,14 @@ define([
             }
 
             this.fetch({
-                data: options,
-                reset: true,
+                data   : options,
+                reset  : true,
                 success: function () {
                 },
-                error: function (models, xhr) {
-                    if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                error  : function (models, xhr) {
+                    if (xhr.status == 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
+                    }
                 }
             });
         }

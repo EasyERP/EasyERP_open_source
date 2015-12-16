@@ -5,7 +5,7 @@ define([
     function (CreateTemplate, currentModel) {
 
         var CreateView = Backbone.View.extend({
-            el: '#bonusTable',
+            el      : '#bonusTable',
             template: _.template(CreateTemplate),
 
             initialize: function (options) {
@@ -17,7 +17,7 @@ define([
 
                 model.set({
                     startDate: data.StartDate,
-                    endDate: data.EndDate
+                    endDate  : data.EndDate
                 });
 
                 this.render(model);
@@ -32,13 +32,18 @@ define([
                 var startPicker = '#' + cid + 'StartDate';
                 var endPicker = '#' + cid + 'EndDate';
 
-                this.$el.prepend(this.template({options: data, startDate: this.startDate, endDate: this.endDate, cid: cid}));
+                this.$el.prepend(this.template({
+                    options  : data,
+                    startDate: this.startDate,
+                    endDate  : this.endDate,
+                    cid      : cid
+                }));
 
                 $(startPicker).datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    onSelect: function () {
+                    changeYear : true,
+                    onSelect   : function () {
                         var startDate = $(self.$el).find(startPicker).datepicker('getDate');
                         var parrent = $(startPicker).parent('td');
                         var value = $(self.$el).find(startPicker).val();
@@ -51,10 +56,10 @@ define([
                 });
 
                 $(endPicker).datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    onSelect: function () {
+                    changeYear : true,
+                    onSelect   : function () {
                         var endDate = $(self.$el).find(endPicker).datepicker('getDate');
                         var parrent = $(endPicker).parent('td');
                         var value = $(self.$el).find(endPicker).val();
@@ -66,8 +71,8 @@ define([
                     }
                 });
 
-                $(startPicker).datepicker('setDate',self.startDate);
-                $(endPicker).datepicker('setDate',self.endDate);
+                $(startPicker).datepicker('setDate', self.startDate);
+                $(endPicker).datepicker('setDate', self.endDate);
 
                 return this;
             }

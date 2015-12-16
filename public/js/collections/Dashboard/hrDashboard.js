@@ -7,7 +7,7 @@
 
             url: 'dashboard/hr',
 
-            initialize: function(){
+            initialize: function () {
                 this.fetch({
                     reset: true
                 });

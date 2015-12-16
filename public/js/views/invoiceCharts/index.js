@@ -110,40 +110,40 @@ define([
                 .attr("fill", "#66b5d4")
                 .attr("opacity", 0.6)
                 .on('mouseover', function (d) {
-                   /* var current = d3.select(this);
-                    var i = current.attr('data-index');
-                    var svgToolTip = d3.select('#' + $scope.myid);
+                    /* var current = d3.select(this);
+                     var i = current.attr('data-index');
+                     var svgToolTip = d3.select('#' + $scope.myid);
 
-                    var value = (d[$scope.y[i - 1]] % 1) ? d[$scope.y[i - 1]].toFixed(2) : d[$scope.y[i - 1]];
+                     var value = (d[$scope.y[i - 1]] % 1) ? d[$scope.y[i - 1]].toFixed(2) : d[$scope.y[i - 1]];
 
-                    var xPosition = parseFloat(current.attr("x")) + 60 + (x.rangeBand() - 200) / 2;
-                    var yPosition = parseFloat(current.attr("y"));
-                    if (xPosition < 10) {
-                        xPosition = 10;
-                    }
-                    if ((width - xPosition) < 110) {
-                        xPosition = width - 120;
-                    }
-                    if (yPosition > 300) {
-                        yPosition = 300;
-                    }
-                    current.attr('class', 'mouseOverBar');
-                    svgToolTip
-                        .select("#tooltip")
-                        .style("left", xPosition + "px")
-                        .style("top", yPosition + "px")
-                        .select(".value")
-                        .text(/!* d[$scope.y[i - 1]] *!/value);
-                    svgToolTip
-                        .select(".lable")
-                        .text($scope.lables[i - 1]);
-                    svgToolTip
-                        .select(".dateValue")
-                        .text(
-                            $scope.x == "date" ? moment(d[$scope.x]).format('dddd, MMMM Do YYYY') : d[$scope.x]);
-                    svgToolTip
-                        .select("#tooltip")
-                        .classed("hidden", false);*/
+                     var xPosition = parseFloat(current.attr("x")) + 60 + (x.rangeBand() - 200) / 2;
+                     var yPosition = parseFloat(current.attr("y"));
+                     if (xPosition < 10) {
+                     xPosition = 10;
+                     }
+                     if ((width - xPosition) < 110) {
+                     xPosition = width - 120;
+                     }
+                     if (yPosition > 300) {
+                     yPosition = 300;
+                     }
+                     current.attr('class', 'mouseOverBar');
+                     svgToolTip
+                     .select("#tooltip")
+                     .style("left", xPosition + "px")
+                     .style("top", yPosition + "px")
+                     .select(".value")
+                     .text(/!* d[$scope.y[i - 1]] *!/value);
+                     svgToolTip
+                     .select(".lable")
+                     .text($scope.lables[i - 1]);
+                     svgToolTip
+                     .select(".dateValue")
+                     .text(
+                     $scope.x == "date" ? moment(d[$scope.x]).format('dddd, MMMM Do YYYY') : d[$scope.x]);
+                     svgToolTip
+                     .select("#tooltip")
+                     .classed("hidden", false);*/
 
                 });
 

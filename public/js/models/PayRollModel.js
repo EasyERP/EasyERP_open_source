@@ -1,7 +1,7 @@
-define(['Validation','common'],function () {
+define(['Validation', 'common'], function () {
     var PayRollModel = Backbone.Model.extend({
         idAttribute: "_id",
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/Payroll";
         }
     });

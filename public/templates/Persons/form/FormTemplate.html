@@ -1,109 +1,146 @@
 <div class="form-holder">
-  <div class="formLeftColumn">
-    <form class="form notDialog" id="createEmployeeForm" data-id="<%=_id%>">
-      <div class="formTitle withMargin">
-        <h3>Details</h3> 
-      </div>
-      <div class="inner overflovHidden">
-        <div class="avatar-wrapper left">
-          <div class="avatar">
-            <img alt="" src="<%=imageSrc%>" />
-          </div>
-          <div class="social">
-            <% if (social.FB){%><a class="facebook" href="<%=social.FB%>"></a><%}%>
-            <% if (social.LI){%><a class="linkedin" href="<%=social.LI%>"></a><%}%>
-            <% if (skype){%><a class="skype" href="skype:<%=skype%>?call"></a><%}%>
-            <div class="clearfix"></div>
-          </div>
+    <div class="formLeftColumn">
+        <form class="form notDialog" id="createEmployeeForm" data-id="<%=_id%>">
+            <div class="formTitle withMargin">
+                <h3>Details</h3>
+            </div>
+            <div class="inner overflovHidden">
+                <div class="avatar-wrapper left">
+                    <div class="avatar">
+                        <img alt="" src="<%=imageSrc%>"/>
+                    </div>
+                    <div class="social">
+                        <% if (social.FB){%><a class="facebook" href="<%=social.FB%>"></a><%}%>
+                        <% if (social.LI){%><a class="linkedin" href="<%=social.LI%>"></a><%}%>
+                        <% if (skype){%><a class="skype" href="skype:<%=skype%>?call"></a><%}%>
+                        <div class="clearfix"></div>
+                    </div>
 
-        </div>
-        <div class="mainInfo">
-          <h3>
+                </div>
+                <div class="mainInfo">
+                    <h3>
             <span title="<%=name.first%> <%=name.last%>">
               <%=(name.first.length>16)?(name.first.substring(0,16)+"..."):name.first%> <%=(name.last.length>16)?(name.last.substring(0,16)+"..."):name.last%>
-              <% if (company && company.name){%>at <a class="bold company" title="<%=company.name.first%>" data-id="<%=company._id%>" href="javascript;"><%=company.name.first%></a><%}%>
+              <% if (company && company.name){%>at <a class="bold company" title="<%=company.name.first%>"
+                                                      data-id="<%=company._id%>" href="javascript;"><%=company.name.first%></a><%}%>
             </span>
-          </h3>
-          <div class="half-block left">
+                    </h3>
 
-            <dl class="customer-info">
-              <dt><span>Job Position </span></dt>
-              <dd id="jobPosition" class="editable" title="<%=jobPosition%>"><span class="no-long" data-maxlength="32"><%=jobPosition%></span></dd>
-              <dt><span>Date of Birth </span></dt>
-              <dd id="dateBirth" class="editable"><span class="no-long" data-maxlength="32"><%=dateBirth%></span></dd>
-              <dt><span>Email</span></dt>
-              <dd id="email" class="editable"><a id="email" data-maxlength="48" class="no-long" href="mailto:<%=email%>" title="<%=email%>"><%=email%></a></dd>
-              <dt><span>Skype</span></dt>
-              <dd id="skype" class="editable" title="<%=skype%>"><a class="no-long" id="skype" data-maxlength="32" href="skype:<%=skype%>?call"><%=skype%></a></dd>
-              <dt><span>LinkedIn</span></dt>
-              <dd id="social_LI" class="editable" title="<%=social.LI%>"><a class="no-long" id="socialLi" data-maxlength="256" href="<%=social.LI%>"><%=social.LI%></a></dd>
-              <dt><span>Facebook</span></dt>
-              <dd id="social_FB" class="editable" title="<%=social.Fb%>"><a class="no-long" id="socialFb" data-maxlength="256" href="<%=social.FB%>"><%=social.FB%></a></dd>
-              <dt><span>Phone</span></dt>
-              <dd id="phones_phone" class="editable" title="<%=phones.phone%>"><a class="no-long" id="phones_phone" data-maxlength="20" href="skype:<%=phones.phone%>?call"><%=phones.phone%></a></dd>
-              <dt><span>Mobile</span></dt>
-              <dd id="phones_mobile" class="editable" title="<%=phones.mobile%>"><a class="no-long" data-maxlength="20" id="phones_mobile" href="skype:<%=phones.mobile%>?call"><%=phones.mobile%></a></dd>
-            </dl>
+                    <div class="half-block left">
 
-          </div>
-          <div class="half-block left">
+                        <dl class="customer-info">
+                            <dt><span>Job Position </span></dt>
+                            <dd id="jobPosition" class="editable" title="<%=jobPosition%>"><span class="no-long"
+                                                                                                 data-maxlength="32"><%=jobPosition%></span>
+                            </dd>
+                            <dt><span>Date of Birth </span></dt>
+                            <dd id="dateBirth" class="editable"><span class="no-long"
+                                                                      data-maxlength="32"><%=dateBirth%></span></dd>
+                            <dt><span>Email</span></dt>
+                            <dd id="email" class="editable"><a id="email" data-maxlength="48" class="no-long"
+                                                               href="mailto:<%=email%>"
+                                                               title="<%=email%>"><%=email%></a></dd>
+                            <dt><span>Skype</span></dt>
+                            <dd id="skype" class="editable" title="<%=skype%>"><a class="no-long" id="skype"
+                                                                                  data-maxlength="32"
+                                                                                  href="skype:<%=skype%>?call"><%=skype%></a>
+                            </dd>
+                            <dt><span>LinkedIn</span></dt>
+                            <dd id="social_LI" class="editable" title="<%=social.LI%>"><a class="no-long" id="socialLi"
+                                                                                          data-maxlength="256"
+                                                                                          href="<%=social.LI%>"><%=social.LI%></a>
+                            </dd>
+                            <dt><span>Facebook</span></dt>
+                            <dd id="social_FB" class="editable" title="<%=social.Fb%>"><a class="no-long" id="socialFb"
+                                                                                          data-maxlength="256"
+                                                                                          href="<%=social.FB%>"><%=social.FB%></a>
+                            </dd>
+                            <dt><span>Phone</span></dt>
+                            <dd id="phones_phone" class="editable" title="<%=phones.phone%>"><a class="no-long"
+                                                                                                id="phones_phone"
+                                                                                                data-maxlength="20"
+                                                                                                href="skype:<%=phones.phone%>?call"><%=phones.phone%></a>
+                            </dd>
+                            <dt><span>Mobile</span></dt>
+                            <dd id="phones_mobile" class="editable" title="<%=phones.mobile%>"><a class="no-long"
+                                                                                                  data-maxlength="20"
+                                                                                                  id="phones_mobile"
+                                                                                                  href="skype:<%=phones.mobile%>?call"><%=phones.mobile%></a>
+                            </dd>
+                        </dl>
 
-            <dl class="customer-info">
-              <dt><span>Street</span></dt>
-              <dd id="address_street" class="editable" title="<%=address.street%>"> <span class="no-long" data-maxlength="32"><%=address.street%></span></dd>
+                    </div>
+                    <div class="half-block left">
 
-              <dt><span>City</span></dt>
-              <dd id="address_city" class="editable" title="<%=address.city%>"><span class="no-long" data-maxlength="32"><%=address.city%></span></dd>
+                        <dl class="customer-info">
+                            <dt><span>Street</span></dt>
+                            <dd id="address_street" class="editable" title="<%=address.street%>"><span class="no-long"
+                                                                                                       data-maxlength="32"><%=address.street%></span>
+                            </dd>
 
-              <dt><span>State</span></dt>
-              <dd id="address_state" class="editable" title="<%=address.state%>"><span class="no-long" data-maxlength="32"><%=address.state%></span></dd>
+                            <dt><span>City</span></dt>
+                            <dd id="address_city" class="editable" title="<%=address.city%>"><span class="no-long"
+                                                                                                   data-maxlength="32"><%=address.city%></span>
+                            </dd>
 
-              <dt><span>Zip</span></dt>
-              <dd id="address_zip" class="editable" title="<%=address.zip%>"><span class="no-long" data-maxlength="32"><%=address.zip%></span></dd>
+                            <dt><span>State</span></dt>
+                            <dd id="address_state" class="editable" title="<%=address.state%>"><span class="no-long"
+                                                                                                     data-maxlength="32"><%=address.state%></span>
+                            </dd>
 
-              <dt><span>Country</span></dt>
-              <dd id="address_country" class="editable" title="<%=address.country%>"><span class="no-long" data-maxlength="32"><%=address.country%></span></dd>
-            </dl>
-          </div>
-          <div class="clearfix"></div>
+                            <dt><span>Zip</span></dt>
+                            <dd id="address_zip" class="editable" title="<%=address.zip%>"><span class="no-long"
+                                                                                                 data-maxlength="32"><%=address.zip%></span>
+                            </dd>
 
-        </div>
-        <div class="edited-block">
-          <p style="text-align:center;"><% if(editedBy.date){%><span style="font-style: italic;">Last Edited <%=editedBy.date%> by <%=editedBy.user ?  editedBy.user.login:""%></span>| <%}%><span style="font-style: italic;">Created On <%=createdBy.date %> by <%=createdBy.user ? createdBy.user.login:""%></span></p>
+                            <dt><span>Country</span></dt>
+                            <dd id="address_country" class="editable" title="<%=address.country%>"><span class="no-long"
+                                                                                                         data-maxlength="32"><%=address.country%></span>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </div>
+                <div class="edited-block">
+                    <p style="text-align:center;"><% if(editedBy.date){%><span style="font-style: italic;">Last Edited <%=editedBy.date%> by <%=editedBy.user ?  editedBy.user.login:""%></span>|
+                        <%}%><span style="font-style: italic;">Created On <%=createdBy.date %> by <%=createdBy.user ? createdBy.user.login:""%></span>
+                    </p>
+                </div>
+                <div class="clearfix"></div>
+                <div id="details" class="person-details">
+                    <div class="half-block left">
+                        <dl class="customer-info">
+                            <dt>Website</dt>
+                            <dd id="website" class="editable" title="<%=website%>"><%=website%></dd>
+                        </dl>
+                    </div>
+                    <div class="half-block left">
+                        <dl class="customer-info">
+
+                            <dt>Fax</dt>
+                            <dd id="phones_fax" class="editable" title="<%=phones.fax%>"><%=phones.fax%></dd>
+                        </dl>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="formRightColumn">
+        <div class="form">
+            <div class="formTitle">
+                <h3 class="left">Opportunities</h3>
+
+                <div class="btnHolder">
+                    <a href="javascript:;" class="icon add opportunities" title="Add">5</a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div id="opportunities"></div>
         </div>
         <div class="clearfix"></div>
-        <div id="details" class="person-details">
-          <div class="half-block left">
-            <dl class="customer-info">
-              <dt>Website </dt>
-              <dd id="website" class="editable" title="<%=website%>"><%=website%></dd>
-            </dl>
-          </div>
-          <div class="half-block left">
-            <dl class="customer-info">
-
-              <dt>Fax </dt>
-              <dd id="phones_fax" class="editable" title="<%=phones.fax%>"><%=phones.fax%></dd>
-            </dl>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div class="formRightColumn">
-    <div class="form">
-      <div class="formTitle">
-        <h3 class="left">Opportunities</h3>
-        <div class="btnHolder">
-          <a href="javascript:;" class="icon add opportunities" title="Add">5</a>
-        </div>
-        <div class="clearfix"></div>
-      </div>
-      <div id="opportunities"></div>
     </div>
     <div class="clearfix"></div>
-  </div>
-  <div class="clearfix"></div>
 </div>

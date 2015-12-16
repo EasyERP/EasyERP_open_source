@@ -33,7 +33,7 @@ define([
             },
 
             //to remove zombies was needed for event after recieveInvoice on projectInfo
-            remove: function() {
+            remove: function () {
                 this.$el.empty().off();
                 this.stopListening();
 
@@ -67,11 +67,11 @@ define([
                 var sortObject;
                 var newRows = this.$el.find('#false').length;
 
-                if (this.isNewRow){
+                if (this.isNewRow) {
                     newRows = this.isNewRow();
                 }
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -254,7 +254,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -282,7 +282,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -310,7 +310,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -337,7 +337,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -364,7 +364,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -420,7 +420,7 @@ define([
                     this.$el.find('.search-options').addClass('hidden');
                 }
 
-                if (typeof(this.setChangedValueToModel) === "function"){ //added for SetChangesToModel in ListView
+                if (typeof(this.setChangedValueToModel) === "function") { //added for SetChangesToModel in ListView
                     this.setChangedValueToModel();
                 }
             },
@@ -457,7 +457,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -493,8 +493,8 @@ define([
                 $('#check_all').prop('checked', false);
 
                 /*if (this.filterView) {
-                    this.filterView.renderFilterContent();
-                }*/
+                 this.filterView.renderFilterContent();
+                 }*/
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -546,7 +546,7 @@ define([
                     pagenation.show();
                 }
 
-                if (this.editCollection){ // add for reset editCollection after sort
+                if (this.editCollection) { // add for reset editCollection after sort
                     this.editCollection.reset(this.collection.models);
                 }
             },

@@ -2,10 +2,12 @@
 <div id="createBtnHolder">
     <a href="#home/action-<%=contentType%>/Create" class="icon-img add left" title="Create" id="top-bar-createBtn"></a>
     <a href="#home/action-<%=contentType%>/Edit" class="icon-img edit left" title="Edit" id=" top-bar-editBtn"></a>
-    <a href="javascript;" class="icon-img remove left" title="Remove"  id="top-bar-deleteBtn"></a>
+    <a href="javascript;" class="icon-img remove left" title="Remove" id="top-bar-deleteBtn"></a>
 </div>
 <div id="saveDiscardHolder">
-    <button id="top-bar-saveBtn" >Save</button> or <button id="top-bar-discardBtn">Discard</button>
+    <button id="top-bar-saveBtn">Save</button>
+    or
+    <button id="top-bar-discardBtn">Discard</button>
 </div>
 
 <div id="template-switcher" class="right">
@@ -15,7 +17,11 @@
         <li><a href="javascript;" class="icon2 icon-btn dark" data-shift="right" id="rightBtn">)</a></li>
     </ul>
     <ul class="btn-list">
-        <li><a href="javascript;" class="changeContentView icon icon-btn dark <%= (viewType == 'list') ? 'selected' : ''%>" data-view-type="list" id="listBtn">i</a></li>
-        <li><a href="javascript;" class="changeContentView icon icon-btn dark <%= (viewType == 'form') ? 'selected' : ''%>" data-view-type="form" id="formBtn">m</a></li>
+        <li><a href="javascript;"
+               class="changeContentView icon icon-btn dark <%= (viewType == 'list') ? 'selected' : ''%>"
+               data-view-type="list" id="listBtn">i</a></li>
+        <li><a href="javascript;"
+               class="changeContentView icon icon-btn dark <%= (viewType == 'form') ? 'selected' : ''%>"
+               data-view-type="form" id="formBtn">m</a></li>
     </ul>
 </div>

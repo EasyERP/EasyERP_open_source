@@ -39,7 +39,7 @@
                 this.asyncLoadImgs(this.collection);
             },
 
-            events: {
+            events        : {
                 "click #showMore"           : "showMore",
                 /*"click .thumbnailwithavatar": "gotoForm",*/
                 "click .thumbnailwithavatar": "gotoEditForm",
@@ -69,7 +69,7 @@
                 }, this);
             },
 
-            asyncLoadImgs: function (collection) {
+            asyncLoadImgs    : function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
@@ -113,7 +113,8 @@
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                };
+                }
+                ;
             },
 
             render: function () {
@@ -125,7 +126,11 @@
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    $('#searchContainer').after(_.template(AphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    $('#searchContainer').after(_.template(AphabeticTemplate, {
+                        alphabeticArray   : self.alphabeticArray,
+                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        allAlphabeticArray: self.allAlphabeticArray
+                    }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
@@ -145,7 +150,7 @@
                     self.hideItemsNumber(e);
                 });
 
-                self.filterView = new filterView({ contentType: self.contentType });
+                self.filterView = new filterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter)
@@ -171,14 +176,14 @@
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                if (Object.keys(filter).length === 0){
+                if (Object.keys(filter).length === 0) {
                     this.filter = {};
                 }
                 this.defaultItemsNumber = 0;
                 this.$el.find('.thumbnailwithavatar').remove();
 
                 this.changeLocationHash(null, this.defaultItemsNumber, filter);
-                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: filter });
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: filter});
                 this.getTotalLength(this.defaultItemsNumber, filter);
             },
 
@@ -213,13 +218,13 @@
                 }
             },
 
-            showMore: function (event) {
+            showMore        : function (event) {
                 event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
             //modified for filter Vasya
-            showMoreContent: function (newModels) {
+            showMoreContent : function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');

@@ -1,4 +1,3 @@
-
 <div class="formHeader">
     <button class="red" id="convertToOpportunity">Convert to Opportunity</button>
     <ul class="breadcrumb"></ul>
@@ -7,6 +6,7 @@
     <form class="form" id="leadForm" data-id="<%=_id%>">
         <div class="inner">
             <h2><%=name%></h2>
+
             <div class="half-block left">
                 <h4>Internal Notes</h4>
                 <textarea disabled><%=internalNotes%></textarea>
@@ -14,41 +14,69 @@
             <div class="half-block left">
                 <div class="half-block left">
                     <p><label>Company Name</label></p>
+
                     <p><label>Customer</label></p>
+
                     <p><label>Address</label></p>
+
                     <p><label></label></p>
+
                     <p><label></label></p>
+
                     <p><label></label></p>
-                    <p><label></label></p>                   
+
+                    <p><label></label></p>
+
                     <p><label>Salesperson</label></p>
                     <!-- <p><label>Sales Team</label></p> -->
-                    <p><label>Campaing</label></p>                  
+                    <p><label>Campaing</label></p>
+
                     <p><label>Source</label></p>
+
                     <p><label>Contact Name</label></p>
+
                     <p><label>Email</label></p>
+
                     <p><label>Phone</label></p>
+
                     <p><label>Mobile</label></p>
+
                     <p><label>Created by</label></p>
+
                     <p><label>Edited by</label></p>
                 </div>
                 <div class="half-block left">
                     <p><span><%=(company) ? company.name : ((tempCompanyField) ? tempCompanyField : '')%></span></p>
+
                     <p><span><%=(customer) ? customer.name.first + ' ' + customer.name.last: ''%></span></p>
+
                     <p><span><%=address.street%></span></p>
+
                     <p><span><%=address.city%></span></p>
+
                     <p><span><%=address.state%></span></p>
+
                     <p><span><%=address.zip%></span></p>
-                    <p><span><%=address.country%></span></p>                   
+
+                    <p><span><%=address.country%></span></p>
+
                     <p><span><%=(salesPerson) ? salesPerson.name.first + ' ' +  salesPerson.name.last : ''%></span></p>
-                 <!--  <p><span><%=(salesTeam) ? salesTeam.departmentName : ''%></span></p> -->
-                    <p><span><%=campaign %></span></p>            
+                    <!--  <p><span><%=(salesTeam) ? salesTeam.departmentName : ''%></span></p> -->
+                    <p><span><%=campaign %></span></p>
+
                     <p><span><%=(source) ? source : ''%></span></p>
+
                     <p><span><%=contactName.first%> <%=contactName.last%></span></p>
+
                     <p><a href="mailto:<%=email%>"><%=email%></a></p>
+
                     <p><span><a href="skype:<%=phones.phone%>?call"><%=phones.phone%></a></span></p>
-                    <p><span><a href="skype:<%=phones.mobile%>?call"><%=phones.mobile%></a></span></p>                    
-                    <p><%=createdBy.user ?  createdBy.user.login + " (" + createdBy.date +  ")" : " "%></p>
-                    <p><%=editedBy.user ?  editedBy.user.login + " (" + editedBy.date +  ")" : " "%></p> 
+
+                    <p><span><a href="skype:<%=phones.mobile%>?call"><%=phones.mobile%></a></span></p>
+
+                    <p><%=createdBy.user ? createdBy.user.login + " (" + createdBy.date + ")" : " "%></p>
+
+                    <p><%=editedBy.user ? editedBy.user.login + " (" + editedBy.date + ")" : " "%></p>
                 </div>
             </div>
             <div class="clearfix"></div>

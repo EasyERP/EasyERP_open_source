@@ -1,16 +1,16 @@
 <div id="searchContainer"></div>
 <% collection.forEach(function(product){ %>
-    <div class="thumbnailwithavatar product" id="<%=product._id%>">
-        <div class="inner">
-            <div class="avatar" style="line-height: 140px;">
-                    <img src="" />
-            </div>
-        </div>
-        <div class="info">
-          <div>
-              <h4><%= product.name %></h4>
-          </div>
-            <p><label>Price: </label><%=(product.info.salePrice)?(product.info.salePrice.toFixed(2)):"0.00"%></p>
+<div class="thumbnailwithavatar product" id="<%=product._id%>">
+    <div class="inner">
+        <div class="avatar" style="line-height: 140px;">
+            <img src=""/>
         </div>
     </div>
-    <% }) %>
+    <div class="info">
+        <div>
+            <h4><%= product.name %></h4>
+        </div>
+        <p><label>Price: </label><%=(product.info.salePrice)?(product.info.salePrice.toFixed(2)):"0.00"%></p>
+    </div>
+</div>
+<% }) %>
