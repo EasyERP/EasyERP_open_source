@@ -9,49 +9,9 @@ module.exports = (function () {
         ID: Number,
         dateByWeek: Number,
         dateByMonth: Number,
-        project: {
-            _id: {
-                type: ObjectId, ref: 'Project', default: null
-            },
-            projectName: String,
-            projectmanager: {
-                _id: {type: ObjectId, ref: 'Project', default: null},
-                name: String
-            },
-            workflow: {
-                _id: {type: ObjectId, ref: 'workflows', default: null},
-                name: String,
-                status: String
-            },
-            customer: {
-                _id: {type: ObjectId, ref: 'Customers', default: null},
-                name: String
-            },
-            bonus: [{
-                employeeId: {
-                    type: ObjectId,
-                    ref: 'Employees'
-                },
-                bonusId: {
-                    type: ObjectId,
-                    ref: 'bonusType'
-                },
-                startDate: Date,
-                startWeek: Number,
-                startYear: Number,
-                endDate: Date,
-                endWeek: Number,
-                endYear: Number
-            }]
-        },
-        employee: {
-            _id: {type: ObjectId, ref: 'Employees', default: null},
-            name: String
-        },
-        department: {
-            _id: {type: ObjectId, ref: 'Department', default: null},
-            departmentName: String
-        },
+        project:  {type: ObjectId, ref: 'Project', default: null},
+        employee: {type: ObjectId, ref: 'Employees', default: null},
+        department: {type: ObjectId, ref: 'Department', default: null},
         year: Number,
         month: Number,
         week: Number,
@@ -87,10 +47,7 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        jobs: {
-            _id: {type: ObjectId, ref: 'jobs', default: null},
-            name: {type: String, default: ''}
-        }
+        jobs: {type: ObjectId, ref: 'jobs', default: null}
     }, {collection: 'wTrack'});
 
     /*function getPrice(num) {

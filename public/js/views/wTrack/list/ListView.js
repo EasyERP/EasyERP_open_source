@@ -644,20 +644,11 @@ define([
                         tr.find('[data-content="workflow"]').text(element.workflow.name);
                         tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
 
-                        project = _.clone(editWtrackModel.get('project'));
-                        project._id = element._id;
-                        project.projectName = element.projectName;
-                        project.workflow._id = element.workflow._id;
-                        project.workflow.name = element.workflow.name;
-                        project.customer._id = element.customer._id;
-                        project.customer.name = element.customer.name.first + ' ' + element.customer.name.last;
-
-                        project.projectmanager.name = projectManager;
-                        project.projectmanager._id = element.projectmanager._id;
+                        project = element._id;
 
                         changedAttr.project = project;
 
-                        dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
+                        dataService.getData("/jobs/getForDD", {"projectId": project}, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
 
@@ -666,8 +657,7 @@ define([
 
                     } else if (elementType === '#jobs') {
 
-                        jobs._id = element._id;
-                        jobs.name = element.name;
+                        jobs = element._id;
 
                         changedAttr.jobs = jobs;
 
@@ -675,14 +665,9 @@ define([
                     } else if (elementType === '#employee') {
                         tr.find('[data-content="department"]').text(element.department.name);
 
-                        employee = _.clone(editWtrackModel.get('employee'));
-                        department = _.clone(editWtrackModel.get('department'));
+                        employee = element._id;
 
-                        employee._id = element._id;
-                        employee.name = target.text();
-
-                        department._id = element.department._id;
-                        department.departmentName = element.department.name;
+                        department = element.department._id;
 
                         changedAttr.employee = employee;
                         changedAttr.department = department;
@@ -693,9 +678,7 @@ define([
 
                         tr.find('[data-content="department"]').removeClass('errorContent');
                     } else if (elementType === '#department') {
-                        department = _.clone(editWtrackModel.get('department'));
-                        department._id = element._id;
-                        department.departmentName = element.departmentName;
+                        department = element._id;
 
                         changedAttr.department = department;
                     } else if (elementType === '#week') {

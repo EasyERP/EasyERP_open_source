@@ -158,22 +158,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         startDate : '',
                         endDate   : '',
                         hours     : '',
-                        project   : {
-                            projectName   : this.modelJSON.projectName,
-                            workflow      : {
-                                _id : this.modelJSON.workflow._id,
-                                name: this.modelJSON.workflow.name
-                            },
-                            customer      : {
-                                _id : this.modelJSON.customer._id,
-                                name: this.modelJSON.customer.fullName
-                            },
-                            projectmanager: {
-                                _id : this.modelJSON.projectmanager._id,
-                                name: this.modelJSON.projectmanager.fullName
-                            },
-                            _id           : this.modelJSON._id
-                        },
+                        project   : this.modelJSON._id,
                         employee  : {},
                         department: {},
                         1         : 8,
@@ -550,14 +535,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         departmentContainer.find('a.current-selected').text(element.department.name);
                         departmentContainer.removeClass('errorContent');
 
-                        employee = {
-                            _id : element._id,
-                            name: element.name
-                        };
-                        department = {
-                            _id           : element.department._id,
-                            departmentName: element.department.name
-                        };
+                        employee = element._id;
+                        department = element.department._id;
 
                         editWtrackModel.employee = employee;
                         editWtrackModel.department = department;
@@ -567,10 +546,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         departmentContainer.find('a.current-selected').text(element.name);
                         departmentContainer.removeClass('errorContent');
 
-                        department = {
-                            _id           : element._id,
-                            departmentName: element.name
-                        };
+                        department = element._id;
 
                         editWtrackModel.department = department;
                     } else {

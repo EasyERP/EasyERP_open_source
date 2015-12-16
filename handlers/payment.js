@@ -218,7 +218,7 @@ var Payment = function (models, event) {
                         var whoCanRw = [everyOne, owner, group];
                         var matchQuery = {
                             $and: [
-                                optionsObject,
+                                //optionsObject,
                                 {
                                     $or: whoCanRw
                                 }

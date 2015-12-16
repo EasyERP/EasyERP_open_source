@@ -204,6 +204,10 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
+            'Payment way' : {
+                view   : 'paymentMethod',
+                backend: 'paymentMethod._id'
+            },
             'Name'       : {
                 view   : 'name',
                 backend: '_id'

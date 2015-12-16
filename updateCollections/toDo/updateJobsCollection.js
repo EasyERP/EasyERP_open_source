@@ -35,8 +35,10 @@ query.exec(function(err, jobs){
 
             var invObj = job.workflow._id ? job.workflow._id : null;
             var project = job.project._id ? job.project._id : null;
+            var invoice = job.invoice._id ? job.invoice._id : null;
+            var quotation = job.quotation._id ? job.quotation._id : null;
 
-            Jobs.findByIdAndUpdate(jobId, {$set: {workflow: invObj, project: project}}, function(err, result){
+            Jobs.findByIdAndUpdate(jobId, {$set: {workflow: invObj, project: project, invoice : invoice, quotation: quotation}}, function(err, result){
                 console.log(count++);
                 callBack();
             })

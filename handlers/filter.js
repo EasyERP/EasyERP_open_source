@@ -678,16 +678,24 @@ var Filters = function (models) {
                         foreignField: "_id", as: "supplier"
                     }
                 }, {
+                    $lookup: {
+                        from        : "PaymentMethod",
+                        localField  : "paymentMethod",
+                        foreignField: "_id", as: "paymentMethod"
+                    }
+                }, {
                     $project: {
                         supplier: {$arrayElemAt: ["$supplier", 0]},
                         invoice : {$arrayElemAt: ["$invoice", 0]},
+                        paymentMethod : {$arrayElemAt: ["$paymentMethod", 0]},
                         name    : 1
                     }
                 }, {
                     $project: {
                         supplier: 1,
                         invoice : 1,
-                        name    : 1
+                        name    : 1,
+                        paymentMethod : 1
                     }
                 }, {
                     $lookup: {
@@ -699,7 +707,8 @@ var Filters = function (models) {
                     $project: {
                         supplier: 1,
                         assigned: {$arrayElemAt: ["$assigned", 0]},
-                        name    : 1
+                        name    : 1,
+                        paymentMethod : 1
                     }
                 }, {
                     $group: {
@@ -724,6 +733,12 @@ var Filters = function (models) {
                             $addToSet: {
                                 _id : '$_id',
                                 name: '$name'
+                            }
+                        },
+                        'paymentMethod'    : {
+                            $addToSet: {
+                                _id : '$paymentMethod._id',
+                                name: '$paymentMethod.name'
                             }
                         }
                     }
