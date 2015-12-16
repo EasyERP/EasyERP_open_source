@@ -37,11 +37,6 @@ define([
                 startTime.text(startDate);
                 endTime.text(endDate);
 
-                custom.cacheToApp('vacationDashDateRange', {
-                    startDate: startDate,
-                    endDate  : endDate
-                });
-
                 this.trigger('changeDateRange');
                 this.toggleDateRange(e);
             },
@@ -99,9 +94,8 @@ define([
             },
 
             render: function () {
-                var dateRange = custom.retriveFromCash('vacationDashDateRange') || {};
-                var startDate = dateRange.startDate || moment().subtract(1, 'week').day("Monday").format('DD MMM, YYYY');
-                var endDate = dateRange.endDate || moment().add(11, 'week').day("Sunday").format('DD MMM, YYYY');
+                var startDate = moment([2014, 7]).format('DD MMM, YYYY');
+                var endDate = moment().format('DD MMM, YYYY');
 
                 $('title').text(this.contentType);
 

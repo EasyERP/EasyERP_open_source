@@ -2845,9 +2845,16 @@ var wTrack = function (models) {
         var query = req.query;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
         var Payment = models.get(req.session.lastDb, 'Payment', paymentSchema);
+        var startDate = query.startDate;
+        var endDate = query.endDate;
         var matchObject = {
             _type   : 'wTrackInvoice',
             forSales: true
+        };
+
+        var matchObjectPayment = {
+            forSale: true,
+            _type  : 'Payment'
         };
         var projectionObject = {
             salesPerson: 1,
@@ -2863,7 +2870,7 @@ var wTrack = function (models) {
             month     : {$month: "$date"},
             week      : {$week: "$date"}
         };
-        var groupedKey = query.byWeek ? 'week' : 'month';
+        var groupedKey = (query.byWeek && query.byWeek !== 'false') ? 'week' : 'month';
 
         var groupObject = {
             invoiced: {$sum: '$paymentInfo.total'},
@@ -2909,6 +2916,14 @@ var wTrack = function (models) {
                 },
                 in  : {$add: ["$$total", {$week: "$date"}]}
             }
+        };
+
+        if(startDate && endDate){
+            startDate = new Date(startDate);
+            endDate = new Date(endDate);
+
+            matchObject.invoiceDate = {$gte: startDate, $lte: endDate};
+            matchObjectPayment.date = {$gte: startDate, $lte: endDate};
         };
 
         if (groupedKey === 'week') {
@@ -3028,10 +3043,7 @@ var wTrack = function (models) {
 
         function paymentGrouper(parallelCb) {
             Payment.aggregate([{
-                $match: {
-                    forSale: true,
-                    _type  : 'Payment'
-                }
+                $match: matchObjectPayment
             }, {
                 $project: projectionPaymentObject
             }, {

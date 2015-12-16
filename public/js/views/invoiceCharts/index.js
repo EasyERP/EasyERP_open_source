@@ -22,7 +22,7 @@ define([
 
         events: {
             "click #byMonth": "byMonth",
-            "click #byWeek" : "byWeek"
+            "click #byWeek" : "byWeekRender"
         },
 
         initialize: function (options) {
@@ -54,7 +54,19 @@ define([
             this.render();
         },
 
-        byWeek: function (e) {
+        changeDateRange: function(){
+            this.startDate = this.$startDate.val();
+            this.endDate = this.$endDate.val();
+
+            this.collection = new InvoiceCharts({
+                byWeek: this.byWeek,
+                startDate: this.startDate,
+                endDate: this.endDate
+            });
+            this.collection.on('reset', this.renderContent, this);
+        },
+
+        byWeekRender: function (e) {
             var $currentEl = $(e.target);
             var $div = $currentEl.closest('div');
 
@@ -62,7 +74,11 @@ define([
             $currentEl.addClass('active');
 
             this.byWeek = true;
-            this.collection = new InvoiceCharts({byWeek: true});
+            this.collection = new InvoiceCharts({
+                byWeek: true,
+                startDate: this.startDate,
+                endDate: this.endDate
+            });
             this.collection.on('reset', this.renderContent, this);
         },
 
@@ -74,7 +90,10 @@ define([
             $currentEl.addClass('active');
 
             this.byWeek = false;
-            this.collection = new InvoiceCharts();
+            this.collection = new InvoiceCharts({
+                startDate: this.startDate,
+                endDate: this.endDate
+            });
             this.collection.on('reset', this.renderContent, this);
         },
 
@@ -282,7 +301,12 @@ define([
 
             $currentEl.html(self.template());
 
+            this.byWeek = false;
+
             this.renderContent();
+
+            this.$startDate = $('#startDate');
+            this.$endDate = $('#endDate');
 
             return this;
         }
