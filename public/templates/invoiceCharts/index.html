@@ -12,9 +12,20 @@
         font-weight: 700;
     }
 
-    tr.boldHead {
-        background-color: #01579B;
+    tr.boldInvoiced {
+        background-color: #adacad;
         opacity: 0.8;
+    }
+    tr.boldInvoiced > td {
+        color: #01579B;
+    }
+
+    tr.boldPaid {
+        background-color: #7f7e7f;
+        opacity: 0.8;
+    }
+    tr.boldPaid > td {
+        color: #40C4FF;
     }
 </style>
 
@@ -30,7 +41,7 @@
             <button id="byMonth" class="active">M</button>
             <button id="byWeek">W</button>
         </div>
-        <div class="legend-box">
+       <!-- <div class="legend-box">
             <div class="invoiced">
                 <div class="square"></div>
                 <div class="text">Invoiced</div>
@@ -39,7 +50,7 @@
                 <div class="square"></div>
                 <div class="text">Paid</div>
             </div>
-        </div>
+        </div>-->
         <svg id="chart" style="height: 500px">
 
         </svg>

@@ -16,13 +16,13 @@
             <%})%>
         </tr>
     <%})%>
-    <tr class="boldHead">
+    <tr class="boldInvoiced">
         <td>Invoiced</td>
         <% collection.forEach(function(payments){%>
                 <td ><%=currencySplitter(payments.get('invoiced').toFixed(2))%></td>
         <%})%>
     </tr>
-    <tr class="boldHead">
+    <tr class="boldPaid">
         <td>Paid</td>
         <% collection.forEach(function(payments){%>
                 <td ><%=currencySplitter(payments.get('paid').toFixed(2))%></td>
