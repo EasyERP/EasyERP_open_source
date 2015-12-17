@@ -331,7 +331,7 @@ var PayRoll = function (models) {
                     next(error);
                 }
 
-                query = PayRoll.find(queryObject).sort(sort);
+                query = PayRoll.find(queryObject).sort(sort).populate('employee').populate('type');
 
                 query.exec(function (err, result) {
                     if (err) {
@@ -503,13 +503,13 @@ var PayRoll = function (models) {
                         dataToSave.diff = (dataToSave.paid ? dataToSave.paid : 0) - (dataToSave.calc ? dataToSave.calc : 0);
 
                         var PRoll = new Payroll(dataToSave);
-
-                        if (dataToSave.type.name === "Salary Cash") {
-                            defObj = dataToSave;
-                        }
+                        //
+                        //if (dataToSave.type === "Salary Cash") {
+                        //    defObj = dataToSave;
+                        //}
 
                         PRoll.save(function (err, result) {
-                            createdIds.push(result.employee._id.toString());
+                            createdIds.push(result.employee.toString());
                             cb();
                         });
 

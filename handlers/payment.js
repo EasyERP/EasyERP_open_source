@@ -273,7 +273,8 @@ var Payment = function (models, event) {
                                 bonus           : 1,
                                 paymentRef      : 1,
                                 year            : 1,
-                                month           : 1
+                                month           : 1,
+                                period: 1
                             }
                         }, {
                             $lookup: {
@@ -296,7 +297,8 @@ var Payment = function (models, event) {
                                 bonus           : 1,
                                 paymentRef      : 1,
                                 year            : 1,
-                                month           : 1
+                                month           : 1,
+                                period: 1
 
                             }
                         }, {
@@ -335,12 +337,16 @@ var Payment = function (models, event) {
         var query;
         var moduleId = returnModuleId(req);
 
-        Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        if (moduleId === 79){
+            Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
 
         access.getReadAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
 
-                query.findById(id);
+                query = Payment.findById(id);
 
                 query
                     .populate('supplier', '_id name fullName')

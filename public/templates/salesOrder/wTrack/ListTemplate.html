@@ -1,8 +1,6 @@
 <% orderCollection.forEach(function(order, index){ %>
 <tr data-id="<%=order._id%>"
-<%if (order.workflow && order.workflow.status === 'Cancelled') { %>
-class="canceledListItem"
-<%} else if (order.type !== "Not Invoiced"){ %>
+<%if (order.workflow && order.workflow.status !== 'New') { %>
 class="notEditable"
 <% } %>>
 <td class="notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox"/></td>

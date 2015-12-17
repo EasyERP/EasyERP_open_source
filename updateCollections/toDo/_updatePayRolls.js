@@ -28,7 +28,7 @@ var payRollSchema = new mongoose.Schema({
     },
     date  : {type: Date, default: null},
     status: {type: Boolean, default: false}
-}, {collection: 'Salary'});
+}, {collection: 'PayRoll'});
 
 payRollSchema.set('toJSON', {virtuals: true});
 
@@ -65,13 +65,15 @@ query.exec(function (error, _res) {
 
         if (rayRoll) {
             objectToSave = {
-                type   : rayRoll._id,
+                type   : rayRoll.type ? rayRoll.type._id : null,
                 employee: rayRoll.employee._id
             };
 
         }
 
-        PayRoll.update({_id: _id}, objectToSave, {new: true}, callback);
+        PayRoll.update({_id: _id}, {$set: {type: rayRoll.type ? rayRoll.type._id : null, employee: rayRoll.employee._id }}, function(err, result){
+            callback(err, result)
+        });
 
     }, function (err) {
         if (err) {

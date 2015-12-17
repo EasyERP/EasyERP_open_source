@@ -11,7 +11,7 @@ module.exports = (function () {
         calc    : Number,
         paid    : Number,
         diff    : Number,
-        type  : {type: ObjectId, ref: "ProductCategories", default: null},
+        type  : {type: ObjectId, ref: "ProductCategory", default: null},
         date  : {type: Date, default: null},
         status: {type: Boolean, default: false}
     }, {collection: 'PayRoll'});
