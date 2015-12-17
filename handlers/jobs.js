@@ -160,7 +160,7 @@ var Jobs = function (models, event) {
                 $lookup: {
                     from        : "Payment",
                     localField  : "invoice._id",
-                    foreignField: "invoice._id", as: "payments"
+                    foreignField: "invoice", as: "payments"
                 }
             }, {
                 $project: {
