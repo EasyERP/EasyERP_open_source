@@ -528,11 +528,11 @@ var Quotation = function (models, event) {
                 }, {
                     $match: newQueryObj
                 }, {
+                    $sort: sort
+                }, {
                     $skip: skip
                 }, {
                     $limit: count
-                }, {
-                    $sort: sort
                 }
             ], waterfallCallback);
         };
