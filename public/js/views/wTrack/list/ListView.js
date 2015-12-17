@@ -122,6 +122,8 @@ define([
                     this.autoCalc(e);
                     this.calculateCost(e, this.wTrackId);
                     this.setChangedValueToModel();
+                    this.showSaveCancelBtns();
+                    e.stopPropagation();
                 } else if ( !keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code) ){
                     e.preventDefault();
                 }
