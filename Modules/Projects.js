@@ -700,11 +700,11 @@ var Project = function (models, event) {
                             }, {
                                 $match: obj
                             }, {
+                                $sort: sort
+                            }, {
                                 $skip: skip
                             }, {
                                 $limit: limit
-                            }, {
-                                $sort: sort
                             }], function (err, projects) {
                                 if (err) {
                                     return console.log(err);

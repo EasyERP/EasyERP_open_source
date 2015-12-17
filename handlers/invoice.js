@@ -599,13 +599,12 @@ var Invoice = function (models, event) {
                             }, {
                                 $match: optionsObject
                             }, {
+                                $sort: sort
+                            }, {
                                 $skip: skip
                             }, {
                                 $limit: count
-                            }, {
-                                $sort: sort
                             }
-
                             ], function (err, result) {
                                 waterfallCallback(null, result)
                             });

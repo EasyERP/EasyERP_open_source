@@ -402,11 +402,11 @@ var wTrack = function (event, models) {
             }, {
                 $match: queryObject
             }, {
+                $sort: sort
+            }, {
                 $skip: skip
             }, {
                 $limit: count
-            }, {
-                $sort: sort
             }], function (err, result) {
                 waterfallCallback(err, result);
             })
