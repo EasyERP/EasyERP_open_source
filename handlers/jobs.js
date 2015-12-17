@@ -241,7 +241,7 @@ var Jobs = function (models, event) {
             jobId = result.get('_id');
             projectId = result.get('project');
 
-            wTrack.find({"jobs._id": jobId}, function (err, result) {
+            wTrack.find({"jobs": jobId}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
