@@ -444,6 +444,16 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                                     App.projectInfo = App.projectInfo || {};
                                     App.projectInfo.currentTab = 'timesheet';
 
+                                    tabs = $(".chart-tabs");
+                                    activeTab = tabs.find('.active');
+
+                                    activeTab.removeClass('active');
+                                    tabs.find('#' + App.projectInfo.currentTab + 'Tab').addClass("active");
+
+                                    dialogHolder = $(".dialog-tabs-items");
+                                    dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                                    dialogHolder.find('#' + App.projectInfo.currentTab).closest('.dialog-tabs-item').addClass("active");
+
                                 },
                                 error  : function () {
                                     App.render({

@@ -834,9 +834,9 @@ var wTrack = function (event, models) {
                         hours    : parseInt(opt.hours)
                     };
 
-                    async.parallel([calculateWeeks, getWorkflowStatus], function (err, result) {
+                    async.parallel([calculateWeeks /*getWorkflowStatus*/], function (err, result) {
                         dateArray = result[0];
-                        project.workflow.status = result[1];
+                       // project.workflow.status = result[1];
 
                         dateArrLength = dateArray.length;
 
@@ -1285,22 +1285,22 @@ var wTrack = function (event, models) {
                         });
                     }
 
-                    function getWorkflowStatus(fCb) {
-                        var workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
-
-                        var query = workflow.find({_id: objectId(projectWorkflowId)}, {status: 1}).lean();
-
-                        query.exec(function (err, result) {
-                            if (err) {
-                                return fCb(err);
-                            }
-
-                            if (result.length > 0) {
-                                fCb(null, result[0].status);
-                            }
-
-                        });
-                    }
+                    //function getWorkflowStatus(fCb) {
+                    //    var workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+                    //
+                    //    var query = workflow.find({_id: objectId(projectWorkflowId)}, {status: 1}).lean();
+                    //
+                    //    query.exec(function (err, result) {
+                    //        if (err) {
+                    //            return fCb(err);
+                    //        }
+                    //
+                    //        if (result.length > 0) {
+                    //            fCb(null, result[0].status);
+                    //        }
+                    //
+                    //    });
+                    //}
 
                     function calculateWeeks(fCb) {
                         var data = options;
