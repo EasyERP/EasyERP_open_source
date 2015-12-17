@@ -99,8 +99,8 @@
                     data.login = login;
                 }
 
-                if (profileId !== jsonModel.profile.id) {
-                    data.profile = {id: profileId};
+                if (profileId !== jsonModel.profile._id) {
+                    data.profile =  profileId;
                 }
 
                 if (Object.keys(data).length === 0) {
