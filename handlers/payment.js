@@ -499,8 +499,7 @@ var Payment = function (models, event) {
                     var paymentObject = _.clone(body[0]);
                     var payment;
 
-                    paymentObject.invoice = {};
-                    paymentObject.invoice._id = params.invoice.get('_id');
+                    paymentObject.invoice = params.invoice.get('_id');
 
                     paymentObject.supplier = params.suppliers;
                     paymentObject.paidAmount = params.totalAmount;

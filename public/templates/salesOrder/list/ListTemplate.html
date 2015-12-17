@@ -10,7 +10,7 @@ class="notEditable"
 <td><%=order.name%></td>
 <td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></td>
 <td><%=(order.projectmanager) ? order.projectmanager.name.first + ' ' + order.projectmanager.name.last : ''%></td>
-<td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
+<td class="total"><%=(order.paymentInfo && order.paymentInfo.total) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
 <td id='<%=order._id%>'>
     <a href="javascript:;" class=""><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
 </td>

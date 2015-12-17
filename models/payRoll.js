@@ -4,21 +4,14 @@ module.exports = (function () {
 
     var payRollSchema = new mongoose.Schema({
         ID      : Number,
-        employee: {
-            _id : {type: ObjectId, ref: 'Employees', default: null},
-            name: String
-        },
+        employee: {type: ObjectId, ref: 'Employees', default: null},
         year    : Number,
         month   : Number,
         dataKey : Number,
         calc    : Number,
         paid    : Number,
         diff    : Number,
-
-        type  : {
-            _id : {type: ObjectId, ref: "ProductCategories", default: null},
-            name: String
-        },
+        type  : {type: ObjectId, ref: "ProductCategories", default: null},
         date  : {type: Date, default: null},
         status: {type: Boolean, default: false}
     }, {collection: 'PayRoll'});
