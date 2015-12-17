@@ -2,15 +2,13 @@
 <% collection.forEach(function(company){ %>
 <div class="inner thumbnailwithavatar" id="<%=company._id%>">
     <div class="avatar" style="line-height: 140px;">
-        <a href="#easyErp/Companies/form/<%=company._id%>" class="gotoForm" title="<%=company.name.first%>"
-           data-id="<%=company._id%>">
+        <a href="#easyErp/Companies/form/<%=company._id%>" class="gotoForm" title="<%=company.name.first%>" data-id="<%=company._id%>">
             <img src=""/>
         </a>
     </div>
     <div class="info">
         <div>
-            <a class="title gotoForm" title="<%=company.name.first%>" href="#easyErp/Companies/form/<%=company._id%>"
-               data-id="<%=company._id%>"><%=company.name.first%></a>
+            <a class="title gotoForm" title="<%=company.name.first%>" href="#easyErp/Companies/form/<%=company._id%>" data-id="<%=company._id%>"><%=company.name.first%></a>
         </div>
         <div>
             <p><%=company.address.country%></p>

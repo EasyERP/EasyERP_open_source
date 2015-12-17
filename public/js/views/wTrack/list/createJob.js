@@ -77,6 +77,7 @@ define(["text!templates/wTrack/createJob.html"
                     var data = {};
 
                     data.project = self.modelJSON._id;
+                    data.name = jobName;
 
                     this.stopDefaultEvents(e);
 

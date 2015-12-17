@@ -127,11 +127,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 asyncLoadImgs: function (model) {
                     var currentModel = model.id ? model.toJSON() : model;
                     var id = currentModel._id;
-                    var pm = currentModel.projectmanager;
-                    var customer = currentModel.customer;
+                    var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id: currentModel.projectmanager;
+                    var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
                     if (pm) {
-                        common.getImagesPM([pm._id], "/getEmployeesImages", "#" + id, function (result) {
+                        common.getImagesPM([pm], "/getEmployeesImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -139,7 +139,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     if (customer) {
-                        common.getImagesPM([customer._id], "/getCustomersImages", "#" + id, function (result) {
+                        common.getImagesPM([customer], "/getCustomersImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);

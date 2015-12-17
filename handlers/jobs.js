@@ -63,7 +63,7 @@ var Jobs = function (models, event) {
         data.type = "Not Quoted";
         data.wTracks = [];
 
-        data.project = objectId(data.project._id);
+        data.project = objectId(data.project);
 
         newModel = new JobsModel(data);
 
@@ -282,7 +282,6 @@ var Jobs = function (models, event) {
                 query = {workflow: data.workflowId};
             } else if (data.name) {
                 query = {name: data.name};
-                updatewTracks = true;
             } else if (data.type) {
                 query = {type: data.type};
             }
@@ -290,24 +289,8 @@ var Jobs = function (models, event) {
             delete data._id;
 
             JobsModel.findByIdAndUpdate(id, query, {new: true}, function (err, result) {
-                var jobId;
-                var jobName;
-
                 if (err) {
                     return next(err);
-                }
-
-                jobId = result.get('_id');
-                jobName = result.get('name');
-
-                if (updatewTracks) {
-                    wTrack.update({"jobs._id": jobId}, {$set: {"jobs.name": jobName}}, {multi: true}, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        console.log('updated wTracks');
-                    })
                 }
 
                 res.status(200).send(result)
