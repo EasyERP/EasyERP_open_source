@@ -31,11 +31,10 @@ define([
 
             events: {
                 'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click #projectDd"                                                : "showNewSelect",
-                "click a.current-selected:not(#projectDd,.jobs)"                  : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination,#generateJobs)" : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
+                'click .dialog-tabs a': 'changeTab',
+                "click a.current-selected:not(.jobs)": "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
+                "click .newSelectList li.miniStylePagination"                    : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },

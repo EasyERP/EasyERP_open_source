@@ -8,6 +8,10 @@ define([], function () {
         return keyCode === 8;
     };
 
+    var isBspaceAndDelete = function (keyCode) {
+        return (keyCode === 8 ||  keyCode === 46);
+    };
+
     var isEnter = function (keyCode) {
         return keyCode === 13;
     };
@@ -25,6 +29,7 @@ define([], function () {
         isBackspace        : isBackspace,
         isEnter            : isEnter,
         isDecimalDot       : isDecimalDot,
-        isDigitOrDecimalDot: isDigitOrDecimalDot
+        isDigitOrDecimalDot: isDigitOrDecimalDot,
+        isBspaceAndDelete : isBspaceAndDelete
     };
 });

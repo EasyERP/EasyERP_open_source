@@ -458,7 +458,8 @@ define([
                 var self = this;
                 var formString = this.template({
                     model  : this.currentModel.toJSON(),
-                    visible: this.visible
+                    visible: this.visible,
+                    hidePrAndCust: this.hidePrAndCust
                 });
                 var service = this.forSales;
                 var notDiv;

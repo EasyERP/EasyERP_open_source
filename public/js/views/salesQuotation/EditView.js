@@ -17,6 +17,7 @@ define([
                 this.pId = options.pId;
                 this.redirect = options.redirect;
                 this.collection = options.collection;
+                this.hidePrAndCust = options.hidePrAndCust || false;
 
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");

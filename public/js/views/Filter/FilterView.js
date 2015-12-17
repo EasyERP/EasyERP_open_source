@@ -147,11 +147,18 @@ define([
                 var allFilterNames = this.$el.find('.filters');
                 var allowName = true;
 
-                _.forEach(allFilterNames, function (filter) {
+                /*_.forEach(allFilterNames, function (filter) {
                     if (filter.innerHTML === filterName) {
                         return allowName = false;
                     }
+                });*/
+                // changed to easier method
+                allFilterNames.each( function (index, elem) {
+                    if (elem.innerHTML === filterName) {
+                        return allowName = false;
+                    }
                 });
+                // end
 
                 key = this.parentContentType;
 
@@ -162,12 +169,14 @@ define([
                 }
 
                 if (!allowName) {
-                    alert('Filter with same name already exists! Please, change filter name.');
+                    //changed alert
+                    App.render({type: 'error', message: 'Filter with same name already exists! Please, change filter name.'});
                     bool = false;
                 }
 
                 if ((Object.keys(App.filter)).length === 0) {
-                    alert('Please, use some filter!');
+                    //changed alert
+                    App.render({type: 'error', message: 'Please, use some filter!'});
                     bool = false;
                 }
 
@@ -208,6 +217,8 @@ define([
                                 );
                                 favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
                                 self.$el.find('.defaultFilter').attr('checked', false);
+                                // added for changing name after saving favourite filter
+                                self.$el.find('.forFilterIcons').html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
                                 self.selectedFilter(id);
                             },
                             error   : function (model, xhr) {
@@ -325,7 +336,7 @@ define([
                 var groupName;
 
                 filterValues.empty();
-                _.forEach(filter, function (key, value) {
+                _.forEach (filter, function (key, value) {
                     groupName = self.$el.find('#' + key).text();
 
                     if (groupName.length > 0) {
@@ -336,7 +347,6 @@ define([
                             groupName = 'Letter';
                             filterIc.addClass('active');
                             filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                            console.log(key, typeof key, key === 'department', key === 'name');
                         }
                     }
                 });
@@ -644,7 +654,10 @@ define([
 
                             self.clickSearchResult(element);
                         });
-                        searchInput.html(""); // to prevent appearing previous values by pressing Backspace
+
+                        allResults.remove(); // to prevent appearing last filters after selecting new
+                        searchInput.html(""); // to prevent appearing value in Search after selecting
+                        e.preventDefault();; // to prevent appearing previous values by pressing Backspace
                     }
                 });
 
