@@ -176,7 +176,7 @@ var Filters = function (models) {
                 $project: {
                     customer      : {$arrayElemAt: ["$customer", 0]},
                     projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
-                    project: 1,
+                    project       : 1,
                     employee      : 1,
                     department    : 1,
                     month         : 1,
@@ -185,70 +185,70 @@ var Filters = function (models) {
                     isPaid        : 1
                 }
             }, {
-                    $group: {
-                        _id             : null,
-                        'jobs'          : {
-                            $addToSet: {
-                                _id : '$jobs._id',
-                                name: '$jobs.name'
+                $group: {
+                    _id             : null,
+                    'jobs'          : {
+                        $addToSet: {
+                            _id : '$jobs._id',
+                            name: '$jobs.name'
+                        }
+                    },
+                    'projectManager': {
+                        $addToSet: {
+                            _id : '$projectmanager._id',
+                            name: {
+                                $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
                             }
-                        },
-                        'projectManager': {
-                            $addToSet: {
-                                _id : '$projectmanager._id',
-                                name: {
-                                    $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
-                                }
+                        }
+                    },
+                    'projectName'   : {
+                        $addToSet: {
+                            _id : '$project._id',
+                            name: '$project.projectName'
+                        }
+                    },
+                    'customer'      : {
+                        $addToSet: {
+                            _id : '$customer._id',
+                            name: {
+                                $concat: ['$customer.name.first', ' ', '$customer.name.last']
                             }
-                        },
-                        'projectName'   : {
-                            $addToSet: {
-                                _id : '$project._id',
-                                name: '$project.projectName'
+                        }
+                    },
+                    'employee'      : {
+                        $addToSet: {
+                            _id : '$employee._id',
+                            name: {
+                                $concat: ['$employee.name.first', ' ', '$employee.name.last']
                             }
-                        },
-                        'customer'      : {
-                            $addToSet: {
-                                _id : '$customer._id',
-                                name : {
-                                    $concat: ['$customer.name.first', ' ', '$customer.name.last']
-                                }
-                            }
-                        },
-                        'employee'      : {
-                            $addToSet: {
-                                _id: '$employee._id',
-                                name : {
-                                    $concat: ['$employee.name.first', ' ', '$employee.name.last']
-                                }
-                            }
-                        },
-                        'department'    : {
-                            $addToSet: {
-                                _id : '$department._id',
-                                name: '$department.departmentName'
-                            }
-                        },
-                        'year'          : {
-                            $addToSet: {
-                                _id : '$year',
-                                name: '$year'
-                            }
-                        },
-                        'month'         : {
-                            $addToSet: {
-                                _id : '$month',
-                                name: '$month'
-                            }
-                        },
-                        'week'          : {
-                            $addToSet: {
-                                _id : '$week',
-                                name: '$week'
-                            }
+                        }
+                    },
+                    'department'    : {
+                        $addToSet: {
+                            _id : '$department._id',
+                            name: '$department.departmentName'
+                        }
+                    },
+                    'year'          : {
+                        $addToSet: {
+                            _id : '$year',
+                            name: '$year'
+                        }
+                    },
+                    'month'         : {
+                        $addToSet: {
+                            _id : '$month',
+                            name: '$month'
+                        }
+                    },
+                    'week'          : {
+                        $addToSet: {
+                            _id : '$week',
+                            name: '$week'
                         }
                     }
                 }
+            }
             ], function (err, result) {
                 if (err) {
                     return callback(err);
@@ -1228,8 +1228,14 @@ var Filters = function (models) {
                     foreignField: "invoice._id", as: "payments"
                 }
             }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
                 $project: {
-                    order    : {
+                    order         : {
                         $cond: {
                             if  : {
                                 $eq: ['$type', 'Not Quoted']
@@ -1246,18 +1252,33 @@ var Filters = function (models) {
                             }
                         }
                     },
-                    name     : 1,
-                    workflow : 1,
-                    type     : 1,
-                    wTracks  : 1,
-                    project  : 1,
-                    budget   : 1,
-                    quotation: 1,
-                    invoice  : 1,
-                    payment  : {
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    payment       : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
+                }
+            }, {
+                $project: {
+                    order         : 1,
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    projectmanager: 1,
+                    payment       : 1
                 }
             }, {
                 $group: {
@@ -1282,8 +1303,10 @@ var Filters = function (models) {
                     },
                     'projectManager': {
                         $addToSet: {
-                            _id : '$project.projectmanager._id',
-                            name: '$project.projectmanager.name'
+                            _id : '$projectmanager._id',
+                            name: {
+                                $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                            }
                         }
                     },
                     'paymentsCount' : {

@@ -120,6 +120,12 @@ var Jobs = function (models, event) {
             }
         }
 
+        if (!queryObject['$and']){
+            queryObject['$and'] = [];
+        }
+
+        queryObject['$and'].push({"invoice._type": 'wTrackInvoice'});
+
         JobsModel
             .aggregate([{
                 $lookup: {
