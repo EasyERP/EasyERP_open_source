@@ -353,12 +353,16 @@ define([
             },
 
             showFilterName: function (filterName) {
-                var filterIc = this.$el.find('.fa.fa-filter');
                 var filterValues = this.$el.find('.forFilterIcons');
-                filterValues.empty();
+                filterValues.each(function(){
+                    $(this).remove();
+                });
 
-                filterIc.addClass('active');
-                filterValues.append('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
+                this.$el.find('#searchFilterContainer').html('<div class="forFilterIcons"></div>');
+
+                filterValues = this.$el.find('.forFilterIcons');
+
+                filterValues.html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
 
             },
 
