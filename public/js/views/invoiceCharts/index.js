@@ -129,12 +129,12 @@ define([
                 d.invoiced = d.invoiced || 0;
                 d.paid = d.paid || 0;
 
-                return d.invoiced < d.paid ? d.invoiced : d.paid;
+                return d.invoiced <= d.paid ? d.invoiced : d.paid;
             })), d3.max(data.map(function (d) {
                 d.invoiced = d.invoiced || 0;
                 d.paid = d.paid || 0;
 
-                return d.invoiced > d.paid ? d.invoiced : d.paid;
+                return d.invoiced >= d.paid ? d.invoiced : d.paid;
             }))]);
 
             topChart
