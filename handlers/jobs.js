@@ -163,6 +163,12 @@ var Jobs = function (models, event) {
                     foreignField: "invoice", as: "payments"
                 }
             }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
                 $project: {
                     order    : {
                         $cond: {
@@ -189,10 +195,25 @@ var Jobs = function (models, event) {
                     budget   : 1,
                     quotation: 1,
                     invoice  : 1,
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
                     payment  : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
+                }
+            }, {
+                $project: {
+                    order    : 1,
+                   name     : 1,
+                    workflow : 1,
+                    type     : 1,
+                    wTracks  : 1,
+                    project  : 1,
+                    budget   : 1,
+                    quotation: 1,
+                    invoice  : 1,
+                    payment  : 1,
+                    projectmanager: 1
                 }
             }, {
                 $match: queryObject
