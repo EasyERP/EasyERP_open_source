@@ -62,6 +62,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (element.maxLength && element.value.length > element.maxLength) {
                         element.value = element.value.slice(0, element.maxLength);
+                    } else {
+                        this.setChangedValueToModel();
+
+                       // $(e.target).parent('td').removeClass('errorContent');
                     }
                 },
 
@@ -372,8 +376,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
 
+                        if (editedElement.attr('id') === 'inputHours'){
+                            editedElementValue = parseInt(editedElementValue);
+                        }
+
                         if (editedElementValue) {
                             editedCol.removeClass('errorContent');
+                        } else {
+                            editedCol.addClass('errorContent');
                         }
 
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
