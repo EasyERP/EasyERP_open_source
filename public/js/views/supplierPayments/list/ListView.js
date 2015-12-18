@@ -116,7 +116,7 @@ define([
                 }
                 targetW.text(target.text());
 
-                this.hidePagesPopup();
+                this.hidePagesPopup(e);
                 this.setEditable(targetElement);
 
                 return false;
