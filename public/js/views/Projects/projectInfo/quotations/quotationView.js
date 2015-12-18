@@ -128,7 +128,8 @@ define([
                 $currentEl.find('#listTableQuotation').html(this.templateList({
                     quotations : this.collection.toJSON(),
                     startNumber: 0,
-                    dateToLocal: common.utcDateToLocaleDate
+                    dateToLocal: common.utcDateToLocaleDate,
+                    currencySplitter: helpers.currencySplitter
                 }));
             }
 
@@ -184,11 +185,11 @@ define([
             model.fetch({
                 success: function (model) {
                     new editView({
-                        model     : model,
-                        redirect  : true,
-                        pId       : self.projectID,
-                        customerId: self.customerId,
-                        collection: self.collection,
+                        model        : model,
+                        redirect     : true,
+                        pId          : self.projectID,
+                        customerId   : self.customerId,
+                        collection   : self.collection,
                         hidePrAndCust: true
                     });
 
@@ -316,9 +317,10 @@ define([
             $currentEl.prepend(this.templateHeader);
 
             $currentEl.find('#listTableQuotation').html(this.templateList({
-                quotations : this.collection.toJSON(),
-                startNumber: 0,
-                dateToLocal: common.utcDateToLocaleDate
+                quotations      : this.collection.toJSON(),
+                startNumber     : 0,
+                dateToLocal     : common.utcDateToLocaleDate,
+                currencySplitter: helpers.currencySplitter
             }));
 
             this.$el.find('#removeQuotation').hide();

@@ -42,7 +42,7 @@
                                     </label></dt>
                                     <dd>
                                         <%if(hidePrAndCust){%>
-                                        <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.name%></span>
+                                        <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></span>
                                         <%} else {%>
                                         <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.name.first + ' ' + model.supplier.name.last%></a>
                                         <% } %>

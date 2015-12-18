@@ -305,12 +305,9 @@ define([
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
-                supplier._id = thisEl.find('#supplierDd').attr('data-id');
-                supplier.name = thisEl.find('#supplierDd').text();
+                supplier = thisEl.find('#supplierDd').attr('data-id');
 
-                project._id = thisEl.find('#projectDd').attr('data-id');
-                project.projectName = thisEl.find('#projectDd').text();
-                project.projectmanager = this.projectManager;
+                project = thisEl.find('#projectDd').attr('data-id');
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {

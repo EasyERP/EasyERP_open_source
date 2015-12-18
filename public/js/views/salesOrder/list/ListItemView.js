@@ -1,9 +1,10 @@
 ﻿define([
         'text!templates/salesOrder/list/ListTemplate.html',
-        'text!templates/salesOrder/wTrack/ListTemplate.html'
+        'text!templates/salesOrder/wTrack/ListTemplate.html',
+        'helpers'
     ],
 
-    function (listTemplate, listForWTrack) {
+    function (listTemplate, listForWTrack, helpers) {
         var OrderListItemView = Backbone.View.extend({
             el: '#listTable',
 
@@ -17,12 +18,14 @@
                 if (App.weTrack) {
                     el.append(_.template(listForWTrack, {
                         orderCollection: this.collection.toJSON(),
-                        startNumber    : this.startNumber
+                        startNumber    : this.startNumber,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 } else {
                     el.append(_.template(listTemplate, {
                         orderCollection: this.collection.toJSON(),
-                        startNumber    : this.startNumber
+                        startNumber    : this.startNumber,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
             }

@@ -12,10 +12,11 @@ define([
         'views/Filter/FilterView',
         'common',
         'dataService',
-        'constants'
+        'constants',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
         var QuotationListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
