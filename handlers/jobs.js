@@ -124,7 +124,7 @@ var Jobs = function (models, event) {
             queryObject['$and'] = [];
         }
 
-        queryObject['$and'].push({"invoice._type": 'wTrackInvoice'});
+        queryObject['$and'].push({"invoice._type": 'wTrackInvoice'}); //add for jobsDash
 
         JobsModel
             .aggregate([{

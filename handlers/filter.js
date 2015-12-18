@@ -1281,6 +1281,10 @@ var Filters = function (models) {
                     payment       : 1
                 }
             }, {
+                $match: {
+                    "invoice._type": 'wTrackInvoice' //add for jobsDash
+                }
+            }, {
                 $group: {
                     _id             : null,
                     'type'          : {
