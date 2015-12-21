@@ -843,6 +843,19 @@ var wTrack = function (models) {
             };
 
             WTrack.aggregate([{
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id', as: 'department'
+                }
+            }, {
+                $project: {
+                    department    : {$arrayElemAt: ["$department", 0]},
+                    month      : 1,
+                    year       : 1,
+                    dateByWeek: 1
+                }
+            }, {
                 $match: match
             }, {
                 $group: groupBy
@@ -962,12 +975,25 @@ var wTrack = function (models) {
                 queryObject['$and'] = [
                     {'dateByMonth': {'$gte': startDateByWeek}},
                     {'dateByMonth': {'$lte': endDateByWeek}},
-                    {'project._id': {'$in': projectIds}}
+                    {'project': {'$in': projectIds}}
                 ];
 
                 WTrack.aggregate([
                     {
                         $match: queryObject
+                    }, {
+                        $lookup: {
+                            from        : 'Project',
+                            localField  : 'project',
+                            foreignField: '_id', as: 'project'
+                        }
+                    }, {
+                        $project: {
+                            project: {$arrayElemAt: ["$project", 0]},
+                            dateByMonth: 1,
+                            revenue: 1,
+                            cost: 1
+                        }
                     }, {
                         $group: {
                             _id    : {
@@ -1278,13 +1304,26 @@ var wTrack = function (models) {
                 queryObject['$and'] = [
                     {'dateByMonth': {'$gte': startDateByWeek}},
                     {'dateByMonth': {'$lte': endDateByWeek}},
-                    {'project._id': {'$in': projectIds}},
+                    {'project': {'$in': projectIds}},
                     {'isPaid': false}
                 ];
 
                 WTrack.aggregate([
                     {
                         $match: queryObject
+                    }, {
+                        $lookup: {
+                            from        : 'Project',
+                            localField  : 'project',
+                            foreignField: '_id', as: 'project'
+                        }
+                    }, {
+                        $project: {
+                            project: {$arrayElemAt: ["$project", 0]},
+                            dateByMonth: 1,
+                            revenue: 1,
+                            cost: 1
+                        }
                     }, {
                         $group: {
                             _id    : {
@@ -1595,13 +1634,26 @@ var wTrack = function (models) {
                 queryObject['$and'] = [
                     {'dateByMonth': {'$gte': startDateByWeek}},
                     {'dateByMonth': {'$lte': endDateByWeek}},
-                    {'project._id': {'$in': projectIds}},
+                    {'project': {'$in': projectIds}},
                     {'isPaid': true}
                 ];
 
                 WTrack.aggregate([
                     {
                         $match: queryObject
+                    }, {
+                        $lookup: {
+                            from        : 'Project',
+                            localField  : 'project',
+                            foreignField: '_id', as: 'project'
+                        }
+                    }, {
+                        $project: {
+                            project    : {$arrayElemAt: ["$project", 0]},
+                            dateByMonth: 1,
+                            revenue    : 1,
+                            cost       : 1
+                        }
                     }, {
                         $group: {
                             _id    : {
