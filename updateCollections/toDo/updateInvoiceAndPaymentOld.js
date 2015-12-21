@@ -127,7 +127,7 @@ query.exec(function (err, payments) {
                         } else if (invoice.payments && invoice.payments.length === 0) {
                             invoicesWithoutPayment.push(invoice);
                         } else {
-                            invoicesWithManyPayment.push(invoice);
+                            invoicesWithManyPayment.push(invoice._id);
                         }
 
                         callBack();
@@ -146,7 +146,7 @@ query.exec(function (err, payments) {
         console.log('Total found', invoices.length, invoices);
         console.log('With One Payment', invoicesWithOnePayment.length);
         console.log('Without payment', invoicesWithoutPayment.length);
-        console.log('Has many Payments', invoicesWithManyPayment.length);
+        console.log('Has many Payments', invoicesWithManyPayment.length, invoicesWithManyPayment);
         console.log('Invoices with bad wetracks', invoicesWithBadWetracks.length, invoicesWithBadWetracks);
         console.log('Invoices with not equal wetracl.length', invoicesWithNotEqualWtrackLength.length, invoicesWithNotEqualWtrackLength);
         console.log('Invoice without jobs', invoicesWithoutJobs.length, invoicesWithoutJobs);
