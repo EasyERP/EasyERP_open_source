@@ -207,6 +207,28 @@ var wTrack = function (models) {
             };
 
             WTrack.aggregate([{
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id', as: 'department'
+                }
+            }, {
+                $project: {
+                    department: {$arrayElemAt: ["$department", 0]},
+                    year: 1,
+                    week: 1,
+                    revenue: 1,
+                    rate: 1,
+                    '1': 1,
+                    '2': 1,
+                    '3': 1,
+                    '4': 1,
+                    '5': 1,
+                    '6': 1,
+                    '7': 1,
+                    dateByWeek: 1
+                }
+            }, {
                 $match: match
             }, {
                 $group: groupBy
