@@ -13,7 +13,7 @@ var CONSTANTS = require('../../constants/mainConstants');
 
 var moment = require('../../public/js/libs/moment/moment');
 
-var dbObject = mongoose.createConnection('localhost', 'production');
+var dbObject = mongoose.createConnection('192.168.88.64', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -57,7 +57,7 @@ query.exec(function (err, payments) {
             paymentYear = moment(payment.date).year();
             month = moment(payment.date).month();
 
-            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2014 && month === 10) {
+            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2014 && month === 11) {
                 /* paymentWeek = moment(payment.date).isoWeek();
                  paymentYear = moment(payment.date).year();*/
 
