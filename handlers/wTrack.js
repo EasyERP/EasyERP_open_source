@@ -185,7 +185,7 @@ var wTrack = function (event, models) {
                     resArray.push(filtrElement);
                     break;
                 case 'customer':
-                    filtrElement['customer'] = {$in: condition.objectID()};
+                    filtrElement['customer._id'] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
                 case 'employee':
@@ -315,8 +315,14 @@ var wTrack = function (event, models) {
                     foreignField: "_id", as: "projectmanager"
                 }
             }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "project.customer",
+                    foreignField: "_id", as: "customer"
+                }
+            }, {
                 $project: {
-                    customer      : 1,
+                    customer      : {$arrayElemAt: ["$customer", 0]},
                     projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
                     project       : 1,
                     employee      : 1,
@@ -335,7 +341,7 @@ var wTrack = function (event, models) {
                     year                : 1,
                     week                : 1,
                     isPaid              : 1,
-                    customer            : 1,
+                    'customer._id'      : 1,
                     'projectmanager._id': 1
                 }
             }, {
