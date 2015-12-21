@@ -8,7 +8,7 @@
 
             initialize: function (options) {
                 this.collection = options.collection;
-                this.startNumber = (options.page - 1 ) * options.itemsNumber;//Counting the start index of list items
+                this.startNumber = (parseInt(options.page) - 1 ) * options.itemsNumber;//Counting the start index of list items
             },
 
             render: function () {

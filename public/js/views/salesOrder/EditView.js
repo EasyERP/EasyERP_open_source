@@ -121,10 +121,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow : workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -226,10 +223,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -397,6 +391,7 @@ define([
                 var mid = 55;
                 event.preventDefault();
                 var self = this;
+                var url = window.location.hash;
                 var answer = confirm("Really DELETE items ?!");
                 if (answer == true) {
                     this.currentModel.destroy({
@@ -405,7 +400,12 @@ define([
                         },
                         success: function () {
                             $('.edit-product-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
+
+                            App.projectInfo = App.projectInfo || {};
+                            App.projectInfo.currentTab = 'orders';
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {

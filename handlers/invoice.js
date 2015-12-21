@@ -226,10 +226,7 @@ var Invoice = function (models, event) {
 
             Order.findByIdAndUpdate(id, {
                 $set: {
-                    workflow: {
-                        name: "Invoiced",
-                        _id : CONSTANTS.ORDERDONE
-                    }
+                    workflow: CONSTANTS.ORDERDONE
                 }
             }, {new: true}, function (err, result) {
                 if (err) {
@@ -803,10 +800,7 @@ var Invoice = function (models, event) {
 
                         Order.findByIdAndUpdate(objectId(orderId), {
                             $set: {
-                                workflow: {
-                                    name: "Not Invoiced",
-                                    _id : CONSTANTS.ORDERDRAFT
-                                }
+                                workflow: CONSTANTS.ORDERDRAFT
                             }
                         }, {new: true}, function (err, result) {
                             if (err) {
