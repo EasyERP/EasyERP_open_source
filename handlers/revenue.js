@@ -633,7 +633,7 @@ var wTrack = function (models) {
             groupBy = {
                 _id        : {
                     project : '$project._id',
-                    assigned: '$project.projectmanager._id',
+                    assigned: '$project.projectmanager',
                     month   : '$month',
                     year    : '$year'
                 },
@@ -642,6 +642,19 @@ var wTrack = function (models) {
             };
 
             WTrack.aggregate([{
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id', as: 'project'
+                }
+            }, {
+                $project: {
+                    project    : {$arrayElemAt: ["$project", 0]},
+                    month      : 1,
+                    year       : 1,
+                    dateByMonth: 1
+                }
+            }, {
                 $match: match
             }, {
                 $group: groupBy
@@ -716,8 +729,8 @@ var wTrack = function (models) {
             groupBy = {
                 _id        : {
                     project : '$project._id',
-                    assigned: '$project.projectmanager._id',
-                    employee: '$employee._id',
+                    assigned: '$project.projectmanager',
+                    employee: '$employee',
                     month   : '$month',
                     year    : '$year'
                 },
@@ -725,6 +738,20 @@ var wTrack = function (models) {
             };
 
             WTrack.aggregate([{
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id', as: 'project'
+                }
+            }, {
+                $project: {
+                    project    : {$arrayElemAt: ["$project", 0]},
+                    month      : 1,
+                    year       : 1,
+                    dateByMonth: 1,
+                    employee: 1
+                }
+            }, {
                 $match: match
             }, {
                 $group: groupBy
@@ -732,7 +759,7 @@ var wTrack = function (models) {
                 $group: {
                     _id         : {
                         assigned: '$_id.assigned',
-                        employee: '$employee._id',
+                        employee: '$employee',
                         month   : '$_id.month',
                         year    : '$_id.year'
                     },
