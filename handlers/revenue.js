@@ -92,18 +92,18 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    project: {$arrayElemAt: ["$project", 0]},
-                    year: 1,
-                    week: 1,
-                    revenue: 1,
-                    rate: 1,
-                    '1': 1,
-                    '2': 1,
-                    '3': 1,
-                    '4': 1,
-                    '5': 1,
-                    '6': 1,
-                    '7': 1,
+                    project   : {$arrayElemAt: ["$project", 0]},
+                    year      : 1,
+                    week      : 1,
+                    revenue   : 1,
+                    rate      : 1,
+                    '1'       : 1,
+                    '2'       : 1,
+                    '3'       : 1,
+                    '4'       : 1,
+                    '5'       : 1,
+                    '6'       : 1,
+                    '7'       : 1,
                     dateByWeek: 1
                 }
             }, {
@@ -215,17 +215,17 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     department: {$arrayElemAt: ["$department", 0]},
-                    year: 1,
-                    week: 1,
-                    revenue: 1,
-                    rate: 1,
-                    '1': 1,
-                    '2': 1,
-                    '3': 1,
-                    '4': 1,
-                    '5': 1,
-                    '6': 1,
-                    '7': 1,
+                    year      : 1,
+                    week      : 1,
+                    revenue   : 1,
+                    rate      : 1,
+                    '1'       : 1,
+                    '2'       : 1,
+                    '3'       : 1,
+                    '4'       : 1,
+                    '5'       : 1,
+                    '6'       : 1,
+                    '7'       : 1,
                     dateByWeek: 1
                 }
             }, {
@@ -290,7 +290,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id        : {
-                    assigned: '$project.projectmanager._id',
+                    assigned: '$project.projectmanager',
                     month   : '$month',
                     year    : '$year'
                 },
@@ -299,6 +299,21 @@ var wTrack = function (models) {
             };
 
             WTrack.aggregate([{
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id', as: 'project'
+                }
+            }, {
+                $project: {
+                    project    : {$arrayElemAt: ["$project", 0]},
+                    month      : 1,
+                    year       : 1,
+                    revenue    : 1,
+                    dateByMonth: 1,
+                    amount     : 1
+                }
+            }, {
                 $match: match
             }, {
                 $group: groupBy
@@ -364,7 +379,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id        : {
-                    assigned: '$project.projectmanager._id',
+                    assigned: '$project.projectmanager',
                     month   : '$month',
                     year    : '$year'
                 },
@@ -374,17 +389,51 @@ var wTrack = function (models) {
             };
 
             WTrack.aggregate([{
-                $match: match
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id', as: 'project'
+                }
             }, {
                 $project: {
-                    project    : 1,
+                    project    : {$arrayElemAt: ["$project", 0]},
                     month      : 1,
                     year       : 1,
                     revenue    : 1,
-                    amount     : 1,
-                    diff       : {$subtract: ["$revenue", "$amount"]},
                     dateByMonth: 1,
-                    _id        : 1
+                    amount     : 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'project.workflow',
+                    foreignField: '_id', as: 'project.workflow'
+                }
+            }, {
+                $project: {
+                    'project._id'           : 1,
+                    'project.projectmanager': 1,
+                    'project.workflow'      : {$arrayElemAt: ["$project.workflow", 0]},
+                    month                   : 1,
+                    year                    : 1,
+                    revenue                 : 1,
+                    dateByMonth             : 1,
+                    amount                  : 1
+                }
+            }, {
+                $match: match
+            }, {
+                $project: {
+                    'project._id'           : 1,
+                    'project.workflow'      : 1,
+                    'project.projectmanager': 1,
+                    month                   : 1,
+                    year                    : 1,
+                    revenue                 : 1,
+                    amount                  : 1,
+                    diff                    : {$subtract: ["$revenue", "$amount"]},
+                    dateByMonth             : 1,
+                    _id                     : 1
                 }
             }, {
                 $match: {diff: {$gte: 0}}
@@ -460,7 +509,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id        : {
-                    assigned: '$project.projectmanager._id',
+                    assigned: '$project.projectmanager',
                     month   : '$month',
                     year    : '$year'
                 },
@@ -470,6 +519,38 @@ var wTrack = function (models) {
             };
 
             WTrack.aggregate([{
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id', as: 'project'
+                }
+            }, {
+                $project: {
+                    project    : {$arrayElemAt: ["$project", 0]},
+                    month      : 1,
+                    year       : 1,
+                    revenue    : 1,
+                    dateByMonth: 1,
+                    amount     : 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'project.workflow',
+                    foreignField: '_id', as: 'project.workflow'
+                }
+            }, {
+                $project: {
+                    'project._id'           : 1,
+                    'project.projectmanager': 1,
+                    'project.workflow'      : {$arrayElemAt: ["$project.workflow", 0]},
+                    month                   : 1,
+                    year                    : 1,
+                    revenue                 : 1,
+                    dateByMonth             : 1,
+                    amount                  : 1
+                }
+            }, {
                 $match: match
             }, {
                 $project: {
@@ -2985,13 +3066,14 @@ var wTrack = function (models) {
             }
         };
 
-        if(startDate && endDate){
+        if (startDate && endDate) {
             startDate = new Date(startDate);
             endDate = new Date(endDate);
 
             matchObject.invoiceDate = {$gte: startDate, $lte: endDate};
             matchObjectPayment.date = {$gte: startDate, $lte: endDate};
-        };
+        }
+        ;
 
         if (groupedKey === 'week') {
             groupObject._id = '$dateByWeek';
@@ -3029,19 +3111,21 @@ var wTrack = function (models) {
                 }
             }, {
                 $group: {
-                    _id: null,
-                    salesArray: {$addToSet: {
-                        _id: '$salesPerson._id',
-                        name: '$salesPerson.name'
-                    }},
-                    root: {$push: '$$ROOT'}
+                    _id       : null,
+                    salesArray: {
+                        $addToSet: {
+                            _id : '$salesPerson._id',
+                            name: '$salesPerson.name'
+                        }
+                    },
+                    root      : {$push: '$$ROOT'}
                 }
             }, {
                 $unwind: '$root'
             }, {
                 $project: {
-                    _id:0,
-                    salesArray: 1,
+                    _id        : 0,
+                    salesArray : 1,
                     salesPerson: '$root.salesPerson',
                     paymentInfo: '$root.paymentInfo',
                     year       : '$root.year',
@@ -3062,7 +3146,7 @@ var wTrack = function (models) {
                         date: '$_id'
                     },
                     invoicedBySales: {$sum: '$root.paymentInfo.total'},
-                    salesArray: {$first: '$root.salesArray'},
+                    salesArray     : {$first: '$root.salesArray'},
                     root           : {$push: '$$ROOT'},
                 }
             }, {
@@ -3071,11 +3155,11 @@ var wTrack = function (models) {
                 $project: {
                     _id            : 0,
                     salesPerson    : '$_id._id'/*{
-                        _id : '$_id._id',
-                        name: {$concat: ['$_id.name.first', ' ', '$_id.name.last']}
-                    }*/,
+                     _id : '$_id._id',
+                     name: {$concat: ['$_id.name.first', ' ', '$_id.name.last']}
+                     }*/,
                     invoicedBySales: 1,
-                    salesArray: 1,
+                    salesArray     : 1,
                     date           : '$_id.date',
                     invoiced       : '$root.invoiced',
                     year           : '$root.root.year',
@@ -3084,11 +3168,11 @@ var wTrack = function (models) {
                 }
             }, {
                 $group: {
-                    _id  : {
+                    _id       : {
                         date    : '$date',
                         invoiced: '$invoiced'
                     },
-                    sales: {
+                    sales     : {
                         $addToSet: {
                             salesPerson    : '$$ROOT.salesPerson',
                             invoicedBySales: '$$ROOT.invoicedBySales'
@@ -3098,11 +3182,11 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    date    : '$_id.date',
-                    invoiced: '$_id.invoiced',
+                    date      : '$_id.date',
+                    invoiced  : '$_id.invoiced',
                     salesArray: 1,
-                    sales   : 1,
-                    _id     : 0
+                    sales     : 1,
+                    _id       : 0
                 }
             }], parallelCb);
 
@@ -3127,8 +3211,8 @@ var wTrack = function (models) {
 
         async.parallel({
             invoiced: invoiceGrouper,
-            paid: paymentGrouper
-        }, function(err, response){
+            paid    : paymentGrouper
+        }, function (err, response) {
             var sales;
 
             function mergeByProperty(arr1, arr2, prop) {
@@ -3137,14 +3221,16 @@ var wTrack = function (models) {
                         return arr1obj[prop] === arr2obj[prop];
                     });
 
-                    if(arr1obj) {
+                    if (arr1obj) {
                         _.extend(arr1obj, arr2obj)
                     } else {
                         arr1.push(arr2obj)
-                    };
+                    }
+                    ;
                 });
             }
-            if(err){
+
+            if (err) {
                 return next(err);
             }
 
