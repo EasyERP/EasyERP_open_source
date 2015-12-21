@@ -96,8 +96,15 @@ query.exec(function (err, payments) {
                                     }
 
                                     if (wtracks.length === job.wTracks.length && invoicesWithBadWetracks.length === 0) {
-                                        console.log(invoice._id, '========== Need Update Invoice Date ==========', 'from', invoice.invoiceDate, 'to', newDate);
-                                        //Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: newDate, paymentDate: payment.date}}, cb);
+                                        invDate = moment(invoice.invoiceDate);
+                                        paymDate = moment(payment.date);
+                                        if(invDate.diff(paymDate, 'days') <= 1 ){
+                                            console.log(invoice._id, '========== Diff less then 1 days ==========', 'from', invoice.invoiceDate, 'to', newDate);
+                                            //Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: payment.date, paymentDate: payment.date}}, cb);
+                                        } else {
+                                            console.log(invoice._id, '========== Need Update Invoice Date ==========', 'from', invoice.invoiceDate, 'to', newDate);
+                                            //Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: newDate, paymentDate: payment.date}}, cb);
+                                        }
                                         cb();
                                     } else {
                                         cb();
