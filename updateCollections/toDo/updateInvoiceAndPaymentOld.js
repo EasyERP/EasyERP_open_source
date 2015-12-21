@@ -46,18 +46,20 @@ query.exec(function (err, payments) {
             var paymentWeek;
             var paymentYear;
             var month;
+            var invDate;
+            var paymDate;
 
             if (err) {
                 return callBack(err);
             }
 
-             paymentWeek = moment(payment.date).isoWeek();
-             paymentYear = moment(payment.date).year();
-             month = moment(payment.date).month();
+            paymentWeek = moment(payment.date).isoWeek();
+            paymentYear = moment(payment.date).year();
+            month = moment(payment.date).month();
 
-            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2014 && month === 8) {
-               /* paymentWeek = moment(payment.date).isoWeek();
-                paymentYear = moment(payment.date).year();*/
+            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2014 && month === 10) {
+                /* paymentWeek = moment(payment.date).isoWeek();
+                 paymentYear = moment(payment.date).year();*/
 
                 invoices.push(invoice._id);
                 if (!invoice.products.length) {
@@ -93,7 +95,7 @@ query.exec(function (err, payments) {
                                         invoicesWithNotEqualWtrackLength.push(invoice._id);
                                     }
 
-                                    if(wtracks.length === job.wTracks.length && invoicesWithBadWetracks.length === 0){
+                                    if (wtracks.length === job.wTracks.length && invoicesWithBadWetracks.length === 0) {
                                         console.log(invoice._id, '========== Need Update Invoice Date ==========', 'from', invoice.invoiceDate, 'to', newDate);
                                         //Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: newDate, paymentDate: payment.date}}, cb);
                                         cb();
