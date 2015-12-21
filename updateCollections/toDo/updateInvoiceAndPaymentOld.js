@@ -57,7 +57,7 @@ query.exec(function (err, payments) {
             paymentYear = moment(payment.date).year();
             month = moment(payment.date).month();
 
-            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2015 && month === 0) {
+            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2015 && month === 9) {
                 /* paymentWeek = moment(payment.date).isoWeek();
                  paymentYear = moment(payment.date).year();*/
 
@@ -105,7 +105,7 @@ query.exec(function (err, payments) {
                                             console.log(invoice._id, '========== Need Update Invoice Date ==========', 'from', invoice.invoiceDate, 'to', newDate);
                                             //Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: newDate, paymentDate: payment.date}}, cb);
                                         }
-                                        cb();
+                                        //cb();
                                     } else {
                                         cb();
                                     }
@@ -127,7 +127,7 @@ query.exec(function (err, payments) {
                         } else if (invoice.payments && invoice.payments.length === 0) {
                             invoicesWithoutPayment.push(invoice);
                         } else {
-                            invoicesWithManyPayment.push(invoice);
+                            invoicesWithManyPayment.push(invoice._id);
                         }
 
                         callBack();
@@ -146,7 +146,7 @@ query.exec(function (err, payments) {
         console.log('Total found', invoices.length, invoices);
         console.log('With One Payment', invoicesWithOnePayment.length);
         console.log('Without payment', invoicesWithoutPayment.length);
-        console.log('Has many Payments', invoicesWithManyPayment.length);
+        console.log('Has many Payments', invoicesWithManyPayment.length, invoicesWithManyPayment);
         console.log('Invoices with bad wetracks', invoicesWithBadWetracks.length, invoicesWithBadWetracks);
         console.log('Invoices with not equal wetracl.length', invoicesWithNotEqualWtrackLength.length, invoicesWithNotEqualWtrackLength);
         console.log('Invoice without jobs', invoicesWithoutJobs.length, invoicesWithoutJobs);
