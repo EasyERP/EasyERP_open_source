@@ -19,21 +19,23 @@ var Vacation = function (event, models) {
         var weekKey;
         var dayNumber;
 
-        for (var day = array.length; day >= 0; day--) {
-            if (array[day]) {
-                dateValue = moment([year, month - 1, day + 1]);
-                //dateValue.date(day + 1);
-                // weekKey = year * 100 + moment(dateValue).isoWeek();
-                weekKey = year * 100 + moment(dateValue).isoWeek();
+        if (array.length){
+            for (var day = array.length; day >= 0; day--) {
+                if (array[day]) {
+                    dateValue = moment([year, month - 1, day + 1]);
+                    //dateValue.date(day + 1);
+                    // weekKey = year * 100 + moment(dateValue).isoWeek();
+                    weekKey = year * 100 + moment(dateValue).isoWeek();
 
-                dayNumber = moment(dateValue).day();
+                    dayNumber = moment(dateValue).day();
 
-                if (dayNumber !== 0 && dayNumber !== 6) {
-                    resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
-                }
+                    if (dayNumber !== 0 && dayNumber !== 6) {
+                        resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
+                    }
 
-                if (resultObj[weekKey] === 0) {
-                    delete resultObj[weekKey];
+                    if (resultObj[weekKey] === 0) {
+                        delete resultObj[weekKey];
+                    }
                 }
             }
         }

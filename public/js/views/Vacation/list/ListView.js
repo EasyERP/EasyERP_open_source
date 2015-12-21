@@ -152,6 +152,10 @@ define([
                     model.changed = this.changedModels[id];
                     model.changed.year = this.yearElement.text();
                     model.changed.month = this.monthElement.attr('data-content');
+
+                    if (!model.id && !model.changed.vacArray) {
+                        this.deleteItem(id);
+                    }
                 }
                 this.editCollection.save();
             },
