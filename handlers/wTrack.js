@@ -233,7 +233,7 @@ var wTrack = function (event, models) {
         var query = req.query;
         var filter = query.filter;
         // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
-        if (filter){
+        if (filter) {
             var filterObj = {};
             filterObj['$and'] = caseFilter(filter);
         }
@@ -382,13 +382,13 @@ var wTrack = function (event, models) {
         };
 
         var sort = {};
-        var filterObj = filter ? filterMapper.mapFilter(filter) : {};
+        var filterObj = filter ? filterMapper.mapFilter(filter) : null;
         var count = parseInt(query.count) ? parseInt(query.count) : 100;
         var page = parseInt(query.page);
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
-            key = Object.keys(query.sort)[0];
+            key = Object.keys(query.sort)[0].toString();
             keyForDay = sortObj[key];
 
             if (key in sortObj) {
@@ -446,7 +446,10 @@ var wTrack = function (event, models) {
             var queryObject = {};
             queryObject['$and'] = [];
             queryObject['$and'].push({_id: {$in: _.pluck(wtrackIds, '_id')}});
-            queryObject['$and'].push(filterObj);
+
+            if (filterObj) {
+                queryObject['$and'].push(filterObj);
+            }
 
             WTrack.aggregate([{
                 $lookup: {
@@ -544,7 +547,7 @@ var wTrack = function (event, models) {
             }, {
                 $match: queryObject
             }, {
-               $sort: sort
+                $sort: sort
             }, {
                 $skip: skip
             }, {
