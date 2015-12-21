@@ -47,10 +47,10 @@
             <td><%=payment.invoice ? payment.invoice.name : ''%></td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
             <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
-                <%=(parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)).toFixed(2)%>
+                <%=currencySplitter((parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)).toFixed(2))%>
             </td>
             <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
-                <%=payment.paidAmount%>
+                <%=currencySplitter(parseFloat(payment.paidAmount).toFixed(2))%>
             </td>
             <!--<td data-content="workflow" class=""><a href="javascript:;" class="<%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow%></a></td>-->
             <td data-type="dtPicker" class="editable date" data-content="date">

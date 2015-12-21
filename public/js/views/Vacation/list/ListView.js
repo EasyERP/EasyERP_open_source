@@ -152,6 +152,10 @@ define([
                     model.changed = this.changedModels[id];
                     model.changed.year = this.yearElement.text();
                     model.changed.month = this.monthElement.attr('data-content');
+
+                    if (!model.id && !model.changed.vacArray) {
+                        this.deleteItem(id);
+                    }
                 }
                 this.editCollection.save();
             },
@@ -418,7 +422,7 @@ define([
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
                 daysNumRow = '<tr class="subHeaderHolder borders"><th class="oe_sortable" data-sort="employee.name">Employee Name</th>' +
-                '<th class="oe_sortable" data-sort="department.name">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
+                '<th class="oe_sortable" data-sort="department.departmentName">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
 
                 this.daysCount = daysInMonth;
 
@@ -539,14 +543,9 @@ define([
                     tr.find('[data-content="employee"]').text(element.name);
                     tr.find('.department').text(element.department.name);
 
-                    employee = _.clone(editVacationModel.get('employee'));
-                    department = _.clone(editVacationModel.get('department'));
+                    employee = element._id;
 
-                    employee._id = element._id;
-                    employee.name = target.text();
-
-                    department._id = element.department._id;
-                    department.name = element.department.name;
+                    department = element.department._id;
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;

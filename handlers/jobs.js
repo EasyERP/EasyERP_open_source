@@ -63,7 +63,7 @@ var Jobs = function (models, event) {
         data.type = "Not Quoted";
         data.wTracks = [];
 
-        data.project = objectId(data.project._id);
+        data.project = objectId(data.project);
 
         newModel = new JobsModel(data);
 
@@ -94,6 +94,7 @@ var Jobs = function (models, event) {
         var queryObject = {};
 
         var data = req.query;
+        var forDashboard = data.forDashboard;
         var sort = {"budget.budgetTotal.costSum": -1};
 
         var filter = data ? data.filter : {};
@@ -108,7 +109,7 @@ var Jobs = function (models, event) {
 
         if (data && data.project) {
             filter['project'] = {};
-            filter['project']['key'] = 'project';
+            filter['project']['key'] = 'project._id';
             filter['project']['value'] = objectId(data.project);
         }
 
@@ -119,6 +120,15 @@ var Jobs = function (models, event) {
                 queryObject['$and'] = caseFilter(filter);
             }
         }
+
+        if (forDashboard){ //add for jobsDash
+            if (!queryObject['$and']){
+                queryObject['$and'] = [];
+            }
+
+            queryObject['$and'].push({"invoice._type": 'wTrackInvoice'});
+        }
+
 
         JobsModel
             .aggregate([{
@@ -163,6 +173,12 @@ var Jobs = function (models, event) {
                     foreignField: "invoice", as: "payments"
                 }
             }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
                 $project: {
                     order    : {
                         $cond: {
@@ -189,10 +205,25 @@ var Jobs = function (models, event) {
                     budget   : 1,
                     quotation: 1,
                     invoice  : 1,
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
                     payment  : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
+                }
+            }, {
+                $project: {
+                    order    : 1,
+                   name     : 1,
+                    workflow : 1,
+                    type     : 1,
+                    wTracks  : 1,
+                    project  : 1,
+                    budget   : 1,
+                    quotation: 1,
+                    invoice  : 1,
+                    payment  : 1,
+                    projectmanager: 1
                 }
             }, {
                 $match: queryObject
@@ -241,7 +272,7 @@ var Jobs = function (models, event) {
             jobId = result.get('_id');
             projectId = result.get('project');
 
-            wTrack.find({"jobs._id": jobId}, function (err, result) {
+            wTrack.find({"jobs": jobId}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
@@ -282,7 +313,6 @@ var Jobs = function (models, event) {
                 query = {workflow: data.workflowId};
             } else if (data.name) {
                 query = {name: data.name};
-                updatewTracks = true;
             } else if (data.type) {
                 query = {type: data.type};
             }
@@ -290,24 +320,8 @@ var Jobs = function (models, event) {
             delete data._id;
 
             JobsModel.findByIdAndUpdate(id, query, {new: true}, function (err, result) {
-                var jobId;
-                var jobName;
-
                 if (err) {
                     return next(err);
-                }
-
-                jobId = result.get('_id');
-                jobName = result.get('name');
-
-                if (updatewTracks) {
-                    wTrack.update({"jobs._id": jobId}, {$set: {"jobs.name": jobName}}, {multi: true}, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        console.log('updated wTracks');
-                    })
                 }
 
                 res.status(200).send(result)

@@ -62,6 +62,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (element.maxLength && element.value.length > element.maxLength) {
                         element.value = element.value.slice(0, element.maxLength);
+                    } else {
+                        this.setChangedValueToModel();
+
+                       // $(e.target).parent('td').removeClass('errorContent');
                     }
                 },
 
@@ -127,11 +131,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 asyncLoadImgs: function (model) {
                     var currentModel = model.id ? model.toJSON() : model;
                     var id = currentModel._id;
-                    var pm = currentModel.projectmanager;
-                    var customer = currentModel.customer;
+                    var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id: currentModel.projectmanager;
+                    var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
                     if (pm) {
-                        common.getImagesPM([pm._id], "/getEmployeesImages", "#" + id, function (result) {
+                        common.getImagesPM([pm], "/getEmployeesImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -139,7 +143,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     if (customer) {
-                        common.getImagesPM([customer._id], "/getCustomersImages", "#" + id, function (result) {
+                        common.getImagesPM([customer], "/getCustomersImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -372,8 +376,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
 
+                        if (editedElement.attr('id') === 'inputHours'){
+                            editedElementValue = parseInt(editedElementValue);
+                        }
+
                         if (editedElementValue) {
                             editedCol.removeClass('errorContent');
+                        } else {
+                            editedCol.addClass('errorContent');
                         }
 
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
@@ -453,6 +463,16 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                                     App.projectInfo = App.projectInfo || {};
                                     App.projectInfo.currentTab = 'timesheet';
+
+                                    tabs = $(".chart-tabs");
+                                    activeTab = tabs.find('.active');
+
+                                    activeTab.removeClass('active');
+                                    tabs.find('#' + App.projectInfo.currentTab + 'Tab').addClass("active");
+
+                                    dialogHolder = $(".dialog-tabs-items");
+                                    dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                                    dialogHolder.find('#' + App.projectInfo.currentTab).closest('.dialog-tabs-item').addClass("active");
 
                                 },
                                 error  : function () {

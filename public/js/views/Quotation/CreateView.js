@@ -64,7 +64,7 @@ define([
                 if (type === 'emptyProject') {
                     this.projectManager = element.projectmanager;
 
-                    this.$el.find('#supplierDd').text(element.customer.name);
+                    this.$el.find('#supplierDd').text(element.customer.name.first + element.customer.name.last);
                     this.$el.find('#supplierDd').attr('data-id', element.customer._id);
                 }
 

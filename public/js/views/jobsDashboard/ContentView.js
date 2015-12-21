@@ -119,7 +119,8 @@ define([
                 new JobsCollection({
                     sort    : sortObject,
                     filter  : this.filter,
-                    viewType: 'list'
+                    viewType: 'list',
+                    forDashboard: true
                 });
             },
 
@@ -135,7 +136,8 @@ define([
 
                 this.collection = new JobsCollection({
                     viewType: 'list',
-                    filter  : this.filter
+                    filter  : this.filter,
+                    forDashboard: true
                 });
 
                 this.collection.bind('reset', renderContent);

@@ -267,7 +267,7 @@ var Quotation = function (models, event) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    optionsObject,
+                   // optionsObject,
                     {
                         $or: whoCanRw
                     }
@@ -288,14 +288,61 @@ var Quotation = function (models, event) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var query;
             var queryObject = {};
 
             queryObject['$and'] = [];
-            queryObject.$and.push({_id: {$in: quotationsIds}});
+            queryObject.$and.push(optionsObject);
+            queryObject.$and.push({_id: {$in: _.pluck(quotationsIds, '_id')}});
 
-            query = Quotation.count(queryObject);
-            query.count(waterfallCallback);
+            //query = Quotation.count(queryObject);
+            //query.count(waterfallCallback);
+            Quotation.aggregate([{
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            },
+                {
+                    $project: {
+                        workflow   : {$arrayElemAt: ["$workflow", 0]},
+                        supplier   : {$arrayElemAt: ["$supplier", 0]},
+                        project    : {$arrayElemAt: ["$project", 0]},
+                        forSales   : 1,
+                        isOrder    : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.projectmanager",
+                        foreignField: "_id", as: "projectmanager"
+                    }
+                }, {
+                    $project: {
+                        forSales      : 1,
+                        workflow      : 1,
+                        supplier      : 1,
+                        project       : 1,
+                        isOrder       : 1,
+                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                    }
+                }, {
+                    $match: queryObject
+                }
+            ], waterfallCallback);
+
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -305,7 +352,7 @@ var Quotation = function (models, event) {
                 return next(err);
             }
 
-            res.status(200).send({count: result});
+            res.status(200).send({count: result.length});
         });
     };
 
@@ -617,7 +664,8 @@ var Quotation = function (models, event) {
                 .populate('groups.group')
                 .populate('groups.owner', '_id login')
                 .populate('deliverTo', '_id, name')
-                .populate('project', '_id projectName');
+                .populate('project', '_id projectName')
+                .populate('workflow', '_id name status');
 
             query.exec(waterfallCallback);
         };

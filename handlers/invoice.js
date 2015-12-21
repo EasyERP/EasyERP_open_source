@@ -226,10 +226,7 @@ var Invoice = function (models, event) {
 
             Order.findByIdAndUpdate(id, {
                 $set: {
-                    workflow: {
-                        name: "Invoiced",
-                        _id : CONSTANTS.ORDERDONE
-                    }
+                    workflow: CONSTANTS.ORDERDONE
                 }
             }, {new: true}, function (err, result) {
                 if (err) {
@@ -803,10 +800,7 @@ var Invoice = function (models, event) {
 
                         Order.findByIdAndUpdate(objectId(orderId), {
                             $set: {
-                                workflow: {
-                                    name: "Not Invoiced",
-                                    _id : CONSTANTS.ORDERDRAFT
-                                }
+                                workflow: CONSTANTS.ORDERNEW
                             }
                         }, {new: true}, function (err, result) {
                             if (err) {
@@ -1308,15 +1302,38 @@ var Invoice = function (models, event) {
 
                         Invoice
                             .aggregate([{
-                                $match: optionsObject
+                                $lookup: {
+                                    from        : "Project",
+                                    localField  : "project",
+                                    foreignField: "_id", as: "project"
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "workflows",
+                                    localField  : "workflow",
+                                    foreignField: "_id", as: "workflow"
+                                }
                             }, {
                                 $project: {
+                                    project    : {$arrayElemAt: ["$project", 0]},
                                     name       : 1,
                                     paymentInfo: 1,
-                                    status     : '$workflow.name',
+                                    status     : {$arrayElemAt: ["$workflow", 0]},
                                     ammount    : {$divide: ['$paymentInfo.total', 100]},
                                     paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
                                     balance    : {$divide: ['$paymentInfo.balance', 100]}
+                                }
+                            }, {
+                                $match: optionsObject
+                            }, {
+                                $project: {
+                                    project    : 1,
+                                    name       : 1,
+                                    paymentInfo: 1,
+                                    status     : '$status.name',
+                                    ammount    : 1,
+                                    paid       : 1,
+                                    balance    : 1
                                 }
                             }, {
                                 $group: {

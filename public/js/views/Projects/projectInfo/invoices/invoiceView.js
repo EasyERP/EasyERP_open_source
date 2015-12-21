@@ -379,7 +379,7 @@ define([
                 self.hideDialog();
 
                 tabs = $(".chart-tabs");
-                target = tabs.find('#invoiceTab');
+                target = tabs.find('#invoicesTab');
 
                 target.closest(".chart-tabs").find("a.active").removeClass("active");
                 target.addClass("active");
@@ -387,6 +387,9 @@ define([
                 dialogHolder = $(".dialog-tabs-items");
                 dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
                 dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
+
+                App.projectInfo = App.projectInfo || {};
+                App.projectInfo.currentTab = 'invoices';
             }
 
             $currentEl.append(template({

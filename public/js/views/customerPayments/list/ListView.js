@@ -123,10 +123,14 @@ define([
                                 that.editCollection.on('remove', function () {
                                     this.listLength--;
                                     localCounter++;
+                                    //
+                                    //if (index === count - 1) {
+                                    //    that.triggerDeleteItemsRender(localCounter);
+                                    //}
 
-                                    if (index === count - 1) {
-                                        that.triggerDeleteItemsRender(localCounter);
-                                    }
+                                    that.deleteCounter = localCounter;
+                                    that.deletePage = $("#currentShowPage").val();
+                                    that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
                                 }, that);
                             } else {
@@ -141,9 +145,12 @@ define([
                                         that.listLength--;
                                         localCounter++;
 
-                                        if (index === count - 1) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
+                                        //if (index === count - 1) {
+                                        //    that.triggerDeleteItemsRender(localCounter);
+                                        //}
+                                        that.deleteCounter = localCounter;
+                                        that.deletePage = $("#currentShowPage").val();
+                                        that.deleteItemsRender(that.deleteCounter, that.deletePage);
                                     },
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
@@ -152,9 +159,12 @@ define([
                                         that.listLength--;
                                         localCounter++;
                                         if (index == count - 1) {
-                                            if (index === count - 1) {
-                                                that.triggerDeleteItemsRender(localCounter);
-                                            }
+                                            //if (index === count - 1) {
+                                            //    that.triggerDeleteItemsRender(localCounter);
+                                            //}
+                                            that.deleteCounter = localCounter;
+                                            that.deletePage = $("#currentShowPage").val();
+                                            that.deleteItemsRender(that.deleteCounter, that.deletePage);
                                         }
 
                                     }

@@ -206,14 +206,8 @@ define([
                                 differenceAmount: 0,
                                 month           : jsonModel.month,
                                 year            : jsonModel.year,
-                                supplier        : {
-                                    _id     : jsonModel.employee._id,
-                                    fullName: jsonModel.employee.name
-                                },
-                                paymentMethod   : {
-                                    _id : jsonModel.type._id,
-                                    name: jsonModel.type.name
-                                },
+                                supplier        : jsonModel.employee,
+                                paymentMethod   : jsonModel.type,
                                 period          : jsonModel.year + '-' + jsonModel.month + '-01',
                                 paymentRef      : dataId
                             };
@@ -237,14 +231,8 @@ define([
                             differenceAmount: 0,
                             month           : jsonModel.month,
                             year            : jsonModel.year,
-                            supplier        : {
-                                _id     : jsonModel.employee._id,
-                                fullName: jsonModel.employee.name
-                            },
-                            paymentMethod   : {
-                                _id : jsonModel.type._id,
-                                name: jsonModel.type.name
-                            },
+                            supplier        : jsonModel.employee,
+                            paymentMethod   : jsonModel.type,
                             period          : jsonModel.year + '-' + jsonModel.month + '-01',
                             paymentRef      : dataId
                         };

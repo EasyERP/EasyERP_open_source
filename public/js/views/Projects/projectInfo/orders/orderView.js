@@ -11,9 +11,10 @@ define([
     'collections/Quotation/filterCollection',
     'models/QuotationModel',
     'dataService',
-    'common'
+    'common',
+    'helpers'
 
-], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
+], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common, helpers) {
     var orderView = listView.extend({
 
         el                      : '#orders',
@@ -227,7 +228,8 @@ define([
                 $currentEl.find('#orderTable').html(this.templateList({
                     orderCollection: this.collection.toJSON(),
                     startNumber    : 0,
-                    dateToLocal    : common.utcDateToLocaleDate
+                    dateToLocal    : common.utcDateToLocaleDate,
+                    currencySplitter: helpers.currencySplitter
                 }));
             }
 
@@ -436,9 +438,10 @@ define([
             $currentEl.prepend(this.templateHeader);
 
             $currentEl.find('#orderTable').html(this.templateList({
-                orderCollection: this.collection.toJSON(),
-                startNumber    : 0,
-                dateToLocal    : common.utcDateToLocaleDate
+                orderCollection : this.collection.toJSON(),
+                startNumber     : 0,
+                dateToLocal     : common.utcDateToLocaleDate,
+                currencySplitter: helpers.currencySplitter
             }));
 
             //this.renderPagination($currentEl, this);

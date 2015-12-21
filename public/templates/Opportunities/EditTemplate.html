@@ -12,41 +12,31 @@
                     <div class="dialog-tabs-item active">
                         <dl class="subject-info">
                             <dt><label for="name">Subject </label></dt>
-                            <dd><input type="text" class="title-input" id="name" value="<%=model.name%>"
-                                       placeholder="Subject" required maxlength="48"/></dd>
+                            <dd><input type="text" class="title-input" id="name" value="<%=model.name%>" placeholder="Subject" required maxlength="48"/></dd>
                         </dl>
                         <div class="half-block left withPaddingLeft">
-                            <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
-                                      class="opp-internal"><%=model.internalNotes%></textarea>
+                            <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500" class="opp-internal"><%=model.internalNotes%></textarea>
                         </div>
                         <div class="half-block left">
                             <dl class="opprtunitie-info">
                                 <dt><label for="expectedRevenueValue">Expected Revenue</label></dt>
-                                <dd><input type="text" class="date-min" id="expectedRevenueValue"
-                                           value="<%=(model.expectedRevenue) ? model.expectedRevenue.value : ''%>"
-                                           maxlength="12"/></dd>
+                                <dd><input type="text" class="date-min" id="expectedRevenueValue" value="<%=(model.expectedRevenue) ? model.expectedRevenue.value : ''%>" maxlength="12"/></dd>
                                 <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="<%=model.expectedRevenue.progress%>" maxlength="32"/>%</dd>-->
                                 <dt><label for="customerDd">Customer</label></dt>
                                 <dd>
-                                    <a id="customerDd" data-id="<%=(model.customer)?model.customer._id:''%>"
-                                       class="current-selected" href="javascript:;"><%=(model.customer)?(model.customer.name.first+"
-                                        "+model.customer.name.last):"Select"%></a>
+                                    <a id="customerDd" data-id="<%=(model.customer)?model.customer._id:''%>" class="current-selected" href="javascript:;"><%=(model.customer)?(model.customer.name.first+" "+model.customer.name.last):"Select"%></a>
                                 </dd>
                                 <dt><label for="salesPersonDd">Assigned to</label></dt>
                                 <dd>
-                                    <a id="salesPersonDd" data-id="<%=(model.salesPerson)?model.salesPerson._id:''%>"
-                                       class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name.first+"
-                                        "+model.salesPerson.name.last):"Select"%></a>
+                                    <a id="salesPersonDd" data-id="<%=(model.salesPerson)?model.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name.first+" "+model.salesPerson.name.last):"Select"%></a>
                                 </dd>
                                 <dt><label for="salesTeamDd">Sales Team</label></dt>
                                 <dd>
-                                    <a id="salesTeamDd" data-id="<%=(model.salesTeam)?model.salesTeam._id:''%>"
-                                       class="current-selected" href="javascript:;"><%=(model.salesTeam)?(model.salesTeam.departmentName):"Select"%></a>
+                                    <a id="salesTeamDd" data-id="<%=(model.salesTeam)?model.salesTeam._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesTeam)?(model.salesTeam.departmentName):"Select"%></a>
                                 </dd>
                                 <dt><label for="workflowDd">Stage </label></dt>
                                 <dd>
-                                    <a id="workflowDd" data-id="<%=(model.workflow)?model.workflow._id:''%>"
-                                       class="current-selected" href="javascript:;"><%=(model.workflow)?(model.workflow.name):"Undefinded"%></a>
+                                    <a id="workflowDd" data-id="<%=(model.workflow)?model.workflow._id:''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?(model.workflow.name):"Undefinded"%></a>
                                 </dd>
                                 <dt><label for="nextActionDate">Next Action </label></dt>
                                 <dd><input type="text" class="date" id="nextActionDate"

@@ -4,13 +4,9 @@
     </td>
     <% for (var i=0; i<=array.length - 1; i++) { %>
     <%if (array[i]) {%>
-    '
-    <td class="total" id="day<%=i%>"><%=array[i]%></td>
-    '
+    '<td class="total" id="day<%=i%>"><%=array[i]%></td>'
     <%} else {%>
-    '
-    <td class="total" id="day<%=i%>"></td>
-    '
+    '<td class="total" id="day<%=i%>"></td>'
     <%}%>
     <% } %>
     <td>

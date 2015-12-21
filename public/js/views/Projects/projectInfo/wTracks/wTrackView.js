@@ -24,6 +24,7 @@ define([
         templateHeader          : _.template(wTrackTopBar),
         listItemView            : listItemView,
         template                : _.template(wTrackTemplate),
+        changedModels           : {},
 
         events: {
             "mouseover .currentPageList"                             : "showPagesPopup",

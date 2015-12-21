@@ -1055,7 +1055,7 @@ var Project = function (models, event) {
                         {
                             $match: {
                                 $and: [
-                                    addObj,
+                                    //  addObj,
                                     {
                                         $or: [
                                             {
@@ -1093,43 +1093,87 @@ var Project = function (models, event) {
                         },
                         function (err, projectsId) {
                             if (!err) {
-                                if (data && data.contentType == 'Tasks') {
-                                    var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
-                                        where('project').in(projectsId.objectID());
-                                    /*if (data && data.filter && data.filter.workflow) {
-                                     data.filter.workflow = data.filter.workflow.map(function (item) {
-                                     return item === "null" ? null : item;
-                                     });
-                                     query.where('workflow').in(data.filter.workflow);
-                                     } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                     query.where('workflow').in([]);
-                                     }*/
-                                    query.exec(function (err, result) {
+                                models.get(req.session.lastDb, 'Project', projectSchema)
+                                    .aggregate([{
+                                        $lookup: {
+                                            from        : "Employees",
+                                            localField  : "projectmanager",
+                                            foreignField: "_id", as: "projectmanager"
+                                        }
+                                    }, {
+                                        $lookup: {
+                                            from        : "Customers",
+                                            localField  : "customer",
+                                            foreignField: "_id", as: "customer"
+                                        }
+                                    }, {
+                                        $lookup: {
+                                            from        : "workflows",
+                                            localField  : "workflow",
+                                            foreignField: "_id", as: "workflow"
+                                        }
+                                    }, {
+                                        $project: {
+                                            projectName   : 1,
+                                            workflow      : {$arrayElemAt: ["$workflow", 0]},
+                                            task          : 1,
+                                            customer      : {$arrayElemAt: ["$customer", 0]},
+                                            health        : 1,
+                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                                        }
+                                    }, {
+                                        $project: {
+                                            _id           : 1,
+                                            projectName   : 1,
+                                            task          : 1,
+                                            workflow      : 1,
+                                            projectmanager: 1,
+                                            customer      : 1,
+                                            health        : 1
+                                        }
+                                    }, {
+                                        $match: addObj
+                                    }], function (err, projects) {
                                         if (!err) {
-                                            if (data.currentNumber && data.currentNumber < result.length) {
-                                                res['showMore'] = true;
+                                            if (data && data.contentType == 'Tasks') {
+                                                var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
+                                                    where('project').in(projectsId.objectID());
+                                                /*if (data && data.filter && data.filter.workflow) {
+                                                 data.filter.workflow = data.filter.workflow.map(function (item) {
+                                                 return item === "null" ? null : item;
+                                                 });
+                                                 query.where('workflow').in(data.filter.workflow);
+                                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                                 query.where('workflow').in([]);
+                                                 }*/
+                                                query.exec(function (err, result) {
+                                                    if (!err) {
+                                                        if (data.currentNumber && data.currentNumber < result.length) {
+                                                            res['showMore'] = true;
+                                                        }
+                                                        res['count'] = result.length;
+                                                        response.send(res);
+                                                    } else {
+                                                        logWriter.log("Projects.js getListLength task.find" + err);
+                                                        response.send(500, {error: "Can't find Tasks"});
+                                                    }
+                                                });
+                                            } else {
+                                                if (data.currentNumber && data.currentNumber < projects.length) {
+                                                    res['showMore'] = true;
+                                                }
+                                                res['count'] = projects.length;
+                                                response.send(res);
                                             }
-                                            res['count'] = result.length;
-                                            response.send(res);
                                         } else {
-                                            logWriter.log("Projects.js getListLength task.find" + err);
-                                            response.send(500, {error: "Can't find Tasks"});
+                                            logWriter.log("Projects.js getListLength task.find " + err);
+                                            response.send(500, {error: "Can't find projects"});
                                         }
                                     });
-                                } else {
-                                    if (data.currentNumber && data.currentNumber < projectsId.length) {
-                                        res['showMore'] = true;
-                                    }
-                                    res['count'] = projectsId.length;
-                                    response.send(res);
-                                }
                             } else {
-                                logWriter.log("Projects.js getListLength task.find " + err);
-                                response.send(500, {error: "Can't find projects"});
+                                console.log(err);
                             }
                         });
-                } else {
-                    console.log(err);
                 }
             });
     };

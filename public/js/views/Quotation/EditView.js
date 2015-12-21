@@ -388,7 +388,7 @@ define([
                     workflow         : workflow
                 };
 
-                if (supplier._id) {
+                if (supplier) {
                     this.model.save(data, {
                         headers: {
                             mid: mid

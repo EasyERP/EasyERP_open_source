@@ -3,8 +3,7 @@
     <tbody>
     <tr>
         <% workflowsCollection.forEach(function(workflow, index){ %>
-        <td class="column" data-index="<%=index%>" data-status="<%=workflow.status%>" data-name="<%=workflow.name%>"
-            id="<%=workflow._id%>">
+        <td class="column" data-index="<%=index%>" data-status="<%=workflow.status%>" data-name="<%=workflow.name%>" id="<%=workflow._id%>">
             <div class="columnNameDiv task <%=workflow.name.toLowerCase().replace(' ', '')%>">
                 <h2 class="columnName">
                     <span class="text"><%=workflow.name%></span>

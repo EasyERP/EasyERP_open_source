@@ -147,6 +147,84 @@ var wTrack = function (event, models) {
         }
     };
 
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
+        }
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'projectManager':
+                    filtrElement['projectmanager._id'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectName':
+                    filtrElement['project._id'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'customer':
+                    filtrElement['customer._id'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'employee':
+                    filtrElement['employee'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'department':
+                    filtrElement['department'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'year':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'month':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'week':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'isPaid':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'jobs':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+            }
+        }
+
+        return resArray;
+    };
+
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var departmentSearcher;
@@ -154,7 +232,12 @@ var wTrack = function (event, models) {
         var contentSearcher;
         var query = req.query;
         var filter = query.filter;
-        var queryObject = filter ? filterMapper.mapFilter(filter) : {};
+        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+        if (filter) {
+            var filterObj = {};
+            filterObj['$and'] = caseFilter(filter);
+        }
+
         var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
@@ -199,12 +282,77 @@ var wTrack = function (event, models) {
         };
 
         contentSearcher = function (wTrackIDs, waterfallCallback) {
-            var queryObject = {_id: {$in: wTrackIDs}};
-            var query;
+            var queryObject = {};
+            queryObject['$and'] = [];
 
-            query = WTrack.count(queryObject);
+            if (filterObj) {
+                queryObject['$and'].push(filterObj);
+            }
 
-            query.count(waterfallCallback);
+            queryObject['$and'].push({_id: {$in: _.pluck(wTrackIDs, '_id')}});
+
+            WTrack.aggregate([{
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $project: {
+                    project   : {$arrayElemAt: ["$project", 0]},
+                    employee  : 1,
+                    department: 1,
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    isPaid    : 1,
+                    customer  : 1
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "project.customer",
+                    foreignField: "_id", as: "customer"
+                }
+            }, {
+                $project: {
+                    customer      : {$arrayElemAt: ["$customer", 0]},
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    project       : 1,
+                    employee      : 1,
+                    department    : 1,
+                    month         : 1,
+                    year          : 1,
+                    week          : 1,
+                    isPaid        : 1
+                }
+            }, {
+                $project: {
+                    project             : 1,
+                    employee            : 1,
+                    department          : 1,
+                    month               : 1,
+                    year                : 1,
+                    week                : 1,
+                    isPaid              : 1,
+                    'customer._id'      : 1,
+                    'projectmanager._id': 1
+                }
+            }, {
+                $match: queryObject
+            }], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                waterfallCallback(null, result.length);
+            });
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -240,13 +388,13 @@ var wTrack = function (event, models) {
         };
 
         var sort = {};
-        var filterObj = filter ? filterMapper.mapFilter(filter) : {};
+        var filterObj = filter ? filterMapper.mapFilter(filter) : null;
         var count = parseInt(query.count) ? parseInt(query.count) : 100;
         var page = parseInt(query.page);
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
-            key = Object.keys(query.sort)[0];
+            key = Object.keys(query.sort)[0].toString();
             keyForDay = sortObj[key];
 
             if (key in sortObj) {
@@ -256,7 +404,7 @@ var wTrack = function (event, models) {
                 sort = query.sort;
             }
         } else {
-            sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
+            sort = {"year": -1, "month": -1, "week": -1};
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -304,7 +452,10 @@ var wTrack = function (event, models) {
             var queryObject = {};
             queryObject['$and'] = [];
             queryObject['$and'].push({_id: {$in: _.pluck(wtrackIds, '_id')}});
-            queryObject['$and'].push(filterObj);
+
+            if (filterObj) {
+                queryObject['$and'].push(filterObj);
+            }
 
             WTrack.aggregate([{
                 $lookup: {
@@ -834,9 +985,9 @@ var wTrack = function (event, models) {
                         hours    : parseInt(opt.hours)
                     };
 
-                    async.parallel([calculateWeeks, getWorkflowStatus], function (err, result) {
+                    async.parallel([calculateWeeks /*getWorkflowStatus*/], function (err, result) {
                         dateArray = result[0];
-                        project.workflow.status = result[1];
+                        // project.workflow.status = result[1];
 
                         dateArrLength = dateArray.length;
 
@@ -1285,22 +1436,22 @@ var wTrack = function (event, models) {
                         });
                     }
 
-                    function getWorkflowStatus(fCb) {
-                        var workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
-
-                        var query = workflow.find({_id: objectId(projectWorkflowId)}, {status: 1}).lean();
-
-                        query.exec(function (err, result) {
-                            if (err) {
-                                return fCb(err);
-                            }
-
-                            if (result.length > 0) {
-                                fCb(null, result[0].status);
-                            }
-
-                        });
-                    }
+                    //function getWorkflowStatus(fCb) {
+                    //    var workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+                    //
+                    //    var query = workflow.find({_id: objectId(projectWorkflowId)}, {status: 1}).lean();
+                    //
+                    //    query.exec(function (err, result) {
+                    //        if (err) {
+                    //            return fCb(err);
+                    //        }
+                    //
+                    //        if (result.length > 0) {
+                    //            fCb(null, result[0].status);
+                    //        }
+                    //
+                    //    });
+                    //}
 
                     function calculateWeeks(fCb) {
                         var data = options;

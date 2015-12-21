@@ -273,7 +273,8 @@ var Payment = function (models, event) {
                                 bonus           : 1,
                                 paymentRef      : 1,
                                 year            : 1,
-                                month           : 1
+                                month           : 1,
+                                period: 1
                             }
                         }, {
                             $lookup: {
@@ -296,7 +297,8 @@ var Payment = function (models, event) {
                                 bonus           : 1,
                                 paymentRef      : 1,
                                 year            : 1,
-                                month           : 1
+                                month           : 1,
+                                period: 1
 
                             }
                         }, {
@@ -335,12 +337,16 @@ var Payment = function (models, event) {
         var query;
         var moduleId = returnModuleId(req);
 
-        Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        if (moduleId === 79){
+            Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
 
         access.getReadAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
 
-                query.findById(id);
+                query = Payment.findById(id);
 
                 query
                     .populate('supplier', '_id name fullName')
@@ -499,8 +505,7 @@ var Payment = function (models, event) {
                     var paymentObject = _.clone(body[0]);
                     var payment;
 
-                    paymentObject.invoice = {};
-                    paymentObject.invoice._id = params.invoice.get('_id');
+                    paymentObject.invoice = params.invoice.get('_id');
 
                     paymentObject.supplier = params.suppliers;
                     paymentObject.paidAmount = params.totalAmount;
@@ -765,6 +770,8 @@ var Payment = function (models, event) {
         var forSale = type === 'customers';
         var bonus = type === 'supplier';
         var salary = type === 'salary';
+        var supplier = 'Customers';
+        var paymentMethod = 'PaymentMethod';
 
         var queryObject = {};
         var filter = req.query.filter;
@@ -790,6 +797,7 @@ var Payment = function (models, event) {
 
         if (bonus) {
             queryObject.bonus = bonus;
+            supplier = 'Employees';
         }
 
         if (filter && typeof filter === 'object') {
@@ -804,6 +812,7 @@ var Payment = function (models, event) {
             queryObject.$and.push({forSale: forSale});
         } else {
             queryObject.$and.push({isExpense: true});
+            paymentMethod = 'ProductCategory';
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -852,8 +861,56 @@ var Payment = function (models, event) {
         contentSearcher = function (paymentIds, waterfallCallback) {
             var query;
 
-            query = Payment.find(queryObject);
-            query.count(waterfallCallback);
+            //query = Payment.find(queryObject);
+            //query.count(waterfallCallback);
+
+            Payment.aggregate([{
+                $lookup: {
+                    from        : supplier,
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $lookup: {
+                    from        : "Invoice",
+                    localField  : "invoice",
+                    foreignField: "_id", as: "invoice"
+                }
+            }, {
+                $lookup: {
+                    from        : paymentMethod,
+                    localField  : "paymentMethod",
+                    foreignField: "_id", as: "paymentMethod"
+                }
+            }, {
+                $project: {
+                    supplier        : {$arrayElemAt: ["$supplier", 0]},
+                    invoice         : {$arrayElemAt: ["$invoice", 0]},
+                    paymentMethod   : {$arrayElemAt: ["$paymentMethod", 0]},
+                    forSale: 1,
+                    isExpense: 1,
+                    bonus: 1
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "invoice.salesPerson",
+                    foreignField: "_id", as: "assigned"
+                }
+            }, {
+                $project: {
+                    supplier        : 1,
+                    assigned        : {$arrayElemAt: ["$assigned", 0]},
+                    paymentMethod   : 1,
+                    invoice: 1,
+                    forSale: 1,
+                    isExpense: 1,
+                    bonus: 1
+                }
+            }, {
+                $match: queryObject
+            }
+            ], waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -863,7 +920,7 @@ var Payment = function (models, event) {
                 return next(err);
             }
 
-            res.status(200).send({count: result});
+            res.status(200).send({count: result.length});
         });
     };
 

@@ -97,10 +97,9 @@ define([
 
                     tr.find('[data-content="employee"]').text(element.name);
 
-                    supplier = _.clone(editModel.get('supplier'));
+                    //supplier = _.clone(editModel.get('supplier'));
 
-                    supplier._id = element._id;
-                    supplier.fullName = target.text();
+                    supplier = element._id;
 
                     changedAttr.supplier = supplier;
                 } else if (elementType === '#bonusType') {
@@ -117,7 +116,7 @@ define([
                 }
                 targetW.text(target.text());
 
-                this.hidePagesPopup();
+                this.hidePagesPopup(e);
                 this.setEditable(targetElement);
 
                 return false;

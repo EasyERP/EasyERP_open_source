@@ -10,9 +10,10 @@ define([
         "populate",
         'constants',
         'views/Assignees/AssigneesView',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
-    function (createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
+    function (createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, helpers) {
 
         var CreateView = createView.extend({
 
@@ -225,7 +226,8 @@ define([
                 $currentEl.append(this.templateNewRow({
                     quotation  : model.toJSON(),
                     startNumber: currentNumber,
-                    dateToLocal: common.utcDateToLocaleDate
+                    dateToLocal: common.utcDateToLocaleDate,
+                    currencySplitter: helpers.currencySplitter
                 }));
             }
         });

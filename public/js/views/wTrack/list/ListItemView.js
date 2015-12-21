@@ -8,7 +8,7 @@
 
             initialize: function (options) {
                 this.collection = options.collection;
-                this.page = options.page ? options.page : 1;
+                this.page = options.page ? parseInt(options.page) : 1;
 
                 this.startNumber = (this.page - 1 ) * options.itemsNumber;
             },

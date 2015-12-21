@@ -119,7 +119,7 @@ define([
 
                 $currentEl.append(itemView.render());
 
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 8}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
                 this.renderCheckboxes();
 
@@ -207,7 +207,7 @@ define([
                     }).render());//added two parameters page and items number
                 }
 
-                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 8}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 7}).render());
 
                 //this.recalculateTotal();   //-----------------------------!
                 if (this.collection.length === 0) {

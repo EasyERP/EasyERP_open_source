@@ -121,10 +121,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow : workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -171,9 +168,6 @@ define([
                                     tr.find('.checkbox').addClass('notRemovable');
 
                                     tr.find('.workflow').find('a').text("Invoiced");
-
-                                    App.projectInfo = App.projectInfo || {};
-                                    App.projectInfo.currentTab = 'invoices';
 
                                     var filter = {
                                         'project': {
@@ -226,10 +220,7 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -305,12 +296,9 @@ define([
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
-                supplier._id = thisEl.find('#supplierDd').attr('data-id');
-                supplier.name = thisEl.find('#supplierDd').text();
+                supplier = thisEl.find('#supplierDd').attr('data-id');
 
-                project._id = thisEl.find('#projectDd').attr('data-id');
-                project.projectName = thisEl.find('#projectDd').text();
-                project.projectmanager = this.projectManager;
+                project = thisEl.find('#projectDd').attr('data-id');
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
@@ -400,6 +388,7 @@ define([
                 var mid = 55;
                 event.preventDefault();
                 var self = this;
+                var url = window.location.hash;
                 var answer = confirm("Really DELETE items ?!");
                 if (answer == true) {
                     this.currentModel.destroy({
@@ -408,7 +397,12 @@ define([
                         },
                         success: function () {
                             $('.edit-product-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
+
+                            App.projectInfo = App.projectInfo || {};
+                            App.projectInfo.currentTab = 'orders';
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {

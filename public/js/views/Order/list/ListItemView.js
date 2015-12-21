@@ -1,8 +1,9 @@
 ﻿define([
-        'text!templates/Order/list/ListTemplate.html'
+        'text!templates/Order/list/ListTemplate.html',
+        'helpers'
     ],
 
-    function (listTemplate) {
+    function (listTemplate, helpers) {
         var OrderListItemView = Backbone.View.extend({
             el: '#listTable',
 
@@ -13,7 +14,8 @@
             render    : function () {
                 this.$el.append(_.template(listTemplate, {
                     orderCollection: this.collection.toJSON(),
-                    startNumber    : this.startNumber
+                    startNumber    : this.startNumber,
+                    currencySplitter: helpers.currencySplitter
                 }));
             }
         });

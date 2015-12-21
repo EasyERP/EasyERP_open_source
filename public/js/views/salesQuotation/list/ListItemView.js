@@ -1,9 +1,10 @@
 ﻿define([
         'text!templates/salesQuotation/list/ListTemplate.html',
-        'text!templates/salesQuotation/wTrack/ListTemplate.html'
+        'text!templates/salesQuotation/wTrack/ListTemplate.html',
+        'helpers'
     ],
 
-    function (listTemplate, listForWTrack) {
+    function (listTemplate, listForWTrack, helpers) {
         var QuotationListItemView = Backbone.View.extend({
             el: '#listTable',
 
@@ -15,13 +16,15 @@
                 if (App.weTrack) {
                     this.$el.append(_.template(listForWTrack, {
                         quotations : this.collection.toJSON(),
-                        startNumber: this.startNumber
+                        startNumber: this.startNumber,
+                        currencySplitter: helpers.currencySplitter
                     }));
 
                 } else {
                     this.$el.append(_.template(listTemplate, {
                         quotations : this.collection.toJSON(),
-                        startNumber: this.startNumber
+                        startNumber: this.startNumber,
+                        currencySplitter: helpers.currencySplitter
                     }));
 
                 }
