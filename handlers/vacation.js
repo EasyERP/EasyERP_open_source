@@ -186,8 +186,8 @@ var Vacation = function (event, models) {
                         }
                         if (options.year && options.year !== 'Line Year') {
                             if (options.month) {
-                                queryObject.year = options.year;
-                                queryObject.month = options.month;
+                                queryObject.year = parseInt(options.year);
+                                queryObject.month = parseInt(options.month);
                             } else {
                                 endDate = moment([options.year, 12]);
                                 startDate = moment([options.year, 1]);
@@ -229,9 +229,50 @@ var Vacation = function (event, models) {
                         }
                     }
 
-                    query = Vacation.find(queryObject);
+                    //query = Vacation.find(queryObject);
 
-                    query.exec(function (err, result) {
+                   // query.exec(function (err, result) {
+                    Vacation.aggregate([{
+                        $lookup: {
+                            from        : "Employees",
+                            localField  : "employee",
+                            foreignField: "_id", as: "employee"
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "Department",
+                            localField  : "department",
+                            foreignField: "_id", as: "department"
+                        }
+                    }, {
+                        $project: {
+                            department: {$arrayElemAt: ["$department", 0]},
+                            employee: {$arrayElemAt: ["$employee", 0]},
+                            month: 1,
+                            year: 1,
+                            vacations: 1,
+                            vacArray: 1,
+                            monthTotal: 1
+                        }
+                    }, {
+                        $project: {
+                            'department.departmentName': 1,
+                            'employee.name': {
+                                $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                            },
+                            'employee._id': 1,
+                            month: 1,
+                            year: 1,
+                            vacations: 1,
+                            vacArray: 1,
+                            monthTotal: 1
+                        }
+                    }, {
+                        $match: queryObject
+                    }, {
+                        $sort: {'employee.name.first': 1}
+                    }
+                    ], function (err, result) {
                         if (err) {
                             return next(err);
                         }
