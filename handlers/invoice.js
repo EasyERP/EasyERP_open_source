@@ -800,7 +800,7 @@ var Invoice = function (models, event) {
 
                         Order.findByIdAndUpdate(objectId(orderId), {
                             $set: {
-                                workflow: CONSTANTS.ORDERDRAFT
+                                workflow: CONSTANTS.ORDERNEW
                             }
                         }, {new: true}, function (err, result) {
                             if (err) {
