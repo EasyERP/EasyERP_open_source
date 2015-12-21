@@ -13,7 +13,7 @@ var CONSTANTS = require('../../constants/mainConstants');
 
 var moment = require('../../public/js/libs/moment/moment');
 
-var dbObject = mongoose.createConnection('192.168.88.64', 'production');
+var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -100,7 +100,7 @@ query.exec(function (err, payments) {
                                         paymDate = moment(payment.date);
                                         if(invDate.diff(paymDate, 'days') <= 1 ){
                                             console.log(invoice._id, '========== Diff less then 1 days ==========', 'from', invoice.invoiceDate, 'to', newDate);
-                                           // Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: payment.date, paymentDate: payment.date}}, cb);
+                                            //Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: payment.date, paymentDate: payment.date}}, cb);
                                         } else {
                                             console.log(invoice._id, '========== Need Update Invoice Date ==========', 'from', invoice.invoiceDate, 'to', newDate);
                                            // Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: newDate, paymentDate: payment.date}}, cb);
