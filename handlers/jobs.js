@@ -94,6 +94,7 @@ var Jobs = function (models, event) {
         var queryObject = {};
 
         var data = req.query;
+        var forDashboard = data.forDashboard;
         var sort = {"budget.budgetTotal.costSum": -1};
 
         var filter = data ? data.filter : {};
@@ -120,11 +121,14 @@ var Jobs = function (models, event) {
             }
         }
 
-        if (!queryObject['$and']){
-            queryObject['$and'] = [];
+        if (forDashboard){ //add for jobsDash
+            if (!queryObject['$and']){
+                queryObject['$and'] = [];
+            }
+
+            queryObject['$and'].push({"invoice._type": 'wTrackInvoice'});
         }
 
-        queryObject['$and'].push({"invoice._type": 'wTrackInvoice'}); //add for jobsDash
 
         JobsModel
             .aggregate([{
