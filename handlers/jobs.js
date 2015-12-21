@@ -108,7 +108,7 @@ var Jobs = function (models, event) {
 
         if (data && data.project) {
             filter['project'] = {};
-            filter['project']['key'] = 'project';
+            filter['project']['key'] = 'project._id';
             filter['project']['value'] = objectId(data.project);
         }
 
