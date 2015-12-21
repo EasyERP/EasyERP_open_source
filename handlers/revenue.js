@@ -77,7 +77,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id    : {
-                    employee: '$project.projectmanager._id',
+                    employee: '$project.projectmanager',
                     year    : '$year',
                     week    : '$week'
                 },
@@ -85,6 +85,51 @@ var wTrack = function (models) {
             };
 
             WTrack.aggregate([{
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id', as: 'project'
+                }
+            }, {
+                $project: {
+                    project: {$arrayElemAt: ["$project", 0]},
+                    year: 1,
+                    week: 1,
+                    revenue: 1,
+                    rate: 1,
+                    '1': 1,
+                    '2': 1,
+                    '3': 1,
+                    '4': 1,
+                    '5': 1,
+                    '6': 1,
+                    '7': 1,
+                    dateByWeek: 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'project.projectmanager',
+                    foreignField: '_id', as: 'employee'
+                }
+            }, {
+                $project: {
+                    project   : 1,
+                    year      : 1,
+                    week      : 1,
+                    employee  : {$arrayElemAt: ["$employee", 0]},
+                    revenue   : 1,
+                    rate      : 1,
+                    '1'       : 1,
+                    '2'       : 1,
+                    '3'       : 1,
+                    '4'       : 1,
+                    '5'       : 1,
+                    '6'       : 1,
+                    '7'       : 1,
+                    dateByWeek: 1
+                }
+            }, {
                 $match: match
             }, {
                 $group: groupBy
