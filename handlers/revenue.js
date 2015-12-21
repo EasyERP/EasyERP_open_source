@@ -1939,7 +1939,7 @@ var wTrack = function (models) {
                                                 }
                                             }]
                                         }
-                                    ],
+                                    ]
                                 }
                             },
                             {
@@ -2000,7 +2000,7 @@ var wTrack = function (models) {
                 matchVacation = {
                     //month: {$gte: startMonth, $lte: endMonth},
                     year          : {$gte: startYear, $lte: endYear},
-                    'employee._id': {$in: ids}
+                    'employee': {$in: ids}
                 };
 
                 matchHoliday = {
@@ -2033,12 +2033,27 @@ var wTrack = function (models) {
                 function vacationComposer(parallelCb) {
                     Vacation.aggregate([{
                         $match: matchVacation
+                    }, {
+                        $lookup: {
+                            from        : 'Employee',
+                            localField  : 'employee',
+                            foreignField: '_id', as: 'employee'
+                        }
+                    }, {
+                        $project: {
+                            monthTotal: 1,
+                            employee: {$arrayElemAt: ["$employee", 0]},
+                            month: 1,
+                            year: 1
+                        }
                     },
                         {
                             $group: {
                                 _id: {
                                     _id       : '$employee._id',
-                                    name      : '$employee.name',
+                                    name      : {
+                                        $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                                    },
                                     month     : '$month',
                                     year      : '$year',
                                     monthTotal: '$monthTotal'
@@ -2248,13 +2263,33 @@ var wTrack = function (models) {
                     _id       : '$department._id',
                     year      : '$year',
                     month     : '$month',
-                    employee  : '$employee'
+                    employee  : '$employee._id'
                 },
                 sold: {$sum: '$worked'}
             };
 
             WTrack.aggregate([{
                 $match: match
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id', as: 'department'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'employee',
+                    foreignField: '_id', as: 'employee'
+                }
+            }, {
+                $project: {
+                    department: {$arrayElemAt: ["$department", 0]},
+                    year: 1,
+                    month: 1,
+                    worked: 1,
+                    employee: {$arrayElemAt: ["$employee", 0]}
+                }
             }, {
                 $group: groupBy
             }, {
@@ -2414,6 +2449,19 @@ var wTrack = function (models) {
             WTrack.aggregate([{
                 $match: match
             }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id', as: 'department'
+                }
+            }, {
+                $project: {
+                    department: {$arrayElemAt: ["$department", 0]},
+                    year: 1,
+                    week: 1,
+                    worked: 1
+                }
+            }, {
                 $group: groupBy
             }, {
                 $project: {
@@ -2481,6 +2529,26 @@ var wTrack = function (models) {
 
             WTrack.aggregate([{
                 $match: match
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id', as: 'department'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'employee',
+                    foreignField: '_id', as: 'employee'
+                }
+            }, {
+                $project: {
+                    department: {$arrayElemAt: ["$department", 0]},
+                    year      : 1,
+                    month     : 1,
+                    worked    : 1,
+                    employee  : {$arrayElemAt: ["$employee", 0]}
+                }
             }, {
                 $group: groupBy
             }, {
@@ -2704,7 +2772,7 @@ var wTrack = function (models) {
                 matchVacation = {
                     //month: {$gte: startMonth, $lte: endMonth},
                     year          : {$gte: startYear, $lte: endYear},
-                    'employee._id': {$in: ids}
+                    'employee': {$in: ids}
                 };
 
                 matchHoliday = {
@@ -2737,12 +2805,26 @@ var wTrack = function (models) {
                 function vacationComposer(parallelCb) {
                     Vacation.aggregate([{
                         $match: matchVacation
-                    },
-                        {
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'employee',
+                            foreignField: '_id', as: 'employee'
+                        }
+                    }, {
+                        $project: {
+                            employee: {$arrayElemAt: ["$employee", 0]},
+                            month: 1,
+                            year: 1,
+                            monthTotal: 1
+                        }
+                    }, {
                             $group: {
                                 _id: {
                                     _id       : '$employee._id',
-                                    name      : '$employee.name',
+                                    name      : {
+                                        $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                                    },
                                     month     : '$month',
                                     year      : '$year',
                                     monthTotal: '$monthTotal'
