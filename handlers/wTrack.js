@@ -398,7 +398,7 @@ var wTrack = function (event, models) {
                 sort = query.sort;
             }
         } else {
-            sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
+            sort = {"year": -1, "month": -1, "week": -1};
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -544,7 +544,7 @@ var wTrack = function (event, models) {
             }, {
                 $match: queryObject
             }, {
-                $sort: sort
+               $sort: sort
             }, {
                 $skip: skip
             }, {
