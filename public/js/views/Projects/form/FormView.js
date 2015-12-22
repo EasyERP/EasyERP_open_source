@@ -720,7 +720,7 @@ define([
                 );
 
                 this.renderProformRevenue();
-
+                this.getInvoiceStats();
             },
 
             getWTrack: function (cb) {
@@ -797,7 +797,7 @@ define([
                 this.wCollection.bind('reset', this.createView);
             },
 
-            getInvoiceStats: function (parallelCb) {
+            getInvoiceStats: function () {
                 //ToDo optimize
                 var _id = window.location.hash.split('form/')[1];
                 var self = this;
@@ -812,7 +812,6 @@ define([
                         self.renderInvoiceStats(response.success);
                     }
                 });
-                parallelCb();
             },
 
             renderInvoiceStats: function (data) {
@@ -1197,10 +1196,11 @@ define([
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');
 
-                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getInvoiceStats];
+                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.renderProformRevenue();
+                    self.getInvoiceStats();
                     self.activeTab();
                 });
 

@@ -283,6 +283,7 @@ var wTrack = function (event, models) {
 
         contentSearcher = function (wTrackIDs, waterfallCallback) {
             var queryObject = {};
+
             queryObject['$and'] = [];
 
             if (filterObj) {
