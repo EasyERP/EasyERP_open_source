@@ -1282,7 +1282,10 @@ var Filters = function (models) {
                 }
             }, {
                 $match: {
-                    "invoice._type": 'wTrackInvoice' //add for jobsDash
+                    $or: [
+                        {"invoice._type": 'wTrackInvoice'},
+                        {quotation: {$exists: true}}
+                    ]
                 }
             }, {
                 $group: {
