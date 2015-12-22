@@ -403,7 +403,7 @@ define([
                             Backbone.history.navigate(url, {trigger: true});
 
                             App.projectInfo = App.projectInfo || {};
-                            App.projectInfo.currentTab = 'quotations'
+                            App.projectInfo.currentTab = 'quotations';
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);

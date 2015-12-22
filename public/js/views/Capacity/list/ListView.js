@@ -777,7 +777,7 @@ define([
                 var collection;
                 var status = row.find('.departmentCB').prop("checked");
 
-                if (!this.departmentsCollections[name]) {
+                if (!this.departmentsCollections[name] || this.capacityObject[name][0].month !== this.month || this.capacityObject[name][0].year !== this.year) {
                     this.departmentsCollections[name] = new departmentCollection(this.capacityObject[name]);
                 }
 

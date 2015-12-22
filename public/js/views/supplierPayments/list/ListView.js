@@ -169,22 +169,16 @@ define([
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
-                    el.html('<input class="editing" type="number" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
 
-                    dataContent = $(el).attr('data-content');
-                    editingEl = $(el).find('.editing');
+
+                    dataContent = el.attr('data-content');
+                    editingEl = el.find('.editing');
 
                     if (dataContent === 'month') {
-                        editingEl.attr({
-                            "min"      : 1,
-                            "max"      : 12,
-                            "maxLength": 2
-                        });
+                        editingEl.attr("maxLength", "2");
                     } else if (dataContent === 'year') {
-                        editingEl.attr({
-                            "min"      : 1980,
-                            "maxLength": 4
-                        });
+                        editingEl.attr("maxLength", "4");
                     }
                 }
 
@@ -192,8 +186,11 @@ define([
             },
 
             onKeyDownInput: function (e) {
+                var code = e.keyCode;
                 if (keyCodes.isEnter(e.keyCode)) {
                     this.setChangedValueToModel();
+                } else if ( !keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code) ){
+                    e.preventDefault();
                 }
             },
 
