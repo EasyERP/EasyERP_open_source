@@ -92,6 +92,9 @@ var Jobs = function (models, event) {
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
         var queryObject = {};
+        var queryObjectStage2 = {
+            $or: []
+        };
 
         var data = req.query;
         var forDashboard = data.forDashboard;
@@ -121,38 +124,34 @@ var Jobs = function (models, event) {
             }
         }
 
-        if (forDashboard){ //add for jobsDash need refactor
-            if (!queryObject['$and']){
-                queryObject['$and'] = [];
-            }
-
-            queryObject['$and'].push({"invoice._type": 'wTrackInvoice'});
+        if (forDashboard) { //add for jobsDash need refactor
+            queryObjectStage2['$or'].push({"invoice._type": 'wTrackInvoice'});
+            queryObjectStage2['$or'].push({quotation: {$exists: true}});
         }
-
 
         JobsModel
             .aggregate([{
                 $lookup: {
-                    from        : "Project",
-                    localField  : "project",
+                    from                   : "Project",
+                    localField             : "project",
                     foreignField: "_id", as: "project"
                 }
             }, {
                 $lookup: {
-                    from        : "Invoice",
-                    localField  : "invoice",
+                    from                   : "Invoice",
+                    localField             : "invoice",
                     foreignField: "_id", as: "invoice"
                 }
             }, {
                 $lookup: {
-                    from        : "workflows",
-                    localField  : "workflow",
+                    from                   : "workflows",
+                    localField             : "workflow",
                     foreignField: "_id", as: "workflow"
                 }
             }, {
                 $lookup: {
-                    from        : "Quotation",
-                    localField  : "quotation",
+                    from                   : "Quotation",
+                    localField             : "quotation",
                     foreignField: "_id", as: "quotation"
                 }
             }, {
@@ -168,19 +167,19 @@ var Jobs = function (models, event) {
                 }
             }, {
                 $lookup: {
-                    from        : "Payment",
-                    localField  : "invoice._id",
+                    from                       : "Payment",
+                    localField                 : "invoice._id",
                     foreignField: "invoice", as: "payments"
                 }
             }, {
                 $lookup: {
-                    from        : "Employees",
-                    localField  : "project.projectmanager",
+                    from                   : "Employees",
+                    localField             : "project.projectmanager",
                     foreignField: "_id", as: "projectmanager"
                 }
             }, {
                 $project: {
-                    order    : {
+                    order         : {
                         $cond: {
                             if  : {
                                 $eq: ['$type', 'Not Quoted']
@@ -197,36 +196,38 @@ var Jobs = function (models, event) {
                             }
                         }
                     },
-                    name     : 1,
-                    workflow : 1,
-                    type     : 1,
-                    wTracks  : 1,
-                    project  : 1,
-                    budget   : 1,
-                    quotation: 1,
-                    invoice  : 1,
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
                     projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
-                    payment  : {
+                    payment       : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
                 }
             }, {
                 $project: {
-                    order    : 1,
-                    name     : 1,
-                    workflow : 1,
-                    type     : 1,
-                    wTracks  : 1,
-                    project  : 1,
-                    budget   : 1,
-                    quotation: 1,
-                    invoice  : 1,
-                    payment  : 1,
+                    order         : 1,
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    payment       : 1,
                     projectmanager: 1
                 }
             }, {
                 $match: queryObject
+            }, {
+                $match: queryObjectStage2
             }, {
                 $sort: sort
             }], function (err, jobs) {
