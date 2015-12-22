@@ -57,7 +57,7 @@ query.exec(function (err, payments) {
             paymentYear = moment(payment.date).year();
             month = moment(payment.date).month();
 
-            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2015 && month === 9) {
+            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2014 && month === 6) {
                 /* paymentWeek = moment(payment.date).isoWeek();
                  paymentYear = moment(payment.date).year();*/
 
