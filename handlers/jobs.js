@@ -92,9 +92,7 @@ var Jobs = function (models, event) {
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
         var queryObject = {};
-        var queryObjectStage2 = {
-            $or: []
-        };
+        var queryObjectStage2 = {};
 
         var data = req.query;
         var forDashboard = data.forDashboard;
@@ -125,6 +123,7 @@ var Jobs = function (models, event) {
         }
 
         if (forDashboard) { //add for jobsDash need refactor
+            queryObjectStage2['$or'] = [];
             queryObjectStage2['$or'].push({"invoice._type": 'wTrackInvoice'});
             queryObjectStage2['$or'].push({quotation: {$exists: true}});
         }
