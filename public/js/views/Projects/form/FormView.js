@@ -720,7 +720,7 @@ define([
                 );
 
                 this.renderProformRevenue();
-
+                this.getInvoiceStats();
             },
 
             getWTrack: function (cb) {
@@ -1197,10 +1197,11 @@ define([
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');
 
-                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getInvoiceStats];
+                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.renderProformRevenue();
+                    self.getInvoiceStats();
                     self.activeTab();
                 });
 
