@@ -797,7 +797,7 @@ define([
                 this.wCollection.bind('reset', this.createView);
             },
 
-            getInvoiceStats: function (parallelCb) {
+            getInvoiceStats: function () {
                 //ToDo optimize
                 var _id = window.location.hash.split('form/')[1];
                 var self = this;
@@ -812,7 +812,6 @@ define([
                         self.renderInvoiceStats(response.success);
                     }
                 });
-                parallelCb();
             },
 
             renderInvoiceStats: function (data) {
