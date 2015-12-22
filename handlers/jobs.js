@@ -121,7 +121,7 @@ var Jobs = function (models, event) {
             }
         }
 
-        if (forDashboard){ //add for jobsDash
+        if (forDashboard){ //add for jobsDash need refactor
             if (!queryObject['$and']){
                 queryObject['$and'] = [];
             }
@@ -214,7 +214,7 @@ var Jobs = function (models, event) {
             }, {
                 $project: {
                     order    : 1,
-                   name     : 1,
+                    name     : 1,
                     workflow : 1,
                     type     : 1,
                     wTracks  : 1,
