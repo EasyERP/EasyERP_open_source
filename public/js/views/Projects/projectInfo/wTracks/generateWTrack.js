@@ -24,7 +24,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click a.generateType"                                            : "generateType",
                     "click td.editable"                                               : "editRow",
                     "change .editable "                                               : "setEditable",
-                    "click"                                                           : "confirmEditing", // added new event for dissapearing red frame after hours
                     //'keydown input.editing'                                           : 'keyDown',
                     'mouseover tbody tr:not("#addNewItem")'                           : 'showRemove',
                     'mouseleave tbody tr:not("#addNewItem")'                          : 'hideRemove',
@@ -46,16 +45,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         e.preventDefault();
                     }
                 },
-                // added new handler function for dissapearing red frame after hours
-                confirmEditing : function (e) {
-                    if (this.$listTable.find('.editing').val()){
-
-                        this.setChangedValueToModel();
-                    }
-
-                },
-                // end
-
 
                 onKeyUpInput: function (e) {
                     var element = e.target;
@@ -63,9 +52,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     if (element.maxLength && element.value.length > element.maxLength) {
                         element.value = element.value.slice(0, element.maxLength);
                     } else {
-                        this.setChangedValueToModel();
-
-                       // $(e.target).parent('td').removeClass('errorContent');
+                        if ($(e.target).attr('id') === 'inputHours') {
+                            this.setChangedValueToModel();
+                        }
                     }
                 },
 
