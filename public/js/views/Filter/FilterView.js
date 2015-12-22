@@ -168,14 +168,13 @@ define([
                     App.savedFilters[this.parentContentType] = [];
                 }
 
-                App.savedFilters[this.parentContentType].forEach(function(el){
-                    if (byDefault.length){
+                if (byDefault.length) {
+                    App.savedFilters[this.parentContentType].forEach(function (el) {
                         el.byDefault = '';
-                    }
-                });
+                    });
+                }
 
                 if (!allowName) {
-                    //changed alert
                     App.render({
                         type   : 'error',
                         message: 'Filter with same name already exists! Please, change filter name.'
@@ -184,7 +183,6 @@ define([
                 }
 
                 if ((Object.keys(App.filter)).length === 0) {
-                    //changed alert
                     App.render({type: 'error', message: 'Please, use some filter!'});
                     bool = false;
                 }
