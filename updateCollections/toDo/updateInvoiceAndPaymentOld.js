@@ -57,7 +57,7 @@ query.exec(function (err, payments) {
             paymentYear = moment(payment.date).year();
             month = moment(payment.date).month();
 
-            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2015 && month === 10) {
+            if (invoice && invoice.invoiceDate > payment.date && paymentYear === 2014 && month === 6) {
                 /* paymentWeek = moment(payment.date).isoWeek();
                  paymentYear = moment(payment.date).year();*/
 
@@ -103,9 +103,9 @@ query.exec(function (err, payments) {
                                             //Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: payment.date, paymentDate: payment.date}}, cb);
                                         } else {
                                             console.log(invoice._id, '========== Need Update Invoice Date ==========', 'from', invoice.invoiceDate, 'to', newDate);
-                                           // Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: newDate, paymentDate: payment.date}}, cb);
+                                            //Invoice.findByIdAndUpdate(invoice._id, {$set: {invoiceDate: newDate, paymentDate: payment.date}}, cb);
                                         }
-                                        cb();
+                                        //cb();
                                     } else {
                                         cb();
                                     }
