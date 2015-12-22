@@ -554,6 +554,8 @@ define([
                 delete this.changedModels[id];
                 this.editCollection.remove(id);
             }
+
+            this.$el.find('.edited').removeClass('edited');
         },
 
         checked: function (e) {

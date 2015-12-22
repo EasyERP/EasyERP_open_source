@@ -312,8 +312,8 @@ define([
 
                 tr = td.parents('tr');
 
-                /*tr.addClass('edited');*/
-                td.addClass('edited');
+                tr.addClass('edited');
+               // td.addClass('edited');
 
                 if (this.isEditRows()) {
                     this.setChangedValue();
@@ -779,6 +779,8 @@ define([
                     delete this.changedModels[id];
                     this.editCollection.remove(id);
                 }
+
+                this.$el.find('.edited').removeClass('edited');
             },
 
             savedNewModel: function (modelObject) {

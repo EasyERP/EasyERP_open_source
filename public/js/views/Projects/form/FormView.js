@@ -58,7 +58,7 @@ define([
                 "click .current-selected:not(.disabled)"                           : "showNewSelect",
                 "click #createItem"                                                : "createDialog",
                 "click #createJob"                                                 : "createJob",
-                "change input:not(.checkbox, .check_all, .statusCheckbox)"         : "showSaveButton",
+                "change input:not(.checkbox, .check_all, .statusCheckbox, #inputAttach)"         : "showSaveButton",
                 "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)": "renderJobWTracks",
                 "mouseover #jobsItem"                                              : "showRemoveButton",
                 "mouseleave #jobsItem"                                             : "hideRemoveButton",
@@ -578,6 +578,8 @@ define([
                 var target = $(e.target);
 
                 target.parents("#health").find("a").attr("class", target.attr("class")).attr("data-value", target.attr("class").replace("health", "")).parent().find("ul").toggle();
+
+                this.showSaveButton();
             },
 
             showHealthDd: function (e) {
