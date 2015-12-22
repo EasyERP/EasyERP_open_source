@@ -168,6 +168,12 @@ define([
                     App.savedFilters[this.parentContentType] = [];
                 }
 
+                App.savedFilters[this.parentContentType].forEach(function(el){
+                    if (byDefault.length){
+                        el.byDefault = '';
+                    }
+                });
+
                 if (!allowName) {
                     //changed alert
                     App.render({
