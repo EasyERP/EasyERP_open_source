@@ -766,6 +766,7 @@ define([
                         self.$createBtn.show();
 
                         $('#check_all').prop('checked', false);
+                        self.$el.find('#top-bar-copyBtn').hide();
                     }
                 }
 
