@@ -6,8 +6,8 @@ module.exports = function (db, model) {
     var logWriter = require('../helpers/logWriter');
 
     var rule = {
-        hour  : 0,
-        minute: 1
+        hour  : 9,
+        minute: 49
     };
 
     var Scheduler = function () {
@@ -51,7 +51,8 @@ module.exports = function (db, model) {
                 month: {
                     $month: "$dateBirth"
                 },
-                age  : 1
+                age  : 1,
+                dateBirth: 1
             }
         };
         var matchOutObject = {
@@ -82,9 +83,11 @@ module.exports = function (db, model) {
         var updateBirthday = function (element, callback) {
             var id = element._id;
             var oldAge = element.age;
+            var dateBirth = element.dateBirth;
+            var age = new Date().getYear() - new Date(dateBirth).getYear();
             var update = {
                 $set: {
-                    age: ++oldAge
+                    age: age
                 }
             };
             var options = {
