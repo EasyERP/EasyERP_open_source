@@ -23,7 +23,7 @@ define([
             "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
             "easyErp/Revenue"                                                                               : "revenue",
-            "easyErp/Efficiency"                                                                                 : "hours",
+            "easyErp/Efficiency"                                                                            : "hours",
             "easyErp/Attendance"                                                                            : "attendance",
             "easyErp/Profiles"                                                                              : "goToProfiles",
             "easyErp/productSettings"                                                                       : "productSettings",
@@ -314,9 +314,9 @@ define([
                 var contentViewUrl = "views/Hours/index";
 
                 if (self.mainView === null) {
-                    self.main("Hours");
+                    self.main("Efficiency");
                 } else {
-                    self.mainView.updateMenu("Hours");
+                    self.mainView.updateMenu("Efficiency");
                 }
 
                 require([contentViewUrl], function (contentView) {
