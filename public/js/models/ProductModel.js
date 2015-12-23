@@ -6,11 +6,15 @@ define(['Validation', 'common'], function (Validation, common) {
         idAttribute: "_id",
         initialize : function () {
             this.on('invalid', function (model, errors) {
+                var msg;
+
                 if (errors.length > 0) {
-                    if (errors.length > 0) {
-                        var msg = errors.join('\n');
-                        alert(msg);
-                    }
+                    msg = errors.join('\n');
+
+                    App.render({
+                        type: 'error',
+                        message: msg
+                    });
                 }
             });
         },

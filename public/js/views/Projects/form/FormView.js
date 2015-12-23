@@ -105,7 +105,10 @@ define([
                             })
                         },
                         error  : function (xhr) {
-                            alert('Please refresh browser');
+                            App.render({
+                                type: 'error',
+                                message: 'Please refresh browser'
+                            });
                         }
                     });
                 } else {
@@ -127,7 +130,10 @@ define([
                             });
                         },
                         error  : function (xhr) {
-                            alert('Please refresh browser');
+                            App.render({
+                                type: 'error',
+                                message: 'Please refresh browser'
+                            });
                         }
                     });
                 }
@@ -154,7 +160,10 @@ define([
                         });
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: 'Please refresh browser'
+                        });
                     }
                 });
             },
@@ -230,7 +239,10 @@ define([
 
                     });
                 } else {
-                    alert("Please, enter Job name!");
+                    App.render({
+                        type: 'error',
+                        message: 'Please, enter Job name!'
+                    });
                 }
             },
 
@@ -483,10 +495,17 @@ define([
                     if (!employeeId || !bonusId) {
                         if (!employeeId) {
                             value = 'Employee';
-                            alert('Please, choose ' + value + ' first.');
+                            App.render({
+                                type: 'error',
+                                message: 'Please, choose ' + value + ' first.'
+                            });
+
                         } else if (!bonusId) {
                             value = 'Bonus';
-                            alert('Please, choose ' + value + ' first.');
+                            App.render({
+                                type: 'error',
+                                message: 'Please, choose ' + value + ' first.'
+                            });
                         }
                         validation = false;
                     }

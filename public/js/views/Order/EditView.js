@@ -113,7 +113,10 @@ define([
                     var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return  App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
@@ -147,7 +150,10 @@ define([
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             if (err) {
-                                alert('Can\'t receive invoice');
+                                App.render({
+                                    type: 'error',
+                                    message: 'Can\'t receive invoice'
+                                });
                             } else {
                                 Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
@@ -167,7 +173,10 @@ define([
                     var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
@@ -303,7 +312,10 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type: 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
             },
 
@@ -331,7 +343,10 @@ define([
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });

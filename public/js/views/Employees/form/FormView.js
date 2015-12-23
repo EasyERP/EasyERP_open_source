@@ -35,7 +35,11 @@ define([
                 var addFrmAttach = $("#employeeForm");
                 var addInptAttach = $("#employeeForm .input-file .inputAttach")[0].files[0];
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
-                    alert('File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay);
+                    App.render({
+                        type: 'error',
+                        message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+                    });
+
                     return;
                 }
                 addFrmAttach.submit(function (e) {

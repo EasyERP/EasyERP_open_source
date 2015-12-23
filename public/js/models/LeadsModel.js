@@ -3,14 +3,21 @@
         idAttribute: "_id",
         initialize : function () {
             this.on('invalid', function (model, errors) {
+                var msg;
+
                 if (errors.length > 0) {
-                    var msg = errors.join('\n');
-                    alert(msg);
+                    msg = errors.join('\n');
+
+                    App.render({
+                        type   : 'error',
+                        message: msg
+                    });
                 }
             });
         },
         validate   : function (attrs) {
             var errors = [];
+
             Validation.checkGroupsNameField(errors, true, attrs.name, "Subject");
             Validation.checkNameField(errors, false, attrs.contactName.first, "Contact first name");
             Validation.checkNameField(errors, false, attrs.contactName.last, "Contact last name");
@@ -28,7 +35,6 @@
                 return errors;
             }
         },
-        parse      : true,
         parse      : function (response) {
             if (!response.data) {
                 if (response.createdBy) {

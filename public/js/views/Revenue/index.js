@@ -444,7 +444,10 @@ define([
                 cb();
             }, function (err) {
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = bySalesByDep.length - 1; i >= 0; i--) {
@@ -533,7 +536,10 @@ define([
                 cb();
             }, function (err) {
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 targetTotal.html(self.bySalesPerWeekTemplate({
@@ -600,7 +606,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = paidBySales.length - 1; i >= 0; i--) {
@@ -680,7 +689,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = unpaidBySales.length - 1; i >= 0; i--) {
@@ -759,7 +771,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = unpaidBySales.length - 1; i >= 0; i--) {
@@ -876,7 +891,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = revenueTotal.length - 1; i >= 0; i--) {
@@ -957,7 +975,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = projectBySales.length - 1; i >= 0; i--) {
@@ -1036,7 +1057,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = employeeBySales.length - 1; i >= 0; i--) {
@@ -1151,7 +1175,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = allBonus.length - 1; i >= 0; i--) {
@@ -1254,7 +1281,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = allBonus.length - 1; i >= 0; i--) {
@@ -1357,7 +1387,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = allBonus.length - 1; i >= 0; i--) {

@@ -118,8 +118,11 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
-                            if (jobs.length < 24) {
-                                return alert("Job field can't be empty. Please, choose or create one.");
+                            if (!job || jobs.length < 24) {
+                                return App.render({
+                                    type: 'error',
+                                    message: "Job field can't be empty. Please, choose or create one."
+                                });
                             }
 
                             products.push({
@@ -133,7 +136,10 @@ define([
                                 jobs         : jobs
                             });
                         } else {
-                            return alert("Products can't be empty.");
+                            return App.render({
+                                type: 'error',
+                                message: "Products can't be empty."
+                            });
                         }
                     }
                 }
@@ -182,7 +188,10 @@ define([
                     });
 
                 } else {
-                    return alert('Products can not be empty.');
+                    return App.render({
+                        type: 'error',
+                        message: "Products can not be empty."
+                    });
                 }
             },
 
