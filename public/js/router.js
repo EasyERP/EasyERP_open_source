@@ -23,7 +23,7 @@ define([
             "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
             "easyErp/Revenue"                                                                               : "revenue",
-            "easyErp/Hours"                                                                                 : "hours",
+            "easyErp/Efficiency"                                                                                 : "hours",
             "easyErp/Attendance"                                                                            : "attendance",
             "easyErp/Profiles"                                                                              : "goToProfiles",
             "easyErp/productSettings"                                                                       : "productSettings",

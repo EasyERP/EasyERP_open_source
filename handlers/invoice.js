@@ -1124,14 +1124,45 @@ var Invoice = function (models, event) {
                 }
             }
         }, {
+            $lookup: {
+                from        : "Project",
+                localField  : "project",
+                foreignField: "_id", as: "project"
+            }
+        }, {
+            $lookup: {
+                from        : "Customers",
+                localField  : "supplier",
+                foreignField: "_id", as: "supplier"
+            }
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "salesPerson",
+                foreignField: "_id", as: "salesPerson"
+            }
+        }, {
             $project: {
+                project    : {$arrayElemAt: ["$project", 0]},
+                supplier   : {$arrayElemAt: ["$supplier", 0]},
+                salesPerson: {$arrayElemAt: ["$salesPerson", 0]},
                 dueDate    : 1,
-                project    : 1,
-                supplier   : 1,
                 name       : 1,
-                paymentInfo: 1,
-                salesPerson: 1,
-                diffStatus : {
+                paymentInfo: 1
+            }
+        }, {
+            $project: {
+                dueDate              : 1,
+                'project.projectName': 1,
+                'supplier.name'      : {
+                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                },
+                name                 : 1,
+                paymentInfo          : 1,
+                'salesPerson.name'   : {
+                    $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                },
+                diffStatus           : {
                     $cond: {
                         if  : {
                             $lt: [{$subtract: [now, '$dueDate']}, 0]
