@@ -190,6 +190,11 @@ define([
 
             self.selectedBonus = [];
             self.$el.find('#removeBonus').hide();
+
+            //App.render({
+            //    type   : 'notify',
+            //    message: 'Data were changed, please refresh browser'
+            //});
             this.trigger('save');
         },
 

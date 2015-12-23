@@ -47,29 +47,29 @@ define([
             invoiceStatsTmpl: _.template(invoiceStats),
 
             events: {
-                'click .chart-tabs'                                                : 'changeTab',
-                'click .deleteAttach'                                              : 'deleteAttach',
-                "click #health a:not(.disabled)"                                   : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                           : "chooseHealthDd",
-                "click .newSelectList li:not(.miniStylePagination):not(.disabled)" : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                      : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)" : "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)" : "prevSelect",
-                "click .current-selected:not(.disabled)"                           : "showNewSelect",
-                "click #createItem"                                                : "createDialog",
-                "click #createJob"                                                 : "createJob",
-                "change input:not(.checkbox, .check_all, .statusCheckbox, #inputAttach)"         : "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)": "renderJobWTracks",
-                "mouseover #jobsItem"                                              : "showRemoveButton",
-                "mouseleave #jobsItem"                                             : "hideRemoveButton",
-                "click .fa.fa-trash"                                               : "removeJobAndWTracks",
-                "dblclick td.editableJobs"                                         : "editRow",
-                "click #saveName"                                                  : "saveNewJobName",
-                "keydown input.editing "                                           : "keyDown",
-                'click'                                                            : 'hideSelect',
-                'keydown'                                                          : 'keydownHandler',
-                "click a.quotation"                                                : "viewQuotation",
-                "click a.invoice"                                                  : "viewInvoice"
+                'click .chart-tabs'                                                                       : 'changeTab',
+                'click .deleteAttach'                                                                     : 'deleteAttach',
+                "click #health a:not(.disabled)"                                                          : "showHealthDd",
+                "click #health ul li div:not(.disabled)"                                                  : "chooseHealthDd",
+                "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                        : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                                             : "notHide",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)"                        : "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)"                        : "prevSelect",
+                "click .current-selected:not(.disabled)"                                                  : "showNewSelect",
+                "click #createItem"                                                                       : "createDialog",
+                "click #createJob"                                                                        : "createJob",
+                "change input:not(.checkbox, .check_all, .check_all_bonus, .statusCheckbox, #inputAttach)": "showSaveButton",
+                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)"                       : "renderJobWTracks",
+                "mouseover #jobsItem"                                                                     : "showRemoveButton",
+                "mouseleave #jobsItem"                                                                    : "hideRemoveButton",
+                "click .fa.fa-trash"                                                                      : "removeJobAndWTracks",
+                "dblclick td.editableJobs"                                                                : "editRow",
+                "click #saveName"                                                                         : "saveNewJobName",
+                "keydown input.editing "                                                                  : "keyDown",
+                'click'                                                                                   : 'hideSelect',
+                'keydown'                                                                                 : 'keydownHandler',
+                "click a.quotation"                                                                       : "viewQuotation",
+                "click a.invoice"                                                                         : "viewInvoice"
             },
 
             initialize: function (options) {
@@ -519,8 +519,12 @@ define([
 
                             self.hideSaveButton();
 
-                            Backbone.history.fragment = "";
-                            Backbone.history.navigate(url, {trigger: true});
+                            //Backbone.history.fragment = "";
+                            //Backbone.history.navigate(url, {trigger: true});
+                            App.render({
+                                type   : 'notify',
+                                message: 'Data were changed, please refresh browser'
+                            });
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
@@ -1125,7 +1129,6 @@ define([
                     dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
                     dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
 
-
                     //if (tabId === 'quotation'){
                     //    dialogHolder.find('#quotations').closest('.dialog-tabs-item').addClass("active");
                     //} else if (tabId === 'orders') {
@@ -1218,6 +1221,8 @@ define([
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+
+                        self.showSaveButton();
                     }
                 });
                 $('#EndDate').datepicker({
@@ -1228,6 +1233,8 @@ define([
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+
+                        self.showSaveButton();
                     }
                 });
                 $('#EndDateTarget').datepicker({
