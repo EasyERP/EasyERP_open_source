@@ -2122,6 +2122,8 @@ var wTrack = function (models) {
                         var hire;
                         var date;
                         var fire;
+                        var fireLength = 0;
+                        var keyForFire;
 
                         employee.hire = [];
 
@@ -2140,6 +2142,8 @@ var wTrack = function (models) {
                             date = new Date(hireDate);
                             employee.fire.push(moment(date).year() * 100 + moment(date).month() + 1);
                         });
+
+                        fireLength = fire.length;
 
                         employee._id = element._id;
                         employee.name = element.employee.first + ' ' + element.employee.last;
@@ -2173,9 +2177,15 @@ var wTrack = function (models) {
                             });
 
                             key = year * 100 + month;
+                            keyForFire = new Date(employee.fire[fireLength - 1]).getYear() * 100 + new Date(employee.fire[fireLength - 1]).getMonth() + 1;
 
-                            employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
-                            employee.total += employee.hoursTotal[key];
+                            if (fireLength && (keyForFire <= key)){
+                                employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
+                                employee.total += employee.hoursTotal[key];
+                            } else {
+                                employee.hoursTotal[key] = 0;
+                            }
+
                         });
 
                         department.employees.push(employee);
@@ -2950,9 +2960,15 @@ var wTrack = function (models) {
 
                             hireFirst = employee.hire[0] ? employee.hire[0] : key;
                             hireLast = employee.hire[1] ? employee.hire[1] : hireFirst;
-                            fireFirst = employee.fire[0] ? employee.fire[0] : key;
+                            fireFirst = employee.fire[0] ? employee.fire[0] : null;
+                            var query;
+                            if (fireFirst){
+                                query = (hireFirst <= key) && (key <= fireFirst)
+                            } else {
+                                query = hireFirst <= key;
+                            }
 
-                            if ((hireFirst <= key) && (key <= fireFirst)) {
+                            if (query) {
                                 employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
                                 employee.total += employee.hoursTotal[key];
                             } else if (key >= hireLast) {
