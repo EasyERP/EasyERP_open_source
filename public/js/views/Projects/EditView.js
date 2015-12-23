@@ -127,10 +127,16 @@ define([
                     if (!employeeId || !bonusId) {
                         if (!employeeId) {
                             value = 'Employee';
-                            alert('Please, choose ' + value + ' first.');
+                            App.render({
+                                type: 'error',
+                                message: 'Please, choose ' + value + ' first.'
+                            });
                         } else if (!bonusId) {
                             value = 'Bonus';
-                            alert('Please, choose ' + value + ' first.');
+                            App.render({
+                                type: 'error',
+                                message: 'Please, choose ' + value + ' first.'
+                            });
                         }
                         validation = false;
                     }

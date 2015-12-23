@@ -122,7 +122,10 @@ define([
                     order       : 1
                 }, function (workflow) {
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
@@ -157,7 +160,10 @@ define([
                     wId: wId
                 }, function (workflow) {
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return  App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
@@ -369,7 +375,10 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type: 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
             },
 
@@ -404,7 +413,10 @@ define([
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });

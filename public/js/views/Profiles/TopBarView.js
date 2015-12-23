@@ -29,7 +29,10 @@ define([
                 event.preventDefault();
                 var selectedProfileId = $('#profilesList > li.active > a').data('id');
                 if (selectedProfileId == "1387275598000" || selectedProfileId == "1387275504000") {
-                    alert("You cannot delete this profile");
+                    App.render({
+                        type: 'error',
+                        message: "You cannot delete this profile"
+                    });
                     return;
                 }
                 dataService.getData('/UserWithProfile', {_id: selectedProfileId}, function (res) {

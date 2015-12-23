@@ -102,7 +102,10 @@ require(['app'], function (app) {
                 if (xhr.status === 401) {
                     Backbone.history.navigate("login", {trigger: true});
                 } else {
-                    alert("You do not have permission to perform this action");
+                    App.render({
+                        type: 'error',
+                        message: "You do not have permission to perform this action."
+                    });
                 }
             } else {
                 if (xhr.responseJSON) {

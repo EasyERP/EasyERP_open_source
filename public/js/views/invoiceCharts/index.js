@@ -153,7 +153,7 @@ define([
                 })
                 .attr("width", x.rangeBand())
                 .attr("fill", "#01579B")//lighBlue
-                .attr("opacity", 0.4)
+                .attr("opacity", 0.3)
                 .on('mouseover', function (d) {
                     /* var current = d3.select(this);
                      var i = current.attr('data-index');
@@ -207,8 +207,8 @@ define([
                     return height - y(datum.paid);
                 })
                 .attr("width", x.rangeBand())
-                .attr("fill", "#40C4FF")//blue
-                .attr("opacity", 0.4);
+                .attr("fill", "#40C4FF")//blue  #40C4FF
+                .attr("opacity", 0.3);
 
             /*topChart.selectAll("text")
              .data(data)

@@ -62,7 +62,10 @@
                         that.trigger('showmore', models);
                     },
                     error  : function () {
-                        alert('Some Error');
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             }

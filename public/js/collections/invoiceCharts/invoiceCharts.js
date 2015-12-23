@@ -19,7 +19,7 @@
                 this.byWeek = !!collection.byWeek;
 
                 if(!this.byWeek){
-                    response.date = moment([year, monthOrWeek - 1]).format('MMM, YYYY');
+                    response.date = moment([year, monthOrWeek - 1]).format('MMM, YY');
                 } else {
                     response.date = monthOrWeek + ', ' + year;
                 }

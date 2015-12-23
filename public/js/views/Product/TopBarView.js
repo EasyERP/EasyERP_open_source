@@ -109,7 +109,10 @@ define([
                 });
 
                 if (!permission) {
-                    return alert("You do not have permission to delete this product");
+                    return App.render({
+                        type: 'error',
+                        message: "You do not have permission to perform this action"
+                    });
                 }
 
                 var answer = confirm("Really DELETE items ?!");

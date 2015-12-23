@@ -96,11 +96,17 @@ define(["text!templates/wTrack/createJob.html"
                                 }
                             },
                             error  : function () {
-                                alert('error');
+                                App.render({
+                                    type: 'error',
+                                    message: "Error"
+                                });
                             }
                         });
                     } else {
-                        alert("Please, enter correct Job name!");
+                        App.render({
+                            type: 'error',
+                            message: "Please, enter correct Job name!"
+                        });
                     }
 
                 },

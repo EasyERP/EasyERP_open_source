@@ -823,7 +823,10 @@ define([
                             },
                             error  : function (model, res) {
                                 if (res.status === 403 && index === 0) {
-                                    alert("You do not have permission to perform this action");
+                                    App.render({
+                                        type: 'error',
+                                        message: "You do not have permission to perform this action"
+                                    });
                                 }
                                 self.deleteItemsRender(1, 1);
 

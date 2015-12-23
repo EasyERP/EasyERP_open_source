@@ -45,12 +45,14 @@
                         that.trigger('showmore', models);
                     },
                     error  : function () {
-                        alert('Some Error');
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             },
 
-            parse: true,
             parse: function (response) {
                 if (response.data) {
                     _.map(response.data, function (user) {

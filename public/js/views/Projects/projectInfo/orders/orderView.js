@@ -67,7 +67,10 @@ define([
                     new editView({model: model, redirect: true, projectManager: self.projectManager});
                 },
                 error  : function () {
-                    alert('Please refresh browser');
+                    App.render({
+                        type: 'error',
+                        message: 'Please refresh browser'
+                    });
                 }
             });
         },
@@ -98,7 +101,10 @@ define([
                     });
                 },
                 error  : function () {
-                    alert('Please refresh browser');
+                    App.render({
+                        type: 'error',
+                        message: 'Please refresh browser'
+                    });
                 }
             });
         },
@@ -365,7 +371,10 @@ define([
                         },
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                             that.listLength--;
                             count--;

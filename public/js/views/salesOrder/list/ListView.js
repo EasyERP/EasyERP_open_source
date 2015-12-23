@@ -183,7 +183,10 @@ define([
                         new editView({model: model, onlyView: onlyView});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: 'Please refresh browser'
+                        });
                     }
                 });
             }
