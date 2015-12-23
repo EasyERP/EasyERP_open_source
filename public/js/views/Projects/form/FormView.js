@@ -1198,6 +1198,8 @@ define([
                 notDiv.html(notesEl);
                 notDiv.append(atachEl);
 
+                this.formModel.bind('chooseAssignee', this.showSaveButton);
+
                 assignees = thisEl.find('#assignees-container');
                 assignees.html(
                     new AssigneesView({

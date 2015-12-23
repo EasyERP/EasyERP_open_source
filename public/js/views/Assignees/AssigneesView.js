@@ -193,6 +193,11 @@ define([
             if ($(".groupsAndUser tr").length < 2) {
                 groupsAndUser.hide();
             }
+
+            if (this.model){
+                this.model.trigger('chooseAssignee');
+            }
+
         },
 
         addGroup: function () {

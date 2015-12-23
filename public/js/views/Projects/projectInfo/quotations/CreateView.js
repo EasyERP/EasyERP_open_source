@@ -118,7 +118,7 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
-                            if (!job || jobs.length < 24) {
+                            if (jobs.length < 24) {
                                 return App.render({
                                     type: 'error',
                                     message: "Job field can't be empty. Please, choose or create one."
