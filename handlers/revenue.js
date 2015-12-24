@@ -2956,6 +2956,10 @@ var wTrack = function (models) {
                                 }
                             });
 
+                            if (department._id === 'QA'){
+                                console.log('QA');
+                            }
+
                             key = year * 100 + month;
 
                             hireFirst = employee.hire[0] ? employee.hire[0] : key;
@@ -2963,23 +2967,24 @@ var wTrack = function (models) {
                             fireFirst = employee.fire[0] ? employee.fire[0] : null;
                             var query;
                             if (fireFirst){
-                                query = (hireFirst <= key) && (key <= fireFirst)
+                                query = (hireFirst <= key) && (key <= fireFirst) && (key >= hireLast);
                             } else {
-                                query = hireFirst <= key;
+                                query = (hireFirst <= key) && (key >= hireLast);
                             }
 
                             if (query) {
                                 employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
                                 employee.total += employee.hoursTotal[key];
-                            } else if (key >= hireLast) {
-                                employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
-                                employee.total += employee.hoursTotal[key];
+                            //} else if (key >= hireLast) {
+                            //    employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
+                            //    //employee.total += employee.hoursTotal[key];
                             } else {
                                 employee.hoursTotal[key] = 0;
                                 employee.total += employee.hoursTotal[key];
                             }
 
                         });
+
 
                         department.employees.push(employee);
                     });
