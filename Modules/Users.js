@@ -108,7 +108,7 @@ var Users = function (mainDb, models) {
                         _user.profile = data.profile;
                     }
                     if (data.login) {
-                        _user.login = data.login;
+                        _user.login = data.login.toLowerCase();
                     }
                     if (data.pass) {
                         shaSum.update(data.pass);
@@ -175,18 +175,22 @@ var Users = function (mainDb, models) {
         try {
             if (data) {
                 if (data.login || data.email) {
-                    models.get(data.dbId, 'Users', userSchema).findOne({$or: [{login: (data.login)/*.toLowerCase()*/}, {email: data.email}]}, function (err, _user) {
+                    models.get(data.dbId, 'Users', userSchema).findOne({$or: [{login: { $regex: data.login , $options: 'i' }/*.toLowerCase()*/}, {email: { $regex: data.login , $options: 'i' }}]}, function (err, _user) {
+
+                        var shaSum;
+                        var lastAccess;
+
                         try {
                             if (_user && _user._id) {
-                                var shaSum = crypto.createHash('sha256');
+                                shaSum = crypto.createHash('sha256');
                                 shaSum.update(data.pass);
-                                if (((_user.login == data.login) || (_user.email == data.login)) && (_user.pass == shaSum.digest('hex'))) {
+                                if (/*((_user.login == data.login) || (_user.email == data.login)) && */_user.pass == shaSum.digest('hex')) {
                                     req.session.loggedIn = true;
                                     req.session.uId = _user._id;
                                     req.session.uName = _user.login;
                                     req.session.lastDb = data.dbId;
                                     req.session.kanbanSettings = _user.kanbanSettings;
-                                    var lastAccess = new Date();
+                                    lastAccess = new Date();
                                     req.session.lastAccess = lastAccess;
                                     models.get(data.dbId, 'Users', userSchema).findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err, result) {
                                         if (err) {
