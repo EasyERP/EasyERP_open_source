@@ -2658,7 +2658,7 @@ var wTrack = function (models) {
 
                         key = Object.keys(element)[0];
 
-                        objToSave.name = element[key].name;
+                        objToSave.name = element[key].name.first + ' ' + element[key].name.last;
                         objToSave.total = element[key].total;
                         objToSave.hoursSold = element[key].hoursSold;
                         object = _.clone(objToSave);
