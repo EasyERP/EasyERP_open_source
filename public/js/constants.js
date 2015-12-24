@@ -422,7 +422,7 @@ define([], function () {
         ATTENDANCE        : 'Attendance',
         DASHBOARD_VACATION: 'DashBoardVacation',
         DASHBOARD_HR      : 'HrDashboard',
-        HOURS             : 'Hours',
+        EFFICIENCY        : 'Efficiency',
         CAPACITY          : 'Capacity',
         JOBSDASHBOARD     : 'jobsDashboard',
         PAYROLLPAYMENTS   : 'PayrollPayments',

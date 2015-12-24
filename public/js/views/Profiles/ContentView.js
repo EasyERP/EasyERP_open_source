@@ -102,7 +102,10 @@ define([
             editProfileDetails: function () {
                 var selectedProfileId = $('#profilesList > li.active > a').data('id');
                 if (selectedProfileId == "1387275598000" || selectedProfileId == "1387275504000") {
-                    alert("You cannot edit this Profile!");
+                    App.render({
+                        type: 'error',
+                        message: "You cannot edit this Profile!"
+                    });
                     return;
                 }
                 $('#profilesList li.active a').hide();

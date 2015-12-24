@@ -4,7 +4,7 @@
     <td><%=invoiceAging.name%></td>
     <td><%=(invoiceAging.salesPerson) ? invoiceAging.salesPerson.name : ''%></td>
     <td><%=(invoiceAging.supplier) ? invoiceAging.supplier.name : ''%></td>
-    <td><%=(invoiceAging.project) ? invoiceAging.project.name : ''%></td>
+    <td><%=(invoiceAging.project) ? invoiceAging.project.projectName : ''%></td>
     <td data-content="zeroTotal"><%=invoiceAging.diffStatus === -1 ? currencySplitter(invoiceAging.paymentInfo.balance)
         : '&nbsp;'%>
     </td>

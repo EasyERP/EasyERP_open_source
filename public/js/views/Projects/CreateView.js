@@ -111,7 +111,10 @@ define([
 
                 if (custom === 'Select') {
                     value = 'Customer';
-                    return alert('Please, choose ' + value + ' first.');
+                    return App.render({
+                        type: 'error',
+                        message: 'Please, choose ' + value + ' first.'
+                    });
                 }
 
                 bonusRow.each(function (key, val) {
@@ -136,7 +139,10 @@ define([
                 });
 
                 if (!validation) {
-                    return alert('Employee and bonus fields must not be empty.');
+                    return App.render({
+                        type: 'error',
+                        message: 'Employee and bonus fields must not be empty.'
+                    });
                 }
 
                 var description = $.trim(this.$el.find("#description").val());

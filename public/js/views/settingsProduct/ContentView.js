@@ -40,7 +40,10 @@ define([
                         new EditView({myModel: model});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
                     }
                 });
                 return false;
@@ -62,7 +65,10 @@ define([
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             } else {
                                 Backbone.history.navigate("home", {trigger: true});
                             }

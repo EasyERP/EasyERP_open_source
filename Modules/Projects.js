@@ -1335,34 +1335,27 @@ var Project = function (models, event) {
                 logWriter.log("Project.js update project.update " + err);
                 res.send(500, {error: "Can't update Project"});
             } else {
-                res.send(200, project);
 
-                if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
-                    wTrackSchema = mongoose.Schemas['wTrack'];
-                    wTrackModel = models.get(dbName, 'wTrack', wTrackSchema);
-
-                    InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
-                    Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
-
-                    if (project._id) {
-                        event.emit('updateProjectDetails', {req: req, _id: project._id});
-                    }
-
-                    event.emit('recollectProjectInfo');
-                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
-                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
-                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer.name', project.customer.name);
-                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectmanager._id', project.projectmanager._id);
-                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectmanager.name', project.projectmanager.name);
-                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.workflow._id', project.workflow._id);
-                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.workflow.name', project.workflow.name);
-
-                    event.emit('updateName', _id, Invoice, 'project._id', 'project.name', project.projectName);
-                    event.emit('updateName', _id, Invoice, 'project._id', 'supplier._id', project.customer._id);
-                    event.emit('updateName', _id, Invoice, 'project._id', 'supplier.name', project.customer.name);
-                    event.emit('updateName', _id, Invoice, 'project._id', 'salesPerson._id', project.projectmanager._id);
-                    event.emit('updateName', _id, Invoice, 'project._id', 'salesPerson.name', project.projectmanager.name);
+                if (project._id) {
+                    event.emit('updateProjectDetails', {req: req, _id: project._id});
                 }
+
+                res.send(200, project);
+                //event.emit('recollectProjectInfo');
+                //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
+                //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
+                //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer.name', project.customer.name);
+                //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectmanager._id', project.projectmanager._id);
+                //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectmanager.name', project.projectmanager.name);
+                //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.workflow._id', project.workflow._id);
+                //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.workflow.name', project.workflow.name);
+                //
+                //event.emit('updateName', _id, Invoice, 'project._id', 'project.name', project.projectName);
+                //event.emit('updateName', _id, Invoice, 'project._id', 'supplier._id', project.customer._id);
+                //event.emit('updateName', _id, Invoice, 'project._id', 'supplier.name', project.customer.name);
+                //event.emit('updateName', _id, Invoice, 'project._id', 'salesPerson._id', project.projectmanager._id);
+                //event.emit('updateName', _id, Invoice, 'project._id', 'salesPerson.name', project.projectmanager.name);
+
             }
         });
     };

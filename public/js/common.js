@@ -156,7 +156,10 @@
                     fr.readAsDataURL(file);
 
                 } else {
-                    alert('Invalid file type!');
+                    App.render({
+                        type: 'error',
+                        message: "Invalid file type!"
+                    });
                 }
             });
             canvasDrawing({model: model}, context);

@@ -1026,22 +1026,34 @@ var Filters = function (models) {
                         forSales: false,
                         isOrder : false
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customers",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $project: {
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                    }
+                }, {
                     $group: {
                         _id       : null,
                         'supplier': {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: '$supplier.name'
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
-                        //'type': {
-                        //    $addToSet: {
-                        //        _id : '$type',
-                        //        name: '$type'
-                        //    }
-                        //},
                         'workflow': {
                             $addToSet: {
                                 _id : '$workflow._id',
@@ -1411,8 +1423,24 @@ var Filters = function (models) {
                         forSales: false,
                         isOrder : true
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customer",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $project: {
+                        workflow : {$arrayElemAt: ["$workflow", 0]},
+                        supplier : {$arrayElemAt: ["$supplier", 0]}
+                    }
+                }, {
                     $group: {
                         _id             : null,
                         'projectName'   : {
@@ -1424,7 +1452,9 @@ var Filters = function (models) {
                         'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: '$supplier.name'
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
                         'projectmanager': {
@@ -1433,12 +1463,6 @@ var Filters = function (models) {
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        //'type': {
-                        //    $addToSet: {
-                        //        _id : '$type',
-                        //        name: '$type'
-                        //    }
-                        //},
                         'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',

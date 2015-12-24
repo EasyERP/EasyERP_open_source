@@ -212,7 +212,10 @@ define([
                     },
                     error  : function (model, response) {
                         if (response) {
-                            alert(response.error);
+                            App.render({
+                                type: 'error',
+                                message: response.error
+                            });
                         }
                     }
                 });
@@ -287,7 +290,10 @@ define([
                     },
                     error  : function (model, err) {
                         if (err.status === 403) {
-                            alert("You do not have permission to perform this action");
+                            App.render({
+                                type: 'error',
+                                message: "You do not have permission to perform this action"
+                            });
                         }
                     }
                 });

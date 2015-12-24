@@ -259,8 +259,8 @@ define([
             };
 
             dataService.getData('/revenue/getFromCash', data, function (result) {
-                self.model.set('hoursByDep', result['hoursByDep']);
-                self.model.trigger('change:hoursByDep');
+                //self.model.set('hoursByDep', result['hoursByDep']);
+                //self.model.trigger('change:hoursByDep');
 
                 self.model.set('totalHours', result['totalHours']);
                 self.model.trigger('change:totalHours');
@@ -333,7 +333,10 @@ define([
                 cb();
             }, function (err) {
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 targetTotal.html(self.hoursByDepTotalTemplate({
@@ -410,7 +413,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = totalHours.length - 1; i >= 0; i--) {
@@ -497,7 +503,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = resultForUnsold.length - 1; i >= 0; i--) {
@@ -584,7 +593,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = hoursSold.length - 1; i >= 0; i--) {

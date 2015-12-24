@@ -60,11 +60,7 @@ define([
                 var model = this.collection.get(id);
 
                 model.save({
-                    workflow: {
-                        _id   : target$.attr("id"),
-                        name  : target$.text(),
-                        status: status
-                    }
+                    workflow: target$.attr("id"),
                 }, {
                     headers : {
                         mid: 55
@@ -158,7 +154,10 @@ define([
                         new editView({model: model});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: 'Please refresh browser'
+                        });
                     }
                 });
             },
