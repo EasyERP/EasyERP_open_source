@@ -170,10 +170,7 @@ define([
                 var data = {
                     forSales: forSales,
 
-                    supplier             : {
-                        _id : supplier,
-                        name: supplierName
-                    },
+                    supplier             : supplier,
                     fiscalPosition       : null,
                     sourceDocument       : null,//$.trim($('#source_document').val()),
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
@@ -183,10 +180,7 @@ define([
                     account              : null,
                     journal              : null,
 
-                    salesPerson : {
-                        _id : salesPersonId,
-                        name: salesPersonName
-                    },
+                    salesPerson : salesPersonId,
                     paymentTerms: paymentTermId,
 
                     products   : products,
@@ -290,7 +284,7 @@ define([
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                     if (!response.error) {
-                        self.defaultWorkflow = {_id: response._id, name: response.name, status: response.status};
+                        self.defaultWorkflow  = response._id;
                     }
                 });
 

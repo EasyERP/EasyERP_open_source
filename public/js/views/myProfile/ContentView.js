@@ -137,14 +137,27 @@ define([
 
                     context.UsersModel = new UsersModel(response.user);
                     context.UsersModel.urlRoot = '/currentUser';
+                    var jsonModel = context.UsersModel.toJSON();
                     var self = this;
                     var mid = 39;
-                    context.UsersModel.save({
-                            imageSrc       : imageSrc,
-                            email          : email,
-                            login          : login,
-                            RelatedEmployee: RelatedEmployee
-                        },
+                    var data = {
+                        RelatedEmployee: RelatedEmployee
+                    };
+
+                    if (this.imageSrc !== jsonModel.imageSrc) {
+                        data.imageSrc = this.imageSrc;
+                    }
+
+                    if (email !== jsonModel.email) {
+                        data.email = email;
+                    }
+
+                    if (login !== jsonModel.login) {
+                        data.login = login;
+                    }
+
+
+                    context.UsersModel.save(data,
                         {
                             headers : {
                                 mid: mid

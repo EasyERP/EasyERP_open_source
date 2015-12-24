@@ -935,28 +935,21 @@ var Invoice = function (models, event) {
     };
 
     this.totalCollectionLength = function (req, res, next) {
-        var data = req.query;
-        var filter = data.filter;
 
-        var optionsObject = {};
-        var result = {};
-
-        result['showMore'] = false;
 
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
-        var waterfallTasks;
-
-        if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject['$or'] = caseFilter(filter);
-            } else {
-                optionsObject['$and'] = caseFilter(filter);
-            }
+        var query = req.query;
+        var filter = query.filter;
+        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+        if (filter) {
+            var filterObj = {};
+            filterObj['$and'] = caseFilter(filter);
         }
+
+        var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
@@ -980,15 +973,15 @@ var Invoice = function (models, event) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    optionsObject,
+                  //  optionsObject,
                     {
                         $or: whoCanRw
                     }
                 ]
             };
-            var Model = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
 
-            Model.aggregate(
+
+            Invoice.aggregate(
                 {
                     $match: matchQuery
                 },
@@ -1002,22 +995,121 @@ var Invoice = function (models, event) {
         };
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
-            var query;
+            var queryObject = {};
+
+            queryObject['$and'] = [];
+
+            if (filterObj) {
+                queryObject['$and'].push(filterObj);
+            }
+
+            queryObject['$and'].push({_id: {$in: _.pluck(invoicesIds, '_id')}});
+
+
+            Invoice.aggregate([{
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "salesPerson",
+                    foreignField: "_id", as: "salesPerson"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "createdBy.user",
+                    foreignField: "_id", as: "createdBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "editedBy.user",
+                    foreignField: "_id", as: "editedBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "Quotation",
+                    localField  : "sourceDocument",
+                    foreignField: "_id", as: "sourceDocument"
+                }
+            }, {
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $project: {
+                    sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
+                    workflow        : {$arrayElemAt: ["$workflow", 0]},
+                    supplier        : {$arrayElemAt: ["$supplier", 0]},
+                    salesPerson     : {$arrayElemAt: ["$salesPerson", 0]},
+                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                    project         : {$arrayElemAt: ["$project", 0]},
+                    expense         : 1,
+                    forSales        : 1,
+                    paymentInfo     : 1,
+                    invoiceDate     : 1,
+                    name            : 1,
+                    paymentDate     : 1,
+                    dueDate         : 1,
+                    payments        : 1
+                }
+            }, {
+                $project: {
+                    sourceDocument  : 1,
+                    workflow        : 1,
+                    supplier        : 1,
+                    salesPerson     : 1,
+                    'editedBy.user' : 1,
+                    'createdBy.user': 1,
+                    project         : 1,
+                    expense         : 1,
+                    forSales        : 1,
+                    paymentInfo     : 1,
+                    invoiceDate     : 1,
+                    name            : 1,
+                    paymentDate     : 1,
+                    dueDate         : 1,
+                    payments        : 1
+                }
+            }, {
+                $match: queryObject
+            }], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                waterfallCallback(null, result.length);
+            });
+
+
+            /* var query;
             var queryObject = ({_id: {$in: invoicesIds}});
 
             query = Invoice.find(queryObject);
-            query.exec(waterfallCallback);
+            query.exec(waterfallCallback);*/
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, invoice) {
+        async.waterfall(waterfallTasks, function (err, result) {
             if (err) {
                 return next(err);
             } else {
 
-                result['count'] = invoice.length;
-                res.status(200).send(result);
+                res.status(200).send({count: result});
             }
         });
     };

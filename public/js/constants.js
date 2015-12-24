@@ -289,6 +289,16 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
+        Invoice     : {
+            'Supplier'    : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Status'      : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
         salesQuotation  : {
             'Project'      : {
                 view   : 'projectName',

@@ -124,6 +124,7 @@ define([
                 this.renderCheckboxes();
 
                 this.renderPagination($currentEl, this);
+                this.renderFilter(self,  {name: 'forSales', value: {key: 'forSales', value: [false]}});
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -134,9 +135,9 @@ define([
                 }, function (stages) {
                     self.stages = stages;
 
-                    dataService.getData('/invoice/getFilterValues', null, function (values) {
-                        self.renderFilter(self, stages, values);
-                    })
+                    /*dataService.getData('/invoice/getFilterValues', null, function (values) {
+                        self.renderFilter(self);
+                    })*/
 
                 });
             },
@@ -162,7 +163,7 @@ define([
                 });
             },
 
-            renderFilter: function (self, stages, values) {
+            /*renderFilter: function (self, stages, values) {
                 self.filterView = new this.filterView({collection: stages, customCollection: values});
 
                 self.filterView.bind('filter', function (filter) {
@@ -174,9 +175,9 @@ define([
                     self.showFilteredPage({}, self);
                 });
 
-                //self.filterView.render();
+                self.filterView.render();
 
-            },
+            },*/
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 var holder = this.$el;

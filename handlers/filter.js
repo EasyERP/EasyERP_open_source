@@ -107,6 +107,7 @@ var Filters = function (models) {
                 Projects        : getProjectFiltersValues,
                 Tasks           : getTasksFiltersValues,
                 salesInvoice    : getSalesInvoiceFiltersValues,
+                Invoice         : getInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
@@ -620,13 +621,77 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                //Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
-                //    if (err){
-                //        return callback(err);
-                //    }
-                //
-                //    callback(null, result);
-                //});
+                /*Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
+                    if (err){
+                       return callback(err);
+                   }
+
+                    callback(null, result);
+                });*/
+
+                callback(null, result);
+            });
+        };
+        function getInvoiceFiltersValues(callback) {
+            wTrackInvoice.aggregate([{
+                $match: {
+                    forSales: false
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    workflow   : {$arrayElemAt: ["$workflow", 0]},
+                    supplier   : {$arrayElemAt: ["$supplier", 0]}
+                }
+            },  {
+                $group: {
+                    _id          : null,
+                    'workflow'   : {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
+                        }
+                    },
+                    /*'project'    : {
+                        $addToSet: {
+                            _id : '$project._id',
+                            name: '$project.projectName'
+                        }
+                    },
+                    'salesPerson': {
+                        $addToSet: {
+                            _id : '$salesPerson._id',
+                            name: {
+                                $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                            }
+                        }
+                    },*/
+                    'supplier'   : {
+                        $addToSet: {
+                            _id : '$supplier._id',
+                            name: {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                            }
+                        }
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
 
                 callback(null, result);
             });
