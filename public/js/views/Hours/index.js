@@ -259,8 +259,8 @@ define([
             };
 
             dataService.getData('/revenue/getFromCash', data, function (result) {
-                self.model.set('hoursByDep', result['hoursByDep']);
-                self.model.trigger('change:hoursByDep');
+                //self.model.set('hoursByDep', result['hoursByDep']);
+                //self.model.trigger('change:hoursByDep');
 
                 self.model.set('totalHours', result['totalHours']);
                 self.model.trigger('change:totalHours');

@@ -3096,9 +3096,9 @@ var wTrack = function (models) {
                 if (result.length === 0) {
 
                     async.parallel({
-                            hoursByDep: function (callback) {
-                                getHoursByDep(startWeek, startYear, callback);
-                            },
+                            //hoursByDep: function (callback) {
+                            //    getHoursByDep(startWeek, startYear, callback);
+                            //},
                             hoursSold : function (callback) {
                                 getHoursSold(startMonth, yearforMonth, callback);
                             },
