@@ -1552,23 +1552,58 @@ module.exports = function (app, mainDb) {
             }, {
                 $project: {
                     totalHours: 1,
-                    wTrack: '$root.wTracks',
-                    quotation: '$root.quotation',
-                    syntheticRev: {
-                        $multiply: [{$divide: ['$root.wTracks.worked', '$totalHours']}, '$root.quotation.paymentInfo.total', 100]}
+                    _id: '$root.wTracks._id',
+                    oldRevenue: '$root.wTracks.revenue',
+                    revenue: {
+                        $multiply: [{$divide: ['$root.wTracks.worked', '$totalHours']}, '$root.quotation.paymentInfo.total', 100]
+                    }
+
                 }
-            }, {
+            }/*, {
                 $match: {
-                    syntheticRev: {$lte: 1}
+                    revenue: null
                 }
-            }]);
+            }*/]);
 
         query.exec(function (error, response) {
             if (error) {
                 return console.dir(error);
             }
 
-            res.status(200).send(response);
+            async.each(response, function(foundObject, cb){
+                var revenue = foundObject.revenue || 0;
+                var oldRevenue = foundObject.oldRevenue || 0;
+
+                console.log(revenue);
+
+                Wtrack.update({_id: foundObject._id}, {$set: {revenue: revenue, oldRevenue: oldRevenue }}, function(err, updated){
+                    if(err){
+                        return cb(err);
+                    }
+
+                    cb();
+                });
+            }, function(err){
+                if(err){
+                    return next(err);
+                }
+
+                async.each(response, function(foundObject, cb){
+                    Wtrack.update({_id: foundObject._id}, {$unset: {rate: '' }}, function(err, updated){
+                        if(err){
+                            return cb(err);
+                        }
+
+                        cb();
+                    });
+                }, function(err){
+                    if(err){
+                        return next(err);
+                    }
+
+                    res.status(200).send({success: 'All updated'});
+                });
+            });
         });
     });
 
