@@ -673,7 +673,7 @@ define([
 
                         tr.find('[data-content="jobs"]').removeClass('errorContent');
                     } else if (elementType === '#employee') {
-                        tr.find('[data-content="department"]').text(element.department.name);
+                        tr.find('[data-content="department"]').text(element.department.departmentName);
 
                         employee = element._id;
 
