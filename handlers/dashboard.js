@@ -516,7 +516,7 @@ var wTrack = function (models) {
                             from        : 'Project',
                             localField  : '_id.project',
                             foreignField: '_id',
-                            as: 'project'
+                            as          : 'project'
                         }
                     }, {
                         $project: {
@@ -526,6 +526,14 @@ var wTrack = function (models) {
                             project   : {$arrayElemAt: ['$project', 0]},
                             hours     : 1,
                             _id       : 0
+                        }
+                    }, {
+                        $project: {
+                            department: 1,
+                            employee  : 1,
+                            dateByWeek: 1,
+                            project   : '$project.projectName',
+                            hours     : 1
                         }
                     }, {
                         $group: {
