@@ -418,7 +418,7 @@ var requestHandler = function (app, event, mainDb) {
 
                         budgetTotal.profitSum = 0;
                         budgetTotal.costSum = 0;
-                        budgetTotal.rateSum = 0;
+                        //budgetTotal.rateSum = 0;
                         budgetTotal.revenueSum = 0;
                         budgetTotal.hoursSum = 0;
                         budgetTotal.revenueByQA = 0;
@@ -487,10 +487,10 @@ var requestHandler = function (app, event, mainDb) {
                                 budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
                                 budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
                             });
-                            budgetTotal.rateSum = {};
-                            var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                            budgetTotal.rateSum.byQA = value ? value : 0;
-                            budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA));
+                            //budgetTotal.rateSum = {};
+                           // var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                           // budgetTotal.rateSum.byQA = value ? value : 0;
+                           // budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA));
 
                             projectValues.revenue = budgetTotal.revenueSum;
                             projectValues.profit = budgetTotal.profitSum;
@@ -503,11 +503,14 @@ var requestHandler = function (app, event, mainDb) {
                                 projectValues.radio = 0;
                             }
 
-                            var empQuery = Employee.find({_id: {$in: keys}}, {
+                            var empQuery = Employee
+                                .find({_id: {$in: keys}}, {
                                 'name'            : 1,
-                                'jobPosition.name': 1,
-                                'department.name' : 1
-                            }).lean();
+                                'jobPosition': 1,
+                                'department' : 1})
+                                .populate('department', '_id departmentName')
+                                .populate('jobPosition', '_id name')
+                                    .lean();
                             empQuery.exec(function (err, response) {
 
                                 if (err) {
@@ -638,7 +641,7 @@ var requestHandler = function (app, event, mainDb) {
 
                     budgetTotal.profitSum = 0;
                     budgetTotal.costSum = 0;
-                    budgetTotal.rateSum = 0;
+                    //budgetTotal.rateSum = 0;
                     budgetTotal.revenueSum = 0;
                     budgetTotal.hoursSum = 0;
                     budgetTotal.revenueByQA = 0;
@@ -686,7 +689,7 @@ var requestHandler = function (app, event, mainDb) {
                                     }
                                     projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                     projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
-                                    projectTeam[empId].rate += parseFloat(wTrack.rate);
+                                   // projectTeam[empId].rate += parseFloat(wTrack.rate);
                                     projectTeam[empId].hours += parseFloat(wTrack.worked);
                                     projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
                                 } else {
@@ -700,7 +703,7 @@ var requestHandler = function (app, event, mainDb) {
 
                                     projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                     projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
-                                    projectTeam[empId].rate = parseFloat(wTrack.rate);
+                                    //projectTeam[empId].rate = parseFloat(wTrack.rate);
                                     projectTeam[empId].hours = parseFloat(wTrack.worked);
                                     projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
                                 }
@@ -722,11 +725,11 @@ var requestHandler = function (app, event, mainDb) {
                             budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
                             budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
                         });
-                        budgetTotal.rateSum = {};
-                        var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                        var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
-                        budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
-                        budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;
+                        //budgetTotal.rateSum = {};
+                        //var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                        //var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
+                        //budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
+                        //budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;
 
                         projectValues.revenue = budgetTotal.revenueSum;
                         projectValues.profit = budgetTotal.profitSum;
@@ -739,11 +742,14 @@ var requestHandler = function (app, event, mainDb) {
                             projectValues.radio = 0;
                         }
 
-                        var empQuery = Employee.find({_id: {$in: keys}}, {
-                            'name'            : 1,
-                            'jobPosition.name': 1,
-                            'department.name' : 1
-                        }).lean();
+                        var empQuery = Employee
+                            .find({_id: {$in: keys}}, {
+                                'name'            : 1,
+                                'jobPosition': 1,
+                                'department' : 1})
+                            .populate('department', '_id departmentName')
+                            .populate('jobPosition', '_id name')
+                            .lean();
                         empQuery.exec(function (err, response) {
 
                             if (err) {
