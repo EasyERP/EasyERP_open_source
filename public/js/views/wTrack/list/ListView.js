@@ -203,15 +203,15 @@ define([
                     var tdsArr;
                     var cid;
                     var hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
-                    var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
-                    var revenue = parseInt(hours) * parseFloat(rate);
+                    //var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
+                    //var revenue = parseInt(hours) * parseFloat(rate);
 
                     $(selectedWtrack).attr('checked', false);
 
                     model.set({"isPaid": false});
                     model.set({"amount": 0});
                     model.set({"cost": 0});
-                    model.set({"revenue": revenue});
+                    model.set({"revenue": 0});
                     model = model.toJSON();
                     delete model._id;
                     _model = new currentModel(model);
@@ -230,11 +230,12 @@ define([
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[21]).find('span').text('Unpaid');
-                    $(tdsArr[21]).find('span').addClass('unDone');
-                    $(tdsArr[25]).text(0);
-                    $(tdsArr[23]).text(0);
-                    $(tdsArr[22]).text(revenue.toFixed(2));
+                    $(tdsArr[20]).find('span').text('Unpaid');
+                    $(tdsArr[20]).find('span').addClass('unDone');
+                    $(tdsArr[24]).text('0.00');
+                    $(tdsArr[22]).text('0.00');
+                    $(tdsArr[23]).text('0.00');
+                    $(tdsArr[21]).text('0.00');
                     $(tdsArr[1]).text("New");
                 }
             },
@@ -258,10 +259,10 @@ define([
                 var calcEl;
                 var editWtrackModel;
                 var workedEl = tr.find('[data-content="worked"]');
-                var revenueEl = tr.find('[data-content="revenue"]');
-                var rateEl = tr.find('[data-content="rate"]');
-                var rateVal;
-                var revenueVal;
+                //var revenueEl = tr.find('[data-content="revenue"]');
+                //var rateEl = tr.find('[data-content="rate"]');
+                //var rateVal;
+                //var revenueVal;
 
                 function eplyDefaultValue(el) {
                     var value = el.text();
@@ -285,10 +286,10 @@ define([
                     worked += parseInt(value);
                 }
 
-                rateVal = parseFloat(eplyDefaultValue(rateEl));
-                revenueVal = parseFloat(worked * rateVal).toFixed(2);
+              //  rateVal = parseFloat(eplyDefaultValue(rateEl));
+              //  revenueVal = parseFloat(worked * rateVal).toFixed(2);
 
-                revenueEl.text(revenueVal);
+              //  revenueEl.text(revenueVal);
 
                 editWtrackModel = this.editCollection.get(wTrackId);
 
@@ -300,7 +301,7 @@ define([
                 }
 
                 this.changedModels[wTrackId].worked = worked;
-                this.changedModels[wTrackId].revenue = revenueVal;
+               // this.changedModels[wTrackId].revenue = revenueVal;
             },
 
             setEditable: function (td) {
@@ -952,12 +953,12 @@ define([
                 var year = now.getFullYear();
                 var month = now.getMonth() + 1;
                 var week = now.getWeek();
-                var rate = 3;
+               // var rate = 3;
                 var startData = {
                     year        : year,
                     month       : month,
                     week        : week,
-                    rate        : rate,
+                    //rate        : rate,
                     projectModel: null
                 };
 

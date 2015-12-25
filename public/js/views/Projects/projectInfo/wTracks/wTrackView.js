@@ -69,13 +69,13 @@ define([
             var year = now.getFullYear();
             var month = now.getMonth() + 1;
             var week = now.getWeek();
-            var rate = 3;
+           // var rate = 3;
             this.projectModel = projectModel;
             var startData = {
                 year        : year,
                 month       : month,
                 week        : week,
-                rate        : rate,
+               // rate        : rate,
                 project     : projectModel._id,
                 projectModel: projectModel
             };
@@ -675,16 +675,16 @@ define([
                 var _model;
                 var tdsArr;
                 var cid;
-                var hours = model.get('worked');
-                var rate = model.get('rate');
-                var revenue = parseInt(hours) * parseFloat(rate);
+               // var hours = model.get('worked');
+                //var rate = model.get('rate');
+                //var revenue = parseInt(hours) * parseFloat(rate);
 
                 $(selectedWtrack).attr('checked', false);
 
                 model.set({"isPaid": false});
                 model.set({"amount": 0});
                 model.set({"cost": 0});
-                model.set({"revenue": revenue});
+                model.set({"revenue": 0});
                 model = model.toJSON();
                 delete model._id;
                 _model = new currentModel(model);
@@ -703,11 +703,12 @@ define([
 
                 tdsArr = row.find('td');
                 $(tdsArr[0]).find('input').val(cid);
-                $(tdsArr[21]).find('span').text('Unpaid');
-                $(tdsArr[21]).find('span').addClass('unDone');
-                $(tdsArr[25]).text(0);
-                $(tdsArr[23]).text(0);
-                $(tdsArr[22]).text(revenue.toFixed(2));
+                $(tdsArr[20]).find('span').text('Unpaid');
+                $(tdsArr[20]).find('span').addClass('unDone');
+                $(tdsArr[24]).text('0.00');
+                $(tdsArr[22]).text('0.00');
+                $(tdsArr[23]).text('0.00');
+                $(tdsArr[21]).text('0.00');
                 $(tdsArr[1]).text("New");
             }
         },

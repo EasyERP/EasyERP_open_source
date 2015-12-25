@@ -23,9 +23,10 @@ define(['Validation', 'common', 'moment'], function (Validation, common, moment)
             5          : 8,
             6          : 0,
             7          : 0,
-            revenue    : 120,
+            revenue    : 0,
             cost       : 0,
-            amount     : 0
+            amount     : 0,
+            rate       : 0
         },
         urlRoot : function () {
             return "/wTrack/";
