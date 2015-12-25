@@ -541,7 +541,7 @@ define([
                     //}
 
                     tr.find('[data-content="employee"]').text(element.name);
-                    tr.find('.department').text(element.department.name);
+                    tr.find('.department').text(element.department.departmentName);
 
                     employee = element._id;
 
