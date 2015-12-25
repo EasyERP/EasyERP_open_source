@@ -2999,21 +2999,18 @@ var wTrack = function (models) {
 
                             hireFirst = employee.hire[0] ? employee.hire[0] : key;
                             hireLast = employee.hire[1] ? employee.hire[1] : hireFirst;
-                            fireFirst = employee.fire[0] ? employee.fire[0] : null;
+                            fireFirst = employee.fire[0] ? employee.fire[0] : key;
                             fire = employee.fire[0] ? employee.fire[0] : null;
                             var query;
-                            if (fireFirst){
+                            if (fire && hireFirst !== hireLast){
+                                query = (hireFirst <= key) && (key <= fireFirst) || (key >= hireLast);
+                            } else  {
                                 query = (hireFirst <= key) && (key <= fireFirst) && (key >= hireLast);
-                            } else {
-                                query = (hireFirst <= key) && (key >= hireLast);
                             }
 
                             if (query) {
                                 employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
                                 employee.total += employee.hoursTotal[key];
-                            //} else if (key >= hireLast) {
-                            //    employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
-                            //    //employee.total += employee.hoursTotal[key];
                             } else {
                                 employee.hoursTotal[key] = 0;
                                 employee.total += employee.hoursTotal[key];
