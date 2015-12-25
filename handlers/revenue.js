@@ -749,7 +749,7 @@ var wTrack = function (models) {
                     month      : 1,
                     year       : 1,
                     dateByMonth: 1,
-                    employee: 1
+                    employee   : 1
                 }
             }, {
                 $match: match
@@ -850,9 +850,9 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    department    : {$arrayElemAt: ["$department", 0]},
-                    month      : 1,
-                    year       : 1,
+                    department: {$arrayElemAt: ["$department", 0]},
+                    month     : 1,
+                    year      : 1,
                     dateByWeek: 1
                 }
             }, {
@@ -989,10 +989,10 @@ var wTrack = function (models) {
                         }
                     }, {
                         $project: {
-                            project: {$arrayElemAt: ["$project", 0]},
+                            project    : {$arrayElemAt: ["$project", 0]},
                             dateByMonth: 1,
-                            revenue: 1,
-                            cost: 1
+                            revenue    : 1,
+                            cost       : 1
                         }
                     }, {
                         $group: {
@@ -1168,7 +1168,8 @@ var wTrack = function (models) {
                 var bonusObject;
 
                 //iterate over grouped result of projects with bonus by Employee
-                for (var i = groupedEmployees.length; i--;) {
+                for (var i = groupedEmployees.length;
+                     i--;) {
                     totalByBonus = 0;
 
                     groupedEmployee = groupedEmployees[i];
@@ -1179,21 +1180,25 @@ var wTrack = function (models) {
                         total: 0
                     };
                     //iterate over grouped result of wTrack by date and projects
-                    for (var j = groupedWtracks.length; j--;) {
+                    for (var j = groupedWtracks.length;
+                         j--;) {
                         dateStr = groupedWtracks[j]._id;
                         /*employee[dateStr] = [];*/
                         bonusObject = {
                             total: 0
                         };
-                        for (var m = groupedEmployee.root.length; m--;) {
+                        for (var m = groupedEmployee.root.length;
+                             m--;) {
                             /*bonusObject = {
                              total: 0
                              };*/
                             totalByBonus = 0;
 
-                            for (var k = groupedWtracks[j].root.length; k--;) {
+                            for (var k = groupedWtracks[j].root.length;
+                                 k--;) {
 
-                                for (var l = groupedEmployee.root[m].projects.length; l--;) {
+                                for (var l = groupedEmployee.root[m].projects.length;
+                                     l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                         if (groupedEmployee.root[m].bonus) {
                                             totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -1319,10 +1324,10 @@ var wTrack = function (models) {
                         }
                     }, {
                         $project: {
-                            project: {$arrayElemAt: ["$project", 0]},
+                            project    : {$arrayElemAt: ["$project", 0]},
                             dateByMonth: 1,
-                            revenue: 1,
-                            cost: 1
+                            revenue    : 1,
+                            cost       : 1
                         }
                     }, {
                         $group: {
@@ -1498,7 +1503,8 @@ var wTrack = function (models) {
                 var bonusObject;
 
                 //iterate over grouped result of projects with bonus by Employee
-                for (var i = groupedEmployees.length; i--;) {
+                for (var i = groupedEmployees.length;
+                     i--;) {
                     totalByBonus = 0;
 
                     groupedEmployee = groupedEmployees[i];
@@ -1509,21 +1515,25 @@ var wTrack = function (models) {
                         total: 0
                     };
                     //iterate over grouped result of wTrack by date and projects
-                    for (var j = groupedWtracks.length; j--;) {
+                    for (var j = groupedWtracks.length;
+                         j--;) {
                         dateStr = groupedWtracks[j]._id;
                         /*employee[dateStr] = [];*/
                         bonusObject = {
                             total: 0
                         };
-                        for (var m = groupedEmployee.root.length; m--;) {
+                        for (var m = groupedEmployee.root.length;
+                             m--;) {
                             /*bonusObject = {
                              total: 0
                              };*/
                             totalByBonus = 0;
 
-                            for (var k = groupedWtracks[j].root.length; k--;) {
+                            for (var k = groupedWtracks[j].root.length;
+                                 k--;) {
 
-                                for (var l = groupedEmployee.root[m].projects.length; l--;) {
+                                for (var l = groupedEmployee.root[m].projects.length;
+                                     l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                         if (groupedEmployee.root[m].bonus) {
                                             totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -1828,7 +1838,8 @@ var wTrack = function (models) {
                 var bonusObject;
 
                 //iterate over grouped result of projects with bonus by Employee
-                for (var i = groupedEmployees.length; i--;) {
+                for (var i = groupedEmployees.length;
+                     i--;) {
                     totalByBonus = 0;
 
                     groupedEmployee = groupedEmployees[i];
@@ -1839,21 +1850,25 @@ var wTrack = function (models) {
                         total: 0
                     };
                     //iterate over grouped result of wTrack by date and projects
-                    for (var j = groupedWtracks.length; j--;) {
+                    for (var j = groupedWtracks.length;
+                         j--;) {
                         dateStr = groupedWtracks[j]._id;
                         /*employee[dateStr] = [];*/
                         bonusObject = {
                             total: 0
                         };
-                        for (var m = groupedEmployee.root.length; m--;) {
+                        for (var m = groupedEmployee.root.length;
+                             m--;) {
                             /*bonusObject = {
                              total: 0
                              };*/
                             totalByBonus = 0;
 
-                            for (var k = groupedWtracks[j].root.length; k--;) {
+                            for (var k = groupedWtracks[j].root.length;
+                                 k--;) {
 
-                                for (var l = groupedEmployee.root[m].projects.length; l--;) {
+                                for (var l = groupedEmployee.root[m].projects.length;
+                                     l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                         if (groupedEmployee.root[m].bonus) {
                                             totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -1913,8 +1928,8 @@ var wTrack = function (models) {
 
                 Employees
                     .find({},
-                    {_id: 1}
-                )
+                        {_id: 1}
+                    )
                     .lean()
                     .exec(function (err, result) {
                         if (err) {
@@ -1999,7 +2014,7 @@ var wTrack = function (models) {
 
                 matchVacation = {
                     //month: {$gte: startMonth, $lte: endMonth},
-                    year          : {$gte: startYear, $lte: endYear},
+                    year      : {$gte: startYear, $lte: endYear},
                     'employee': {$in: ids}
                 };
 
@@ -2017,9 +2032,9 @@ var wTrack = function (models) {
                 function monthHourRetriver(parallelCb) {
                     MonthHours
                         .find(
-                        match,
-                        {year: 1, month: 1, hours: 1}
-                    )
+                            match,
+                            {year: 1, month: 1, hours: 1}
+                        )
                         .lean()
                         .exec(parallelCb)
                 };
@@ -2042,9 +2057,9 @@ var wTrack = function (models) {
                     }, {
                         $project: {
                             monthTotal: 1,
-                            employee: {$arrayElemAt: ["$employee", 0]},
-                            month: 1,
-                            year: 1
+                            employee  : {$arrayElemAt: ["$employee", 0]},
+                            month     : 1,
+                            year      : 1
                         }
                     },
                         {
@@ -2179,7 +2194,7 @@ var wTrack = function (models) {
                             key = year * 100 + month;
                             keyForFire = new Date(employee.fire[fireLength - 1]).getYear() * 100 + new Date(employee.fire[fireLength - 1]).getMonth() + 1;
 
-                            if (fireLength && (keyForFire <= key)){
+                            if (fireLength && (keyForFire <= key)) {
                                 employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
                                 employee.total += employee.hoursTotal[key];
                             } else {
@@ -2295,10 +2310,10 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     department: {$arrayElemAt: ["$department", 0]},
-                    year: 1,
-                    month: 1,
-                    worked: 1,
-                    employee: {$arrayElemAt: ["$employee", 0]}
+                    year      : 1,
+                    month     : 1,
+                    worked    : 1,
+                    employee  : {$arrayElemAt: ["$employee", 0]}
                 }
             }, {
                 $group: groupBy
@@ -2467,9 +2482,9 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     department: {$arrayElemAt: ["$department", 0]},
-                    year: 1,
-                    week: 1,
-                    worked: 1
+                    year      : 1,
+                    week      : 1,
+                    worked    : 1
                 }
             }, {
                 $group: groupBy
@@ -2695,8 +2710,8 @@ var wTrack = function (models) {
 
                 Employees
                     .find({},
-                    {_id: 1}
-                )
+                        {_id: 1}
+                    )
                     .lean()
                     .exec(function (err, result) {
                         if (err) {
@@ -2707,27 +2722,51 @@ var wTrack = function (models) {
                             Ids.push(element._id);
                         });
 
-                        Employees.aggregate([
-                            {
-                                $match: {
-                                    $or: [
-                                        {
-                                            isEmployee: true
-                                        }, {
-                                            $and: [{isEmployee: false}, {
-                                                lastFire: {
-                                                    $ne : null,
-                                                    $gte: startDate
-                                                }
-                                            }]
-                                        }
-                                    ]
-                                }
-                            },
+                        Employees.aggregate([{
+                            $lookup: {
+                                from        : 'Department',
+                                localField  : 'department',
+                                foreignField: '_id',
+                                as          : 'department'
+                            }
+                        }, {
+                            $project: {
+                                department: {$arrayElemAt: ["$department", 0]},
+                                name      : 1,
+                                isEmployee: 1,
+                                lastFire  : 1,
+                                hire      : 1,
+                                fire      : 1
+                            }
+                        }, {
+                            $project: {
+                                department: 1,
+                                name      : 1,
+                                isEmployee: 1,
+                                lastFire  : 1,
+                                hire      : 1,
+                                fire      : 1
+                            }
+                        }, {
+                            $match: {
+                                $or: [
+                                    {
+                                        isEmployee: true
+                                    }, {
+                                        $and: [{isEmployee: false}, {
+                                            lastFire: {
+                                                $ne : null,
+                                                $gte: startDate
+                                            }
+                                        }]
+                                    }
+                                ]
+                            }
+                        },
                             {
                                 $group: {
                                     _id: {
-                                        department: '$department.name',
+                                        department: '$department.departmentName',
                                         depId     : '$department._id',
                                         employee  : '$name',
                                         _id       : '$_id',
@@ -2781,7 +2820,7 @@ var wTrack = function (models) {
 
                 matchVacation = {
                     //month: {$gte: startMonth, $lte: endMonth},
-                    year          : {$gte: startYear, $lte: endYear},
+                    year      : {$gte: startYear, $lte: endYear},
                     'employee': {$in: ids}
                 };
 
@@ -2799,9 +2838,9 @@ var wTrack = function (models) {
                 function monthHourRetriver(parallelCb) {
                     MonthHours
                         .find(
-                        match,
-                        {year: 1, month: 1, hours: 1}
-                    )
+                            match,
+                            {year: 1, month: 1, hours: 1}
+                        )
                         .lean()
                         .exec(parallelCb)
                 };
@@ -2823,32 +2862,32 @@ var wTrack = function (models) {
                         }
                     }, {
                         $project: {
-                            employee: {$arrayElemAt: ["$employee", 0]},
-                            month: 1,
-                            year: 1,
+                            employee  : {$arrayElemAt: ["$employee", 0]},
+                            month     : 1,
+                            year      : 1,
                             monthTotal: 1
                         }
                     }, {
-                            $group: {
-                                _id: {
-                                    _id       : '$employee._id',
-                                    name      : {
-                                        $concat: ['$employee.name.first', ' ', '$employee.name.last']
-                                    },
-                                    month     : '$month',
-                                    year      : '$year',
-                                    monthTotal: '$monthTotal'
-                                }
+                        $group: {
+                            _id: {
+                                _id       : '$employee._id',
+                                name      : {
+                                    $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                                },
+                                month     : '$month',
+                                year      : '$year',
+                                monthTotal: '$monthTotal'
                             }
-                        }, {
-                            $project: {
-                                employee  : '$_id._id',
-                                name      : '$_id.name',
-                                month     : '$_id.month',
-                                year      : '$_id.year',
-                                monthTotal: '$_id.monthTotal'
-                            }
-                        },
+                        }
+                    }, {
+                        $project: {
+                            employee  : '$_id._id',
+                            name      : '$_id.name',
+                            month     : '$_id.month',
+                            year      : '$_id.year',
+                            monthTotal: '$_id.monthTotal'
+                        }
+                    },
                         {
                             $sort: {_id: 1}
                         }
@@ -2956,15 +2995,12 @@ var wTrack = function (models) {
                                 }
                             });
 
-                            if (department._id === 'QA'){
-                                console.log('QA');
-                            }
-
                             key = year * 100 + month;
 
                             hireFirst = employee.hire[0] ? employee.hire[0] : key;
                             hireLast = employee.hire[1] ? employee.hire[1] : hireFirst;
                             fireFirst = employee.fire[0] ? employee.fire[0] : null;
+                            fire = employee.fire[0] ? employee.fire[0] : null;
                             var query;
                             if (fireFirst){
                                 query = (hireFirst <= key) && (key <= fireFirst) && (key >= hireLast);
@@ -2984,7 +3020,6 @@ var wTrack = function (models) {
                             }
 
                         });
-
 
                         department.employees.push(employee);
                     });
