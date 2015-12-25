@@ -199,7 +199,7 @@ var Users = function (mainDb, models) {
                                     });
                                     res.send(200);
                                 } else {
-                                    res.send(400);
+                                    res.send(406, {error: "Incorect Incoming Password"});
                                 }
                             } else {
                                 if (err) {

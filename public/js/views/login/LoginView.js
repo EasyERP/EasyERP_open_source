@@ -94,10 +94,14 @@ define([
                 success: function () {
                     Custom.runApplication(true);
                 },
-                error  : function () {
-                    //Custom.runApplication(false, "Server is unavailable...");
+                error  : function (data) {
                     $("#loginForm").addClass("notRegister");
-                    $("#loginForm .error").text("Such user doesn't registered");
+                    //Custom.runApplication(false, "Server is unavailable...");
+                    if (data.status === 406) {
+                        $("#loginForm .error").text("Wrong Password");
+                    } else {
+                        $("#loginForm .error").text("Such user doesn't registered");
+                    }
                 }
             });
         }
