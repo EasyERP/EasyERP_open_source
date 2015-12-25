@@ -11,6 +11,7 @@ var Quotation = function (models, event) {
     var ProjectSchema = mongoose.Schemas['Project'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var JobsSchema = mongoose.Schemas['jobs'];
+    var wTrackSchema = mongoose.Schemas['wTrack'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
@@ -267,7 +268,7 @@ var Quotation = function (models, event) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                   // optionsObject,
+                    // optionsObject,
                     {
                         $or: whoCanRw
                     }
@@ -317,11 +318,11 @@ var Quotation = function (models, event) {
             },
                 {
                     $project: {
-                        workflow   : {$arrayElemAt: ["$workflow", 0]},
-                        supplier   : {$arrayElemAt: ["$supplier", 0]},
-                        project    : {$arrayElemAt: ["$project", 0]},
-                        forSales   : 1,
-                        isOrder    : 1
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]},
+                        project : {$arrayElemAt: ["$project", 0]},
+                        forSales: 1,
+                        isOrder : 1
                     }
                 }, {
                     $lookup: {
@@ -358,11 +359,15 @@ var Quotation = function (models, event) {
 
     function ConvertType(array, type) {
         if (type === 'integer') {
-            for (var i = array.length - 1; i >= 0; i--) {
+            for (var i = array.length - 1;
+                 i >= 0;
+                 i--) {
                 array[i] = parseInt(array[i]);
             }
         } else if (type === 'boolean') {
-            for (var i = array.length - 1; i >= 0; i--) {
+            for (var i = array.length - 1;
+                 i >= 0;
+                 i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
                 } else if (array[i] === 'false') {
@@ -380,7 +385,8 @@ var Quotation = function (models, event) {
         var filtrElement = {};
         var key;
 
-        for (var filterName in filter) {
+        for (var filterName in
+            filter) {
             condition = filter[filterName]['value'];
             key = filter[filterName]['key'];
 
@@ -687,6 +693,7 @@ var Quotation = function (models, event) {
         var type = "Not Quoted";
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         Quotation.findByIdAndRemove(id, function (err, quotation) {
             if (err) {
@@ -706,23 +713,21 @@ var Quotation = function (models, event) {
                     }
 
                     project = result ? result.get('project') : null;
-                    
 
-                    async.each(result, function(job){
-                        var wTracks = job.wTracks;
+                    var wTracks = result.wTracks;
 
-                        async.each(wTracks, function(wTrack, cb){
-                            wTrack.findByIdAndUpdate(wTrack, {$set: {revenue: 0}}, cb)
-                        });
+                    async.each(wTracks, function (wTr, callback) {
+                        wTrack.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback)
+                    }, function () {
+                        event.emit('updateProjectDetails', {req: req, _id: project, jobId: result._id});
+                        cb();
                     });
-
-                    cb();
                 });
 
             }, function () {
-                if (project) {
-                    event.emit('fetchJobsCollection', {project: project});
-                }
+                //if (project) {
+                //    event.emit('fetchJobsCollection', {project: project});
+                //}
 
                 res.status(200).send({success: quotation});
             });
