@@ -232,8 +232,9 @@ define([
                     $(tdsArr[0]).find('input').val(cid);
                     $(tdsArr[20]).find('span').text('Unpaid');
                     $(tdsArr[20]).find('span').addClass('unDone');
-                    $(tdsArr[24]).text(0);
-                    $(tdsArr[22]).text(0);
+                    $(tdsArr[24]).text('0.00');
+                    $(tdsArr[22]).text('0.00');
+                    $(tdsArr[23]).text('0.00');
                     $(tdsArr[21]).text('0.00');
                     $(tdsArr[1]).text("New");
                 }
