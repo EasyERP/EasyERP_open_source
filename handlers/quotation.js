@@ -706,6 +706,15 @@ var Quotation = function (models, event) {
                     }
 
                     project = result ? result.get('project') : null;
+                    
+
+                    async.each(result, function(job){
+                        var wTracks = job.wTracks;
+
+                        async.each(wTracks, function(wTrack, cb){
+                            wTrack.findByIdAndUpdate(wTrack, {$set: {revenue: 0}}, cb)
+                        });
+                    });
 
                     cb();
                 });
