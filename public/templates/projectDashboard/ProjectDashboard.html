@@ -10,12 +10,6 @@
     <td><%=(project.total && project.total.profitSum) ? currencySplitter(project.total.profitSum.toFixed()) :
         '&nbsp'%>
     </td>
-    <td><%=(project.total && project.total.rateSum) ? currencySplitter(project.total.rateSum.byDev ?
-        project.total.rateSum.byDev.toFixed(2) : '') : '&nbsp'%>
-    </td>
-    <td><%=(project.total && project.total.rateSum) ? currencySplitter(project.total.rateSum.byQA
-        ?project.total.rateSum.byQA.toFixed(2) : '') : '&nbsp'%>
-    </td>
     <td><%=(project.total && project.total.hoursSum) ? currencySplitter(project.total.hoursSum.toFixed()) : '&nbsp'%>
     </td>
     <td class="procent"><%=(project.total && project.total.markUp) ? (project.total.markUp ?

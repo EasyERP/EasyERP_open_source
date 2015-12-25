@@ -171,7 +171,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         5         : 8,
                         6         : 0,
                         7         : 0,
-                        revenue   : 120
+                        revenue   : 0
                     };
 
                     var target = $(e.target);

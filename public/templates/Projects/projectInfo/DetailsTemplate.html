@@ -42,7 +42,6 @@
             <th>Cost</th>
             <th>Revenue</th>
             <th>Profit</th>
-            <th>Rate</th>
         </tr>
         </thead>
 
@@ -53,7 +52,6 @@
         <%var totalCost = 0;%>
         <%var totalRevenue = 0;%>
         <%var totalProfit = 0;%>
-        <%var totalRate = 0;%>
         <% jobs.forEach(function(element,i){ %>
         <%if (element.budget) {%>
         <%var budgetTotal = element.budget.budgetTotal%>
@@ -84,9 +82,6 @@
             <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal ? isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 :
-                currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2)) : 0%>
-            </td>
 
         </tr>
         <% count++ %>
@@ -94,8 +89,6 @@
         <% totalCost += budgetTotal.costSum %>
         <% totalRevenue += budgetTotal.revenueSum%>
         <% totalProfit += budgetTotal.profitSum%>
-        <% totalRate += isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : (budgetTotal.revenueSum /
-        budgetTotal.hoursSum) %>
         <% } %>
         <% })%>
 
@@ -115,7 +108,6 @@
             <td id="totalCost" data-value="<%=totalCost%>"><%= currencySplitter(totalCost.toFixed())%></td>
             <td id="totalRevenue" data-value="<%=totalRevenue%>"><%= currencySplitter(totalRevenue.toFixed())%></td>
             <td id="totalProfit" data-value="<%=totalProfit%>"><%= currencySplitter(totalProfit.toFixed())%></td>
-            <td id="totalRate"><%= currencySplitter(totalRate.toFixed(2))%></td>
         </tr>
 
         </tfoot>
