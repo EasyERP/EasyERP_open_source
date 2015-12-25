@@ -952,15 +952,17 @@ var Invoice = function (models, event) {
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
+        var waterfallTasks;
         var query = req.query;
         var filter = query.filter;
+        var filterObj = {};
+
         // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
         if (filter) {
-            var filterObj = {};
             filterObj['$and'] = caseFilter(filter);
         }
 
-        var waterfallTasks;
+
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
