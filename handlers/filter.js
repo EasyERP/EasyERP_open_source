@@ -378,19 +378,22 @@ var Filters = function (models) {
                     $lookup: {
                         from        : "Department",
                         localField  : "department",
-                        foreignField: "_id", as: "department"
+                        foreignField: "_id",
+                        as: "department"
                     }
                 }, {
                     $lookup: {
                         from        : "Employees",
                         localField  : "manager",
-                        foreignField: "_id", as: "manager"
+                        foreignField: "_id",
+                        as: "manager"
                     }
                 }, {
                     $lookup: {
                         from        : "JobPosition",
                         localField  : "jobPosition",
-                        foreignField: "_id", as: "jobPosition"
+                        foreignField: "_id",
+                        as: "jobPosition"
                     }
                 }, {
                     $project: {
@@ -608,8 +611,19 @@ var Filters = function (models) {
             Employee.aggregate([
                 {
                     $match: matchObjectForDash
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Department",
+                        localField  : "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                }, {
+                    $project: {
+                        name: 1,
+                        department: {$arrayElemAt: ['$department', 0]}
+                    }
+                }, {
                     $group: {
                         _id         : null,
                         'name'      : {
@@ -621,7 +635,7 @@ var Filters = function (models) {
                         'department': {
                             $addToSet: {
                                 _id : '$department._id',
-                                name: {'$ifNull': ['$department.name', 'None']}
+                                name: {'$ifNull': ['$department.departmentName', 'None']}
                             }
                         }
                     }
