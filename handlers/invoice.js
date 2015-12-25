@@ -49,8 +49,15 @@ var Invoice = function (models, event) {
         var dbIndex = req.session.lastDb;
         var isWtrack = checkDb(dbIndex);
         var body = req.body;
+        var waterfallTasks
         var forSales = body.forSales;
-        var waterfallTasks = [invoiceSaver, journalEntryComposer];
+
+        if (forSales) {
+            waterfallTasks = [invoiceSaver, journalEntryComposer];
+        } else {
+            waterfallTasks = [invoiceSaver];
+        }
+
         var createdBy = {};
         var editedBy = {};
 
@@ -69,8 +76,12 @@ var Invoice = function (models, event) {
                 if (err) {
                     return waterfallCb(err);
                 }
+                if (forSales) {
+                    waterfallCb(null, dbIndex, result);
+                } else {
+                    waterfallCb(null, result);
+                }
 
-                waterfallCb(null, dbIndex, result);
             });
         }
 
