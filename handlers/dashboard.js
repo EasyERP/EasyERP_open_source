@@ -653,7 +653,7 @@ var wTrack = function (models) {
                                 isLead    : 1,
                                 hire      : 1,
                                 name      : 1,
-                                firedCount: {$size: '$fire'},
+                                firedCount: {$size: '$fire'}
                             }
                         },
                         {
@@ -700,7 +700,7 @@ var wTrack = function (models) {
                         }
 
                         Department.populate(employees, {
-                            path  : 'hiredEmployees.department._id',
+                            path  : 'hiredEmployees.department',
                             select: '_id departmentName'
                         }, function (err, deps) {
                             if (err) {
@@ -727,7 +727,7 @@ var wTrack = function (models) {
                                 isLead    : 1,
                                 fire      : 1,
                                 name      : 1,
-                                firedCount: {$size: '$fire'},
+                                firedCount: {$size: '$fire'}
                             }
                         },
                         {
@@ -774,7 +774,7 @@ var wTrack = function (models) {
                         }
 
                         Department.populate(employees, {
-                            path   : 'firedEmployees.department._id',
+                            path   : 'firedEmployees.department',
                             select : '_id departmentName',
                             options: {
                                 lean: true

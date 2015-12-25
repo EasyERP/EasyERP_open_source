@@ -36,23 +36,29 @@ define([
             notHide                  : function () {
                 return false;
             },
+
             showNewSelect            : function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
             },
+
             chooseOption             : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
             },
+
             nextSelect               : function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect               : function (e) {
                 this.showNewSelect(e, true, false);
             },
+
             hideNewSelect            : function () {
                 $(".newSelectList").hide();
             },
+
             addAttach                : function (event) {
                 var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
                 $(".attachContainer").append('<li class="attachFile">' +
@@ -62,9 +68,11 @@ define([
                 $(".attachContainer .attachFile:last").append($(".input-file .inputAttach").attr("hidden", "hidden"));
                 $(".input-file").append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
             },
+
             deleteAttach             : function (e) {
                 $(e.target).closest(".attachFile").remove();
             },
+
             updateAssigneesPagination: function (el) {
                 var pag = el.find(".userPagination .text");
                 el.find(".userPagination .nextUserList").remove();
@@ -119,12 +127,14 @@ define([
                         break;
                 }
             },
+
             hideDialog          : function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
+
             showEdit            : function () {
                 $(".upload").animate({
                     height : "20px",
@@ -132,6 +142,7 @@ define([
                 }, 250);
 
             },
+
             hideEdit            : function () {
                 $(".upload").animate({
                     height : "0px",
@@ -139,6 +150,7 @@ define([
                 }, 250);
 
             },
+
             fileSizeIsAcceptable: function (file) {
                 if (!file) {
                     return false;
@@ -190,22 +202,13 @@ define([
                 var relatedUser = thisEl.find("#relatedUsersDd").attr("data-id");
 
                 var dep = thisEl.find("#departmentsDd");
-                var department = {
-                    _id : dep.attr("data-id"),
-                    name: dep.text()
-                };
+                var department = dep.attr("data-id");
 
                 var jobPos = thisEl.find("#jobPositionDd");
-                var jobPosition = {
-                    _id : jobPos.attr("data-id"),
-                    name: jobPos.text()
-                };
+                var jobPosition = jobPos.attr("data-id");
 
                 var manag = thisEl.find("#projectManagerDD");
-                var manager = {
-                    _id : manag.attr("data-id"),
-                    name: manag.text()
-                };
+                var manager = manag.attr("data-id");
                 var coach = thisEl.find("#coachDd").attr("data-id");
                 var identNo = $.trim($("#identNo").val());
                 var nationality = thisEl.find("#nationality").attr("data-id");
