@@ -12,7 +12,7 @@
     </td>
     <td><%=(project.total && project.total.hoursSum) ? currencySplitter(project.total.hoursSum.toFixed()) : '&nbsp'%>
     </td>
-    <td class="procent"><%=(project.total && project.total.markUp) ? (project.total.markUp ?
+    <td class="<%=(project.total && project.total.markUp) ? 'procent' : '' %>"><%=(project.total && project.total.markUp) ? (project.total.markUp ?
         project.total.markUp.toFixed() : '&nbsp') : '&nbsp'%>
     </td>
     <td class="procent"><%=(project.total && project.total.radio) ? (project.total.radio ? project.total.radio.toFixed()

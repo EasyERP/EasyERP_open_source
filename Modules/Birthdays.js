@@ -158,6 +158,7 @@
                         .select('_id name dateBirth age jobPosition workPhones.mobile department')
                         .populate('jobPosition', '_id name')
                         .populate('department', ' _id departmentName')
+                        .lean()
                         .exec(function (error, ress) {
                             if (error) {
                                 console.log(error);
