@@ -254,6 +254,8 @@ define([
             } else {
                 if (datePicker.length) {
                     parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text" readonly/>');
+                } else if(parent.attr('data-name') === 'productDescr') {
+                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text"/>');
                 } else {
                     parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="number"/>');
                 }
