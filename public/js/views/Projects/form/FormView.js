@@ -106,7 +106,7 @@ define([
                         },
                         error  : function (xhr) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: 'Please refresh browser'
                             });
                         }
@@ -131,7 +131,7 @@ define([
                         },
                         error  : function (xhr) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: 'Please refresh browser'
                             });
                         }
@@ -161,7 +161,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
@@ -240,7 +240,7 @@ define([
                     });
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please, enter Job name!'
                     });
                 }
@@ -356,8 +356,8 @@ define([
                 } else {
                     icon.html('-');
                     $('<tr id=' + subId + ' class="subRow">' +
-                    '<td colspan="13" id="subRow-holder' + jobId + '"></td>' +
-                    '</tr>').insertAfter(jobContainer);
+                        '<td colspan="13" id="subRow-holder' + jobId + '"></td>' +
+                        '</tr>').insertAfter(jobContainer);
                     $('#subRow-holder' + jobId).append(template({
                         jobStatus       : job.type,
                         jobItem         : job,
@@ -496,14 +496,14 @@ define([
                         if (!employeeId) {
                             value = 'Employee';
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: 'Please, choose ' + value + ' first.'
                             });
 
                         } else if (!bonusId) {
                             value = 'Bonus';
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: 'Please, choose ' + value + ' first.'
                             });
                         }

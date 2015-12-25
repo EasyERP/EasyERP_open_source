@@ -236,13 +236,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -250,10 +252,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -388,13 +391,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -402,10 +407,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -435,13 +441,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -449,10 +457,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -482,13 +491,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadProjectsFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -496,10 +507,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadProjectsFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -529,13 +541,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadTasksFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -543,10 +557,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadTasksFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -577,13 +592,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadOpportunitiesFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -591,10 +608,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadOpportunitiesFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -1542,7 +1560,7 @@ module.exports = function (app, mainDb) {
                     totalHours: {$sum: '$wTracks.worked'},
                     root      : {
                         $push: {
-                            wTracks: '$wTracks',
+                            wTracks  : '$wTracks',
                             quotation: '$quotation'
                         }
                     }
@@ -1552,52 +1570,57 @@ module.exports = function (app, mainDb) {
             }, {
                 $project: {
                     totalHours: 1,
-                    _id: '$root.wTracks._id',
+                    _id       : '$root.wTracks._id',
                     oldRevenue: '$root.wTracks.revenue',
-                    revenue: {
+                    revenue   : {
                         $multiply: [{$divide: ['$root.wTracks.worked', '$totalHours']}, '$root.quotation.paymentInfo.total', 100]
                     }
 
                 }
             }/*, {
-                $match: {
-                    revenue: null
-                }
-            }*/]);
+             $match: {
+             revenue: null
+             }
+             }*/]);
 
         query.exec(function (error, response) {
             if (error) {
                 return console.dir(error);
             }
 
-            async.each(response, function(foundObject, cb){
+            async.each(response, function (foundObject, cb) {
                 var revenue = foundObject.revenue || 0;
                 var oldRevenue = foundObject.oldRevenue || 0;
 
                 console.log(revenue);
 
-                Wtrack.update({_id: foundObject._id}, {$set: {revenue: revenue, oldRevenue: oldRevenue }}, function(err, updated){
-                    if(err){
+                Wtrack.update({_id: foundObject._id}, {
+                    $set: {
+                        revenue   : revenue,
+                        oldRevenue: oldRevenue
+                    }
+                }, function (err, updated) {
+                    if (err) {
                         return cb(err);
                     }
 
                     cb();
                 });
-            }, function(err){
-                if(err){
+            }, function (err) {
+                if (err) {
                     return next(err);
                 }
 
-                async.each(response, function(foundObject, cb){
-                    Wtrack.update({_id: foundObject._id}, {$unset: {rate: '' }}, function(err, updated){
-                        if(err){
+                async.each(response, function (foundObject, cb) {
+                    Wtrack.update({_id: foundObject._id}, {$unset: {rate: ''}}, function (err, updated) {
+                        if (err) {
                             return cb(err);
                         }
 
                         cb();
                     });
-                }, function(err){
-                    if(err){
+                }, function (err) {
+                    if (err) {
                         return next(err);
                     }
 
