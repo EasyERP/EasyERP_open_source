@@ -492,6 +492,12 @@ define([
 
             this.findDataPickers();
 
+            if (filter) {
+                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+
+                Backbone.history.navigate(url);
+            }
+
             if (!this.filterView) {
                 this.filterView = new filterView({contentType: 'DashVacation'});
                 this.filterView.bind('filter', function (filter) {
@@ -505,12 +511,6 @@ define([
             } /*else {
                 this.filterView.renderFilterContent();
             }*/
-
-            if (filter) {
-                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-
-                Backbone.history.navigate(url);
-            }
 
             return this;
         }
