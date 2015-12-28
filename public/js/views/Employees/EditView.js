@@ -1,6 +1,7 @@
 define([
         "text!templates/Employees/EditTemplate.html",
         'views/Notes/AttachView',
+        'views/selectView/selectView',
         "collections/Employees/EmployeesCollection",
         "collections/JobPositions/JobPositionsCollection",
         "collections/Departments/DepartmentsCollection",
@@ -10,7 +11,7 @@ define([
         "common",
         "populate"
     ],
-    function (EditTemplate, attachView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate) {
+    function (EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate) {
 
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -33,43 +34,48 @@ define([
             },
 
             events: {
-                "click #tabList a"                                                : "switchTab",
-                "mouseenter .avatar"                                              : "showEdit",
-                "mouseleave .avatar"                                              : "hideEdit",
-                'click .dialog-tabs a'                                            : 'changeTab',
-                'click .endContractReasonList, .withEndContract .arrow'           : 'showEndContractSelect',
-                'click .withEndContract .newSelectList li'                        : 'endContract',
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click"                                                           : "hideNewSelect"
+                "click #tabList a"                                               : "switchTab",
+                "mouseenter .avatar"                                             : "showEdit",
+                "mouseleave .avatar"                                             : "hideEdit",
+                'click .dialog-tabs a'                                           : 'changeTab',
+                'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
+                'click .withEndContract .newSelectList li'                       : 'endContract',
+                "click a.current-selected"                                        : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption"
+                //"click .newSelectList li.miniStylePagination"                     : "notHide",
+                //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                // "click input:not(#selectInput)"                                                           : "hideNewSelect"
             },
 
-            notHide              : function () {
+            notHide: function () {
                 return false;
             },
 
-            showNewSelect        : function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+            showNewSelect: function (e, prev, next) {
+                //populate.showSelect(e, prev, next, this);
+
+                new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
                 return false;
             },
 
-            chooseOption         : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
             },
 
-            nextSelect           : function (e) {
+            nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
 
-            prevSelect           : function (e) {
+            prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
 
-            hideNewSelect        : function () {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
 
@@ -79,7 +85,7 @@ define([
                 return false;
             },
 
-            endContract          : function (e) {
+            endContract: function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
 
@@ -95,7 +101,7 @@ define([
                 });
             },
 
-            changeTab            : function (e) {
+            changeTab: function (e) {
                 var holder = $(e.target);
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
@@ -105,7 +111,7 @@ define([
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
-            keydownHandler       : function (e) {
+            keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
                         this.hideDialog();
@@ -115,14 +121,14 @@ define([
                 }
             },
 
-            hideDialog           : function () {
+            hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
 
-            showEdit             : function () {
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
@@ -130,7 +136,7 @@ define([
 
             },
 
-            hideEdit             : function () {
+            hideEdit: function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"
@@ -167,7 +173,7 @@ define([
 
                 var department = this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null;
 
-                var jobPosition =  this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null;
+                var jobPosition = this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null;
 
                 var manager = this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null;
 
