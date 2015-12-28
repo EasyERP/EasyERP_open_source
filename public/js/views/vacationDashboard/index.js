@@ -458,6 +458,8 @@ define([
             var statictics;
             var url = '#easyErp/DashBoardVacation';
 
+            App.filter = filter || {};
+
             if ('toJSON' in dashboardData) {
                 dashboardData.unbind();
                 dashboardData = dashboardData.toJSON();
@@ -500,10 +502,9 @@ define([
                 });
 
                 this.filterView.render();
-            }
-            /*else {
-             this.filterView.renderFilterContent();
-             }*/
+            } /*else {
+                this.filterView.renderFilterContent();
+            }*/
 
             if (filter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));

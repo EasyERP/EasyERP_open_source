@@ -183,24 +183,35 @@ define([
             },
 
             copyRow: function (e) {
-                this.hideGenerateCopy();
-
-                this.changed = true;
-                this.createdCopied = true;
+                var self = this;
                 var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
                 var length = checkedRows.length;
+                var selectedWtrack;
+                var target;
+                var id;
+                var row;
+                var model;
+                var _model;
+                var tdsArr;
+                var cid;
+                var hours;
+
+                this.hideGenerateCopy();
+                this.changed = true;
+                this.createdCopied = true;
+
+
 
                 for (var i = length - 1; i >= 0; i--) {
-                    var selectedWtrack = checkedRows[i];
-                    var self = this;
-                    var target = $(selectedWtrack);
-                    var id = target.val();
-                    var row = target.closest('tr');
-                    var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                    var _model;
-                    var tdsArr;
-                    var cid;
-                    var hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                    selectedWtrack = checkedRows[i];
+                    target = $(selectedWtrack);
+                    id = target.val();
+                    row = target.closest('tr');
+                    model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
+                    _model;
+                    tdsArr;
+                    cid;
+                    hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
                     //var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
                     //var revenue = parseInt(hours) * parseFloat(rate);
 
