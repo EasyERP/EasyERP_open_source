@@ -208,9 +208,6 @@ define([
                     id = target.val();
                     row = target.closest('tr');
                     model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                    _model;
-                    tdsArr;
-                    cid;
                     hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
                     //var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
                     //var revenue = parseInt(hours) * parseFloat(rate);
