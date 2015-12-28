@@ -21,7 +21,7 @@ var Employee = function (event, models) {
         var key;
         var project;
         var projectSecond;
-        var Employees =  models.get(req.session.lastDb, "Employees", employeeSchema);
+        var Employees = models.get(req.session.lastDb, "Employees", employeeSchema);
 
         for (var i in
             req.query) {
@@ -45,19 +45,19 @@ var Employee = function (event, models) {
         }
 
         project = {
-            manager         : {$arrayElemAt: ["$manager", 0]},
-            jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-            department      : {$arrayElemAt: ["$department", 0]},
-            name            : 1,
-            isEmployee: 1
+            manager    : {$arrayElemAt: ["$manager", 0]},
+            jobPosition: {$arrayElemAt: ["$jobPosition", 0]},
+            department : {$arrayElemAt: ["$department", 0]},
+            name       : 1,
+            isEmployee : 1
         };
 
         projectSecond = {
-            manager         : 1,
-            jobPosition     : 1,
-            department      : 1,
-            name            : 1,
-            isEmployee: 1
+            manager    : 1,
+            jobPosition: 1,
+            department : 1,
+            name       : 1,
+            isEmployee : 1
         };
 
         switch (contentType) {
@@ -169,7 +169,7 @@ var Employee = function (event, models) {
                         {
                             $match: {
                                 $and: [
-                                  //  optionsObject,
+                                    //  optionsObject,
                                     {
                                         $or: [
                                             {
@@ -207,7 +207,7 @@ var Employee = function (event, models) {
                         }
                         ,
                         function (err, result) {
-                            if (!optionsObject['$and']){
+                            if (!optionsObject['$and']) {
                                 optionsObject['$and'] = [];
                             }
 
@@ -862,6 +862,8 @@ var Employee = function (event, models) {
                                             {
                                                 project = {
                                                     jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
+                                                    department         : {$arrayElemAt: ["$department", 0]},
+                                                    manager            : {$arrayElemAt: ["$manager", 0]},
                                                     age                : 1,
                                                     relatedUser        : {$arrayElemAt: ["$relatedUser", 0]},
                                                     'workPhones.mobile': 1,
@@ -872,6 +874,8 @@ var Employee = function (event, models) {
 
                                                 projectSecond = {
                                                     jobPosition        : 1,
+                                                    department         : 1,
+                                                    manager            : 1,
                                                     age                : 1,
                                                     'relatedUser.login': 1,
                                                     'workPhones.mobile': 1,
