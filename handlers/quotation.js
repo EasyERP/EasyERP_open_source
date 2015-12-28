@@ -127,47 +127,6 @@ var Quotation = function (models, event) {
         });
     };
 
-    function updateOnlySelectedFields(req, res, next, id, data) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var products;
-        var project;
-
-        Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
-            if (err) {
-                return next(err);
-            }
-
-            if (data.isOrder) {
-                products = quotation.products;
-
-                async.each(products, function (product, cb) {
-                    var jobs = product.jobs;
-
-                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered"}}, {new: true}, function (err, result) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        project = result.project ? result.project : null;
-                        cb();
-                    });
-
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
-                    }
-
-                    res.status(200).send({success: 'Quotation updated', result: quotation});
-
-                });
-            } else {
-                res.status(200).send({success: 'Quotation updated', result: quotation});
-            }
-
-        });
-
-    }
-
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
@@ -356,84 +315,6 @@ var Quotation = function (models, event) {
             res.status(200).send({count: result.length});
         });
     };
-
-    function ConvertType(array, type) {
-        if (type === 'integer') {
-            for (var i = array.length - 1;
-                 i >= 0;
-                 i--) {
-                array[i] = parseInt(array[i]);
-            }
-        } else if (type === 'boolean') {
-            for (var i = array.length - 1;
-                 i >= 0;
-                 i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    }
-
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        for (var filterName in
-            filter) {
-            condition = filter[filterName]['value'];
-            key = filter[filterName]['key'];
-
-            switch (filterName) {
-                case 'reference':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'projectName':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'project':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'type':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'projectmanager':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'forSales':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'isOrder':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        }
-
-        return resArray;
-    }
 
     this.getByViewType = function (req, res, next) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
@@ -708,13 +589,14 @@ var Quotation = function (models, event) {
                     type     : type,
                     quotation: null
                 }, {new: true}, function (err, result) {
+                    var wTracks;
+
                     if (err) {
                         return next(err);
                     }
 
                     project = result ? result.get('project') : null;
-
-                    var wTracks = result.wTracks;
+                    wTracks = result.wTracks;
 
                     async.each(wTracks, function (wTr, callback) {
                         wTrack.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback)
@@ -725,10 +607,6 @@ var Quotation = function (models, event) {
                 });
 
             }, function () {
-                //if (project) {
-                //    event.emit('fetchJobsCollection', {project: project});
-                //}
-
                 res.status(200).send({success: quotation});
             });
         });
@@ -789,6 +667,125 @@ var Quotation = function (models, event) {
 
         })
     };
+
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1;
+                 i >= 0;
+                 i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1;
+                 i >= 0;
+                 i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
+        }
+    }
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in
+            filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'reference':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectName':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'project':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'type':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectmanager':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSales':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'isOrder':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+
+        return resArray;
+    }
+
+    function updateOnlySelectedFields(req, res, next, id, data) {
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var products;
+        var project;
+
+        Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
+            if (err) {
+                return next(err);
+            }
+
+            if (data.isOrder) {
+                products = quotation.products;
+
+                async.each(products, function (product, cb) {
+                    var jobs = product.jobs;
+
+                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered"}}, {new: true}, function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+                        project = result.project ? result.project : null;
+                        cb();
+                    });
+
+                }, function () {
+                    if (project) {
+                        event.emit('fetchJobsCollection', {project: project});
+                    }
+
+                    res.status(200).send({success: 'Quotation updated', result: quotation});
+
+                });
+            } else {
+                res.status(200).send({success: 'Quotation updated', result: quotation});
+            }
+
+        });
+
+    }
 
 };
 
