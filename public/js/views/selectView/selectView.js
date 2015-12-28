@@ -2,34 +2,61 @@
  * Created by liliy on 28.12.2015.
  */
 define([
-        "text!templates/selectView/selectTemplate.html"
+        "text!templates/selectView/selectTemplate.html",
+        "text!templates/selectView/selectContent.html",
+        'collections/Filter/filterCollection'
     ],
-    function (selectTemplate) {
+    function (selectTemplate, selectContent, filterCollection) {
         var selectView = Backbone.View.extend({
-            template: _.template(selectTemplate),
+            template       : _.template(selectTemplate),
+            contentTemplate: _.template(selectContent),
 
             events: {
-                "click .newSelectList li:not(.miniStylePagination, #selectInput)" : "chooseOption",
+                // "click .newSelectList li:not(.miniStylePagination, #selectInput)" : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-               // "click :not(#selectInput)"                                  : "hideNewSelect",
-                "click  #selectInput"                                             : "quickSearch"
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                // "click :not(#selectInput)"                                  : "hideNewSelect",
             },
 
             initialize: function (options) {
+                var self = this;
                 this.number = options.number || 10;
                 this.responseObj = options.responseObj || [];
                 this.e = options.e;
-                this.el = this.e.target;
-                this.$el = $(this.el);
+                this.attr = $(this.e.target).attr('id');
 
-                this.render();
+                var data = this.responseObj["#" + this.attr];
 
-            },
+                this.collection = new filterCollection(data);
+                this.filteredCollection = new filterCollection(data);
 
-            quickSearch: function (e) {
+                this.filteredCollection.bind('reset', resetCollection);
 
+                function resetCollection() {
+                    self.showNewSelect(self.e);
+                }
+
+                this.inputEvent = _.debounce(
+                    function (e) {
+                        var target = e.target;
+                        var value = target.value;
+                        var newFilteredCollection;
+
+                        if (!value) {
+                            this.$el.find('.miniStylePagination').show();
+                            return this.filteredCollection.reset(this.collection.toJSON());
+                        }
+
+                        this.currentPage = 1;
+
+                        newFilteredCollection = this.filterCollection(value);
+                        this.$el.find('.miniStylePagination').toggle(!!newFilteredCollection.length);
+                        this.filteredCollection.reset(newFilteredCollection);
+                    }, 500);
+
+                _.bindAll(this, "inputEvent");
+                _.bindAll(this, "showNewSelect");
             },
 
             hideNewSelect: function () {
@@ -48,14 +75,24 @@ define([
                 this.showNewSelect(e, true, false);
             },
 
+            filterCollection: function (value) {
+                var resultCollection;
+                var regex;
+
+                regex = new RegExp(value, 'i');
+
+                resultCollection = this.collection.filter(function (model) {
+                    return model.get('name').match(regex);
+                });
+
+                return resultCollection;
+            },
+
             showNewSelect: function (e, prev, next) {
-                var targetEl = $(e.target);
-                var attr = targetEl.attr("id");
-                var data = this.responseObj["#" + attr];
-                var targetParent = $(e.target).parent();
+                var targetParent = this.$el;
                 var elementVisible = this.number;
                 var newSel;
-                var parent = this.$el;
+                var parent;
                 var s;
                 var start;
                 var end;
@@ -65,6 +102,9 @@ define([
                 var curUlPosition;
                 var curUlOffset;
                 var $window = $(window);
+                var data = this.filteredCollection ? this.filteredCollection.toJSON() : this.collection.toJSON();
+                var contentHolder = this.$el.find('#content');
+
                 this.currentPage = this.currentPage || 1;
 
                 if (targetParent.prop('tagName') !== 'TR') {
@@ -86,20 +126,20 @@ define([
                     parent = $(e.target);
                 }
 
-                if (newSel.length && newSel.is(":visible") && !prev && !next) {
-                    newSel.remove();
-                    return;
-                }
+                //if (newSel.length && newSel.is(":visible") && !prev && !next) {
+                //    newSel.remove();
+                //    return;
+                //}
 
-                $(".newSelectList").hide(); //fixed by Liliya for generateWTracks
+                //$(".newSelectList").hide(); //fixed by Liliya for generateWTracks
 
-                if ((prev || next) && newSel.length) {
-                    this.currentPage = newSel.data("page");
-                    newSel.remove();
-                } else if (newSel.length) {
-                    newSel.show();
-                    return;
-                }
+                //if ((prev || next) && newSel.length) {
+                //    this.currentPage = newSel.data("page");
+                //    newSel.remove();
+                //} else if (newSel.length) {
+                //    newSel.show();
+                //    return;
+                //}
 
                 if (prev) {
                     this.currentPage--;
@@ -108,41 +148,54 @@ define([
                     this.currentPage++;
                 }
 
-                s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
+                //s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
                 start = (this.currentPage - 1) * elementVisible;
                 end = Math.min(this.currentPage * elementVisible, data.length);
                 allPages = Math.ceil(data.length / elementVisible);
 
-                if (data && data.length) {
-                    this.$el.append(_.template(selectTemplate, {
-                        collection    : data.slice(start, end),
-                        currentPage   : this.currentPage,
-                        allPages      : allPages,
-                        start         : start,
-                        end           : end,
-                        dataLength    : data.length,
-                        elementVisible: elementVisible
-                    }));
+                contentHolder.html(_.template(selectContent, {
+                    collection    : data.slice(start, end),
+                    currentPage   : this.currentPage,
+                    allPages      : allPages,
+                    start         : start,
+                    end           : end,
+                    dataLength    : data.length,
+                    elementVisible: elementVisible
+                }));
 
-                    $curUl = parent.find('.newSelectList');
-                    curUlOffset = $curUl.offset();
-                    curUlPosition = $curUl.position();
-                    curUlHeight = $curUl.outerHeight();
+                $curUl = this.$el.find('.newSelectList');
+                curUlOffset = $curUl.offset();
+                curUlPosition = $curUl.position();
+                curUlHeight = $curUl.outerHeight();
 
-                    if (curUlOffset.top + curUlHeight > $window.scrollTop() + $window.height()) {
-                        $curUl.css({
-                            top: curUlPosition.top - curUlHeight - this.$el.outerHeight()
-                        });
-                    }
-
-                } else if (attr === 'jobs') {
-                    this.$el.append(s);
+                if (curUlOffset.top + curUlHeight > $window.scrollTop() + $window.height()) {
+                    $curUl.css({
+                        top: curUlPosition.top - curUlHeight - this.$el.outerHeight()
+                    });
                 }
             },
 
             render: function () {
+                var self = this;
+                var searchInput;
+
+                this.$el.html(this.template);
 
                 this.showNewSelect(this.e, false, false);
+
+                searchInput = this.$el.find("#selectInput");
+
+                searchInput.keyup(function (e) {
+                    e.stopPropagation();
+                    self.inputEvent(e);
+
+                });
+
+                searchInput.change(function (e) {
+                    e.stopPropagation();
+                    self.inputEvent(e);
+
+                });
 
                 return this;
             }

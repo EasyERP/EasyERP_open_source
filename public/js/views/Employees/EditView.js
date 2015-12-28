@@ -40,43 +40,56 @@ define([
                 'click .dialog-tabs a'                                           : 'changeTab',
                 'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
                 'click .withEndContract .newSelectList li'                       : 'endContract',
-                "click a.current-selected"                                        : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption"
+                "click .current-selected"                                        : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption",
                 //"click .newSelectList li.miniStylePagination"                     : "notHide",
                 //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                // "click input:not(#selectInput)"                                                           : "hideNewSelect"
+                "click"                                                          : "hideNewSelect"
             },
 
-            notHide: function () {
-                return false;
-            },
+            //notHide: function () {
+            //    return false;
+            //},
 
-            showNewSelect: function (e, prev, next) {
-                //populate.showSelect(e, prev, next, this);
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
 
-                new selectView({
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
 
             chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                $(".newSelectList").hide();
+
+                this.selectView.remove();
             },
 
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
+            //nextSelect: function (e) {
+            //    this.showNewSelect(e, false, true);
+            //},
+            //
+            //prevSelect: function (e) {
+            //    this.showNewSelect(e, true, false);
+            //},
 
             hideNewSelect: function () {
-                $(".newSelectList").hide();
+                this.selectView.remove();
             },
 
             showEndContractSelect: function (e) {
