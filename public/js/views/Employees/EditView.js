@@ -29,7 +29,46 @@ define([
                     this.currentModel = options.model;
                 }
                 this.currentModel.urlRoot = '/Employees';
-                this.responseObj = {};
+                this.responseObj = [
+                    {
+                        '#sourceDd': [
+                            {
+                                _id : 'www.rabota.ua',
+                                name: 'www.rabota.ua'
+                            }, {
+                                _id : 'www.work.ua',
+                                name: 'www.work.ua'
+                            }, {
+                                _id : 'www.ain.net',
+                                name: 'www.ain.net'
+                            }, {
+                                _id : 'other',
+                                name: 'other'
+                            }
+                        ]
+                    },
+                    {
+                        '#genderDd': [
+                            {
+                                _id : 'male',
+                                name: 'male'
+                            }, {
+                                _id : 'female',
+                                name: 'female'
+                            }
+                        ]
+                    },
+                    {
+                        '#maritalDd': [
+                            {
+                                _id : 'married',
+                                name: 'married'
+                            }, {
+                                _id : 'unmarried',
+                                name: 'unmarried'
+                            }
+                        ]
+                    }];
                 this.render();
             },
 
