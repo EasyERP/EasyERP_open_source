@@ -9,6 +9,7 @@ define([
         'collections/PayrollExpenses/sortCollection',
         'collections/PayrollPayments/editCollection',
         'models/PayRollModel',
+        'views/selectView/selectView',
         "views/PayrollPayments/CreateView",
         'views/PayrollExpenses/CreateView',
         "helpers",
@@ -18,7 +19,7 @@ define([
         "async"
     ],
 
-    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
+    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
@@ -41,8 +42,8 @@ define([
                 "click #expandAll"                                                : "expandAll",
                 "click"                                                           : "removeNewSelect",
                 "click .diff"                                                     : "newPayment",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+               // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .oe_sortable"                                              : "goSort"
             },
 
@@ -164,22 +165,34 @@ define([
                 }
             },
 
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
 
                 return false;
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").remove();
-            },
 
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
+                if (this.selectView){
+                    this.selectView.remove();
+                }
             },
 
             newPayment: function (e) {
@@ -532,6 +545,10 @@ define([
 
             removeNewSelect: function () {
                 $('.newSelectList').remove();
+
+                if (this.selectView){
+                    this.selectView.remove()
+                }
             },
 
             keyDown: function (e) {
@@ -757,7 +774,7 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").remove();
+                //$(".newSelectList").remove();
 
                 var self = this;
                 var target = $(e.target);
@@ -779,9 +796,11 @@ define([
                 }
 
                 if (dataContent === 'employee') {
-                    populate.showSelect(e, prev, next, this);
+                    this.showNewSelect(e);
+                    return false;
                 } else if (dataContent === 'paymentType') {
-                    populate.showSelect(e, prev, next, this);
+                    this.showNewSelect(e);
+                    return false;
                 } else if (dataContent === 'dataKey') {
 
                     tempContainer = target.text();
