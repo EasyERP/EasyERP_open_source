@@ -45,7 +45,7 @@
                 }
             },
 
-            showNewSelect: function (e, prev, next) {
+            showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
