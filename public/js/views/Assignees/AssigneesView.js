@@ -1,9 +1,10 @@
 define([
     'text!templates/Assignees/AssigneesTemplate.html',
+    'views/selectView/selectView',
     'common',
     "populate"
 
-], function (assigneesTemplate, common, populate) {
+], function (assigneesTemplate, selectView, common, populate) {
     var AssigneesView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -17,30 +18,45 @@ define([
             "click .prevUserList"                                             : "prevUserList",
             "click .nextUserList"                                             : "nextUserList",
             "click .current-selected"                                         : "showNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-            "click .newSelectList li.miniStylePagination"                     : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+            //"click .newSelectList li.miniStylePagination"                     : "notHide",
+            //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+            //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
         },
 
         template: _.template(assigneesTemplate),
 
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new selectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
             return false;
         },
         chooseOption : function (e) {
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-            $(".newSelectList").hide();
+
+            this.hideNewSelect();
         },
-        nextSelect   : function (e) {
-            this.showNewSelect(e, false, true);
-        },
-        prevSelect   : function (e) {
-            this.showNewSelect(e, true, false);
-        },
+
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            if (this.selectView){
+                this.selectView.remove();
+            }
         },
 
         unassign    : function (e) {
@@ -76,7 +92,6 @@ define([
             e.data.self.updateAssigneesPagination(div);
             div = $(e.target).parents(".left");
             e.data.self.updateAssigneesPagination(div);
-
         },
 
         removeUsers              : function (e) {
