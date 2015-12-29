@@ -26,6 +26,7 @@ var Quotation = function (models, event) {
         var Workflow = models.get(db, 'workflows', WorkflowSchema);
         var Quotation = models.get(db, 'Quotation', QuotationSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         var body = mapObject(req.body);
         var isPopulate = req.body.populate;
@@ -90,12 +91,15 @@ var Quotation = function (models, event) {
                         });
                     }
                 ], function (err) {
+                    var id;
+                    var products;
+
                     if (err) {
                         return next(err);
                     }
 
-                    var id = _quotation._id;
-                    var products = _quotation.products;
+                    id = _quotation._id;
+                    products = _quotation.products;
 
                     async.each(products, function (product, cb) {
                         var jobs = product.jobs;
@@ -123,7 +127,11 @@ var Quotation = function (models, event) {
             } else {
                 res.status(201).send(_quotation);
             }
-            event.emit('recalculateRevenue', _quotation);
+            event.emit('recalculateRevenue', {
+                quotation: _quotation,
+                wTrackModel: wTrackModel,
+                req: req
+            });
         });
     };
 

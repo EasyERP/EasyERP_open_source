@@ -1,6 +1,8 @@
 require('pmx').init();
 
 var requestHandler = function (app, event, mainDb) {
+    "use strict";
+
     var dbsObject = mainDb.dbsObject;
     var mongoose = require('mongoose');
     var async = require('async');
@@ -43,6 +45,7 @@ var requestHandler = function (app, event, mainDb) {
     var ObjectId = mongoose.Types.ObjectId;
 
     var io = app.get('io');
+    var logger = app.get('logger');
 
     //binding for remove Workflow
     event.on('removeWorkflow', function (req, wId, id) {
@@ -184,14 +187,14 @@ var requestHandler = function (app, event, mainDb) {
 
                     wTrack
                         .find({
-                            month         : month,
-                            year : year,
+                            month     : month,
+                            year      : year,
                             'employee': ObjectId(key)
                         }, {
-                            worked        : 1,
-                            revenue: 1,
+                            worked    : 1,
+                            revenue   : 1,
                             'employee': 1,
-                            _id           : 1
+                            _id       : 1
                         }, function (err, result) {
                             if (err) {
                                 return console.log(err);
@@ -291,7 +294,7 @@ var requestHandler = function (app, event, mainDb) {
                             month         : month,
                             year          : year
                         }, {
-                            baseSalary: 1,
+                            baseSalary    : 1,
                             'employee._id': 1
                         })
                     .lean();
@@ -488,9 +491,9 @@ var requestHandler = function (app, event, mainDb) {
                                 budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
                             });
                             //budgetTotal.rateSum = {};
-                           // var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                           // budgetTotal.rateSum.byQA = value ? value : 0;
-                           // budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA));
+                            // var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                            // budgetTotal.rateSum.byQA = value ? value : 0;
+                            // budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA));
 
                             projectValues.revenue = budgetTotal.revenueSum;
                             projectValues.profit = budgetTotal.profitSum;
@@ -505,12 +508,13 @@ var requestHandler = function (app, event, mainDb) {
 
                             var empQuery = Employee
                                 .find({_id: {$in: keys}}, {
-                                'name'            : 1,
-                                'jobPosition': 1,
-                                'department' : 1})
+                                    'name'       : 1,
+                                    'jobPosition': 1,
+                                    'department' : 1
+                                })
                                 .populate('department', '_id departmentName')
                                 .populate('jobPosition', '_id name')
-                                    .lean();
+                                .lean();
                             empQuery.exec(function (err, response) {
 
                                 if (err) {
@@ -617,10 +621,10 @@ var requestHandler = function (app, event, mainDb) {
             }
 
             Employee.populate(result, {
-                'path': "wTracks.employee",
+                'path'  : "wTracks.employee",
                 'select': '_id, name',
-                'lean': true
-            }, function(err, result){
+                'lean'  : true
+            }, function (err, result) {
                 async.forEach(result, function (job, cb) {
                     var jobID = job._id;
                     var projectTeam = {};
@@ -689,7 +693,7 @@ var requestHandler = function (app, event, mainDb) {
                                     }
                                     projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                     projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
-                                   // projectTeam[empId].rate += parseFloat(wTrack.rate);
+                                    // projectTeam[empId].rate += parseFloat(wTrack.rate);
                                     projectTeam[empId].hours += parseFloat(wTrack.worked);
                                     projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
                                 } else {
@@ -744,9 +748,10 @@ var requestHandler = function (app, event, mainDb) {
 
                         var empQuery = Employee
                             .find({_id: {$in: keys}}, {
-                                'name'            : 1,
+                                'name'       : 1,
                                 'jobPosition': 1,
-                                'department' : 1})
+                                'department' : 1
+                            })
                             .populate('department', '_id departmentName')
                             .populate('jobPosition', '_id name')
                             .lean();
@@ -915,12 +920,16 @@ var requestHandler = function (app, event, mainDb) {
                 objChange[sequenceField] = inc;
                 query = model.update(objFind, {$inc: objChange}, {multi: true});
                 query.exec(function (err, res) {
-                    if (callback) callback((inc == -1) ? end : start);
+                    if (callback) {
+                        callback((inc == -1) ? end : start);
+                    }
                 });
             } else {
                 if (isCreate) {
                     query = model.count({"workflow": workflowStart}).exec(function (err, res) {
-                        if (callback) callback(res);
+                        if (callback) {
+                            callback(res);
+                        }
                     });
                 }
                 if (isDelete) {
@@ -930,7 +939,9 @@ var requestHandler = function (app, event, mainDb) {
                     objChange[sequenceField] = -1;
                     query = model.update(objFind, {$inc: objChange}, {multi: true});
                     query.exec(function (err, res) {
-                        if (callback) callback(res);
+                        if (callback) {
+                            callback(res);
+                        }
                     });
                 }
             }
@@ -946,7 +957,9 @@ var requestHandler = function (app, event, mainDb) {
             objChange[sequenceField] = 1;
             query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec(function (err, res) {
-                if (callback) callback(end);
+                if (callback) {
+                    callback(end);
+                }
             });
 
         }
@@ -966,6 +979,99 @@ var requestHandler = function (app, event, mainDb) {
 
     event.on('fetchInvoiceCollection', function (options) {
         io.emit('fetchInvoiceCollection', options);
+    });
+
+    event.on('recalculateRevenue', function (options) {
+        var quotation = options.quotation;
+        var wTrackModel = options.wTrackModel;
+        var req = options.req;
+        var totalAmount = 0;
+
+        if (!quotation || !wTrackModel) {
+            return false;
+        }
+
+        totalAmount = quotation.paymentInfo.total;
+
+        async.each(quotation.products, wTrackUpdater, function (err) {
+            if (err) {
+                logger.error(err);
+            }
+        });
+
+        function wTrackUpdater(product, cb) {
+            var waterfallTasks = [totalWorkedCalculator, wTrackUpdatertotalWorked];
+
+            function totalWorkedCalculator(waterfallCb) {
+                wTrackModel.aggregate([{
+                    $match: {
+                        jobs: product.jobs
+                    }
+                }, {
+                    $group: {
+                        _id        : null,
+                        totalWorked: {$sum: '$worked'},
+                        ids        : {$addToSet: '$_id'}
+                    }
+                }], function (err, wetracks) {
+                    var totalWorked;
+                    var ids = [];
+
+                    if (err) {
+                        return waterfallCb(err);
+                    }
+
+                    if (wetracks[0]) {
+                        totalWorked = wetracks[0].totalWorked;
+                        ids = wetracks[0].ids;
+                    } else {
+                        totalWorked = 0;
+                    }
+
+                    waterfallCb(null, totalWorked, ids);
+                });
+            };
+
+            function wTrackUpdatertotalWorked(totalWorked, ids, waterfallCb) {
+                wTrackModel.find({
+                    _id: {$in: ids}
+                }, function (err, wTracks) {
+                    if (err) {
+                        return waterfallCb(err);
+                    }
+
+                    async.each(wTracks, function (wTrack, cb) {
+                        var revenue = (wTrack.worked / totalWorked) * totalAmount;
+
+                        console.log(revenue, wTrack._id);
+                        wTrackModel.findByIdAndUpdate(wTrack._id, {$set: {revenue: revenue}}, {new: true}, function(err, updated){
+                            if (err) {
+                                return cb(err);
+                            }
+                            event.emit('updateProjectDetails', {req: req, _id: updated.project, jobId: updated.jobs});
+                            cb();
+                        });
+                    }, function (err) {
+                        if (err) {
+                            return waterfallCb(err);
+                        }
+
+                        waterfallCb();
+                    });
+                });
+            };
+
+            function waterfallMasterCb(err, response) {
+                if (err) {
+                    return cb(err);
+                }
+                console.log(response);
+                cb();
+            };
+
+            async.waterfall(waterfallTasks, waterfallMasterCb);
+
+        }
     });
 
     Array.prototype.objectID = function () {
@@ -1002,7 +1108,6 @@ var requestHandler = function (app, event, mainDb) {
         }
         return _arrayOfNumbers;
     };
-
     Array.prototype.getShowmore = function (countPerPage) {
         var showMore = false;
         for (var i = 0; i < this.length; i++) {
