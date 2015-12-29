@@ -63,14 +63,11 @@ define([
 
             events: {
                 "click .stageSelect"                               : "showNewSelect",
-                //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable"                                : "editRow",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc"                                 : "autoCalc",
-                "change .editable "                                : "setEditable",
-                "keydown input.editing "                           : "keyDown",
-                //"change .listCB": "setAllTotalVals"
+                "change .editable"                                : "setEditable",
+                "keydown input.editing"                           : "keyDown",
                 "click"                                            : "removeInputs"
             },
 
@@ -252,14 +249,6 @@ define([
                 }
             },
 
-            //nextSelect: function (e) {
-            //    this.showNewSelect(e, false, true);
-            //},
-            //
-            //prevSelect: function (e) {
-            //    this.showNewSelect(e, true, false);
-            //},
-
             autoCalc: function (e) {
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
@@ -271,10 +260,6 @@ define([
                 var calcEl;
                 var editWtrackModel;
                 var workedEl = tr.find('[data-content="worked"]');
-                //var revenueEl = tr.find('[data-content="revenue"]');
-                //var rateEl = tr.find('[data-content="rate"]');
-                //var rateVal;
-                //var revenueVal;
 
                 function eplyDefaultValue(el) {
                     var value = el.text();
@@ -298,22 +283,13 @@ define([
                     worked += parseInt(value);
                 }
 
-                //  rateVal = parseFloat(eplyDefaultValue(rateEl));
-                //  revenueVal = parseFloat(worked * rateVal).toFixed(2);
-
-                //  revenueEl.text(revenueVal);
-
-                editWtrackModel = this.editCollection.get(wTrackId);
-
                 workedEl.text(worked);
-                //editWtrackModel.set('worked', worked);
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
                 }
 
                 this.changedModels[wTrackId].worked = worked;
-                // this.changedModels[wTrackId].revenue = revenueVal;
             },
 
             setEditable: function (td) {
