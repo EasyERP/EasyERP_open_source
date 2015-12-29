@@ -69,8 +69,6 @@ define([
                 "change .autoCalc"                                                : "autoCalc",
                 "change .editable "                                               : "setEditable",
                 "keydown input.editing "                                          : "keyDown"
-                //"change .listCB": "setAllTotalVals"
-                // "click"                                                           : "removeInputs"
             },
 
             removeInputs: function () {
@@ -185,24 +183,32 @@ define([
             },
 
             copyRow: function (e) {
-                this.hideGenerateCopy();
-
-                this.changed = true;
-                this.createdCopied = true;
+                var self = this;
                 var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
                 var length = checkedRows.length;
+                var selectedWtrack;
+                var target;
+                var id;
+                var row;
+                var model;
+                var _model;
+                var tdsArr;
+                var cid;
+                var hours;
+
+                this.hideGenerateCopy();
+                this.changed = true;
+                this.createdCopied = true;
+
+
 
                 for (var i = length - 1; i >= 0; i--) {
-                    var selectedWtrack = checkedRows[i];
-                    var self = this;
-                    var target = $(selectedWtrack);
-                    var id = target.val();
-                    var row = target.closest('tr');
-                    var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                    var _model;
-                    var tdsArr;
-                    var cid;
-                    var hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                    selectedWtrack = checkedRows[i];
+                    target = $(selectedWtrack);
+                    id = target.val();
+                    row = target.closest('tr');
+                    model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
+                    hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
                     //var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
                     //var revenue = parseInt(hours) * parseFloat(rate);
 
@@ -827,105 +833,6 @@ define([
                 $(".newSelectList").remove();
             },
 
-            render: function () {
-                var self = this;
-                var $currentEl = this.$el;
-                var pagenation;
-                var checkedInputs;
-                var allInputs;
-
-                $currentEl.html('');
-                $currentEl.append(_.template(listTemplate));
-                $currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
-
-                this.renderPagination($currentEl, this);
-
-                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-                $('#check_all').click(function () {
-                    var checkLength;
-
-                    allInputs = $('.listCB');
-                    allInputs.prop('checked', this.checked);
-                    checkedInputs = $("input.listCB:checked");
-
-                    if (self.collection.length > 0) {
-                        checkLength = checkedInputs.length;
-
-                        if (checkLength > 0) {
-                            $("#top-bar-deleteBtn").show();
-                            $("#top-bar-copyBtn").show();
-                            $("#top-bar-createBtn").hide();
-
-                            if (checkLength === self.collection.length) {
-                                checkedInputs.each(function (index, element) {
-                                    self.checkProjectId(element, checkLength);
-                                });
-
-                                $('#check_all').prop('checked', true);
-                            }
-                        } else {
-                            $("#top-bar-deleteBtn").hide();
-                            $("#top-bar-createBtn").show();
-                            // self.genInvoiceEl.hide();
-                            self.copyEl.hide();
-                            $('#check_all').prop('checked', false);
-                        }
-                    }
-
-                    self.setAllTotalVals();
-                });
-
-                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
-                    projects = _.map(projects.data, function (project) {
-                        project.name = project.projectName;
-
-                        return project
-                    });
-
-                    self.responseObj['#project'] = projects;
-                });
-
-                dataService.getData("/employee/getForDD", null, function (employees) {
-                    employees = _.map(employees.data, function (employee) {
-                        employee.name = employee.name.first + ' ' + employee.name.last;
-
-                        return employee
-                    });
-
-                    self.responseObj['#employee'] = employees;
-                });
-
-                dataService.getData("/department/getForDD", null, function (departments) {
-                    departments = _.map(departments.data, function (department) {
-                        department.name = department.departmentName;
-
-                        return department
-                    });
-
-                    self.responseObj['#department'] = departments;
-                });
-
-                this.renderFilter(self);
-
-                setTimeout(function () {
-                    /*self.editCollection = new EditCollection(self.collection.toJSON());
-                     self.editCollection.on('saved', self.savedNewModel, self);
-                     self.editCollection.on('updated', self.updatedOptions, self);*/
-                    self.bindingEventsToEditedCollection(self);
-                    self.$listTable = $('#listTable');
-                }, 10);
-
-                //this.genInvoiceEl = $('#top-bar-generateBtn');
-                this.copyEl = $('#top-bar-copyBtn');
-                this.$saveBtn = $('#top-bar-saveBtn');
-                return this;
-            },
-
             bindingEventsToEditedCollection: function (context) {
                 if (context.editCollection) {
                     context.editCollection.unbind();
@@ -1266,7 +1173,106 @@ define([
 
                 self.changedModels = {};
                 self.responseObj['#jobs'] = [];
-            }
+            },
+
+            render: function () {
+                var self = this;
+                var $currentEl = this.$el;
+                var pagenation;
+                var checkedInputs;
+                var allInputs;
+
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());//added two parameters page and items number
+
+                this.renderPagination($currentEl, this);
+
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
+                $('#check_all').click(function () {
+                    var checkLength;
+
+                    allInputs = $('.listCB');
+                    allInputs.prop('checked', this.checked);
+                    checkedInputs = $("input.listCB:checked");
+
+                    if (self.collection.length > 0) {
+                        checkLength = checkedInputs.length;
+
+                        if (checkLength > 0) {
+                            $("#top-bar-deleteBtn").show();
+                            $("#top-bar-copyBtn").show();
+                            $("#top-bar-createBtn").hide();
+
+                            if (checkLength === self.collection.length) {
+                                checkedInputs.each(function (index, element) {
+                                    self.checkProjectId(element, checkLength);
+                                });
+
+                                $('#check_all').prop('checked', true);
+                            }
+                        } else {
+                            $("#top-bar-deleteBtn").hide();
+                            $("#top-bar-createBtn").show();
+                            // self.genInvoiceEl.hide();
+                            self.copyEl.hide();
+                            $('#check_all').prop('checked', false);
+                        }
+                    }
+
+                    self.setAllTotalVals();
+                });
+
+                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
+
+                dataService.getData("/employee/getForDD", null, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee
+                    });
+
+                    self.responseObj['#employee'] = employees;
+                });
+
+                dataService.getData("/department/getForDD", null, function (departments) {
+                    departments = _.map(departments.data, function (department) {
+                        department.name = department.departmentName;
+
+                        return department
+                    });
+
+                    self.responseObj['#department'] = departments;
+                });
+
+                this.renderFilter(self);
+
+                setTimeout(function () {
+                    /*self.editCollection = new EditCollection(self.collection.toJSON());
+                     self.editCollection.on('saved', self.savedNewModel, self);
+                     self.editCollection.on('updated', self.updatedOptions, self);*/
+                    self.bindingEventsToEditedCollection(self);
+                    self.$listTable = $('#listTable');
+                }, 10);
+
+                this.copyEl = $('#top-bar-copyBtn');
+                this.$saveBtn = $('#top-bar-saveBtn');
+
+                return this;
+            },
         });
 
         return wTrackListView;
