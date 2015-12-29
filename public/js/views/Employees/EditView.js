@@ -1,6 +1,7 @@
 define([
         "text!templates/Employees/EditTemplate.html",
         'views/Notes/AttachView',
+        'views/selectView/selectView',
         "collections/Employees/EmployeesCollection",
         "collections/JobPositions/JobPositionsCollection",
         "collections/Departments/DepartmentsCollection",
@@ -10,17 +11,19 @@ define([
         "common",
         "populate"
     ],
-    function (EditTemplate, attachView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate) {
+    function (EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate) {
 
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Employees",
             imageSrc   : '',
             template   : _.template(EditTemplate),
+            responseObj : {},
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
                 _.bindAll(this, "render", "deleteItem");
+
                 if (options.collection) {
                     this.employeesCollection = options.collection;
                     this.currentModel = this.employeesCollection.getElement();
@@ -28,58 +31,107 @@ define([
                     this.currentModel = options.model;
                 }
                 this.currentModel.urlRoot = '/Employees';
-                this.responseObj = {};
+
+                this.responseObj['#sourceDd'] = [
+                            {
+                                _id : 'www.rabota.ua',
+                                name: 'www.rabota.ua'
+                            }, {
+                                _id : 'www.work.ua',
+                                name: 'www.work.ua'
+                            }, {
+                                _id : 'www.ain.net',
+                                name: 'www.ain.net'
+                            }, {
+                                _id : 'other',
+                                name: 'other'
+                            }
+                        ];
+
+                this.responseObj['#genderDd'] = [
+                            {
+                                _id : 'male',
+                                name: 'male'
+                            }, {
+                                _id : 'female',
+                                name: 'female'
+                            }
+                        ];
+                this.responseObj['#maritalDd'] = [
+                            {
+                                _id : 'married',
+                                name: 'married'
+                            }, {
+                                _id : 'unmarried',
+                                name: 'unmarried'
+                            }
+                        ];
+
                 this.render();
             },
 
             events: {
-                "click #tabList a"                                                : "switchTab",
-                "mouseenter .avatar"                                              : "showEdit",
-                "mouseleave .avatar"                                              : "hideEdit",
-                'click .dialog-tabs a'                                            : 'changeTab',
-                'click .endContractReasonList, .withEndContract .arrow'           : 'showEndContractSelect',
-                'click .withEndContract .newSelectList li'                        : 'endContract',
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click"                                                           : "hideNewSelect"
+                "click #tabList a"                                               : "switchTab",
+                "mouseenter .avatar"                                             : "showEdit",
+                "mouseleave .avatar"                                             : "hideEdit",
+                'click .dialog-tabs a'                                           : 'changeTab',
+                'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
+                'click .withEndContract .newSelectList li'                       : 'endContract',
+                "click .current-selected"                                        : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption",
+                "click"                                                          : "hideNewSelect"
             },
 
-            notHide              : function () {
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
 
-            showNewSelect        : function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
-            },
-
-            chooseOption         : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                $(".newSelectList").hide();
+
+                this.selectView.remove();
             },
 
-            nextSelect           : function (e) {
-                this.showNewSelect(e, false, true);
-            },
+            //nextSelect: function (e) {
+            //    this.showNewSelect(e, false, true);
+            //},
+            //
+            //prevSelect: function (e) {
+            //    this.showNewSelect(e, true, false);
+            //},
 
-            prevSelect           : function (e) {
-                this.showNewSelect(e, true, false);
-            },
-
-            hideNewSelect        : function () {
-                $(".newSelectList").hide();
+            hideNewSelect: function () {
+                if ( this.selectView){
+                    this.selectView.remove();
+                }
             },
 
             showEndContractSelect: function (e) {
                 e.preventDefault();
                 $(e.target).parent().find(".newSelectList").toggle();
+
                 return false;
             },
 
-            endContract          : function (e) {
+            endContract: function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
 
@@ -95,17 +147,20 @@ define([
                 });
             },
 
-            changeTab            : function (e) {
+            changeTab: function (e) {
+                var n;
+                var dialog_holder;
                 var holder = $(e.target);
+
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = holder.closest(".dialog-tabs").parent().find(".dialog-tabs-items");
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = holder.closest(".dialog-tabs").parent().find(".dialog-tabs-items");
                 dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
-            keydownHandler       : function (e) {
+            keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
                         this.hideDialog();
@@ -115,14 +170,14 @@ define([
                 }
             },
 
-            hideDialog           : function () {
+            hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
 
-            showEdit             : function () {
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
@@ -130,7 +185,7 @@ define([
 
             },
 
-            hideEdit             : function () {
+            hideEdit: function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"
@@ -138,21 +193,24 @@ define([
             },
 
             switchTab: function (e) {
+                var index;
+                var link;
+
                 e.preventDefault();
-                var link = this.$("#tabList a");
+                link = this.$("#tabList a");
+
                 if (link.hasClass("selected")) {
                     link.removeClass("selected");
                 }
-                var index = link.index($(e.target).addClass("selected"));
+
+                index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
 
             saveItem  : function () {
                 var empThumb;
                 var self = this;
-
                 var depForTransfer = this.currentModel.get('department');
-
                 var gender = $("#genderDd").data("id");
                 gender = gender ? gender : null;
 
@@ -167,7 +225,7 @@ define([
 
                 var department = this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null;
 
-                var jobPosition =  this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null;
+                var jobPosition = this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null;
 
                 var manager = this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null;
 
@@ -175,13 +233,13 @@ define([
                 coach = coach ? coach : null;
 
                 var homeAddress = {};
+
                 $("dd").find(".homeAddress").each(function () {
                     var el = $(this);
                     homeAddress[el.attr("name")] = $.trim(el.val());
                 });
                 // date parse 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-
                 var hireArray = this.currentModel.get('hire');
                 var newHireArray = [];
 
@@ -220,6 +278,7 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
+
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -341,10 +400,11 @@ define([
 
             },
             deleteItem: function (event) {
-                var mid = 39;
                 event.preventDefault();
+                var mid = 39;
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
+
                 if (answer == true) {
                     this.currentModel.urlRoot = "/Employees";
                     this.currentModel.destroy({

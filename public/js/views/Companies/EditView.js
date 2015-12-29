@@ -6,20 +6,24 @@ define([
         "collections/Departments/DepartmentsCollection",
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
+        'views/selectView/selectView',
         "common",
         "populate"
     ],
-    function (EditTemplate, CompaniesCollection, EmployeesCollection, PersonsCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, common, populate) {
+    function (EditTemplate, CompaniesCollection, EmployeesCollection, PersonsCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, selectView, common, populate) {
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Companies",
             imageSrc   : '',
+            template: _.template(EditTemplate),
+
             initialize : function (options) {
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/Companies";
                 this.responseObj = {};
+
                 this.render();
             },
 
@@ -35,30 +39,44 @@ define([
                 "click"                                                           : "hideNewSelect",
                 "click .details"                                                  : "toggleDetails",
                 'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
             },
-            notHide      : function () {
-                return false;
-            },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
-            nextSelect   : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect   : function (e) {
-                this.showNewSelect(e, true, false);
-            },
+
+
             showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
+
             chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
+
             changeTab    : function (e) {
                 var holder = $(e.target);
                 var n;
@@ -75,15 +93,18 @@ define([
             chooseUser   : function (e) {
                 $(e.target).toggleClass("choosen");
             },
+
             toggleDetails: function () {
                 $("#details-dialog").toggle();
             },
+
             hideDialog   : function () {
                 $(".edit-companies-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
+
             showEdit     : function () {
                 $(".upload").animate({
                     height : "20px",
@@ -91,6 +112,7 @@ define([
                 }, 250);
 
             },
+
             hideEdit     : function () {
                 $(".upload").animate({
                     height : "0px",
@@ -98,6 +120,7 @@ define([
                 }, 250);
 
             },
+
             switchTab    : function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
@@ -117,6 +140,7 @@ define([
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
+
             saveItem    : function (event) {
                 var self = this;
                 var mid = 39;
@@ -221,8 +245,6 @@ define([
                     }
                 });
             },
-
-            template: _.template(EditTemplate),
 
             deleteItem: function (event) {
                 var mid = 39;
