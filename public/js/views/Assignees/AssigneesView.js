@@ -19,9 +19,6 @@ define([
             "click .nextUserList"                                             : "nextUserList",
             "click .current-selected"                                         : "showNewSelect",
             "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
-            //"click .newSelectList li.miniStylePagination"                     : "notHide",
-            //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
         },
 
         template: _.template(assigneesTemplate),
