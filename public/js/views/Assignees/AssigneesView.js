@@ -18,7 +18,8 @@ define([
             "click .prevUserList"                                             : "prevUserList",
             "click .nextUserList"                                             : "nextUserList",
             "click .current-selected"                                         : "showNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+            "click"               : "hideNewSelect"
         },
 
         template: _.template(assigneesTemplate),
@@ -44,6 +45,7 @@ define([
 
             return false;
         },
+
         chooseOption : function (e) {
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
