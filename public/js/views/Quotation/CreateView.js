@@ -2,6 +2,7 @@ define([
         "text!templates/Quotation/CreateTemplate.html",
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
+        'views/selectView/selectView',
         'views/Product/InvoiceOrder/ProductItems',
         "models/QuotationModel",
         "common",
@@ -10,7 +11,7 @@ define([
         'views/Assignees/AssigneesView',
         'dataService'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -30,29 +31,44 @@ define([
             },
 
             events: {
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click a.current-selected:not(.jobs)": "showNewSelect",
+                'keydown'                                                        : 'keydownHandler',
+                'click .dialog-tabs a'                                           : 'changeTab',
+                "click a.current-selected:not(.jobs)"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"                    : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                "click" : "hideNewSelect"
             },
 
-            showNewSelect: function (e, prev, next) {
-                e.preventDefault();
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
 
-                populate.showSelect(e, prev, next, this);
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
+            },
 
-            },
-            notHide      : function () {
-                return false;
-            },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
-            chooseOption : function (e) {
+
+            chooseOption: function (e) {
                 var target = $(e.target);
                 var id = target.attr("id");
                 var type = target.attr('data-level');
@@ -73,12 +89,6 @@ define([
                 this.hideNewSelect();
 
                 return false;
-            },
-            nextSelect   : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect   : function (e) {
-                this.showNewSelect(e, true, false);
             },
 
             keydownHandler: function (e) {
@@ -112,7 +122,6 @@ define([
             },
 
             saveItem: function () {
-
                 var self = this;
                 var mid = 55;
                 var thisEl = this.$el;
@@ -158,7 +167,9 @@ define([
                 });
 
                 if (selectedLength) {
-                    for (var i = selectedLength - 1; i >= 0; i--) {
+                    for (var i = selectedLength - 1;
+                         i >= 0;
+                         i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         if (productId) {

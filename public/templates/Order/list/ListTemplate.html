@@ -11,7 +11,7 @@ class="notEditable">
 <td class="unTaxed"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.unTaxed.toFixed(2)) : '0.00'%></td>
 <td class="total"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total.toFixed(2)) : '0.00'%></td>
 <td id='<%=quotation._id%>'>
-    <a href="javascript:;" class=""><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
+    <a href="javascript:;"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
 </td>
 <td><%=quotation.orderDate%></td>
 </tr>

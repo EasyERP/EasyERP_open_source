@@ -18,29 +18,25 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 events: {
                     "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                     "click .current-selected"                          : "showNewSelect",
-                    //"click .newSelectList li.miniStylePagination"                     : "notHide",
-                    //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                    //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                     "click #addNewEmployeeRow"                         : "addNewEmployeeRow",
                     "click a.generateType"                             : "generateType",
                     "click td.editable"                                : "editRow",
                     "change .editable "                                : "setEditable",
-                    //'keydown input.editing'                                           : 'keyDown',
                     'mouseover tbody tr:not("#addNewItem")'            : 'showRemove',
                     'mouseleave tbody tr:not("#addNewItem")'           : 'hideRemove',
                     'click .remove'                                    : 'deleteRow',
                     "keydown input:not(#jobName, #selectInput)"        : "onKeyDownInput",
-                    "keyup input:not(#jobName, , #selectInput)"        : "onKeyUpInput",
-                    "click" : "hideSelects"
+                    "keyup input:not(#jobName, #selectInput)"          : "onKeyUpInput",
+                    "click"                                            : "hideSelects"
                 },
 
-            hideSelects: function (e) {
-                if (this.selectView){
-                    this.selectView.remove();
-                }
+                hideSelects: function (e) {
+                    if (this.selectView) {
+                        this.selectView.remove();
+                    }
 
-                this.$el.find('.generateTypeUl').hide();
-            },
+                    this.$el.find('.generateTypeUl').hide();
+                },
 
                 onKeyDownInput: function (e) {
                     // Allow: backspace, delete, tab, escape, enter, home, end, left, right
@@ -157,7 +153,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     ul.show();
 
-                    if (this.selectView){
+                    if (this.selectView) {
                         this.selectView.remove();
                     }
 
