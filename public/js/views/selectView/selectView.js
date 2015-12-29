@@ -12,21 +12,21 @@ define([
             contentTemplate: _.template(selectContent),
 
             events: {
-                // "click .newSelectList li:not(.miniStylePagination, #selectInput)" : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
-                // "click :not(#selectInput)"                                  : "hideNewSelect",
             },
 
             initialize: function (options) {
                 var self = this;
+                var data;
+
                 this.number = options.number || 10;
                 this.responseObj = options.responseObj || [];
                 this.e = options.e;
                 this.attr = $(this.e.target).attr('id');
 
-                var data = this.responseObj["#" + this.attr];
+                data = this.responseObj["#" + this.attr];
 
                 this.collection = new filterCollection(data);
                 this.filteredCollection = new filterCollection(data);
@@ -59,10 +59,6 @@ define([
                 _.bindAll(this, "showNewSelect");
             },
 
-            hideNewSelect: function () {
-                this.$el.find(".newSelectList").hide();
-            },
-
             notHide: function () {
                 return false;
             },
@@ -93,7 +89,6 @@ define([
                 var elementVisible = this.number;
                 var newSel;
                 var parent;
-                var s;
                 var start;
                 var end;
                 var allPages;
@@ -199,7 +194,6 @@ define([
 
                 return this;
             }
-
         });
 
         return selectView;

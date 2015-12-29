@@ -18,10 +18,12 @@ define([
             contentType: "Employees",
             imageSrc   : '',
             template   : _.template(EditTemplate),
+            responseObj : {},
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
                 _.bindAll(this, "render", "deleteItem");
+
                 if (options.collection) {
                     this.employeesCollection = options.collection;
                     this.currentModel = this.employeesCollection.getElement();
@@ -29,9 +31,8 @@ define([
                     this.currentModel = options.model;
                 }
                 this.currentModel.urlRoot = '/Employees';
-                this.responseObj = [
-                    {
-                        '#sourceDd': [
+
+                this.responseObj['#sourceDd'] = [
                             {
                                 _id : 'www.rabota.ua',
                                 name: 'www.rabota.ua'
@@ -45,10 +46,9 @@ define([
                                 _id : 'other',
                                 name: 'other'
                             }
-                        ]
-                    },
-                    {
-                        '#genderDd': [
+                        ];
+
+                this.responseObj['#genderDd'] = [
                             {
                                 _id : 'male',
                                 name: 'male'
@@ -56,10 +56,8 @@ define([
                                 _id : 'female',
                                 name: 'female'
                             }
-                        ]
-                    },
-                    {
-                        '#maritalDd': [
+                        ];
+                this.responseObj['#maritalDd'] = [
                             {
                                 _id : 'married',
                                 name: 'married'
@@ -67,8 +65,8 @@ define([
                                 _id : 'unmarried',
                                 name: 'unmarried'
                             }
-                        ]
-                    }];
+                        ];
+
                 this.render();
             },
 
@@ -81,15 +79,8 @@ define([
                 'click .withEndContract .newSelectList li'                       : 'endContract',
                 "click .current-selected"                                        : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption",
-                //"click .newSelectList li.miniStylePagination"                     : "notHide",
-                //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click"                                                          : "hideNewSelect"
             },
-
-            //notHide: function () {
-            //    return false;
-            //},
 
             showNewSelect: function (e) {
                 var $target = $(e.target);
@@ -128,12 +119,15 @@ define([
             //},
 
             hideNewSelect: function () {
-                this.selectView.remove();
+                if ( this.selectView){
+                    this.selectView.remove();
+                }
             },
 
             showEndContractSelect: function (e) {
                 e.preventDefault();
                 $(e.target).parent().find(".newSelectList").toggle();
+
                 return false;
             },
 
@@ -155,10 +149,13 @@ define([
 
             changeTab: function (e) {
                 var holder = $(e.target);
+                var n;
+                var dialog_holder;
+
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = holder.closest(".dialog-tabs").parent().find(".dialog-tabs-items");
+                holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = holder.closest(".dialog-tabs").parent().find(".dialog-tabs-items");
                 dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
@@ -196,21 +193,24 @@ define([
             },
 
             switchTab: function (e) {
+                var index;
+                var link;
+
                 e.preventDefault();
-                var link = this.$("#tabList a");
+                link = this.$("#tabList a");
+
                 if (link.hasClass("selected")) {
                     link.removeClass("selected");
                 }
-                var index = link.index($(e.target).addClass("selected"));
+
+                index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
 
             saveItem  : function () {
                 var empThumb;
                 var self = this;
-
                 var depForTransfer = this.currentModel.get('department');
-
                 var gender = $("#genderDd").data("id");
                 gender = gender ? gender : null;
 
@@ -233,13 +233,13 @@ define([
                 coach = coach ? coach : null;
 
                 var homeAddress = {};
+
                 $("dd").find(".homeAddress").each(function () {
                     var el = $(this);
                     homeAddress[el.attr("name")] = $.trim(el.val());
                 });
                 // date parse 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-
                 var hireArray = this.currentModel.get('hire');
                 var newHireArray = [];
 
@@ -278,6 +278,7 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
+
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -399,10 +400,11 @@ define([
 
             },
             deleteItem: function (event) {
-                var mid = 39;
                 event.preventDefault();
+                var mid = 39;
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
+
                 if (answer == true) {
                     this.currentModel.urlRoot = "/Employees";
                     this.currentModel.destroy({
