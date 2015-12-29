@@ -20,16 +20,21 @@ define([
             initialize: function (options) {
                 var self = this;
                 var data;
+                var $target;
 
                 this.number = options.number || 10;
                 this.responseObj = options.responseObj || [];
                 this.e = options.e;
-                this.attr = $(this.e.target).attr('id');
+
+                $target = $(this.e.target);
+
+                this.attr = $target.attr('id');
 
                 data = this.responseObj["#" + this.attr];
 
+
                 if (!data || !data.length){
-                    this.attr = $(this.e.target).attr('data-content') || $(this.e.target).parent().attr('data-content');
+                    this.attr = $target.attr('data-content') || $target.parent().attr('data-content');
                     data = this.responseObj["#" + this.attr];
                 }
 
@@ -96,7 +101,6 @@ define([
                 var targetParent = this.$el;
                 var elementVisible = this.number;
                 var newSel;
-                var parent;
                 var start;
                 var end;
                 var s;
@@ -108,7 +112,6 @@ define([
                 var $window = $(window);
                 var data = this.filteredCollection ? this.filteredCollection.toJSON() : this.collection.toJSON();
                 var contentHolder = this.$el.find('#content');
-                var $searchInput = this.$el.find('#selectInput');
 
                 this.currentPage = this.currentPage || 1;
 
@@ -125,11 +128,11 @@ define([
                     }
                 }
 
-                parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
-
-                if (parent.prop('tagName') === 'TR') {
-                    parent = $(e.target);
-                }
+                //parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
+                //
+                //if (parent.prop('tagName') === 'TR') {
+                //    parent = $(e.target);
+                //}
 
                 //if (newSel.length && newSel.is(":visible") && !prev && !next) {
                 //    newSel.remove();
@@ -158,23 +161,8 @@ define([
                 end = Math.min(this.currentPage * elementVisible, data.length);
                 allPages = Math.ceil(data.length / elementVisible);
 
-                //if (data && (this.attr !== 'jobs')) {
-                //    contentHolder.html(_.template(selectContent, {
-                //        collection    : data.slice(start, end),
-                //        currentPage   : this.currentPage,
-                //        allPages      : allPages,
-                //        start         : start,
-                //        end           : end,
-                //        dataLength    : data.length,
-                //        elementVisible: elementVisible
-                //    }));
-                //} else if (this.attr === 'jobs') {
-                //    this.$el.find('#selectInput').remove();
-                //    contentHolder.append(s);
-                //}
-
                 if ((this.attr === 'jobs') && !data.length){
-                    $searchInput.remove();
+                    this.searchInput.remove();
                     contentHolder.append(s);
                 } else {
                     contentHolder.html(_.template(selectContent, {
@@ -198,25 +186,24 @@ define([
                     });
                 }
 
-                if (!$searchInput.val().length && data.length < elementVisible){
-                    $searchInput.remove();
+                if (!this.searchInput.val().length && data.length < elementVisible){
+                    this.searchInput.remove();
                 }
             },
 
             render: function () {
                 var self = this;
-                var searchInput;
 
                 this.$el.html(this.template);
 
-                this.showNewSelect(this.e, false, false);
+                this.searchInput = this.$el.find("#selectInput");
 
-                searchInput = this.$el.find("#selectInput");
-
-                searchInput.keyup(function (e) {
+                this.searchInput.keyup(function (e) {
                     e.stopPropagation();
                     self.inputEvent(e);
                 });
+
+                this.showNewSelect(this.e);
 
                 return this;
             }
