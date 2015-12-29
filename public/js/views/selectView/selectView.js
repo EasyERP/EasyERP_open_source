@@ -36,6 +36,7 @@ define([
                 this.collection = new filterCollection(data);
                 this.filteredCollection = new filterCollection(data);
 
+                this.filteredCollection.unbind();
                 this.filteredCollection.bind('reset', resetCollection);
 
                 function resetCollection() {
@@ -69,10 +70,12 @@ define([
             },
 
             nextSelect: function (e) {
+                e.stopPropagation();
                 this.showNewSelect(e, false, true);
             },
 
             prevSelect: function (e) {
+                e.stopPropagation();
                 this.showNewSelect(e, true, false);
             },
 
@@ -211,11 +214,6 @@ define([
                 searchInput = this.$el.find("#selectInput");
 
                 searchInput.keyup(function (e) {
-                    e.stopPropagation();
-                    self.inputEvent(e);
-                });
-
-                searchInput.change(function (e) {
                     e.stopPropagation();
                     self.inputEvent(e);
                 });

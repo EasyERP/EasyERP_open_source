@@ -508,9 +508,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     this.$el.find('.generateTypeUl').hide();
 
-                    //if ($target.attr('id') === 'selectInput') {
-                    //    return false;
-                    //}
+                    if ($target.attr('id') === 'selectInput') {
+                        return false;
+                    }
 
                     if (this.selectView) {
                         this.selectView.remove();
