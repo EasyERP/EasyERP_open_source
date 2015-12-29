@@ -1,13 +1,14 @@
 define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
         'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
+        'views/selectView/selectView',
         'collections/Jobs/filterCollection',
         'populate',
         'dataService',
         'moment',
         'common'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, JobsCollection, populate, dataService, moment, common) {
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common) {
         "use strict";
         var CreateView = Backbone.View.extend({
                 template                 : _.template(generateTemplate),
@@ -15,22 +16,31 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 responseObj              : {},
 
                 events: {
-                    "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                    "click .current-selected"                                         : "showNewSelect",
-                    "click .newSelectList li.miniStylePagination"                     : "notHide",
-                    "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                    "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                    "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
-                    "click a.generateType"                                            : "generateType",
-                    "click td.editable"                                               : "editRow",
-                    "change .editable "                                               : "setEditable",
+                    "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                    "click .current-selected"                          : "showNewSelect",
+                    //"click .newSelectList li.miniStylePagination"                     : "notHide",
+                    //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                    //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                    "click #addNewEmployeeRow"                         : "addNewEmployeeRow",
+                    "click a.generateType"                             : "generateType",
+                    "click td.editable"                                : "editRow",
+                    "change .editable "                                : "setEditable",
                     //'keydown input.editing'                                           : 'keyDown',
-                    'mouseover tbody tr:not("#addNewItem")'                           : 'showRemove',
-                    'mouseleave tbody tr:not("#addNewItem")'                          : 'hideRemove',
-                    'click .remove'                                                   : 'deleteRow',
-                    "keydown input:not(#jobName)"                                     : "onKeyDownInput",
-                    "keyup input:not(#jobName)"                                       : "onKeyUpInput"
+                    'mouseover tbody tr:not("#addNewItem")'            : 'showRemove',
+                    'mouseleave tbody tr:not("#addNewItem")'           : 'hideRemove',
+                    'click .remove'                                    : 'deleteRow',
+                    "keydown input:not(#jobName, #selectInput)"        : "onKeyDownInput",
+                    "keyup input:not(#jobName, , #selectInput)"        : "onKeyUpInput",
+                    "click" : "hideSelects"
                 },
+
+            hideSelects: function (e) {
+                if (this.selectView){
+                    this.selectView.remove();
+                }
+
+                this.$el.find('.generateTypeUl').hide();
+            },
 
                 onKeyDownInput: function (e) {
                     // Allow: backspace, delete, tab, escape, enter, home, end, left, right
@@ -120,7 +130,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 asyncLoadImgs: function (model) {
                     var currentModel = model.id ? model.toJSON() : model;
                     var id = currentModel._id;
-                    var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id: currentModel.projectmanager;
+                    var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
                     var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
                     if (pm) {
@@ -146,6 +156,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var ul = td.find('.newSelectList');
 
                     ul.show();
+
+                    if (this.selectView){
+                        this.selectView.remove();
+                    }
 
                     this.stopDefaultEvents(e);
                 },
@@ -365,7 +379,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
 
-                        if (editedElement.attr('id') === 'inputHours'){
+                        if (editedElement.attr('id') === 'inputHours') {
                             editedElementValue = parseInt(editedElementValue);
                         }
 
@@ -485,11 +499,29 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 showNewSelect: function (e, prev, next) {
-                    var targetEl = $(e.target);
-                    var content = targetEl.closest('td').attr('data-content');
+                    //var targetEl = $(e.target);
+                    //var content = targetEl.closest('td').attr('data-content');
+                    //
+                    //populate.showSelect(e, prev, next, this);
+                    var $target = $(e.target);
+                    e.stopPropagation();
 
-                    populate.showSelect(e, prev, next, this);
+                    this.$el.find('.generateTypeUl').hide();
 
+                    //if ($target.attr('id') === 'selectInput') {
+                    //    return false;
+                    //}
+
+                    if (this.selectView) {
+                        this.selectView.remove();
+                    }
+
+                    this.selectView = new selectView({
+                        e          : e,
+                        responseObj: this.responseObj
+                    });
+
+                    $target.append(this.selectView.render().el);
                     return false;
                 },
 
@@ -528,7 +560,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (elementType === '#employee') {
                         departmentContainer = tr.find('[data-content="department"]');
-                        departmentContainer.find('a.current-selected').text(element.department.name);
+                        departmentContainer.find('a.current-selected').text(element.department.departmentName);
                         departmentContainer.removeClass('errorContent');
 
                         employee = element._id;

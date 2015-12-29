@@ -29,7 +29,7 @@ define([
                 data = this.responseObj["#" + this.attr];
 
                 if (!data || !data.length){
-                    this.attr = $(this.e.target).attr('data-content');
+                    this.attr = $(this.e.target).attr('data-content') || $(this.e.target).parent().attr('data-content');
                     data = this.responseObj["#" + this.attr];
                 }
 
