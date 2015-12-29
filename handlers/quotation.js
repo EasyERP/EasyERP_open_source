@@ -15,7 +15,6 @@ var Quotation = function (models, event) {
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
-    var workflowHandler = new WorkflowHandler(models);
     var _ = require('../node_modules/underscore');
 
     this.create = function (req, res, next) {
@@ -118,12 +117,13 @@ var Quotation = function (models, event) {
                         if (project) {
                             event.emit('fetchJobsCollection', {project: project});
                         }
-                        res.status(200).send(_quotation);
+                        res.status(201).send(_quotation);
                     });
                 })
             } else {
-                res.status(200).send(_quotation);
+                res.status(201).send(_quotation);
             }
+            event.emit('recalculateRevenue', _quotation);
         });
     };
 

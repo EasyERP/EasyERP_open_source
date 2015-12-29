@@ -528,7 +528,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (elementType === '#employee') {
                         departmentContainer = tr.find('[data-content="department"]');
-                        departmentContainer.find('a.current-selected').text(element.department.name);
+                        departmentContainer.find('a.current-selected').text(element.department.departmentName);
                         departmentContainer.removeClass('errorContent');
 
                         employee = element._id;

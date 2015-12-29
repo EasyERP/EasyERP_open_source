@@ -5,34 +5,74 @@ require('../config/development');
 
 var request = require('supertest');
 var expect = require('chai').expect;
-
+var url = 'http://localhost:8089/';
 var host = process.env.HOST;
-var url;
 var aggent;
 
-describe.only("BDD for wTrack", function () {  // Runs once before all tests start.
+describe("Quotation Specs", function () {
+    var id;
+
     before(function (done) {
-        aggent = request.agent(host);
+        aggent = request.agent(url);
 
         aggent
             .post('login')
             .send({
                 login: 'admin',
-                pass: '1q2w3eQWE',
-                dbId: 'weTrack'
+                pass : '1q2w3eQWE',
+                dbId : 'production'
             })
             .expect(200, done);
     });
 
-    after(function () {
-        url = null;
-        agent = null;
-    });
+    it("should create quotation", function (done) {
+        var body = {
+            "supplier"         : "55b92ad621e4b7c40f00064f",
+            "project"          : "55b92ad621e4b7c40f000660",
+            "workflow"         : "5555bf276a3f01acae0b5560",
+            "supplierReference": null,
+            "orderDate"        : "28 Dec, 2015",
+            "expectedDate"     : "Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))",
+            "name"             : "PO",
+            "invoiceControl"   : null,
+            "invoiceRecived"   : false,
+            "paymentTerm"      : null,
+            "fiscalPosition"   : null,
+            "destination"      : null,
+            "incoterm"         : null,
+            "products"         : [
+                {
+                    "product"      : "5540d528dacb551c24000003",
+                    "unitPrice"    : "500",
+                    "quantity"     : "1",
+                    "scheduledDate": "28 Dec, 2015",
+                    "taxes"        : "0.00",
+                    "description"  : "",
+                    "subTotal"     : "500",
+                    "jobs"         : "56819665dcd80b901c5645b7"
+                }
+            ],
+            "currency"         : "565eab29aeb95fa9c0f9df2d",
+            "forSales"         : true,
+            "deliverTo"        : "55543831d51bdef79ea0d58c",
+            "populate"         : true,
+            "paymentInfo"      : {
+                "total"  : "500.00",
+                "unTaxed": "500.00",
+                "taxes"  : "0.00"
+            },
+            "groups"           : {
+                "owner": "55ba28c8d79a3a3439000016",
+                "users": [],
+                "group": []
+            },
+            "whoCanRW"         : "everyOne"
+        };
 
-    it("export should return file", function (done) {
         aggent
-            .get('wTrack/exportToXlsx')
-            .expect(200)
+            .post('quotation')
+            .send(body)
+            .expect(201)
             .end(function (err, res) {
                 var body = res.body;
 
@@ -40,10 +80,22 @@ describe.only("BDD for wTrack", function () {  // Runs once before all tests sta
                     return done(err);
                 }
 
-                expect(body).to.be.instanceOf(Array);
+                expect(body).to.be.instanceOf(Object);
+                expect(body).to.have.property('_id');
+                expect(body).to.have.property('products');
+                expect(body.products).to.be.instanceOf(Array);
+                expect(body.products.length).not.to.be.equal(0);
+
+                id = body._id;
+
                 done();
             });
+    });
 
+    it("should delete quotation", function (done) {
+        aggent
+            .delete('quotation/' + id)
+            .expect(200, done);
     });
 });
 
