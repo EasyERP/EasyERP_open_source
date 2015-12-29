@@ -3,20 +3,32 @@ define([
         "models/TasksModel",
         "common",
         "populate",
-        'views/Notes/AttachView'
-
+        'views/Notes/AttachView',
+        'views/selectView/selectView'
     ],
-    function (CreateTemplate, TaskModel, common, populate, attachView) {
+    function (CreateTemplate, TaskModel, common, populate, attachView, selectView) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Tasks",
             template   : _.template(CreateTemplate),
+            responseObj: {},
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
                 this.model = new TaskModel();
-                this.responseObj = {};
+                this.responseObj['#type'] = [
+                    {
+                        _id : 'Task',
+                        name: 'Task'
+                    }, {
+                        _id : 'Bug',
+                        name: 'Bug'
+                    }, {
+                        _id : 'Feature',
+                        name: 'Feature'
+                    }
+                ];
                 this.render();
             },
 
@@ -26,11 +38,9 @@ define([
                 "change #workflowNames"                                           : "changeWorkflows",
                 "click .current-selected"                                         : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click"                                                           : "hideNewSelect"
             },
+
             addAttach   : function (event) {
                 var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
                 $(".attachContainer").append('<li class="attachFile">' +
@@ -40,6 +50,7 @@ define([
                 $(".attachContainer .attachFile:last").append($(".input-file .inputAttach").attr("hidden", "hidden"));
                 $(".input-file").append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
             },
+
             deleteAttach: function (e) {
                 $(e.target).closest(".attachFile").remove();
             },
@@ -49,10 +60,6 @@ define([
                     return false;
                 }
                 return file.size < App.File.MAXSIZE;
-            },
-
-            notHide: function (e) {
-                return false;
             },
 
             getWorkflowValue: function (value) {
@@ -69,6 +76,7 @@ define([
                 }
 
             },
+
             switchTab     : function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
@@ -78,6 +86,7 @@ define([
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
+
             hideDialog    : function () {
                 $(".edit-dialog").remove();
             },
@@ -129,20 +138,36 @@ define([
 
                     });
             },
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
 
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
             hideNewSelect: function (e) {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
+
             chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },

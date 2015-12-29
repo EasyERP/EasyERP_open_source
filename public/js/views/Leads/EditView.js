@@ -1,12 +1,13 @@
 define([
         "text!templates/Leads/EditTemplate.html",
+        'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         "custom",
         'common',
         'dataService',
         "populate"
     ],
-    function (EditTemplate, AssigneesView, Custom, common, dataService, populate) {
+    function (EditTemplate, selectView, AssigneesView, Custom, common, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -18,6 +19,7 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/Leads";
                 this.responseObj = {};
+
                 this.render();
             },
 
@@ -31,27 +33,14 @@ define([
                 "click"                                                           : "hideNewSelect",
                 'keydown'                                                         : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
-
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
             },
+
             openDialog: function (e) {
                 e.preventDefault();
                 $("#convert-dialog-form").dialog("open");
             },
 
-            notHide: function () {
-                return false;
-            },
-
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
             changeTab : function (e) {
                 $(e.target).closest(".dialog-tabs").find("a.active").removeClass("active");
                 $(e.target).addClass("active");
@@ -242,14 +231,35 @@ define([
                     });
                 }
             },
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
 
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
+                return false;
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             chooseOption: function (e) {
