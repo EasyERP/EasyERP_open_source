@@ -1,5 +1,6 @@
 define([
         "text!templates/Opportunities/CreateTemplate.html",
+        'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         "models/OpportunitiesModel",
         "common",
@@ -7,7 +8,7 @@ define([
         "dataService",
         'views/Notes/AttachView'
     ],
-    function (CreateTemplate, AssigneesView, OpportunityModel, common, populate, dataService, attachView) {
+    function (CreateTemplate, selectView, AssigneesView, OpportunityModel, common, populate, dataService, attachView) {
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Opportunities",
@@ -27,29 +28,40 @@ define([
                 'keydown'                                                         : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected"                                         : "showNewSelect",
                 "click"                                                           : "hideNewSelect"
             },
 
-            notHide      : function () {
-                return false;
-            },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
-            nextSelect   : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect   : function (e) {
-                this.showNewSelect(e, true, false);
-            },
+
             showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
+
             chooseOption : function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));

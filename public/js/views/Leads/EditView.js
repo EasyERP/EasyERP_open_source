@@ -19,7 +19,7 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/Leads";
                 this.responseObj = {};
-                
+
                 this.render();
             },
 
