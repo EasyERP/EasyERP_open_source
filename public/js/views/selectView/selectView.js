@@ -28,6 +28,11 @@ define([
 
                 data = this.responseObj["#" + this.attr];
 
+                if (!data || !data.length){
+                    this.attr = $(this.e.target).attr('data-content');
+                    data = this.responseObj["#" + this.attr];
+                }
+
                 this.collection = new filterCollection(data);
                 this.filteredCollection = new filterCollection(data);
 
@@ -91,6 +96,7 @@ define([
                 var parent;
                 var start;
                 var end;
+                var s;
                 var allPages;
                 var $curUl;
                 var curUlHeight;
@@ -143,21 +149,40 @@ define([
                     this.currentPage++;
                 }
 
-                //s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
+                s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
                 start = (this.currentPage - 1) * elementVisible;
                 end = Math.min(this.currentPage * elementVisible, data.length);
                 allPages = Math.ceil(data.length / elementVisible);
 
-                contentHolder.html(_.template(selectContent, {
-                    collection    : data.slice(start, end),
-                    currentPage   : this.currentPage,
-                    allPages      : allPages,
-                    start         : start,
-                    end           : end,
-                    dataLength    : data.length,
-                    elementVisible: elementVisible
-                }));
+                //if (data && (this.attr !== 'jobs')) {
+                //    contentHolder.html(_.template(selectContent, {
+                //        collection    : data.slice(start, end),
+                //        currentPage   : this.currentPage,
+                //        allPages      : allPages,
+                //        start         : start,
+                //        end           : end,
+                //        dataLength    : data.length,
+                //        elementVisible: elementVisible
+                //    }));
+                //} else if (this.attr === 'jobs') {
+                //    this.$el.find('#selectInput').remove();
+                //    contentHolder.append(s);
+                //}
 
+                if ((this.attr === 'jobs') && !data.length){
+                    this.$el.find('#selectInput').remove();
+                    contentHolder.append(s);
+                } else {
+                    contentHolder.html(_.template(selectContent, {
+                        collection    : data.slice(start, end),
+                        currentPage   : this.currentPage,
+                        allPages      : allPages,
+                        start         : start,
+                        end           : end,
+                        dataLength    : data.length,
+                        elementVisible: elementVisible
+                    }));
+                }
                 $curUl = this.$el.find('.newSelectList');
                 curUlOffset = $curUl.offset();
                 curUlPosition = $curUl.position();
@@ -181,14 +206,14 @@ define([
                 searchInput = this.$el.find("#selectInput");
 
                 searchInput.keyup(function (e) {
-                    e.stopPropagation();
                     self.inputEvent(e);
+                    e.stopPropagation();
 
                 });
 
                 searchInput.change(function (e) {
-                    e.stopPropagation();
                     self.inputEvent(e);
+                    e.stopPropagation();
 
                 });
 
