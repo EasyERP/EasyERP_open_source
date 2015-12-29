@@ -9,7 +9,6 @@
             <th>Cost</th>
             <th>Revenue</th>
             <th>Profit</th>
-            <th>Rate</th>
         </tr>
         </thead>
 
@@ -27,9 +26,6 @@
             <td><%=currencySplitter(budget[i].cost.toFixed())%></td>
             <td><%=currencySplitter(budget[i].revenue.toFixed())%></td>
             <td><%=currencySplitter(budget[i].profit.toFixed())%></td>
-            <td><%= isNaN(budget[i].revenue / budget[i].hours) ? 0 : currencySplitter((budget[i].revenue /
-                budget[i].hours).toFixed(2)) %>
-            </td>
         </tr>
         <% count++ %>
         <% })%>

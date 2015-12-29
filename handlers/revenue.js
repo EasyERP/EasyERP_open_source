@@ -81,7 +81,8 @@ var wTrack = function (models) {
                     year    : '$year',
                     week    : '$week'
                 },
-                revenue: {$sum: {$multiply: ["$rate", {$add: ["$1", "$2", "$3", "$4", "$5", "$6", "$7"]}]}}
+               // revenue: {$sum: {$multiply: ["$rate", {$add: ["$1", "$2", "$3", "$4", "$5", "$6", "$7"]}]}}
+                revenue: {$sum: '$revenue'}
             };
 
             WTrack.aggregate([{
@@ -95,15 +96,9 @@ var wTrack = function (models) {
                     project   : {$arrayElemAt: ["$project", 0]},
                     year      : 1,
                     week      : 1,
-                    revenue   : 1,
-                    rate      : 1,
-                    '1'       : 1,
-                    '2'       : 1,
-                    '3'       : 1,
-                    '4'       : 1,
-                    '5'       : 1,
-                    '6'       : 1,
-                    '7'       : 1,
+                    revenue   : {
+                        $divide: ['$revenue', 100]
+                    },
                     dateByWeek: 1
                 }
             }, {
@@ -119,14 +114,6 @@ var wTrack = function (models) {
                     week      : 1,
                     employee  : {$arrayElemAt: ["$employee", 0]},
                     revenue   : 1,
-                    rate      : 1,
-                    '1'       : 1,
-                    '2'       : 1,
-                    '3'       : 1,
-                    '4'       : 1,
-                    '5'       : 1,
-                    '6'       : 1,
-                    '7'       : 1,
                     dateByWeek: 1
                 }
             }, {
@@ -203,7 +190,10 @@ var wTrack = function (models) {
                     year      : '$year',
                     week      : '$week'
                 },
-                revenue: {$sum: {$multiply: ["$rate", {$add: ["$1", "$2", "$3", "$4", "$5", "$6", "$7"]}]}}
+               //revenue: {$sum: {$multiply: ["$rate", {$add: ["$1", "$2", "$3", "$4", "$5", "$6", "$7"]}]}}
+               revenue: {
+                   $sum: '$revenue'
+               }
             };
 
             WTrack.aggregate([{
@@ -217,15 +207,9 @@ var wTrack = function (models) {
                     department: {$arrayElemAt: ["$department", 0]},
                     year      : 1,
                     week      : 1,
-                    revenue   : 1,
-                    rate      : 1,
-                    '1'       : 1,
-                    '2'       : 1,
-                    '3'       : 1,
-                    '4'       : 1,
-                    '5'       : 1,
-                    '6'       : 1,
-                    '7'       : 1,
+                    revenue   : {
+                        $divide: ['$revenue', 100]
+                    },
                     dateByWeek: 1
                 }
             }, {
@@ -749,7 +733,7 @@ var wTrack = function (models) {
                     month      : 1,
                     year       : 1,
                     dateByMonth: 1,
-                    employee: 1
+                    employee   : 1
                 }
             }, {
                 $match: match
@@ -850,9 +834,9 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    department    : {$arrayElemAt: ["$department", 0]},
-                    month      : 1,
-                    year       : 1,
+                    department: {$arrayElemAt: ["$department", 0]},
+                    month     : 1,
+                    year      : 1,
                     dateByWeek: 1
                 }
             }, {
@@ -989,10 +973,10 @@ var wTrack = function (models) {
                         }
                     }, {
                         $project: {
-                            project: {$arrayElemAt: ["$project", 0]},
+                            project    : {$arrayElemAt: ["$project", 0]},
                             dateByMonth: 1,
-                            revenue: 1,
-                            cost: 1
+                            revenue    : 1,
+                            cost       : 1
                         }
                     }, {
                         $group: {
@@ -1076,7 +1060,7 @@ var wTrack = function (models) {
 
                     Employee.populate(projects, {
                         path   : '_id',
-                        match  : {'department._id': '55b92ace21e4b7c40f000014'},
+                        match  : {'department': '55b92ace21e4b7c40f000014'},
                         select : '_id name',
                         options: {
                             lean: true
@@ -1168,7 +1152,8 @@ var wTrack = function (models) {
                 var bonusObject;
 
                 //iterate over grouped result of projects with bonus by Employee
-                for (var i = groupedEmployees.length; i--;) {
+                for (var i = groupedEmployees.length;
+                     i--;) {
                     totalByBonus = 0;
 
                     groupedEmployee = groupedEmployees[i];
@@ -1179,21 +1164,25 @@ var wTrack = function (models) {
                         total: 0
                     };
                     //iterate over grouped result of wTrack by date and projects
-                    for (var j = groupedWtracks.length; j--;) {
+                    for (var j = groupedWtracks.length;
+                         j--;) {
                         dateStr = groupedWtracks[j]._id;
                         /*employee[dateStr] = [];*/
                         bonusObject = {
                             total: 0
                         };
-                        for (var m = groupedEmployee.root.length; m--;) {
+                        for (var m = groupedEmployee.root.length;
+                             m--;) {
                             /*bonusObject = {
                              total: 0
                              };*/
                             totalByBonus = 0;
 
-                            for (var k = groupedWtracks[j].root.length; k--;) {
+                            for (var k = groupedWtracks[j].root.length;
+                                 k--;) {
 
-                                for (var l = groupedEmployee.root[m].projects.length; l--;) {
+                                for (var l = groupedEmployee.root[m].projects.length;
+                                     l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                         if (groupedEmployee.root[m].bonus) {
                                             totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -1319,10 +1308,10 @@ var wTrack = function (models) {
                         }
                     }, {
                         $project: {
-                            project: {$arrayElemAt: ["$project", 0]},
+                            project    : {$arrayElemAt: ["$project", 0]},
                             dateByMonth: 1,
-                            revenue: 1,
-                            cost: 1
+                            revenue    : 1,
+                            cost       : 1
                         }
                     }, {
                         $group: {
@@ -1406,7 +1395,7 @@ var wTrack = function (models) {
 
                     Employee.populate(projects, {
                         path   : '_id',
-                        match  : {'department._id': '55b92ace21e4b7c40f000014'},
+                        match  : {'department': '55b92ace21e4b7c40f000014'},
                         select : '_id name',
                         options: {
                             lean: true
@@ -1498,7 +1487,8 @@ var wTrack = function (models) {
                 var bonusObject;
 
                 //iterate over grouped result of projects with bonus by Employee
-                for (var i = groupedEmployees.length; i--;) {
+                for (var i = groupedEmployees.length;
+                     i--;) {
                     totalByBonus = 0;
 
                     groupedEmployee = groupedEmployees[i];
@@ -1509,21 +1499,25 @@ var wTrack = function (models) {
                         total: 0
                     };
                     //iterate over grouped result of wTrack by date and projects
-                    for (var j = groupedWtracks.length; j--;) {
+                    for (var j = groupedWtracks.length;
+                         j--;) {
                         dateStr = groupedWtracks[j]._id;
                         /*employee[dateStr] = [];*/
                         bonusObject = {
                             total: 0
                         };
-                        for (var m = groupedEmployee.root.length; m--;) {
+                        for (var m = groupedEmployee.root.length;
+                             m--;) {
                             /*bonusObject = {
                              total: 0
                              };*/
                             totalByBonus = 0;
 
-                            for (var k = groupedWtracks[j].root.length; k--;) {
+                            for (var k = groupedWtracks[j].root.length;
+                                 k--;) {
 
-                                for (var l = groupedEmployee.root[m].projects.length; l--;) {
+                                for (var l = groupedEmployee.root[m].projects.length;
+                                     l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                         if (groupedEmployee.root[m].bonus) {
                                             totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -1736,7 +1730,7 @@ var wTrack = function (models) {
 
                     Employee.populate(projects, {
                         path   : '_id',
-                        match  : {'department._id': '55b92ace21e4b7c40f000014'},
+                        match  : {'department': '55b92ace21e4b7c40f000014'},
                         select : '_id name',
                         options: {
                             lean: true
@@ -1828,7 +1822,8 @@ var wTrack = function (models) {
                 var bonusObject;
 
                 //iterate over grouped result of projects with bonus by Employee
-                for (var i = groupedEmployees.length; i--;) {
+                for (var i = groupedEmployees.length;
+                     i--;) {
                     totalByBonus = 0;
 
                     groupedEmployee = groupedEmployees[i];
@@ -1839,21 +1834,25 @@ var wTrack = function (models) {
                         total: 0
                     };
                     //iterate over grouped result of wTrack by date and projects
-                    for (var j = groupedWtracks.length; j--;) {
+                    for (var j = groupedWtracks.length;
+                         j--;) {
                         dateStr = groupedWtracks[j]._id;
                         /*employee[dateStr] = [];*/
                         bonusObject = {
                             total: 0
                         };
-                        for (var m = groupedEmployee.root.length; m--;) {
+                        for (var m = groupedEmployee.root.length;
+                             m--;) {
                             /*bonusObject = {
                              total: 0
                              };*/
                             totalByBonus = 0;
 
-                            for (var k = groupedWtracks[j].root.length; k--;) {
+                            for (var k = groupedWtracks[j].root.length;
+                                 k--;) {
 
-                                for (var l = groupedEmployee.root[m].projects.length; l--;) {
+                                for (var l = groupedEmployee.root[m].projects.length;
+                                     l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                         if (groupedEmployee.root[m].bonus) {
                                             totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -1883,526 +1882,552 @@ var wTrack = function (models) {
         });
     };
 
-    this.totalHours = function (req, res, next) {
-        var MonthHours = models.get(req.session.lastDb, 'MonthHours', monthHoursSchema);
-        var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
-        var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
-        var Employees = models.get(req.session.lastDb, 'Employees', employeeSchema);
-
-        access.getReadAccess(req, req.session.uId, 67, function (access) {
-            var options = req.query;
-            var startMonth = parseInt(options.month) || 10;
-            var startYear = parseInt(options.year) || 2014;
-            var endMonth = parseInt(options.endMonth) || 9;
-            var endYear = parseInt(options.endYear) || 2015;
-            var startWeek = moment().year(startYear).month(startMonth - 1).isoWeek();
-            var match;
-            var matchHoliday;
-            var matchVacation;
-            var parallelTasksObject;
-            var waterfallTasks;
-
-            var startDate = startYear * 100 + startWeek;
-
-            if (!access) {
-                return res.status(403).send();
-            }
-
-            function employeesRetriver(waterfallCb) {
-                var Ids = [];
-
-                Employees
-                    .find({},
-                    {_id: 1}
-                )
-                    .lean()
-                    .exec(function (err, result) {
-                        if (err) {
-                            waterfallCb(err);
-                        }
-
-                        result.forEach(function (element) {
-                            Ids.push(element._id);
-                        });
-
-                        Employees.aggregate([
-                            {
-                                $match: {
-                                    $or: [
-                                        {
-                                            isEmployee: true
-                                        }, {
-                                            $and: [{isEmployee: false}, {
-                                                lastFire: {
-                                                    $ne : null,
-                                                    $gte: startDate
-                                                }
-                                            }]
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                $group: {
-                                    _id: {
-                                        department: '$department.name',
-                                        depId     : '$department._id',
-                                        employee  : '$name',
-                                        _id       : '$_id',
-                                        hire      : '$hire',
-                                        fire      : '$fire'
-                                    }
-                                }
-                            },
-                            {
-                                $project: {
-                                    department: '$_id.department',
-                                    depId     : '$_id.depId',
-                                    employee  : '$_id.employee',
-                                    _id       : '$_id._id',
-                                    hire      : '$_id.hire',
-                                    fire      : '$_id.fire'
-                                }
-                            },
-                            {
-                                $group: {
-                                    _id : '$department',
-                                    root: {$push: '$$ROOT'}
-                                }
-                            },
-                            {
-                                $sort: {_id: 1}
-                            }
-                        ], function (err, response) {
-                            if (err) {
-                                return next(err);
-                            }
-
-                            waterfallCb(null, {ids: Ids, response: response});
-                        });
-                    });
-            };
-
-            waterfallTasks = [
-                employeesRetriver,
-                parallel
-            ];
-
-            function parallel(Ids, waterfallCb) {
-                var ids = Ids.ids;
-                var employees = Ids.response;
-
-                match = {
-                    // month: {$gte: startMonth, $lte: endMonth},
-                    year: {$gte: startYear, $lte: endYear}
-                };
-
-                matchVacation = {
-                    //month: {$gte: startMonth, $lte: endMonth},
-                    year          : {$gte: startYear, $lte: endYear},
-                    'employee': {$in: ids}
-                };
-
-                matchHoliday = {
-                    // week: {$gte: startWeek, $lte: endWeek},
-                    year: {$gte: startYear, $lte: endYear}
-                };
-
-                parallelTasksObject = {
-                    monthHours: monthHourRetriver,
-                    holidays  : holidaysRetriver,
-                    vacations : vacationComposer
-                };
-
-                function monthHourRetriver(parallelCb) {
-                    MonthHours
-                        .find(
-                        match,
-                        {year: 1, month: 1, hours: 1}
-                    )
-                        .lean()
-                        .exec(parallelCb)
-                };
-
-                function holidaysRetriver(parallelCb) {
-                    Holidays
-                        .find(matchHoliday)
-                        .lean()
-                        .exec(parallelCb)
-                };
-                function vacationComposer(parallelCb) {
-                    Vacation.aggregate([{
-                        $match: matchVacation
-                    }, {
-                        $lookup: {
-                            from        : 'Employee',
-                            localField  : 'employee',
-                            foreignField: '_id', as: 'employee'
-                        }
-                    }, {
-                        $project: {
-                            monthTotal: 1,
-                            employee: {$arrayElemAt: ["$employee", 0]},
-                            month: 1,
-                            year: 1
-                        }
-                    },
-                        {
-                            $group: {
-                                _id: {
-                                    _id       : '$employee._id',
-                                    name      : {
-                                        $concat: ['$employee.name.first', ' ', '$employee.name.last']
-                                    },
-                                    month     : '$month',
-                                    year      : '$year',
-                                    monthTotal: '$monthTotal'
-                                }
-                            }
-                        }, {
-                            $project: {
-                                employee  : '$_id._id',
-                                name      : '$_id.name',
-                                month     : '$_id.month',
-                                year      : '$_id.year',
-                                monthTotal: '$_id.monthTotal'
-                            }
-                        },
-                        {
-                            $sort: {_id: 1}
-                        }
-                    ], function (err, response) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        parallelCb(null, response);
-                    });
-                };
-
-                async.parallel(parallelTasksObject, function (err, response) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    response.employees = employees;
-                    waterfallCb(null, response);
-                });
-            }
-
-            function waterfallCb(err, response) {
-                if (err) {
-                    return next(err);
-                }
-
-                resultMapper(response);
-
-            }
-
-            function resultMapper(response) {
-                var holidays = response['holidays'];
-                var vacations = response['vacations'];
-                var employees = response['employees'];
-                var monthHours = response['monthHours'];
-                var result = [];
-                var departments = [];
-                var sortDepartments = [];
-
-                employees.forEach(function (employee) {
-                    var department = {};
-                    var depRoot;
-                    var key;
-
-                    department._id = employee._id;
-                    department.employees = [];
-                    depRoot = employee.root;
-
-                    depRoot.forEach(function (element) {
-                        var employee = {};
-                        var hire;
-                        var date;
-                        var fire;
-
-                        employee.hire = [];
-
-                        hire = _.clone(element.hire);
-
-                        hire.forEach(function (hireDate) {
-                            date = new Date(hireDate);
-                            employee.hire.push(moment(date).year() * 100 + moment(date).month() + 1);
-                        });
-
-                        employee.fire = [];
-
-                        fire = _.clone(element.fire);
-
-                        fire.forEach(function (hireDate) {
-                            date = new Date(hireDate);
-                            employee.fire.push(moment(date).year() * 100 + moment(date).month() + 1);
-                        });
-
-                        employee._id = element._id;
-                        employee.name = element.employee.first + ' ' + element.employee.last;
-
-                        employee.total = 0;
-                        employee.hoursTotal = {};
-
-                        monthHours.forEach(function (months) {
-                            var month = months.month;
-                            var year = months.year;
-                            var vacationForEmployee = 0;
-                            var hoursForMonth;
-                            var holidaysForMonth = 0;
-
-                            hoursForMonth = months.hours;
-
-                            vacations.forEach(function (vacation) {
-                                if ((employee._id.toString() === vacation.employee.toString()) && (vacation.month === month) && (vacation.year === year)) {
-                                    vacationForEmployee = vacation.monthTotal;
-                                }
-                            });
-
-                            holidays.forEach(function (holiday) {
-                                var dateMonth = moment(holiday.date).month() + 1;
-                                var dateYear = moment(holiday.date).year();
-                                var dayNumber = moment(holiday.date).day();
-
-                                if ((dateMonth === month) && (dateYear === year) && (dayNumber !== 0 && dayNumber !== 6)) {
-                                    holidaysForMonth += 1;
-                                }
-                            });
-
-                            key = year * 100 + month;
-
-                            employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
-                            employee.total += employee.hoursTotal[key];
-                        });
-
-                        department.employees.push(employee);
-                    });
-
-                    result.push(department);
-                });
-
-                constForView.forEach(function (dep) {
-                    result.forEach(function (depart) {
-                        if (dep === depart._id) {
-                            sortDepartments.push(depart);
-                        }
-                    });
-                });
-
-                async.each(sortDepartments, function (element) {
-                    var obj = {};
-                    var objToSave = {};
-                    var empArr;
-
-                    obj.employees = [];
-                    obj.name = element._id;
-
-                    obj.totalForDep = 0;
-
-                    empArr = element.employees;
-
-                    empArr.forEach(function (employee) {
-                        var object;
-
-                        objToSave.name = employee.name;
-                        objToSave.total = employee.total;
-                        objToSave.hoursTotal = employee.hoursTotal;
-                        objToSave.hire = employee.hire;
-                        objToSave.fire = employee.fire;
-
-                        object = _.clone(objToSave);
-
-                        obj.employees.push(object);
-                        obj.totalForDep += objToSave.total;
-                    });
-                    departments.push(obj);
-                });
-
-                res.status(200).send(departments);
-            }
-
-            async.waterfall(waterfallTasks, waterfallCb);
-
-        });
-    };
-
-    this.hoursSold = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-
-        access.getReadAccess(req, req.session.uId, 67, function (access) {
-            var options = req.query;
-            var startMonth = parseInt(options.month) || 10;
-            var startYear = parseInt(options.year) || 2014;
-            var endMonth = parseInt(options.endMonth) || 9;
-            var endYear = parseInt(options.endYear) || 2015;
-            var startWeek = moment().year(startYear).month(startMonth - 1).isoWeek();
-            var endWeek = moment().year(endYear).month(endMonth - 1).isoWeek();
-
-            var startDate;
-            var endDate;
-            var match;
-            var groupBy;
-
-            if (!access) {
-                return res.status(403).send();
-            }
-
-            startDate = startYear * 100 + parseInt(startMonth);
-            endDate = endYear * 100 + parseInt(endMonth);
-
-            match = {
-                dateByMonth: {$gte: startDate, $lte: endDate}
-            };
-
-            groupBy = {
-                _id : {
-                    department: '$department.departmentName',
-                    _id       : '$department._id',
-                    year      : '$year',
-                    month     : '$month',
-                    employee  : '$employee._id'
-                },
-                sold: {$sum: '$worked'}
-            };
-
-            WTrack.aggregate([{
-                $match: match
-            }, {
-                $lookup: {
-                    from        : 'Department',
-                    localField  : 'department',
-                    foreignField: '_id', as: 'department'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'employee',
-                    foreignField: '_id', as: 'employee'
-                }
-            }, {
-                $project: {
-                    department: {$arrayElemAt: ["$department", 0]},
-                    year: 1,
-                    month: 1,
-                    worked: 1,
-                    employee: {$arrayElemAt: ["$employee", 0]}
-                }
-            }, {
-                $group: groupBy
-            }, {
-                $project: {
-                    year      : "$_id.year",
-                    month     : "$_id.month",
-                    department: "$_id.department",
-                    sold      : 1,
-                    employee  : '$_id.employee',
-                    _id       : 0
-                }
-            }, {
-                $group: {
-                    _id      : '$department',
-                    root     : {$push: '$$ROOT'},
-                    totalSold: {$sum: '$sold'}
-                }
-            }, {
-                $sort: {_id: 1}
-            }], function (err, response) {
-
-                if (err) {
-                    return next(err);
-                }
-
-                resultMapper(response);
-
-            });
-
-            function resultMapper(response) {
-                var result = [];
-                var departments = [];
-                var sortDepartments = [];
-
-                response.forEach(function (departments) {
-                    var depObj = {};
-                    var depName = departments._id;
-                    var rootArray = departments.root;
-                    var employeesArray = [];
-                    var groupedRoot = _.groupBy(rootArray, 'employee._id');
-                    var keys = Object.keys(groupedRoot);
-
-                    depObj.department = depName;
-
-                    keys.forEach(function (key) {
-                        var arrayGrouped = groupedRoot[key];
-                        var empObj = {};
-
-                        arrayGrouped.forEach(function (element) {
-                            var key = element.year * 100 + element.month;
-
-                            if (!empObj[element.employee._id]) {
-
-                                empObj[element.employee._id] = {};
-                                empObj[element.employee._id] = element.employee;
-
-                                empObj[element.employee._id].hoursSold = {};
-                                empObj[element.employee._id].hoursSold[key] = element.sold;
-
-                                empObj[element.employee._id].total = parseInt(element.sold);
-                            } else {
-                                empObj[element.employee._id].hoursSold[key] = element.sold;
-                                empObj[element.employee._id].total += parseInt(element.sold);
-                            }
-
-                        });
-                        employeesArray.push(empObj);
-                    });
-                    depObj.employees = employeesArray;
-
-                    result.push(depObj);
-                });
-
-                constForView.forEach(function (dep) {
-                    result.forEach(function (depart) {
-                        if (dep === depart._id) {
-                            sortDepartments.push(depart);
-                        }
-                    });
-                });
-
-                async.each(sortDepartments, function (element) {
-                    var obj = {};
-                    var objToSave = {};
-                    var empArr;
-                    var key;
-
-                    obj.employees = [];
-                    obj.name = element.department;
-
-                    obj.totalForDep = 0;
-
-                    empArr = element.employees;
-
-                    empArr.forEach(function (element) {
-                        var object;
-
-                        key = Object.keys(element)[0];
-
-                        objToSave.name = element[key].name;
-                        objToSave.total = element[key].total;
-                        objToSave.hoursSold = element[key].hoursSold;
-                        object = _.clone(objToSave);
-                        obj.employees.push(object);
-                        obj.totalForDep += objToSave.total;
-                    });
-                    departments.push(obj);
-                });
-
-                res.status(200).send(departments);
-            }
-        });
-    };
+    //this.totalHours = function (req, res, next) {
+    //    var MonthHours = models.get(req.session.lastDb, 'MonthHours', monthHoursSchema);
+    //    var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
+    //    var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
+    //    var Employees = models.get(req.session.lastDb, 'Employees', employeeSchema);
+    //
+    //    access.getReadAccess(req, req.session.uId, 67, function (access) {
+    //        var options = req.query;
+    //        var startMonth = parseInt(options.month) || 10;
+    //        var startYear = parseInt(options.year) || 2014;
+    //        var endMonth = parseInt(options.endMonth) || 9;
+    //        var endYear = parseInt(options.endYear) || 2015;
+    //        var startWeek = moment().year(startYear).month(startMonth - 1).isoWeek();
+    //        var match;
+    //        var matchHoliday;
+    //        var matchVacation;
+    //        var parallelTasksObject;
+    //        var waterfallTasks;
+    //
+    //        var startDate = startYear * 100 + startWeek;
+    //
+    //        if (!access) {
+    //            return res.status(403).send();
+    //        }
+    //
+    //        function employeesRetriver(waterfallCb) {
+    //            var Ids = [];
+    //
+    //            Employees
+    //                .find({},
+    //                    {_id: 1}
+    //                )
+    //                .lean()
+    //                .exec(function (err, result) {
+    //                    if (err) {
+    //                        waterfallCb(err);
+    //                    }
+    //
+    //                    result.forEach(function (element) {
+    //                        Ids.push(element._id);
+    //                    });
+    //
+    //                    Employees.aggregate([{
+    //                        $lookup: {
+    //                            from        : 'Department',
+    //                            localField  : 'department',
+    //                            foreignField: '_id',
+    //                            as: 'department'
+    //                        }
+    //                    }, {
+    //                        $project: {
+    //                            department: {$arrayElemAt: ["$department", 0]},
+    //                            isEmployee: 1,
+    //                            startDate: 1,
+    //                            hire: 1,
+    //                            fire: 1,
+    //                            name: 1
+    //                        }
+    //                    },
+    //                        {
+    //                            $match: {
+    //                                $or: [
+    //                                    {
+    //                                        isEmployee: true
+    //                                    }, {
+    //                                        $and: [{isEmployee: false}, {
+    //                                            lastFire: {
+    //                                                $ne : null,
+    //                                                $gte: startDate
+    //                                            }
+    //                                        }]
+    //                                    }
+    //                                ]
+    //                            }
+    //                        },
+    //                        {
+    //                            $group: {
+    //                                _id: {
+    //                                    department: '$department.departmentName',
+    //                                    depId     : '$department._id',
+    //                                    employee  : '$name',
+    //                                    _id       : '$_id',
+    //                                    hire      : '$hire',
+    //                                    fire      : '$fire'
+    //                                }
+    //                            }
+    //                        },
+    //                        {
+    //                            $project: {
+    //                                department: '$_id.department',
+    //                                depId     : '$_id.depId',
+    //                                employee  : '$_id.employee',
+    //                                _id       : '$_id._id',
+    //                                hire      : '$_id.hire',
+    //                                fire      : '$_id.fire'
+    //                            }
+    //                        },
+    //                        {
+    //                            $group: {
+    //                                _id : '$department',
+    //                                root: {$push: '$$ROOT'}
+    //                            }
+    //                        },
+    //                        {
+    //                            $sort: {_id: 1}
+    //                        }
+    //                    ], function (err, response) {
+    //                        if (err) {
+    //                            return next(err);
+    //                        }
+    //
+    //                        waterfallCb(null, {ids: Ids, response: response});
+    //                    });
+    //                });
+    //        };
+    //
+    //        waterfallTasks = [
+    //            employeesRetriver,
+    //            parallel
+    //        ];
+    //
+    //        function parallel(Ids, waterfallCb) {
+    //            var ids = Ids.ids;
+    //            var employees = Ids.response;
+    //
+    //            match = {
+    //                // month: {$gte: startMonth, $lte: endMonth},
+    //                year: {$gte: startYear, $lte: endYear}
+    //            };
+    //
+    //            matchVacation = {
+    //                //month: {$gte: startMonth, $lte: endMonth},
+    //                year      : {$gte: startYear, $lte: endYear},
+    //                'employee': {$in: ids}
+    //            };
+    //
+    //            matchHoliday = {
+    //                // week: {$gte: startWeek, $lte: endWeek},
+    //                year: {$gte: startYear, $lte: endYear}
+    //            };
+    //
+    //            parallelTasksObject = {
+    //                monthHours: monthHourRetriver,
+    //                holidays  : holidaysRetriver,
+    //                vacations : vacationComposer
+    //            };
+    //
+    //            function monthHourRetriver(parallelCb) {
+    //                MonthHours
+    //                    .find(
+    //                        match,
+    //                        {year: 1, month: 1, hours: 1}
+    //                    )
+    //                    .lean()
+    //                    .exec(parallelCb)
+    //            };
+    //
+    //            function holidaysRetriver(parallelCb) {
+    //                Holidays
+    //                    .find(matchHoliday)
+    //                    .lean()
+    //                    .exec(parallelCb)
+    //            };
+    //            function vacationComposer(parallelCb) {
+    //                Vacation.aggregate([{
+    //                    $match: matchVacation
+    //                }, {
+    //                    $lookup: {
+    //                        from        : 'Employee',
+    //                        localField  : 'employee',
+    //                        foreignField: '_id', as: 'employee'
+    //                    }
+    //                }, {
+    //                    $project: {
+    //                        monthTotal: 1,
+    //                        employee  : {$arrayElemAt: ["$employee", 0]},
+    //                        month     : 1,
+    //                        year      : 1
+    //                    }
+    //                },
+    //                    {
+    //                        $group: {
+    //                            _id: {
+    //                                _id       : '$employee._id',
+    //                                name      : {
+    //                                    $concat: ['$employee.name.first', ' ', '$employee.name.last']
+    //                                },
+    //                                month     : '$month',
+    //                                year      : '$year',
+    //                                monthTotal: '$monthTotal'
+    //                            }
+    //                        }
+    //                    }, {
+    //                        $project: {
+    //                            employee  : '$_id._id',
+    //                            name      : '$_id.name',
+    //                            month     : '$_id.month',
+    //                            year      : '$_id.year',
+    //                            monthTotal: '$_id.monthTotal'
+    //                        }
+    //                    },
+    //                    {
+    //                        $sort: {_id: 1}
+    //                    }
+    //                ], function (err, response) {
+    //                    if (err) {
+    //                        return next(err);
+    //                    }
+    //
+    //                    parallelCb(null, response);
+    //                });
+    //            };
+    //
+    //            async.parallel(parallelTasksObject, function (err, response) {
+    //                if (err) {
+    //                    return next(err);
+    //                }
+    //
+    //                response.employees = employees;
+    //                waterfallCb(null, response);
+    //            });
+    //        }
+    //
+    //        function waterfallCb(err, response) {
+    //            if (err) {
+    //                return next(err);
+    //            }
+    //
+    //            resultMapper(response);
+    //
+    //        }
+    //
+    //        function resultMapper(response) {
+    //            var holidays = response['holidays'];
+    //            var vacations = response['vacations'];
+    //            var employees = response['employees'];
+    //            var monthHours = response['monthHours'];
+    //            var result = [];
+    //            var departments = [];
+    //            var sortDepartments = [];
+    //
+    //            employees.forEach(function (employee) {
+    //                var department = {};
+    //                var depRoot;
+    //                var key;
+    //
+    //                department._id = employee._id;
+    //                department.employees = [];
+    //                depRoot = employee.root;
+    //
+    //                depRoot.forEach(function (element) {
+    //                    var employee = {};
+    //                    var hire;
+    //                    var date;
+    //                    var fire;
+    //                    var fireLength = 0;
+    //                    var keyForFire;
+    //
+    //                    employee.hire = [];
+    //
+    //                    hire = _.clone(element.hire);
+    //
+    //                    hire.forEach(function (hireDate) {
+    //                        date = new Date(hireDate);
+    //                        employee.hire.push(moment(date).year() * 100 + moment(date).month() + 1);
+    //                    });
+    //
+    //                    employee.fire = [];
+    //
+    //                    fire = _.clone(element.fire);
+    //
+    //                    fire.forEach(function (hireDate) {
+    //                        date = new Date(hireDate);
+    //                        employee.fire.push(moment(date).year() * 100 + moment(date).month() + 1);
+    //                    });
+    //
+    //                    fireLength = fire.length;
+    //
+    //                    employee._id = element._id;
+    //                    employee.name = element.employee.first + ' ' + element.employee.last;
+    //
+    //                    employee.total = 0;
+    //                    employee.hoursTotal = {};
+    //
+    //                    monthHours.forEach(function (months) {
+    //                        var month = months.month;
+    //                        var year = months.year;
+    //                        var vacationForEmployee = 0;
+    //                        var hoursForMonth;
+    //                        var holidaysForMonth = 0;
+    //
+    //                        hoursForMonth = months.hours;
+    //
+    //                        vacations.forEach(function (vacation) {
+    //                            if ((employee._id.toString() === vacation.employee.toString()) && (vacation.month === month) && (vacation.year === year)) {
+    //                                vacationForEmployee = vacation.monthTotal;
+    //                            }
+    //                        });
+    //
+    //                        holidays.forEach(function (holiday) {
+    //                            var dateMonth = moment(holiday.date).month() + 1;
+    //                            var dateYear = moment(holiday.date).year();
+    //                            var dayNumber = moment(holiday.date).day();
+    //
+    //                            if ((dateMonth === month) && (dateYear === year) && (dayNumber !== 0 && dayNumber !== 6)) {
+    //                                holidaysForMonth += 1;
+    //                            }
+    //                        });
+    //
+    //                        key = year * 100 + month;
+    //                        keyForFire = new Date(employee.fire[fireLength - 1]).getYear() * 100 + new Date(employee.fire[fireLength - 1]).getMonth() + 1;
+    //
+    //                        if (fireLength && (keyForFire <= key)) {
+    //                            employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
+    //                            employee.total += employee.hoursTotal[key];
+    //                        } else {
+    //                            employee.hoursTotal[key] = 0;
+    //                        }
+    //
+    //                    });
+    //
+    //                    department.employees.push(employee);
+    //                });
+    //
+    //                result.push(department);
+    //            });
+    //
+    //            constForView.forEach(function (dep) {
+    //                result.forEach(function (depart) {
+    //                    if (dep === depart._id) {
+    //                        sortDepartments.push(depart);
+    //                    }
+    //                });
+    //            });
+    //
+    //            async.each(sortDepartments, function (element) {
+    //                var obj = {};
+    //                var objToSave = {};
+    //                var empArr;
+    //
+    //                obj.employees = [];
+    //                obj.name = element._id;
+    //
+    //                obj.totalForDep = 0;
+    //
+    //                empArr = element.employees;
+    //
+    //                empArr.forEach(function (employee) {
+    //                    var object;
+    //
+    //                    objToSave.name = employee.name;
+    //                    objToSave.total = employee.total;
+    //                    objToSave.hoursTotal = employee.hoursTotal;
+    //                    objToSave.hire = employee.hire;
+    //                    objToSave.fire = employee.fire;
+    //
+    //                    object = _.clone(objToSave);
+    //
+    //                    obj.employees.push(object);
+    //                    obj.totalForDep += objToSave.total;
+    //                });
+    //                departments.push(obj);
+    //            });
+    //
+    //            res.status(200).send(departments);
+    //        }
+    //
+    //        async.waterfall(waterfallTasks, waterfallCb);
+    //
+    //    });
+    //};
+    //
+    //this.hoursSold = function (req, res, next) {
+    //    var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+    //
+    //    access.getReadAccess(req, req.session.uId, 67, function (access) {
+    //        var options = req.query;
+    //        var startMonth = parseInt(options.month) || 10;
+    //        var startYear = parseInt(options.year) || 2014;
+    //        var endMonth = parseInt(options.endMonth) || 9;
+    //        var endYear = parseInt(options.endYear) || 2015;
+    //        var startWeek = moment().year(startYear).month(startMonth - 1).isoWeek();
+    //        var endWeek = moment().year(endYear).month(endMonth - 1).isoWeek();
+    //
+    //        var startDate;
+    //        var endDate;
+    //        var match;
+    //        var groupBy;
+    //
+    //        if (!access) {
+    //            return res.status(403).send();
+    //        }
+    //
+    //        startDate = startYear * 100 + parseInt(startMonth);
+    //        endDate = endYear * 100 + parseInt(endMonth);
+    //
+    //        match = {
+    //            dateByMonth: {$gte: startDate, $lte: endDate}
+    //        };
+    //
+    //        groupBy = {
+    //            _id : {
+    //                department: '$department.departmentName',
+    //                _id       : '$department._id',
+    //                year      : '$year',
+    //                month     : '$month',
+    //                employee  : '$employee._id'
+    //            },
+    //            sold: {$sum: '$worked'}
+    //        };
+    //
+    //        WTrack.aggregate([{
+    //            $match: match
+    //        }, {
+    //            $lookup: {
+    //                from        : 'Department',
+    //                localField  : 'department',
+    //                foreignField: '_id', as: 'department'
+    //            }
+    //        }, {
+    //            $lookup: {
+    //                from        : 'Employees',
+    //                localField  : 'employee',
+    //                foreignField: '_id', as: 'employee'
+    //            }
+    //        }, {
+    //            $project: {
+    //                department: {$arrayElemAt: ["$department", 0]},
+    //                year      : 1,
+    //                month     : 1,
+    //                worked    : 1,
+    //                employee  : {$arrayElemAt: ["$employee", 0]}
+    //            }
+    //        }, {
+    //            $group: groupBy
+    //        }, {
+    //            $project: {
+    //                year      : "$_id.year",
+    //                month     : "$_id.month",
+    //                department: "$_id.department",
+    //                sold      : 1,
+    //                employee  : '$_id.employee',
+    //                _id       : 0
+    //            }
+    //        }, {
+    //            $group: {
+    //                _id      : '$department',
+    //                root     : {$push: '$$ROOT'},
+    //                totalSold: {$sum: '$sold'}
+    //            }
+    //        }, {
+    //            $sort: {_id: 1}
+    //        }], function (err, response) {
+    //
+    //            if (err) {
+    //                return next(err);
+    //            }
+    //
+    //            resultMapper(response);
+    //
+    //        });
+    //
+    //        function resultMapper(response) {
+    //            var result = [];
+    //            var departments = [];
+    //            var sortDepartments = [];
+    //
+    //            response.forEach(function (departments) {
+    //                var depObj = {};
+    //                var depName = departments._id;
+    //                var rootArray = departments.root;
+    //                var employeesArray = [];
+    //                var groupedRoot = _.groupBy(rootArray, 'employee._id');
+    //                var keys = Object.keys(groupedRoot);
+    //
+    //                depObj.department = depName;
+    //
+    //                keys.forEach(function (key) {
+    //                    var arrayGrouped = groupedRoot[key];
+    //                    var empObj = {};
+    //
+    //                    arrayGrouped.forEach(function (element) {
+    //                        var key = element.year * 100 + element.month;
+    //
+    //                        if (!empObj[element.employee._id]) {
+    //
+    //                            empObj[element.employee._id] = {};
+    //                            empObj[element.employee._id] = element.employee;
+    //
+    //                            empObj[element.employee._id].hoursSold = {};
+    //                            empObj[element.employee._id].hoursSold[key] = element.sold;
+    //
+    //                            empObj[element.employee._id].total = parseInt(element.sold);
+    //                        } else {
+    //                            empObj[element.employee._id].hoursSold[key] = element.sold;
+    //                            empObj[element.employee._id].total += parseInt(element.sold);
+    //                        }
+    //
+    //                    });
+    //                    employeesArray.push(empObj);
+    //                });
+    //                depObj.employees = employeesArray;
+    //
+    //                result.push(depObj);
+    //            });
+    //
+    //            constForView.forEach(function (dep) {
+    //                result.forEach(function (depart) {
+    //                    if (dep === depart._id) {
+    //                        sortDepartments.push(depart);
+    //                    }
+    //                });
+    //            });
+    //
+    //            async.each(sortDepartments, function (element) {
+    //                var obj = {};
+    //                var objToSave = {};
+    //                var empArr;
+    //                var key;
+    //
+    //                obj.employees = [];
+    //                obj.name = element.department;
+    //
+    //                obj.totalForDep = 0;
+    //
+    //                empArr = element.employees;
+    //
+    //                empArr.forEach(function (element) {
+    //                    var object;
+    //
+    //                    key = Object.keys(element)[0];
+    //
+    //                    objToSave.name = element[key].name;
+    //                    objToSave.total = element[key].total;
+    //                    objToSave.hoursSold = element[key].hoursSold;
+    //                    object = _.clone(objToSave);
+    //                    obj.employees.push(object);
+    //                    obj.totalForDep += objToSave.total;
+    //                });
+    //                departments.push(obj);
+    //            });
+    //
+    //            res.status(200).send(departments);
+    //        }
+    //    });
+    //};
 
     this.getFromCash = function (req, res, next) {
         var self = this;
@@ -2457,9 +2482,9 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     department: {$arrayElemAt: ["$department", 0]},
-                    year: 1,
-                    week: 1,
-                    worked: 1
+                    year      : 1,
+                    week      : 1,
+                    worked    : 1
                 }
             }, {
                 $group: groupBy
@@ -2648,7 +2673,7 @@ var wTrack = function (models) {
 
                         key = Object.keys(element)[0];
 
-                        objToSave.name = element[key].name;
+                        objToSave.name = element[key].name.first + ' ' + element[key].name.last;
                         objToSave.total = element[key].total;
                         objToSave.hoursSold = element[key].hoursSold;
                         object = _.clone(objToSave);
@@ -2685,8 +2710,8 @@ var wTrack = function (models) {
 
                 Employees
                     .find({},
-                    {_id: 1}
-                )
+                        {_id: 1}
+                    )
                     .lean()
                     .exec(function (err, result) {
                         if (err) {
@@ -2697,27 +2722,51 @@ var wTrack = function (models) {
                             Ids.push(element._id);
                         });
 
-                        Employees.aggregate([
-                            {
-                                $match: {
-                                    $or: [
-                                        {
-                                            isEmployee: true
-                                        }, {
-                                            $and: [{isEmployee: false}, {
-                                                lastFire: {
-                                                    $ne : null,
-                                                    $gte: startDate
-                                                }
-                                            }]
-                                        }
-                                    ]
-                                }
-                            },
+                        Employees.aggregate([{
+                            $lookup: {
+                                from        : 'Department',
+                                localField  : 'department',
+                                foreignField: '_id',
+                                as          : 'department'
+                            }
+                        }, {
+                            $project: {
+                                department: {$arrayElemAt: ["$department", 0]},
+                                name      : 1,
+                                isEmployee: 1,
+                                lastFire  : 1,
+                                hire      : 1,
+                                fire      : 1
+                            }
+                        }, {
+                            $project: {
+                                department: 1,
+                                name      : 1,
+                                isEmployee: 1,
+                                lastFire  : 1,
+                                hire      : 1,
+                                fire      : 1
+                            }
+                        }, {
+                            $match: {
+                                $or: [
+                                    {
+                                        isEmployee: true
+                                    }, {
+                                        $and: [{isEmployee: false}, {
+                                            lastFire: {
+                                                $ne : null,
+                                                $gte: startDate
+                                            }
+                                        }]
+                                    }
+                                ]
+                            }
+                        },
                             {
                                 $group: {
                                     _id: {
-                                        department: '$department.name',
+                                        department: '$department.departmentName',
                                         depId     : '$department._id',
                                         employee  : '$name',
                                         _id       : '$_id',
@@ -2771,7 +2820,7 @@ var wTrack = function (models) {
 
                 matchVacation = {
                     //month: {$gte: startMonth, $lte: endMonth},
-                    year          : {$gte: startYear, $lte: endYear},
+                    year      : {$gte: startYear, $lte: endYear},
                     'employee': {$in: ids}
                 };
 
@@ -2789,9 +2838,9 @@ var wTrack = function (models) {
                 function monthHourRetriver(parallelCb) {
                     MonthHours
                         .find(
-                        match,
-                        {year: 1, month: 1, hours: 1}
-                    )
+                            match,
+                            {year: 1, month: 1, hours: 1}
+                        )
                         .lean()
                         .exec(parallelCb)
                 };
@@ -2813,32 +2862,32 @@ var wTrack = function (models) {
                         }
                     }, {
                         $project: {
-                            employee: {$arrayElemAt: ["$employee", 0]},
-                            month: 1,
-                            year: 1,
+                            employee  : {$arrayElemAt: ["$employee", 0]},
+                            month     : 1,
+                            year      : 1,
                             monthTotal: 1
                         }
                     }, {
-                            $group: {
-                                _id: {
-                                    _id       : '$employee._id',
-                                    name      : {
-                                        $concat: ['$employee.name.first', ' ', '$employee.name.last']
-                                    },
-                                    month     : '$month',
-                                    year      : '$year',
-                                    monthTotal: '$monthTotal'
-                                }
+                        $group: {
+                            _id: {
+                                _id       : '$employee._id',
+                                name      : {
+                                    $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                                },
+                                month     : '$month',
+                                year      : '$year',
+                                monthTotal: '$monthTotal'
                             }
-                        }, {
-                            $project: {
-                                employee  : '$_id._id',
-                                name      : '$_id.name',
-                                month     : '$_id.month',
-                                year      : '$_id.year',
-                                monthTotal: '$_id.monthTotal'
-                            }
-                        },
+                        }
+                    }, {
+                        $project: {
+                            employee  : '$_id._id',
+                            name      : '$_id.name',
+                            month     : '$_id.month',
+                            year      : '$_id.year',
+                            monthTotal: '$_id.monthTotal'
+                        }
+                    },
                         {
                             $sort: {_id: 1}
                         }
@@ -2951,11 +3000,15 @@ var wTrack = function (models) {
                             hireFirst = employee.hire[0] ? employee.hire[0] : key;
                             hireLast = employee.hire[1] ? employee.hire[1] : hireFirst;
                             fireFirst = employee.fire[0] ? employee.fire[0] : key;
+                            fire = employee.fire[0] ? employee.fire[0] : null;
+                            var query;
+                            if (fire && hireFirst !== hireLast){
+                                query = (hireFirst <= key) && (key <= fireFirst) || (key >= hireLast);
+                            } else  {
+                                query = (hireFirst <= key) && (key <= fireFirst) && (key >= hireLast);
+                            }
 
-                            if ((hireFirst <= key) && (key <= fireFirst)) {
-                                employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
-                                employee.total += employee.hoursTotal[key];
-                            } else if (key >= hireLast) {
+                            if (query) {
                                 employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
                                 employee.total += employee.hoursTotal[key];
                             } else {

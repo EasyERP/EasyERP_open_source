@@ -40,8 +40,10 @@ var Filters = function (models) {
             var modelName;
             var filterName;
 
-            for (modelName in result) {
-                for (filterName in result[modelName]) {
+            for (modelName in
+                result) {
+                for (filterName in
+                    result[modelName]) {
                     if (_.isArray(result[modelName][filterName])) {
                         result[modelName][filterName] = _.reject(result[modelName][filterName], function (element) {
                             return (element.name === '' || element.name === 'None');
@@ -62,7 +64,9 @@ var Filters = function (models) {
             var year = moment().isoWeekYear();
             var week;
 
-            for (var i = 0; i <= 11; i++) {
+            for (var i = 0;
+                 i <= 11;
+                 i++) {
                 if (startWeek + i > 53) {
                     week = startWeek + i - 53;
                     weeksArr.push((year + 1) * 100 + week);
@@ -371,8 +375,45 @@ var Filters = function (models) {
             Employee.aggregate([
                 {
                     $match: {'isEmployee': true}
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Department",
+                        localField  : "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "manager",
+                        foreignField: "_id",
+                        as: "manager"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "JobPosition",
+                        localField  : "jobPosition",
+                        foreignField: "_id",
+                        as: "jobPosition"
+                    }
+                }, {
+                    $project: {
+                        department : {$arrayElemAt: ["$department", 0]},
+                        manager    : {$arrayElemAt: ["$manager", 0]},
+                        jobPosition: {$arrayElemAt: ["$jobPosition", 0]},
+                        name       : 1
+                    }
+                }, {
+                    $project: {
+                        department    : 1,
+                        'manager._id' : 1,
+                        'manager.name': {
+                            $concat: ['$manager.name.first', ' ', '$manager.name.last']
+                        },
+                        jobPosition   : 1,
+                        name          : 1
+                    }
+                }, {
                     $group: {
                         _id          : null,
                         'name'       : {
@@ -384,7 +425,7 @@ var Filters = function (models) {
                         'department' : {
                             $addToSet: {
                                 _id : '$department._id',
-                                name: {'$ifNull': ['$department.name', 'None']}
+                                name: {'$ifNull': ['$department.departmentName', 'None']}
                             }
                         },
                         'jobPosition': {
@@ -416,8 +457,31 @@ var Filters = function (models) {
             Employee.aggregate([
                 {
                     $match: {'isEmployee': false}
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Department",
+                        localField  : "department",
+                        foreignField: "_id", as: "department"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "JobPosition",
+                        localField  : "jobPosition",
+                        foreignField: "_id", as: "jobPosition"
+                    }
+                }, {
+                    $project: {
+                        department : {$arrayElemAt: ["$department", 0]},
+                        jobPosition: {$arrayElemAt: ["$jobPosition", 0]},
+                        name       : 1
+                    }
+                }, {
+                    $project: {
+                        department : 1,
+                        jobPosition: 1,
+                        name       : 1
+                    }
+                }, {
                     $group: {
                         _id          : null,
                         'name'       : {
@@ -429,19 +493,13 @@ var Filters = function (models) {
                         'department' : {
                             $addToSet: {
                                 _id : '$department._id',
-                                name: {'$ifNull': ['$department.name', 'None']}
+                                name: {'$ifNull': ['$department.departmentName', 'None']}
                             }
                         },
                         'jobPosition': {
                             $addToSet: {
                                 _id : '$jobPosition._id',
                                 name: {'$ifNull': ['$jobPosition.name', 'None']}
-                            }
-                        },
-                        'manager'    : {
-                            $addToSet: {
-                                _id : '$manager._id',
-                                name: {'$ifNull': ['$manager.name', 'None']}
                             }
                         }
                     }
@@ -461,20 +519,20 @@ var Filters = function (models) {
             Project
                 .aggregate([{
                     $lookup: {
-                        from        : "Employees",
-                        localField  : "projectmanager",
+                        from                   : "Employees",
+                        localField             : "projectmanager",
                         foreignField: "_id", as: "projectmanager"
                     }
                 }, {
                     $lookup: {
-                        from        : "Customers",
-                        localField  : "customer",
+                        from                   : "Customers",
+                        localField             : "customer",
                         foreignField: "_id", as: "customer"
                     }
                 }, {
                     $lookup: {
-                        from        : "workflows",
-                        localField  : "workflow",
+                        from                   : "workflows",
+                        localField             : "workflow",
                         foreignField: "_id", as: "workflow"
                     }
                 }, {
@@ -554,8 +612,19 @@ var Filters = function (models) {
             Employee.aggregate([
                 {
                     $match: matchObjectForDash
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Department",
+                        localField  : "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                }, {
+                    $project: {
+                        name: 1,
+                        department: {$arrayElemAt: ['$department', 0]}
+                    }
+                }, {
                     $group: {
                         _id         : null,
                         'name'      : {
@@ -567,7 +636,7 @@ var Filters = function (models) {
                         'department': {
                             $addToSet: {
                                 _id : '$department._id',
-                                name: {'$ifNull': ['$department.name', 'None']}
+                                name: {'$ifNull': ['$department.departmentName', 'None']}
                             }
                         }
                     }
@@ -1437,8 +1506,8 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        workflow : {$arrayElemAt: ["$workflow", 0]},
-                        supplier : {$arrayElemAt: ["$supplier", 0]}
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]}
                     }
                 }, {
                     $group: {

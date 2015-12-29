@@ -69,8 +69,6 @@ define([
                 "change .autoCalc"                                                : "autoCalc",
                 "change .editable "                                               : "setEditable",
                 "keydown input.editing "                                          : "keyDown"
-                //"change .listCB": "setAllTotalVals"
-                // "click"                                                           : "removeInputs"
             },
 
             removeInputs: function () {
@@ -185,33 +183,41 @@ define([
             },
 
             copyRow: function (e) {
-                this.hideGenerateCopy();
-
-                this.changed = true;
-                this.createdCopied = true;
+                var self = this;
                 var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
                 var length = checkedRows.length;
+                var selectedWtrack;
+                var target;
+                var id;
+                var row;
+                var model;
+                var _model;
+                var tdsArr;
+                var cid;
+                var hours;
+
+                this.hideGenerateCopy();
+                this.changed = true;
+                this.createdCopied = true;
+
+
 
                 for (var i = length - 1; i >= 0; i--) {
-                    var selectedWtrack = checkedRows[i];
-                    var self = this;
-                    var target = $(selectedWtrack);
-                    var id = target.val();
-                    var row = target.closest('tr');
-                    var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                    var _model;
-                    var tdsArr;
-                    var cid;
-                    var hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
-                    var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
-                    var revenue = parseInt(hours) * parseFloat(rate);
+                    selectedWtrack = checkedRows[i];
+                    target = $(selectedWtrack);
+                    id = target.val();
+                    row = target.closest('tr');
+                    model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
+                    hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                    //var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
+                    //var revenue = parseInt(hours) * parseFloat(rate);
 
                     $(selectedWtrack).attr('checked', false);
 
                     model.set({"isPaid": false});
                     model.set({"amount": 0});
                     model.set({"cost": 0});
-                    model.set({"revenue": revenue});
+                    model.set({"revenue": 0});
                     model = model.toJSON();
                     delete model._id;
                     _model = new currentModel(model);
@@ -230,11 +236,12 @@ define([
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[21]).find('span').text('Unpaid');
-                    $(tdsArr[21]).find('span').addClass('unDone');
-                    $(tdsArr[25]).text(0);
-                    $(tdsArr[23]).text(0);
-                    $(tdsArr[22]).text(revenue.toFixed(2));
+                    $(tdsArr[20]).find('span').text('Unpaid');
+                    $(tdsArr[20]).find('span').addClass('unDone');
+                    $(tdsArr[24]).text('0.00');
+                    $(tdsArr[22]).text('0.00');
+                    $(tdsArr[23]).text('0.00');
+                    $(tdsArr[21]).text('0.00');
                     $(tdsArr[1]).text("New");
                 }
             },
@@ -258,10 +265,10 @@ define([
                 var calcEl;
                 var editWtrackModel;
                 var workedEl = tr.find('[data-content="worked"]');
-                var revenueEl = tr.find('[data-content="revenue"]');
-                var rateEl = tr.find('[data-content="rate"]');
-                var rateVal;
-                var revenueVal;
+                //var revenueEl = tr.find('[data-content="revenue"]');
+                //var rateEl = tr.find('[data-content="rate"]');
+                //var rateVal;
+                //var revenueVal;
 
                 function eplyDefaultValue(el) {
                     var value = el.text();
@@ -285,10 +292,10 @@ define([
                     worked += parseInt(value);
                 }
 
-                rateVal = parseFloat(eplyDefaultValue(rateEl));
-                revenueVal = parseFloat(worked * rateVal).toFixed(2);
+              //  rateVal = parseFloat(eplyDefaultValue(rateEl));
+              //  revenueVal = parseFloat(worked * rateVal).toFixed(2);
 
-                revenueEl.text(revenueVal);
+              //  revenueEl.text(revenueVal);
 
                 editWtrackModel = this.editCollection.get(wTrackId);
 
@@ -300,7 +307,7 @@ define([
                 }
 
                 this.changedModels[wTrackId].worked = worked;
-                this.changedModels[wTrackId].revenue = revenueVal;
+               // this.changedModels[wTrackId].revenue = revenueVal;
             },
 
             setEditable: function (td) {
@@ -673,7 +680,7 @@ define([
 
                         tr.find('[data-content="jobs"]').removeClass('errorContent');
                     } else if (elementType === '#employee') {
-                        tr.find('[data-content="department"]').text(element.department.name);
+                        tr.find('[data-content="department"]').text(element.department.departmentName);
 
                         employee = element._id;
 
@@ -826,105 +833,6 @@ define([
                 $(".newSelectList").remove();
             },
 
-            render: function () {
-                var self = this;
-                var $currentEl = this.$el;
-                var pagenation;
-                var checkedInputs;
-                var allInputs;
-
-                $currentEl.html('');
-                $currentEl.append(_.template(listTemplate));
-                $currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
-
-                this.renderPagination($currentEl, this);
-
-                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-                $('#check_all').click(function () {
-                    var checkLength;
-
-                    allInputs = $('.listCB');
-                    allInputs.prop('checked', this.checked);
-                    checkedInputs = $("input.listCB:checked");
-
-                    if (self.collection.length > 0) {
-                        checkLength = checkedInputs.length;
-
-                        if (checkLength > 0) {
-                            $("#top-bar-deleteBtn").show();
-                            $("#top-bar-copyBtn").show();
-                            $("#top-bar-createBtn").hide();
-
-                            if (checkLength === self.collection.length) {
-                                checkedInputs.each(function (index, element) {
-                                    self.checkProjectId(element, checkLength);
-                                });
-
-                                $('#check_all').prop('checked', true);
-                            }
-                        } else {
-                            $("#top-bar-deleteBtn").hide();
-                            $("#top-bar-createBtn").show();
-                            // self.genInvoiceEl.hide();
-                            self.copyEl.hide();
-                            $('#check_all').prop('checked', false);
-                        }
-                    }
-
-                    self.setAllTotalVals();
-                });
-
-                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
-                    projects = _.map(projects.data, function (project) {
-                        project.name = project.projectName;
-
-                        return project
-                    });
-
-                    self.responseObj['#project'] = projects;
-                });
-
-                dataService.getData("/employee/getForDD", null, function (employees) {
-                    employees = _.map(employees.data, function (employee) {
-                        employee.name = employee.name.first + ' ' + employee.name.last;
-
-                        return employee
-                    });
-
-                    self.responseObj['#employee'] = employees;
-                });
-
-                dataService.getData("/department/getForDD", null, function (departments) {
-                    departments = _.map(departments.data, function (department) {
-                        department.name = department.departmentName;
-
-                        return department
-                    });
-
-                    self.responseObj['#department'] = departments;
-                });
-
-                this.renderFilter(self);
-
-                setTimeout(function () {
-                    /*self.editCollection = new EditCollection(self.collection.toJSON());
-                     self.editCollection.on('saved', self.savedNewModel, self);
-                     self.editCollection.on('updated', self.updatedOptions, self);*/
-                    self.bindingEventsToEditedCollection(self);
-                    self.$listTable = $('#listTable');
-                }, 10);
-
-                //this.genInvoiceEl = $('#top-bar-generateBtn');
-                this.copyEl = $('#top-bar-copyBtn');
-                this.$saveBtn = $('#top-bar-saveBtn');
-                return this;
-            },
-
             bindingEventsToEditedCollection: function (context) {
                 if (context.editCollection) {
                     context.editCollection.unbind();
@@ -952,12 +860,12 @@ define([
                 var year = now.getFullYear();
                 var month = now.getMonth() + 1;
                 var week = now.getWeek();
-                var rate = 3;
+               // var rate = 3;
                 var startData = {
                     year        : year,
                     month       : month,
                     week        : week,
-                    rate        : rate,
+                    //rate        : rate,
                     projectModel: null
                 };
 
@@ -1264,7 +1172,106 @@ define([
 
                 self.changedModels = {};
                 self.responseObj['#jobs'] = [];
-            }
+            },
+
+            render: function () {
+                var self = this;
+                var $currentEl = this.$el;
+                var pagenation;
+                var checkedInputs;
+                var allInputs;
+
+                $currentEl.html('');
+                $currentEl.append(_.template(listTemplate));
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());//added two parameters page and items number
+
+                this.renderPagination($currentEl, this);
+
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
+                $('#check_all').click(function () {
+                    var checkLength;
+
+                    allInputs = $('.listCB');
+                    allInputs.prop('checked', this.checked);
+                    checkedInputs = $("input.listCB:checked");
+
+                    if (self.collection.length > 0) {
+                        checkLength = checkedInputs.length;
+
+                        if (checkLength > 0) {
+                            $("#top-bar-deleteBtn").show();
+                            $("#top-bar-copyBtn").show();
+                            $("#top-bar-createBtn").hide();
+
+                            if (checkLength === self.collection.length) {
+                                checkedInputs.each(function (index, element) {
+                                    self.checkProjectId(element, checkLength);
+                                });
+
+                                $('#check_all').prop('checked', true);
+                            }
+                        } else {
+                            $("#top-bar-deleteBtn").hide();
+                            $("#top-bar-createBtn").show();
+                            // self.genInvoiceEl.hide();
+                            self.copyEl.hide();
+                            $('#check_all').prop('checked', false);
+                        }
+                    }
+
+                    self.setAllTotalVals();
+                });
+
+                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
+
+                dataService.getData("/employee/getForDD", null, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee
+                    });
+
+                    self.responseObj['#employee'] = employees;
+                });
+
+                dataService.getData("/department/getForDD", null, function (departments) {
+                    departments = _.map(departments.data, function (department) {
+                        department.name = department.departmentName;
+
+                        return department
+                    });
+
+                    self.responseObj['#department'] = departments;
+                });
+
+                this.renderFilter(self);
+
+                setTimeout(function () {
+                    /*self.editCollection = new EditCollection(self.collection.toJSON());
+                     self.editCollection.on('saved', self.savedNewModel, self);
+                     self.editCollection.on('updated', self.updatedOptions, self);*/
+                    self.bindingEventsToEditedCollection(self);
+                    self.$listTable = $('#listTable');
+                }, 10);
+
+                this.copyEl = $('#top-bar-copyBtn');
+                this.$saveBtn = $('#top-bar-saveBtn');
+
+                return this;
+            },
         });
 
         return wTrackListView;

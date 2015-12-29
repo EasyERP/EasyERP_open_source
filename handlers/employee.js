@@ -31,7 +31,7 @@ var Employee = function (models) {
 
         query
             .select('_id name department')
-            //.populate('department._id', '_id departmentName')
+            .populate('department', 'departmentName _id')
             .sort({'name.first': 1})
             .lean()
             .exec(function (err, employees) {
@@ -100,7 +100,7 @@ var Employee = function (models) {
                 $match: {isEmployee: true}
             }, {
                 $group: {
-                    _id: "$department._id",
+                    _id: "$department",
                     employees: {
                         $push: {
                             name: {$concat: ['$name.first', ' ', '$name.last']},
@@ -127,11 +127,11 @@ var Employee = function (models) {
         var ids = req.query.data;
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-        Employee.find({_id: {$in: ids}}, {
-            'name'            : 1,
-            'jobPosition.name': 1,
-            'department.name' : 1
-        }, function (err, result) {
+        Employee
+            .find({_id: {$in: ids}})
+            .populate('jobPosition', '_id name')
+            .populate('department', '_id departmentName')
+            .exec( function (err, result) {
             if (err) {
                 return next(err);
             }

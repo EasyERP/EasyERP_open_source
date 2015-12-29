@@ -50,28 +50,35 @@ define([
             notHide              : function () {
                 return false;
             },
+
             showNewSelect        : function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
             },
+
             chooseOption         : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
             },
+
             nextSelect           : function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect           : function (e) {
                 this.showNewSelect(e, true, false);
             },
+
             hideNewSelect        : function () {
                 $(".newSelectList").hide();
             },
+
             showEndContractSelect: function (e) {
                 e.preventDefault();
                 $(e.target).parent().find(".newSelectList").toggle();
                 return false;
             },
+
             endContract          : function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
@@ -87,6 +94,7 @@ define([
                     }
                 });
             },
+
             changeTab            : function (e) {
                 var holder = $(e.target);
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
@@ -96,6 +104,7 @@ define([
                 dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
+
             keydownHandler       : function (e) {
                 switch (e.which) {
                     case 27:
@@ -105,12 +114,14 @@ define([
                         break;
                 }
             },
+
             hideDialog           : function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
+
             showEdit             : function () {
                 $(".upload").animate({
                     height : "20px",
@@ -118,6 +129,7 @@ define([
                 }, 250);
 
             },
+
             hideEdit             : function () {
                 $(".upload").animate({
                     height : "0px",
@@ -153,20 +165,11 @@ define([
                 var relatedUser = this.$el.find("#relatedUsersDd").data("id");
                 relatedUser = relatedUser ? relatedUser : null;
 
-                var department = {
-                    _id : this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null,
-                    name: this.$el.find("#departmentsDd").text() ? this.$el.find("#departmentsDd").text() : null
-                };
+                var department = this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null;
 
-                var jobPosition = {
-                    _id : this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null,
-                    name: this.$el.find("#jobPositionDd").text() ? this.$el.find("#jobPositionDd").text() : null
-                };
+                var jobPosition =  this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null;
 
-                var manager = {
-                    _id : this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null,
-                    name: this.$el.find("#projectManagerDD").text() ? this.$el.find("#projectManagerDD").text() : null
-                };
+                var manager = this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null;
 
                 var coach = $.trim(this.$el.find("#coachDd").data("id"));
                 coach = coach ? coach : null;
@@ -306,9 +309,9 @@ define([
 
                         if (self.firstData === data.name.first &&
                             self.lastData === data.name.last &&
-                            self.departmentData === data.department.name &&
-                            self.jobPositionData === data.jobPosition.name &&
-                            self.projectManagerData === data.manager.name) {
+                            self.departmentData === $.trim(self.$el.find("#departmentsDd").text()) &&
+                            self.jobPositionData === $.trim(self.$el.find("#jobPositionDd").text()) &&
+                            self.projectManagerData === $.trim(this.$el.find("#projectManagerDD").text())) {
 
                             model = model.toJSON();
                             empThumb = $('#' + model._id);

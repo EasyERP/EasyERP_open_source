@@ -7,6 +7,7 @@ var Employee = function (event, models) {
     var employeeSchema = mongoose.Schemas['Employee'];
     var fs = require('fs');
     var moment = require('../public/js/libs/moment/moment');
+    var _ = require('../node_modules/underscore');
 
     var CONSTANTS = require('../constants/mainConstants');
 
@@ -18,8 +19,12 @@ var Employee = function (event, models) {
         var resArray = [];
         var filtrElement = {};
         var key;
+        var project;
+        var projectSecond;
+        var Employees = models.get(req.session.lastDb, "Employees", employeeSchema);
 
-        for (var i in req.query) {
+        for (var i in
+            req.query) {
             data[i] = req.query[i];
         }
         res['showMore'] = false;
@@ -39,11 +44,28 @@ var Employee = function (event, models) {
             optionsObject['workflow'] = {$in: []};
         }
 
+        project = {
+            manager    : {$arrayElemAt: ["$manager", 0]},
+            jobPosition: {$arrayElemAt: ["$jobPosition", 0]},
+            department : {$arrayElemAt: ["$department", 0]},
+            name       : 1,
+            isEmployee : 1
+        };
+
+        projectSecond = {
+            manager    : 1,
+            jobPosition: 1,
+            department : 1,
+            name       : 1,
+            isEmployee : 1
+        };
+
         switch (contentType) {
             case ('Employees'):
             {
 
-                for (var filterName in data.filter) {
+                for (var filterName in
+                    data.filter) {
                     condition = data.filter[filterName]['value'];
                     key = data.filter[filterName]['key'];
 
@@ -86,7 +108,8 @@ var Employee = function (event, models) {
                 break;
             case ('Applications'):
             {
-                for (var filterName in data.filter) {
+                for (var filterName in
+                    data.filter) {
                     condition = data.filter[filterName]['value'];
                     key = data.filter[filterName]['key'];
 
@@ -142,11 +165,11 @@ var Employee = function (event, models) {
             function (err, deps) {
                 if (!err) {
                     var arrOfObjectId = deps.objectID();
-                    models.get(req.session.lastDb, "Employees", employeeSchema).aggregate(
+                    Employees.aggregate(
                         {
                             $match: {
                                 $and: [
-                                    optionsObject,
+                                    //  optionsObject,
                                     {
                                         $or: [
                                             {
@@ -184,17 +207,56 @@ var Employee = function (event, models) {
                         }
                         ,
                         function (err, result) {
-                            if (!err) {
-                                if (data.currentNumber && data.currentNumber < result.length) {
-                                    res['showMore'] = true;
-                                }
-                                res['count'] = result.length;
-                                response.send(res);
-                            } else {
-                                console.log(err);
-                                logWriter.log("Employees.js getTotalCount " + err);
-                                response.send(500, {error: 'Server Eroor'});
+                            if (!optionsObject['$and']) {
+                                optionsObject['$and'] = [];
                             }
+
+                            optionsObject['$and'].push({_id: {$in: _.pluck(result, '_id')}});
+
+                            Employees.aggregate([{
+                                $lookup: {
+                                    from                   : "Employees",
+                                    localField             : "manager",
+                                    foreignField: "_id", as: "manager"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "JobPosition",
+                                    localField             : "jobPosition",
+                                    foreignField: "_id", as: "jobPosition"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "Department",
+                                    localField             : "department",
+                                    foreignField: "_id", as: "department"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "workflows",
+                                    localField             : "workflow",
+                                    foreignField: "_id", as: "workflow"
+                                }
+                            }, {
+                                $project: project
+                            }, {
+                                $project: projectSecond
+                            }, {
+                                $match: optionsObject
+                            }
+                            ], function (err, result) {
+                                if (!err) {
+                                    if (data.currentNumber && data.currentNumber < result.length) {
+                                        res['showMore'] = true;
+                                    }
+                                    res['count'] = result.length;
+                                    response.send(res);
+                                } else {
+                                    console.log(err);
+                                    logWriter.log("Employees.js getTotalCount " + err);
+                                    response.send(500, {error: 'Server Eroor'});
+                                }
+                            });
                         }
                     );
 
@@ -447,7 +509,7 @@ var Employee = function (event, models) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
         query.where('isEmployee', true);
         query.select('_id name').
-            sort({'name.first': 1});
+        sort({'name.first': 1});
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
@@ -565,6 +627,7 @@ var Employee = function (event, models) {
     function getFilter(req, response) {
         var data = {};
         var optionsObject = {};
+        var Employees = models.get(req.session.lastDb, "Employees", employeeSchema);
 
         var viewType;
         var contentType;
@@ -574,10 +637,18 @@ var Employee = function (event, models) {
         var resArray = [];
         var filtrElement = {};
         var key;
+        var sort;
+        var keySort;
+        var project;
+        var projectSecond;
 
-        for (var i in req.query) {
+        for (var i in
+            req.query) {
             data[i] = req.query[i];
         }
+
+        var skip = ((parseInt(data.page ? data.page : 1) - 1) * parseInt(data.count));
+        var limit = parseInt(data.count);
 
         viewType = data.viewType;
         contentType = data.contentType;
@@ -588,7 +659,8 @@ var Employee = function (event, models) {
             case ('Employees'):
             {
 
-                for (var filterName in data.filter) {
+                for (var filterName in
+                    data.filter) {
                     condition = data.filter[filterName]['value'];
                     key = data.filter[filterName]['key'];
 
@@ -631,7 +703,8 @@ var Employee = function (event, models) {
                 break;
             case ('Applications'):
             {
-                for (var filterName in data.filter) {
+                for (var filterName in
+                    data.filter) {
                     condition = data.filter[filterName]['value'];
                     key = data.filter[filterName]['key'];
 
@@ -692,7 +765,7 @@ var Employee = function (event, models) {
                         {
                             $match: {
                                 $and: [
-                                    optionsObject,
+                                    // optionsObject,
                                     {
                                         $or: [
                                             {
@@ -730,27 +803,88 @@ var Employee = function (event, models) {
                         },
                         function (err, result) {
                             if (!err) {
-                                var query = models.get(req.session.lastDb, "Employees", employeeSchema).find().where('_id').in(result);
+
+                                if (!optionsObject['$and']) {
+                                    optionsObject['$and'] = [];
+                                }
+
+                                optionsObject['$and'].push({_id: {$in: _.pluck(result, '_id')}});
+
                                 switch (contentType) {
                                     case ('Employees'):
                                         switch (viewType) {
                                             case ('list'):
                                             {
                                                 if (data.sort) {
-                                                    query.sort(data.sort);
+                                                    keySort = Object.keys(data.sort)[0];
+                                                    data.sort[keySort] = parseInt(data.sort[keySort]);
+                                                    sort = data.sort;
                                                 } else {
-                                                    query.sort({"editedBy.date": -1});
+                                                    sort = {"editedBy.date": -1};
                                                 }
 
-                                                query.select('_id name createdBy editedBy department jobPosition manager dateBirth skype workEmail workPhones jobType').
-                                                    populate('createdBy.user', 'login').
-                                                    populate('editedBy.user', 'login');
+                                                project = {
+                                                    manager         : {$arrayElemAt: ["$manager", 0]},
+                                                    jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                                                    department      : {$arrayElemAt: ["$department", 0]},
+                                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                                    name            : 1,
+                                                    'editedBy.date' : 1,
+                                                    'createdBy.date': 1,
+                                                    dateBirth       : 1,
+                                                    skype           : 1,
+                                                    workEmail       : 1,
+                                                    workPhones      : 1,
+                                                    jobType         : 1,
+                                                    isEmployee      : 1
+                                                };
+
+                                                projectSecond = {
+                                                    manager         : 1,
+                                                    jobPosition     : 1,
+                                                    department      : 1,
+                                                    'createdBy.user': 1,
+                                                    'editedBy.user' : 1,
+                                                    'editedBy.date' : 1,
+                                                    'createdBy.date': 1,
+                                                    name            : 1,
+                                                    dateBirth       : 1,
+                                                    skype           : 1,
+                                                    workEmail       : 1,
+                                                    workPhones      : 1,
+                                                    jobType         : 1,
+                                                    isEmployee      : 1
+                                                };
                                             }
                                                 break;
                                             case ('thumbnails'):
                                             {
-                                                query.select('_id name dateBirth age jobPosition relatedUser workPhones.mobile').
-                                                    populate('relatedUser', 'login')
+                                                project = {
+                                                    jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
+                                                    department         : {$arrayElemAt: ["$department", 0]},
+                                                    manager            : {$arrayElemAt: ["$manager", 0]},
+                                                    age                : 1,
+                                                    relatedUser        : {$arrayElemAt: ["$relatedUser", 0]},
+                                                    'workPhones.mobile': 1,
+                                                    name               : 1,
+                                                    dateBirth          : 1,
+                                                    isEmployee         : 1
+                                                };
+
+                                                projectSecond = {
+                                                    jobPosition        : 1,
+                                                    department         : 1,
+                                                    manager            : 1,
+                                                    age                : 1,
+                                                    'relatedUser.login': 1,
+                                                    'workPhones.mobile': 1,
+                                                    name               : 1,
+                                                    dateBirth          : 1,
+                                                    isEmployee         : 1
+                                                };
+
+                                                sort = {"_id": 1};
                                             }
                                                 break;
 
@@ -764,43 +898,131 @@ var Employee = function (event, models) {
                                                     data.filter.workflow = data.filter.workflow.map(function (item) {
                                                         return item === "null" ? null : item;
                                                     });
-                                                    query.where('workflow').in(data.filter.workflow);
+                                                    // query.where('workflow').in(data.filter.workflow);
                                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                                    query;//.where('workflow').in([]);
+                                                    // query;//.where('workflow').in([]);
                                                 }
 
                                                 if (data.sort) {
-                                                    query.sort(data.sort);
+                                                    keySort = Object.keys(data.sort)[0];
+                                                    data.sort[keySort] = parseInt(data.sort[keySort]);
+                                                    sort = data.sort;
                                                 } else {
-                                                    query.sort({"editedBy.date": -1});
+                                                    sort = {"editedBy.date": -1};
                                                 }
-                                                query.select('_id name createdBy editedBy jobPosition manager workEmail workPhones creationDate workflow personalEmail department jobType sequence').
-                                                    populate('createdBy.user', 'login').
-                                                    populate('editedBy.user', 'login').
-                                                    populate('workflow', 'name status');
-                                            }
-                                                break;
-                                            case ('thumbnails'):
-                                            {
+
+                                                project = {
+                                                    manager         : {$arrayElemAt: ["$manager", 0]},
+                                                    jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                                                    department      : {$arrayElemAt: ["$department", 0]},
+                                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                                    name            : 1,
+                                                    'editedBy.date' : 1,
+                                                    'createdBy.date': 1,
+                                                    dateBirth       : 1,
+                                                    skype           : 1,
+                                                    workEmail       : 1,
+                                                    workPhones      : 1,
+                                                    jobType         : 1,
+                                                    isEmployee      : 1,
+                                                    creationDate    : 1,
+                                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                                    personalEmail   : 1,
+                                                    sequence        : 1
+                                                };
+
+                                                projectSecond = {
+                                                    manager         : 1,
+                                                    jobPosition     : 1,
+                                                    department      : 1,
+                                                    'createdBy.user': 1,
+                                                    'editedBy.user' : 1,
+                                                    'editedBy.date' : 1,
+                                                    'createdBy.date': 1,
+                                                    name            : 1,
+                                                    dateBirth       : 1,
+                                                    skype           : 1,
+                                                    workEmail       : 1,
+                                                    workPhones      : 1,
+                                                    jobType         : 1,
+                                                    isEmployee      : 1,
+                                                    creationDate    : 1,
+                                                    workflow        : 1,
+                                                    personalEmail   : 1,
+                                                    sequence        : 1
+                                                };
 
                                             }
                                                 break;
-
                                         }
                                         break;
                                 }
 
-                                query.skip((data.page - 1) * data.count).
-                                    limit(data.count).
-                                    exec(function (error, _res) {
-                                        if (!error) {
-                                            res['data'] = _res;
-                                            response.send(res);
-                                        } else {
-                                            console.log(error);
-                                            logWriter.log("employees.js getFilter " + error);
-                                        }
-                                    });
+                                Employees.aggregate([{
+                                    $lookup: {
+                                        from                   : "Employees",
+                                        localField             : "manager",
+                                        foreignField: "_id", as: "manager"
+                                    }
+                                }, {
+                                    $lookup: {
+                                        from                   : "JobPosition",
+                                        localField             : "jobPosition",
+                                        foreignField: "_id", as: "jobPosition"
+                                    }
+                                }, {
+                                    $lookup: {
+                                        from                   : "Department",
+                                        localField             : "department",
+                                        foreignField: "_id", as: "department"
+                                    }
+                                }, {
+                                    $lookup: {
+                                        from                   : "Users",
+                                        localField             : "relatedUser",
+                                        foreignField: "_id", as: "relatedUser"
+                                    }
+                                }, {
+                                    $lookup: {
+                                        from                   : "Users",
+                                        localField             : "createdBy.user",
+                                        foreignField: "_id", as: "createdBy.user"
+                                    }
+                                }, {
+                                    $lookup: {
+                                        from                   : "Users",
+                                        localField             : "editedBy.user",
+                                        foreignField: "_id", as: "editedBy.user"
+                                    }
+                                }, {
+                                    $lookup: {
+                                        from                   : "workflows",
+                                        localField             : "workflow",
+                                        foreignField: "_id", as: "workflow"
+                                    }
+                                }, {
+                                    $project: project
+                                }, {
+                                    $project: projectSecond
+                                }, {
+                                    $match: optionsObject
+                                }, {
+                                    $sort: sort
+                                }, {
+                                    $skip: skip
+                                }, {
+                                    $limit: limit
+                                }
+                                ], function (err, result) {
+                                    if (err) {
+                                        console.log(err);
+                                        return logWriter.log("employees.js getFilter " + err);
+                                    }
+
+                                    res['data'] = result;
+                                    response.send(res);
+                                });
                             } else {
                                 console.log(err);
                                 logWriter.log("employees.js getFilter " + err);
@@ -860,8 +1082,8 @@ var Employee = function (event, models) {
 
         query.where('isEmployee', false);
         query.populate('relatedUser department jobPosition workflow').
-            populate('createdBy.user').
-            populate('editedBy.user');
+        populate('createdBy.user').
+        populate('editedBy.user');
 
         query.sort({'name.first': 1});
         query.exec(function (err, applications) {
@@ -965,13 +1187,14 @@ var Employee = function (event, models) {
                         },
                         function (err, responseOpportunities) {
                             if (!err) {
-                                models.get(req.session.lastDb, "Employees", employeeSchema).
-                                    where('_id').in(responseOpportunities).
-                                    select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired").
-                                    populate('workflow', '_id').
-                                    sort({lastFire: -1, 'sequence': -1}).
-                                    limit(req.session.kanbanSettings.applications.countPerPage).
-                                    exec(function (err, result) {
+                                models.get(req.session.lastDb, "Employees", employeeSchema)
+                                    .where('_id').in(responseOpportunities)
+                                    .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
+                                    .populate('workflow', '_id')
+                                    .populate('jobPosition', '_id name')
+                                    .sort({lastFire: -1, 'sequence': -1})
+                                    .limit(req.session.kanbanSettings.applications.countPerPage)
+                                    .exec(function (err, result) {
                                         if (!err) {
                                             res['data'] = result;
                                             res['time'] = (new Date() - startTime);
@@ -998,18 +1221,22 @@ var Employee = function (event, models) {
 
     function getById(req, response) {
         var data = {};
-        for (var i in req.query) {
+        for (var i in
+            req.query) {
             data[i] = req.query[i];
         }
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).findById(data.id);
-        query.populate('coach', 'name _id');
-        query.populate('relatedUser', 'login _id');
-        query.populate('workflow').
-            populate('createdBy.user').
-            populate('editedBy.user').
-            populate('groups.users').
-            populate('groups.group').
-            populate('groups.owner', '_id login');
+        query.populate('coach', 'name _id')
+            .populate('relatedUser', 'login _id')
+            .populate('workflow')
+            .populate('createdBy.user')
+            .populate('editedBy.user')
+            .populate('groups.users')
+            .populate('manager', '_id name')
+            .populate('jobPosition', '_id name fullName')
+            .populate('department', '_id departmentName')
+            .populate('groups.group')
+            .populate('groups.owner', '_id login');
 
         query.exec(function (err, findedEmployee) {
             if (err) {
@@ -1083,7 +1310,8 @@ var Employee = function (event, models) {
 
         var updateObject = {};
 
-        for (var i in data) {
+        for (var i in
+            data) {
             if (i === 'contractEndReason') {
                 updateObject['isEmployee'] = false;
                 updateObject.lastFire = moment(date).year() * 100 + moment(date).isoWeek();
@@ -1105,7 +1333,7 @@ var Employee = function (event, models) {
                             data.sequence -= 1;
                         }
 
-                        if (data.fire && data.fire.length){
+                        if (data.fire && data.fire.length) {
                             updateObject.lastFire = moment(data.fire[data.fire.length - 1]).year() * 100 + moment(data.fire[data.fire.length - 1]).isoWeek();
                         }
 
@@ -1170,7 +1398,7 @@ var Employee = function (event, models) {
                 };
             }
 
-            if (data.fire && data.fire.length){
+            if (data.fire && data.fire.length) {
                 updateObject.lastFire = moment(data.fire[data.fire.length - 1]).year() * 100 + moment(data.fire[data.fire.length - 1]).isoWeek();
             }
 
@@ -1248,8 +1476,9 @@ var Employee = function (event, models) {
     }
 
     function addAtach(req, _id, files, res) {//to be deleted
-        models.get(req.session.lastDb, "Employees", employeeSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {upsert: true,
-            new: true
+        models.get(req.session.lastDb, "Employees", employeeSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {
+            upsert: true,
+            new   : true
         }, function (err, result) {
             try {
                 if (err) {
@@ -1293,16 +1522,16 @@ var Employee = function (event, models) {
     function getEmployeesImages(req, data, res) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({isEmployee: true});
         query.where('_id').in(data.ids).
-            select('_id imageSrc name').
-            exec(function (error, response) {
-                if (error) {
-                    console.log(error);
-                    logWriter.log("Employees.js remove employee.remove " + error);
-                    res.send(500, {error: "Can't find Employees Imgs"});
-                } else {
-                    res.send(200, {data: response});
-                }
-            });
+        select('_id imageSrc name').
+        exec(function (error, response) {
+            if (error) {
+                console.log(error);
+                logWriter.log("Employees.js remove employee.remove " + error);
+                res.send(500, {error: "Can't find Employees Imgs"});
+            } else {
+                res.send(200, {data: response});
+            }
+        });
 
     };
 

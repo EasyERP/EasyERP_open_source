@@ -168,26 +168,17 @@ define([
                 var departmentId = departmentDd.data("id");
                 var departmentName = departmentDd.text()
 
-                var department = {
-                    _id : departmentId ? departmentId : null,
-                    name: departmentName ? departmentName : ''
-                };
+                var department = departmentId ? departmentId : null;
 
                 var jobPositionDd = this.$el.find("#jobPositionDd");
                 var jobPositionId = jobPositionDd.data("id");
                 var jobPositionName = jobPositionDd.text();
-                var jobPosition = {
-                    _id : jobPositionId ? jobPositionId : null,
-                    name: jobPositionName ? jobPositionName : ''
-                };
+                var jobPosition = jobPositionId ? jobPositionId : null;
 
                 var projectManagerDD = this.$el.find("#projectManagerDD");
                 var projectManagerId = projectManagerDD.data("id");
                 var projectManagerName = projectManagerDD.text();
-                var manager = {
-                    _id : projectManagerId ? projectManagerId : null,
-                    name: projectManagerName ? projectManagerName : ''
-                };
+                var manager = projectManagerId ? projectManagerId : null;
 
                 var identNo = $.trim($("#identNo").val());
 

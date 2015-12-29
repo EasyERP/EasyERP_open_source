@@ -181,7 +181,7 @@
                                         <a id="departmentDd"
                                            data-id="<%=model.department ? model.department._id : ''%>"
                                            class="current-selected" href="javascript:;"><%=model.department ?
-                                            (model.department.name) : 'Select'%></a>
+                                            (model.department.departmentName) : 'Select'%></a>
                                     </dd>
                                     <dt>
                                         <label for="projectManagerDD">Manager</label>
@@ -191,7 +191,7 @@
                                            data-id="<%=model.manager ? model.manager._id : ''%>"
                                            class="current-selected"
                                            href="javascript:;"><%=model.manager._id ?
-                                            (model.manager.name) : 'Select'%>
+                                            (model.manager.fullName) : 'Select'%>
                                         </a>
                                     </dd>
                                     <dt>

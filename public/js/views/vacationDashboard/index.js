@@ -458,6 +458,8 @@ define([
             var statictics;
             var url = '#easyErp/DashBoardVacation';
 
+            App.filter = filter || {};
+
             if ('toJSON' in dashboardData) {
                 dashboardData.unbind();
                 dashboardData = dashboardData.toJSON();
@@ -490,6 +492,12 @@ define([
 
             this.findDataPickers();
 
+            if (filter) {
+                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+
+                Backbone.history.navigate(url);
+            }
+
             if (!this.filterView) {
                 this.filterView = new filterView({contentType: 'DashVacation'});
                 this.filterView.bind('filter', function (filter) {
@@ -500,16 +508,9 @@ define([
                 });
 
                 this.filterView.render();
-            }
-            /*else {
-             this.filterView.renderFilterContent();
-             }*/
-
-            if (filter) {
-                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-
-                Backbone.history.navigate(url);
-            }
+            } /*else {
+                this.filterView.renderFilterContent();
+            }*/
 
             return this;
         }
