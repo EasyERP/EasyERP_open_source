@@ -7,9 +7,10 @@ define([
         'views/CustomersSuppliers/salesPurchases',
         "models/CompaniesModel",
         "common",
-        "populate"
+        "populate",
+        "custom"
     ],
-    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, CompanyModel, common, populate) {
+    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, CompanyModel, common, populate, custom) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -194,7 +195,12 @@ define([
                         },
                         wait   : true,
                         success: function () {
+
+
                             self.hideDialog();
+
+                           custom.getFiltersValues(true); // added for refreshing filters after creating
+
                             Backbone.history.navigate("easyErp/Companies", {trigger: true});
                         },
                         error  : function (models, xhr) {
