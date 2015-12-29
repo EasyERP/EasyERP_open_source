@@ -105,6 +105,7 @@ define([
                 var $window = $(window);
                 var data = this.filteredCollection ? this.filteredCollection.toJSON() : this.collection.toJSON();
                 var contentHolder = this.$el.find('#content');
+                var $searchInput = this.$el.find('#selectInput');
 
                 this.currentPage = this.currentPage || 1;
 
@@ -170,7 +171,7 @@ define([
                 //}
 
                 if ((this.attr === 'jobs') && !data.length){
-                    this.$el.find('#selectInput').remove();
+                    $searchInput.remove();
                     contentHolder.append(s);
                 } else {
                     contentHolder.html(_.template(selectContent, {
@@ -193,6 +194,10 @@ define([
                         top: curUlPosition.top - curUlHeight - this.$el.outerHeight()
                     });
                 }
+
+                if (!$searchInput.val().length && data.length < elementVisible){
+                    $searchInput.remove();
+                }
             },
 
             render: function () {
@@ -206,15 +211,13 @@ define([
                 searchInput = this.$el.find("#selectInput");
 
                 searchInput.keyup(function (e) {
-                    self.inputEvent(e);
                     e.stopPropagation();
-
+                    self.inputEvent(e);
                 });
 
                 searchInput.change(function (e) {
-                    self.inputEvent(e);
                     e.stopPropagation();
-
+                    self.inputEvent(e);
                 });
 
                 return this;

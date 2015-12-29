@@ -148,13 +148,13 @@ define([
             },
 
             changeTab: function (e) {
-                var holder = $(e.target);
                 var n;
                 var dialog_holder;
+                var holder = $(e.target);
 
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
-                holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
                 dialog_holder = holder.closest(".dialog-tabs").parent().find(".dialog-tabs-items");
                 dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
