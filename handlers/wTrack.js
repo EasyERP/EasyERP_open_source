@@ -2058,12 +2058,16 @@ var wTrack = function (event, models) {
 
         function generatewTracks(job, mainCb){
             var jobForwTrack = job;
-            var wfTasks = [calculateWeeks, generate, checkGenerated];
+            //var wfTasks = [calculateWeeks, generate, checkGenerated];
 
-            async.each(data, function(options){
+            async.each(data, function(options, generateCb){
                 var startDate = options.startDate;
                 var endDate = options.endDate;
-                var hours = options.hours;
+                var startIsoWeek = moment(startDate).isoWeek();
+                var startYear = moment(startDate).year();
+                var startMonth = moment(startDate).month();
+                var startDay = moment(startDate).day();
+                var hours = parseInt(options.hours);
                 var project = options.project;
                 var employee = options.employee;
                 var department = options.department;
@@ -2071,16 +2075,82 @@ var wTrack = function (event, models) {
                 var dateDiff;
                 var weekCounter;
                 var totalForWeek = 0;
+                var isoWeeksInYear = moment(startDate).isoWeeksInYear();
+                var endIsoWeek;
+                var endYear;
+                var endMonth;
+                var endDay;
+                var yearDiff;
+                var result;
 
                 for (var i = 7; i > 0; i--){
                     totalForWeek += parseInt(options[i]);
                 }
 
                 if (hours){
+                    weekCounter = Math.ceil(hours / totalForWeek);
 
+                    endDate = moment(startDate).isoWeek(startIsoWeek + weekCounter).day(5);
+
+                    if (startIsoWeek + weekCounter > isoWeeksInYear){
+                        endDate.year(startYear + 1);
+                    }
                 }
+
+                endIsoWeek = moment(endDate).isoWeek();
+                endYear = moment(endDate).year();
+                endMonth = moment(endDate).month();
+                endDay = moment(endDate).day();
+
+                yearDiff = endYear - startYear;
+
+                if (yearDiff === 0){
+                   result = calcWeeks(weekCounter, startDate, endDate);
+
+                    generateItems(result);
+                    generateCb();
+                } else if (yearDiff > 0){
+                    function firstPart(pCb){
+                        var weeks = isoWeeksInYear - startIsoWeek;
+                        var endD = moment([startYear, 11, 31]);
+                        var result = calcWeeks(weeks, startDate, endD);
+
+                        pCb(null, result);
+                    }
+
+                    function secondPart(pCb){
+                        var weeks = weekCounter - isoWeeksInYear - startIsoWeek;
+                        var startD = moment([endYear, 0, 1]);
+                        var result = calcWeeks(weeks, startD, endDate);
+
+                        pCb(null, result);
+                    }
+
+                    async.parallel([firstPart, secondPart], function(err, result){
+                        var firstPart = result[0];
+                        var secondPart = result[1];
+
+                        result = firstPart.concat(secondPart);
+
+                        generateItems(result);
+                        generateCb();
+                    });
+                }
+            }, function(){
+                mainCb();
             });
 
+        }
+
+        function generateItems(weeksArray){
+
+            weeksArray.forEach(function(arrayEl){
+                var month = arrayEl.month;
+                var week = arrayEl.week;
+                var year = arrayEl.year;
+                var weekValues = arrayEl.weekValues;
+
+            });
         }
     };
 
