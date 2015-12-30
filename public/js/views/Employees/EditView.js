@@ -144,6 +144,13 @@ define([
             //},
 
             hideNewSelect: function () {
+                var editingDates = this.$el.find('.editing');
+
+                editingDates.each(function () {
+                    $(this).parent().text($(this).val());
+                    $(this).remove();
+                });
+
                 if (this.selectView) {
                     this.selectView.remove();
                 }

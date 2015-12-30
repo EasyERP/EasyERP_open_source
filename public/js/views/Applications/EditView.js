@@ -520,6 +520,13 @@
                 }
             },
             hideNewSelect: function (e) {
+                var editingDates = this.$el.find('.editing');
+
+                editingDates.each(function () {
+                    $(this).parent().text($(this).val());
+                    $(this).remove();
+                });
+
                 $(".newSelectList").hide();
             },
             showNewSelect: function (e, prev, next) {
