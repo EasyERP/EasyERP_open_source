@@ -6,6 +6,7 @@ define([
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/cancelEdit.html',
+        'views/selectView/selectView',
         'views/supplierPayments/CreateView',
         'views/Filter/FilterView',
         'models/PaymentModel',
@@ -19,7 +20,7 @@ define([
         'helpers/keyCodeHelper',
         'views/listViewBase',
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase) {
         var PaymentListView = ListViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -35,11 +36,8 @@ define([
             responseObj             : {},
 
             events: {
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable"                                               : "editRow",
-                "click"                                                           : "hideItemsNumber",
-                "change .editable "                                               : "setEditable",
+                "change .editable"                                               : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "focusout .editing"                                               : "onChangeInput",
                 "keydown .editing"                                                : "onKeyDownInput"
@@ -165,7 +163,8 @@ define([
                     ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
                     el.append(ul);
                 } else if (isSelect) {
-                    populate.showSelect(e, prev, next, this);
+                    this.showNewSelect(e);
+                    return false;
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -187,6 +186,28 @@ define([
                         });
                     }
                 }
+
+                return false;
+            },
+
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
 
                 return false;
             },

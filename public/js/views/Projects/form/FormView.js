@@ -7,6 +7,7 @@ define([
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
         'text!templates/Projects/projectInfo/invoiceStats.html',
+        'views/selectView/selectView',
         'views/salesOrder/EditView',
         'views/salesQuotation/EditView',
         'views/salesInvoice/EditView',
@@ -37,7 +38,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -52,9 +53,9 @@ define([
                 "click #health a:not(.disabled)"                                                          : "showHealthDd",
                 "click #health ul li div:not(.disabled)"                                                  : "chooseHealthDd",
                 "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                        : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                                             : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)"                        : "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)"                        : "prevSelect",
+                //"click .newSelectList li.miniStylePagination"                                             : "notHide",
+                //"click .newSelectList li.miniStylePagination .next:not(.disabled)"                        : "nextSelect",
+                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)"                        : "prevSelect",
                 "click .current-selected:not(.disabled)"                                                  : "showNewSelect",
                 "click #createItem"                                                                       : "createDialog",
                 "click #createJob"                                                                        : "createJob",
@@ -409,8 +410,25 @@ define([
             },
 
             showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                //populate.showSelect(e, prev, next, this);
+                var $target = $(e.target);
+                e.stopPropagation();
 
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+                return false;
                 return false;
             },
 
@@ -652,13 +670,10 @@ define([
             },
 
             hideSelect: function () {
-                $(".newSelectList").hide();
-            },
-
-            showEndContractSelect: function (e) {
-                e.preventDefault();
-                $(e.target).parent().find(".newSelectList").toggle();
-                return false;
+              //  $(".newSelectList").hide();
+                if (this.selectView){
+                    this.selectView.remove();
+                }
             },
 
             showSaveButton: function () {

@@ -1,5 +1,6 @@
 define([
         "text!templates/Persons/EditTemplate.html",
+        'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
         "common",
@@ -7,7 +8,7 @@ define([
         "dataService",
         "populate"
     ],
-    function (EditTemplate, AssigneesView, SalesPurchasesView, common, Custom, dataService, populate) {
+    function (EditTemplate, selectView, AssigneesView, SalesPurchasesView, common, Custom, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             contentType: "Persons",
@@ -32,23 +33,11 @@ define([
                 "mouseleave .avatar"                                              : "hideEdit",
                 'click .dialog-tabs a'                                            : 'changeTab',
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .details"                                                  : "showDetailsBox"
             },
 
             showDetailsBox: function (e) {
                 $(e.target).parent().find(".details-box").toggle();
-            },
-            notHide       : function () {
-                return false;
-            },
-            nextSelect    : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect    : function (e) {
-                this.showNewSelect(e, true, false);
             },
 
             changeTab: function (e) {
@@ -64,12 +53,14 @@ define([
             chooseUser: function (e) {
                 $(e.target).toggleClass("choosen");
             },
+
             hideDialog: function () {
                 $('.edit-person-dialog').remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
+
             showEdit  : function () {
                 $(".upload").animate({
                     height : "20px",
@@ -77,6 +68,7 @@ define([
                 }, 250);
 
             },
+
             hideEdit  : function () {
                 $(".upload").animate({
                     height : "0px",
@@ -84,6 +76,7 @@ define([
                 }, 250);
 
             },
+
             saveItem  : function () {
                 var self = this;
                 var mid = 39;
@@ -200,18 +193,40 @@ define([
                 });
             },
 
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
 
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
+                return false;
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
+
             chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
+
             deleteItem   : function (event) {
                 var mid = 39;
                 event.preventDefault();
@@ -238,6 +253,7 @@ define([
                 }
 
             },
+
             render       : function () {
                 var self = this;
                 var notDiv;

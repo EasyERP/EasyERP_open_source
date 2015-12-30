@@ -3,13 +3,14 @@ define([
         "collections/Companies/CompaniesCollection",
         "collections/Employees/EmployeesCollection",
         "collections/Departments/DepartmentsCollection",
+        'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
         "models/CompaniesModel",
         "common",
         "populate"
     ],
-    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, CompanyModel, common, populate) {
+    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, CompanyModel, common, populate) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -31,32 +32,44 @@ define([
                 'keydown'                                                         : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected"                                         : "showNewSelect",
                 "click"                                                           : "hideNewSelect"
+            },
 
-            },
-            notHide       : function () {
-                return false;
-            },
             hideNewSelect : function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
-            nextSelect    : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect    : function (e) {
-                this.showNewSelect(e, true, false);
-            },
+
             showNewSelect : function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
+
             chooseOption  : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
+
             keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
@@ -80,6 +93,7 @@ define([
             toggleDetails: function () {
                 $("#details-dialog").toggle();
             },
+
             switchTab    : function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
@@ -89,6 +103,7 @@ define([
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
+
             showEdit     : function () {
                 $(".upload").animate({
                     height : "20px",
@@ -96,6 +111,7 @@ define([
                 }, 250);
 
             },
+
             hideEdit     : function () {
                 $(".upload").animate({
                     height : "0px",

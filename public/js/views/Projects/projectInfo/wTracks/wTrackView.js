@@ -348,24 +348,24 @@ define([
             }, this);
         },
 
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
+        //showNewSelect: function (e, prev, next) {
+        //    populate.showSelect(e, prev, next, this);
+        //
+        //    return false;
+        //},
+        //
+        //nextSelect: function (e) {
+        //    this.showNewSelect(e, false, true);
+        //},
+        //
+        //prevSelect: function (e) {
+        //    this.showNewSelect(e, true, false);
+        //},
 
-            return false;
-        },
-
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        showPagesPopup: function (e) {
-            $(e.target).closest("button").next("ul").toggle();
-            return false;
-        },
+        //showPagesPopup: function (e) {
+        //    $(e.target).closest("button").next("ul").toggle();
+        //    return false;
+        //},
 
         bindingEventsToEditedCollection: function (context) {
             if (context.editCollection) {

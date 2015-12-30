@@ -1,5 +1,6 @@
 define([
         "text!templates/Quotation/EditTemplate.html",
+        'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
         'views/Projects/projectInfo/orders/orderView',
@@ -10,7 +11,7 @@ define([
         "populate",
         'constants'
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, ordersView, quotationCollection, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, selectView, AssigneesView, ProductItemView, ordersView, quotationCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
@@ -39,25 +40,39 @@ define([
                 "click .current-selected"                                         : "showNewSelect",
                 "click"                                                           : "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .confirmOrder"                                             : "confirmOrder",
                 "click .cancelQuotation"                                          : "cancelQuotation",
                 "click .setDraft"                                                 : "setDraft"
             },
 
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
-            },
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
 
-            notHide: function () {
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView){
+                    this.selectView.remove();
+                }
             },
 
             chooseOption: function (e) {
@@ -75,13 +90,8 @@ define([
                     this.$el.find('#supplierDd').text(element.customer.name);
                     this.$el.find('#supplierDd').attr('data-id', element.customer._id);
                 }
-            },
-            nextSelect  : function (e) {
-                this.showNewSelect(e, false, true);
-            },
 
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
+                this.hideNewSelect();
             },
 
             keydownHandler: function (e) {
