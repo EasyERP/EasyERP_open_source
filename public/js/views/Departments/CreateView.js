@@ -1,5 +1,6 @@
 define([
         "text!templates/Departments/CreateTemplate.html",
+        'views/selectView/selectView',
         "collections/Departments/DepartmentsCollection",
         "collections/Customers/AccountsDdCollection",
         "models/DepartmentsModel",
@@ -7,7 +8,7 @@ define([
         "custom",
         "populate"
     ],
-    function (CreateTemplate, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate) {
+    function (CreateTemplate, selectView, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -29,15 +30,10 @@ define([
                 "click"                                                           : "hideNewSelect",
                 "click .prevUserList"                                             : "prevUserList",
                 "click .nextUserList"                                             : "nextUserList",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
                 // 'keydown': 'keydownHandler'
             },
-            notHide       : function (e) {
-                return false;
-            },
+
             keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
@@ -46,12 +42,6 @@ define([
                     default:
                         break;
                 }
-            },
-            nextSelect    : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect    : function (e) {
-                this.showNewSelect(e, true, false);
             },
 
             updateAssigneesPagination: function (el) {
@@ -166,9 +156,31 @@ define([
             },
             hideNewSelect: function (e) {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
+
             showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
 

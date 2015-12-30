@@ -1,5 +1,6 @@
 define([
         'views/listViewBase',
+        'views/selectView/selectView',
         'text!templates/wTrack/list/ListHeader.html',
         'text!templates/wTrack/list/cancelEdit.html',
         'text!templates/wTrack/list/forWeek.html',
@@ -22,7 +23,7 @@ define([
         'helpers/keyCodeHelper'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS,  keyCodes) {
+    function (listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
         var wTrackListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -61,18 +62,20 @@ define([
             },
 
             events: {
-                "click .stageSelect"                                              : "showNewSelect",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable"                                               : "editRow",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "change .autoCalc"                                                : "autoCalc",
-                "change .editable "                                               : "setEditable",
-                "keydown input.editing "                                          : "keyDown"
+                "click .stageSelect"                               : "showNewSelect",
+                "click td.editable"                                : "editRow",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "change .autoCalc"                                 : "autoCalc",
+                "change .editable"                                : "setEditable",
+                "keydown input.editing"                           : "keyDown",
+                "click"                                            : "removeInputs"
             },
 
             removeInputs: function () {
-                this.setChangedValueToModel();
+                // this.setChangedValueToModel();
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             generateJob: function (e) {
@@ -122,7 +125,7 @@ define([
                     this.setChangedValueToModel();
                     this.showSaveCancelBtns();
                     e.stopPropagation();
-                } else if ( !keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code) ){
+                } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
                     e.preventDefault();
                 }
             },
@@ -246,14 +249,6 @@ define([
                 }
             },
 
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
-
             autoCalc: function (e) {
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
@@ -265,10 +260,6 @@ define([
                 var calcEl;
                 var editWtrackModel;
                 var workedEl = tr.find('[data-content="worked"]');
-                //var revenueEl = tr.find('[data-content="revenue"]');
-                //var rateEl = tr.find('[data-content="rate"]');
-                //var rateVal;
-                //var revenueVal;
 
                 function eplyDefaultValue(el) {
                     var value = el.text();
@@ -292,22 +283,13 @@ define([
                     worked += parseInt(value);
                 }
 
-              //  rateVal = parseFloat(eplyDefaultValue(rateEl));
-              //  revenueVal = parseFloat(worked * rateVal).toFixed(2);
-
-              //  revenueEl.text(revenueVal);
-
-                editWtrackModel = this.editCollection.get(wTrackId);
-
                 workedEl.text(worked);
-                //editWtrackModel.set('worked', worked);
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
                 }
 
                 this.changedModels[wTrackId].worked = worked;
-               // this.changedModels[wTrackId].revenue = revenueVal;
             },
 
             setEditable: function (td) {
@@ -320,7 +302,7 @@ define([
                 tr = td.parents('tr');
 
                 tr.addClass('edited');
-               // td.addClass('edited');
+                // td.addClass('edited');
 
                 if (this.isEditRows()) {
                     this.setChangedValue();
@@ -393,8 +375,6 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").remove();
-
                 var el = $(e.target);
                 var self = this;
                 var tr = $(e.target).closest('tr');
@@ -419,7 +399,6 @@ define([
                 var previousYear;
                 var nextYear;
 
-
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
                         this.setChangedValueToModel();
@@ -435,10 +414,14 @@ define([
                             self.responseObj['#jobs'] = jobs;
 
                             tr.find('[data-content="jobs"]').addClass('editable');
-                            populate.showSelect(e, prev, next, self);
+                            // populate.showSelect(e, prev, next, self);
+                            self.showNewSelect(e);
+                            return false;
                         });
                     } else {
-                        populate.showSelect(e, prev, next, this);
+                        //populate.showSelect(e, prev, next, this);
+                        this.showNewSelect(e);
+                        return false;
                     }
                 } else if (isWeek) {
                     weeks = custom.getWeeks(month, year);
@@ -459,6 +442,8 @@ define([
                     el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
 
                     this.calculateCost(e, wTrackId);
+                } else if (el.attr('id') === 'selectInput') {
+                    return false;
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -478,8 +463,8 @@ define([
                         }
                     }
 
-                    insertedInput.keyup( function(e) {
-                        if( insertedInput.val() > maxValue  ) {
+                    insertedInput.keyup(function (e) {
+                        if (insertedInput.val() > maxValue) {
                             e.preventDefault();
                             insertedInput.val("" + maxValue);
                         }
@@ -489,7 +474,9 @@ define([
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
-                    this.calculateCost(e, wTrackId);
+                    if (wTrackId) {
+                        this.calculateCost(e, wTrackId);
+                    }
                 }
 
                 return false;
@@ -512,7 +499,6 @@ define([
                 var hours;
                 var calc;
                 var year;
-
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
@@ -824,13 +810,35 @@ define([
             },
 
             showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                //populate.showSelect(e, prev, next, this);
+
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
 
                 return false;
             },
 
             hideNewSelect: function (e) {
-                $(".newSelectList").remove();
+                // $(".newSelectList").remove();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             bindingEventsToEditedCollection: function (context) {
@@ -860,7 +868,7 @@ define([
                 var year = now.getFullYear();
                 var month = now.getMonth() + 1;
                 var week = now.getWeek();
-               // var rate = 3;
+                // var rate = 3;
                 var startData = {
                     year        : year,
                     month       : month,
@@ -1095,7 +1103,7 @@ define([
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             App.render({
-                                                type: 'error',
+                                                type   : 'error',
                                                 message: "You do not have permission to perform this action"
                                             });
                                         }

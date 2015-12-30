@@ -5,9 +5,9 @@ define([
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
         'views/Bonus/BonusView',
-        'custom'
+        'views/selectView/selectView'
     ],
-    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, customFile) {
+    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -30,9 +30,9 @@ define([
                 "click #health ul li div"                                         : "chooseHealthDd",
                 "click"                                                           : "hideHealth",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                //"click .newSelectList li.miniStylePagination"                     : "notHide",
+                //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected"                                         : "showNewSelect"
 
             },
@@ -40,24 +40,49 @@ define([
                 return false;
             },
             showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                //populate.showSelect(e, prev, next, this);
+
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
 
                 return false;
             },
             chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                $(".newSelectList").hide();
+               // $(".newSelectList").hide();
+                this.hideHealth();
             },
+
             nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
+
             hideHealth   : function () {
-                $(".newSelectList").hide();
+               // $(".newSelectList").hide();
                 $("#health ul").hide();
 
+                if (this.selectView){
+                    this.selectView.remove();
+                }
             },
 
             chooseHealthDd: function (e) {

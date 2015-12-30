@@ -65,13 +65,13 @@
             <td class="editableJobs" id="jobsName"><%=element.name%></td>
             <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
             </td>
-            <td class="selects"><a data-id="<%=element.type%>" id="type" class="current-selected"><%=element.type%></a>
-                <ul class="newSelectList" style="display: none;">
-                    <li>Ordered</li>
-                    <li>Quoted</li>
-                    <li>Invoiced</li>
-                    <li>Not Quoted</li>
-                </ul>
+            <td class="selects"><a data-id="<%=element.type%>" id="type"><%=element.type%></a>
+                <!--<ul class="newSelectList" style="display: none;">-->
+                    <!--<li>Ordered</li>-->
+                    <!--<li>Quoted</li>-->
+                    <!--<li>Invoiced</li>-->
+                    <!--<li>Not Quoted</li>-->
+                <!--</ul>-->
             </td>
             <td><a data-id="<%=element.quotation ? element.quotation._id : null%>" class="quotation"><%=element.quotation
                 ? element.quotation.name: ''%></a></td>

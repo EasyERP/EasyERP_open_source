@@ -1,12 +1,13 @@
 define([
     'text!templates/Bonus/BonusTemplate.html',
+    'views/selectView/selectView',
     'views/Bonus/CreateView',
     'models/BonusModel',
     "dataService",
     'common',
     "populate",
     'moment'
-], function (bonusTemplate, createView, currentModel, dataService, common, populate, moment) {
+], function (bonusTemplate, selectView, createView, currentModel, dataService, common, populate, moment) {
     var BonusView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -23,8 +24,6 @@ define([
         events: {
             'click #createBonus'                                              : 'addBonus',
             'click #removeBonus'                                              : 'removeBonus',
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
             "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
             'click .choseType'                                                : 'showSelect',
             'click .choseEmployee'                                            : 'showSelect',
@@ -37,6 +36,10 @@ define([
 
         hideDatepicker: function () {
             //ToDO Hide Datepicker
+
+            if (this.selectView){
+                this.selectView.remove();
+            }
         },
 
         showDatepicker: function (e) {
@@ -99,24 +102,23 @@ define([
         },
 
         showSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-        },
-
-        nextSelect: function (e) {
-            var self = this;
-
-            self.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            var self = this;
-
-            self.showNewSelect(e, true, false);
-        },
-
-        showNewSelect: function (e, prev, next) {
+            var $target = $(e.target);
             e.stopPropagation();
-            populate.showSelect(e, prev, next, this);
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new selectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
 
             return false;
         },
@@ -168,6 +170,10 @@ define([
 
         hideNewSelect: function () {
             $(".newSelectList").remove();
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
         },
 
         addBonus: function (e) {

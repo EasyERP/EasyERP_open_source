@@ -1,21 +1,36 @@
 ﻿define([
         "text!templates/Tasks/EditTemplate.html",
+        'views/selectView/selectView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
         "common",
         "populate",
         "custom"
     ],
-    function (EditTemplate, noteView, attachView, common, populate, custom) {
+    function (EditTemplate, selectView, noteView, attachView, common, populate, custom) {
 
         var EditView = Backbone.View.extend({
             contentType: "Tasks",
             template   : _.template(EditTemplate),
+            responseObj: {},
+
             initialize : function (options) {
                 _.bindAll(this, "render", "saveItem", "deleteItem");
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = '/Tasks';
-                this.responseObj = {};
+                this.responseObj['#type'] = [
+                    {
+                        _id : 'Task',
+                        name: 'Task'
+                    }, {
+                        _id : 'Bug',
+                        name: 'Bug'
+                    }, {
+                        _id : 'Feature',
+                        name: 'Feature'
+                    }
+                ];
+
                 this.render();
             },
 
@@ -24,9 +39,6 @@
                 'keydown'                                                         : 'keydownHandler',
                 "click .current-selected"                                         : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click"                                                           : "hideNewSelect",
                 "click #projectTopName"                                           : "hideDialog",
                 "keypress #logged, #estimated"                                    : "isNumberKey"
@@ -42,6 +54,10 @@
 
             hideNewSelect: function (e) {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             chooseOption: function (e) {
@@ -208,20 +224,28 @@
                 });
             },
 
-            notHide: function (e) {
+            showNewSelect: function (e, prev, next) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
 
-            nextSelect   : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect   : function (e) {
-                this.showNewSelect(e, true, false);
-            },
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
-            },
             deleteItem   : function (event) {
                 var mid = 39;
                 event.preventDefault();

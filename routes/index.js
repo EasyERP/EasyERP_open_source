@@ -57,7 +57,7 @@ module.exports = function (app, mainDb) {
     var currencyRouter = require('./currency')(models);
     var journalRouter = require('./journal')(models);
 
-    var requestHandler = require("../requestHandler.js")(app, event, mainDb);
+    var requestHandler;
 
     var winston = require('winston');
     var logger = new (winston.Logger)({
@@ -66,9 +66,19 @@ module.exports = function (app, mainDb) {
                 json     : false,
                 timestamp: true
             }),
-            new winston.transports.File({
-                filename: 'debug.log',
-                json    : false
+            new (winston.transports.File)({
+                name: 'infoFile',
+                filename: 'info.log',
+                level: 'info',
+                json     : false,
+                maxsize: 1024 * 1024 * 10
+            }),
+            new (winston.transports.File)({
+                name: 'errorFile',
+                filename: 'error.log',
+                json     : false,
+                level: 'error',
+                maxsize: 1024 * 1024 * 10
             })
         ],
         exceptionHandlers: [
@@ -83,6 +93,10 @@ module.exports = function (app, mainDb) {
         ],
         exitOnError      : false
     });
+
+    app.set('logger', logger);
+
+    requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
     function caseFilter(filter) {
         var condition;
@@ -131,23 +145,6 @@ module.exports = function (app, mainDb) {
 
         return resArray;
     };
-
-    //ToDo changeIt in all views
-    function filterObjectComposer(req, res, next) {
-        var query = req.query;
-        var queryObject = {};
-        var filter = query.filter;
-        var condition = '$and';
-
-        if (filter && typeof filter === 'object') {
-            condition = filter.condition || 'and';
-            condition = '$' + condition;
-            queryObject[condition] = caseFilter(filter);
-        }
-
-        req.queryObject = queryObject;
-        next();
-    }
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');

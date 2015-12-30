@@ -29,11 +29,7 @@ module.exports = (function () {
     };
 
     var quotationSchema = new Schema({
-        currency: {
-            _id : {type: ObjectId, ref: 'currency', default: null},
-            name: {type: String, default: ''},
-            rate: {type: Number, default: 1}
-        },
+        currency: {type: ObjectId, ref: 'currency', default: null},
         forSales      : {type: Boolean, default: true},
         type          : {type: String, default: 'Not Ordered', enum: ['Not Ordered', 'Not Invoiced', 'Invoiced']},
         isOrder       : {type: Boolean, default: false},

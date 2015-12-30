@@ -61,7 +61,13 @@
     "grunt-contrib-uglify": "^0.9.1",
     "grunt-jsdoc": "^0.6.8",
     "grunt-modernizr": "^1.0.1",
+    "jasmine-core": "^2.4.1",
     "jsdoc": "^3.3.2",
+    "karma": "^0.13.16",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-jasmine": "^0.3.6",
+    "karma-mocha": "^0.2.1",
+    "mocha": "^2.3.4",
     "open": "0.0.5",
     "sinon": "^1.16.1",
     "supertest": "^1.0.1"

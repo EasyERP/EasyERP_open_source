@@ -4,19 +4,56 @@ define([
         "common",
         "populate",
         'views/Notes/AttachView',
-        'views/Assignees/AssigneesView'
+        'views/Assignees/AssigneesView',
+        'views/selectView/selectView'
     ],
-    function (CreateTemplate, EmployeeModel, common, populate, attachView, AssigneesView) {
+    function (CreateTemplate, EmployeeModel, common, populate, attachView, AssigneesView, selectView) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Employees",
             template   : _.template(CreateTemplate),
             imageSrc   : '',
+            responseObj: {},
+
             initialize : function () {
                 _.bindAll(this, "saveItem");
                 this.model = new EmployeeModel();
-                this.responseObj = {};
+                this.responseObj['#sourceDd'] = [
+                    {
+                        _id : 'www.rabota.ua',
+                        name: 'www.rabota.ua'
+                    }, {
+                        _id : 'www.work.ua',
+                        name: 'www.work.ua'
+                    }, {
+                        _id : 'www.ain.net',
+                        name: 'www.ain.net'
+                    }, {
+                        _id : 'other',
+                        name: 'other'
+                    }
+                ];
+
+                this.responseObj['#genderDd'] = [
+                    {
+                        _id : 'male',
+                        name: 'male'
+                    }, {
+                        _id : 'female',
+                        name: 'female'
+                    }
+                ];
+                this.responseObj['#maritalDd'] = [
+                    {
+                        _id : 'married',
+                        name: 'married'
+                    }, {
+                        _id : 'unmarried',
+                        name: 'unmarried'
+                    }
+                ];
+
                 this.render();
             },
 
@@ -28,35 +65,41 @@ define([
                 'click .dialog-tabs a'                                            : 'changeTab',
                 "click .current-selected"                                         : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click"                                                           : "hideNewSelect"
-            },
-            notHide                  : function () {
-                return false;
             },
 
             showNewSelect            : function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
 
             chooseOption             : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                $(".newSelectList").hide();
-            },
-
-            nextSelect               : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-
-            prevSelect               : function (e) {
-                this.showNewSelect(e, true, false);
             },
 
             hideNewSelect            : function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             addAttach                : function (event) {

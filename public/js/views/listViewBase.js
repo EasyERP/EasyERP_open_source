@@ -348,6 +348,10 @@ define([
             hidePagesPopup: function (e) {
                 var el = e.target;
 
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');

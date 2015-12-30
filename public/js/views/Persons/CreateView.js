@@ -2,13 +2,14 @@ define([
         "text!templates/Persons/CreateTemplate.html",
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
+        'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
         "models/PersonsModel",
         "common",
         "populate"
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, PersonModel, common, populate) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, PersonModel, common, populate) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -32,31 +33,42 @@ define([
                 "click .details"                                                  : "showDetailsBox",
                 "click .current-selected"                                         : "showNewSelect",
                 "click"                                                           : "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
             },
-            showNewSelect : function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
+            showNewSelect : function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
 
-            },
-            notHide       : function () {
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
+
             hideNewSelect : function () {
                 $(".newSelectList").hide();
+                if (this.selectView){
+                    this.selectView.remove();
+                }
             },
+
             chooseOption  : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
             },
-            nextSelect    : function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect    : function (e) {
-                this.showNewSelect(e, true, false);
-            },
+
             showDetailsBox: function (e) {
                 $(e.target).parent().find(".details-box").toggle();
             },
