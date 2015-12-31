@@ -2105,7 +2105,7 @@ var wTrack = function (event, models) {
                 yearDiff = endYear - startYear;
 
                 if (yearDiff === 0){
-                   result = calcWeeks(weekCounter, startDate, endDate);
+                   result = calcWeeks(endIsoWeek - startIsoWeek, startDate, endDate);
 
                     generateItems(result);
                     generateCb();
@@ -2136,42 +2136,170 @@ var wTrack = function (event, models) {
                         generateCb();
                     });
                 }
+
+                function calcWeeks(weeks, startD, endD){
+                    var weeksArray = [];
+                    var result = [];
+                    var startWeek = moment(startD).isoWeek();
+                    var startYear = moment(startD).year();
+                    var startDay = moment(startD).day();
+                    var startDate = moment(startD).date();
+                    var endWeek = moment(endD).isoWeek();
+                    var resArr;
+
+                    resArr = checkWeekToDivide(startWeek, startYear, startDay);
+                    result = resArr;
+
+                    for (var i = weeks - 1; i > 0; i--){
+                        resArr = checkWeekToDivide(startWeek + i, startYear);
+                        result = result.concat(resArr)
+                    }
+
+                    resArr = checkWeekToDivide(endWeek, startYear, null, endDay);
+                    result = result.concat(resArr);
+
+                    function checkWeekToDivide(week, year, day, endDay){
+                        var arrayResult = [];
+                        var weekObj = {};
+                        var weekObjNext = {};
+                        var month = moment().year(year).isoWeek(week).month();
+                        var endOfMonth = moment().year(year).month(month).endOf('month').date();
+                        var day = day || 1;
+                        var dayForEndOfMonth = moment().year(year).month(month).date(endOfMonth).day() + 1;
+
+                        if (startDate + 7 > endOfMonth){
+                            weekObj.week =  week;
+                            weekObj.year = year;
+                            weekObj.weekValues = {};
+
+                            for (var k = 7; k >= 1; k--){
+                                if (k <= dayForEndOfMonth){
+                                    weekObj.weekValues[k] = options[k];
+                                } else {
+                                    weekObj.weekValues[k] = 0;
+                                }
+                            }
+
+                            weekObjNext.week =  week;
+                            weekObjNext.nextMonth = true;
+                            weekObjNext.year = year;
+                            weekObjNext.weekValues = {};
+
+                            for (var k = 7; k >= 1; k--){
+                                if (k > dayForEndOfMonth){
+                                    if (endDay){
+                                        if (k <= endDay){
+                                            weekObjNext.weekValues[k] = options[k];
+                                        } else {
+                                            weekObj.weekValues[k] = 0;
+                                        }
+                                    } else {
+                                        weekObjNext.weekValues[k] = options[k];
+                                    }
+                                } else {
+                                    weekObj.weekValues[k] = 0;
+                                }
+                            }
+
+                            arrayResult.push(weekObj);
+                            arrayResult.push(weekObjNext);
+
+
+                        } else {
+                            weekObj.week =  week;
+                            weekObj.year = year;
+                            weekObj.weekValues = {};
+
+                            for (var k = 7; k >= 1; k--){
+                                if (k >= day){
+                                    if (endDay){
+                                        if (k < endDay + 1){
+                                            weekObj.weekValues[k] = options[k];
+                                        } else {
+                                            weekObj.weekValues[k] = 0;
+                                        }
+                                    } else {
+                                        weekObj.weekValues[k] = options[k];
+                                    }
+                                } else {
+                                    weekObj.weekValues[k] = 0;
+                                }
+                            }
+
+                            arrayResult.push(weekObj);
+                        }
+
+                        return arrayResult;
+                    }
+
+                    return result;
+                }
+
+                function generateItems(weeksArray){
+
+                    weeksArray.forEach(function(arrayEl){
+                        var week = arrayEl.week;
+                        var year = arrayEl.year;
+                        var weekValues = arrayEl.weekValues;
+                        var wTrackToSave;
+                        var month = moment().year(year).isoWeek(week).month() + 1;
+                        var dateByWeek = year * 100 + week;
+                        var dateByMonth = year * 100 + month;
+                        var worked = 0;
+                        var cost = 0;
+
+
+                        for (var i = 7; i >= 1; i--){
+                            worked += arrayEl.weekValues[i] ? arrayEl.weekValues[i] : 0;
+                        }
+
+                        var newwTrack = {
+                            employee: employee,
+                            department: department,
+                            project: project,
+                            cost: cost,
+                            isPaid: false,
+                            jobs: jobForwTrack,
+                            dateByWeek: dateByWeek,
+                            dateByMonth: dateByMonth,
+                            month: month,
+                            year: year,
+                            week: week,
+                            worked: worked,
+                            whoCanRW : "everyOne",
+                            createdBy : {
+                                date : new Date(),
+                                user : req.session.uId
+                            },
+                            groups : {
+                                "group" : [ ],
+                                "users" : [ ],
+                                "owner" : null
+                            },
+                            "1": weekValues['1'],
+                            "2": weekValues['2'],
+                            "3": weekValues['3'],
+                            "4": weekValues['4'],
+                            "5": weekValues['5'],
+                            "6": weekValues['6'],
+                            "7": weekValues['7']
+                        };
+
+                        wTrackToSave= new WTrack(newwTrack);
+
+                        wTrackToSave.save(function(err, result){
+                            if (err){
+                                console.log(err);
+                            }
+                        });
+
+                    });
+                }
             }, function(){
                 mainCb();
             });
 
-            function generateItems(weeksArray){
 
-                weeksArray.forEach(function(arrayEl){
-                    var week = arrayEl.week;
-                    var year = arrayEl.year;
-                    var weekValues = arrayEl.weekValues;
-                    var newwTrack = {
-                        employee: employee,
-                        department: department,
-                        project: project,
-                        cost: cost,
-                        isPaid: false,
-                        jobs: jobId,
-                        dateByWeek: dateByWeek,
-                        dateByMonth: dateByMonth,
-                        month: month,
-                        year: year,
-                        week: week,
-                        worked: worked,
-                        whoCanRW : "everyOne",
-                        createdBy : {
-                            date : new Date(),
-                            user : req.session.uId
-                        },
-
-
-
-
-                    };
-
-                });
-            }
         }
 
 
