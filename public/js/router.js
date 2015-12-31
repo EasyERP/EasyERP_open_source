@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'views/main/MainView',
     'views/login/LoginView',
     'dataService',
@@ -6,7 +7,7 @@ define([
     'common',
     'constants'
 
-], function (mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
+], function (Backbone, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
 
     var appRouter = Backbone.Router.extend({
 

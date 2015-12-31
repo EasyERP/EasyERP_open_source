@@ -3207,13 +3207,29 @@ var wTrack = function (models) {
         var query = req.query;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
         var Payment = models.get(req.session.lastDb, 'Payment', paymentSchema);
+        var Wetrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var startDate = query.startDate;
         var endDate = query.endDate;
+        var momentStartDate;
+        var startYear;
+        var startMonth;
+        var startWeek;
+        var momentEndDate;
+        var endYear;
+        var endMonth;
+        var endWeek;
+        var startDateByWeeek;
+        var startDateByMonth;
+        var endDateByWeeek;
+        var endDateByMonth;
         var matchObject = {
             _type   : 'wTrackInvoice',
             forSales: true
         };
 
+        var wTrackMatchObject = {
+
+        };
         var matchObjectPayment = {
             forSale: true,
             _type  : 'Payment'
@@ -3241,6 +3257,11 @@ var wTrack = function (models) {
 
         var groupPaymentObject = {
             paid: {$sum: '$paidAmount'}/*,
+             root    : {$push: '$$ROOT'}*/
+        };
+
+        var groupWetrackObject = {
+            revenue: {$sum: '$revenue'}/*,
              root    : {$push: '$$ROOT'}*/
         };
 
@@ -3284,19 +3305,42 @@ var wTrack = function (models) {
             startDate = new Date(startDate);
             endDate = new Date(endDate);
 
+            momentStartDate = moment(startDate);
+            momentEndDate = moment(endDate);
+
+            startYear = momentStartDate.year();
+            startMonth = momentStartDate.month();
+            startWeek = momentStartDate.isoWeek();
+
+            endYear = momentEndDate.year();
+            endMonth = momentEndDate.month();
+            endWeek = momentEndDate.isoWeek();
+
+            startDateByWeeek = startYear * 100 + startWeek;
+            startDateByMonth = startYear * 100 + startMonth;
+            endDateByWeeek = endYear * 100 + endWeek;
+            endDateByMonth = endYear * 100 + endMonth;
+
             matchObject.invoiceDate = {$gte: startDate, $lte: endDate};
             matchObjectPayment.date = {$gte: startDate, $lte: endDate};
+
+            if (groupedKey === 'week') {
+                wTrackMatchObject.dateByWeek = {$gte: startDateByWeeek, $lte: endDateByWeeek}
+            } else {
+                wTrackMatchObject.dateByMonth = {$gte: startDateByMonth, $lte: endDateByMonth}
+            }
         }
-        ;
 
         if (groupedKey === 'week') {
             groupObject._id = '$dateByWeek';
             groupPaymentObject._id = '$dateByWeek';
+            groupWetrackObject._id = '$dateByWeek';
             projectionObject.dateByWeek = dateByWeekAggr;
             projectionPaymentObject.dateByWeek = dateByWeekAggrPayment;
         } else {
             groupObject._id = '$dateByMonth';
             groupPaymentObject._id = '$dateByMonth';
+            groupWetrackObject._id = '$dateByMonth';
             projectionObject.dateByMonth = dateByMonthAggr;
             projectionPaymentObject.dateByMonth = dateByMonthAggrPayment;
         }
@@ -3423,9 +3467,25 @@ var wTrack = function (models) {
 
         };
 
+        function revenueGrouper(parallelCb) {
+            Wetrack.aggregate([{
+                $match: wTrackMatchObject
+            }, {
+                $group: groupWetrackObject
+            }, {
+                $project: {
+                    _id : 0,
+                    date: '$_id',
+                    revenue: 1
+                }
+            }], parallelCb);
+
+        };
+
         async.parallel({
             invoiced: invoiceGrouper,
-            paid    : paymentGrouper
+            paid    : paymentGrouper,
+            revenue: revenueGrouper
         }, function (err, response) {
             var sales;
 
@@ -3449,6 +3509,8 @@ var wTrack = function (models) {
             }
 
             mergeByProperty(response.invoiced, response.paid, 'date');
+            mergeByProperty(response.invoiced, response.revenue, 'date');
+
             sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
