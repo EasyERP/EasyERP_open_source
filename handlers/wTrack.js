@@ -2058,6 +2058,7 @@ var wTrack = function (event, models) {
 
         function generatewTracks(job, mainCb){
             var jobForwTrack = job;
+            var totalHours = 0;
             //var wfTasks = [calculateWeeks, generate, checkGenerated];
 
             async.each(data, function(options, generateCb){
@@ -2142,7 +2143,6 @@ var wTrack = function (event, models) {
                     var startDate = moment(startD).date();
                     var endWeek = moment(endD).isoWeek();
                     var resArr;
-                    var totalHours = 0;
                     var hoursCount;
                     var endDay = moment(endD).day();
 
@@ -2152,6 +2152,10 @@ var wTrack = function (event, models) {
                     for (var i = weeks - 1; i > 0; i--){
                         resArr = checkWeekToDivide(startWeek + i, startYear);
                         result = result.concat(resArr)
+                    }
+
+                    if (options.hours && (options.hours - totalHours <= totalForWeek)){
+                        return result;
                     }
 
                     resArr = checkWeekToDivide(endWeek, startYear, null, endDay);
