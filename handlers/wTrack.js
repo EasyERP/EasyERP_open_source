@@ -2140,18 +2140,41 @@ var wTrack = function (event, models) {
                 mainCb();
             });
 
+            function generateItems(weeksArray){
+
+                weeksArray.forEach(function(arrayEl){
+                    var week = arrayEl.week;
+                    var year = arrayEl.year;
+                    var weekValues = arrayEl.weekValues;
+                    var newwTrack = {
+                        employee: employee,
+                        department: department,
+                        project: project,
+                        cost: cost,
+                        isPaid: false,
+                        jobs: jobId,
+                        dateByWeek: dateByWeek,
+                        dateByMonth: dateByMonth,
+                        month: month,
+                        year: year,
+                        week: week,
+                        worked: worked,
+                        whoCanRW : "everyOne",
+                        createdBy : {
+                            date : new Date(),
+                            user : req.session.uId
+                        },
+
+
+
+
+                    };
+
+                });
+            }
         }
 
-        function generateItems(weeksArray){
 
-            weeksArray.forEach(function(arrayEl){
-                var month = arrayEl.month;
-                var week = arrayEl.week;
-                var year = arrayEl.year;
-                var weekValues = arrayEl.weekValues;
-
-            });
-        }
     };
 
     this.getForDashVacation = function (req, res, next) {
