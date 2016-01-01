@@ -20,7 +20,7 @@ var mainDb = mongoose.createConnection(process.env.MAIN_DB_HOST, process.env.MAI
 
 var app;
 
-mongoose.set('debug', true);
+//mongoose.set('debug', true);
 
 //var open = require('open');
 mainDb.on('error', console.error.bind(console, 'connection error:'));
