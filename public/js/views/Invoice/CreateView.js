@@ -1,4 +1,5 @@
 define([
+        'Backbone',
         "text!templates/Invoice/CreateTemplate.html",
         "models/InvoiceModel",
         "common",
@@ -9,7 +10,7 @@ define([
         "dataService",
         'constants'
     ],
-    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
+    function (Backbone, CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -217,7 +218,7 @@ define([
 
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.RESPONSES.CREATE_QUOTATION
                     });
                 }
@@ -236,6 +237,7 @@ define([
                 var self = this;
                 var invoiceItemContainer;
                 var paymentContainer;
+                var notDiv;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -280,7 +282,7 @@ define([
                     new listHederInvoice().render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, false);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
                 populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);

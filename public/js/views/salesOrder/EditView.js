@@ -491,7 +491,7 @@ define([
                     }).render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true, true);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this/*, true, true*/);
 
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);

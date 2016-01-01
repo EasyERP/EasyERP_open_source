@@ -6,5 +6,6 @@ module.exports = (function () {
         sequence: {type: Number}
     }, {collection: 'currency'});
 
+    mongoose.model('currency', currencySchema);
     mongoose.Schemas['Currency'] = currencySchema;
 })();

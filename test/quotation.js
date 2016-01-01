@@ -28,7 +28,7 @@ describe("Quotation Specs", function () {
     it("should create quotation", function (done) {
         var body = {
             "supplier"         : "55b92ad621e4b7c40f00064f",
-            "project"          : "55b92ad621e4b7c40f000660",
+            "project"          : "56867a800692dc4c0eb63fe8",
             "workflow"         : "5555bf276a3f01acae0b5560",
             "supplierReference": null,
             "orderDate"        : "28 Dec, 2015",
@@ -49,10 +49,13 @@ describe("Quotation Specs", function () {
                     "taxes"        : "0.00",
                     "description"  : "",
                     "subTotal"     : "500",
-                    "jobs"         : "56819665dcd80b901c5645b7"
+                    "jobs"         : "56867a950692dc4c0eb63fe9"
                 }
             ],
-            "currency"         : "565eab29aeb95fa9c0f9df2d",
+            "currency"         : {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                name: 'EUR'
+            },
             "forSales"         : true,
             "deliverTo"        : "55543831d51bdef79ea0d58c",
             "populate"         : true,
@@ -80,11 +83,21 @@ describe("Quotation Specs", function () {
                     return done(err);
                 }
 
-                expect(body).to.be.instanceOf(Object);
-                expect(body).to.have.property('_id');
-                expect(body).to.have.property('products');
-                expect(body.products).to.be.instanceOf(Array);
-                expect(body.products.length).not.to.be.equal(0);
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('_id');
+                expect(body)
+                    .to.have.property('currency')
+                    .and.to.be.instanceOf(Object)
+                    .and.have.property('rate')
+                    .and.to.be.below(1);
+                expect(body)
+                    .to.have.property('products');
+                expect(body.products)
+                    .to.be.instanceOf(Array);
+                expect(body.products.length)
+                    .not.to.be.equal(0);
 
                 id = body._id;
 
