@@ -474,7 +474,11 @@ var Employee = function (event, models) {
                     _employee.nationality = data.nationality;
                 }
                 if (data.hire) {
-                    _employee.hire = getDate(data.hire);
+                    _employee.hire = {
+                        date       : getDate(data.hire),
+                        department : data.department,
+                        jobPosition: data.jobPosition
+                    }
                 }
                 ///////////////////////////////////////////////////
                 event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", 0, 0, _employee.workflow, _employee.workflow, true, false, function (sequence) {
@@ -1236,6 +1240,10 @@ var Employee = function (event, models) {
             .populate('jobPosition', '_id name fullName')
             .populate('department', '_id departmentName')
             .populate('groups.group')
+            .populate('hire.department', '_id departmentName')
+            .populate('hire.jobPosition', '_id name')
+            .populate('fire.department', '_id departmentName')
+            .populate('fire.jobPosition', '_id name')
             .populate('groups.owner', '_id login');
 
         query.exec(function (err, findedEmployee) {
@@ -1305,6 +1313,9 @@ var Employee = function (event, models) {
         var query = {};
         var date = new Date();
         var depForTransfer = data.depForTransfer;
+        var department = data.department;
+        var jobPosition = data.jobPosition;
+
         delete data.depForTransfer;
         delete data.fileName;
 
@@ -1338,10 +1349,14 @@ var Employee = function (event, models) {
                         }
 
                         if (data.fired) {
-                            dataObj = {'fire': new Date()};
+                            dataObj = {
+                                'fire': data.fired
+                            };
                             dataObj.lastFire = moment(new Date()).year() * 100 + moment(new Date()).isoWeek();
                         } else if (data.hired) {
-                            dataObj = {'hire': new Date()};
+                            dataObj = {
+                                'hire': data.hired
+                            };
                         }
 
                         if (dataObj.hire || dataObj.fire) {
@@ -1385,10 +1400,14 @@ var Employee = function (event, models) {
             }
 
             if (data.fired) {
-                dataObj = {'fire': new Date()};
+                dataObj = {
+                    'fire': data.fired
+                };
 
             } else if (data.hired) {
-                dataObj = {'hire': new Date()};
+                dataObj = {
+                    'hire': data.hired
+                };
             } else if (depForTransfer) {
                 dataObj = {
                     'transferred': {
@@ -1399,7 +1418,7 @@ var Employee = function (event, models) {
             }
 
             if (data.fire && data.fire.length) {
-                updateObject.lastFire = moment(data.fire[data.fire.length - 1]).year() * 100 + moment(data.fire[data.fire.length - 1]).isoWeek();
+                updateObject.lastFire = moment(data.fire[data.fire.length - 1].date).year() * 100 + moment(data.fire[data.fire.length - 1].date).isoWeek();
             }
 
             if (dataObj.hire || dataObj.fire) {

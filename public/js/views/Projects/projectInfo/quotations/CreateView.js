@@ -1,4 +1,5 @@
 define([
+        'Backbone',
         "views/salesQuotation/CreateView",
         "text!templates/Projects/projectInfo/quotations/CreateTemplate.html",
         "text!templates/Projects/projectInfo/quotations/newRow.html",
@@ -13,16 +14,17 @@ define([
         'dataService',
         'helpers'
     ],
-    function (createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, helpers) {
+    function (Backbone, createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, helpers) {
+        "use strict";
 
         var CreateView = createView.extend({
-
             el            : "#content-holder",
             contentType   : "Quotation",
             template      : _.template(CreateTemplate),
             templateNewRow: _.template(newRow),
 
             initialize: function (options) {
+                /*this.channelObject = _.extend({}, Backbone.Events);*/
 
                 if (options) {
                     this.visible = options.visible;
@@ -46,6 +48,14 @@ define([
                 this.render();
                 this.getForDd(this.projectId, this.customerId);
                 this.forSales = true;
+            },
+
+            recalculatePriceByJob: function () {
+                this.channelObject.trigger('recalculatePriceByJob');
+            },
+
+            validateForm: function(e){
+
             },
 
             saveItem: function () {
@@ -120,7 +130,7 @@ define([
 
                             if (jobs.length < 24) {
                                 return App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "Job field can't be empty. Please, choose or create one."
                                 });
                             }
@@ -137,7 +147,7 @@ define([
                             });
                         } else {
                             return App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "Products can't be empty."
                             });
                         }
@@ -189,7 +199,7 @@ define([
 
                 } else {
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Products can not be empty."
                     });
                 }
@@ -214,7 +224,8 @@ define([
                         canBeSold       : true,
                         service         : 'Service',
                         projectModel    : this.projectModel,
-                        wTrackCollection: this.wTrackCollection
+                        wTrackCollection: this.wTrackCollection,
+                        channelObject   : this.channelObject
                     }).render().el
                 );
 
@@ -233,9 +244,9 @@ define([
                 this.collection.add(model);
 
                 $currentEl.append(this.templateNewRow({
-                    quotation  : model.toJSON(),
-                    startNumber: currentNumber,
-                    dateToLocal: common.utcDateToLocaleDate,
+                    quotation       : model.toJSON(),
+                    startNumber     : currentNumber,
+                    dateToLocal     : common.utcDateToLocaleDate,
                     currencySplitter: helpers.currencySplitter
                 }));
             }

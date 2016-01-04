@@ -56,6 +56,7 @@ module.exports = function (app, mainDb) {
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
     var journalRouter = require('./journal')(models);
+    var async = require('async');
 
     var requestHandler;
 
@@ -1497,7 +1498,7 @@ module.exports = function (app, mainDb) {
     });
 
     //ToDo remove it after test
-    app.get('/unlinkWtracks', function (req, res, next) {
+   /* app.get('/unlinkWtracks', function (req, res, next) {
         require('..//models/index.js');
 
         var mongoose = require('mongoose');
@@ -1574,11 +1575,11 @@ module.exports = function (app, mainDb) {
                     }
 
                 }
-            }/*, {
+            }/!*, {
              $match: {
              revenue: null
              }
-             }*/]);
+             }*!/]);
 
         query.exec(function (error, response) {
             if (error) {
@@ -1624,6 +1625,30 @@ module.exports = function (app, mainDb) {
                     res.status(200).send({success: 'All updated'});
                 });
             });
+        });
+    });*/
+
+    app.get('/clean', function(req, res, next){
+        var dbId = req.session.lastDb;
+        var db = dbsObject[dbId];
+        var collections = ['Project', 'wTrack', 'Invoice', 'Quotation', 'Payment', 'jobs', 'savedFilters', 'payOut'];
+        var collection;
+
+        async.each(collections, function (colName, cb) {
+            collection = db.collection(colName);
+            collection.drop(function (err, reply) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb();
+            });
+        }, function (err) {
+            if(err){
+                return next(err);
+            }
+
+            res.status(200).send('droped');
         });
     });
 

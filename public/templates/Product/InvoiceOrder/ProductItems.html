@@ -6,20 +6,26 @@
             Product
         </th>
         <% if (forSales) {%>
-        <th class="width25" data-sort="jobs">
-            Job
-        </th>
+            <th class="width25" data-sort="jobs">
+                Job
+            </th>
         <% } else {%>
-        <th class="width20" data-sort="description">
-            Description
-        </th>
+            <th class="width20" data-sort="description">
+                Description
+            </th>
         <% } %>
         <th class="width25" data-sort="scheduledDate">
             Scheduled Date
         </th>
-        <th class="width20" data-sort="quantity">
-            Quantity
-        </th>
+        <% if (forSales) {%>
+            <th class="width20" data-sort="hours">
+                Hours
+            </th>
+        <% } else {%>
+            <th class="width20" data-sort="quantity">
+                Quantity
+            </th>
+        <% } %>
         <th class="width20" data-sort="unitPrice">
             Unit Price
         </th>

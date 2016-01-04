@@ -9,9 +9,10 @@ define([
         "populate",
         'constants',
         'views/Assignees/AssigneesView',
-        'dataService'
+        'dataService',
+        'helpers/keyValidator'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -31,11 +32,11 @@ define([
             },
 
             events: {
-                'keydown'                                                        : 'keydownHandler',
+                'keypress'                                                       : 'keydownHandler',
                 'click .dialog-tabs a'                                           : 'changeTab',
                 "click a.current-selected:not(.jobs)"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
-                "click" : "hideNewSelect"
+                "click"                                                          : "hideNewSelect"
             },
 
             showNewSelect: function (e) {
@@ -92,12 +93,18 @@ define([
             },
 
             keydownHandler: function (e) {
-                switch (e.which) {
+                var charCode = e.which;
+                var symbol = String.fromCharCode(charCode);
+
+                switch (charCode) {
                     case 27:
                         this.hideDialog();
                         break;
-                    default:
+                    case 13:
+                        this.validateForm(e);
                         break;
+                    default:
+                        return keyValidator(e);
                 }
             },
 

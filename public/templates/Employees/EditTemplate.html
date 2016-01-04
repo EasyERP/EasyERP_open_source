@@ -19,6 +19,13 @@
                     </li>
 
                     <li>
+                        <a href="javascript:;"
+                           class="">
+                           Job
+                        </a>
+                    </li>
+
+                    <li>
                         <a href="javascript:;">Assignees</a>
                     </li>
 
@@ -149,46 +156,6 @@
 
                             <div class="half-block left">
                                 <dl class="edit-employee-info">
-
-
-                                    <dt><label for="jobPositionDd">Job position</label></dt>
-                                    <dd>
-                                        <a id="jobPositionDd"
-                                           data-id="<%=model.jobPosition ? model.jobPosition._id:''%>"
-                                           class="current-selected"
-                                           href="javascript:;"><%=model.jobPosition?(model.jobPosition.name):'Select'%></a>
-                                    </dd>
-
-                                    <dt><label for="departmentsDd">Department</label></dt>
-                                    <dd>
-                                        <a id="departmentsDd"
-                                           data-id="<%=model.department ? model.department._id : ''%>"
-                                           class="current-selected" href="javascript:;">
-                                            <%=model.department ?(model.department.departmentName) : 'Select'%></a>
-                                    </dd>
-                                    <dt>
-                                        <label for="projectManagerDD">Manager</label>
-                                    </dt>
-                                    <dd>
-                                        <a id="projectManagerDD"
-                                           data-id="<%=model.manager ? model.manager._id : ''%>"
-                                           class="current-selected"
-                                           href="javascript:;"><%=model.manager._id ?
-                                            (model.manager.fullName) : 'Select'%>
-                                        </a>
-                                    </dd>
-                                    <dt>
-                                        <label for="jobTypeDd">Job type</label>
-                                    </dt>
-                                    <dd>
-                                        <a id="jobTypeDd"
-                                           data-id="<%=model.jobType?model.jobType:''%>"
-                                           class="current-selected"
-                                           href="javascript:;">
-                                            <%=model.jobType?(model.jobType):'Select'%>
-                                        </a>
-                                    </dd>
-
                                     <dt>
                                         <label for="sourceDd">Source </label>
                                     </dt>
@@ -401,77 +368,6 @@
                             </div>
                             <div class="clearfix"></div>
                             <div class="formTitle">
-                                <h3 class="left">HiredFired</h3>
-
-                                <div class="clearfix"></div>
-                            </div>
-
-                            <div class="half-block left withPaddingLeft">
-                                <%_.each(model.hire, function(hire, key){ %>
-                                <dt>
-                                    <label>Hired</label>
-                                </dt>
-                                <dd><input class="hire"
-                                           type="text"
-                                           name="hire"
-                                           id="hire<%=key%>"
-                                           value="<%=model.hire[key]%>"
-                                           required readonly/></dd>
-                                <% }); %>
-                            </div>
-                            <div class="half-block right withPaddingLeft">
-                                <%_.each(model.fire, function(fire, key){ %>
-                                <dt>
-                                    <label>Fired</label>
-                                </dt>
-                                <dd><input class="fire"
-                                           type="text"
-                                           name="fire"
-                                           id="fire<%=key%>"
-                                           value="<%=model.fire[key]%>" required readonly/>
-                                </dd>
-                                <% }); %>
-                            </div>
-
-                            <% if (model.transferred.length > 0) {%>
-                            <div class="clearfix"></div>
-                            <div class="formTitle">
-                                <h3 class="left">Transfer</h3>
-
-                                <div class="clearfix"></div>
-                            </div>
-
-                            <div class="half-block left withPaddingLeft">
-                                <%_.each(model.transferred, function(obj, key){ %>
-                                <dt>
-                                    <label>Department</label>
-                                </dt>
-                                <dd>
-                                    <input class="dep"
-                                           type="text"
-                                           name="dep"
-                                           id="dep<%=key%>"
-                                           value="<%=obj.department%>" required readonly/>
-                                </dd>
-                                <% }); %>
-                            </div>
-                            <div class="half-block right withPaddingLeft">
-                                <%_.each(model.transferred, function(obj, key){ %>
-                                <dt>
-                                    <label>Date</label>
-                                </dt>
-                                <dd><input class="date"
-                                           type="text"
-                                           name="date"
-                                           id="date<%=key%>"
-                                           value="<%=obj.date%>"
-                                           required readonly/></dd>
-                                <% }); %>
-                            </div>
-                            <% } %>
-
-                            <div class="clearfix"></div>
-                            <div class="formTitle">
                                 <h3 class="left">Resume</h3>
 
                                 <div class="clearfix"></div>
@@ -481,8 +377,120 @@
                         </div>
                     </div>
 
+
                     <div class="clearfix"></div>
 
+                    <div class="dialog-tabs-item">
+                            <div>
+                                <dt><label for="jobPositionDd">Job position</label></dt>
+                                <dd>
+                                    <a id="jobPositionDd"
+                                       data-id="<%=model.jobPosition ? model.jobPosition._id:''%>"
+                                       class="current-selected"
+                                       href="javascript:;"><%=model.jobPosition?(model.jobPosition.name):'Select'%></a>
+                                </dd>
+
+                                <dt><label for="departmentsDd">Department</label></dt>
+                                <dd>
+                                    <a id="departmentsDd"
+                                       data-id="<%=model.department ? model.department._id : ''%>"
+                                       class="current-selected" href="javascript:;">
+                                        <%=model.department ?(model.department.departmentName) : 'Select'%></a>
+                                </dd>
+                                <dt>
+                                    <label for="projectManagerDD">Manager</label>
+                                </dt>
+                                <dd>
+                                    <a id="projectManagerDD"
+                                       data-id="<%=model.manager ? model.manager._id : ''%>"
+                                       class="current-selected"
+                                       href="javascript:;"><%=model.manager._id ?
+                                        (model.manager.fullName) : 'Select'%>
+                                    </a>
+                                </dd>
+                                <dt>
+                                    <label for="jobTypeDd">Job type</label>
+                                </dt>
+                                <dd>
+                                    <a id="jobTypeDd"
+                                       data-id="<%=model.jobType?model.jobType:''%>"
+                                       class="current-selected"
+                                       href="javascript:;">
+                                        <%=model.jobType?(model.jobType):'Select'%>
+                                    </a>
+                                </dd>
+                            </div>
+                        <div class="clearfix"></div>
+                        <div class="formTitle">
+                            <h3 class="left">HiredFired</h3>
+
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <table class="list">
+                            <thead>
+                            <tr>
+                                <th>Hired</th>
+                                <th>Job position</th>
+                                <th>Fired</th>
+                                <th>Job position</th>
+                                <th>Department</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <%_.each(model.hire, function(hire, key){ %>
+                            <tr>
+                                <td class="editable hire" id="hire<%=key%>"><%=model.hire[key].date%></td>
+                                <td><%=model.hire[key].jobPosition.name%></td>
+                                <td class="fire <%=model.fire && model.fire[key]%> ? 'editable' : ''" id="fire<%=key%>"><%=model.fire && model.fire[key] ?model.fire[key].date: ""%></td>
+                                <td><%=model.fire && model.fire[key] ? model.fire[key].jobPosition.name: ""%></td>
+                                <td><%=model.hire[key] && model.hire[key].department ? model.hire[key].department.departmentName: ""%></td>
+                            </tr>
+                            <% }); %>
+
+                            </tbody>
+                            </table>
+
+                        <% if (model.transferred.length > 0) {%>
+                        <div class="clearfix"></div>
+                        <div class="formTitle">
+                            <h3 class="left">Transfer</h3>
+
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="half-block left withPaddingLeft">
+                            <%_.each(model.transferred, function(obj, key){ %>
+                            <dt>
+                                <label>Department</label>
+                            </dt>
+                            <dd>
+                                <input class="dep"
+                                       type="text"
+                                       name="dep"
+                                       id="dep<%=key%>"
+                                       value="<%=obj.department%>" required readonly/>
+                            </dd>
+                            <% }); %>
+                        </div>
+                        <div class="half-block right withPaddingLeft">
+                            <%_.each(model.transferred, function(obj, key){ %>
+                            <dt>
+                                <label>Date</label>
+                            </dt>
+                            <dd><input class="date"
+                                       type="text"
+                                       name="date"
+                                       id="date<%=key%>"
+                                       value="<%=obj.date%>"
+                                       required readonly/></dd>
+                            <% }); %>
+                        </div>
+                        <% } %>
+                   </div>
+
+
+                    <div class="clearfix"></div>
                     <div class="dialog-tabs-item">
                         <div class="assignees-container"></div>
                     </div>

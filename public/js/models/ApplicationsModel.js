@@ -46,13 +46,13 @@
 
                     if (response.hire) {
                         response.hire = _.map(response.hire, function (hire) {
-                            hire = moment(hire).format('DD MMM, YYYY');
+                            hire.date = common.utcDateToLocaleDate(hire.date);
                             return hire;
                         });
                     }
                     if (response.fire) {
                         response.fire = _.map(response.fire, function (fire) {
-                            fire = moment(fire).format('DD MMM, YYYY');
+                            fire.date = common.utcDateToLocaleDate(fire.date);
                             return fire;
                         });
                     }

@@ -1,5 +1,7 @@
-﻿define(['moment'],
-    function (moment) {
+﻿define([
+    'Backbone',
+    'moment'
+], function (Backbone, moment) {
         "use strict";
         var Model = Backbone.Model.extend({
             idAttribute: '_id',
@@ -29,6 +31,9 @@
 
                 response.paid = response.paid || 0;
                 response.paid /= 100;
+
+                response.revenue = response.revenue || 0;
+                response.revenue /= 100;
 
                 sales = response.sales || [];
 

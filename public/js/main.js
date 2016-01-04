@@ -34,6 +34,12 @@ require.config({
         socketio     : '/socket.io/socket.io.js'
     },
     shim : {
+        'Underscore': {
+            exports: '_'
+        },
+        'jQuery': {
+            exports: '$'
+        },
         'jqueryui'  : ['jQuery'],
         'ajaxForm'  : ['jQuery'],
         'imageCrop' : ['jQuery'],

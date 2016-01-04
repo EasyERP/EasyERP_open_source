@@ -18,7 +18,7 @@ define([
             contentType: "Employees",
             imageSrc   : '',
             template   : _.template(EditTemplate),
-            responseObj : {},
+            responseObj: {},
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
@@ -33,39 +33,39 @@ define([
                 this.currentModel.urlRoot = '/Employees';
 
                 this.responseObj['#sourceDd'] = [
-                            {
-                                _id : 'www.rabota.ua',
-                                name: 'www.rabota.ua'
-                            }, {
-                                _id : 'www.work.ua',
-                                name: 'www.work.ua'
-                            }, {
-                                _id : 'www.ain.net',
-                                name: 'www.ain.net'
-                            }, {
-                                _id : 'other',
-                                name: 'other'
-                            }
-                        ];
+                    {
+                        _id : 'www.rabota.ua',
+                        name: 'www.rabota.ua'
+                    }, {
+                        _id : 'www.work.ua',
+                        name: 'www.work.ua'
+                    }, {
+                        _id : 'www.ain.net',
+                        name: 'www.ain.net'
+                    }, {
+                        _id : 'other',
+                        name: 'other'
+                    }
+                ];
 
                 this.responseObj['#genderDd'] = [
-                            {
-                                _id : 'male',
-                                name: 'male'
-                            }, {
-                                _id : 'female',
-                                name: 'female'
-                            }
-                        ];
+                    {
+                        _id : 'male',
+                        name: 'male'
+                    }, {
+                        _id : 'female',
+                        name: 'female'
+                    }
+                ];
                 this.responseObj['#maritalDd'] = [
-                            {
-                                _id : 'married',
-                                name: 'married'
-                            }, {
-                                _id : 'unmarried',
-                                name: 'unmarried'
-                            }
-                        ];
+                    {
+                        _id : 'married',
+                        name: 'married'
+                    }, {
+                        _id : 'unmarried',
+                        name: 'unmarried'
+                    }
+                ];
 
                 this.render();
             },
@@ -79,7 +79,32 @@ define([
                 'click .withEndContract .newSelectList li'                       : 'endContract',
                 "click .current-selected"                                        : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption",
-                "click"                                                          : "hideNewSelect"
+                "click"                                                          : "hideNewSelect",
+                "click td.editable"                                              : "editDate"
+            },
+
+            editDate: function (e) {
+                var self = this;
+                var $target = $(e.target);
+                var tempContainer;
+
+                tempContainer = ($target.text()).trim();
+                $target.html('<input class="editing" type="text" value="' + tempContainer + '">');
+                $target.find('.editing').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true,
+                    onSelect   : function () {
+                        var editingDates = self.$el.find('.editing');
+
+                        editingDates.each(function () {
+                            $(this).parent().text($(this).val());
+                            $(this).remove();
+                        });
+                    }
+                }).addClass('datepicker');
+
+                return false;
             },
 
             showNewSelect: function (e) {
@@ -107,7 +132,7 @@ define([
             chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
-                this.selectView.remove();
+               // this.selectView.remove();
             },
 
             //nextSelect: function (e) {
@@ -119,7 +144,14 @@ define([
             //},
 
             hideNewSelect: function () {
-                if ( this.selectView){
+                var editingDates = this.$el.find('.editing');
+
+                editingDates.each(function () {
+                    $(this).parent().text($(this).val());
+                    $(this).remove();
+                });
+
+                if (this.selectView) {
                     this.selectView.remove();
                 }
             },
@@ -132,10 +164,15 @@ define([
             },
 
             endContract: function (e) {
+                var fired = {};
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
 
-                this.currentModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: true});
+                fired.date = new Date();
+                fired.department = this.$el.find("#departmentsDd").attr("data-id") ? this.$el.find("#departmentsDd").attr("data-id") : null;
+                fired.jobPosition = this.$el.find("#jobPositionDd").attr("data-id") ? this.$el.find("#jobPositionDd").attr("data-id") : null;
+
+                this.currentModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: fired});
                 this.currentModel.save(this.currentModel.changed, {
                     patch  : true,
                     success: function () {
@@ -244,8 +281,12 @@ define([
                 var newHireArray = [];
 
                 _.each(hireArray, function (hire, key) {
-                    var date = new Date($.trim(self.$el.find("#hire" + key).val()));
-                    newHireArray.push(date);
+                    var date = new Date($.trim(self.$el.find("#hire" + key).text()));
+                    newHireArray.push({
+                        date       : date,
+                        department : department,
+                        jobPosition: jobPosition
+                    });
                     return newHireArray;
                 });
 
@@ -253,8 +294,12 @@ define([
                 var newFireArray = [];
 
                 _.each(fireArray, function (hire, key) {
-                    var date = new Date($.trim(self.$el.find("#fire" + key).val()));
-                    newFireArray.push(date);
+                    var date = new Date($.trim(self.$el.find("#fire" + key).text()));
+                    newFireArray.push({
+                        date       : date,
+                        department : department,
+                        jobPosition: jobPosition
+                    });
                     return newFireArray;
                 });
 
@@ -517,17 +562,6 @@ define([
                     //    var day = target.val().split('/')[0];
                     //    target.val(day + '/' + month + '/' + year);
                     //}
-                });
-                $('.hire').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true
-                });
-
-                $('.fire').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true
                 });
 
                 $('.date').datepicker({
