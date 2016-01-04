@@ -1,7 +1,8 @@
 define([
+        'Underscore',
         'views/Quotation/EditView'
-    ],
-    function (ParrentEditView) {
+    ], function (_, ParrentEditView) {
+        'use strict';
 
         var EditView = ParrentEditView.extend({
             forSales   : true,
@@ -9,7 +10,7 @@ define([
 
             initialize: function (options) {
                 this.forSales = true;
-                this.currentModel = (options.model) ? options.model : options.collection.getElement();
+                this.currentModel = options.model || options.collection.getElement();
                 this.currentModel.urlRoot = "/quotation";
                 this.responseObj = {};
                 this.projectManager = this.currentModel.toJSON().project.projectmanager;

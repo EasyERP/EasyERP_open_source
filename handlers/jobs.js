@@ -242,9 +242,9 @@ var Jobs = function (models, event) {
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
         query.find({type: "Not Quoted", 'project': objectId(pId)}, {
-            name                           : 1,
-            _id                            : 1,
-            "budget.budgetTotal.revenueSum": 1
+            name    : 1,
+            _id     : 1,
+            "budget": 1
         }, function (err, jobs) {
             if (err) {
                 return next(err);

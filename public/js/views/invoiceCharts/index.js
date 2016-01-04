@@ -108,13 +108,15 @@ define([
             var margin = {top: 20, right: 70, bottom: 50, left: 100};
             var width = WIDTH - margin.left - margin.right - 15;
             var height = HEIGH - margin.top - margin.bottom;
-            var now = new Date();
-            var max = data.length;
-
+            var topChart = d3.select("#chart");
             var x = d3.scale.ordinal().rangeRoundBands([margin.left, width], 0.1);
             var y = d3.scale.linear().range([height, margin.bottom]);
 
-            var topChart = d3.select("#chart");
+            var now = new Date();
+            var max = data.length;
+            var xAxis;
+            var yAxis;
+            var line;
 
             topChart
                 .append("g")
@@ -128,14 +130,25 @@ define([
             y.domain([d3.min(data.map(function (d) {
                 d.invoiced = d.invoiced || 0;
                 d.paid = d.paid || 0;
+                d.revenue = d.revenue || 0;
 
-                return d.invoiced <= d.paid ? d.invoiced : d.paid;
+                return Math.min(d.invoiced, d.paid, d.revenue);
             })), d3.max(data.map(function (d) {
                 d.invoiced = d.invoiced || 0;
                 d.paid = d.paid || 0;
+                d.revenue = d.revenue || 0;
 
-                return d.invoiced >= d.paid ? d.invoiced : d.paid;
+                return Math.max(d.invoiced, d.paid, d.revenue);
             }))]);
+
+            line = d3.svg.line()
+                .x(function (d) {
+                    return x(d.date) + x.rangeBand() / 2;
+                })
+                .y(function (d) {
+                    return y(d.revenue);
+                })
+                .interpolate("monotone");
 
             topChart
                 .selectAll("rect")
@@ -155,40 +168,6 @@ define([
                 .attr("fill", "#01579B")//lighBlue
                 .attr("opacity", 0.3)
                 .on('mouseover', function (d) {
-                    /* var current = d3.select(this);
-                     var i = current.attr('data-index');
-                     var svgToolTip = d3.select('#' + $scope.myid);
-
-                     var value = (d[$scope.y[i - 1]] % 1) ? d[$scope.y[i - 1]].toFixed(2) : d[$scope.y[i - 1]];
-
-                     var xPosition = parseFloat(current.attr("x")) + 60 + (x.rangeBand() - 200) / 2;
-                     var yPosition = parseFloat(current.attr("y"));
-                     if (xPosition < 10) {
-                     xPosition = 10;
-                     }
-                     if ((width - xPosition) < 110) {
-                     xPosition = width - 120;
-                     }
-                     if (yPosition > 300) {
-                     yPosition = 300;
-                     }
-                     current.attr('class', 'mouseOverBar');
-                     svgToolTip
-                     .select("#tooltip")
-                     .style("left", xPosition + "px")
-                     .style("top", yPosition + "px")
-                     .select(".value")
-                     .text(/!* d[$scope.y[i - 1]] *!/value);
-                     svgToolTip
-                     .select(".lable")
-                     .text($scope.lables[i - 1]);
-                     svgToolTip
-                     .select(".dateValue")
-                     .text(
-                     $scope.x == "date" ? moment(d[$scope.x]).format('dddd, MMMM Do YYYY') : d[$scope.x]);
-                     svgToolTip
-                     .select("#tooltip")
-                     .classed("hidden", false);*/
 
                 });
 
@@ -210,31 +189,38 @@ define([
                 .attr("fill", "#40C4FF")//blue  #40C4FF
                 .attr("opacity", 0.3);
 
-            /*topChart.selectAll("text")
-             .data(data)
-             .enter()
-             .append("svg:text")
-             .attr('class', 'inBarText')
-             .attr("x", function (datum, index) {
-             return (x(datum._id) - barWidth / 2);
-             })
-             .attr("y", function (datum) {
-             return y(datum.count);
-             })
-             .attr("dx", barWidth / 2)
-             .attr("dy", "1.2em")
-             .attr("text-anchor", "middle")
-             .text(function (datum) {
-             return datum.count
-             })
-             .attr("fill", "white");*/
+            topChart.append("path")
+                .datum(data)
+                .attr('stroke', 'yellow')
+                .attr('stroke-width', 2)
+                .style('fill', 'none')
+               /* .attr("class", "line")*/
+                .attr("d", line);
 
-            var xAxis = d3.svg.axis()
+            topChart.selectAll(".circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "circle")
+                .attr("cx", function (d) {
+                    return x(d.date) + x.rangeBand() / 2;
+                })
+                .attr("cy", function (d) {
+                    return y(d.revenue);
+                })
+                .attr("r", function (d) {
+                    return 4;
+                })
+                .style("fill", "#1EBBEA")
+                .style("stroke", "#fff")
+                .style("stroke-width", "2");
+
+            xAxis = d3.svg.axis()
                 .scale(x)
                 .ticks(0)
                 .tickSize(0);
 
-            var yAxis = d3.svg.axis()
+            yAxis = d3.svg.axis()
                 .scale(y)
                 .ticks(5)
                 .orient('left');

@@ -21,11 +21,11 @@
                 this.currentModel.urlRoot = "/Applications";
                 this.responseObj = {};
                 this.refuseId = 0;
-                this.render();
 
+                this.render();
             },
 
-            events        : {
+            events: {
                 "click #tabList a"                                                : "switchTab",
                 "click .breadcrumb a, #refuse"                                    : "changeWorkflow",
                 "change #workflowNames"                                           : "changeWorkflows",
@@ -40,8 +40,34 @@
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .hireEmployee"                                             : "isEmployee",
-                "click .refuseEmployee"                                           : "refuseEmployee"
+                "click .refuseEmployee"                                           : "refuseEmployee",
+                "click td.editable"                                               : "editDate"
             },
+
+            editDate: function (e) {
+                var self = this;
+                var $target = $(e.target);
+                var tempContainer;
+
+                tempContainer = ($target.text()).trim();
+                $target.html('<input class="editing" type="text" value="' + tempContainer + '">');
+                $target.find('.editing').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true,
+                    onSelect   : function () {
+                        var editingDates = self.$el.find('.editing');
+
+                        editingDates.each(function () {
+                            $(this).parent().text($(this).val());
+                            $(this).remove();
+                        });
+                    }
+                }).addClass('datepicker');
+
+                return false;
+            },
+
             refuseEmployee: function (e) {
                 e.preventDefault();
                 var self = this;
@@ -84,9 +110,15 @@
             },
             isEmployee    : function (e) {
                 e.preventDefault();
+                var hired = {};
+
+                hired.date = new Date();
+                hired.department = this.$el.find("#departmentsDd").attr("data-id") ? this.$el.find("#departmentsDd").attr("data-id") : null;
+                hired.jobPosition = this.$el.find("#jobPositionDd").attr("data-id") ? this.$el.find("#jobPositionDd").attr("data-id") : null;
+
                 this.currentModel.save({
                     isEmployee: true,
-                    hired     : true
+                    hired     : hired
                 }, {
                     headers: {
                         mid: 39
@@ -130,7 +162,9 @@
 
             getWorkflowValue: function (value) {
                 var workflows = [];
-                for (var i = 0; i < value.length; i++) {
+                for (var i = 0;
+                     i < value.length;
+                     i++) {
                     workflows.push({name: value[i].name, status: value[i].status});
                 }
                 return workflows;
@@ -218,7 +252,7 @@
                 relatedUser = relatedUser ? relatedUser : null;
 
                 var departmentDd = el.find("#departmentDd");
-                var departmentId = departmentDd.data("id");
+                var departmentId = departmentDd.attr("data-id");
 
                 var department = departmentId ? departmentId : null;
 
@@ -272,8 +306,12 @@
                 var newHireArray = [];
 
                 _.each(hireArray, function (hire, key) {
-                    var date = new Date($.trim(self.$el.find("#hire" + key).val()));
-                    newHireArray.push(date);
+                    var date = new Date($.trim(self.$el.find("#hire" + key).text()));
+                    newHireArray.push({
+                        date       : date,
+                        department : department,
+                        jobPosition: jobPosition
+                    });
                     return newHireArray;
                 });
 
@@ -281,8 +319,12 @@
                 var newFireArray = [];
 
                 _.each(fireArray, function (hire, key) {
-                    var date = new Date($.trim(el.find("#fire" + key).val()));
-                    newFireArray.push(date);
+                    var date = new Date($.trim(el.find("#fire" + key).text()));
+                    newFireArray.push({
+                        date       : date,
+                        department : department,
+                        jobPosition: jobPosition
+                    });
                     return newFireArray;
                 });
 
@@ -478,6 +520,13 @@
                 }
             },
             hideNewSelect: function (e) {
+                var editingDates = this.$el.find('.editing');
+
+                editingDates.each(function () {
+                    $(this).parent().text($(this).val());
+                    $(this).remove();
+                });
+
                 $(".newSelectList").hide();
             },
             showNewSelect: function (e, prev, next) {
@@ -533,7 +582,9 @@
                 );
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
                     var id;
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0;
+                         i < data.length;
+                         i++) {
                         if (data[i].name == "Refused") {
                             self.refuseId = data[i]._id;
                             if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id == data[i]._id) {
@@ -563,18 +614,6 @@
                     changeYear : true,
                     yearRange  : '-100y:c+nn',
                     maxDate    : '-18y'
-                });
-
-                $('.hire').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true
-                });
-
-                $('.fire').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true
                 });
 
                 $('.date').datepicker({

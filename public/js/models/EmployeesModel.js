@@ -34,13 +34,13 @@
                 }
                 if (response.hire) {
                     response.hire = _.map(response.hire, function (hire) {
-                        hire = common.utcDateToLocaleDate(hire);
+                        hire.date = common.utcDateToLocaleDate(hire.date);
                         return hire;
                     });
                 }
                 if (response.fire) {
                     response.fire = _.map(response.fire, function (fire) {
-                        fire = common.utcDateToLocaleDate(fire);
+                        fire.date = common.utcDateToLocaleDate(fire.date);
                         return fire;
                     });
                 }
