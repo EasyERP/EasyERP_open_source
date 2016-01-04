@@ -652,27 +652,59 @@ var Filters = function (models) {
             });
         };
 
-        function getTasksFiltersValues(callback) {
-            Task.aggregate([
-                {
-                    $group: {
+        function getTasksFiltersValues(callback) {   // added $lookups in aggregation and one new field Summary
+            Task.aggregate([  {
+
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "assignedTo",
+                    foreignField: "_id", as: "assignedTo"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $project: {
+                    summary   : 1,
+                    type      :1,
+                    workflow   : {$arrayElemAt: ["$workflow", 0]},
+                    assignedTo   : {$arrayElemAt: ["$assignedTo", 0]},
+                    project    : {$arrayElemAt: ["$project", 0]}
+                }
+            },{$match : {'project' : {$exists : true} }},
+                {$group: {
                         _id         : null,
                         'project'   : {
                             $addToSet: {
-                                _id : '$project',
-                                name: '$project.name'
+                                _id : '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'summary'   : {
+                            $addToSet: {
+                                _id : '$_id',
+                                name: '$summary'
                             }
                         },
                         'assignedTo': {
                             $addToSet: {
                                 _id : '$assignedTo._id',
-                                name: {'$ifNull': ['$assignedTo.name', 'None']}
+                                name: {$concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']}
                             }
                         },
                         'workflow'  : {
                             $addToSet: {
                                 _id : '$workflow._id',
-                                name: {'$ifNull': ['$workflow.name', 'None']}
+                                name: '$workflow.name'
                             }
                         },
                         'type'      : {
@@ -683,6 +715,7 @@ var Filters = function (models) {
                         }
                     }
                 }
+
             ], function (err, result) {
                 if (err) {
                     callback(err);

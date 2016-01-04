@@ -349,7 +349,6 @@ define([
     };
 
     var getFiltersValues = function (options) {
-        console.log(options);
         var locationHash = window.location.hash;
         var filter = locationHash.split('/filter=')[1];//For startDate & endDate in EmployeeFinder for filters in dashVac
 

@@ -182,6 +182,10 @@ define([], function () {
                 view   : 'project',
                 backend: 'project'
             },
+            'Task Summary': {
+                view   : 'summary',
+                backend: 'summary'
+            },
             'Status'     : {
                 view   : 'workflow',
                 backend: 'workflow'

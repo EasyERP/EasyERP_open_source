@@ -670,7 +670,8 @@ define([
             },
 
             hideSelect: function () {
-              //  $(".newSelectList").hide();
+                $("#health").find("ul").hide(); // added for hiding list if element in isnt chosen
+
                 if (this.selectView){
                     this.selectView.remove();
                 }

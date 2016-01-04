@@ -521,7 +521,7 @@ var Project = function (models, event) {
     function caseFilter(filter) {
         var condition = [];
 
-        for (var key in filter) {
+        for (var key in filter) {   // added correct fields for Tasks and one new field Summary
             switch (key) {
                 case 'workflow':
                     condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
@@ -537,6 +537,15 @@ var Project = function (models, event) {
                     break;
                 case 'name':
                     condition.push({'_id': {$in: filter.name.value.objectID()}});
+                    break;
+                case 'summary':
+                    condition.push({'_id': {$in: filter.summary.value.objectID()}});
+                    break;
+                case 'type':
+                    condition.push({'type': {$in: filter.type.value}});
+                    break;
+                case 'assignedTo':
+                    condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
                     break;
             }
         }
@@ -997,6 +1006,7 @@ var Project = function (models, event) {
         var res = {};
         var data = {};
         var addObj = {};
+        var obj = {};
         for (var i in req.query) {
             data[i] = req.query[i];
         }
@@ -1135,9 +1145,14 @@ var Project = function (models, event) {
                                         $match: addObj
                                     }], function (err, projects) {
                                         if (!err) {
-                                            if (data && data.contentType == 'Tasks') {
-                                                var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
-                                                    where('project').in(projectsId.objectID());
+                                            if (data && data.contentType == 'Tasks') {    // added aggregation function for filters in Tasks
+                                                var query = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+                                                obj = {'$and': [{'project._id': {$in: _.pluck(projects, '_id')}}]};
+
+                                                if (data && data.filter) {
+                                                    obj['$and'].push({$and: caseFilter(data.filter)});
+                                                }/*.
+                                                    where('project').in(projectsId.objectID());*/
                                                 /*if (data && data.filter && data.filter.workflow) {
                                                  data.filter.workflow = data.filter.workflow.map(function (item) {
                                                  return item === "null" ? null : item;
@@ -1146,7 +1161,57 @@ var Project = function (models, event) {
                                                  } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                                  query.where('workflow').in([]);
                                                  }*/
-                                                query.exec(function (err, result) {
+                                                query    // added for correct counting in filters in Tasks
+                                                    .aggregate([{
+                                                        $lookup: {
+                                                            from        : "Employees",
+                                                            localField  : "assignedTo",
+                                                            foreignField: "_id",
+                                                            as: "assignedTo"
+                                                        }
+                                                    }, {
+                                                        $lookup: {
+                                                            from        : "Project",
+                                                            localField  : "project",
+                                                            foreignField: "_id",
+                                                            as: "project"
+                                                        }
+                                                    },  {
+                                                        $lookup: {
+                                                            from        : "workflows",
+                                                            localField  : "workflow",
+                                                            foreignField: "_id",
+                                                            as: "workflow"
+                                                        }
+                                                    }, {
+                                                        $project: {
+                                                            _id             : 1,
+                                                            summary         : 1,
+                                                            project         : {$arrayElemAt: ["$project", 0]},
+                                                            workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                                            assignedTo      : {$arrayElemAt: ["$assignedTo", 0]},
+                                                            type            : 1
+                                                        }
+                                                    }, {
+                                                        $project: {
+                                                            _id             : 1,
+                                                            summary         : 1,
+                                                            project         : 1,
+                                                            workflow        : 1,
+                                                            assignedTo      : 1,
+                                                            type            : 1
+                                                        }
+                                                    }, {
+                                                        $match: obj
+                                                    }], function (err, tasks) {
+                                                        if (err) {
+                                                            return console.log(err);
+                                                        }
+
+                                                        res['count'] = tasks.length;
+                                                        response.send(res);
+                                                    });
+                                                /*query.exec(function (err, result) {
                                                     if (!err) {
                                                         if (data.currentNumber && data.currentNumber < result.length) {
                                                             res['showMore'] = true;
@@ -1157,7 +1222,7 @@ var Project = function (models, event) {
                                                         logWriter.log("Projects.js getListLength task.find" + err);
                                                         response.send(500, {error: "Can't find Tasks"});
                                                     }
-                                                });
+                                                });*/
                                             } else {
                                                 if (data.currentNumber && data.currentNumber < projects.length) {
                                                     res['showMore'] = true;
@@ -1894,10 +1959,15 @@ var Project = function (models, event) {
             });
     };
 
-    function getTasksForList(req, data, response) {
+    /*function getTasksForList(req, data, response) {
         var res = {};
         res['data'] = [];
         var addObj = {};
+        var filter = data.filter;
+        var filterObj = {};
+        if (filter) {
+            filterObj['$and'] = caseFilter(filter);
+        }
         if (data.parrentContentId) {
             addObj['_id'] = objectId(data.parrentContentId);
         }
@@ -1960,7 +2030,7 @@ var Project = function (models, event) {
                                     where('project').in(projectsId.objectID());
                                 if (data && data.filter) {
 
-                                    /*for (var key in data.filter) {
+                                    /!*for (var key in data.filter) {
                                      switch (key) {
                                      case 'workflow':
                                      data.filter.workflow = data.filter.workflow.map(function (item) {
@@ -1972,7 +2042,7 @@ var Project = function (models, event) {
                                      query.where('type').in(data.filter.type);
                                      break;
                                      }
-                                     }*/
+                                     }*!/
 
                                 }
 
@@ -1997,6 +2067,203 @@ var Project = function (models, event) {
                                             logWriter.log("Projects.js Getist task.find" + err);
                                             response.send(500, {error: "Can't find Tasks"});
                                         }
+                                    });
+                            } else {
+                                logWriter.log("Projects.js getTasksForList task.find " + err);
+                                response.send(500, {error: "Can't find Projects"});
+                            }
+                        });
+
+                } else {
+                    console.log(err);
+                }
+            }
+        );
+    };*/
+    function getTasksForList(req, data, response) {
+
+        var skip = (parseInt(data.page ? data.page : 1) - 1) * parseInt(data.count);
+        var limit = parseInt(data.count);
+        var res = {};
+        var obj = {};
+        var addObj = {};
+        var query;
+        var keys;
+        var arrOfObjectId;
+        var sort;
+
+        res['data'] = [];
+
+
+        if (data.parrentContentId) {
+            addObj['_id'] = objectId(data.parrentContentId);
+        }
+        models.get(req.session.lastDb, "Department", department).aggregate(
+            {
+                $match: {
+                    users: objectId(req.session.uId)
+                }
+            }, {
+                $project: {
+                    _id: 1
+                }
+            },
+            function (err, deps) {
+                if (!err) {
+                    arrOfObjectId = deps.objectID();
+                    models.get(req.session.lastDb, 'Project', projectSchema).aggregate(
+                        {
+                            $match: {
+                                $and: [
+                                    addObj,
+                                    {
+                                        $or: [
+                                            {
+                                                $or: [
+                                                    {
+                                                        $and: [
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.users': objectId(req.session.uId)}
+                                                        ]
+                                                    },
+                                                    {
+                                                        $and: [
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.group': {$in: arrOfObjectId}}
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'owner'},
+                                                    {'groups.owner': objectId(req.session.uId)}
+                                                ]
+                                            },
+                                            {whoCanRW: "everyOne"}
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 1
+                            }
+                        },
+                        function (err, result) { // added aggregate function for filtration, sort moved to aggregate
+                            if (!err) {
+                                obj = {'$and': [{'project._id': {$in: _.pluck(result, '_id')}}]};
+
+                                if (data && data.filter) {
+                                    obj['$and'].push({$and: caseFilter(data.filter)});
+                                }
+
+                                if (data.sort) {
+                                    keys = Object.keys(data.sort)[0];
+                                    data.sort[keys] = parseInt(data.sort[keys]);
+                                    sort = data.sort;
+                                } else {
+                                    sort = {"editedBy.date": -1};
+                                }
+
+                                query = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+
+                                query
+                                    .aggregate([{
+                                        $lookup: {
+                                            from        : "Employees",
+                                            localField  : "assignedTo",
+                                            foreignField: "_id",
+                                            as: "assignedTo"
+                                        }
+                                    }, {
+                                        $lookup: {
+                                            from        : "Project",
+                                            localField  : "project",
+                                            foreignField: "_id",
+                                            as: "project"
+                                        }
+                                    }, {
+                                        $lookup: {
+                                            from        : "Users",
+                                            localField  : "createdBy.user",
+                                            foreignField: "_id",
+                                            as: "createdBy.user"
+                                        }
+                                    }, {
+                                        $lookup: {
+                                            from        : "Users",
+                                            localField  : "editedBy.user",
+                                            foreignField: "_id",
+                                            as: "editedBy.user"
+                                        }
+                                    }, {
+                                        $lookup: {
+                                            from        : "workflows",
+                                            localField  : "workflow",
+                                            foreignField: "_id",
+                                            as: "workflow"
+                                        }
+                                    }, {
+                                        $project: {
+                                            _id             : 1,
+                                            summary         : 1,
+                                            type            : 1,
+                                            workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                            assignedTo      : {$arrayElemAt: ["$assignedTo", 0]},
+                                            project         : {$arrayElemAt: ["$project", 0]},
+                                            'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                            'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                            'createdBy.date': 1,
+                                            'editedBy.date' : 1,
+                                            StartDate       : 1,
+                                            EndDate         : 1,
+                                            logged          : 1,
+                                            tags            : 1,
+                                            progress        : 1,
+                                            status          : 1,
+                                            estimated       : 1,
+                                            sequence        : 1,
+                                            taskCount       : 1
+                                        }
+                                    }, {
+                                        $project: {
+                                            _id             : 1,
+                                            summary         : 1,
+                                            type            : 1,
+                                            workflow        : 1,
+                                            project         : 1,
+                                            assignedTo      : 1,
+                                            'createdBy.date': 1,
+                                            'editedBy.date' : 1,
+                                            'createdBy.user': 1,
+                                            'editedBy.user' : 1,
+                                            StartDate       : 1,
+                                            EndDate         : 1,
+                                            logged          : 1,
+                                            tags            : 1,
+                                            progress        : 1,
+                                            status          : 1,
+                                            estimated       : 1,
+                                            sequence        : 1,
+                                            taskCount       : 1
+                                    }
+                            }, {
+                                        $match: obj
+                                    }, {
+                                        $sort: sort
+                                    }, {
+                                        $skip: skip
+                                    }, {
+                                        $limit: limit
+                                    }], function (err, tasks) {
+                                        if (err) {
+                                            return console.log(err);
+                                        }
+
+                                        res['data'] = tasks;
+                                        response.send(res);
                                     });
                             } else {
                                 logWriter.log("Projects.js getTasksForList task.find " + err);

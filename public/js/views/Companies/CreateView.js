@@ -11,7 +11,7 @@ define([
         "populate",
         "custom"
     ],
-    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, CompanyModel, common, populate) {
+    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, CompanyModel, common, populate, custom) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
