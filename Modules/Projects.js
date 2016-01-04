@@ -1205,24 +1205,16 @@ var Project = function (models, event) {
                                                         $match: obj
                                                     }], function (err, tasks) {
                                                         if (err) {
-                                                            return console.log(err);
+                                                            logWriter.log("Projects.js getListLength task.find" + err);
+                                                            response.send(500, {error: "Can't find Tasks"});
+                                                        }
+                                                        if (data.currentNumber && data.currentNumber < result.length) {
+                                                            res['showMore'] = true;
                                                         }
 
                                                         res['count'] = tasks.length;
                                                         response.send(res);
                                                     });
-                                                /*query.exec(function (err, result) {
-                                                    if (!err) {
-                                                        if (data.currentNumber && data.currentNumber < result.length) {
-                                                            res['showMore'] = true;
-                                                        }
-                                                        res['count'] = result.length;
-                                                        response.send(res);
-                                                    } else {
-                                                        logWriter.log("Projects.js getListLength task.find" + err);
-                                                        response.send(500, {error: "Can't find Tasks"});
-                                                    }
-                                                });*/
                                             } else {
                                                 if (data.currentNumber && data.currentNumber < projects.length) {
                                                     res['showMore'] = true;
@@ -1959,127 +1951,7 @@ var Project = function (models, event) {
             });
     };
 
-    /*function getTasksForList(req, data, response) {
-        var res = {};
-        res['data'] = [];
-        var addObj = {};
-        var filter = data.filter;
-        var filterObj = {};
-        if (filter) {
-            filterObj['$and'] = caseFilter(filter);
-        }
-        if (data.parrentContentId) {
-            addObj['_id'] = objectId(data.parrentContentId);
-        }
-        models.get(req.session.lastDb, "Department", department).aggregate(
-            {
-                $match: {
-                    users: objectId(req.session.uId)
-                }
-            }, {
-                $project: {
-                    _id: 1
-                }
-            },
-            function (err, deps) {
-                if (!err) {
-                    var arrOfObjectId = deps.objectID();
-                    models.get(req.session.lastDb, 'Project', projectSchema).aggregate(
-                        {
-                            $match: {
-                                $and: [
-                                    addObj,
-                                    {
-                                        $or: [
-                                            {
-                                                $or: [
-                                                    {
-                                                        $and: [
-                                                            {whoCanRW: 'group'},
-                                                            {'groups.users': objectId(req.session.uId)}
-                                                        ]
-                                                    },
-                                                    {
-                                                        $and: [
-                                                            {whoCanRW: 'group'},
-                                                            {'groups.group': {$in: arrOfObjectId}}
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'owner'},
-                                                    {'groups.owner': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {whoCanRW: "everyOne"}
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            $project: {
-                                _id: 1
-                            }
-                        },
-                        function (err, projectsId) {
-                            if (!err) {
-                                var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
-                                    where('project').in(projectsId.objectID());
-                                if (data && data.filter) {
 
-                                    /!*for (var key in data.filter) {
-                                     switch (key) {
-                                     case 'workflow':
-                                     data.filter.workflow = data.filter.workflow.map(function (item) {
-                                     return item === "null" ? null : item;
-                                     });
-                                     query.where('workflow').in(data.filter.workflow);
-                                     break;
-                                     case 'type':
-                                     query.where('type').in(data.filter.type);
-                                     break;
-                                     }
-                                     }*!/
-
-                                }
-
-                                if (data.sort) {
-                                    query.sort(data.sort);
-                                } else {
-                                    query.sort({'editedBy.date': -1});
-                                }
-                                query.select("-attachments -notes").
-                                    populate('project', 'projectShortDesc projectName').
-                                    populate('assignedTo', 'name').
-                                    populate('editedBy.user', 'login').
-                                    populate('createdBy.user', 'login').
-                                    populate('workflow', 'name _id status').
-                                    skip((data.page - 1) * data.count).
-                                    limit(data.count).
-                                    exec(function (err, result) {
-                                        if (!err) {
-                                            res['data'] = result;
-                                            response.send(res);
-                                        } else {
-                                            logWriter.log("Projects.js Getist task.find" + err);
-                                            response.send(500, {error: "Can't find Tasks"});
-                                        }
-                                    });
-                            } else {
-                                logWriter.log("Projects.js getTasksForList task.find " + err);
-                                response.send(500, {error: "Can't find Projects"});
-                            }
-                        });
-
-                } else {
-                    console.log(err);
-                }
-            }
-        );
-    };*/
     function getTasksForList(req, data, response) {
 
         var skip = (parseInt(data.page ? data.page : 1) - 1) * parseInt(data.count);
