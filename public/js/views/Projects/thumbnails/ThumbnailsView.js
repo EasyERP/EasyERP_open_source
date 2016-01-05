@@ -1,4 +1,5 @@
 ﻿define([
+    'Underscore',
         "text!templates/Projects/thumbnails/ThumbnailsItemTemplate.html",
         'text!templates/stages.html',
         'views/Projects/EditView',
@@ -12,7 +13,7 @@
         'custom'
     ],
 
-    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
+    function (_, thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,

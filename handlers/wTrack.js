@@ -29,7 +29,7 @@ var wTrack = function (event, models) {
     var exportMap = require('../helpers/csvMap').wTrack;
 
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'wTrack', wTrackSchema)
+        return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
     }, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
@@ -64,9 +64,6 @@ var wTrack = function (event, models) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var department;
-        var employee;
-        var project;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -1539,9 +1536,7 @@ var wTrack = function (event, models) {
 
                                 totalForWeek = 0;
 
-                                for (var i = 7;
-                                     i >= 1;
-                                     i--) {
+                                for (var i = 7; i >= 1; i--) {
                                     totalForWeek += parseInt(opt[i]);
                                 }
 
@@ -1549,9 +1544,7 @@ var wTrack = function (event, models) {
                                 var date = startDate;
                                 totalForWeek = 0;
 
-                                for (var i = 7;
-                                     i >= 1;
-                                     i--) {
+                                for (var i = 7; i >= 1; i--) {
                                     totalForWeek += parseInt(opt[i]);
                                 }
 

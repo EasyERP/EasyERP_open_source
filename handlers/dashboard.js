@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 
 var wTrack = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
+    'use strict';
+    //var access = require("../Modules/additions/access.js")(models);
     var _ = require('lodash');
     var moment = require('../public/js/libs/moment/moment');
     var async = require('async');
@@ -19,12 +20,12 @@ var wTrack = function (models) {
 
     var objectId = mongoose.Types.ObjectId;
 
-    var wTrackSchema = mongoose.Schemas['wTrack'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
-    var HolidaySchema = mongoose.Schemas['Holiday'];
-    var VacationSchema = mongoose.Schemas['Vacation'];
-    var vacationCacheSchema = mongoose.Schemas['vacationCacheSchema'];
+    var wTrackSchema = mongoose.Schemas.wTrack;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var EmployeeSchema = mongoose.Schemas.Employee;
+    var HolidaySchema = mongoose.Schemas.Holiday;
+    var VacationSchema = mongoose.Schemas.Vacation;
+    var vacationCacheSchema = mongoose.Schemas.vacationCacheSchema;
 
     this.composeForVacation = function (req, res, next) {
         console.time('vacCache');
@@ -56,15 +57,15 @@ var wTrack = function (models) {
             if (filter.department && filter.department.value) {
                 departmentQuery = {
                     $in: filter.department.value.objectID()
-                }
+                };
             }
         }
 
         weeksArr = [];
 
         if (filter && filter.startDate && filter.endDate) {
-            startDate = parseInt(filter.startDate);
-            endDate = parseInt(filter.endDate);
+            startDate = parseInt(filter.startDate, 10);
+            endDate = parseInt(filter.endDate, 10);
 
             for (i = startDate; i <= endDate; i++) {
                 _dateStr = i.toString();
@@ -79,6 +80,11 @@ var wTrack = function (models) {
             currentWeek = moment().isoWeek();
             currentStartWeek = currentWeek - 1;
             currentYear = moment().weekYear();
+
+            if (currentStartWeek <= 0) {
+                currentStartWeek += 53;
+                currentYear -= 1;
+            }
 
             startDate = currentYear * 100 + currentStartWeek;
 
@@ -128,7 +134,7 @@ var wTrack = function (models) {
             employeesArray = employeesArray.objectID();
 
             if (employeesArray.length) {
-                employeeQueryForEmployeeByDep['$and'].unshift({
+                employeeQueryForEmployeeByDep.$and.unshift({
                     _id: {$in: employeesArray}
                 });
             }
@@ -147,7 +153,6 @@ var wTrack = function (models) {
 
             //======== tempVariables; =========
             var VacationCache;
-            var cache;
             //======== tempVariables ==========
 
             if (err) {
@@ -161,7 +166,7 @@ var wTrack = function (models) {
 
             function departmentMapper(department, departmentCb) {
                 var dashDepartment = _.find(dashBoardResult, function (deps) {
-                    if (deps.department == null) {
+                    if (deps.department === null) {
                         console.log('==================== department =======================');
                         console.log(deps);
                         console.log('===========================================');
@@ -190,7 +195,7 @@ var wTrack = function (models) {
                                 var _vacations;
 
                                 data = _.find(dashResultByEmployee.weekData, function (d) {
-                                    return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
+                                    return parseInt(d.dateByWeek, 10) === parseInt(weekData.dateByWeek, 10);
                                 });
 
                                 if (data) {
@@ -244,7 +249,7 @@ var wTrack = function (models) {
                 }, function () {
                     departmentCb();
                 });
-            };
+            }
 
             function sendResponse() {
                 Department.populate(employeesByDep, {
@@ -272,13 +277,12 @@ var wTrack = function (models) {
                         upsert: true,
                         new   : true
                     }, function (err, res) {
-                        "use strict";
                         if (err) {
                             console.error(err);
                         }
                     });
                 });
-            };
+            }
 
             async.each(employeesByDep, departmentMapper, sendResponse);
 
@@ -286,15 +290,16 @@ var wTrack = function (models) {
                 var result = [];
                 var resObject;
                 var length = targetArrayOfObjects.length;
+                var i;
 
-                for (var i = 0; i < length; i++) {
+                for (i = 0; i < length; i++) {
                     resObject = _.clone(targetArrayOfObjects[i]);
                     result.push(resObject);
                 }
 
                 return result;
             }
-        };
+        }
 
         function holidaysComposer(parallelCb) {
             var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
@@ -315,12 +320,13 @@ var wTrack = function (models) {
             }], /*parallelCb*/function (err, holidays) {
                 var holidaysObject = {};
                 var key;
+                var i;
 
                 if (err) {
                     return parallelCb(err);
                 }
 
-                for (var i = holidays.length - 1; i >= 0; i--) {
+                for (i = holidays.length - 1; i >= 0; i--) {
                     key = holidays[i].dateByWeek;
 
                     if (!holidaysObject[key]) {
@@ -332,7 +338,7 @@ var wTrack = function (models) {
 
                 parallelCb(null, holidaysObject);
             });
-        };
+        }
 
         function vacationComposer(parallelCb) {
             var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
@@ -364,7 +370,7 @@ var wTrack = function (models) {
                     vacations   : 1
                 }
             }], parallelCb);
-        };
+        }
 
         function employeeByDepComposer(parallelCb) {
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -379,7 +385,6 @@ var wTrack = function (models) {
                             fire      : 1,
                             hire      : 1,
                             name      : 1,
-                            /*firedCount: {$size: '$fire'},*/
                             lastFire  : 1
                         }
                     },
@@ -411,7 +416,7 @@ var wTrack = function (models) {
 
                     parallelCb(null, employees);
                 });
-        };
+        }
 
         function dashComposer(parallelCb) {
             function employeeFinder(waterfallCb) {
@@ -491,7 +496,7 @@ var wTrack = function (models) {
 
                     waterfallCb(null, result);
                 });
-            };
+            }
 
             function wTrackComposer(employeesArray, waterfallCb) {
                 WTrack.aggregate([
@@ -591,7 +596,7 @@ var wTrack = function (models) {
                     }
                     waterfallCb(null, response);
                 });
-            };
+            }
 
             function masterWaterfallCb(err, result) {
                 if (err) {
@@ -602,7 +607,7 @@ var wTrack = function (models) {
             }
 
             async.waterfall([employeeFinder, wTrackComposer], masterWaterfallCb);
-        };
+        }
 
         async.parallel([employeeByDepComposer, dashComposer, holidaysComposer, vacationComposer], resultMapper);
     };
@@ -642,7 +647,7 @@ var wTrack = function (models) {
             }];
 
             res.status(200).send(finalResult);
-        };
+        }
 
         function hiredEmployees(parallelCb) {
             Employee
@@ -716,7 +721,7 @@ var wTrack = function (models) {
                         parallelCb(null, employees);
                     });
                 });
-        };
+        }
 
         function firedEmployees(parallelCb) {
             Employee
@@ -793,7 +798,7 @@ var wTrack = function (models) {
                         parallelCb(null, employees);
                     });
                 });
-        };
+        }
 
         async.parallel([hiredEmployees, firedEmployees], resultMapper);
     };
