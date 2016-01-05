@@ -7,14 +7,14 @@ var Invoice = function (models, event) {
 
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
-    var InvoiceSchema = mongoose.Schemas['Invoice'];
-    var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
-    var OrderSchema = mongoose.Schemas['Quotation'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var CustomerSchema = mongoose.Schemas['Customer'];
-    var PaymentSchema = mongoose.Schemas['Payment'];
-    var wTrackSchema = mongoose.Schemas['wTrack'];
-    var JobsSchema = mongoose.Schemas['jobs'];
+    var InvoiceSchema = mongoose.Schemas.Invoice;
+    var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
+    var OrderSchema = mongoose.Schemas.Quotation;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var CustomerSchema = mongoose.Schemas.Customer;
+    var PaymentSchema = mongoose.Schemas.Payment;
+    var wTrackSchema = mongoose.Schemas.wTrack;
+    var JobsSchema = mongoose.Schemas.jobs;
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
@@ -22,14 +22,14 @@ var Invoice = function (models, event) {
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants.js');
 
-    var journalEntryHandler = require('./journalEntry');
-    var _journalEntryHandler = new journalEntryHandler(models);
+    var JournalEntryHandler = require('./journalEntry');
+    var _journalEntryHandler = new JournalEntryHandler(models);
 
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
 
         return validDbs.indexOf(db) !== -1;
-    };
+    }
 
     function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
@@ -42,22 +42,15 @@ var Invoice = function (models, event) {
         journalEntryBody.sourceDocument._id = invoice._id;
         journalEntryBody.sourceDocument.model = 'Invoice';
 
-        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb, uId)
+        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb, uId);
     }
 
     this.create = function (req, res, next) {
         var dbIndex = req.session.lastDb;
         var isWtrack = checkDb(dbIndex);
         var body = req.body;
-        var waterfallTasks
         var forSales = body.forSales;
-
-        if (forSales) {
-            waterfallTasks = [invoiceSaver, journalEntryComposer];
-        } else {
-            waterfallTasks = [invoiceSaver];
-        }
-
+        var waterfallTasks;
         var createdBy = {};
         var editedBy = {};
 
@@ -76,14 +69,16 @@ var Invoice = function (models, event) {
                 if (err) {
                     return waterfallCb(err);
                 }
-                if (forSales) {
-                    waterfallCb(null, dbIndex, result);
-                } else {
-                    waterfallCb(null, result);
-                }
 
+                result = result.toObject();
+                result.currency = result.currency || {};
+                result.currency.name = body.currency ? body.currency.name : 'USD';
+
+                waterfallCb(null, dbIndex, result);
             });
         }
+
+        waterfallTasks = [invoiceSaver, journalEntryComposer];
 
         if (isWtrack && forSales) {
             Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
@@ -528,44 +523,44 @@ var Invoice = function (models, event) {
                         Invoice
                             .aggregate([{
                                 $lookup: {
-                                    from        : "Employees",
-                                    localField  : "salesPerson",
+                                    from                   : "Employees",
+                                    localField             : "salesPerson",
                                     foreignField: "_id", as: "salesPerson"
                                 }
                             }, {
                                 $lookup: {
-                                    from        : "Customers",
-                                    localField  : "supplier",
+                                    from                   : "Customers",
+                                    localField             : "supplier",
                                     foreignField: "_id", as: "supplier"
                                 }
                             }, {
                                 $lookup: {
-                                    from        : "workflows",
-                                    localField  : "workflow",
+                                    from                   : "workflows",
+                                    localField             : "workflow",
                                     foreignField: "_id", as: "workflow"
                                 }
                             }, {
                                 $lookup: {
-                                    from        : "Users",
-                                    localField  : "createdBy.user",
+                                    from                   : "Users",
+                                    localField             : "createdBy.user",
                                     foreignField: "_id", as: "createdBy.user"
                                 }
                             }, {
                                 $lookup: {
-                                    from        : "Users",
-                                    localField  : "editedBy.user",
+                                    from                   : "Users",
+                                    localField             : "editedBy.user",
                                     foreignField: "_id", as: "editedBy.user"
                                 }
                             }, {
                                 $lookup: {
-                                    from        : "Quotation",
-                                    localField  : "sourceDocument",
+                                    from                   : "Quotation",
+                                    localField             : "sourceDocument",
                                     foreignField: "_id", as: "sourceDocument"
                                 }
                             }, {
                                 $lookup: {
-                                    from        : "Project",
-                                    localField  : "project",
+                                    from                   : "Project",
+                                    localField             : "project",
                                     foreignField: "_id", as: "project"
                                 }
                             }, {
@@ -743,6 +738,7 @@ var Invoice = function (models, event) {
 
                         query.populate('products.product')
                             .populate('products.jobs')
+                            .populate('currency._id')
                             .populate('payments', '_id name date paymentRef paidAmount')
                             .populate('department', '_id departmentName')
                             .populate('paymentTerms', '_id name')
@@ -946,23 +942,28 @@ var Invoice = function (models, event) {
     };
 
     this.totalCollectionLength = function (req, res, next) {
+        var data = req.query;
+        var filter = data.filter;
 
+        var optionsObject = {};
+        var result = {};
+
+        result['showMore'] = false;
 
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
-        var query = req.query;
-        var filter = query.filter;
-        var filterObj = {};
 
-        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
-        if (filter) {
-            filterObj['$and'] = caseFilter(filter);
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject['$or'] = caseFilter(filter);
+            } else {
+                optionsObject['$and'] = caseFilter(filter);
+            }
         }
-
-
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
@@ -986,15 +987,15 @@ var Invoice = function (models, event) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                  //  optionsObject,
+                    optionsObject,
                     {
                         $or: whoCanRw
                     }
                 ]
             };
+            var Model = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
 
-
-            Invoice.aggregate(
+            Model.aggregate(
                 {
                     $match: matchQuery
                 },
@@ -1008,121 +1009,22 @@ var Invoice = function (models, event) {
         };
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
-            var queryObject = {};
-
-            queryObject['$and'] = [];
-
-            if (filterObj) {
-                queryObject['$and'].push(filterObj);
-            }
-
-            queryObject['$and'].push({_id: {$in: _.pluck(invoicesIds, '_id')}});
-
-
-            Invoice.aggregate([{
-                $lookup: {
-                    from        : "Employees",
-                    localField  : "salesPerson",
-                    foreignField: "_id", as: "salesPerson"
-                }
-            }, {
-                $lookup: {
-                    from        : "Customers",
-                    localField  : "supplier",
-                    foreignField: "_id", as: "supplier"
-                }
-            }, {
-                $lookup: {
-                    from        : "workflows",
-                    localField  : "workflow",
-                    foreignField: "_id", as: "workflow"
-                }
-            }, {
-                $lookup: {
-                    from        : "Users",
-                    localField  : "createdBy.user",
-                    foreignField: "_id", as: "createdBy.user"
-                }
-            }, {
-                $lookup: {
-                    from        : "Users",
-                    localField  : "editedBy.user",
-                    foreignField: "_id", as: "editedBy.user"
-                }
-            }, {
-                $lookup: {
-                    from        : "Quotation",
-                    localField  : "sourceDocument",
-                    foreignField: "_id", as: "sourceDocument"
-                }
-            }, {
-                $lookup: {
-                    from        : "Project",
-                    localField  : "project",
-                    foreignField: "_id", as: "project"
-                }
-            }, {
-                $project: {
-                    sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
-                    workflow        : {$arrayElemAt: ["$workflow", 0]},
-                    supplier        : {$arrayElemAt: ["$supplier", 0]},
-                    salesPerson     : {$arrayElemAt: ["$salesPerson", 0]},
-                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                    project         : {$arrayElemAt: ["$project", 0]},
-                    expense         : 1,
-                    forSales        : 1,
-                    paymentInfo     : 1,
-                    invoiceDate     : 1,
-                    name            : 1,
-                    paymentDate     : 1,
-                    dueDate         : 1,
-                    payments        : 1
-                }
-            }, {
-                $project: {
-                    sourceDocument  : 1,
-                    workflow        : 1,
-                    supplier        : 1,
-                    salesPerson     : 1,
-                    'editedBy.user' : 1,
-                    'createdBy.user': 1,
-                    project         : 1,
-                    expense         : 1,
-                    forSales        : 1,
-                    paymentInfo     : 1,
-                    invoiceDate     : 1,
-                    name            : 1,
-                    paymentDate     : 1,
-                    dueDate         : 1,
-                    payments        : 1
-                }
-            }, {
-                $match: queryObject
-            }], function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                waterfallCallback(null, result.length);
-            });
-
-
-            /* var query;
+            var query;
             var queryObject = ({_id: {$in: invoicesIds}});
 
             query = Invoice.find(queryObject);
-            query.exec(waterfallCallback);*/
+            query.exec(waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, result) {
+        async.waterfall(waterfallTasks, function (err, invoice) {
             if (err) {
                 return next(err);
             } else {
 
-                res.status(200).send({count: result});
+                result['count'] = invoice.length;
+                res.status(200).send(result);
             }
         });
     };
@@ -1439,14 +1341,14 @@ var Invoice = function (models, event) {
                         Invoice
                             .aggregate([{
                                 $lookup: {
-                                    from        : "Project",
-                                    localField  : "project",
+                                    from                   : "Project",
+                                    localField             : "project",
                                     foreignField: "_id", as: "project"
                                 }
                             }, {
                                 $lookup: {
-                                    from        : "workflows",
-                                    localField  : "workflow",
+                                    from                   : "workflows",
+                                    localField             : "workflow",
                                     foreignField: "_id", as: "workflow"
                                 }
                             }, {
