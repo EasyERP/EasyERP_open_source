@@ -94,7 +94,7 @@ query.exec(function (error, _res) {
                 rates = oxr.rates;
                 currency.rate = rates.USD;
 
-                Cuotation.update({_id: emp._id}, {Set: {currency: currency}}, callback);
+                Cuotation.update({_id: emp._id}, {$set: {currency: currency}}, callback);
             });
         } else {
             callback();

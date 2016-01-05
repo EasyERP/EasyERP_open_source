@@ -15,8 +15,8 @@ module.exports = (function () {
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         month           : {type: Number},
         year            : {type: Number},
-        currency        : {
-            name: {type: String, default: 'USD'},
+        currency: {
+            _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         },
         groups          : {
