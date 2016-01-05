@@ -124,6 +124,7 @@ var Jobs = function (models, event) {
 
         if (forDashboard) { //add for jobsDash need refactor
             queryObjectStage2['$or'] = [];
+            queryObjectStage2['$or'].push({type: 'Not Quoted'});
             queryObjectStage2['$or'].push({"invoice._type": 'wTrackInvoice'});
             queryObjectStage2['$or'].push({quotation: {$exists: true}});
         }
