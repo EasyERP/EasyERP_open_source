@@ -1,14 +1,14 @@
 define([
-        "text!templates/Invoice/EditTemplate.html",
+        'text!templates/Invoice/EditTemplate.html',
         'views/Assignees/AssigneesView',
-        "views/Invoice/InvoiceProductItems",
-        "views/salesInvoice/wTrack/wTrackRows",
-        "views/Payment/CreateView",
-        "views/Payment/list/ListHeaderInvoice",
-        "common",
-        "custom",
-        "dataService",
-        "populate",
+        'views/Invoice/InvoiceProductItems',
+        'views/salesInvoice/wTrack/wTrackRows',
+        'views/Payment/CreateView',
+        'views/Payment/list/ListHeaderInvoice',
+        'common',
+        'custom',
+        'dataService',
+        'populate',
         'constants',
         'helpers'
     ],
@@ -92,12 +92,6 @@ define([
                         });
                     }
                 });
-
-                /*paymentView = new PaymentCreateView({
-                 model     : this.currentModel,
-                 redirect: this.redirect,
-                 collection: this.collection
-                 });*/
             },
 
             cancelInvoice: function (e) {
@@ -273,7 +267,7 @@ define([
                 var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
 
                 if (errors.length) {
-                    return
+                    return false;
                 }
 
                 if (selectedLength) {
