@@ -8,17 +8,27 @@ define([
     'views/Attendance/StatisticsView',
     'populate',
     'moment',
-    'dataService'
-], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService) {
+    'dataService',
+    'views/selectView/selectView' // added view for employees dd list
+], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, selectView) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
         template: _.template(mainTemplate),
 
         events: {
-            'change #currentEmployee': 'changeEmployee',
+            "click .editable"        : "showNewSelect",  // changed dropdown list
             'change #currentStatus'  : 'changeStatus',
-            'change #currentTime'    : 'changeTime'
+            'change #currentTime'    : 'changeTime',
+            "click .newSelectList li:not(.miniStylePagination)": "changeEmployee",  // changed to click for selectView dd
+            "click"                                            : "removeInputs"
+        },
+
+        removeInputs: function () {
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
         },
 
         initialize: function () {
@@ -38,7 +48,13 @@ define([
 
             dataService.getData("/getPersonsForDd", {}, function (result) {
                 var yearToday = moment().year();
-                employees = result.data;
+                employees = result;
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
+
+                    return employee
+                });   // changed for getting proper form of names
+
                 self.model.set({
                     employees: employees
                 });
@@ -65,7 +81,32 @@ define([
             });
         },
 
-        changeEmployee: function () {
+
+
+        showNewSelect: function (e, prev, next) {
+            //populate.showSelect(e, prev, next, this);
+
+            var $target = $(e.target);
+            e.stopPropagation();
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new selectView({
+                e          : e,
+                responseObj: {'#employee' : this.model.get("employees")}
+            });
+
+            $target.append(this.selectView.render().el);
+
+            return false;
+        },
+
+        changeEmployee: function (e) {
             var startTime = new Date();
             var self = this;
             var labels;
@@ -73,7 +114,12 @@ define([
             var data;
             var keys;
 
-            this.currentEmployee = this.$el.find("#currentEmployee option:selected").attr('id');
+            var target = $(e.target);
+            var targetElement = target.closest(".editable").find('span');
+
+            targetElement.text(target.text());
+
+            this.currentEmployee = target.attr("id");  // changed for getting value from selectView dd
 
             if (!self.currentEmployee) {
                 self.currentEmployee = self.model.get('employees')[0].id;
