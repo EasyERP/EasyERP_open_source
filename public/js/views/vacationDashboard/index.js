@@ -1,4 +1,7 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/vacationDashboard/index.html',
     'views/vacationDashboard/statisticsView',
     'collections/Dashboard/vacationDashboard',
@@ -9,7 +12,7 @@ define([
     'custom',
     'moment',
     'constants'
-], function (mainTemplate, StatisticsView, vacationDashboard, VacationDashEdit, filterView, dataService, async, custom, moment, CONSTANTS) {
+], function (Backbone, $, _, mainTemplate, StatisticsView, vacationDashboard, VacationDashEdit, filterView, dataService, async, custom, moment, CONSTANTS) {
     "use strict";
     var View = Backbone.View.extend({
         el: '#content-holder',
@@ -32,7 +35,6 @@ define([
             var self = this;
             var year;
             var week;
-            var socket = App.socket;
 
             this.startTime = options.startTime;
             this.filter = options.filter || custom.retriveFromCash('DashVacation.filter');
@@ -46,7 +48,7 @@ define([
 
             startWeek = self.week - 1;
 
-            if (startWeek >= 0) {
+            if (startWeek > 0) {
                 this.startWeek = startWeek;
             } else {
                 this.startWeek = startWeek + 53;
@@ -80,19 +82,20 @@ define([
             var projectsRows = self.$el.find("tr[data-content='project']");
             var countEmployees = employeeRows.length;
             var countProjects = projectsRows.length;
+            var i;
 
             if (!self.expandAll) {
-                for (var i = length; i >= 0; i--) {
+                for (i = length; i >= 0; i--) {
                     rows.eq(i).show();
                 }
 
                 self.$el.find('.icon').text('-');
                 self.expandAll = true;
             } else {
-                for (var i = countEmployees; i >= 0; i--) {
+                for (i = countEmployees; i >= 0; i--) {
                     employeeRows.eq(i).hide();
                 }
-                for (var i = countProjects; i >= 0; i--) {
+                for (i = countProjects; i >= 0; i--) {
                     projectsRows.eq(i).hide();
                 }
 
@@ -136,7 +139,7 @@ define([
             if (!isLeadNumber) {
                 return '<span class="low"><span class="label label-danger">Low</span></span>'
             }
-            if (isLeadNumber == 1) {
+            if (isLeadNumber === 1) {
                 return '<span class="medium"><span class="label label-warning">Medium</span></span>'
             }
             return '<span class="high"><span class="label label-success">High</span></span>'
@@ -150,10 +153,13 @@ define([
             var year = week.dateByWeek.toString().slice(0, 4);
             var _week = week.dateByWeek.toString().slice(4);
 
+            var _lastHiredObject = hiredArr[hiredArr.length - 1];
+            var _lastFiredObject = firedArr[firedArr.length - 1];
+            var _lastHiredDate = _lastHiredObject ? moment(_lastHiredObject.date, 'YYYY-MM-DD') : null;
+            var _lastFiredDate = _lastFiredObject ? moment(_lastFiredObject.date, 'YYYY-MM-DD') : null;
             var _hiredDate;
             var _firedDate;
-            var _lastHiredDate = moment(hiredArr[hiredArr.length - 1], 'YYYY-MM-DD');
-            var _lastFiredDate = moment(firedArr[firedArr.length - 1], 'YYYY-MM-DD');
+            var i;
 
             date = moment().set('year', year).set('week', _week);
 
@@ -162,17 +168,19 @@ define([
                     return true;
                 }
                 return false;
-            } else {
-                for (var i = firedLength - 1; i >= 0; i--) {
-                    _hiredDate = moment(hiredArr[i]).format('YYYY-MM-DD');
-                    _firedDate = moment(firedArr[i]).format('YYYY-MM-DD');
-
-                    if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && date < _lastFiredDate)) {
-                        return true;
-                    }
-                }
-                return false;
             }
+
+            for (i = firedLength - 1; i >= 0; i--) {
+                _hiredDate = hiredArr[i] ? hiredArr[i].date : null;
+                _firedDate = firedArr[i] ? firedArr[i].date : null;
+                _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
+                _firedDate = moment(_firedDate).format('YYYY-MM-DD');
+
+                if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate > _lastFiredDate))) {
+                    return true;
+                }
+            }
+            return false;
         },
 
         getCellClass: function (week, self, employee) {
@@ -242,7 +250,10 @@ define([
         },
 
         getDate: function (num, year) {
-            return moment().week(num).year(year).day("Monday").format("DD.MM");
+            var _moment = moment().hours(12).isoWeek(num).isoWeekYear(year);
+            var date = _moment.isoWeekday(5).format("DD.MM", true);
+
+            return date;
         },
 
         calculateStatistics: function () {

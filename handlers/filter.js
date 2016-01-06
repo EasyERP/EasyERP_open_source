@@ -1271,25 +1271,29 @@ var Filters = function (models) {
                 $lookup: {
                     from        : "Project",
                     localField  : "project",
-                    foreignField: "_id", as: "project"
+                    foreignField: "_id",
+                    as: "project"
                 }
             }, {
                 $lookup: {
                     from        : "Invoice",
                     localField  : "invoice",
-                    foreignField: "_id", as: "invoice"
+                    foreignField: "_id",
+                    as: "invoice"
                 }
             }, {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
-                    foreignField: "_id", as: "workflow"
+                    foreignField: "_id",
+                    as: "workflow"
                 }
             }, {
                 $lookup: {
                     from        : "Quotation",
                     localField  : "quotation",
-                    foreignField: "_id", as: "quotation"
+                    foreignField: "_id",
+                    as: "quotation"
                 }
             }, {
                 $project: {
@@ -1306,13 +1310,15 @@ var Filters = function (models) {
                 $lookup: {
                     from        : "Payment",
                     localField  : "invoice._id",
-                    foreignField: "invoice._id", as: "payments"
+                    foreignField: "invoice._id",
+                    as: "payments"
                 }
             }, {
                 $lookup: {
                     from        : "Employees",
                     localField  : "project.projectmanager",
-                    foreignField: "_id", as: "projectmanager"
+                    foreignField: "_id",
+                    as: "projectmanager"
                 }
             }, {
                 $project: {
@@ -1365,7 +1371,8 @@ var Filters = function (models) {
                 $match: {
                     $or: [
                         {"invoice._type": 'wTrackInvoice'},
-                        {quotation: {$exists: true}}
+                        {quotation: {$exists: true}},
+                        {type: 'Not Quoted'}
                     ]
                 }
             }, {
