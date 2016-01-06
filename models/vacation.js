@@ -9,7 +9,7 @@ module.exports = (function () {
         ID: Number,
         employee: {type: ObjectId, ref: 'Employees', default: null},
         department: {type: ObjectId, ref: 'Department', default: null},
-        vacations: {},
+        vacations: Object,
         month: Number,
         year: Number,
         vacArray: Array,

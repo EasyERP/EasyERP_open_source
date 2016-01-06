@@ -202,7 +202,9 @@ var wTrack = function (models) {
                                     weekData = data;
                                 }
                                 _vacations = _.find(vacations, function (vacationObject) {
-                                    return (vacationObject.employee.toString() === _employee._id.toString());
+                                    var employee = vacationObject.employee;
+
+                                    return (employee && employee._id.toString() === _employee._id.toString());
                                 });
 
                                 if (_vacations) {
@@ -347,9 +349,24 @@ var wTrack = function (models) {
             var endYear = weeksArr[weeksArr.length - 1].year;
             var endMonth = moment().weekYear(currentYear).week(endWeek).month() + 1;
 
+            var startDate = currentYear * 100 + startMonth;
+            var endDate = endYear * 100 + endMonth;
+
             Vacation.aggregate([{
+                $project: {
+                    _id        : 1,
+                    month      : 1,
+                    year       : 1,
+                    vacations  : 1,
+                    vacArray   : 1,
+                    department : 1,
+                    employee   : 1,
+                    dateByMonth: {$add: ['$month', {$multiply: ['$year', 100]}]}
+                }
+            }, {
                 $match: {
-                    $and: [{year: {$gte: currentYear, $lte: endYear}}, {month: {$gte: startMonth, $lte: endMonth}}]
+                    /*$and: [{year: {$gte: currentYear, $lte: endYear}}, {month: {$gte: startMonth, $lte: endMonth}}]*/
+                    $and: [{dateByMonth: {$gte: startDate, $lte: endDate}}]
                 }
             }, {
                 $group: {

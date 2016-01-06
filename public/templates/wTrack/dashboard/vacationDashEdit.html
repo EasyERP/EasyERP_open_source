@@ -18,7 +18,7 @@
                     <div class="miniAvatarInfo">
                         <dt><label for="customer">Customer</label></dt>
                         <dd>
-                            <span id="customer"><%= customer.name %></span>
+                            <span id="customer"><%= customer.name ? customer.name.first + ' ' + customer.name.last : ''%></span>
                         </dd>
                     </div>
                 </dl>
@@ -31,7 +31,7 @@
                     <div class="miniAvatarInfo">
                         <dt><label for="projectManager">Sales Manager</label></dt>
                         <dd>
-                            <span id="projectManager"><%= projectmanager.name %></span>
+                            <span id="projectManager"><%= projectmanager.name ? projectmanager.name.first + ' ' +  projectmanager.name.last : ''%></span>
                         </dd>
                     </div>
                 </dl>
@@ -79,22 +79,22 @@
                     </thead>
                     <tbody id="wTrackEditTable">
                     <%wTracks.forEach(function(wTrack){%>
-                    <tr data-id="<%=wTrack._id%>">
-                        <td data-content="employee">
-                            <%=(wTrack.employee) ? wTrack.employee.name : ''%>
-                        </td>
-                        <td data-content="department">
-                            <%=(wTrack.department) ? wTrack.department.departmentName : ''%>
-                        </td>
-                        <td data-type="input" class="hours" data-content="worked"><%=wTrack.worked%></td>
-                        <td data-type="input" class="editable autoCalc" data-content="1"><%=wTrack['1']%></td>
-                        <td data-type="input" class="editable autoCalc" data-content="2"><%=wTrack['2']%></td>
-                        <td data-type="input" class="editable autoCalc" data-content="3"><%=wTrack['3']%></td>
-                        <td data-type="input" class="editable autoCalc" data-content="4"><%=wTrack['4']%></td>
-                        <td data-type="input" class="editable autoCalc" data-content="5"><%=wTrack['5']%></td>
-                        <td data-type="input" class="editable autoCalc" data-content="6"><%=wTrack['6']%></td>
-                        <td data-type="input" class="editable autoCalc" data-content="7"><%=wTrack['7']%></td>
-                    </tr>
+                        <tr data-id="<%=wTrack._id%>">
+                            <td data-content="employee">
+                                <%=(wTrack.employee) ? wTrack.employee.name.first + ' ' +  wTrack.employee.name.last: ''%>
+                            </td>
+                            <td data-content="department">
+                                <%=(wTrack.department) ? wTrack.department.departmentName : ''%>
+                            </td>
+                            <td data-type="input" class="hours" data-content="worked"><%=wTrack.worked%></td>
+                            <td data-type="input" class="editable autoCalc" data-content="1"><%=wTrack['1']%></td>
+                            <td data-type="input" class="editable autoCalc" data-content="2"><%=wTrack['2']%></td>
+                            <td data-type="input" class="editable autoCalc" data-content="3"><%=wTrack['3']%></td>
+                            <td data-type="input" class="editable autoCalc" data-content="4"><%=wTrack['4']%></td>
+                            <td data-type="input" class="editable autoCalc" data-content="5"><%=wTrack['5']%></td>
+                            <td data-type="input" class="editable autoCalc" data-content="6"><%=wTrack['6']%></td>
+                            <td data-type="input" class="editable autoCalc" data-content="7"><%=wTrack['7']%></td>
+                        </tr>
                     <%})%>
                     </tbody>
                     <tfoot>
