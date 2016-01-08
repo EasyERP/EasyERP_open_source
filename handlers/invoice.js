@@ -382,7 +382,7 @@ var Invoice = function (models, event) {
         }
 
         return element;
-    };
+    }
 
     function caseFilter(filter) {
         var condition;

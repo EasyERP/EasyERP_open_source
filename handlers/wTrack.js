@@ -29,7 +29,7 @@ var wTrack = function (event, models) {
     var exportMap = require('../helpers/csvMap').wTrack;
 
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'wTrack', wTrackSchema)
+        return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
     }, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
@@ -64,9 +64,6 @@ var wTrack = function (event, models) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var department;
-        var employee;
-        var project;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -149,9 +146,7 @@ var wTrack = function (event, models) {
 
     function ConvertType(array, type) {
         if (type === 'integer') {
-            for (var i = array.length - 1;
-                 i >= 0;
-                 i--) {
+            for (var i = array.length - 1; i >= 0; i--) {
                 array[i] = parseInt(array[i]);
             }
         } else if (type === 'boolean') {
@@ -1539,9 +1534,7 @@ var wTrack = function (event, models) {
 
                                 totalForWeek = 0;
 
-                                for (var i = 7;
-                                     i >= 1;
-                                     i--) {
+                                for (var i = 7; i >= 1; i--) {
                                     totalForWeek += parseInt(opt[i]);
                                 }
 
@@ -1549,9 +1542,7 @@ var wTrack = function (event, models) {
                                 var date = startDate;
                                 totalForWeek = 0;
 
-                                for (var i = 7;
-                                     i >= 1;
-                                     i--) {
+                                for (var i = 7; i >= 1; i--) {
                                     totalForWeek += parseInt(opt[i]);
                                 }
 
@@ -2016,12 +2007,98 @@ var wTrack = function (event, models) {
 
         var query = req.query;
         var mongoQuery = {
-            dateByWeek           : query.dateByWeek,
-            'project.projectName': query.projectName,
-            'employee._id'       : query.employee
+            dateByWeek: parseInt(query.dateByWeek, 10),
+            'employee': objectId(query.employee)
         };
 
-        WTrack.find(mongoQuery, function (err, wTrack) {
+        WTrack.aggregate([{
+            $match: mongoQuery
+        }, {
+            $lookup: {
+                from        : 'Project',
+                localField  : 'project',
+                foreignField: '_id',
+                as          : 'project'
+            }
+        }, {
+            $project: {
+                1          : 1,
+                2          : 1,
+                3          : 1,
+                4          : 1,
+                5          : 1,
+                6          : 1,
+                7          : 1,
+                cost       : 1,
+                worked     : 1,
+                week       : 1,
+                month      : 1,
+                year       : 1,
+                dateByWeek : 1,
+                dateByMonth: 1,
+                info       : 1,
+                department : 1,
+                employee   : 1,
+                project    : {$arrayElemAt: ["$project", 0]},
+                revenue    : 1
+            }
+        }, {
+            $match: {
+                'project.projectName': query.projectName
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'project.customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'project.projectmanager',
+                foreignField: '_id',
+                as          : 'projectmanager'
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'employee',
+                foreignField: '_id',
+                as          : 'employee'
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'department',
+                foreignField: '_id',
+                as          : 'department'
+            }
+        }, {
+            $project: {
+                1             : 1,
+                2             : 1,
+                3             : 1,
+                4             : 1,
+                5             : 1,
+                6             : 1,
+                7             : 1,
+                cost          : 1,
+                worked        : 1,
+                week          : 1,
+                month         : 1,
+                year          : 1,
+                dateByWeek    : 1,
+                dateByMonth   : 1,
+                info          : 1,
+                department    : {$arrayElemAt: ["$department", 0]},
+                project       : 1,
+                customer      : {$arrayElemAt: ["$customer", 0]},
+                projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                employee: {$arrayElemAt: ["$employee", 0]},
+                revenue       : 1
+            }
+        }], function (err, wTrack) {
             var firstWtrack;
             var customer;
             var projectmanager;
@@ -2032,8 +2109,8 @@ var wTrack = function (event, models) {
 
             firstWtrack = wTrack[0];
 
-            customer = firstWtrack ? firstWtrack.project.customer : null;
-            projectmanager = firstWtrack ? firstWtrack.project.projectmanager : null;
+            customer = firstWtrack ? firstWtrack.customer : null;
+            projectmanager = firstWtrack ? firstWtrack.projectmanager : null;
 
             res.status(200).send({
                 customer      : customer,
