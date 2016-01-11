@@ -1995,6 +1995,7 @@ var wTrack = function (event, models) {
     //};
 
     this.generateWTrack = function (req, res, next) {
+        var keyConst = ['', 'Mo', 'Tu', 'Wd', 'Th', 'Fr', 'Sa', 'Su'];
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -2102,7 +2103,11 @@ var wTrack = function (event, models) {
                 yearDiff = endYear - startYear;
 
                 if (yearDiff === 0){
-                   result = calcWeeks(endIsoWeek - startIsoWeek, startDate, endDate);
+                    if (endIsoWeek - startIsoWeek < 0) {
+                        result = calcWeeks(endIsoWeek + 1, startDate, endDate);
+                    } else {
+                        result = calcWeeks(endIsoWeek - startIsoWeek, startDate, endDate);
+                    }
 
                     generateItems(result);
                     generateCb();
@@ -2135,7 +2140,6 @@ var wTrack = function (event, models) {
                 }
 
                 function calcWeeks(weeks, startD, endD){
-                    var weeksArray = [];
                     var result = [];
                     var startWeek = moment(startD).isoWeek();
                     var startYear = moment(startD).year();
@@ -2143,11 +2147,17 @@ var wTrack = function (event, models) {
                     var startDate = moment(startD).date();
                     var endWeek = moment(endD).isoWeek();
                     var resArr;
-                    var hoursCount;
                     var endDay = moment(endD).day();
 
-                    resArr = checkWeekToDivide(startWeek, startYear, startDay);
-                    result = resArr;
+                    if (startWeek >= isoWeeksInYear) {
+                        resArr = checkWeekToDivide(startWeek, startYear, startDay);
+                        result = resArr;
+                        startWeek = 0;
+                        weeks -= 1;
+                    } else {
+                        resArr = checkWeekToDivide(startWeek, startYear, startDay);
+                        result = resArr;
+                    }
 
                     for (var i = weeks - 1; i > 0; i--){
                         resArr = checkWeekToDivide(startWeek + i, startYear);
@@ -2169,68 +2179,85 @@ var wTrack = function (event, models) {
                         var endOfMonth = moment().year(year).month(month).endOf('month').date();
                         var day = day || 1;
                         var dayForEndOfMonth = moment().year(year).month(month).date(endOfMonth).day() + 1;
+                        var dateForCheck =  moment().year(year).isoWeek(week).date();
+                        var key;
+                        var checkToDivide = true;
 
-                        if (startDate + 7 > endOfMonth){
+                        if (endDay === 0 || endDay === 6){
+                            endDay = 5;
+                        }
+
+                        if (week === endWeek && dateForCheck <= moment(endD).date()){
+                            checkToDivide = false;
+                        }
+
+                        if (dateForCheck + 7 > endOfMonth && checkToDivide){
                             weekObj.week =  week;
                             weekObj.year = year;
-                            weekObj.weekValues = {};
+                            weekObj.total = 0;
 
                             for (var k = 7; k >= 1; k--){
-                                if (k <= dayForEndOfMonth){
-                                    weekObj.weekValues[k] = options[k];
+                                key = keyConst[k];
+                                if (k < dayForEndOfMonth){
+                                    weekObj[key] = options[k];
                                     totalHours += options[k];
+                                    weekObj.total += weekObj[key];
                                 } else {
-                                    weekObj.weekValues[k] = 0;
+                                    weekObj[key] = 0;
                                 }
                             }
 
                             weekObjNext.week =  week;
-                            weekObjNext.nextMonth = true;
+                            weekObjNext.nextMonth = weekObj.total ? true : false;
                             weekObjNext.year = year;
-                            weekObjNext.weekValues = {};
+                            weekObjNext.total = 0;
 
-                            for (var k = 7; k >= 1; k--){
-                                if (k > dayForEndOfMonth){
+                            for (var j = 7; j >= 1; j--){
+                                key = keyConst[j];
+                                if (j >= dayForEndOfMonth){
                                     if (endDay){
-                                        if (k <= endDay){
-                                            weekObjNext.weekValues[k] = options[k];
-                                            totalHours += options[k];
+                                        if (j <= endDay){
+                                            weekObjNext[key] = options[j];
+                                            totalHours += options[j];
+                                            weekObjNext.total += weekObjNext[key];
                                         } else {
-                                            weekObj.weekValues[k] = 0;
+                                            weekObjNext[key] = 0;
                                         }
                                     } else {
-                                        weekObjNext.weekValues[k] = options[k];
-                                        totalHours += options[k];
+                                        weekObjNext[key] = options[j];
+                                        totalHours += options[j];
+                                        weekObjNext.total += weekObjNext[key];
                                     }
                                 } else {
-                                    weekObj.weekValues[k] = 0;
+                                    weekObjNext[key] = 0;
                                 }
                             }
 
                             arrayResult.push(weekObj);
                             arrayResult.push(weekObjNext);
-
-
                         } else {
                             weekObj.week =  week;
                             weekObj.year = year;
-                            weekObj.weekValues = {};
+                            weekObj.total = 0;
 
-                            for (var k = 7; k >= 1; k--){
-                                if (k >= day){
+                            for (var l = 7; l >= 1; l--){
+                                key = keyConst[l];
+                                if (l >= day){
                                     if (endDay){
-                                        if (k < endDay + 1){
-                                            weekObj.weekValues[k] = options[k];
-                                            totalHours += options[k];
+                                        if (l < endDay + 1){
+                                            weekObj[key] = options[l];
+                                            totalHours += options[l];
+                                            weekObj.total += weekObj[key];
                                         } else {
-                                            weekObj.weekValues[k] = 0;
+                                            weekObj[key] = 0;
                                         }
                                     } else {
-                                        weekObj.weekValues[k] = options[k];
-                                        totalHours += options[k];
+                                        weekObj[key] = options[l];
+                                        totalHours += options[l];
+                                        weekObj.total += weekObj[key];
                                     }
                                 } else {
-                                    weekObj.weekValues[k] = 0;
+                                    weekObj[key] = 0;
                                 }
                             }
 
@@ -2248,17 +2275,21 @@ var wTrack = function (event, models) {
                     weeksArray.forEach(function(arrayEl){
                         var week = arrayEl.week;
                         var year = arrayEl.year;
-                        var weekValues = arrayEl.weekValues;
+                        var weekValues = arrayEl;
                         var wTrackToSave;
                         var month = moment().year(year).isoWeek(week).month() + 1;
                         var dateByWeek = year * 100 + week;
                         var dateByMonth = year * 100 + month;
-                        var worked = 0;
+                        var worked = arrayEl.total;
                         var cost = 0;
 
+                        if (arrayEl.nextMonth){
+                            month += 1;
 
-                        for (var i = 7; i >= 1; i--){
-                            worked += arrayEl.weekValues[i] ? arrayEl.weekValues[i] : 0;
+                            if (month > 12){
+                                month = 1;
+                                year += 1;
+                            }
                         }
 
                         var newwTrack = {
@@ -2284,23 +2315,24 @@ var wTrack = function (event, models) {
                                 "users" : [ ],
                                 "owner" : null
                             },
-                            "1": weekValues['1'],
-                            "2": weekValues['2'],
-                            "3": weekValues['3'],
-                            "4": weekValues['4'],
-                            "5": weekValues['5'],
-                            "6": weekValues['6'],
-                            "7": weekValues['7']
+                            "1": weekValues['Mo'],
+                            "2": weekValues['Tu'],
+                            "3": weekValues['Wd'],
+                            "4": weekValues['Th'],
+                            "5": weekValues['Fr'],
+                            "6": weekValues['Sa'],
+                            "7": weekValues['Su']
                         };
 
-                        wTrackToSave= new WTrack(newwTrack);
+                        if (worked > 0){
+                            wTrackToSave= new WTrack(newwTrack);
 
-                        wTrackToSave.save(function(err, result){
-                            if (err){
-                                console.log(err);
-                            }
-                        });
-
+                            wTrackToSave.save(function(err, result){
+                                if (err){
+                                    console.log(err);
+                                }
+                            });
+                        }
                     });
                 }
             }, function(){
