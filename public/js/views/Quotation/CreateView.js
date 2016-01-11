@@ -78,7 +78,7 @@ define([
                     return el._id === id;
                 });
 
-                if (type === 'emptyProject' || (type && App.weTrack && this.forSales)) {    // added condition for project with no data-level empty
+                if (type ) {    // added condition for project with no data-level empty
                     this.projectManager = element.projectmanager;
 
                     this.$el.find('#supplierDd').text(element.customer.name.first + element.customer.name.last);
