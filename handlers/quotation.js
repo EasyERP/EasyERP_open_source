@@ -103,6 +103,7 @@ var Quotation = function (models, event) {
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var products;
         var project;
 
@@ -136,6 +137,11 @@ var Quotation = function (models, event) {
             } else {
                 res.status(200).send({success: 'Quotation updated', result: quotation});
             }
+            event.emit('recalculateRevenue', {   // added for recalculating projectInfo after editing quotation
+                quotation  : quotation,
+                wTrackModel: wTrackModel,
+                req        : req
+            });
 
         });
 
