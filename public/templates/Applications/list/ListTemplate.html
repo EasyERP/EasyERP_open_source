@@ -10,6 +10,9 @@
     <td class="notForm"><a href="skype:<%=application.workPhones.phone%>?call"><%=application.workPhones.phone%></a>
     </td>
     <td><%=(application.jobPosition) ? application.jobPosition.name : ''%></td>
+    <!--<td><%=(application.department) ? application.department.departmentName : ''%></td>-->
+    <!--<td><%=(application.hire.length) ? application.hire[application.hire.length - 1].date : ''%></td>-->
+    <td><%=(application.fire.length) ? application.fire[application.fire.length - 1].date : ''%></td>
     <td id='<%=application._id%>' data-sequence='<%=application.sequence%>'>
         <a href="javascript:;" class="stageSelect"
            data-id="<%=(application.workflow) ? application.workflow._id : ''%>"><%=(application.workflow) ?
