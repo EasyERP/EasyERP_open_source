@@ -2063,7 +2063,7 @@ var wTrack = function (event, models) {
 
             async.each(data, function(options, asyncCb){
 
-                async.waterfall([, calculateWeeks], function(err, result){
+                async.waterfall([getVacationsHolidays, calculateWeeks], function(err, result){
                     if (err){
                         return next(err);
                     }
@@ -2079,15 +2079,18 @@ var wTrack = function (event, models) {
                     var newResult = {};
                     var total = 0;
                     var employee = options.employee;
+                    var startYear = moment(options.startDate).year();
+                    var endYear = options.endDate ? moment(options.endDate).year() : startYear + 1;
 
-                    var queryHolidays = Holiday.find({year: {$in: uniqYears}, week: {$in: uniqWeeks}}).lean();
-                    var query = Vacation.find({
-                        month         : {$in: uniqMonths},
-                        year          : {$in: uniqYears},
-                        "employee": employee
-                    }, {month: 1, year: 1, vacArray: 1}).lean();
+
+                    async.parallel([getHolidays, getVacations], function(err, result){
+                        generateCb(null, result);
+                    });
+
 
                     function getHolidays(parallelCb){
+                        var queryHolidays = Holiday.find({year: {$gte: startYear, $lte: endYear}}).lean();
+
                         queryHolidays.exec(function (err, result) {
                             if (err) {
                                 parallelCb(err);
@@ -2112,6 +2115,11 @@ var wTrack = function (event, models) {
                     }
 
                     function getVacations(parallelCb){
+                        var query = Vacation.find({
+                            year          : {$gte: startYear, $lte: endYear},
+                            "employee": employee
+                        }, {month: 1, year: 1, vacArray: 1}).lean();
+
                         query.exec(function (err, result) {
                             if (err) {
                                 parallelCb(err);
@@ -2151,7 +2159,9 @@ var wTrack = function (event, models) {
                     }
                 };
 
-                function calculateWeeks(vacHol, generateCb) {
+                function calculateWeeks(vacationsHolidays, generateCb) {
+                    var holidays = vacationsHolidays[0] ? vacationsHolidays[0] : {};
+                    var vacations = vacationsHolidays[1] ? vacationsHolidays[1] : {};
                     var startDate = options.startDate;
                     var endDate = options.endDate;
                     var startIsoWeek = moment(startDate).isoWeek();
@@ -2168,9 +2178,7 @@ var wTrack = function (event, models) {
                     var yearDiff;
                     var result;
 
-                    for (var i = 7;
-                         i > 0;
-                         i--) {
+                    for (var i = 7; i > 0; i--) {
                         totalForWeek += parseInt(options[i]);
                     }
 
@@ -2226,6 +2234,7 @@ var wTrack = function (event, models) {
                         var result = [];
                         var startWeek = moment(startD).isoWeek();
                         var startYear = moment(startD).year();
+                        var endYear = moment(endD).year();
                         var startDay = moment(startD).day();
                         var endWeek = moment(endD).isoWeek();
                         var resArr;
@@ -2266,6 +2275,7 @@ var wTrack = function (event, models) {
                             var dateForCheck = moment().year(year).isoWeek(week).date();
                             var key;
                             var checkToDivide = true;
+                            var dateByWeek;
 
                             if (endDay === 0 || endDay === 6) {
                                 endDay = 5;
@@ -2280,15 +2290,21 @@ var wTrack = function (event, models) {
                                 weekObj.year = year;
                                 weekObj.total = 0;
 
-                                for (var k = 7;
-                                     k >= 1;
-                                     k--) {
+                                dateByWeek =  weekObj.year * 100 + weekObj.week;
+
+                                for (var k = 7; k >= 1; k--) {
                                     key = keyConst[k];
                                     if (k < dayForEndOfMonth) {
                                         weekObj[key] = options[k];
                                         totalHours += options[k];
                                         weekObj.total += weekObj[key];
-                                    } else {
+
+                                        if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][k]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][k]))) {
+                                            weekObj[key] = 0;
+                                            totalHours -= weekObj[key];
+                                            weekObj.total -= weekObj[key];
+                                        }
+                                        } else {
                                         weekObj[key] = 0;
                                     }
                                 }
@@ -2298,9 +2314,9 @@ var wTrack = function (event, models) {
                                 weekObjNext.year = year;
                                 weekObjNext.total = 0;
 
-                                for (var j = 7;
-                                     j >= 1;
-                                     j--) {
+                                dateByWeek =  weekObjNext.year * 100 + weekObjNext.week;
+
+                                for (var j = 7; j >= 1; j--) {
                                     key = keyConst[j];
                                     if (j >= dayForEndOfMonth) {
                                         if (endDay) {
@@ -2308,6 +2324,12 @@ var wTrack = function (event, models) {
                                                 weekObjNext[key] = options[j];
                                                 totalHours += options[j];
                                                 weekObjNext.total += weekObjNext[key];
+
+                                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][j]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][j]))) {
+                                                    weekObjNext[key] = 0;
+                                                    totalHours -= weekObjNext[key];
+                                                    weekObjNext.total -= weekObjNext[key];
+                                                }
                                             } else {
                                                 weekObjNext[key] = 0;
                                             }
@@ -2315,6 +2337,12 @@ var wTrack = function (event, models) {
                                             weekObjNext[key] = options[j];
                                             totalHours += options[j];
                                             weekObjNext.total += weekObjNext[key];
+
+                                            if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][j]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][j]))) {
+                                                weekObjNext[key] = 0;
+                                                totalHours -= weekObjNext[key];
+                                                weekObjNext.total -= weekObjNext[key];
+                                            }
                                         }
                                     } else {
                                         weekObjNext[key] = 0;
@@ -2328,9 +2356,9 @@ var wTrack = function (event, models) {
                                 weekObj.year = year;
                                 weekObj.total = 0;
 
-                                for (var l = 7;
-                                     l >= 1;
-                                     l--) {
+                                dateByWeek =  weekObj.year * 100 + weekObj.week;
+
+                                for (var l = 7; l >= 1; l--) {
                                     key = keyConst[l];
                                     if (l >= day) {
                                         if (endDay) {
@@ -2338,6 +2366,12 @@ var wTrack = function (event, models) {
                                                 weekObj[key] = options[l];
                                                 totalHours += options[l];
                                                 weekObj.total += weekObj[key];
+
+                                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][l]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][l]))) {
+                                                    weekObj[key] = 0;
+                                                    totalHours -= weekObj[key];
+                                                    weekObj.total -= weekObj[key];
+                                                }
                                             } else {
                                                 weekObj[key] = 0;
                                             }
