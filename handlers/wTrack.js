@@ -2160,8 +2160,8 @@ var wTrack = function (event, models) {
                 };
 
                 function calculateWeeks(vacationsHolidays, generateCb) {
-                    var holidays = vacationsHolidays[0] ? vacationsHolidays[0] : {};
-                    var vacations = vacationsHolidays[1] ? vacationsHolidays[1] : {};
+                    var holidays = vacationsHolidays[0] ? vacationsHolidays[0].holidays : {};
+                    var vacations = vacationsHolidays[1] ? vacationsHolidays[1].vacations : {};
                     var startDate = options.startDate;
                     var endDate = options.endDate;
                     var startIsoWeek = moment(startDate).isoWeek();
