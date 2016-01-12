@@ -145,7 +145,7 @@ var wTrack = function (event, models) {
         }
     };
 
-    function ConvertType(array, type) {
+    function convertType(array, type) {
         var i;
 
         if (type === 'integer') {
@@ -190,41 +190,42 @@ var wTrack = function (event, models) {
                     resArray.push(filtrElement);
                     break;
                 case 'employee':
-                    filtrElement['employee'] = {$in: condition.objectID()};
+                    filtrElement.employee = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
                 case 'department':
-                    filtrElement['department'] = {$in: condition.objectID()};
+                    filtrElement.department = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
                 case 'year':
-                    ConvertType(condition, 'integer');
+                    convertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'month':
-                    ConvertType(condition, 'integer');
+                    convertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'week':
-                    ConvertType(condition, 'integer');
+                    convertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'isPaid':
-                    ConvertType(condition, 'boolean');
+                    convertType(condition, 'boolean');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'jobs':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
+                    break;
             }
         }
 
         return resArray;
-    };
+    }
 
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -233,10 +234,10 @@ var wTrack = function (event, models) {
         var contentSearcher;
         var query = req.query;
         var filter = query.filter;
+        var filterObj = {};
         // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
         if (filter) {
-            var filterObj = {};
-            filterObj['$and'] = caseFilter(filter);
+            filterObj.$and = caseFilter(filter);
         }
 
         var waterfallTasks;
@@ -285,13 +286,13 @@ var wTrack = function (event, models) {
         contentSearcher = function (wTrackIDs, waterfallCallback) {
             var queryObject = {};
 
-            queryObject['$and'] = [];
+            queryObject.$and = [];
 
             if (filterObj) {
-                queryObject['$and'].push(filterObj);
+                queryObject.$and.push(filterObj);
             }
 
-            queryObject['$and'].push({_id: {$in: _.pluck(wTrackIDs, '_id')}});
+            queryObject.$and.push({_id: {$in: _.pluck(wTrackIDs, '_id')}});
 
             WTrack.aggregate([{
                 $lookup: {
@@ -391,18 +392,18 @@ var wTrack = function (event, models) {
 
         var sort = {};
         var filterObj = filter ? filterMapper.mapFilter(filter) : null;
-        var count = parseInt(query.count) ? parseInt(query.count) : 100;
-        var page = parseInt(query.page);
+        var count = parseInt(query.count, 10) || 100;
+        var page = parseInt(query.page, 10);
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
             key = Object.keys(query.sort)[0].toString();
             keyForDay = sortObj[key];
 
-            if (key in sortObj) {
-                sort[keyForDay] = parseInt(query.sort[key]);
+            if (sortObj.hasOwnProperty(key)) {
+                sort[keyForDay] = parseInt(query.sort[key], 10);
             } else {
-                query.sort[key] = parseInt(query.sort[key]);
+                query.sort[key] = parseInt(query.sort[key], 10);
                 sort = query.sort;
             }
         } else {
