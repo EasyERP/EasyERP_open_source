@@ -459,7 +459,9 @@ var wTrack = function (event, models) {
                 queryObject['$and'].push(filterObj);
             }
 
-            WTrack.aggregate([{
+
+
+            var aggregation = WTrack.aggregate([{
                 $lookup: {
                     from        : "Project",
                     localField  : "project",
@@ -562,9 +564,13 @@ var wTrack = function (event, models) {
                 $skip: skip
             }, {
                 $limit: count
-            }], function (err, result) {
+            }] );
+
+            aggregation.options = { allowDiskUse: true };
+            aggregation.exec(function (err, result) {
                 waterfallCallback(err, result);
-            })
+            });
+
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
