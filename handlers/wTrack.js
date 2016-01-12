@@ -2074,9 +2074,7 @@ var wTrack = function (event, models) {
                 function getVacationsHolidays(generateCb){
                     var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
                     var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
-                    var newResultHolidays = {};
                     var totalHolidays = 0;
-                    var newResult = {};
                     var total = 0;
                     var employee = options.employee;
                     var startYear = moment(options.startDate).year();
@@ -2089,6 +2087,7 @@ var wTrack = function (event, models) {
 
 
                     function getHolidays(parallelCb){
+                        var newResultHolidays = {};
                         var queryHolidays = Holiday.find({year: {$gte: startYear, $lte: endYear}}).lean();
 
                         queryHolidays.exec(function (err, result) {
@@ -2103,10 +2102,12 @@ var wTrack = function (event, models) {
                                 var key = year * 100 + week;
                                 var dayOfWeek = moment(date).day();
 
+                                key = key.toString();
+
                                 if (!newResultHolidays[key]) {
                                     newResultHolidays[key] = {};
                                 }
-                                newResultHolidays[key][dayOfWeek] = dayOfWeek;
+                                newResultHolidays[key][dayOfWeek.toString()] = dayOfWeek;
                                 totalHolidays++;
                             });
 
@@ -2115,12 +2116,15 @@ var wTrack = function (event, models) {
                     }
 
                     function getVacations(parallelCb){
+
                         var query = Vacation.find({
                             year          : {$gte: startYear, $lte: endYear},
                             "employee": employee
                         }, {month: 1, year: 1, vacArray: 1}).lean();
 
                         query.exec(function (err, result) {
+                            var newResult = {};
+
                             if (err) {
                                 parallelCb(err);
                             }
@@ -2133,21 +2137,24 @@ var wTrack = function (event, models) {
                                     var weekKey;
                                     var dayNumber;
                                     var dateValue;
+                                    var key;
+                                    var dayKey;
 
-                                    for (var day = vacArr.length - 1;
-                                         day >= 0;
-                                         day--) {
+                                    for (var day = vacArr.length - 1; day >= 0; day--) {
                                         if (vacArr[day]) {
                                             dateValue = moment([year, month - 1, day + 1]);
                                             weekKey = year * 100 + moment(dateValue).isoWeek();
+                                            key = weekKey.toString();
 
-                                            dayNumber = moment(dateValue).day();
+                                            dayNumber = dateValue.day();
+
+                                            dayKey = dayNumber.toString();
 
                                             if (dayNumber !== 0 && dayNumber !== 6) {
-                                                if (!newResult[weekKey]) {
-                                                    newResult[weekKey] = {};
+                                                if (!newResult[key]) {
+                                                    newResult[key] = {};
                                                 }
-                                                newResult[weekKey][dayNumber] = dayNumber;
+                                                newResult[key][dayKey] = dayNumber;
                                                 total++;
                                             }
                                         }
@@ -2291,6 +2298,7 @@ var wTrack = function (event, models) {
                                 weekObj.total = 0;
 
                                 dateByWeek =  weekObj.year * 100 + weekObj.week;
+                                dateByWeek = dateByWeek.toString();
 
                                 for (var k = 7; k >= 1; k--) {
                                     key = keyConst[k];
@@ -2299,10 +2307,10 @@ var wTrack = function (event, models) {
                                         totalHours += options[k];
                                         weekObj.total += weekObj[key];
 
-                                        if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][k]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][k]))) {
-                                            weekObj[key] = 0;
+                                        if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][k.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][k.toString()]))) {
                                             totalHours -= weekObj[key];
                                             weekObj.total -= weekObj[key];
+                                            weekObj[key] = 0;
                                         }
                                         } else {
                                         weekObj[key] = 0;
@@ -2315,6 +2323,7 @@ var wTrack = function (event, models) {
                                 weekObjNext.total = 0;
 
                                 dateByWeek =  weekObjNext.year * 100 + weekObjNext.week;
+                                dateByWeek = dateByWeek.toString();
 
                                 for (var j = 7; j >= 1; j--) {
                                     key = keyConst[j];
@@ -2325,10 +2334,10 @@ var wTrack = function (event, models) {
                                                 totalHours += options[j];
                                                 weekObjNext.total += weekObjNext[key];
 
-                                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][j]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][j]))) {
-                                                    weekObjNext[key] = 0;
+                                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][j.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][j.toString()]))) {
                                                     totalHours -= weekObjNext[key];
                                                     weekObjNext.total -= weekObjNext[key];
+                                                    weekObjNext[key] = 0;
                                                 }
                                             } else {
                                                 weekObjNext[key] = 0;
@@ -2338,10 +2347,10 @@ var wTrack = function (event, models) {
                                             totalHours += options[j];
                                             weekObjNext.total += weekObjNext[key];
 
-                                            if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][j]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][j]))) {
-                                                weekObjNext[key] = 0;
+                                            if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][j.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][j.toString()]))) {
                                                 totalHours -= weekObjNext[key];
                                                 weekObjNext.total -= weekObjNext[key];
+                                                weekObjNext[key] = 0;
                                             }
                                         }
                                     } else {
@@ -2357,6 +2366,7 @@ var wTrack = function (event, models) {
                                 weekObj.total = 0;
 
                                 dateByWeek =  weekObj.year * 100 + weekObj.week;
+                                dateByWeek = dateByWeek.toString();
 
                                 for (var l = 7; l >= 1; l--) {
                                     key = keyConst[l];
@@ -2367,10 +2377,10 @@ var wTrack = function (event, models) {
                                                 totalHours += options[l];
                                                 weekObj.total += weekObj[key];
 
-                                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][l]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][l]))) {
-                                                    weekObj[key] = 0;
+                                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][l.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][l.toString()]))) {
                                                     totalHours -= weekObj[key];
                                                     weekObj.total -= weekObj[key];
+                                                    weekObj[key] = 0;
                                                 }
                                             } else {
                                                 weekObj[key] = 0;
@@ -2379,6 +2389,12 @@ var wTrack = function (event, models) {
                                             weekObj[key] = options[l];
                                             totalHours += options[l];
                                             weekObj.total += weekObj[key];
+
+                                            if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][l.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][l.toString()]))) {
+                                                totalHours -= weekObj[key];
+                                                weekObj.total -= weekObj[key];
+                                                weekObj[key] = 0;
+                                            }
                                         }
                                     } else {
                                         weekObj[key] = 0;
