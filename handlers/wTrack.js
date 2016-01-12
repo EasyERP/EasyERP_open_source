@@ -1,18 +1,19 @@
 var mongoose = require('mongoose');
 var wTrack = function (event, models) {
+    'use strict';
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var _ = require('underscore');
-    var wTrackSchema = mongoose.Schemas['wTrack'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var MonthHoursSchema = mongoose.Schemas['MonthHours'];
-    var SalarySchema = mongoose.Schemas['Salary'];
-    var HolidaySchema = mongoose.Schemas['Holiday'];
-    var VacationSchema = mongoose.Schemas['Vacation'];
-    var WorkflowSchema = mongoose.Schemas['workflow'];
-    var jobsSchema = mongoose.Schemas['jobs'];
-    var ProjectSchema = mongoose.Schemas['Project'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
+    var wTrackSchema = mongoose.Schemas.wTrack;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var MonthHoursSchema = mongoose.Schemas.MonthHours;
+    var SalarySchema = mongoose.Schemas.Salary;
+    var HolidaySchema = mongoose.Schemas.Holiday;
+    var VacationSchema = mongoose.Schemas.Vacation;
+    var WorkflowSchema = mongoose.Schemas.workflow;
+    var jobsSchema = mongoose.Schemas.jobs;
+    var ProjectSchema = mongoose.Schemas.Project;
+    var EmployeeSchema = mongoose.Schemas.Employee;
     /*var CustomerSchema = mongoose.Schemas['Customer'];
      var EmployeeSchema = mongoose.Schemas['Employee'];
      var WorkflowSchema = mongoose.Schemas['workflow'];*/
@@ -145,14 +146,14 @@ var wTrack = function (event, models) {
     };
 
     function ConvertType(array, type) {
+        var i;
+
         if (type === 'integer') {
-            for (var i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i]);
+            for (i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i], 10);
             }
         } else if (type === 'boolean') {
-            for (var i = array.length - 1;
-                 i >= 0;
-                 i--) {
+            for (i = array.length - 1; i >= 0; i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
                 } else if (array[i] === 'false') {
@@ -162,18 +163,18 @@ var wTrack = function (event, models) {
                 }
             }
         }
-    };
+    }
 
     function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
         var key;
+        var filterName;
 
-        for (var filterName in
-            filter) {
-            condition = filter[filterName]['value'];
-            key = filter[filterName]['key'];
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
 
             switch (filterName) {
                 case 'projectManager':
@@ -459,8 +460,6 @@ var wTrack = function (event, models) {
                 queryObject['$and'].push(filterObj);
             }
 
-
-
             var aggregation = WTrack.aggregate([{
                 $lookup: {
                     from        : "Project",
@@ -564,9 +563,9 @@ var wTrack = function (event, models) {
                 $skip: skip
             }, {
                 $limit: count
-            }] );
+            }]);
 
-            aggregation.options = { allowDiskUse: true };
+            aggregation.options = {allowDiskUse: true};
             aggregation.exec(function (err, result) {
                 waterfallCallback(err, result);
             });
@@ -1117,8 +1116,8 @@ var wTrack = function (event, models) {
                                     totalHours = 0;
 
                                     for (var i = 7;
-                                         i > 0;
-                                         i--) {
+                                        i > 0;
+                                        i--) {
                                         if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][i]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][i]))) {
                                             trackWeek[i] = 0;
                                             totalHours += trackWeek[i];
@@ -1138,8 +1137,8 @@ var wTrack = function (event, models) {
                                         var index;
 
                                         for (var i = 1;
-                                             i <= 7;
-                                             i++) {
+                                            i <= 7;
+                                            i++) {
                                             if (trackWeek[i] !== 0) {
                                                 index = i;
                                             }
@@ -1236,8 +1235,8 @@ var wTrack = function (event, models) {
                                                 lastwTrack = element;
                                                 if (lastwTrack[1] === 0) {
                                                     for (var i = 7;
-                                                         i >= 1;
-                                                         i--) {
+                                                        i >= 1;
+                                                        i--) {
                                                         lastwTrack[i] = parseInt(opt[i]);
                                                     }
                                                 }
@@ -1250,16 +1249,16 @@ var wTrack = function (event, models) {
                                             newObj = _.clone(lastwTrack);
 
                                             for (var i = 7;
-                                                 i > 0;
-                                                 i--) {
+                                                i > 0;
+                                                i--) {
                                                 hours += parseInt(opt[i]);
                                                 newObj[i] = parseInt(opt[i]);
                                             }
                                             var weekCount = addHours / hours;
 
                                             for (var i = Math.round(weekCount) - 1;
-                                                 i > 0;
-                                                 i--) {
+                                                i > 0;
+                                                i--) {
                                                 newWeek = lastwTrack.week + i;
                                                 newYear = newObj.year;
                                                 if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
@@ -1322,15 +1321,15 @@ var wTrack = function (event, models) {
                                                     newObj[i - 1] = newObj[i - 1] - (globalTotal - opt.hours);
 
                                                     for (var j = i;
-                                                         j <= 7;
-                                                         j++) {
+                                                        j <= 7;
+                                                        j++) {
                                                         newObj[j] = 0;
                                                     }
 
                                                     hoursInWeek = 0;
                                                     for (var j = 7;
-                                                         j >= 1;
-                                                         j--) {
+                                                        j >= 1;
+                                                        j--) {
                                                         hoursInWeek += parseInt(newObj[j]);
                                                     }
 
@@ -1346,8 +1345,8 @@ var wTrack = function (event, models) {
                                                     });
                                                 } else {
                                                     for (var i = 2;
-                                                         i >= 1;
-                                                         i--) {
+                                                        i >= 1;
+                                                        i--) {
                                                         newWeek = lastwTrack.week + i;
                                                         newYear = newObj.year;
                                                         if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
@@ -1441,8 +1440,8 @@ var wTrack = function (event, models) {
                                     var dateValue;
 
                                     for (var day = vacArr.length - 1;
-                                         day >= 0;
-                                         day--) {
+                                        day >= 0;
+                                        day--) {
                                         if (vacArr[day]) {
                                             dateValue = moment([year, month - 1, day + 1]);
                                             weekKey = year * 100 + moment(dateValue).isoWeek();
@@ -1664,8 +1663,8 @@ var wTrack = function (event, models) {
                                 }
 
                                 for (var y = diff;
-                                     y >= z;
-                                     y--) {
+                                    y >= z;
+                                    y--) {
                                     var obj = {};
                                     var objNext = {};
                                     var newDate;
@@ -1696,8 +1695,8 @@ var wTrack = function (event, models) {
                                         if ((moment(newDate).date() + 7 > endOfMonth) && ((opt.hours > totalForWeek) || opt.endDate) && (newDate > d)) {
 
                                             for (var j = 1;
-                                                 j <= 5;
-                                                 j++) {
+                                                j <= 5;
+                                                j++) {
                                                 if (j <= moment(newDate).endOf('month').day()) {
                                                     obj.weekValues[j] = parseInt(opt[j]);
                                                     objNext.weekValues[j] = 0;
@@ -1769,8 +1768,8 @@ var wTrack = function (event, models) {
                                                     }
 
                                                     for (var k = i;
-                                                         k <= 7;
-                                                         k++) {
+                                                        k <= 7;
+                                                        k++) {
                                                         obj.weekValues[k] = 0;
                                                     }
                                                 } else {
@@ -1781,9 +1780,7 @@ var wTrack = function (event, models) {
 
                                                     if ((obj.week === 53) && (obj.month === 1)) {
                                                         // day = moment(newDate).day();
-                                                        for (var k = 1;
-                                                             k <= 7;
-                                                             k++) {
+                                                        for (var k = 1; k <= 7; k++) {
                                                             if (k >= moment(newDate).day()) {
                                                                 obj.weekValues[k] = parseInt(opt[k]);
                                                             } else {
@@ -1791,9 +1788,7 @@ var wTrack = function (event, models) {
                                                             }
                                                         }
                                                     } else {
-                                                        for (var k = 1;
-                                                             k <= 7;
-                                                             k++) {
+                                                        for (var k = 1; k <= 7; k++) {
                                                             if (k <= day) {
                                                                 obj.weekValues[k] = parseInt(opt[k]);
                                                             } else {
@@ -1838,9 +1833,7 @@ var wTrack = function (event, models) {
                                                 if ((moment(newDate).date() + 7 > endOfMonth) && (moment(newDate).date() < moment(endDate).date())) {
                                                     day = moment(date).day();
 
-                                                    for (var k = 5;
-                                                         k >= 1;
-                                                         k--) {
+                                                    for (var k = 5; k >= 1; k--) {
                                                         if (k <= moment(newDate).endOf('month').day()) {
                                                             obj.weekValues[k] = parseInt(opt[k]);
                                                             objNext.weekValues[k] = 0;
@@ -1879,9 +1872,7 @@ var wTrack = function (event, models) {
                                                     result.push(objNext);
                                                 } else {
                                                     day = moment(newDate).day();
-                                                    for (var j = 5;
-                                                         j >= 1;
-                                                         j--) {
+                                                    for (var j = 5; j >= 1; j--) {
                                                         if (day <= j) {
                                                             obj.weekValues[j] = parseInt(opt[j]);
                                                             total += parseInt(opt[j]);
@@ -1922,9 +1913,7 @@ var wTrack = function (event, models) {
                                             if (moment(newDate).date() + 7 > endOfMonth) {
                                                 day = moment(newDate).day();
 
-                                                for (var k = 5;
-                                                     k >= 1;
-                                                     k--) {
+                                                for (var k = 5; k >= 1; k--) {
                                                     if (k <= moment(newDate).endOf('month').day()) {
                                                         obj.weekValues[k] = parseInt(opt[k]);
                                                         objNext.weekValues[k] = 0;
@@ -1963,9 +1952,7 @@ var wTrack = function (event, models) {
                                             } else {
                                                 day = moment(newDate).day();
 
-                                                for (var k = 5;
-                                                     k >= 1;
-                                                     k--) {
+                                                for (var k = 5; k >= 1; k--) {
                                                     if (k >= day) {
                                                         obj.weekValues[k] = parseInt(opt[k]);
                                                         total += parseInt(opt[k]);
@@ -2101,7 +2088,7 @@ var wTrack = function (event, models) {
                 project       : 1,
                 customer      : {$arrayElemAt: ["$customer", 0]},
                 projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
-                employee: {$arrayElemAt: ["$employee", 0]},
+                employee      : {$arrayElemAt: ["$employee", 0]},
                 revenue       : 1
             }
         }], function (err, wTrack) {

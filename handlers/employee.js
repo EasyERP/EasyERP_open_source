@@ -14,7 +14,7 @@ var Employee = function (models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'Employee', EmployeeSchema)
+        return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
     }, exportMap, 'Employees');
 
     this.getNameAndDepartment = getNameAndDepartment;
