@@ -1073,6 +1073,7 @@ var wTrack = function (event, models) {
                                         var fixedExpense;
                                         var expenseCoefficient;
                                         var hoursForMonth;
+                                        var hours;
 
                                         if (err) {
                                             callB(err);
