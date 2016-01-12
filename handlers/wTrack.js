@@ -1999,7 +1999,6 @@ var wTrack = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.body;
         var tasks = [createJobFunc, generatewTracks];
 
@@ -2074,6 +2073,7 @@ var wTrack = function (event, models) {
                 function getVacationsHolidays(generateCb){
                     var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
                     var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+                    var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
                     var totalHolidays = 0;
                     var total = 0;
                     var employee = options.employee;
@@ -2081,9 +2081,21 @@ var wTrack = function (event, models) {
                     var endYear = options.endDate ? moment(options.endDate).year() : startYear + 1;
 
 
-                    async.parallel([getHolidays, getVacations], function(err, result){
+                    async.parallel([getHolidays, getVacations, getEmployee], function(err, result){
                         generateCb(null, result);
                     });
+
+                    function getEmployee(parallelCb){
+                        var query = Employee.find({_id: objectId(employee)}, {name: 1, hire: 1, fire: 1});
+
+                        query.exec(function(err, result){
+                            if (err) {
+                                parallelCb(err);
+                            }
+
+                            parallelCb(null, result[0].toString());
+                        });
+                    }
 
 
                     function getHolidays(parallelCb){
@@ -2169,6 +2181,7 @@ var wTrack = function (event, models) {
                 function calculateWeeks(vacationsHolidays, generateCb) {
                     var holidays = vacationsHolidays[0] ? vacationsHolidays[0].holidays : {};
                     var vacations = vacationsHolidays[1] ? vacationsHolidays[1].vacations : {};
+                    var employeeModel = vacationsHolidays[2] ? vacationsHolidays[2].vacations : {};
                     var startDate = options.startDate;
                     var endDate = options.endDate;
                     var startIsoWeek = moment(startDate).isoWeek();
@@ -2257,9 +2270,7 @@ var wTrack = function (event, models) {
                             result = resArr;
                         }
 
-                        for (var i = weeks - 1;
-                             i > 0;
-                             i--) {
+                        for (var i = weeks - 1; i > 0; i--) {
                             resArr = checkWeekToDivide(startWeek + i, startYear);
                             result = result.concat(resArr)
                         }
