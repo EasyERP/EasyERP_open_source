@@ -2,24 +2,147 @@ var mongoose = require('mongoose');
 var WorkflowHandler = require('./workflow');
 
 var Quotation = function (models, event) {
+    "use strict";
+
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
-    var QuotationSchema = mongoose.Schemas['Quotation'];
-    var CustomerSchema = mongoose.Schemas['Customer'];
-    var WorkflowSchema = mongoose.Schemas['workflow'];
-    var EmployeesSchema = mongoose.Schemas['Employees'];
-    var ProjectSchema = mongoose.Schemas['Project'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var JobsSchema = mongoose.Schemas['jobs'];
-    var wTrackSchema = mongoose.Schemas['wTrack'];
+    var QuotationSchema = mongoose.Schemas.Quotation;
+    var CustomerSchema = mongoose.Schemas.Customer;
+    var WorkflowSchema = mongoose.Schemas.workflow;
+    var EmployeesSchema = mongoose.Schemas.Employees;
+    var ProjectSchema = mongoose.Schemas.Project;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var JobsSchema = mongoose.Schemas.jobs;
+    var wTrackSchema = mongoose.Schemas.wTrack;
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var _ = require('../node_modules/underscore');
+    var currencyHalper = require('../helpers/currency');
+
+    function convertType(array, type) {
+        var i;
+
+        if (type === 'integer') {
+            for (i = array.length - 1;
+                 i >= 0;
+                 i--) {
+                array[i] = parseInt(array[i], 10);
+            }
+        } else if (type === 'boolean') {
+            for (i = array.length - 1;
+                 i >= 0;
+                 i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
+        }
+    }
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+        var filterName;
+
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
+
+            switch (filterName) {
+                case 'reference':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectName':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'project':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'type':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectmanager':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSales':
+                    convertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'isOrder':
+                    convertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+
+        return resArray;
+    }
+
+    function updateOnlySelectedFields(req, res, next, id, data) {
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var products;
+        var project;
+
+        Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
+            if (err) {
+                return next(err);
+            }
+
+            if (data.isOrder) {
+                products = quotation.products;
+
+                async.each(products, function (product, cb) {
+                    var jobs = product.jobs;
+
+                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered"}}, {new: true}, function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+                        project = result.project || null;
+                        cb();
+                    });
+
+                }, function () {
+                    if (project) {
+                        event.emit('fetchJobsCollection', {project: project});
+                    }
+
+                    res.status(200).send({success: 'Quotation updated', result: quotation});
+
+                });
+            } else {
+                res.status(200).send({success: 'Quotation updated', result: quotation});
+            }
+
+        });
+
+    }
 
     this.create = function (req, res, next) {
         var db = req.session.lastDb;
-        var project;
         var Customer = models.get(db, 'Customers', CustomerSchema);
         var Employee = models.get(db, 'Employees', EmployeesSchema);
         var Project = models.get(db, 'Project', ProjectSchema);
@@ -27,24 +150,28 @@ var Quotation = function (models, event) {
         var Quotation = models.get(db, 'Quotation', QuotationSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-
         var body = mapObject(req.body);
+        var currency = body.currency ? body.currency.name : 'USD';
         var isPopulate = req.body.populate;
+        var quotation;
+        var project;
+        var rates;
 
-        var quotation = new Quotation(body);
+        currencyHalper(body.orderDate, function (err, oxr) {
+            oxr = oxr || {};
+            rates = oxr.rates;
 
-        if (req.session.uId) {
-            quotation.createdBy.user = req.session.uId;
-            quotation.editedBy.user = req.session.uId;
-        }
+            body.currency = body.currency || {};
+            body.currency.rate = rates && rates[currency] ? rates[currency] : 1;
+            quotation = new Quotation(body);
 
-        quotation.save(function (err, _quotation) {
-            if (err) {
-                return next(err);
+            if (req.session.uId) {
+                quotation.createdBy.user = req.session.uId;
+                quotation.editedBy.user = req.session.uId;
             }
 
-            if (isPopulate) {
-                async.parallel([
+            quotation.save(function (err, _quotation) {
+                var parellelTasks = [
                     function (callback) {
                         Customer.populate(_quotation, {
                             path  : 'supplier',
@@ -90,47 +217,59 @@ var Quotation = function (models, event) {
                             });
                         });
                     }
-                ], function (err) {
-                    var id;
-                    var products;
+                ];
 
-                    if (err) {
-                        return next(err);
-                    }
+                if (err) {
+                    return next(err);
+                }
 
-                    id = _quotation._id;
-                    products = _quotation.products;
+                if (isPopulate) {
+                    async.parallel(parellelTasks, function (err) {
+                        var id;
+                        var products;
 
-                    async.each(products, function (product, cb) {
-                        var jobs = product.jobs;
-
-                        JobsModel.findByIdAndUpdate(jobs, {
-                            $set: {
-                                quotation: id,
-                                type     : "Quoted"
-                            }
-                        }, {new: true}, function (err, result) {
-                            if (err) {
-                                return cb(err);
-                            }
-                            project = result.project ? result.project : null;
-                            cb();
-                        });
-
-                    }, function () {
-                        if (project) {
-                            event.emit('fetchJobsCollection', {project: project});
+                        if (err) {
+                            return next(err);
                         }
-                        res.status(201).send(_quotation);
+
+                        id = _quotation._id;
+                        products = _quotation.products;
+
+                        async.each(products, function (product, cb) {
+                            var jobs = product.jobs;
+
+                            JobsModel.findByIdAndUpdate(jobs, {
+                                $set: {
+                                    quotation: id,
+                                    type     : "Quoted"
+                                }
+                            }, {new: true}, function (err, result) {
+                                if (err) {
+                                    return cb(err);
+                                }
+                                if (result.project) {
+                                    project = result.project;
+                                } else {
+                                    project = null;
+                                }
+                                cb();
+                            });
+
+                        }, function () {
+                            if (project) {
+                                event.emit('fetchJobsCollection', {project: project});
+                            }
+                            res.status(201).send(_quotation);
+                        });
                     });
-                })
-            } else {
-                res.status(201).send(_quotation);
-            }
-            event.emit('recalculateRevenue', {
-                quotation: _quotation,
-                wTrackModel: wTrackModel,
-                req: req
+                } else {
+                    res.status(201).send(_quotation);
+                }
+                event.emit('recalculateRevenue', {
+                    quotation  : _quotation,
+                    wTrackModel: wTrackModel,
+                    req        : req
+                });
             });
         });
     };
@@ -138,7 +277,7 @@ var Quotation = function (models, event) {
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
-        var mid = parseInt(req.headers.mid);
+        var mid = parseInt(req.headers.mid, 10);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, mid, function (access) {
@@ -160,7 +299,7 @@ var Quotation = function (models, event) {
     this.updateModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
-        var mid = parseInt(req.headers.mid);
+        var mid = parseInt(req.headers.mid, 10);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, mid, function (access) {
@@ -169,7 +308,17 @@ var Quotation = function (models, event) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
-                    updateOnlySelectedFields(req, res, next, id, data);
+                    data.currency = data.currency || {};
+                    currencyHalper(data.orderDate, function (err, oxr) {
+                        var currency = data.currency ? data.currency.name : 'USD';
+                        var rates;
+
+                        oxr = oxr || {};
+                        rates = oxr.rates;
+                        data.currency.rate = rates[currency] || 1;
+
+                        updateOnlySelectedFields(req, res, next, id, data);
+                    });
                 } else {
                     res.status(403).send();
                 }
@@ -195,21 +344,21 @@ var Quotation = function (models, event) {
             filter.isOrder = {
                 key  : 'isOrder',
                 value: ['true']
-            }
+            };
         } else {
             filter.isOrder = {
                 key  : 'isOrder',
                 value: ['false']
-            }
+            };
         }
 
         var optionsObject = {};
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
-                optionsObject['$or'] = caseFilter(filter);
+                optionsObject.$or = caseFilter(filter);
             } else {
-                optionsObject['$and'] = caseFilter(filter);
+                optionsObject.$and = caseFilter(filter);
             }
         }
 
@@ -258,7 +407,7 @@ var Quotation = function (models, event) {
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var queryObject = {};
 
-            queryObject['$and'] = [];
+            queryObject.$and = [];
             queryObject.$and.push(optionsObject);
             queryObject.$and.push({_id: {$in: _.pluck(quotationsIds, '_id')}});
 
@@ -335,8 +484,8 @@ var Quotation = function (models, event) {
         var contentType = query.contentType;
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
-        var count = parseInt(query.count) ? parseInt(query.count) : 100;
-        var page = parseInt(query.page);
+        var count = parseInt(query.count, 10) || 100;
+        var page = parseInt(query.page, 10);
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var filter = query.filter || {};
         var key;
@@ -345,25 +494,25 @@ var Quotation = function (models, event) {
             filter.isOrder = {
                 key  : 'isOrder',
                 value: ['true']
-            }
+            };
         } else {
             filter.isOrder = {
                 key  : 'isOrder',
                 value: ['false']
-            }
+            };
         }
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
-                queryObject['$or'] = caseFilter(filter);
+                queryObject.$or = caseFilter(filter);
             } else {
-                queryObject['$and'] = caseFilter(filter);
+                queryObject.$and = caseFilter(filter);
             }
         }
 
         if (query.sort) {
             key = Object.keys(query.sort)[0];
-            query.sort[key] = parseInt(query.sort[key]);
+            query.sort[key] = parseInt(query.sort[key], 10);
             sort = query.sort;
         } else {
             sort = {"orderDate": -1};
@@ -498,8 +647,8 @@ var Quotation = function (models, event) {
         var contentSearcher;
         var waterfallTasks;
 
-        var contentType = req.query.contentType;
-        var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));
+        /*var contentType = req.query.contentType;
+        var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));*/
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -550,6 +699,7 @@ var Quotation = function (models, event) {
             query
                 .populate('supplier', '_id name fullName')
                 .populate('destination')
+                .populate('currency._id')
                 .populate('incoterm')
                 .populate('invoiceControl')
                 .populate('paymentTerm')
@@ -607,7 +757,7 @@ var Quotation = function (models, event) {
                     wTracks = result.wTracks;
 
                     async.each(wTracks, function (wTr, callback) {
-                        wTrack.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback)
+                        wTrack.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
                     }, function () {
                         event.emit('updateProjectDetails', {req: req, _id: project, jobId: result._id});
                         cb();
@@ -621,9 +771,7 @@ var Quotation = function (models, event) {
     };
 
     this.getFilterValues = function (req, res, next) {
-        var CustomersSchema = mongoose.Schemas['Customers'];
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        var Customers = models.get(req.session.lastDb, 'Customers', CustomersSchema);
 
         async.waterfall([
             function (cb) {
@@ -632,9 +780,6 @@ var Quotation = function (models, event) {
                         {
                             $group: {
                                 _id         : null,
-                                /*'Reference': {
-                                 $addToSet: '$supplierReference'
-                                 },*/
                                 'Order date': {
                                     $addToSet: '$orderDate'
                                 }
@@ -642,159 +787,25 @@ var Quotation = function (models, event) {
                         }
                     ], function (err, quot) {
                         if (err) {
-                            cb(err)
+                           return cb(err);
 
-                        } else {
-                            cb(null, quot)
                         }
-                    })
+
+                        cb(null, quot);
+                    });
             },
             function (quot, cb) {
-                //Customers
-                //    .populate(quot, {
-                //        path  : 'supplier',
-                //        model : Customers,
-                //        select: 'name _id'
-                //    },
-                //    function (err, quot) {
-                //        if (err) {
-                //            return cb(err)
-                //
-                //        }
-                //        cb(null, quot)
-                //
-                //    })
-                cb(null, quot)
+                cb(null, quot);
             }
 
         ], function (err, result) {
             if (err) {
-                return next(err)
-            }
-            res.status(200).send(result)
-
-        })
-    };
-
-    function ConvertType(array, type) {
-        if (type === 'integer') {
-            for (var i = array.length - 1;
-                 i >= 0;
-                 i--) {
-                array[i] = parseInt(array[i]);
-            }
-        } else if (type === 'boolean') {
-            for (var i = array.length - 1;
-                 i >= 0;
-                 i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    }
-
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        for (var filterName in
-            filter) {
-            condition = filter[filterName]['value'];
-            key = filter[filterName]['key'];
-
-            switch (filterName) {
-                case 'reference':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'projectName':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'project':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'type':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'projectmanager':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'forSales':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'isOrder':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        }
-
-        return resArray;
-    }
-
-    function updateOnlySelectedFields(req, res, next, id, data) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var products;
-        var project;
-
-        Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
-            if (err) {
                 return next(err);
             }
-
-            if (data.isOrder) {
-                products = quotation.products;
-
-                async.each(products, function (product, cb) {
-                    var jobs = product.jobs;
-
-                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered"}}, {new: true}, function (err, result) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        project = result.project ? result.project : null;
-                        cb();
-                    });
-
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
-                    }
-
-                    res.status(200).send({success: 'Quotation updated', result: quotation});
-
-                });
-            } else {
-                res.status(200).send({success: 'Quotation updated', result: quotation});
-            }
+            res.status(200).send(result);
 
         });
-
-    }
-
+    };
 };
 
 module.exports = Quotation;

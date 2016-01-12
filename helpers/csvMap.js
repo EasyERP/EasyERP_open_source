@@ -24,10 +24,10 @@ module.exports = (function () {
         },
         formatters: {
             'Created Date': function (date) {
-                return moment(date).utc().format(dateFormat);
+                return moment(date).format(dateFormat);
             },
             'Edited Date' : function (date) {
-                return moment(date).utc().format(dateFormat);
+                return moment(date).format(dateFormat);
             }
         }
 

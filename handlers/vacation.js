@@ -196,7 +196,8 @@ var Vacation = function (event, models) {
                                 endDate = moment([options.year, 12]);
                                 startDate = moment([options.year, 1]);
 
-                                queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
+                               // queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
+                                queryObject.year = {'$in': [ parseInt(options.year), (options.year - 1)]}; // changed from String to Number
                             }
                         } else if (options.year) {
                             var date = new Date();

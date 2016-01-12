@@ -444,6 +444,8 @@ define([], function () {
             'Design',
             'PM'
         ],
-        SELECTP_ROJECT   : 'Please select a Project'
+        SELECTP_ROJECT   : 'Please select a Project',
+
+        IT_SERVICES: 'IT services'
     }
 });

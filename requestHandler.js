@@ -1041,7 +1041,7 @@ var requestHandler = function (app, event, mainDb) {
                     }
 
                     async.each(wTracks, function (wTrack, cb) {
-                        var revenue = (wTrack.worked / totalWorked) * totalAmount;
+                        var revenue = (wTrack.worked / totalWorked) * totalAmount * 100;
 
                         console.log(revenue, wTrack._id);
                         wTrackModel.findByIdAndUpdate(wTrack._id, {$set: {revenue: revenue}}, {new: true}, function(err, updated){

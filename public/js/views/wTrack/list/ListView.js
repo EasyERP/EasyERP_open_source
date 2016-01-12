@@ -1163,6 +1163,7 @@ define([
                         /*self.editCollection = new EditCollection(collection.toJSON());*/
                         self.bindingEventsToEditedCollection(self);
                         self.hideSaveCancelBtns();
+                        self.copyEl.hide();
                     }
                 });
 

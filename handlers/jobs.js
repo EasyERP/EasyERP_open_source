@@ -124,6 +124,7 @@ var Jobs = function (models, event) {
 
         if (forDashboard) { //add for jobsDash need refactor
             queryObjectStage2['$or'] = [];
+            queryObjectStage2['$or'].push({type: 'Not Quoted'});
             queryObjectStage2['$or'].push({"invoice._type": 'wTrackInvoice'});
             queryObjectStage2['$or'].push({quotation: {$exists: true}});
         }
@@ -242,9 +243,9 @@ var Jobs = function (models, event) {
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
         query.find({type: "Not Quoted", 'project': objectId(pId)}, {
-            name                           : 1,
-            _id                            : 1,
-            "budget.budgetTotal.revenueSum": 1
+            name    : 1,
+            _id     : 1,
+            "budget": 1
         }, function (err, jobs) {
             if (err) {
                 return next(err);

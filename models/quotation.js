@@ -3,6 +3,8 @@
  */
 
 module.exports = (function () {
+    'use strict';
+
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
     var Schema = mongoose.Schema;
@@ -25,11 +27,14 @@ module.exports = (function () {
         unitPrice    : Number,
         product      : {type: ObjectId, ref: 'Product', default: null},
         description  : {type: String, default: ''},
-        jobs: {type: ObjectId, ref: "jobs", default: null}
+        jobs         : {type: ObjectId, ref: "jobs", default: null}
     };
 
     var quotationSchema = new Schema({
-        currency: {type: ObjectId, ref: 'currency', default: null},
+        currency      : {
+            _id : {type: ObjectId, ref: 'currency', default: null},
+            rate: {type: Number, default: 1}
+        },
         forSales      : {type: Boolean, default: true},
         type          : {type: String, default: 'Not Ordered', enum: ['Not Ordered', 'Not Invoiced', 'Invoiced']},
         isOrder       : {type: Boolean, default: false},
@@ -80,7 +85,7 @@ module.exports = (function () {
             },
             {
                 returnOriginal: false,
-                upsert: true
+                upsert        : true
             },
             function (err, rate) {
                 if (err) {

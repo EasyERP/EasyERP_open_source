@@ -29,7 +29,6 @@ module.exports = (function () {
         journal: {type: ObjectId, ref: 'journal', default: null},
         currency: {
             _id : {type: ObjectId, ref: 'currency', default: null},
-            name: {type: String, default: ''},
             rate: {type: Number, default: 1}
         },
 
