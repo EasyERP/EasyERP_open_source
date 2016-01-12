@@ -933,7 +933,9 @@ var Employee = function (event, models) {
                                                     creationDate    : 1,
                                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                                                     personalEmail   : 1,
-                                                    sequence        : 1
+                                                    sequence        : 1,
+                                                    hire: 1,
+                                                    fire: 1
                                                 };
 
                                                 projectSecond = {
@@ -954,7 +956,9 @@ var Employee = function (event, models) {
                                                     creationDate    : 1,
                                                     workflow        : 1,
                                                     personalEmail   : 1,
-                                                    sequence        : 1
+                                                    sequence        : 1,
+                                                    hire: 1,
+                                                    fire: 1
                                                 };
 
                                             }
