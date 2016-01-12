@@ -185,16 +185,23 @@ module.exports = (function () {
             _id: false,
             date: Date,
             department: {type: ObjectId, ref: 'Department', default: null},
-            jobPosition: {type: ObjectId, ref: 'JobPosition', default: null}
+            jobPosition: {type: ObjectId, ref: 'JobPosition', default: null},
+            manager: {type: ObjectId, ref: 'Employees', default: null},
+            jobType: {type: String, default: ''},
+            salary: {type: Number, default: 0},
+            info: {type: String, default: ''}
         }],
         fire: [{
             _id: false,
             date: Date,
             department: {type: ObjectId, ref: 'Department', default: null},
-            jobPosition: {type: ObjectId, ref: 'JobPosition', default: null}
+            jobPosition: {type: ObjectId, ref: 'JobPosition', default: null},
+            manager: {type: ObjectId, ref: 'Employees', default: null},
+            jobType: {type: String, default: ''},
+            salary: {type: Number, default: 0},
+            info: {type: String, default: ''}
         }],
-        lastFire: {type: Number, default: null},
-        transferred: [JSON]
+        lastFire: {type: Number, default: null}
     }, {collection: 'Employees'});
 
     employeeSchema.virtual('fullName').get(function () {

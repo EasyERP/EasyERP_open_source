@@ -1242,8 +1242,11 @@ var Employee = function (event, models) {
             .populate('groups.group')
             .populate('hire.department', '_id departmentName')
             .populate('hire.jobPosition', '_id name')
+            .populate('hire.manager', '_id name')
+            .populate('hire.jobPosition', '_id name')
             .populate('fire.department', '_id departmentName')
             .populate('fire.jobPosition', '_id name')
+            .populate('fire.manager', '_id name')
             .populate('groups.owner', '_id login');
 
         query.exec(function (err, findedEmployee) {
