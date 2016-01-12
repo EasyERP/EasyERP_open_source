@@ -216,5 +216,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Employee'] = employeeSchema;
+    mongoose.Schemas.Employee = employeeSchema;
 })();
