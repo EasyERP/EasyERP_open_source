@@ -12,8 +12,9 @@ define([
     "custom",
     "dataService",
     "populate",
-    'constants'
-], function (Backbone, $, _, EditTemplate, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, common, Custom, dataService, populate, CONSTANTS) {
+    'constants',
+    'helpers/keyValidator'
+], function (Backbone, $, _, EditTemplate, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, common, Custom, dataService, populate, CONSTANTS, keyValidator) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -43,7 +44,7 @@ define([
         },
 
         events: {
-            'keydown'                                          : 'keydownHandler',
+            'keypress .forNum'                                 : 'keydownHandler',
             'click .dialog-tabs a'                             : 'changeTab',
             "click .current-selected"                          : "showNewSelect",
             "click"                                            : "hideNewSelect",
@@ -103,12 +104,14 @@ define([
         },
 
         keydownHandler: function (e) {
-            switch (e.which) {
+            var charCode = e.which;
+
+            switch (charCode) {
                 case 27:
                     this.hideDialog();
                     break;
                 default:
-                    break;
+                    return keyValidator(e);
             }
         },
 

@@ -268,7 +268,8 @@ define([
             this.$el.find('#paymentDate').datepicker({
                 dateFormat : "d M, yy",
                 changeMonth: true,
-                changeYear : true
+                changeYear : true,
+                maxDate    : 0
             }).datepicker('setDate', new Date())
                 .datepicker('option', 'minDate', model.invoiceDate);
 

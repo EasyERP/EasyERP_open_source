@@ -257,7 +257,7 @@ define([
                 } else if(parent.attr('data-name') === 'productDescr') {
                     parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text"/>');
                 } else {
-                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="number"/>');
+                    parent.append('<input id="editInput" class="forNum"  maxlength="' + maxlength + '" type="text"/>'); // changed validation for numbers on keyValidator
                 }
 
                 $('#editInput').val(this.text);

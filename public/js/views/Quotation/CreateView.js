@@ -32,7 +32,7 @@ define([
             },
 
             events: {
-                'keypress'                                                       : 'keydownHandler',
+                'keypress .forNum'                                               : 'keydownHandler',
                 'click .dialog-tabs a'                                           : 'changeTab',
                 "click a.current-selected:not(.jobs)"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
