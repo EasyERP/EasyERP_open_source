@@ -77,10 +77,10 @@ define([
                         context.$el.find("#top-bar").addClass("banned");
                         context.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                     }
-                    if (currentUser.RelatedEmployee) {
-                        $("#loginPanel .iconEmployee").attr("src", currentUser.RelatedEmployee.imageSrc);
-                        if (currentUser.RelatedEmployee.name) {
-                            $("#loginPanel  #userName").text(currentUser.RelatedEmployee.name.first + " " + currentUser.RelatedEmployee.name.last);
+                    if (currentUser.relatedEmployee) {
+                        $("#loginPanel .iconEmployee").attr("src", currentUser.relatedEmployee.imageSrc);
+                        if (currentUser.relatedEmployee.name) {
+                            $("#loginPanel  #userName").text(currentUser.relatedEmployee.name.first + " " + currentUser.relatedEmployee.name.last);
                         } else {
                             $("#loginPanel  #userName").text(currentUser.login);
                         }
@@ -102,10 +102,10 @@ define([
                     this.$el.find("#top-bar").addClass("banned");
                     this.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                 }
-                if (App.currentUser.RelatedEmployee) {
-                    $("#loginPanel .iconEmployee").attr("src", App.currentUser.RelatedEmployee.imageSrc);
-                    if (App.currentUser.RelatedEmployee.name) {
-                        $("#loginPanel  #userName").text(App.currentUser.RelatedEmployee.name.first + " " + App.currentUser.RelatedEmployee.name.last);
+                if (App.currentUser.relatedEmployee) {
+                    $("#loginPanel .iconEmployee").attr("src", App.currentUser.relatedEmployee.imageSrc);
+                    if (App.currentUser.relatedEmployee.name) {
+                        $("#loginPanel  #userName").text(App.currentUser.relatedEmployee.name.first + " " + App.currentUser.relatedEmployee.name.last);
                     } else {
                         $("#loginPanel  #userName").text(App.currentUser.login);
                     }

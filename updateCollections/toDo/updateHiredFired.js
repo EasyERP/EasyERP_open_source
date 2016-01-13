@@ -132,7 +132,7 @@ dbObject.once('open', function callback() {
 });
 
 var Employee = dbObject.model("Employees", EmployeeSchema);
-var EmployeeOld = dbObject.model("EmployeesNew", EmployeeSchemaOld);
+var EmployeeOld = dbObject.model("EmployeesOld", EmployeeSchemaOld);
 
 var query = EmployeeOld.find().lean();
 

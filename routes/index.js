@@ -56,6 +56,8 @@ module.exports = function (app, mainDb) {
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
     var journalRouter = require('./journal')(models);
+    var userRouter = require('./user')(event, models);
+
     var async = require('async');
 
     var requestHandler;
@@ -676,13 +678,15 @@ module.exports = function (app, mainDb) {
         requestHandler.updateCurrentUser(req, res, data);
     });
 
-    app.patch('/currentUser/:_id', function (req, res) {
+    app.use('/currentUser', userRouter);
+
+   /* app.patch('/currentUser/:_id', function (req, res) {
         var data = {};
         if (req.body.oldpass && req.body.pass) {
             data.changePass = true;
         }
         requestHandler.updateCurrentUser(req, res, data);
-    });
+    });*/
 
     app.get('/UsersForDd', function (req, res) {
         requestHandler.getUsersForDd(req, res);

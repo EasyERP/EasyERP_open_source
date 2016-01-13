@@ -519,6 +519,13 @@ define([
                             return Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
                         }
 
+                        if(model.get('relatedUser') === App.currentUser._id){
+                            App.currentUser.imageSrc =  self.imageSrc;
+
+                            $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                            $("#loginPanel #userName").text(model.toJSON().fullName);
+                        }
+
                         if (self.firstData === data.name.first &&
                             self.lastData === data.name.last &&
                             self.departmentData === department &&
