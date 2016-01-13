@@ -1072,6 +1072,7 @@ var wTrack = function (event, models) {
                     var department = options.department;
                     var weekCounter;
                     var totalForWeek = 0;
+                    var totalRendered = 0;
                     var isoWeeksInYear = moment(startDate).isoWeeksInYear();
                     var endIsoWeek;
                     var endYear;
@@ -1104,7 +1105,7 @@ var wTrack = function (event, models) {
                             result = result.concat(resArr)
                         }
 
-                        if (options.hours && (options.hours - totalHours <= totalForWeek)) {
+                        if (options.hours && (options.hours - totalHours >= totalForWeek)) {
                             return result;
                         }
 
@@ -1118,8 +1119,10 @@ var wTrack = function (event, models) {
                             var month = moment().year(year).isoWeek(week).month();
                             var endOfMonth = moment().year(year).month(month).endOf('month').date();
                             var day = day || 1;
-                            var dayForEndOfMonth = moment().year(year).month(month).date(endOfMonth).day() + 1;
-                            var dateForCheck = moment().year(year).isoWeek(week).date();
+                           // var dayForEndOfMonth = moment().year(year).month(month).date(endOfMonth).day() + 1;
+                            var date =  moment().year(year).isoWeek(week).day(day);
+                            var dateForCheck = date.date();
+                            var dayForEndOfMonth = date.day();
                             var key;
                             var checkToDivide = true;
                             var dateByWeek;
@@ -1142,7 +1145,7 @@ var wTrack = function (event, models) {
 
                                 for (var k = 7; k >= 1; k--) {
                                     key = keyConst[k];
-                                    if (k < dayForEndOfMonth) {
+                                    if (k <= dayForEndOfMonth) {
                                         weekObj[key] = options[k];
                                         totalHours += options[k];
                                         weekObj.total += weekObj[key];
@@ -1167,7 +1170,7 @@ var wTrack = function (event, models) {
 
                                 for (var j = 7; j >= 1; j--) {
                                     key = keyConst[j];
-                                    if (j >= dayForEndOfMonth) {
+                                    if (j > dayForEndOfMonth) {
                                         if (endDay) {
                                             if (j <= endDay) {
                                                 weekObjNext[key] = options[j];
@@ -1257,11 +1260,34 @@ var wTrack = function (event, models) {
                             var year = arrayEl.year;
                             var weekValues = arrayEl;
                             var wTrackToSave;
-                            var month = moment().year(year).isoWeek(week).month() + 1;
+                            var month = moment().year(year).isoWeek(week).day(1).month() + 1;
                             var dateByWeek = year * 100 + week;
                             var dateByMonth = year * 100 + month;
                             var worked = arrayEl.total;
                             var cost = 0;
+                            var diff;
+                            var keys = keyConst;
+                            var i = 1;
+
+                            if (options.hours && options.hours - totalRendered <= totalForWeek){
+                                diff = options.hours - totalRendered;
+                                worked = 0;
+
+                                while (diff - weekValues[keys[i]] >= 0 && i <= 7) {
+                                    weekValues[keys[i]] = weekValues[keys[i]];
+                                    diff -= weekValues[keys[i]];
+                                    worked +=  weekValues[keys[i]];
+                                    i++;
+                                }
+                                weekValues[keys[i]] = Math.abs(diff);
+                                worked +=  weekValues[keys[i]];
+
+                                for (var j = i + 1; j <= 7; j++){
+                                    weekValues[keys[j]] = 0;
+                                }
+                            }
+
+                            totalRendered += worked;
 
                             if (arrayEl.nextMonth) {
                                 month += 1;
@@ -1337,7 +1363,7 @@ var wTrack = function (event, models) {
                     }
 
                     if (hours) {
-                        weekCounter = Math.floor(hours / totalForWeek);
+                        weekCounter = Math.ceil(hours / totalForWeek);
 
                         endDate = moment(startDate).isoWeek(startIsoWeek + weekCounter).day(5);
                     }
