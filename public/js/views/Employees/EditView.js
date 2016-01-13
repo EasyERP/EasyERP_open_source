@@ -118,7 +118,6 @@ define([
                 var tr = table.find('tr').last();
                 var dataContent = tr.attr('data-content');
                 var dataId = parseInt(tr.attr('data-id'));
-                var id = tr.attr('id');
                 var newId;
                 var row;
                 var tds;
@@ -240,13 +239,13 @@ define([
 
                 if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'statusInfoDd' || 'hireFireDd'){
                     element.text($target.text());
-                    element.attr('data-id', valueId)
+                    element.attr('data-id', valueId);
                 } else {
                     $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 }
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 var editingDates = this.$el.find('.editing');
 
                 editingDates.each(function () {
@@ -269,28 +268,11 @@ define([
             },
 
             endContract: function (e) {
-                //var fired = {};
-                //var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
 
                 this.addNewRow(null, contractEndReason);
 
                 this.$el.find('.withEndContract').hide();
-
-                //fired.date = new Date();
-                //fired.department = this.$el.find("#departmentsDd").attr("data-id") ? this.$el.find("#departmentsDd").attr("data-id") : null;
-                //fired.jobPosition = this.$el.find("#jobPositionDd").attr("data-id") ? this.$el.find("#jobPositionDd").attr("data-id") : null;
-                //
-                //this.currentModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: fired});
-                //this.currentModel.save(this.currentModel.changed, {
-                //    patch  : true,
-                //    success: function () {
-                //        Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
-                //    },
-                //    error  : function () {
-                //        Backbone.history.navigate("home", {trigger: true});
-                //    }
-                //});
             },
 
             changeTab: function (e) {
@@ -368,30 +350,22 @@ define([
                 var lastRow = $tableFire.find('tr').last();
                 var fireDate;
                 var fireReason;
-                var gender = $("#genderDd").data("id");
-                gender = gender ? gender : null;
+                var gender = $("#genderDd").data("id") || null;
 
-                var marital = $("#maritalDd").data("id");
-                marital = marital ? marital : null;
-
-                var relatedUser = this.$el.find("#relatedUsersDd").data("id");
-                relatedUser = relatedUser ? relatedUser : null;
-
-                var coach = $.trim(this.$el.find("#coachDd").data("id"));
-                coach = coach ? coach : null;
-
+                var marital = $("#maritalDd").data("id") || null;
+                var relatedUser = this.$el.find("#relatedUsersDd").data("id") || null;
+                var coach = $.trim(this.$el.find("#coachDd").data("id")) || null;
                 var homeAddress = {};
 
                 $("dd").find(".homeAddress").each(function () {
                     var el = $(this);
                     homeAddress[el.attr("name")] = $.trim(el.val());
                 });
-                // date parse 
+
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
                 var hireArray = $tableFire.find('[data-content="hire"]');
                 var newHireArray = [];
                 var lengthHire = hireArray.length - 1;
-
                 var fireArray = this.currentModel.get('fire');
                 var newFire = _.clone(fireArray);
                 var newFireArray = [];
@@ -448,34 +422,6 @@ define([
                 department = newHireArray[lengthHire - 1].department;
                 manager = newHireArray[lengthHire - 1].manager;
                 jobType = newHireArray[lengthHire - 1].jobType;
-
-                //var fireArray = this.currentModel.get('fire');
-                //var newFire = _.clone(fireArray);
-                //var updatedFire = $tableFire.find('[data-content="fire"]');
-                //var newFireArray = [];
-                //
-                //if (newFire.length !== updatedFire.length) {
-                //    var newObj = _.clone(newHireArray[newHireArray.length - 1]);
-                //    newFire.push(newObj);
-                //}
-
-                //_.each(newFire, function (fire, key) {
-                //    var tr = $(self.$el.find("#fire" + key));
-                //
-                //    var date = new Date($.trim(tr.find("[data-id='fireDate']").text()));
-                //    var info = tr.find('#statusInfoDd').attr('data-id');
-                //
-                //    if (!tr){
-                //        newFireArray.push(fire)
-                //    } else {
-                //        fire.date = date;
-                //        fire.info = info;
-                //
-                //        newFireArray.push(fire);
-                //    }
-                //
-                //    return newFireArray;
-                //});
 
                 if (lastRow.hasClass('fired')) {
                     redirect = true;
@@ -559,11 +505,9 @@ define([
                     data.contractEnd = {
                         "date"  : new Date(fireDate),
                         "reason": fireReason
-                    }
+                    };
                 }
-                //if (!relatedUser){
-                //    data['currentUser']= App.currentUser._id;
-                //}
+
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                     headers: {
@@ -584,8 +528,6 @@ define([
                             model = model.toJSON();
                             empThumb = $('#' + model._id);
 
-                            //empThumb.find('.fullName').html(model.name.first + ' ' + model.name.last);
-                            //empThumb.find('.jobPos').html(model.jobPosition.name);
                             empThumb.find('.age').html(model.result.age);
                             empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
                             empThumb.find('.telephone a').html(model.workPhones.mobile);
@@ -637,8 +579,6 @@ define([
                 var jobPosElement;
                 var departmentElement;
                 var projectManagerElement;
-                var hireArray;
-                var fireArray;
 
                 if (this.currentModel.get('dateBirth')) {
                     this.currentModel.set({
@@ -647,23 +587,6 @@ define([
                         silent: true
                     });
                 }
-                //this.currentModel.set({
-                //    hire: this.currentModel.get('hire')
-                //}, {
-                //    silent: true
-                //});
-                //
-                //this.currentModel.set({
-                //    fire: this.currentModel.get('fire')
-                //}, {
-                //    silent: true
-                //});
-                //
-                //this.currentModel.set({
-                //    transferred: this.currentModel.get('transferred')
-                //}, {
-                //    silent: true
-                //});
 
                 var formString = this.template({
                     model: this.currentModel.toJSON()
@@ -721,11 +644,6 @@ define([
                     changeYear : true,
                     yearRange  : '-100y:c+nn',
                     maxDate    : '-18y'
-                    //onChangeMonthYear: function (year, month) {
-                    //    var target = $(this);
-                    //    var day = target.val().split('/')[0];
-                    //    target.val(day + '/' + month + '/' + year);
-                    //}
                 });
 
                 $('.date').datepicker({

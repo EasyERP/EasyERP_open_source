@@ -129,12 +129,12 @@
                 }).addClass('datepicker');
             }
 
-
             return false;
         },
 
         refuseEmployee: function (e) {
             e.preventDefault();
+
             var self = this;
             var workflowStart = this.currentModel.get("workflow") && this.currentModel.get("workflow")._id ? this.currentModel.get("workflow")._id : this.currentModel.get("workflow");
 
@@ -173,6 +173,7 @@
             return false;
 
         },
+
         isEmployee    : function (e) {
             e.preventDefault();
             var hired = {};
@@ -222,9 +223,7 @@
 
         getWorkflowValue: function (value) {
             var workflows = [];
-            for (var i = 0;
-                 i < value.length;
-                 i++) {
+            for (var i = 0; i < value.length; i++) {
                 workflows.push({name: value[i].name, status: value[i].status});
             }
             return workflows;
@@ -232,11 +231,15 @@
 
         switchTab: function (e) {
             e.preventDefault();
+
             var link = this.$("#tabList a");
+            var index;
+
             if (link.hasClass("selected")) {
                 link.removeClass("selected");
             }
-            var index = link.index($(e.target).addClass("selected"));
+
+            index = link.index($(e.target).addClass("selected"));
             this.$(".tab").hide().eq(index).show();
         },
 
@@ -246,13 +249,14 @@
             $(".add-user-dialog").remove();
             $(".crop-images-dialog").remove();
         },
+
         showEdit  : function () {
             $(".upload").animate({
                 height : "20px",
                 display: "block"
             }, 250);
-
         },
+
         hideEdit  : function () {
             $(".upload").animate({
                 height : "0px",
@@ -264,7 +268,6 @@
         saveItem     : function () {
             var self = this;
             var mid = 39;
-
             var lengthHire;
             var jobType;
             var department;
@@ -275,13 +278,8 @@
                 first: $.trim(this.$el.find("#first").val()),
                 last : $.trim(this.$el.find("#last").val())
             };
-
-            var gender = $("#genderDd").data("id");
-            gender = gender ? gender : null;
-
-            var marital = $("#maritalDd").data("id");
-            marital = marital ? marital : null;
-
+            var gender = $("#genderDd").data("id") || null;
+            var marital = $("#maritalDd").data("id") || null;
             var workAddress = {
                 street : $.trim(el.find('#street').val()),
                 city   : $.trim(el.find('#city').val()),
@@ -289,50 +287,36 @@
                 zip    : $.trim(el.find('#zip').val()),
                 country: $.trim(el.find('#country').val())
             };
-
             var social = {
                 LI: $.trim(el.find('#LI').val()),
                 FB: $.trim(el.find('#FB').val())
             };
-
             var tags = $.trim(el.find("#tags").val()).split(',');
-
             var workEmail = $.trim(el.find("#workEmail").val());
-
             var personalEmail = $.trim(el.find("#personalEmail").val());
-
             var skype = $.trim(el.find("#skype").val());
-
             var workPhones = {
                 phone : $.trim(el.find("#phone").val()),
                 mobile: $.trim(el.find("#mobile").val())
             };
-
             var bankAccountNo = $.trim($("#bankAccountNo").val());
-
-            var relatedUser = el.find("#relatedUsersDd").data("id");
-            relatedUser = relatedUser ? relatedUser : null;
-
+            var relatedUser = el.find("#relatedUsersDd").data("id") || null;
             var identNo = $.trim($("#identNo").val());
-
             var passportNo = $.trim(el.find("#passportNo").val());
-
             var otherId = $.trim(el.find("#otherId").val());
-
             var homeAddress = {};
+
             $("dd").find(".homeAddress").each(function () {
                 var el = $(this);
                 homeAddress[el.attr("name")] = $.trim(el.val());
             });
 
             var dateBirthSt = $.trim(el.find("#dateBirth").val());
-
             var sourceId = $("#sourceDd").data("id");
-
             var nationality = $("#nationality").data("id");
-
             var usersId = [];
             var groupsId = [];
+
             $(".groupsAndUser tr").each(function () {
                 if ($(this).data("type") == "targetUsers") {
                     usersId.push($(this).data("id"));
@@ -348,11 +332,8 @@
                 users: usersId,
                 group: groupsId
             };
-
             var whoCanRW = el.find("[name='whoCanRW']:checked").val();
-
             var hireArray = this.currentModel.get('hire');
-
             var fireArray = this.currentModel.get('fire');
             var newFire = _.clone(fireArray);
             var newFireArray = [];
@@ -382,15 +363,10 @@
             manager = hireArray[lengthHire - 1].manager;
             jobType = hireArray[lengthHire - 1].jobType;
 
-
             var referredBy = $.trim(el.find("#referredBy").val());
-
             var expectedSalary = $.trim(el.find("#expectedSalary").val());
-
             var proposedSalary = parseInt($.trim(el.find("#proposedSalary").val()), 10);
-
             var viewType = custom.getCurrentVT();
-
             var nextAction = $.trim(this.$el.find("#nextAction").val());
 
             var data = {
@@ -401,14 +377,12 @@
                 marital    : marital,
                 workAddress: workAddress,
                 social     : social,
-
                 tags         : tags,
                 workEmail    : workEmail,
                 personalEmail: personalEmail,
                 skype        : skype,
                 workPhones   : workPhones,
                 bankAccountNo: bankAccountNo,
-
                 relatedUser: relatedUser,
                 department : department,
                 jobPosition: jobPosition,
@@ -416,20 +390,16 @@
                 identNo    : identNo,
                 passportNo : passportNo,
                 otherId    : otherId,
-
                 homeAddress: homeAddress,
                 dateBirth  : dateBirthSt,
                 source     : sourceId,
                 imageSrc   : this.imageSrc,
                 nationality: nationality,
                 groups     : groups,
-
                 whoCanRW  : whoCanRW,
                 hire      : hireArray,
                 fire      : newFireArray,
-                //degree: this.$el.find("#degreesDd option:selected").val(),
                 nextAction: nextAction,
-
                 referredBy    : referredBy,
                 expectedSalary: expectedSalary,
                 proposedSalary: proposedSalary
@@ -437,7 +407,6 @@
 
             var workflowId = el.find("#workflowsDd").data("id");
             var workflow = workflowId ? workflowId : null;
-
             var currentWorkflow = this.currentModel.get('workflow');
             if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id != workflow)) {
                 data['workflow'] = workflow;
@@ -446,6 +415,7 @@
                 data['workflowStart'] = currentWorkflow._id;
             }
             ;
+
             this.currentModel.save(data, {
                 headers: {
                     mid: mid
@@ -515,10 +485,12 @@
             });
         },
         deleteItem   : function (event) {
-            var mid = 39;
             event.preventDefault();
+
+            var mid = 39;
             var self = this;
             var answer = confirm("Really DELETE items ?!");
+
             if (answer == true) {
                 this.currentModel.destroy({
                     headers: {
@@ -606,9 +578,11 @@
         render: function () {
             var id = null;
             var self = this;
+            var notDiv;
             var formString = this.template({
                 model: this.currentModel.toJSON()
             });
+
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 dialogClass  : "edit-dialog",
@@ -632,7 +606,8 @@
                     }
                 }
             });
-            var notDiv = this.$el.find('.attach-container');
+
+            notDiv = this.$el.find('.attach-container');
             notDiv.append(
                 new attachView({
                     model: this.currentModel,
@@ -647,9 +622,7 @@
             );
             populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
                 var id;
-                for (var i = 0;
-                     i < data.length;
-                     i++) {
+                for (var i = 0; i < data.length; i++) {
                     if (data[i].name == "Refused") {
                         self.refuseId = data[i]._id;
                         if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id == data[i]._id) {
@@ -659,6 +632,7 @@
                     }
                 }
             });
+
             populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this);
             populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
             populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
@@ -667,12 +641,14 @@
             populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
+
             $('#nextAction').datepicker({
                 dateFormat : "d M, yy",
                 changeMonth: true,
                 changeYear : true,
                 minDate    : this.currentModel.toJSON().creationDate
             });
+
             $('#dateBirth').datepicker({
                 dateFormat : "d M, yy",
                 changeMonth: true,
