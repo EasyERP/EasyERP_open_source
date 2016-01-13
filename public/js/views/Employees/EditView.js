@@ -1,5 +1,7 @@
 define([
         "Backbone",
+    "jQuery",
+    "Underscore",
         "text!templates/Employees/EditTemplate.html",
         'views/Notes/AttachView',
         'views/selectView/selectView',
@@ -13,7 +15,7 @@ define([
         "populate",
         "moment"
     ],
-    function (Backbone, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment) {
+    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment) {
         'use strict';
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -236,8 +238,6 @@ define([
                 var id = element.attr('id') || parentUl.attr('id');
                 var valueId = $target.attr('id');
 
-               // $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-
                 if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'statusInfoDd' || 'hireFireDd'){
                     element.text($target.text());
                     element.attr('data-id', valueId)
@@ -245,14 +245,6 @@ define([
                     $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 }
             },
-
-            //nextSelect: function (e) {
-            //    this.showNewSelect(e, false, true);
-            //},
-            //
-            //prevSelect: function (e) {
-            //    this.showNewSelect(e, true, false);
-            //},
 
             hideNewSelect: function (e) {
                 var editingDates = this.$el.find('.editing');
