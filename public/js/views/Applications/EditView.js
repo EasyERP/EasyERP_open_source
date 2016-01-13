@@ -178,10 +178,10 @@
             var hired = {};
 
             hired.date = new Date();
-            hired.department = this.$el.find("#department").attr("data-id") ? this.$el.find("#departments").attr("data-id") : null;
-            hired.jobPosition = this.$el.find("#jobPosition").attr("data-id") ? this.$el.find("#jobPosition").attr("data-id") : null;
-            hired.manager = this.$el.find("#manager").attr("data-id") ? this.$el.find("#manager").attr("data-id") : null;
-            hired.jobType = this.$el.find("#jobType").attr("data-id") ? this.$el.find("#jobType").attr("data-id") : null;
+            hired.department = this.$el.find("#department").attr("data-id") || null;
+            hired.jobPosition = this.$el.find("#jobPosition").attr("data-id") || null;
+            hired.manager = this.$el.find("#manager").attr("data-id") || null;
+            hired.jobType = this.$el.find("#jobType").attr("data-id") || null;
 
             this.currentModel.save({
                 isEmployee: true,
@@ -199,10 +199,13 @@
 
         changeTab     : function (e) {
             var holder = $(e.target);
+            var n;
+            var dialog_holder;
+
             holder.closest(".dialog-tabs").find("a.active").removeClass("active");
             holder.addClass("active");
-            var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-            var dialog_holder = $(".dialog-tabs-items");
+            n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+            dialog_holder = $(".dialog-tabs-items");
             dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
             dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
         },
