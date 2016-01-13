@@ -1,4 +1,5 @@
 define([
+        "Backbone",
         "text!templates/Employees/EditTemplate.html",
         'views/Notes/AttachView',
         'views/selectView/selectView',
@@ -9,10 +10,11 @@ define([
         "collections/Users/UsersCollection",
         'views/Assignees/AssigneesView',
         "common",
-        "populate"
+        "populate",
+        "moment"
     ],
-    function (EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate) {
-
+    function (Backbone, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment) {
+        'use strict';
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Employees",
@@ -67,17 +69,6 @@ define([
                     }
                 ];
 
-                this.responseObj['#hireFireDd'] = [
-                    {
-                        _id : 'Hired',
-                        name: 'Hired'
-                    }, {
-                        _id : 'Fired',
-                        name: 'Fired'
-                    }
-                ];
-
-
                 this.responseObj['#statusInfoDd'] = [
                     {
                         _id : '',
@@ -115,32 +106,62 @@ define([
                 "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption",
                 "click"                                                          : "hideNewSelect",
                 "click td.editable"                                              : "editJob",
-                "click #addNewRow": "addNewRow"
+                "click #update"                                                  : "addNewRow"
             },
 
-            addNewRow: function(){
+            addNewRow: function (e, contractEndReason) {
+                var $target = e ? $(e.target) : null;
+                var targetId = $target ? $target.attr('id') : null;
                 var table = this.$el.find('#hireFireTable');
                 var tr = table.find('tr').last();
                 var dataContent = tr.attr('data-content');
                 var dataId = parseInt(tr.attr('data-id'));
                 var id = tr.attr('id');
-                var newId = dataContent + (dataId + 1).toString();
+                var newId;
                 var row;
                 var tds;
-                var newDate = new Date()
+                var newDate = new Date();
+                var selects;
 
-                if (dataContent === 'fire'){
-                   return false;
+                this.$el.find('#update').hide();
+                this.$el.find('.withEndContract').hide();
+
+                if (contractEndReason) {
+                    dataContent = 'fire';
+                    dataId = table.find('[data-content="fire"]').length ? parseInt(table.find('[data-content="fire"]').last().attr('data-id')) : parseInt(table.find('[data-content="hire"]').last().attr('data-id')) - 1;
                 }
 
-                table.append('<tr id=' + newId + '>' + tr.html() + '</tr>');
+                newId = dataContent + (dataId + 1).toString();
+
+                table.append('<tr id="' + newId + '">' + tr.html() + '</tr>');
 
                 row =  table.find('tr').last();
+                row.attr('data-id', dataId + 1);
+                row.attr('data-content', dataContent);
 
                 tds = row.find('td');
 
-                $(tds[0]).html('<a id="hireFireDd" class="current-selected">Select</a>');
-                $(tds[1]).text(common.utcDateToLocaleDate(newDate))
+                if (targetId === 'update') {
+                    $(tds[0]).text('Hired');
+                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[7]).find('a').attr('data-id', 'Update');
+                    $(tds[7]).find('a').text('Update');
+                } else if (contractEndReason) {
+                    row.addClass('fired');
+                    $(tds[0]).text('Fired');
+                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[1]).removeClass('hireDate');
+                    $(tds[1]).addClass('fireDate');
+                    $(tds[1]).attr('data-id', 'fireDate');
+                    $(tds[6]).removeClass('editable');
+                    $(tds[7]).find('a').text(contractEndReason);
+                    $(tds[7]).find('a').attr('data-id', contractEndReason);
+
+                    selects = row.find('.current-selected');
+                    selects.removeClass('current-selected');
+
+                    $(tds[7]).find('a').addClass('current-selected');
+                }
             },
 
             showSelect: function(e){
@@ -256,24 +277,28 @@ define([
             },
 
             endContract: function (e) {
-                var fired = {};
-                var wfId = $('.endContractReasonList').attr('data-id');
+                //var fired = {};
+                //var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
 
-                fired.date = new Date();
-                fired.department = this.$el.find("#departmentsDd").attr("data-id") ? this.$el.find("#departmentsDd").attr("data-id") : null;
-                fired.jobPosition = this.$el.find("#jobPositionDd").attr("data-id") ? this.$el.find("#jobPositionDd").attr("data-id") : null;
+                this.addNewRow(null, contractEndReason);
 
-                this.currentModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: fired});
-                this.currentModel.save(this.currentModel.changed, {
-                    patch  : true,
-                    success: function () {
-                        Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
-                    },
-                    error  : function () {
-                        Backbone.history.navigate("home", {trigger: true});
-                    }
-                });
+                this.$el.find('.withEndContract').hide();
+
+                //fired.date = new Date();
+                //fired.department = this.$el.find("#departmentsDd").attr("data-id") ? this.$el.find("#departmentsDd").attr("data-id") : null;
+                //fired.jobPosition = this.$el.find("#jobPositionDd").attr("data-id") ? this.$el.find("#jobPositionDd").attr("data-id") : null;
+                //
+                //this.currentModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: fired});
+                //this.currentModel.save(this.currentModel.changed, {
+                //    patch  : true,
+                //    success: function () {
+                //        Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
+                //    },
+                //    error  : function () {
+                //        Backbone.history.navigate("home", {trigger: true});
+                //    }
+                //});
             },
 
             changeTab: function (e) {
@@ -337,30 +362,28 @@ define([
             },
 
             saveItem  : function () {
+
+                this.hideNewSelect();
+
                 var jobType;
                 var department;
                 var jobPosition;
                 var manager;
                 var empThumb;
                 var self = this;
-                var depForTransfer = this.currentModel.get('department');
+                var redirect = false;
+                var $tableFire = this.$el.find('#hireFireTable');
+                var lastRow = $tableFire.find('tr').last();
+                var fireDate;
+                var fireReason;
                 var gender = $("#genderDd").data("id");
                 gender = gender ? gender : null;
-
-                //var jobType = $("#jobTypeDd").data("id");
-                //jobType = jobType ? jobType : null;
 
                 var marital = $("#maritalDd").data("id");
                 marital = marital ? marital : null;
 
                 var relatedUser = this.$el.find("#relatedUsersDd").data("id");
                 relatedUser = relatedUser ? relatedUser : null;
-
-                //var department = this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null;
-                //
-                //var jobPosition = this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null;
-                //
-                //var manager = this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null;
 
                 var coach = $.trim(this.$el.find("#coachDd").data("id"));
                 coach = coach ? coach : null;
@@ -373,13 +396,16 @@ define([
                 });
                 // date parse 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-                var hireArray = this.currentModel.get('hire');
+                var hireArray = $tableFire.find('[data-content="hire"]');
                 var newHireArray = [];
-                var lengthHire;
+                var lengthHire = hireArray.length - 1;
+
+                var fireArray = this.currentModel.get('fire');
+                var newFire = _.clone(fireArray);
+                var newFireArray = [];
 
                 _.each(hireArray, function (hire, key) {
                     var tr = self.$el.find("#hire" + key);
-
                     var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
                     var jobPosition = tr.find('#jobPositionDd').attr('data-id');
                     var department = tr.find('#departmentsDd').attr('data-id');
@@ -388,58 +414,82 @@ define([
                     var info = tr.find('#statusInfoDd').attr('data-id');
                     var jobType = tr.find('#jobTypeDd').attr('data-id');
 
+                    var trFire = $(self.$el.find("#fire" + key));
+
                     newHireArray.push({
                         date       : date,
                         department : department,
                         jobPosition: jobPosition,
-                        manager: manager,
-                        jobType: jobType,
-                        salary: salary,
-                        info: info
+                        manager    : manager,
+                        jobType    : jobType,
+                        salary     : salary,
+                        info       : info
                     });
+
+                    if (lengthHire === key && !lastRow.hasClass('fired')) {
+                        return newHireArray;
+                    }
+
+                    if (trFire && trFire.length) {
+                        newFire[key] = _.clone(newHireArray[key]);
+
+                        newFire[key].date = new Date($.trim(trFire.find("[data-id='fireDate']").text()));
+                        newFire[key].info = trFire.find('#statusInfoDd').attr('data-id');
+
+                        newFireArray.push(newFire[key]);
+                    } else if (!newFire[key]) {
+                        newFire[key] = _.clone(newHireArray[key]);
+
+                        newFire[key].date = date;
+                        newFire[key].info = 'Update';
+
+                        newFireArray.push(newFire[key]);
+                    } else {
+                        newFireArray.push(newFire[key]);
+                    }
+
                     return newHireArray;
                 });
+
                 lengthHire = newHireArray.length;
                 jobPosition = newHireArray[lengthHire - 1].jobPosition;
                 department = newHireArray[lengthHire - 1].department;
                 manager = newHireArray[lengthHire - 1].manager;
                 jobType = newHireArray[lengthHire - 1].jobType;
 
-                var fireArray = this.currentModel.get('fire');
-                var newFireArray = [];
-
-                _.each(fireArray, function (fire, key) {
-                    var tr = $(self.$el.find("#fire" + key));
-
-                    var date = new Date($.trim(tr.find("[data-id='fireDate']").text()));
-                    var info = tr.find('#statusInfoDdfire').attr('data-id');
-
-                    if (!tr){
-                        newFireArray.push(fire)
-                    } else {
-                        fire.date = date;
-                        fire.info = info;
-
-                        newFireArray.push(fire);
-                    }
-
-                    return newFireArray;
-                });
-
-                //var transferArray = this.currentModel.get('transferred');
-                //var newTransfer = [];
+                //var fireArray = this.currentModel.get('fire');
+                //var newFire = _.clone(fireArray);
+                //var updatedFire = $tableFire.find('[data-content="fire"]');
+                //var newFireArray = [];
                 //
-                //_.each(transferArray, function (obj, key) {
-                //    var date = $.trim(self.$el.find("#date" + key).val());
-                //    var dep = obj.department;
-                //    var result = {};
+                //if (newFire.length !== updatedFire.length) {
+                //    var newObj = _.clone(newHireArray[newHireArray.length - 1]);
+                //    newFire.push(newObj);
+                //}
+
+                //_.each(newFire, function (fire, key) {
+                //    var tr = $(self.$el.find("#fire" + key));
                 //
-                //    result.department = dep;
-                //    result.date = new Date(date);
+                //    var date = new Date($.trim(tr.find("[data-id='fireDate']").text()));
+                //    var info = tr.find('#statusInfoDd').attr('data-id');
                 //
-                //    newTransfer.push(result);
-                //    return newTransfer;
+                //    if (!tr){
+                //        newFireArray.push(fire)
+                //    } else {
+                //        fire.date = date;
+                //        fire.info = info;
+                //
+                //        newFireArray.push(fire);
+                //    }
+                //
+                //    return newFireArray;
                 //});
+
+                if (lastRow.hasClass('fired')) {
+                    redirect = true;
+                    fireDate = newFireArray[newFireArray.length - 1].date;
+                    fireReason = newFireArray[newFireArray.length - 1].info;
+                }
 
                 var active = (this.$el.find("#active").is(":checked")) ? true : false;
                 var sourceId = $("#sourceDd").data("id");
@@ -509,11 +559,16 @@ define([
                     whoCanRW      : whoCanRW,
                     hire          : newHireArray,
                     fire          : newFireArray
-                    // depForTransfer: depForTransfer
                 };
-                //if (department._id !== depForTransfer._id) {
-                //    data.depForTransfer = depForTransfer.name;
-                //}
+
+                if (redirect) {
+                    data.isEmployee = false;
+                    data.lastFire = moment(fireDate).year() * 100 + moment(fireDate).isoWeek();
+                    data.contractEnd = {
+                        "date"  : new Date(fireDate),
+                        "reason": fireReason
+                    }
+                }
                 //if (!relatedUser){
                 //    data['currentUser']= App.currentUser._id;
                 //}
@@ -524,14 +579,9 @@ define([
                     },
                     patch  : true,
                     success: function (model) {
-                        //App.currentUser.imageSrc =  self.imageSrc;
-                        //if (relatedUser){
-                        //    $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
-                        //    $("#loginPanel #userName").text(model.toJSON().fullName);
-                        //} else {
-                        //    $("#loginPanel .iconEmployee").attr("src", App.currentUser.imageSrc);
-                        //    $("#loginPanel  #userName").text(App.currentUser.login);
-                        //}
+                        if (redirect) {
+                            return Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
+                        }
 
                         if (self.firstData === data.name.first &&
                             self.lastData === data.name.last &&
@@ -605,23 +655,23 @@ define([
                         silent: true
                     });
                 }
-                this.currentModel.set({
-                    hire: this.currentModel.get('hire')
-                }, {
-                    silent: true
-                });
-
-                this.currentModel.set({
-                    fire: this.currentModel.get('fire')
-                }, {
-                    silent: true
-                });
-
-                this.currentModel.set({
-                    transferred: this.currentModel.get('transferred')
-                }, {
-                    silent: true
-                });
+                //this.currentModel.set({
+                //    hire: this.currentModel.get('hire')
+                //}, {
+                //    silent: true
+                //});
+                //
+                //this.currentModel.set({
+                //    fire: this.currentModel.get('fire')
+                //}, {
+                //    silent: true
+                //});
+                //
+                //this.currentModel.set({
+                //    transferred: this.currentModel.get('transferred')
+                //}, {
+                //    silent: true
+                //});
 
                 var formString = this.template({
                     model: this.currentModel.toJSON()

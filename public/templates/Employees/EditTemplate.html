@@ -29,16 +29,16 @@
                         <a href="javascript:;">Assignees</a>
                     </li>
 
-                    <!--<li class="right withEndContract">-->
-                        <!--<span class="arrow">7</span>-->
-                        <!--<span class="endContractReasonList">End Contract</span>-->
-                        <!--<ul class="newSelectList">-->
-                            <!--<li>End Contract</li>-->
-                            <!--<li>Fired</li>-->
-                            <!--<li>Personal Issues</li>-->
-                            <!--<li>Other</li>-->
-                        <!--</ul>-->
-                    <!--</li>-->
+                    <li class="right withEndContract">
+                        <span class="arrow">7</span>
+                        <span class="endContractReasonList">End Contract</span>
+                        <ul class="newSelectList">
+                            <li>End Contract</li>
+                            <li>Fired</li>
+                            <li>Personal Issues</li>
+                            <li>Other</li>
+                        </ul>
+                    </li>
 
                 </ul>
 
@@ -172,7 +172,7 @@
                                         <label>Manager</label>
                                     </dt>
                                     <dd>
-                                        <span id="manager" data-id="<%=model.manager ? model.manager._id: ''%>"><%=model.manager ? model.manager.fullName : ""%></span>
+                                        <span id="manager" data-id="<%=model.manager ? model.manager._id: null%>"><%=model.manager ? model.manager.fullName : ""%></span>
                                     </dd>
                                     <dt>
                                         <label>Job Type</label>
@@ -426,17 +426,17 @@
                                 <td>Hired</td>
                                 <td class="editable hireDate" data-id="hireDate"><%=model.hire[key].date%></td>
                                 <td>
-                                    <a id="jobPositionDd" class="current-selected" data-id="<%=model.jobPosition ? model.jobPosition._id:''%>" href="javascript:;">
+                                    <a id="jobPositionDd" class="current-selected" data-id="<%=model.jobPosition ? model.jobPosition._id : null%>" href="javascript:;">
                                     <%=model.hire[key].jobPosition ? model.hire[key].jobPosition.name : 'Select'%>
                                 </a>
                                 </td>
                              <td>
-                                 <a id="departmentsDd" class="current-selected" data-id="<%=model.department ? model.department._id : ''%>" href="javascript:;">
+                                 <a id="departmentsDd" class="current-selected" data-id="<%=model.department ? model.department._id : null%>" href="javascript:;">
                                      <%=model.hire[key].department ? model.hire[key].department.departmentName : "Select"%>
                                  </a>
                              </td>
                       <td>
-                          <a id="projectManagerDD" class="current-selected" data-id="<%=model.manager ? model.manager._id : ''%>" href="javascript:;">
+                          <a id="projectManagerDD" class="current-selected" data-id="<%=model.manager ? model.manager._id : null%>" href="javascript:;">
                               <%=model.hire[key].manager ? model.hire[key].manager.name.first + ' ' + model.hire[key].manager.name.last : "Select"%>
                           </a>
                       </td>
@@ -454,7 +454,7 @@
                       </td>
                   </tr>
 
-                  <%if (model.fire && model.fire[key] && model.hire[key + 1] && model.fire[key] !== model.hire[key + 1]) {%>
+                  <%if (model.fire && model.fire[key] && model.fire[key].date !==  model.hire[key].date) {%>
                   <tr id="fire<%=key%>" data-id="<%=key%>" data-content="fire">
                       <td>Fired</td>
                       <td class="editable fireDate" data-id="fireDate"><%=model.fire[key].date%></td>
@@ -473,7 +473,7 @@
                   </tbody>
                   </table>
 
-                        <a id="addNewRow">Add new item</a>
+                        <a id="update">Update</a>
           <div class="clearfix"></div>
           <div class="dialog-tabs-item">
               <div class="assignees-container"></div>
