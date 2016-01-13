@@ -6,7 +6,7 @@ define(['Validation'], function (Validation) {
             login          : "",
             email          : "",
             profile        : null,
-            RelatedEmployee: null,
+            relatedEmployee: null,
             savedFilters   : []
         },
         initialize : function () {

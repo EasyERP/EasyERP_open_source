@@ -1435,9 +1435,9 @@ var Employee = function (event, models) {
                 query = {$set: updateObject, $push: dataObj};
             } else if (data.relatedUser) {
                 query = {$set: updateObject};
-                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
+                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'relatedEmployee', _id);
             } else if (data.currentUser) {
-                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
+                event.emit('updateName', data.currentUser, UsersModel, '_id', 'relatedEmployee', null);
                 delete data.currentUser;
                 query = {$set: updateObject};
             } else {
