@@ -17,9 +17,9 @@ define([
         template: _.template(mainTemplate),
 
         events: {
-            "click .editable"        : "showNewSelect",  // changed dropdown list
-            'change #currentStatus'  : 'changeStatus',
-            'change #currentTime'    : 'changeTime',
+            "click .editable"                                  : "showNewSelect",  // changed dropdown list
+            'change #currentStatus'                            : 'changeStatus',
+            'change #currentTime'                              : 'changeTime',
             "click .newSelectList li:not(.miniStylePagination)": "changeEmployee",  // changed to click for selectView dd
             "click"                                            : "removeInputs"
         },

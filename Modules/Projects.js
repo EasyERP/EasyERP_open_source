@@ -1003,6 +1003,7 @@ var Project = function (models, event) {
     };
 
     function getTotalCount(req, response) {
+        var query;
         var res = {};
         var data = {};
         var addObj = {};
@@ -1145,22 +1146,14 @@ var Project = function (models, event) {
                                         $match: addObj
                                     }], function (err, projects) {
                                         if (!err) {
-                                            if (data && data.contentType == 'Tasks') {    // added aggregation function for filters in Tasks
-                                                var query = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+                                            if (data && data.contentType === 'Tasks') {    // added aggregation function for filters in Tasks
+                                                query = models.get(req.session.lastDb, 'Tasks', tasksSchema);
                                                 obj = {'$and': [{'project._id': {$in: _.pluck(projects, '_id')}}]};
 
                                                 if (data && data.filter) {
                                                     obj['$and'].push({$and: caseFilter(data.filter)});
-                                                }/*.
-                                                    where('project').in(projectsId.objectID());*/
-                                                /*if (data && data.filter && data.filter.workflow) {
-                                                 data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                 return item === "null" ? null : item;
-                                                 });
-                                                 query.where('workflow').in(data.filter.workflow);
-                                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                                 query.where('workflow').in([]);
-                                                 }*/
+                                                }
+
                                                 query    // added for correct counting in filters in Tasks
                                                     .aggregate([{
                                                         $lookup: {

@@ -64,7 +64,7 @@ define([
 
                 resultCollection = this.collection.filter(function (model) {
 
-                    var  searchItem = ""+ model.get('name'); // added in case of not string values
+                    var  searchItem = model.get('name').toString(); // added in case of not string values
 
                     return searchItem.match(regex);
                 });

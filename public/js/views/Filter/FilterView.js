@@ -665,10 +665,10 @@ define([
                             self.clickSearchResult(element);
                         });
 
-                        if (!allResults.get()[0] && searchInput.html()) {  // added message in case of search unsuccessful
+                        if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
                             App.render({
-                            type   : 'error',
-                            message: 'No such result'
+                                type   : 'error',
+                                message: 'No such result'
                             });
                         }
 

@@ -658,19 +658,22 @@ var Filters = function (models) {
                 $lookup: {
                     from        : "Project",
                     localField  : "project",
-                    foreignField: "_id", as: "project"
+                    foreignField: "_id",
+                    as: "project"
                 }
             }, {
                 $lookup: {
                     from        : "Employees",
                     localField  : "assignedTo",
-                    foreignField: "_id", as: "assignedTo"
+                    foreignField: "_id",
+                    as: "assignedTo"
                 }
             }, {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
-                    foreignField: "_id", as: "workflow"
+                    foreignField: "_id",
+                    as: "workflow"
                 }
             }, {
                 $project: {
@@ -698,13 +701,13 @@ var Filters = function (models) {
                         'assignedTo': {
                             $addToSet: {
                                 _id : '$assignedTo._id',
-                                name: {$concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']}
+                                name: {'$ifNull': [{$concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']}, 'None']}
                             }
                         },
                         'workflow'  : {
                             $addToSet: {
                                 _id : '$workflow._id',
-                                name: '$workflow.name'
+                                name: {'$ifNull': ['$workflow.name', 'None']}
                             }
                         },
                         'type'      : {
