@@ -12,24 +12,24 @@
         <a class="<%=editable ? 'current-selected' : ''%>" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
     </td>
     <% } else {%>
-    <td data-name="productDescr">
+    <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>">
           <span>
             <%=product.description%>
           </span>
     </td>
     <% } %>
-    <td data-name="scheduledDate" class="<%=editable ? 'editable' : ''%>">
+    <td data-name="scheduledDate" class="<%=editable && !forSales ? 'editable' : ''%>">
         <span class="datepicker">
             <%=product.scheduledDate%>
         </span>
         <input type="text" class="datepicker notVisible" readonly>
     </td>
-    <td data-name="quantity" class="<%=editable ? 'editable' : ''%>">
+    <td data-name="quantity" class="<%=editable && !forSales ? 'editable' : ''%>">
         <span>
             <%=product.quantity%>
         </span>
     </td>
-    <td data-name="price" class="<%=editable ? 'editable' : ''%>">
+    <td data-name="price" class="<%=editable  ? 'editable' : ''%>">
         <span>
             <%=product.unitPrice%>
         </span>
