@@ -15,7 +15,7 @@
                         <% if (jobs && jobs._id) {%>
                         <input id="jobName" value="<%=jobs.name%>" readonly/>
                         <% } else {%>
-                        <input id="jobName"/>
+                        <input id="jobName" maxlength="36"/>
                         <% } %>
                     </dd>
                 </dl>
@@ -62,14 +62,13 @@
                         <col width="7%">
                         <col width="7%">
                         <col width="7%">
-                        <col width="7%">
-                        <col width="4%">
-                        <col width="4%">
-                        <col width="4%">
-                        <col width="4%">
-                        <col width="4%">
-                        <col width="4%">
-                        <col width="4%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
                     </colgroup>
                     <thead>
                     <tr>
@@ -79,7 +78,6 @@
                         <th>Generate&nbspBy</th>
                         <th>Start&nbspDate</th>
                         <th>End&nbspDate / Hours</th>
-                        <!--<th>Revenue</th>-->
                         <th>Mo</th>
                         <th>Tu</th>
                         <th>We</th>
@@ -91,17 +89,17 @@
                     </thead>
                     <tbody>
                     <tr id="addNewItem">
-                        <td colspan="14">
+                        <td colspan="13">
                             <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
                         </td>
                     </tr>
                     </tbody>
                     <tfoot>
                     <tr>
-                        <td colspan="14" class="invisible_border">&nbsp;</td>
+                        <td colspan="13" class="invisible_border">&nbsp;</td>
                     </tr>
                     <tr>
-                        <td colspan="14" class="invisible_border">&nbsp;</td>
+                        <td colspan="13" class="invisible_border">&nbsp;</td>
                     </tr>
 
                     </tfoot>

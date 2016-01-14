@@ -172,16 +172,13 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         endDate   : '',
                         hours     : '',
                         project   : this.modelJSON._id,
-                        employee  : {},
-                        department: {},
                         1         : 8,
                         2         : 8,
                         3         : 8,
                         4         : 8,
                         5         : 8,
                         6         : 0,
-                        7         : 0,
-                        revenue   : 0
+                        7         : 0
                     };
 
                     var target = $(e.target);

@@ -278,7 +278,7 @@ var wTrack = function (models) {
                     VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {
                         upsert: true,
                         new   : true
-                    }, function (err, res) {
+                    }, function (err) {
                         if (err) {
                             console.error(err);
                         }

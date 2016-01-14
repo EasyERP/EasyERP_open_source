@@ -21,7 +21,7 @@
         <tr data-id="<%=element._id%>" id="projectTeam">
             <td><%=element.name.first + ' ' + element.name.last%></td>
             <td><%=element.jobPosition.name%></td>
-            <td><%=element.department.name%></td>
+            <td><%=element.department.departmentName%></td>
             <td><%=currencySplitter(budget[i].hours.toFixed())%></td>
             <td><%=currencySplitter(budget[i].cost.toFixed())%></td>
             <td><%=currencySplitter(budget[i].revenue.toFixed())%></td>

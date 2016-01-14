@@ -40,7 +40,7 @@ define([
                     });
                 }
                 return response.data;
-            },
+            }
         });
         return TasksCollection;
     });

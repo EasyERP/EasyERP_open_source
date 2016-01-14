@@ -369,6 +369,9 @@ define([
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
 
+                            App.projectInfo = App.projectInfo || {};
+                            App.projectInfo.currentTab = 'orders';
+
                             if (invoiceCb && typeof invoiceCb === 'function') {
                                 return invoiceCb(null);
                             }

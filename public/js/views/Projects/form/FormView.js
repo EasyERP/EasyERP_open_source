@@ -2,6 +2,9 @@
  * Created by liliya on 17.09.15.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
         'text!templates/Projects/form/FormTemplate.html',
         'text!templates/Projects/projectInfo/DetailsTemplate.html',
         'text!templates/Projects/projectInfo/proformRevenue.html',
@@ -38,7 +41,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -53,13 +56,11 @@ define([
                 "click #health a:not(.disabled)"                                                          : "showHealthDd",
                 "click #health ul li div:not(.disabled)"                                                  : "chooseHealthDd",
                 "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                        : "chooseOption",
-                //"click .newSelectList li.miniStylePagination"                                             : "notHide",
-                //"click .newSelectList li.miniStylePagination .next:not(.disabled)"                        : "nextSelect",
-                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)"                        : "prevSelect",
                 "click .current-selected:not(.disabled)"                                                  : "showNewSelect",
                 "click #createItem"                                                                       : "createDialog",
                 "click #createJob"                                                                        : "createJob",
                 "change input:not(.checkbox, .check_all, .check_all_bonus, .statusCheckbox, #inputAttach)": "showSaveButton",
+                "change #description"                                                                     : "showSaveButton",
                 "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)"                       : "renderJobWTracks",
                 "mouseover #jobsItem"                                                                     : "showRemoveButton",
                 "mouseleave #jobsItem"                                                                    : "hideRemoveButton",
@@ -670,7 +671,8 @@ define([
             },
 
             hideSelect: function () {
-              //  $(".newSelectList").hide();
+                $("#health").find("ul").hide(); // added for hiding list if element in isnt chosen
+
                 if (this.selectView){
                     this.selectView.remove();
                 }
@@ -1257,6 +1259,7 @@ define([
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                        $('#EndDate').datepicker('option', 'minDate', endDate); // added minDate after selecting new startDate
 
                         self.showSaveButton();
                     }
@@ -1265,6 +1268,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
+                    minDate : $('#StartDate').datepicker('getDate'), //added minDate at start
                     onSelect   : function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());

@@ -552,7 +552,7 @@ define([
 
                         targetInput.removeClass('errorContent');
                     }
-                }).datepicker('option', 'minDate', "+2W");
+                }).datepicker('option', 'minDate', new Date());
 
                 this.delegateEvents(this.events);
 

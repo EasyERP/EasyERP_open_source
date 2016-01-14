@@ -24,12 +24,13 @@ define([
             switch (type) {
                 case "edit":
                 {
-                    $(".title-wrapper").show();
-                    $("#noteArea").attr("placeholder", "").parents(".addNote").addClass("active");
+                    this.$el.find(".title-wrapper").show();  // here and in all next global searching $ changed for correct finding elements
+                    this.$el.find("#noteArea").attr("placeholder", "").parents(".addNote").addClass("active");
+                    this.$el.find('#noteArea').val($('#' + id_int).find('.noteText').text());
+                    this.$el.find('#noteTitleArea').val($('#' + id_int).find('.noteTitle').text());
+                    this.$el.find('#getNoteKey').attr("value", id_int);
 
-                    $('#noteArea').val($('#' + id_int).find('.noteText').text());
-                    $('#noteTitleArea').val($('#' + id_int).find('.noteTitle').text());
-                    $('#getNoteKey').attr("value", id_int);
+
                     break;
                 }
                 case "del":
@@ -60,27 +61,27 @@ define([
         expandNote: function (e) {
             if (!$(e.target).parents(".addNote").hasClass("active")) {
                 $(e.target).attr("placeholder", "").parents(".addNote").addClass("active");
-                $(".addTitle").show();
+                this.$el.find(".addTitle").show();
             }
         },
 
         cancelNote: function (e) {
             $(e.target).parents(".addNote").find("#noteArea").attr("placeholder", "Add a Note...").parents(".addNote").removeClass("active");
             $(e.target).parents(".addNote").find("#noteArea").val("");
-            $('#getNoteKey').val('');// remove id from hidden field if note editing is cancel
-            $(".title-wrapper").hide();
-            $(".addTitle").hide();
-            $('#noteArea').val('');
-            $('#noteTitleArea').val('');
-            $('#getNoteKey').attr("value", '');
+            this.$el.find('#getNoteKey').val('');// remove id from hidden field if note editing is cancel
+            this.$el.find(".title-wrapper").hide();
+            this.$el.find(".addTitle").hide();
+            this.$el.find('#noteArea').val('');
+            this.$el.find('#noteTitleArea').val('');
+            this.$el.find('#getNoteKey').attr("value", '');
         },
 
         saveNote: function (e) {
             var self = this;
             if ($(e.target).parents(".addNote").find("#noteArea").val().replace(/ /g, '') || $(e.target).parents(".addNote").find("#noteTitleArea").val().replace(/ /g, '')) {
                 $(e.target).parents(".addNote").find("#noteArea").attr("placeholder", "Add a Note...").parents(".addNote").removeClass("active");
-                $(".title-wrapper").hide();
-                $(".addTitle").hide();
+                this.$el.find(".title-wrapper").hide();
+                this.$el.find(".addTitle").hide();
             }
             else {
                 $(e.target).parents(".addNote").find("#noteArea").focus();
@@ -100,7 +101,7 @@ define([
                 if (val.replace(/ /g, '') || title.replace(/ /g, '')) {
                     var formModel = this.model;
                     var notes = formModel.get('notes');
-                    var arrKeyStr = $('#getNoteKey').attr("value");
+                    var arrKeyStr = this.$el.find('#getNoteKey').attr("value");
                     var noteObj = {
                         note : '',
                         title: ''
@@ -120,9 +121,9 @@ define([
                                 },
                                 patch  : true,
                                 success: function () {
-                                    $('#noteBody').val($('#' + arrKeyStr).find('.noteText').html(val));
-                                    $('#noteBody').val($('#' + arrKeyStr).find('.noteTitle').html(title));
-                                    $('#getNoteKey').attr("value", '');
+                                    self.$el.find('#noteBody').val($('#' + arrKeyStr).find('.noteText').html(val));
+                                    self.$el.find('#noteBody').val($('#' + arrKeyStr).find('.noteTitle').html(title));
+                                    self.$el.find('#getNoteKey').attr("value", '');
                                 }
                             });
                     } else {
@@ -149,8 +150,8 @@ define([
                                 }
                             });
                     }
-                    $('#noteArea').val('');
-                    $('#noteTitleArea').val('');
+                    this.$el.find('#noteArea').val('');
+                    this.$el.find('#noteTitleArea').val('');
                 } else {
                     return false;
                 }

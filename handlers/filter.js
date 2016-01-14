@@ -111,6 +111,7 @@ var Filters = function (models) {
                 Projects        : getProjectFiltersValues,
                 Tasks           : getTasksFiltersValues,
                 salesInvoice    : getSalesInvoiceFiltersValues,
+                Invoice         : getInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
@@ -651,21 +652,56 @@ var Filters = function (models) {
             });
         };
 
-        function getTasksFiltersValues(callback) {
-            Task.aggregate([
-                {
-                    $group: {
+        function getTasksFiltersValues(callback) {   // added $lookups in aggregation and one new field Summary
+            Task.aggregate([  {
+
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id",
+                    as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "assignedTo",
+                    foreignField: "_id",
+                    as: "assignedTo"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id",
+                    as: "workflow"
+                }
+            }, {
+                $project: {
+                    summary   : 1,
+                    type      :1,
+                    workflow   : {$arrayElemAt: ["$workflow", 0]},
+                    assignedTo   : {$arrayElemAt: ["$assignedTo", 0]},
+                    project    : {$arrayElemAt: ["$project", 0]}
+                }
+            },{$match : {'project' : {$exists : true} }},
+                {$group: {
                         _id         : null,
                         'project'   : {
                             $addToSet: {
-                                _id : '$project',
-                                name: '$project.name'
+                                _id : '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'summary'   : {
+                            $addToSet: {
+                                _id : '$_id',
+                                name: '$summary'
                             }
                         },
                         'assignedTo': {
                             $addToSet: {
                                 _id : '$assignedTo._id',
-                                name: {'$ifNull': ['$assignedTo.name', 'None']}
+                                name: {'$ifNull': [{$concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']}, 'None']}
                             }
                         },
                         'workflow'  : {
@@ -682,6 +718,7 @@ var Filters = function (models) {
                         }
                     }
                 }
+
             ], function (err, result) {
                 if (err) {
                     callback(err);
@@ -689,13 +726,77 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                //Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
-                //    if (err){
-                //        return callback(err);
-                //    }
-                //
-                //    callback(null, result);
-                //});
+                /*Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
+                    if (err){
+                       return callback(err);
+                   }
+
+                    callback(null, result);
+                });*/
+
+                callback(null, result);
+            });
+        };
+        function getInvoiceFiltersValues(callback) {
+            wTrackInvoice.aggregate([{
+                $match: {
+                    forSales: false
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    workflow   : {$arrayElemAt: ["$workflow", 0]},
+                    supplier   : {$arrayElemAt: ["$supplier", 0]}
+                }
+            },  {
+                $group: {
+                    _id          : null,
+                    'workflow'   : {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
+                        }
+                    },
+                    /*'project'    : {
+                        $addToSet: {
+                            _id : '$project._id',
+                            name: '$project.projectName'
+                        }
+                    },
+                    'salesPerson': {
+                        $addToSet: {
+                            _id : '$salesPerson._id',
+                            name: {
+                                $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                            }
+                        }
+                    },*/
+                    'supplier'   : {
+                        $addToSet: {
+                            _id : '$supplier._id',
+                            name: {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                            }
+                        }
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
 
                 callback(null, result);
             });

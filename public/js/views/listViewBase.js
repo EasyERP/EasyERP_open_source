@@ -536,10 +536,9 @@ define([
                     //$currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
                     $('#searchContainer').after(_.template(aphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null;
+                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
                     if (currentLetter) {
                         $('#startLetter').find('a').each(function () {
                             var target = $(this);

@@ -142,10 +142,9 @@
                     $('#startLetter').remove();
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null;
+                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
