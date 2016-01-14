@@ -61,7 +61,7 @@ define([
                     if (baseFilter) {
                         filter[baseFilter.name] = baseFilter.value;
                     }
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self);
                 });
                 self.filterView.bind('defaultFilter', function () {
                     if (baseFilter) {
@@ -71,7 +71,6 @@ define([
                 });
 
                 self.filterView.render();
-
             },
 
             goSort: function (e) {
@@ -158,9 +157,9 @@ define([
                 var url = '#easyErp/jobsDashboard';
                 this.$el.html(this.template());
 
-                this.renderJobs();
-
                 this.renderFilter(this);
+
+                this.renderJobs();
 
                 if (filter) {
                     url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
