@@ -775,9 +775,16 @@ define([
 
             renderCapacity: function (row, subNameClass, name) {
                 var collection;
+                var oldMonth;
+                var oldYear;
                 var status = row.find('.departmentCB').prop("checked");
 
-                if (!this.departmentsCollections[name]) {
+                if (this.departmentsCollections[name]) {
+                    oldMonth = this.departmentsCollections[name].models[0].attributes.month;
+                    oldYear = this.departmentsCollections[name].models[0].attributes.year;
+                }
+
+                if (!this.departmentsCollections[name] || oldMonth !== this.capacityObject[name][0].month || oldYear !== this.capacityObject[name][0].year ) {
                     this.departmentsCollections[name] = new departmentCollection(this.capacityObject[name]);
                 }
 

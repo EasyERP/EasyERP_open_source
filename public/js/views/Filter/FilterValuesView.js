@@ -63,7 +63,10 @@ define([
                 regex = new RegExp(value, 'i');
 
                 resultCollection = this.collection.filter(function (model) {
-                    return model.get('name').match(regex);
+
+                    var  searchItem = model.get('name').toString(); // added in case of not string values
+
+                    return searchItem.match(regex);
                 });
 
                 return resultCollection;

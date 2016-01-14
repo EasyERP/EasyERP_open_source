@@ -222,6 +222,10 @@ define([
                     prevValue = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + prevValue + '"   style="width:' + width + 'px">');
+                    if (!isName){
+                        el.find('input').attr('maxlength','6');
+                    }
+
                     el.find('.editing').keydown( function (e) {
                         var code = e.keyCode;
 
@@ -297,6 +301,11 @@ define([
                     model.changed = this.changedModels[id];
                 }
                 this.editCollection.save();
+
+                for (var id in this.changedModels) {
+                   delete this.changedModels[id];
+
+                }
             },
 
             savedNewModel: function (modelObject) {
@@ -388,11 +397,16 @@ define([
 
             hideItemsNumber: function (e) {
                 var el = e.target;
+                var editedElement = this.$listTable.find('.editing');
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                 }
+                if (editedElement.val()){
+                    this.setChangedValueToModel();
+                }
+
 
             },
 

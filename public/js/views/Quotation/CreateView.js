@@ -32,7 +32,7 @@ define([
             },
 
             events: {
-                'keypress'                                                       : 'keydownHandler',
+                'keypress .forNum'                                               : 'keydownHandler',
                 'click .dialog-tabs a'                                           : 'changeTab',
                 "click a.current-selected:not(.jobs)"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
@@ -78,7 +78,7 @@ define([
                     return el._id === id;
                 });
 
-                if (type === 'emptyProject') {
+                if (type ) {    // added condition for project with no data-level empty
                     this.projectManager = element.projectmanager;
 
                     this.$el.find('#supplierDd').text(element.customer.name.first + element.customer.name.last);

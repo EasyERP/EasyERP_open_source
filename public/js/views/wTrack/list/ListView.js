@@ -266,7 +266,8 @@ define([
 
                     if (value === '') {
                         if (el.children('input').length) {
-                            value = input.val();
+                            value = input.val() || '0' ; // in case of empty input
+
                         } else {
                             value = '0';
                         }

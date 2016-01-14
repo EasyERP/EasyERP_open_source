@@ -665,10 +665,16 @@ define([
                             self.clickSearchResult(element);
                         });
 
+                        if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
+                            App.render({
+                                type   : 'error',
+                                message: 'No such result'
+                            });
+                        }
+
                         allResults.remove(); // to prevent appearing last filters after selecting new
-                        searchInput.html(""); // to prevent appearing value in Search after selecting
-                        e.preventDefault();
-                        ; // to prevent appearing previous values by pressing Backspace
+                        searchInput.html("");// to prevent appearing value in Search after selecting
+                        e.preventDefault();  // to prevent appearing previous values by pressing Backspace
                     }
                 });
 
