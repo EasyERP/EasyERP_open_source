@@ -92,8 +92,18 @@ var employeeSchema = new mongoose.Schema({
         LI: {type: String, default: ''},
         GP: {type: String, default: ''}
     },
-    hire: [Date],
-    fire: [Date],
+    hire: [{
+        _id: false,
+        date: Date,
+        department: {type: ObjectId, ref: 'Department', default: null},
+        jobPosition: {type: ObjectId, ref: 'JobPosition', default: null}
+    }],
+    fire: [{
+        _id: false,
+        date: Date,
+        department: {type: ObjectId, ref: 'Department', default: null},
+        jobPosition: {type: ObjectId, ref: 'JobPosition', default: null}
+    }],
     lastFire: {type: Number, default: null},
     transferred: [JSON]
 }, {collection: 'Employees'});
@@ -122,7 +132,7 @@ dbObject.once('open', function callback() {
 });
 
 var Employee = dbObject.model("Employees", EmployeeSchema);
-var EmployeeOld = dbObject.model("EmployeesNew", EmployeeSchemaOld);
+var EmployeeOld = dbObject.model("EmployeesOld", EmployeeSchemaOld);
 
 var query = EmployeeOld.find().lean();
 
@@ -136,19 +146,27 @@ query.exec(function (error, _res) {
         var hire = [];
         var fire = [];
 
-        emp.hire.forEach(function(date){
+        emp.hire.forEach(function(obj){
             hire.push({
-                date: date,
-                department: emp.department,
-                jobPosition: emp.jobPosition
+                date: obj.date,
+                department: obj.department,
+                jobPosition: obj.jobPosition,
+                manager: emp.manager,
+                jobType: emp.jobType,
+                salary: 0,
+                info: ""
             });
         });
 
-        emp.fire.forEach(function(date){
+        emp.fire.forEach(function(obj){
             fire.push({
-                date: date,
-                department: emp.department,
-                jobPosition: emp.jobPosition
+                date: obj.date,
+                department: obj.department,
+                jobPosition: obj.jobPosition,
+                manager: emp.manager,
+                jobType: emp.jobType,
+                salary: 0,
+                info: emp.contractEnd ? emp.contractEnd.reason : ''
             });
         });
 

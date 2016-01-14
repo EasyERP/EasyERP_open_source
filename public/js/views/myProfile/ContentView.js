@@ -1,30 +1,36 @@
 define([
-        "text!templates/myProfile/UsersPagesTemplate.html",
-        "text!templates/myProfile/ChangePassword.html",
+        'Backbone',
+        'Underscore',
+        'jQuery',
+        'text!templates/myProfile/UsersPagesTemplate.html',
+        'text!templates/myProfile/ChangePassword.html',
         'common',
-        "models/UsersModel",
+        'models/UsersModel',
         'dataService',
-        "populate"
+        'populate'
     ],
-    function (UsersPagesTemplate, ChangePassword, common, UsersModel, dataService, populate) {
+    function (Backbone, _, $, UsersPagesTemplate, ChangePassword, common, UsersModel, dataService, populate) {
+        'use strict';
         var ContentView = Backbone.View.extend({
-            el           : '#content-holder',
-            contentType  : "myProfile",
-            actionType   : "Content",
-            template     : _.template(ChangePassword),
-            imageSrc     : '',
-            initialize   : function (options) {
+            el         : '#content-holder',
+            contentType: "myProfile",
+            actionType : "Content",
+            template   : _.template(ChangePassword),
+            imageSrc   : '',
+
+            initialize: function (options) {
                 this.startTime = options.startTime;
                 this.render();
                 this.responseObj = {};
             },
-            events       : {
+
+            events: {
                 "click .changePassword"                                           : "changePassword",
                 "mouseenter .avatar"                                              : "showEdit",
                 "mouseleave .avatar"                                              : "hideEdit",
                 "click #resetBtn"                                                 : "resetForm",
                 "click #saveBtn"                                                  : "save",
-                "click #RelatedEmployee li > a"                                   : "gotoEmployeesForm",
+                "click #relatedEmployee li > a"                                   : "gotoEmployeesForm",
                 "click"                                                           : "hideNewSelect",
                 "click .current-selected"                                         : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
@@ -33,34 +39,39 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
 
             },
+
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
 
             },
-            hideNewSelect: function () {
-                $(".newSelectList").hide();
-            },
-            notHide      : function () {
+
+            notHide: function () {
                 return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption : function (e) {
+
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            nextSelect   : function (e) {
+
+            nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect   : function (e) {
+
+            prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
 
             changePassword: function (e) {
                 e.preventDefault();
+
                 var formString = this.template();
                 var self = this;
+
                 this.$el = $(formString).dialog({
                     dialogClass  : "change-password-dialog",
                     width        : "500px",
@@ -73,7 +84,7 @@ define([
                             text : "Save",
                             class: "btn",
                             click: function () {
-                                self.ChangePassword(self);
+                                self._changePassword(self);
                             }
                         },
                         cancel: {
@@ -87,16 +98,16 @@ define([
                 });
             },
 
-            ChangePassword: function (self) {
-                oldpass = $.trim(this.$el.find('#old_password').val());
-                pass = $.trim(this.$el.find('#new_password').val());
-                confirmPass = $.trim(this.$el.find('#confirm_new_password').val());
+            _changePassword: function (self) {
+                var oldpass = $.trim(this.$el.find('#old_password').val());
+                var pass = $.trim(this.$el.find('#new_password').val());
+                var confirmPass = $.trim(this.$el.find('#confirm_new_password').val());
 
                 dataService.getData('/currentUser', null, function (response, context) {
+                    var mid = 39;
+
                     context.UsersModel = new UsersModel(response.user);
                     context.UsersModel.urlRoot = '/currentUser';
-
-                    var mid = 39;
                     context.UsersModel.save({
                             oldpass: oldpass,
                             pass   : pass
@@ -107,7 +118,7 @@ define([
                             },
                             wait       : true,
                             patch      : true,
-                            success    : function (model) {
+                            success    : function (/*model*/) {
                                 self.hideDialog();
                             },
                             error      : function (model, xhr) {
@@ -125,64 +136,54 @@ define([
                 var ids = [];
                 var email = $.trim($("#email").val());
                 var login = $.trim($("#login").val());
-                var RelatedEmployee = $("input[type='radio']:checked").attr("data-id");
+                var relatedEmployee = $("input[type='radio']:checked").attr("data-id");
 
-                if (RelatedEmployee) {
-                    ids.push(RelatedEmployee);
+                if (relatedEmployee) {
+                    ids.push(relatedEmployee);
                 } else {
-                    RelatedEmployee = null;
+                    relatedEmployee = null;
                 }
 
                 dataService.getData('/currentUser', null, function (response, context) {
-
-                    context.UsersModel = new UsersModel(response.user);
-                    context.UsersModel.urlRoot = '/currentUser';
-                    var jsonModel = context.UsersModel.toJSON();
                     var self = this;
                     var mid = 39;
-                    var data = {
-                        RelatedEmployee: RelatedEmployee
-                    };
+                    var user = response.user;
+                    var _login = user.login;
 
-                    if (this.imageSrc !== jsonModel.imageSrc) {
-                        data.imageSrc = this.imageSrc;
-                    }
+                    context.UsersModel = new UsersModel(user);
+                    context.UsersModel.urlRoot = '/currentUser';
 
-                    if (email !== jsonModel.email) {
-                        data.email = email;
-                    }
+                    context.UsersModel.set({
+                        email          : email,
+                        login          : login,
+                        relatedEmployee: relatedEmployee
+                    });
 
-                    if (login !== jsonModel.login) {
-                        data.login = login;
-                    }
-
-
-                    context.UsersModel.save(data,
-                        {
-                            headers : {
-                                mid: mid
-                            },
-                            patch   : true,
-                            wait    : true,
-                            success : function (model) {
-                                if (RelatedEmployee) {
-                                    common.getImages(ids, '/getEmployeesImages', function (response) {
-                                        // App.currentUser.imageSrc = response.data[0].imageSrc;
-                                        $("#loginPanel .iconEmployee").attr("src", response.data[0].imageSrc);
-                                        $("#loginPanel #userName").text(response.data[0].fullName);
-                                    });
-                                } else {
-                                    $("#loginPanel .iconEmployee").attr("src", model.toJSON().imageSrc);
-                                    $("#loginPanel  #userName").text(model.toJSON().login);
-                                }
-                                Backbone.history.fragment = "";
-                                Backbone.history.navigate("easyErp/myProfile", {trigger: true});
-                            },
-                            error   : function (model, xhr) {
-                                self.errorNotification(xhr);
-                            },
-                            editMode: true
-                        });
+                    context.UsersModel.save(context.UsersModel.changedAttributes(), {
+                        headers : {
+                            mid: mid
+                        },
+                        patch   : true,
+                        wait    : true,
+                        success : function (model) {
+                            if (relatedEmployee) {
+                                common.getImages(ids, '/getEmployeesImages', function (response) {
+                                    // App.currentUser.imageSrc = response.data[0].imageSrc;
+                                    $("#loginPanel .iconEmployee").attr("src", response.data[0].imageSrc);
+                                    $("#loginPanel #userName").text(response.data[0].fullName);
+                                });
+                            } else {
+                                $("#loginPanel .iconEmployee").attr("src", model.toJSON().imageSrc);
+                                $("#loginPanel  #userName").text(model.toJSON().login);
+                            }
+                            Backbone.history.fragment = "";
+                            Backbone.history.navigate("easyErp/myProfile", {trigger: true});
+                        },
+                        error   : function (model, xhr) {
+                            self.errorNotification(xhr);
+                        },
+                        editMode: true
+                    });
                 }, this.render());
             },
 
@@ -191,7 +192,7 @@ define([
                 $(':input', '#createUserForm')
                     .not(':button, :submit, :reset, :hidden')
                     .val('')
-                    .removeAttr('checked')
+                    .removeAttr('checked');
             },
 
             showEdit: function () {
@@ -221,25 +222,29 @@ define([
 
             render: function () {
                 dataService.getData('/currentUser', null, function (response, context) {
-                    dataService.getData('/getForDdByRelatedUser', null, function (RelatedEmployee) {
+                    dataService.getData('/getForDdByRelatedUser', null, function (relatedEmployee) {
                         var date = new Date();
                         var minutes = date.getTimezoneOffset();
+                        var timezone;
+                        var model;
+
                         if (minutes < 0) {
-                            var timezone = ("UTC +" + (minutes / 60) * (-1));
+                            timezone = ("UTC +" + (minutes / 60) * (-1));
                         } else {
-                            var timezone = ("UTC -" + (minutes / 60) * (-1));
+                            timezone = ("UTC -" + (minutes / 60) * (-1));
                         }
-                        var model = response.user;
+
+                        model = response.user;
                         context.$el.html(_.template(UsersPagesTemplate,
                             {
                                 model          : model,
-                                RelatedEmployee: RelatedEmployee.data,
+                                relatedEmployee: relatedEmployee.data,
                                 timezone       : timezone
                             }));
                         common.canvasDraw({model: model}, this);
 
-                        if (response.user.RelatedEmployee) {
-                            $("input[type='radio'][value=" + response.user.RelatedEmployee._id + "]").attr("checked", true);
+                        if (response.user.relatedEmployee) {
+                            $("input[type='radio'][value=" + response.user.relatedEmployee._id + "]").attr("checked", true);
                         }
                         else {
                             $("input[type='radio']:first").attr("checked", true);

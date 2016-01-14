@@ -33,7 +33,7 @@ module.exports = (function () {
          * @property {Array} kanbanSettings.tasks.foldWorkflows
          *
          * @property {Array} savedFilters - Saved filters for current user
-         * @property {String} RelatedEmployee - Related employee for current user
+         * @property {String} relatedEmployee - Related employee for current user
          */
         imageSrc       : {
             type   : String,
@@ -70,7 +70,7 @@ module.exports = (function () {
             }
         ],
         ID             : Number,
-        RelatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
+        relatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
     }, {collection: 'Users'});
 
     mongoose.model('Users', userSchema);

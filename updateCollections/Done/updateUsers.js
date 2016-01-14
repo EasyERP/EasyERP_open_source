@@ -43,7 +43,7 @@ var userSchema = mongoose.Schema({
             _id: {type: ObjectId, ref: 'savedFilters', default: null},
             byDefault: {type: String, default: ''}
         }],
-    RelatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
+    relatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
 }, {collection: 'Users'});
 
 mongoose.model('UserOld', userSchema);

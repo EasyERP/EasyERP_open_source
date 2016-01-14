@@ -181,7 +181,7 @@ module.exports = (function () {
             'kanbanSettings.tasks.countPerPage'         : 'Tasks Count Per Page',
             'kanbanSettings.tasks.foldWorkflows'        : 'Tasks Fold Workflows',
             savedFilters                                : 'Saved Filters',
-            RelatedEmployee                             : 'Related Employee'
+            relatedEmployee                             : 'Related Employee'
         }
     };
 
