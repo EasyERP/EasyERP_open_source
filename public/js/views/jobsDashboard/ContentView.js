@@ -49,10 +49,24 @@ define([
                     Backbone.history.navigate(url);
                 }
 
+                context.collection.unbind();
+                context.collection.bind('reset', renderContent);
+
+                function renderContent(models) {
+                    var template = _.template(DashboardTemplate);
+
+                    context.$el.find('#jobsContent').html(template({
+                        collection      : models.toJSON(),
+                        currencySplitter: helpers.currencySplitter,
+                        getClass        : context.getClass
+                    }));
+                }
+
                 context.collection = new JobsCollection({
                     viewType: 'list',
                     filter  : filter
                 });
+
             },
 
             renderFilter: function (self, baseFilter) {
