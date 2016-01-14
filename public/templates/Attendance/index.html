@@ -4,13 +4,11 @@
             <span>
                 Select an Employee:
             </span>
-            <select id="currentEmployee">
-                <% employees.forEach(function(employee){ %>
-                <option id="<%= employee._id %>">
-                    <%= employee.name.first + " " + employee.name.last %>
-                </option>
-                <% }) %>
-            </select>
+
+            <div class="editable" data-content="employee" data-id="<%= employees[0]._id%>"><span><%=
+                employees[0].name%></span>
+            </div>
+
         </div>
         <div class="pull-left">
             <span>

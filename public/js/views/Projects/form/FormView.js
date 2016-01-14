@@ -670,7 +670,8 @@ define([
             },
 
             hideSelect: function () {
-              //  $(".newSelectList").hide();
+                $("#health").find("ul").hide(); // added for hiding list if element in isnt chosen
+
                 if (this.selectView){
                     this.selectView.remove();
                 }
@@ -1257,6 +1258,7 @@ define([
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                        $('#EndDate').datepicker('option', 'minDate', endDate); // added minDate after selecting new startDate
 
                         self.showSaveButton();
                     }
@@ -1265,6 +1267,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
+                    minDate : $('#StartDate').datepicker('getDate'), //added minDate at start
                     onSelect   : function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());

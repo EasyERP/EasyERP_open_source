@@ -5,9 +5,10 @@ define([
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
         'views/Bonus/BonusView',
-        'views/selectView/selectView'
+        'views/selectView/selectView',
+        'custom'
     ],
-    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView) {
+    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView, customFile) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -221,6 +222,10 @@ define([
                             },
                             wait   : true,
                             success: function (model, response) {
+
+
+                                customFile.getFiltersValues(true); // added for refreshing filters after creating
+
                                 self.attachView.sendToServer(null, model.changed);
                             },
                             error  : function (model, xhr) {

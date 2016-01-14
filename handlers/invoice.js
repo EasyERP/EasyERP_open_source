@@ -74,16 +74,20 @@ var Invoice = function (models, event) {
                 result.currency = result.currency || {};
                 result.currency.name = body.currency ? body.currency.name : 'USD';
 
-                waterfallCb(null, dbIndex, result);
+                if (forSales) {
+                    waterfallCb(null, dbIndex, result);
+                } else { // added in case of bad creating no forSales invoice ( property model undefined for Journal )
+                    waterfallCb(null, result);
+                }
             });
         }
 
-        waterfallTasks = [invoiceSaver, journalEntryComposer];
-
         if (isWtrack && forSales) {
             Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
+            waterfallTasks = [invoiceSaver, journalEntryComposer];
         } else {
             Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
+           waterfallTasks = [invoiceSaver];   // added in case of bad creating no forSales invoice ( property model undefined for Journal )
         }
 
         async.waterfall(waterfallTasks, function (err, result) {
