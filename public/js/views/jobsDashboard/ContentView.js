@@ -2,6 +2,9 @@
  * Created by lilya on 09/11/15.
  */
 define([
+        "Backbone",
+        "jQuery",
+        "Underscore",
         'views/listViewBase',
         "text!templates/jobsDashboard/DashboardHeader.html",
         "text!templates/jobsDashboard/DashboardTemplate.html",
@@ -15,7 +18,7 @@ define([
         "helpers",
         "async"
     ],
-    function (listViewBase, DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, JobsCollection, FilterView, custom, dataService, helpers, async) {
+    function (Backbone, $, _, listViewBase, DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, JobsCollection, FilterView, custom, dataService, helpers, async) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
@@ -62,12 +65,6 @@ define([
                         filter[baseFilter.name] = baseFilter.value;
                     }
                     self.showFilteredPage(filter, self);
-                });
-                self.filterView.bind('defaultFilter', function () {
-                    if (baseFilter) {
-                        filter[baseFilter.name] = baseFilter.value;
-                    }
-                    self.showFilteredPage({}, self);
                 });
 
                 self.filterView.render();
@@ -122,8 +119,6 @@ define([
                     forDashboard: true
                 });
             },
-
-            //
 
             getClass: function (job) {
                 "use strict";
