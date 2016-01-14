@@ -609,10 +609,6 @@ define([
             this.getAutoCalcField('friHours', '5');
             this.getAutoCalcField('satHours', '6');
             this.getAutoCalcField('sunHours', '7');
-            this.getAutoCalcField('revenue', 'revenue', true);
-            this.getAutoCalcField('cost', 'cost', true);
-            this.getAutoCalcField('profit', 'profit', true);
-            this.getAutoCalcField('amount', 'amount', true);
         },
 
         getAutoCalcField: function (idTotal, dataRow, money) {
@@ -629,7 +625,7 @@ define([
                 row = $(element).closest('tr');
                 rowTd = row.find('[data-content="' + dataRow + '"]');
 
-                rowTdVal += parseFloat(rowTd.html()) * 100;
+                rowTdVal += parseFloat(rowTd.html() || 0) * 100;
             });
 
             if (money) {
@@ -703,12 +699,6 @@ define([
 
                 tdsArr = row.find('td');
                 $(tdsArr[0]).find('input').val(cid);
-                $(tdsArr[20]).find('span').text('Unpaid');
-                $(tdsArr[20]).find('span').addClass('unDone');
-                $(tdsArr[24]).text('0.00');
-                $(tdsArr[22]).text('0.00');
-                $(tdsArr[23]).text('0.00');
-                $(tdsArr[21]).text('0.00');
                 $(tdsArr[1]).text("New");
             }
         },
