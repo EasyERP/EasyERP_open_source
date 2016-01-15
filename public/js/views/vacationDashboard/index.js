@@ -26,7 +26,8 @@ define([
             "click .openAll"     : "openAll",
             "click .employeesRow": "openEmployee",
             "click .group"       : "openDepartment",
-            "click .wTrackInfo"  : "getWtrackInfo"
+            "click .wTrackInfo"  : "getWtrackInfo",
+            "click"              : "hideDateRange"
         },
 
         initialize: function (options) {
@@ -446,6 +447,12 @@ define([
             dashCollection.on('reset sort', this.render, this);
         },
 
+        hideDateRange: function () {
+            var targetEl = $('.frameDetail');
+
+            targetEl.addClass('hidden');
+        },
+
         render: function (options) {
             var $currentEl = this.$el;
             var defaultData = options ? !options.defaultData : true;
@@ -506,9 +513,10 @@ define([
                 });
 
                 this.filterView.render();
-            } /*else {
-                this.filterView.renderFilterContent();
-            }*/
+            }
+            /*else {
+             this.filterView.renderFilterContent();
+             }*/
 
             return this;
         }

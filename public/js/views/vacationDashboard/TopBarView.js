@@ -1,9 +1,12 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/vacationDashboard/TopBarTemplate.html',
         'moment',
         'custom'
     ],
-    function (ContentTopBarTemplate, moment, custom) {
+    function (Backbone, $, _, ContentTopBarTemplate, moment, custom) {
         "use strict";
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
@@ -11,9 +14,9 @@ define([
             template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click #updateDate": "changeDateRange",
-                "click .dateRange" : "toggleDateRange",
-                "click #cancelBtn" : "cancel"
+                "click #updateDate"     : "changeDateRange",
+                "click .dateRange"      : "toggleDateRange",
+                "click #cancelBtn"      : "cancel"
             },
 
             cancel: function (e) {
@@ -96,6 +99,12 @@ define([
                         defaultDate: endDate
                     })
                     .datepicker('setDate', endDate);
+            },
+
+            hideDateRange: function () {
+                var targetEl = this.$el.find('.frameDetail');
+
+                targetEl.addClass('hidden');
             },
 
             render: function () {
