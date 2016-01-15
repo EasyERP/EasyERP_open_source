@@ -795,6 +795,34 @@ var Project = function (models) {
                 });
             });
 
+            if (collection[0].total.hasOwnProperty(key)){
+
+                collection.sort(function(a , b){
+
+                    var fieldA = a.total[key] || '0';
+                    var fieldB = b.total[key] || '0';
+
+                    if (sort[key] === 1) {
+                        if (fieldA > fieldB) {
+                            return 1;
+                        }
+                        if (fieldA < fieldB) {
+                            return -1;
+                        }
+                        return 0;
+                    } else {
+                        if (fieldA < fieldB) {
+                            return 1;
+                        }
+                        if (fieldA > fieldB) {
+                            return -1;
+                        }
+                        return 0;
+                    }
+                });
+            }
+
+
             data['data'] = collection;
 
             res.status(200).send(data);
