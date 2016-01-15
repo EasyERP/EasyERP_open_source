@@ -9,13 +9,17 @@ var wTrack = function (models) {
 
     var CONSTANTS = require('../constants/mainConstants');
     var constForView = [
-        'iOS',
-        'Android',
-        'Web',
-        'WP',
-        'QA',
-        'Design',
-        'PM'
+        '55b92ace21e4b7c40f00000f',
+        '55b92ace21e4b7c40f000010',
+        '55b92ace21e4b7c40f000016',
+        '56802eb31afe27f547b7ba52',
+        '566ee11b8453e8b464b70b73',
+        '56802e9d1afe27f547b7ba51',
+        '56802ec21afe27f547b7ba53',
+        '55b92ace21e4b7c40f000012',
+        '55b92ace21e4b7c40f000011',
+        '55bb1f14cb76ca630b000006',
+        '55bb1f40cb76ca630b000007'
     ];
 
     var objectId = mongoose.Types.ObjectId;
