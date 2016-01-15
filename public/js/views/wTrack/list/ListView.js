@@ -750,7 +750,7 @@ define([
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
-                    model = this.editCollection.get(id);// ? this.editCollection.get(id) : this.collection.get(id);
+                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
                 }
 
@@ -759,10 +759,10 @@ define([
                 }
                 this.editCollection.save();
 
-                for (var id in this.changedModels) {
-                    delete this.changedModels[id];
-                    this.editCollection.remove(id);
-                }
+                //for (var id in this.changedModels) {
+                //    delete this.changedModels[id];
+                //    this.editCollection.remove(id);
+                //}
 
                 this.$el.find('.edited').removeClass('edited');
             },
@@ -793,6 +793,13 @@ define([
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
                 }
+
+                for (var id in this.changedModels) {
+                    delete this.changedModels[id];
+                    this.editCollection.remove(id);
+                }
+
+                this.editCollection.add(this.collection.models);
             },
 
             updatedOptions: function () {
