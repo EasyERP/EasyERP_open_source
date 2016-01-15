@@ -77,7 +77,7 @@ define([
                         changeMonth: true,
                         changeYear : true,
                         defaultDate: startDate,
-                        onSelect   : function (text, datPicker) {
+                        onSelect   : function () {
                             var targetInput = $(this);
                             var endDatePicker = self.$endDate;
                             var endDate = moment(targetInput.datepicker('getDate'));
