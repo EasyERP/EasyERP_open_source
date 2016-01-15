@@ -47,9 +47,9 @@ var Jobs = function (models, event) {
                     resArray.push(filtrElement);
                     break;
             }
+        }
 
             return resArray;
-        }
     };
 
     this.create = function (req, res, next) {

@@ -972,9 +972,9 @@ define([
 
                 $(checkboxes).each(function (index, element) {
                     row = $(element).closest('tr');
-                    rowTd = row.find('[data-content="' + dataRow + '"]')
+                    rowTd = row.find('[data-content="' + dataRow + '"]');
 
-                    rowTdVal += parseFloat(rowTd.html()) * 100;
+                    rowTdVal += parseFloat(rowTd.html() || 0) * 100;
                 });
 
                 if (money) {
@@ -995,10 +995,6 @@ define([
                 this.getAutoCalcField('friHours', '5');
                 this.getAutoCalcField('satHours', '6');
                 this.getAutoCalcField('sunHours', '7');
-                this.getAutoCalcField('revenue', 'revenue', true);
-                this.getAutoCalcField('cost', 'cost', true);
-                this.getAutoCalcField('profit', 'profit', true);
-                this.getAutoCalcField('amount', 'amount', true);
             },
 
             deleteItemsRender: function (deleteCounter, deletePage) {

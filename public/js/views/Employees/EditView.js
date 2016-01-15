@@ -1,7 +1,7 @@
 define([
         "Backbone",
-    "jQuery",
-    "Underscore",
+        "jQuery",
+        "Underscore",
         "text!templates/Employees/EditTemplate.html",
         'views/Notes/AttachView',
         'views/selectView/selectView',
@@ -136,7 +136,7 @@ define([
 
                 table.append('<tr id="' + newId + '">' + tr.html() + '</tr>');
 
-                row =  table.find('tr').last();
+                row = table.find('tr').last();
                 row.attr('data-id', dataId + 1);
                 row.attr('data-content', dataContent);
 
@@ -165,12 +165,12 @@ define([
                 }
             },
 
-            showSelect: function(e){
+            showSelect: function (e) {
                 var $target = $(e.target);
 
                 e.stopPropagation();
 
-                if ($target.children()){
+                if ($target.children()) {
                     $target.children().show();
                 }
 
@@ -186,7 +186,7 @@ define([
                 tempContainer = ($target.text()).trim();
                 $target.html('<input class="editing" type="text" value="' + tempContainer + '">');
 
-                if (dataId === 'salary'){
+                if (dataId === 'salary') {
                     return false;
                 } else {
                     $target.find('.editing').datepicker({
@@ -203,7 +203,6 @@ define([
                         }
                     }).addClass('datepicker');
                 }
-
 
                 return false;
             },
@@ -237,7 +236,7 @@ define([
                 var id = element.attr('id') || parentUl.attr('id');
                 var valueId = $target.attr('id');
 
-                if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'statusInfoDd' || 'hireFireDd'){
+                if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'statusInfoDd' || 'hireFireDd') {
                     element.text($target.text());
                     element.attr('data-id', valueId);
                 } else {
@@ -519,8 +518,8 @@ define([
                             return Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
                         }
 
-                        if(model.get('relatedUser') === App.currentUser._id){
-                            App.currentUser.imageSrc =  self.imageSrc;
+                        if (model.get('relatedUser') === App.currentUser._id) {
+                            App.currentUser.imageSrc = self.imageSrc;
 
                             $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
                             $("#loginPanel #userName").text(model.toJSON().fullName);

@@ -345,7 +345,7 @@ define([
 
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
-                    groupName = self.$el.find('#' + key).text();
+                    groupName = $('#' + key).text();
 
                     if (groupName.length > 0) {
                         filterIc.addClass('active');

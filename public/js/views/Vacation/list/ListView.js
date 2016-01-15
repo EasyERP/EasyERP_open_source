@@ -1,7 +1,11 @@
 define([
+        "Backbone",
+        "jQuery",
+        "Underscore",
         'text!templates/Vacation/list/ListHeader.html',
         'text!templates/Vacation/list/cancelEdit.html',
         'text!templates/Vacation/list/ListTotal.html',
+        'views/selectView/selectView',
         'views/Vacation/CreateView',
         'views/Vacation/list/ListItemView',
         'models/VacationModel',
@@ -12,11 +16,10 @@ define([
         'constants',
         'async',
         'moment',
-        'populate',
-        'views/selectView/selectView'
+        'populate'
     ],
 
-    function (listTemplate, cancelEdit, listTotal, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate, selectView) {
+    function (Backbone, $, _, listTemplate, cancelEdit, listTotal, selectView, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
         var VacationListView = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -55,12 +58,25 @@ define([
                 "click td.editable, .current-selected"                             : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .oe_sortable"                                              : "goSort",
-                "change .editable"                                               : "setEditable",
+                "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect"
             },
 
+            showNewCurrentSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this, 12);
+            },
+
             hideNewSelect: function () {
-                $(".newSelectList").remove();
+               // $(".newSelectList").remove();
+                var editingDates = this.$el.find('.editing');
+
+                editingDates.each(function () {
+                    $(this).parent().text($(this).val());
+                    $(this).remove();
+                });
+
+                this.$el.find('.newSelectList').hide();
+
                 if (this.selectView) {
                     this.selectView.remove();
                 }

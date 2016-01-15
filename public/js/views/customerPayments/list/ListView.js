@@ -470,7 +470,7 @@ define([
                     }).render());
                 }
 
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
                 this.renderCheckboxes();
 

@@ -42,7 +42,7 @@
                                 <dd>
                                     <a id="projectManagerDD"
                                        data-id="<%=model.projectmanager?model.projectmanager._id:''%>"
-                                       class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.name):'Select'%></a>
+                                       class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):'Select'%></a>
                                 </dd>
 
                                 <dt><label for="projectTypeDD">Project Type </label></dt>
@@ -58,7 +58,7 @@
                                 </dt>
                                 <dd>
                                     <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>"
-                                       class="current-selected" href="javascript:;"><%=model.customer?(model.customer.name):'Select'%></a>
+                                       class="current-selected" href="javascript:;"><%=model.customer?(model.customer.fullName):'Select'%></a>
                                 </dd>
                                 <dt>
                                     <label for="workflowsDd">Status</label>

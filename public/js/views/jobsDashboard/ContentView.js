@@ -2,6 +2,9 @@
  * Created by lilya on 09/11/15.
  */
 define([
+        "Backbone",
+        "jQuery",
+        "Underscore",
         'views/listViewBase',
         "text!templates/jobsDashboard/DashboardHeader.html",
         "text!templates/jobsDashboard/DashboardTemplate.html",
@@ -15,7 +18,7 @@ define([
         "helpers",
         "async"
     ],
-    function (listViewBase, DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, JobsCollection, FilterView, custom, dataService, helpers, async) {
+    function (Backbone, $, _, listViewBase, DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, QuotationCollection, JobsCollection, FilterView, custom, dataService, helpers, async) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
@@ -46,10 +49,24 @@ define([
                     Backbone.history.navigate(url);
                 }
 
+                context.collection.unbind();
+                context.collection.bind('reset', renderContent);
+
+                function renderContent(models) {
+                    var template = _.template(DashboardTemplate);
+
+                    context.$el.find('#jobsContent').html(template({
+                        collection      : models.toJSON(),
+                        currencySplitter: helpers.currencySplitter,
+                        getClass        : context.getClass
+                    }));
+                }
+
                 context.collection = new JobsCollection({
                     viewType: 'list',
                     filter  : filter
                 });
+
             },
 
             renderFilter: function (self, baseFilter) {
@@ -61,17 +78,10 @@ define([
                     if (baseFilter) {
                         filter[baseFilter.name] = baseFilter.value;
                     }
-                    self.showFilteredPage(filter, self)
-                });
-                self.filterView.bind('defaultFilter', function () {
-                    if (baseFilter) {
-                        filter[baseFilter.name] = baseFilter.value;
-                    }
-                    self.showFilteredPage({}, self);
+                    self.showFilteredPage(filter, self);
                 });
 
                 self.filterView.render();
-
             },
 
             goSort: function (e) {
@@ -124,8 +134,6 @@ define([
                 });
             },
 
-            //
-
             getClass: function (job) {
                 "use strict";
                 return job.payment && job.invoice && job.invoice.paymentInfo.total !== job.payment.paid && job.workflow.name !== 'In Progress' ? 'redBorder' : '';
@@ -158,9 +166,9 @@ define([
                 var url = '#easyErp/jobsDashboard';
                 this.$el.html(this.template());
 
-                this.renderJobs();
-
                 this.renderFilter(this);
+
+                this.renderJobs();
 
                 if (filter) {
                     url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
