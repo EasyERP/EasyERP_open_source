@@ -18,15 +18,15 @@ define([
             this.responseObj = {};
         },
 
-        events    : {
-            'click .addUser'                                                  : 'addUser',
-            'click .addGroup'                                                 : 'addGroup',
-            'click .unassign'                                                 : 'unassign',
-            "click .prevUserList"                                             : "prevUserList",
-            "click .nextUserList"                                             : "nextUserList",
-            "click .current-selected"                                         : "showNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-            "click"               : "hideNewSelect"
+        events: {
+            'click .addUser'                                   : 'addUser',
+            'click .addGroup'                                  : 'addGroup',
+            'click .unassign'                                  : 'unassign',
+            "click .prevUserList"                              : "prevUserList",
+            "click .nextUserList"                              : "nextUserList",
+            "click .current-selected"                          : "showNewSelect",
+            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            "click"                                            : "hideNewSelect"
         },
 
         template: _.template(assigneesTemplate),
@@ -53,14 +53,14 @@ define([
             return false;
         },
 
-        chooseOption : function (e) {
+        chooseOption: function (e) {
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
             this.hideNewSelect();
         },
 
         hideNewSelect: function () {
-            if (this.selectView){
+            if (this.selectView) {
                 this.selectView.remove();
             }
         },
@@ -73,7 +73,7 @@ define([
             $("#" + type).append("<option value='" + id + "'>" + text + "</option>");
             holder.closest("tr").remove();
             var groupsAndUser_holder = $(".groupsAndUser");
-            if (groupsAndUser_holder.find("tr").length == 1) {
+            if (groupsAndUser_holder.find("tr").length === 1) {
                 groupsAndUser_holder.hide();
             }
         },
@@ -234,7 +234,7 @@ define([
                 groupsAndUser.hide();
             }
 
-            if (this.model){
+            if (this.model) {
                 this.model.trigger('chooseAssignee');
             }
 
@@ -295,7 +295,7 @@ define([
             });
         },
 
-        render  : function () {
+        render: function () {
             var owner = "";
             var whoCanRW = "everyOne";
 
