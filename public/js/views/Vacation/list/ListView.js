@@ -1,7 +1,11 @@
 define([
+        "Backbone",
+        "jQuery",
+        "Underscore",
         'text!templates/Vacation/list/ListHeader.html',
         'text!templates/Vacation/list/cancelEdit.html',
         'text!templates/Vacation/list/ListTotal.html',
+        'views/selectView/selectView',
         'views/Vacation/CreateView',
         'views/Vacation/list/ListItemView',
         'models/VacationModel',
@@ -15,7 +19,7 @@ define([
         'populate'
     ],
 
-    function (listTemplate, cancelEdit, listTotal, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+    function (Backbone, $, _, listTemplate, cancelEdit, listTotal, selectView, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
         var VacationListView = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -50,8 +54,8 @@ define([
             },
 
             events: {
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "blur td.editable input"                                          : "hideInput",
                 "click td.editable"                                               : "editRow",
                 "click .current-selected"                                         : "showNewCurrentSelect",
@@ -62,11 +66,44 @@ define([
             },
 
             showNewCurrentSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this, 12);
+               // populate.showSelect(e, prev, next, this, 12);
+
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj,
+                    number: 12
+                });
+
+                $target.append(this.selectView.render().el);
+
+                return false;
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").remove();
+               // $(".newSelectList").remove();
+                var editingDates = this.$el.find('.editing');
+
+                editingDates.each(function () {
+                    $(this).parent().text($(this).val());
+                    $(this).remove();
+                });
+
+                this.$el.find('.newSelectList').hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             savedNewModel: function (modelObject) {
