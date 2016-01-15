@@ -810,8 +810,9 @@ define([
                 var count = checkboxes$.length;
 
                 this.collectionLength = this.collection.length;
+                var checkId = isObjectId($('#listTable').find('tr').data('id'));
 
-                if (!this.changed) {
+                if (!this.changed || !checkId) {
                     var answer = confirm("Really DELETE items ?!");
                     var value;
 
