@@ -15,11 +15,10 @@ define([
         'dataService',
         'constants',
         'async',
-        'moment',
-        'populate'
+        'moment'
     ],
 
-    function (Backbone, $, _, listTemplate, cancelEdit, listTotal, selectView, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+    function (Backbone, $, _, listTemplate, cancelEdit, listTotal, selectView, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var VacationListView = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -55,15 +54,11 @@ define([
 
             events: {
                 //"blur td.editable input"                                          : "hideInput",
-                "click td.editable, .current-selected"                             : "showNewSelect",
+                "click td.editable, .current-selected"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .oe_sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect"
-            },
-
-            showNewCurrentSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this, 12);
             },
 
             hideNewSelect: function () {
@@ -263,11 +258,11 @@ define([
                 });
             },
 
-            hideInput: function (e) {
+           /* hideInput: function (e) {
                 var target = $(e.target);
 
                 target.hide();
-            },
+            },*/
 
             showNewSelect: function (e) {
 
