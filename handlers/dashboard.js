@@ -25,7 +25,7 @@ var wTrack = function (models) {
     var EmployeeSchema = mongoose.Schemas.Employee;
     var HolidaySchema = mongoose.Schemas.Holiday;
     var VacationSchema = mongoose.Schemas.Vacation;
-    var vacationCacheSchema = mongoose.Schemas.vacationCacheSchema;
+    //var vacationCacheSchema = mongoose.Schemas.vacationCacheSchema;
 
     this.composeForVacation = function (req, res, next) {
         console.time('vacCache');
@@ -48,9 +48,12 @@ var wTrack = function (models) {
 
         var weeksArr;
         var week;
+        var year;
         var startDate;
         var endDate;
         var _dateStr;
+        var duration;
+        var weeks = 0;
         var i;
 
         if (filter) {
@@ -64,10 +67,19 @@ var wTrack = function (models) {
         weeksArr = [];
 
         if (filter && filter.startDate && filter.endDate) {
-            startDate = parseInt(filter.startDate, 10);
-            endDate = parseInt(filter.endDate, 10);
+            startDate = filter.startDate;
+            week = startDate.substr(-2);
+            year = startDate.substr(0, 4);
+            startDate = moment().year(year).week(week);
+            endDate = filter.endDate;
+            week = endDate.substr(-2);
+            year = endDate.substr(0, 4);
+            endDate = moment().year(year).week(week);
 
-            for (i = startDate; i <= endDate; i++) {
+            duration = endDate.diff(startDate, 'weeks');
+            duration += 1;
+
+            /*for (i = startDate; i <= endDate; i++) {
                 _dateStr = i.toString();
                 week = _dateStr.substr(-2);
                 weeksArr.push({
@@ -75,13 +87,13 @@ var wTrack = function (models) {
                     week      : week,
                     year      : _dateStr.substr(0, 4)
                 });
-            }
+            }*/
         } else {
-            currentWeek = moment().isoWeek();
-            currentStartWeek = currentWeek - 1;
-            currentYear = moment().weekYear();
+            startDate = moment().subtract(2, 'weeks');
+            endDate = moment().add(8, 'weeks');
+            duration = endDate.diff(startDate, 'weeks');
 
-            if (currentStartWeek <= 0) {
+           /* if (currentStartWeek <= 0) {
                 currentStartWeek += 53;
                 currentYear -= 1;
             }
@@ -106,24 +118,54 @@ var wTrack = function (models) {
                 }
             }
 
-            endDate = weeksArr[weeksArr.length - 1].dateByWeek;
+            endDate = weeksArr[weeksArr.length - 1].dateByWeek;*/
         }
+
+        for (i = 0; i <= duration; i++) {
+            _dateStr = startDate.add(weeks, 'weeks');
+            week = _dateStr.isoWeek();
+            year = _dateStr.isoWeekYear();
+            weeksArr.push({
+                dateByWeek: year * 100 + week,
+                week    : week,
+                year    : year
+            });
+            weeks = weeks || 1;
+        }
+
+        startDate = weeksArr[0].dateByWeek;
+        endDate = weeksArr[weeksArr.length - 1].dateByWeek;
 
         employeeQueryForEmployeeByDep = {
             $and: [{
-                $or         : [
-                    {
+                $or         : [{
+                    $and: [{
                         isEmployee: true
                     }, {
-                        $and: [{
-                            isEmployee: false
+                        $or: [{
+                            lastFire: null
                         }, {
                             lastFire: {
                                 $ne : null,
                                 $gte: startDate
                             }
+                        }, {
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
                         }]
-                    }
+                    }]
+                }, {
+                    $and: [{
+                        isEmployee: false
+                    }, {
+                        lastFire: {
+                            $ne : null,
+                            $gte: startDate
+                        }
+                    }]
+                }
                 ],
                 'department': departmentQuery
             }]
@@ -152,7 +194,7 @@ var wTrack = function (models) {
             var vacations;
 
             //======== tempVariables; =========
-            var VacationCache;
+            //var VacationCache;
             //======== tempVariables ==========
 
             if (err) {
@@ -181,7 +223,23 @@ var wTrack = function (models) {
 
                 async.each(department.employees, function (_employee, employeeCb) {
                     var dashResultByEmployee;
-                    var tempWeekArr = deepCloner(weeksArr);
+                    var tempWeekArr;
+
+                    function deepCloner(targetArrayOfObjects) {
+                        var _result = [];
+                        var resObject;
+                        var length = targetArrayOfObjects.length;
+                        var i;
+
+                        for (i = 0; i < length; i++) {
+                            resObject = _.clone(targetArrayOfObjects[i]);
+                            _result.push(resObject);
+                        }
+
+                        return _result;
+                    }
+
+                    tempWeekArr = deepCloner(weeksArr);
 
                     if (dashDepartment) {
                         dashResultByEmployee = _.find(dashDepartment.employeeData, function (employeeData) {
@@ -262,8 +320,10 @@ var wTrack = function (models) {
 
                     constForView.forEach(function (dep) {
                         employeesByDep.forEach(function (department, index) {
-                            if (employeesByDep[index].department) {
-                                if (dep === employeesByDep[index].department.departmentName) {
+                            var _dep = employeesByDep[index].department;
+
+                            if (_dep) {
+                                if (dep === _dep.departmentName) {
                                     sortDepartments.push(employeesByDep[index]);
                                 }
                             }
@@ -273,7 +333,7 @@ var wTrack = function (models) {
                     res.status(200).send(sortDepartments);
                     console.timeEnd('vacCache');
 
-                    VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
+                    /*VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
 
                     VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {
                         upsert: true,
@@ -282,25 +342,11 @@ var wTrack = function (models) {
                         if (err) {
                             console.error(err);
                         }
-                    });
+                    });*/
                 });
             }
 
             async.each(employeesByDep, departmentMapper, sendResponse);
-
-            function deepCloner(targetArrayOfObjects) {
-                var result = [];
-                var resObject;
-                var length = targetArrayOfObjects.length;
-                var i;
-
-                for (i = 0; i < length; i++) {
-                    resObject = _.clone(targetArrayOfObjects[i]);
-                    result.push(resObject);
-                }
-
-                return result;
-            }
         }
 
         function holidaysComposer(parallelCb) {
@@ -392,47 +438,53 @@ var wTrack = function (models) {
         function employeeByDepComposer(parallelCb) {
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-            Employee
-                .aggregate([
-                    {
-                        $project: {
-                            isEmployee: 1,
-                            department: 1,
-                            isLead    : 1,
-                            fire      : 1,
-                            hire      : 1,
-                            name      : 1,
-                            lastFire  : 1
+            Employee.aggregate([{
+                $project: {
+                    isEmployee: 1,
+                    department: 1,
+                    isLead    : 1,
+                    fire      : 1,
+                    hire      : 1,
+                    name      : 1,
+                    lastFire  : 1,
+                    lastHire: {
+                        $let: {
+                            vars: {
+                                lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                            },
+                            in: {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
                         }
-                    },
-                    {
-                        $match: employeeQueryForEmployeeByDep
-                    }, {
-                        $group: {
-                            _id      : "$department",
-                            employees: {
-                                $push: {
-                                    isLead: '$isLead',
-                                    fired : '$fire',
-                                    hired : '$hire',
-                                    name  : {$concat: ['$name.first', ' ', '$name.last']},
-                                    _id   : '$_id'
-                                }
-                            }
-                        }
-                    }, {
-                        $project: {
-                            department: '$_id',
-                            employees : 1,
-                            _id       : 0
-                        }
-                    }], function (err, employees) {
-                    if (err) {
-                        return parallelCb(err);
                     }
+                }
+            }, {
+                $match: employeeQueryForEmployeeByDep
+            }, {
+                $group: {
+                    _id      : "$department",
+                    employees: {
+                        $push: {
+                            isLead: '$isLead',
+                            fired : '$fire',
+                            hired : '$hire',
+                            lastHire: '$lastHire',
+                            name  : {$concat: ['$name.first', ' ', '$name.last']},
+                            _id   : '$_id'
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    department: '$_id',
+                    employees : 1,
+                    _id       : 0
+                }
+            }], function (err, employees) {
+                if (err) {
+                    return parallelCb(err);
+                }
 
-                    parallelCb(null, employees);
-                });
+                parallelCb(null, employees);
+            });
         }
 
         function dashComposer(parallelCb) {
@@ -493,7 +545,7 @@ var wTrack = function (models) {
 
                             inerWaterfallCb(null, employees);
                         });
-                };
+                }
 
                 function groupWtrackByEmployee(inerWaterfallCb) {
                     WTrack.aggregate(aggregateQuery, function (err, employees) {
@@ -730,7 +782,7 @@ var wTrack = function (models) {
                     Department.populate(employees, {
                         path  : 'hiredEmployees.department',
                         select: '_id departmentName'
-                    }, function (err, deps) {
+                    }, function (err/*, deps*/) {
                         if (err) {
                             return parallelCb(err);
                         }
@@ -807,7 +859,7 @@ var wTrack = function (models) {
                         options: {
                             lean: true
                         }
-                    }, function (err, deps) {
+                    }, function (err/*, deps*/) {
                         if (err) {
                             return parallelCb(err);
                         }
@@ -820,6 +872,6 @@ var wTrack = function (models) {
         async.parallel([hiredEmployees, firedEmployees], resultMapper);
     };
 
-}
+};
 
 module.exports = wTrack;
