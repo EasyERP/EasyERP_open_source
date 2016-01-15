@@ -22,7 +22,8 @@ module.exports = function (models) {
             expenses = JSON.parse(expensesStringObject);
             res.status(200).send(expenses);
         });
-    };
+    }
+
     router.get('/', handler.getSorted);
     router.get('/:viewType', cacheRetriver, handler.getForView);
     router.post('/', handler.create);

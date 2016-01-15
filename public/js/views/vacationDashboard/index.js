@@ -323,12 +323,8 @@ define([
             var weeksArr = [];
 
             var dashCollection = this.dashCollection;
-            var startWeek;
-            var startYear;
-            var endYear;
             var startDate;
             var endDate;
-            var endWeek;
             var year;
             var week;
             var _dateStr;
@@ -348,13 +344,6 @@ define([
             endDate = endDateStr = moment(endDateStr);
             startDate = moment(startDateStr);
             duration = endDateStr.diff(startDateStr, 'weeks');
-           /* startYear = startDateStr.isoWeekYear();
-            endYear = endDateStr.isoWeekYear();
-            startWeek = startDateStr.isoWeek();
-            endWeek = endDateStr.isoWeek();*/
-
-            /*startDate = startYear * 100 + startWeek;
-            endDate = endYear * 100 + endWeek;*/
 
             for (i = 0; i <= duration; i++) {
                 _dateStr = startDateStr.add(weeks, 'weeks');
@@ -515,9 +504,6 @@ define([
 
                 this.filterView.render();
             }
-            /*else {
-             this.filterView.renderFilterContent();
-             }*/
 
             return this;
         }

@@ -6,7 +6,7 @@ var wTrack = function (models) {
     var _ = require('lodash');
     var moment = require('../public/js/libs/moment/moment');
     var async = require('async');
-
+    var redisStore = require('../helpers/redisClient');
     var CONSTANTS = require('../constants/mainConstants');
     var constForView = [
         '55b92ace21e4b7c40f00000f',
@@ -32,13 +32,13 @@ var wTrack = function (models) {
     //var vacationCacheSchema = mongoose.Schemas.vacationCacheSchema;
 
     this.composeForVacation = function (req, res, next) {
-        console.time('vacCache');
+        console.time('dash');
 
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var query = req.query;
         var employeesArray = [];
-        var filter = query ? query.filter : null;
+        var filter = query.filter || {};
         var currentWeek = moment().isoWeek();
         var currentStartWeek = currentWeek - 1;
         var currentYear = moment().weekYear();
@@ -58,14 +58,13 @@ var wTrack = function (models) {
         var _dateStr;
         var duration;
         var weeks = 0;
+        var key;
         var i;
 
-        if (filter) {
-            if (filter.department && filter.department.value) {
-                departmentQuery = {
-                    $in: filter.department.value.objectID()
-                };
-            }
+        if (filter.department && filter.department.value) {
+            departmentQuery = {
+                $in: filter.department.value.objectID()
+            };
         }
 
         weeksArr = [];
@@ -74,8 +73,8 @@ var wTrack = function (models) {
             startDate = moment(filter.startDate);
             endDate = moment(filter.endDate);
         } else {
-            startDate = moment().subtract(2, 'weeks');
-            endDate = moment().add(8, 'weeks');
+            startDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
+            endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
         }
 
         duration = endDate.diff(startDate, 'weeks');
@@ -94,6 +93,12 @@ var wTrack = function (models) {
 
         startDate = weeksArr[0].dateByWeek;
         endDate = weeksArr[weeksArr.length - 1].dateByWeek;
+
+        delete filter.startDate;
+        delete filter.endDate;
+
+
+        key = startDate + '_' + endDate + '_' + JSON.stringify(filter);
 
         employeeQueryForEmployeeByDep = {
             $and: [{
@@ -290,18 +295,8 @@ var wTrack = function (models) {
                     });
 
                     res.status(200).send(sortDepartments);
-                    console.timeEnd('vacCache');
-
-                    /*VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
-
-                    VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {
-                        upsert: true,
-                        new   : true
-                    }, function (err) {
-                        if (err) {
-                            console.error(err);
-                        }
-                    });*/
+                    console.timeEnd('dash');
+                    redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(sortDepartments));
                 });
             }
 
