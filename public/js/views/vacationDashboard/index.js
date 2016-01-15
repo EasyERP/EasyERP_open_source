@@ -42,7 +42,7 @@ define([
             week = moment().isoWeek();
 
             this.dateByWeek = year * 100 + week;
-            this.momentDate = moment().subtract(2, 'weeks');
+            this.momentDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
 
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
             custom.cacheToApp('DashVacation.filter', this.filter);
@@ -345,15 +345,16 @@ define([
             this.dateByWeek = year * 100 + week;
 
             startDateStr = moment(startDateStr);
-            endDateStr = moment(endDateStr);
+            endDate = endDateStr = moment(endDateStr);
+            startDate = moment(startDateStr);
             duration = endDateStr.diff(startDateStr, 'weeks');
-            startYear = startDateStr.isoWeekYear();
+           /* startYear = startDateStr.isoWeekYear();
             endYear = endDateStr.isoWeekYear();
             startWeek = startDateStr.isoWeek();
-            endWeek = endDateStr.isoWeek();
+            endWeek = endDateStr.isoWeek();*/
 
-            startDate = startYear * 100 + startWeek;
-            endDate = endYear * 100 + endWeek;
+            /*startDate = startYear * 100 + startWeek;
+            endDate = endYear * 100 + endWeek;*/
 
             for (i = 0; i <= duration; i++) {
                 _dateStr = startDateStr.add(weeks, 'weeks');
@@ -371,8 +372,8 @@ define([
 
             filter = this.filter || custom.retriveFromCash('DashVacation.filter') || {};
 
-            filter.startDate = startDate;
-            filter.endDate = endDate;
+            filter.startDate = startDate.toDate();
+            filter.endDate = endDate.toDate();
 
             if (dashCollection) {
                 dashCollection = this.dashCollection = this.fetchData({
@@ -390,7 +391,7 @@ define([
 
         defaultDataGenerator: function () {
             var startDate = this.momentDate;
-            var endDate = moment().add(8, 'weeks');
+            var endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
             var duration = endDate.diff(startDate, 'weeks');
             var weeksArr = custom.retriveFromCash('vacationDashWeeksArr') || [];
             var weeks = 0;

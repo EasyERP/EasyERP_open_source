@@ -460,6 +460,9 @@ define([], function () {
         ],
         SELECTP_ROJECT   : 'Please select a Project',
 
-        IT_SERVICES: 'IT services'
+        IT_SERVICES: 'IT services',
+
+        DASH_VAC_WEEK_BEFORE: 2,
+        DASH_VAC_WEEK_AFTER: 8
     }
 });

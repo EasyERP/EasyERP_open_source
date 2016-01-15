@@ -4,9 +4,10 @@ define([
         'Underscore',
         'text!templates/vacationDashboard/TopBarTemplate.html',
         'moment',
-        'custom'
+        'custom',
+        'constants'
     ],
-    function (Backbone, $, _, ContentTopBarTemplate, moment, custom) {
+    function (Backbone, $, _, ContentTopBarTemplate, moment, custom, CONSTANTS) {
         "use strict";
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
@@ -109,8 +110,8 @@ define([
 
             render: function () {
                 var dateRange = custom.retriveFromCash('vacationDashDateRange') || {};
-                var startDate = dateRange.startDate || moment().subtract(1, 'week').day("Monday").format('DD MMM, YYYY');
-                var endDate = dateRange.endDate || moment().add(11, 'week').day("Sunday").format('DD MMM, YYYY');
+                var startDate = dateRange.startDate || moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'week').day("Monday").format('DD MMM, YYYY');
+                var endDate = dateRange.endDate || moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'week').day("Sunday").format('DD MMM, YYYY');
 
                 $('title').text(this.contentType);
 

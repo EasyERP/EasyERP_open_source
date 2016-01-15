@@ -71,59 +71,14 @@ var wTrack = function (models) {
         weeksArr = [];
 
         if (filter && filter.startDate && filter.endDate) {
-            startDate = filter.startDate;
-            week = startDate.substr(-2);
-            year = startDate.substr(0, 4);
-            startDate = moment().year(year).week(week);
-            endDate = filter.endDate;
-            week = endDate.substr(-2);
-            year = endDate.substr(0, 4);
-            endDate = moment().year(year).week(week);
-
-            duration = endDate.diff(startDate, 'weeks');
-            duration += 1;
-
-            /*for (i = startDate; i <= endDate; i++) {
-                _dateStr = i.toString();
-                week = _dateStr.substr(-2);
-                weeksArr.push({
-                    dateByWeek: i,
-                    week      : week,
-                    year      : _dateStr.substr(0, 4)
-                });
-            }*/
+            startDate = moment(filter.startDate);
+            endDate = moment(filter.endDate);
         } else {
             startDate = moment().subtract(2, 'weeks');
             endDate = moment().add(8, 'weeks');
-            duration = endDate.diff(startDate, 'weeks');
-
-           /* if (currentStartWeek <= 0) {
-                currentStartWeek += 53;
-                currentYear -= 1;
-            }
-
-            startDate = currentYear * 100 + currentStartWeek;
-
-            for (i = 0; i <= 11; i++) {
-                if (currentStartWeek + i > 53) {
-                    week = currentStartWeek + i - 53;
-                    weeksArr.push({
-                        dateByWeek: (currentYear + 1) * 100 + week,
-                        week      : week,
-                        year      : currentYear + 1
-                    });
-                } else {
-                    week = currentStartWeek + i;
-                    weeksArr.push({
-                        dateByWeek: currentYear * 100 + week,
-                        week      : week,
-                        year      : currentYear
-                    });
-                }
-            }
-
-            endDate = weeksArr[weeksArr.length - 1].dateByWeek;*/
         }
+
+        duration = endDate.diff(startDate, 'weeks');
 
         for (i = 0; i <= duration; i++) {
             _dateStr = startDate.add(weeks, 'weeks');
@@ -326,8 +281,8 @@ var wTrack = function (models) {
                         employeesByDep.forEach(function (department, index) {
                             var _dep = employeesByDep[index].department;
 
-                            if (_dep) {
-                                if (dep === _dep.departmentName) {
+                            if (_dep && _dep._id) {
+                                if (dep === _dep._id.toString()) {
                                     sortDepartments.push(employeesByDep[index]);
                                 }
                             }
