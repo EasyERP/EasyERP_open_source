@@ -45,6 +45,7 @@ var requestHandler = function (app, event, mainDb) {
     var ObjectId = mongoose.Types.ObjectId;
 
     var io = app.get('io');
+    var redisStore = require('./helpers/redisClient');
     var logger = app.get('logger');
 
     //binding for remove Workflow
@@ -967,6 +968,7 @@ var requestHandler = function (app, event, mainDb) {
     //Emit UI event for information user about some changes
     event.on('recollectVacationDash', function () {
         io.emit('recollectVacationDash');
+        redisStore.removeAllFromStorage('dashboardVacation');
     });
 
     event.on('recollectProjectInfo', function () {
