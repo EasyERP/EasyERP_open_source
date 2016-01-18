@@ -449,6 +449,10 @@ define([
 
                     this.recalculatePriceByJob();
                 } else {*/
+                if (!this.forSales) {   // added possibility to edit quantity and scheduled date for Purchase Quotation
+                    $($parrents[2]).addClass('editable');
+                    $($parrents[3]).addClass('editable');
+                }
                     salePrice = selectedProduct.info.salePrice;
 
                     $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);

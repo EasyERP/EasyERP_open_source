@@ -25,9 +25,15 @@
         <th data-sort="scheduledDate">
             Scheduled Date
         </th>
-        <th data-sort="quantity">
+        <% if (forSales) {%>
+        <th  data-sort="hours">
+            Hours
+        </th>
+        <% } else {%>
+        <th  data-sort="quantity">
             Quantity
         </th>
+        <% } %>
         <th data-sort="unitPrice">
             Unit Price
         </th>
