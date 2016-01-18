@@ -157,10 +157,6 @@ var wTrack = function (models) {
             var holidays;
             var vacations;
 
-            //======== tempVariables; =========
-            //var VacationCache;
-            //======== tempVariables ==========
-
             if (err) {
                 return next(err);
             }
@@ -172,16 +168,6 @@ var wTrack = function (models) {
 
             function departmentMapper(department, departmentCb) {
                 var dashDepartment = _.find(dashBoardResult, function (deps) {
-                    if (deps.department === null) {
-                        console.log('==================== department =======================');
-                        console.log(deps);
-                        console.log('===========================================');
-                    }
-                    if (department.department === null) {
-                        console.log('===================== department ======================');
-                        console.log(department);
-                        console.log('===========================================');
-                    }
                     return deps.department.toString() === department.department.toString();
                 });
 
@@ -445,7 +431,7 @@ var wTrack = function (models) {
             function employeeFinder(waterfallCb) {
                 var aggregateQuery = [{
                     $group: {
-                        _id  : '$employee._id',
+                        _id  : '$employee',
                         hours: {$sum: '$worked'}
                     }
                 }, {
