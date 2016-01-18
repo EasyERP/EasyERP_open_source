@@ -1,6 +1,6 @@
 <tr data-id="<%=vacation._id%>">
     <td class="editable" data-content="employee" data-type="employeeSelect">
-        <%=vacation.employee ? vacation.employee.name : ''%>
+        <%=vacation.employee ? vacation.employee.name.first + vacation.employee.name.last : ''%>
     </td>
     <td class="department">
         <%=vacation.department ? vacation.department.departmentName : ''%>

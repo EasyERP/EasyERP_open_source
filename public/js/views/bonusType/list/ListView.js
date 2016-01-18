@@ -811,8 +811,9 @@ define([
                 var count = checkboxes$.length;
 
                 this.collectionLength = this.collection.length;
+                var checkId = isObjectId($('#listTable').find('tr').data('id'));  // check if new element
 
-                if (!this.changed) {
+                if (!this.changed || !checkId) {
                     var answer = confirm("Really DELETE items ?!");
                     var value;
 
@@ -827,6 +828,7 @@ define([
 
                                 that.createBtnEl.show();
                                 that.saveBtnEl.hide();
+                                that.changed = false; // in case of full field new element
 
                                 if (index === count - 1) {
                                     that.triggerDeleteItemsRender(localCounter);

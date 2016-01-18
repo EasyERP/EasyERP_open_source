@@ -15,11 +15,10 @@ define([
         'dataService',
         'constants',
         'async',
-        'moment',
-        'populate'
+        'moment'
     ],
 
-    function (Backbone, $, _, listTemplate, cancelEdit, listTotal, selectView, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+    function (Backbone, $, _, listTemplate, cancelEdit, listTotal, selectView, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var VacationListView = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -54,40 +53,12 @@ define([
             },
 
             events: {
-                //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "blur td.editable input"                                          : "hideInput",
-                "click td.editable"                                               : "editRow",
-                "click .current-selected"                                         : "showNewCurrentSelect",
+                //"blur td.editable input"                                          : "hideInput",
+                "click td.editable, .current-selected"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .oe_sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect"
-            },
-
-            showNewCurrentSelect: function (e, prev, next) {
-               // populate.showSelect(e, prev, next, this, 12);
-
-                var $target = $(e.target);
-                e.stopPropagation();
-
-                if ($target.attr('id') === 'selectInput') {
-                    return false;
-                }
-
-                if (this.selectView) {
-                    this.selectView.remove();
-                }
-
-                this.selectView = new selectView({
-                    e          : e,
-                    responseObj: this.responseObj,
-                    number: 12
-                });
-
-                $target.append(this.selectView.render().el);
-
-                return false;
             },
 
             hideNewSelect: function () {
@@ -287,25 +258,45 @@ define([
                 });
             },
 
-            hideInput: function (e) {
+           /* hideInput: function (e) {
                 var target = $(e.target);
 
                 target.hide();
-            },
+            },*/
 
-            editRow: function (e, prev, next) {
-                var self = this;
-                var el = $(e.target);
-                var hasInput = el.find('input').length;
-                var isInput = el.prop("tagName") === 'INPUT';
-                var tr = $(e.target).closest('tr');
+            showNewSelect: function (e) {
 
-                if (!isInput && !hasInput) {
-                    populate.showSelect(e, prev, next, this);
-                } else if (hasInput) {
-                    el.find('input').show();
+                var $target = $(e.target);
+
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                if ($target.hasClass('current-selected')){
+
+                    this.selectView = new selectView({
+                        e          : e,
+                        responseObj: this.responseObj,
+                        number     : 12
+                    });
+                    $target.append(this.selectView.render().el);
+
                 } else {
-                    populate.showSelect(e, prev, next, this);
+
+                    this.selectView = new selectView({
+                        e          : e,
+                        responseObj: this.responseObj
+                    });
+
+                    $target.append(this.selectView.render().el);
+                    $target.find('input').show();
+
                 }
 
                 return false;
@@ -477,21 +468,21 @@ define([
                 $(subHeaderContainer[2]).replaceWith(daysNumRow);
             },
 
-            nextSelect: function (e) {
+            /*nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
 
             prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
-            },
+            },*/
 
-            showNewSelect: function (e, prev, next) {
+            /*showNewSelect: function (e, prev, next) {
                 e.stopPropagation();
                 populate.showSelect(e, prev, next, this);
 
                 return false;
             },
-
+*/
             changedDataOptions: function () {
                 var month = this.monthElement.attr('data-content');
                 var year = this.yearElement.attr('data-content');

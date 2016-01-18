@@ -1,5 +1,3 @@
-require('pmx').init();
-
 var express = require('express');
 var router = express.Router();
 var WtrackHandler = require('../handlers/dashboard');
@@ -23,8 +21,10 @@ module.exports = function (models) {
         var needRefresh = !!query.refresh;
 
         if (filter.startDate && filter.endDate) {
-            startDate = moment(filter.startDate);
-            endDate = moment(filter.endDate);
+            startDate = new Date(filter.startDate);
+            startDate = moment(startDate);
+            endDate = new Date(filter.endDate);
+            endDate = moment(endDate);
         } else {
             startDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
             endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
@@ -40,6 +40,9 @@ module.exports = function (models) {
 
         redisStore.readFromStorage('dashboardVacation', key, function (err, result) {
             if (needRefresh || !result) {
+                filter.startDate = startDate;
+                filter.endDate = endDate;
+
                 return next();
             }
 

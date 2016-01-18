@@ -1375,7 +1375,7 @@ var Employee = function (event, models) {
 							if (!err) {
 								res.send(200, {success: 'Employees updated', sequence: result.sequence});
 
-								updateRefs(result, dbName, _id);
+								//updateRefs(result, dbName, _id);
 							} else {
 								res.send(500, {error: "Can't update Employees"});
 							}
@@ -1392,7 +1392,7 @@ var Employee = function (event, models) {
 						if (!err) {
 							res.send(200, {success: 'Employees updated'});
 
-							updateRefs(result, dbName, _id);
+							//updateRefs(result, dbName, _id);
 						} else {
 							res.send(500, {error: "Can't update Employees"});
 						}
@@ -1491,7 +1491,7 @@ var Employee = function (event, models) {
 
 					res.send(200, {success: 'Employees updated', result: result});
 
-					updateRefs(result, dbName, _id);
+					//updateRefs(result, dbName, _id);
 				} else {
 					res.send(500, {error: "Can't update Employees"});
 				}

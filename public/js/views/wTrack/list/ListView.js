@@ -398,6 +398,10 @@ define([
                     this.setChangedValueToModel();
                 }
 
+                if (el.hasClass('editing')) {  // added in case of double click on el
+                    el = el.parent('td');
+                }
+
                 if (isSelect) {
                     if (content === 'jobs') {
                         dataService.getData("/jobs/getForDD", {"projectId": tr.find('[data-content="project"]').attr('data-id')}, function (jobs) {

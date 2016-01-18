@@ -570,7 +570,7 @@ var JobPosition = function (event, models) {
                 } else {
                     res.send(200, {success: 'JobPosition updated success'});
 
-                    updateRefs(result, dbName, _id);
+                    //updateRefs(result, dbName, _id);
                 }
             });
         }

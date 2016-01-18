@@ -683,8 +683,8 @@ var Filters = function (models) {
                     assignedTo   : {$arrayElemAt: ["$assignedTo", 0]},
                     project    : {$arrayElemAt: ["$project", 0]}
                 }
-            },{$match : {'project' : {$exists : true} }},
-                {$group: {
+            }, {
+                $group: {
                         _id         : null,
                         'project'   : {
                             $addToSet: {
