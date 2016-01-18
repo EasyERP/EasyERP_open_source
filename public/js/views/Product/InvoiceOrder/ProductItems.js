@@ -109,7 +109,7 @@ define([
                         wTrackCollection    : self.wTrackCollection,
                         createJob           : true,
                         forQuotationGenerate: true,
-                        quotationDialog     : this
+                        quotationDialog     : self
                     });
                 });
             }
