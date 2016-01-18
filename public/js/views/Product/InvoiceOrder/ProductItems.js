@@ -438,7 +438,7 @@ define([
                     $($parrents[5]).text(taxes);
                     $($parrents[6]).text(subtotal);
 
-                    $(".newSelectList").hide();
+                $(".newSelectList").remove();
 
                     this.calculateTotal(selectedProduct.info.salePrice);
                /* }*/

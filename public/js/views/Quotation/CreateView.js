@@ -62,7 +62,7 @@ define([
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
 
                 if (this.selectView) {
                     this.selectView.remove();
@@ -73,6 +73,7 @@ define([
                 var target = $(e.target);
                 var id = target.attr("id");
                 var type = target.attr('data-level');
+                var aEl;
 
                 var element = _.find(this.responseObj['#project'], function (el) {
                     return el._id === id;
