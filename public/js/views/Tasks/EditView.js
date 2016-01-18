@@ -35,13 +35,29 @@
             },
 
             events: {
-                "click #tabList a"                                                : "switchTab",
-                'keydown'                                                         : 'keydownHandler',
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click"                                                           : "hideNewSelect",
-                "click #projectTopName"                                           : "hideDialog",
-                "keypress #logged, #estimated"                                    : "isNumberKey"
+                "click #tabList a"                                 : "switchTab",
+                'keydown'                                          : 'keydownHandler',
+                "click .current-selected"                          : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click"                                            : "hideNewSelect",
+                // "click #projectTopName"                            : "hideDialog",
+                "keypress #logged, #estimated"                     : "isNumberKey",
+                "click #projectTopName"                            : "useProjectFilter"
+            },
+
+            useProjectFilter: function (e) {
+                e.preventDefault();
+                var project = this.currentModel.get('project')._id;
+                var filter = {
+                    project: {
+                        key  : 'project._id',
+                        value: [project]
+                    }
+                };
+
+                $(".edit-dialog").remove();
+
+                Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
             },
 
             isNumberKey: function (evt) {
