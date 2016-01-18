@@ -60,29 +60,6 @@
                 }
             ];
 
-            this.responseObj['#statusInfoDd'] = [
-                {
-                    _id : '',
-                    name: ''
-                }, {
-                    _id : 'Update',
-                    name: 'Update'
-                }, {
-                    _id : 'End Contract',
-                    name: 'End Contract'
-                },
-                {
-                    _id : 'Fired',
-                    name: 'Fired'
-                }, {
-                    _id : 'Personal Issues',
-                    name: 'Personal Issues'
-                }, {
-                    _id : 'Other',
-                    name: 'Other'
-                }
-            ];
-
             this.render();
         },
 
@@ -341,7 +318,7 @@
             _.each(fireArray, function (fire, key) {
                 var tr = self.$el.find("#fire" + key);
                 var date = new Date($.trim(tr.find("[data-id='fireDate']").text()));
-                var info = tr.find('#statusInfoDd').attr('data-id');
+                var info = tr.find('#statusInfoDd').val();
 
                 if (key === fireArray.length - 1) {
                     newFire[key] = _.clone(fireArray[key]);
@@ -565,14 +542,9 @@
             var parentUl = $target.parent();
             var element = $target.closest('a') || parentUl.closest('a');
             var id = element.attr('id') || parentUl.attr('id');
-            var valueId = $target.attr('id');
 
-            if (id === 'statusInfoDd') {
-                element.text($target.text());
-                element.attr('data-id', valueId)
-            } else {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-            }
+            $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
         },
 
         render: function () {
