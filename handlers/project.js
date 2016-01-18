@@ -799,8 +799,8 @@ var Project = function (models) {
 
                 collection.sort(function(a , b){
 
-                    var fieldA = a.total[key] || '0';
-                    var fieldB = b.total[key] || '0';
+                    var fieldA = a.total[key] || 0;
+                    var fieldB = b.total[key] || 0;
 
                     if (sort[key] === 1) {
                         if (fieldA > fieldB) {
