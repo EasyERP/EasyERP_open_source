@@ -150,7 +150,8 @@ define([
                 } else if (contractEndReason) {
                     row.addClass('fired');
                     $(tds[0]).text('Fired');
-                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[1]).addClass('errorContent');
+                    $(tds[1]).text('');
                     $(tds[1]).removeClass('hireDate');
                     $(tds[1]).addClass('fireDate');
                     $(tds[1]).attr('data-id', 'fireDate');
@@ -197,7 +198,7 @@ define([
                             var editingDates = self.$el.find('.editing');
 
                             editingDates.each(function () {
-                                $(this).parent().text($(this).val());
+                                $(this).parent().text($(this).val()).removeClass('errorContent');
                                 $(this).remove();
                             });
                         }
@@ -266,8 +267,30 @@ define([
                 return false;
             },
 
+            activeTab: function(){
+                var tabs;
+                var activeTab;
+                var activeTab;
+                var dialogHolder;
+                var tabId;
+
+                tabId = 'job';
+                tabs = $(".dialog-tabs");
+                activeTab = tabs.find('.active');
+
+                activeTab.removeClass('active');
+                tabs.find('#' + tabId + 'Tab').addClass("active");
+
+                dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
+
+            },
+
             endContract: function (e) {
                 var contractEndReason = $(e.target).text();
+
+                this.activeTab();
 
                 this.addNewRow(null, contractEndReason);
 

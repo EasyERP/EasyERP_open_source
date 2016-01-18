@@ -70,8 +70,10 @@ define([
         },
 
         generateJob: function () {
+            var self = this;
             var model = this.projectModel;
             var projectsDdContainer = $('#projectDd');
+            var projectId = $("#projectDd").attr("data-id");
 
             if (!model) {
                 projectsDdContainer.css('color', 'red');
@@ -82,17 +84,36 @@ define([
                 });
             }
 
-            if (this.generatedView) {
-                this.generatedView.undelegateEvents();
+            if (projectId === model._id){
+                if (this.generatedView) {
+                    this.generatedView.undelegateEvents();
+                }
+
+                this.generatedView = new GenerateWTrack({
+                    model               : this.projectModel,
+                    wTrackCollection    : this.wTrackCollection,
+                    createJob           : true,
+                    forQuotationGenerate: true,
+                    quotationDialog     : this
+                });
+            } else {
+                dataService.getData("/project/getForWtrack", {_id: projectId}, function (project) {
+                   self.projectModel = project && project.data ? project.data[0] : {};
+
+                    if (self.generatedView) {
+                        self.generatedView.undelegateEvents();
+                    }
+
+                    self.generatedView = new GenerateWTrack({
+                        model               : self.projectModel,
+                        wTrackCollection    : self.wTrackCollection,
+                        createJob           : true,
+                        forQuotationGenerate: true,
+                        quotationDialog     : self
+                    });
+                });
             }
 
-            this.generatedView = new GenerateWTrack({
-                model               : this.projectModel,
-                wTrackCollection    : this.wTrackCollection,
-                createJob           : true,
-                forQuotationGenerate: true,
-                quotationDialog     : this
-            });
 
             return false;
         },
@@ -115,6 +136,7 @@ define([
             var $targetEl = $(e.target);
             var self = this;
             var $thisEl = this.$el;
+            var project = $("#projectDd").attr("data-id");
 
             if (!this.checkForQuickEdit($targetEl)) {
                 return false;
@@ -122,27 +144,28 @@ define([
 
             e.preventDefault();
 
-            dataService.getData("/jobs/getForDD", {"projectId": $("#projectDd").attr("data-id")}, function (jobs) {
-                var aEl;
+            if (project && project.length >= 24){
+                dataService.getData("/jobs/getForDD", {"projectId": project}, function (jobs) {
+                    var aEl;
 
-                self.responseObj['#jobs'] = jobs;
+                    self.responseObj['#jobs'] = jobs;
 
-                if (!jobs.length) {
-                    /* $("#jobs").text("Select");
-                     $("#jobs").attr("data-id", null);*/
-                    aEl = $thisEl.find('.current-selected.jobs');
-                    aEl.text("Select");
-                }
+                    if (!jobs.length) {
+                        /* $("#jobs").text("Select");
+                         $("#jobs").attr("data-id", null);*/
+                        aEl = $thisEl.find('.current-selected.jobs');
+                        aEl.text("Select");
+                    }
 
-                if (!self.projectModel) {
-                    dataService.getData("/project/getForQuotation", {"projectId": $("#projectDd").attr("data-id")}, function (project) {
-                        self.projectModel = project;
-                    })
-                }
+                    if (!self.projectModel) {
+                        dataService.getData("/project/getForQuotation", {"projectId": project}, function (project) {
+                            self.projectModel = project;
+                        });
+                    }
 
-                populate.showSelect(e, prev, next, self);
-            });
-
+                    populate.showSelect(e, prev, next, self);
+                });
+            }
         },
 
         getProducts: function (e) {
@@ -438,7 +461,7 @@ define([
                     $($parrents[5]).text(taxes);
                     $($parrents[6]).text(subtotal);
 
-                    $(".newSelectList").hide();
+                $(".newSelectList").remove();
 
                     this.calculateTotal(selectedProduct.info.salePrice);
                /* }*/

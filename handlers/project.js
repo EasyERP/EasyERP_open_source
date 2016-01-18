@@ -16,7 +16,12 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
         var inProgress = data && data.inProgress ? true : false;
-        var filter = inProgress ? {"workflow": CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
+        var id = data ? data._id : null;
+        var filter = inProgress ? {"workflow": CONSTANTS.PROJECTINPROGRESS} : {};
+
+        if (id){
+            filter._id = objectId(id);
+        }//add fof Projects in wTrack
 
         Project
             .find(filter)

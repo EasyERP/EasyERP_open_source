@@ -3,7 +3,7 @@
         <td class="notForm"><input type="checkbox" value="<%=wTrack._id%>" class="checkbox listCB"/></td>
         <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
         <td data-content="jobs" data-id="<%=wTrack.jobs ? wTrack.jobs.name : '------'%>"
-            class="<%=wTrack && wTrack.workflow.name === 'In Progress' ? 'editable' : ''%>"><%=wTrack.jobs ?
+            class="<%=wTrack.workflow && wTrack.workflow.name === 'In Progress' ? 'editable' : ''%>"><%=wTrack.jobs ?
             wTrack.jobs.name : '------'%>
         </td>
         <td data-content="assigned"><%=wTrack && wTrack.projectmanager ? wTrack.projectmanager.name.first + ' ' +
@@ -19,7 +19,7 @@
             data-id="<%= wTrack.customer? wTrack.customer.name.first + ' ' + wTrack.customer.name.last : ''%>">
             <%=wTrack.customer?wTrack.customer.name.first + ' ' + wTrack.customer.name.last: ''%>
         </td>
-        <td class="editable" data-content="employee" data-id="<%= wTrack.employee._id%>"><%=wTrack.employee ?
+        <td class="editable" data-content="employee" data-id="<%= wTrack.employee._id%>"><%=wTrack.employee && wTrack.employee.name ?
             wTrack.employee.name.first + ' ' + wTrack.employee.name.last : ''%>
         </td>
         <td class="editable" data-content="department"><%=wTrack.department ? wTrack.department.departmentName : ''%></td>

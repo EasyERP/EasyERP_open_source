@@ -55,7 +55,21 @@
                 "click .stageSelect"                     : "showNewSelect",
                 "click .newSelectList li"                : "chooseOption",
                 "click"                                  : "hideHealth",
-                "click .filter-check-list li"            : "checkCheckbox"
+                "click .filter-check-list li"            : "checkCheckbox",
+                "click .project"                         : "useProjectFilter"
+            },
+
+            useProjectFilter: function (e) {
+                e.preventDefault();
+                var project = $(e.target).attr('id');
+                var filter = {
+                    project: {
+                        key  : 'project._id',
+                        value: [project]
+                    }
+                };
+
+                Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
             },
 
             dropDown: function (e) {
