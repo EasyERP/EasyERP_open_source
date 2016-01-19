@@ -171,46 +171,6 @@
                             <dd><span><%=marital%></span></dd>
                         </dl>
                     </div>
-                    <div class="formTitle">
-                        <h3 class="left">HiredFired</h3>
-
-                        <div class="clearfix"></div>
-
-                        <div class="half-block left withPaddingLeft">
-                            <%_.each(hire, function(hire, key){ %>
-                            <dt><label>Hired</label></dt>
-                            <dd><%=hire%></dd>
-                            <% }); %>
-                        </div>
-                        <div class="half-block right withPaddingLeft">
-                            <%_.each(fire, function(fire, key){ %>
-                            <dt><label>Fired</label></dt>
-                            <dd><%=fire%></dd>
-                            <% }); %>
-                        </div>
-                    </div>
-
-                    <% if (transferred.length > 0) {%>
-                    <div class="clearfix"></div>
-                    <div class="formTitle">
-                        <h3 class="left">Transfer</h3>
-
-                        <div class="clearfix"></div>
-                    </div>
-
-                    <div class="half-block left withPaddingLeft">
-                        <%_.each(transferred, function(obj, key){ %>
-                        <dt><label>Department</label></dt>
-                        <dd><%=obj.department%></dd>
-                        <% }); %>
-                    </div>
-                    <div class="half-block right withPaddingLeft">
-                        <%_.each(transferred, function(obj, key){ %>
-                        <dt><label>Date</label></dt>
-                        <dd><%=obj.date%></dd>
-                        <% }); %>
-                    </div>
-                    <% } %>
 
                     <div class="clearfix"></div>
                     <div class="formTitle">
