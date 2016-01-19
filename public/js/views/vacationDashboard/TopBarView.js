@@ -1,9 +1,13 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/vacationDashboard/TopBarTemplate.html',
         'moment',
-        'custom'
+        'custom',
+        'constants'
     ],
-    function (ContentTopBarTemplate, moment, custom) {
+    function (Backbone, $, _, ContentTopBarTemplate, moment, custom, CONSTANTS) {
         "use strict";
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
@@ -11,9 +15,9 @@ define([
             template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click #updateDate": "changeDateRange",
-                "click .dateRange" : "toggleDateRange",
-                "click #cancelBtn" : "cancel"
+                "click #updateDate"     : "changeDateRange",
+                "click .dateRange"      : "toggleDateRange",
+                "click #cancelBtn"      : "cancel"
             },
 
             cancel: function (e) {
@@ -74,7 +78,7 @@ define([
                         changeMonth: true,
                         changeYear : true,
                         defaultDate: startDate,
-                        onSelect   : function (text, datPicker) {
+                        onSelect   : function () {
                             var targetInput = $(this);
                             var endDatePicker = self.$endDate;
                             var endDate = moment(targetInput.datepicker('getDate'));
@@ -98,10 +102,16 @@ define([
                     .datepicker('setDate', endDate);
             },
 
+            hideDateRange: function () {
+                var targetEl = this.$el.find('.frameDetail');
+
+                targetEl.addClass('hidden');
+            },
+
             render: function () {
                 var dateRange = custom.retriveFromCash('vacationDashDateRange') || {};
-                var startDate = dateRange.startDate || moment().subtract(1, 'week').day("Monday").format('DD MMM, YYYY');
-                var endDate = dateRange.endDate || moment().add(11, 'week').day("Sunday").format('DD MMM, YYYY');
+                var startDate = dateRange.startDate || moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'week').day("Monday").format('DD MMM, YYYY');
+                var endDate = dateRange.endDate || moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'week').day("Sunday").format('DD MMM, YYYY');
 
                 $('title').text(this.contentType);
 

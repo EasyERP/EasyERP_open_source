@@ -17,7 +17,7 @@ module.exports = function(models){
         var waterfallTasks = [checkFilter, getResult, calcTotal];
 
         function checkFilter(callback) {
-            callback(null, filter)
+            callback(null, filter);
         }
 
         function getResult(filter, callback) {

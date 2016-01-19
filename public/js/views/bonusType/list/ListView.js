@@ -183,7 +183,7 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var Ids = tr.data('id');
@@ -399,7 +399,8 @@ define([
                 var el = e.target;
                 var editedElement = this.$listTable.find('.editing');
 
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                this.$el.find(".allNumberPerPage").hide();
+                this.$el.find(".newSelectList").remove();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                 }

@@ -201,7 +201,7 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Payment'] = PaymentSchema;
-    mongoose.Schemas['salaryPayment'] = salaryPaymentSchema;
-    mongoose.Schemas['wTrackPayOut'] = payOutSchema;
+    mongoose.Schemas.Payment = PaymentSchema;
+    mongoose.Schemas.salaryPayment = salaryPaymentSchema;
+    mongoose.Schemas.wTrackPayOut = payOutSchema;
 })();

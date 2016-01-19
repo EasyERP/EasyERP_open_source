@@ -7,7 +7,7 @@ define([
         "use strict";
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
-            contentType: 'DashBoardVacation',
+            contentType: 'InvoiceCharts',
             template   : _.template(ContentTopBarTemplate),
 
             events: {
@@ -107,10 +107,10 @@ define([
 
                 this.bindDataPickers(startDate, endDate);
 
-                custom.cacheToApp('vacationDashDateRange', {
+               /* custom.cacheToApp('vacationDashDateRange', {
                     startDate: startDate,
                     endDate  : endDate
-                });
+                });*/
 
                 return this;
             }

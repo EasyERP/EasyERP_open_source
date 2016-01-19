@@ -328,13 +328,13 @@ var Department = function (event, models) {
                                     });
                                 } else {
                                     res.send(200, {success: 'Department updated success'});
-
+/*
                                     if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                                         EmployeeSchema = mongoose.Schemas['Employee'];
                                         EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 
                                         event.emit('updateName', _id, EmployeeModel, 'department._id', 'department.name', result.departmentName);
-                                    }
+                                    }*/
                                 }
                             }
                         });
@@ -353,13 +353,13 @@ var Department = function (event, models) {
                                 });
                             } else {
                                 res.send(200, {success: 'Department updated success'});
-
+/*
                                 if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                                     EmployeeSchema = mongoose.Schemas['Employee'];
                                     EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 
                                     event.emit('updateName', _id, EmployeeModel, 'department._id', 'department.name', result.departmentName);
-                                }
+                                }*/
                             }
                         }
                     });
