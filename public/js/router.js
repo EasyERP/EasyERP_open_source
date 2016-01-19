@@ -608,7 +608,7 @@ define([
                         startTime: startTime,
                         filter   : filter
                     });
-                    
+
                     self.changeTopBarView(topbarView);
 
                     self.changeView(contentview);
