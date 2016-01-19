@@ -13,9 +13,10 @@ define([
         'views/Assignees/AssigneesView',
         "common",
         "populate",
-        "moment"
+        "moment",
+        'helpers/keyCodeHelper'
     ],
-    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment) {
+    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment, keyCodes) {
         'use strict';
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -85,7 +86,19 @@ define([
                 "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption",
                 "click"                                                          : "hideNewSelect",
                 "click td.editable"                                              : "editJob",
-                "click #update"                                                  : "addNewRow"
+                "click #update"                                                  : "addNewRow",
+                "keyup .editing"                                                 : "validateNumbers"
+            },
+
+            validateNumbers: function (e) {
+                var $target = $(e.target);
+                var code = e.keyCode;
+                var inputValue = $target.val();
+
+                if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
+                    $target.val(parseFloat(inputValue) || "");
+                    return false;
+                }
             },
 
             addNewRow: function (e, contractEndReason) {
