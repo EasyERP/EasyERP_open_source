@@ -426,30 +426,31 @@
                                 <td>Hired</td>
                                 <td class="editable hireDate" data-id="hireDate"><%=model.hire[key].date%></td>
                                 <td>
-                                    <a id="jobPositionDd" class="current-selected" data-id="<%=model.jobPosition ? model.jobPosition._id : null%>" href="javascript:;">
+                                    <a id="jobPositionDd" class="current-selected" data-id="<%= model.hire[key].jobPosition ?  model.hire[key].jobPosition._id : null%>" href="javascript:;">
                                     <%=model.hire[key].jobPosition ? model.hire[key].jobPosition.name : 'Select'%>
                                 </a>
                                 </td>
                              <td>
-                                 <a id="departmentsDd" class="current-selected" data-id="<%=model.department ? model.department._id : null%>" href="javascript:;">
+                                 <a id="departmentsDd" class="current-selected" data-id="<%=model.hire[key].department ? model.hire[key].department._id : null%>" href="javascript:;">
                                      <%=model.hire[key].department ? model.hire[key].department.departmentName : "Select"%>
                                  </a>
                              </td>
                       <td>
-                          <a id="projectManagerDD" class="current-selected" data-id="<%=model.manager ? model.manager._id : null%>" href="javascript:;">
+                          <a id="projectManagerDD" class="current-selected" data-id="<%= model.hire[key].manager ?  model.hire[key].manager._id : null%>" href="javascript:;">
                               <%=model.hire[key].manager ? model.hire[key].manager.name.first + ' ' + model.hire[key].manager.name.last : "Select"%>
                           </a>
                       </td>
                       <td>
-                          <a id="jobTypeDd" class="current-selected" data-id="<%=model.jobType?model.jobType:''%>" href="javascript:;">
+                          <a id="jobTypeDd" class="current-selected" data-id="<%model.hire[key].jobType ?model.hire[key].jobType :''%>" href="javascript:;">
                           <%=model.hire[key].jobType ? model.hire[key].jobType : "Select"%>
                       </a>
                          </td>
                       <td class="editable" data-id="salary"><%=model.hire[key].salary%></td>
                       <td>
-                          <a id="statusInfoDd" data-id="<%=model.hire[key].info ? model.hire[key].info : ''%> " class="current-selected" href="javascript:;">
-                              <%=model.hire[key].info && model.hire[key].info.length > 1 ? model.hire[key].info : "Select"%>
-                          </a>
+                          <!--<a id="statusInfoDd" data-id="<%=model.hire[key].info ? model.hire[key].info : ''%> " class="current-selected" href="javascript:;">-->
+                              <!--<%=model.hire[key].info && model.hire[key].info.length > 1 ? model.hire[key].info : "Select"%>-->
+                          <!--</a>-->
+                          <input id="statusInfoDd" class="statusInfo" data-id="<%=model.hire[key].info ? model.hire[key].info : ''%> " value='<%=model.hire[key].info && model.hire[key].info.length > 1 ? model.hire[key].info : ""%>' />
 
                       </td>
                   </tr>
@@ -463,8 +464,11 @@
                       <td><%=model.fire[key].manager && model.hire[key].manager.name.last !== model.fire[key].manager.name.last ? model.fire[key].manager.name.first + ' ' + model.fire[key].manager.name.last : ""%></td>
                       <td><%=model.fire[key].jobType !== model.hire[key].jobType ? model.fire[key].jobType : ''%></td>
                       <td><%=model.fire[key].salary%></td>
-                      <td><a id="statusInfoDd" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " class="current-selected" href="javascript:;">
-                          <%=model.fire[key].info ? model.fire[key].info : "Select"%>
+                     <td>
+                         <!--<a id="statusInfoDd" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " class="current-selected" href="javascript:;">-->
+                          <!--<%=model.fire[key].info ? model.fire[key].info : "Select"%>-->
+                      <input id="statusInfoDd" class="statusInfo" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " value='<%=model.fire[key].info && model.fire[key].info.length > 1 ? model.fire[key].info : ""%>' />
+
                       </a></td>
                   </tr>
                   <% } %>

@@ -601,7 +601,7 @@ define([
                 $currentEl.html(this.template({filterCollection: this.constantsObject}));
 
                 this.renderFilterContent(options);
-                this.showFilterIcons(filters);
+                //this.showFilterIcons(filters);
                 this.renderSavedFilters();
 
                 $.widget("custom.catcomplete", $.ui.autocomplete, {
