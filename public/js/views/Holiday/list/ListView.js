@@ -138,9 +138,9 @@ define([
                 var editedElementValue;
                 var editHolidayModel;
 
-                if (navigator.userAgent.indexOf("Firefox") > -1) {
+                /*if (navigator.userAgent.indexOf("Firefox") > -1) { // fireFox work correctly without this condition
                     this.setEditable(editedElement);
-                }
+                }*/
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
