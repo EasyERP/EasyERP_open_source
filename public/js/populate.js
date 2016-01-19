@@ -227,8 +227,8 @@ define([
 
             s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
             start = (currentPage - 1) * elementVisible;
-            end = Math.min(currentPage * elementVisible, data.length);
-            allPages = Math.ceil(data.length / elementVisible);
+            end = Math.min(currentPage * elementVisible, data ? data.length : 0);
+            allPages = Math.ceil(data ? data.length : 0 / elementVisible);
 
             if (data && data.length) {
                 parent.append(_.template(selectTemplate, {

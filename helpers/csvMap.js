@@ -1,5 +1,5 @@
 module.exports = (function () {
-
+    'use strict';
     var moment = require('../public/js/libs/moment/moment');
     var dateFormat = 'MMMM Do YYYY';
 
@@ -500,7 +500,7 @@ module.exports = (function () {
             'bonus.startYear'    : 'Bonus Start Year',
             'bonus.endDate'      : 'Bonus End Date',
             'bonus.endWeek'      : 'Bonus End Week',
-            'bonus.endYear'      : 'Bonus End Year',
+            'bonus.endYear'      : 'Bonus End Year'
 
         },
         arrayKeys  : {
@@ -631,6 +631,6 @@ module.exports = (function () {
         Industry    : industry,
         Tasks       : task,
         Products    : product
-    }
+    };
 
 })();

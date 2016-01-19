@@ -16,7 +16,12 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
         var inProgress = data && data.inProgress ? true : false;
-        var filter = inProgress ? {"workflow": CONSTANTS.PROJECTINPROGRESS} : {}; //add fof Projects in wTrack
+        var id = data ? data._id : null;
+        var filter = inProgress ? {"workflow": CONSTANTS.PROJECTINPROGRESS} : {};
+
+        if (id){
+            filter._id = objectId(id);
+        }//add fof Projects in wTrack
 
         Project
             .find(filter)
@@ -794,6 +799,34 @@ var Project = function (models) {
                     });
                 });
             });
+
+            if (collection[0].total.hasOwnProperty(key)){
+
+                collection.sort(function(a , b){
+
+                    var fieldA = a.total[key] || 0;
+                    var fieldB = b.total[key] || 0;
+
+                    if (sort[key] === 1) {
+                        if (fieldA > fieldB) {
+                            return 1;
+                        }
+                        if (fieldA < fieldB) {
+                            return -1;
+                        }
+                        return 0;
+                    } else {
+                        if (fieldA < fieldB) {
+                            return 1;
+                        }
+                        if (fieldA > fieldB) {
+                            return -1;
+                        }
+                        return 0;
+                    }
+                });
+            }
+
 
             data['data'] = collection;
 

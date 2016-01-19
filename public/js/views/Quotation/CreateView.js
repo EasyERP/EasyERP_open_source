@@ -62,7 +62,7 @@ define([
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
 
                 if (this.selectView) {
                     this.selectView.remove();
@@ -73,6 +73,7 @@ define([
                 var target = $(e.target);
                 var id = target.attr("id");
                 var type = target.attr('data-level');
+                var aEl;
 
                 var element = _.find(this.responseObj['#project'], function (el) {
                     return el._id === id;
@@ -83,6 +84,10 @@ define([
 
                     this.$el.find('#supplierDd').text(element.customer.name.first + element.customer.name.last);
                     this.$el.find('#supplierDd').attr('data-id', element.customer._id);
+
+                    aEl = $('.current-selected.jobs');
+                    aEl.text("Select");
+                    aEl.attr('id', 'jobs');
                 }
 
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));

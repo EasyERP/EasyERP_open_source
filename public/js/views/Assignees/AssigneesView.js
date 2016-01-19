@@ -1,25 +1,32 @@
 define([
+    "Backbone",
+    "jQuery",
+    "Underscore",
     'text!templates/Assignees/AssigneesTemplate.html',
+    'text!templates/Assignees/addGroupDialog.html',
+    'text!templates/Assignees/addUserDialog.html',
     'views/selectView/selectView',
     'common',
     "populate"
 
-], function (assigneesTemplate, selectView, common, populate) {
+], function (Backbone, $, _, assigneesTemplate, addGroupTemplate, addUserTemplate, selectView, common, populate) {
     var AssigneesView = Backbone.View.extend({
 
         initialize: function (options) {
+            this.remove();
             this.model = options.model;
             this.responseObj = {};
         },
-        events    : {
-            'click .addUser'                                                  : 'addUser',
-            'click .addGroup'                                                 : 'addGroup',
-            'click .unassign'                                                 : 'unassign',
-            "click .prevUserList"                                             : "prevUserList",
-            "click .nextUserList"                                             : "nextUserList",
-            "click .current-selected"                                         : "showNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-            "click"               : "hideNewSelect"
+
+        events: {
+            'click .addUser'                                   : 'addUser',
+            'click .addGroup'                                  : 'addGroup',
+            'click .unassign'                                  : 'unassign',
+            "click .prevUserList"                              : "prevUserList",
+            "click .nextUserList"                              : "nextUserList",
+            "click .current-selected"                          : "showNewSelect",
+            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            "click"                                            : "hideNewSelect"
         },
 
         template: _.template(assigneesTemplate),
@@ -46,14 +53,14 @@ define([
             return false;
         },
 
-        chooseOption : function (e) {
+        chooseOption: function (e) {
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
             this.hideNewSelect();
         },
 
         hideNewSelect: function () {
-            if (this.selectView){
+            if (this.selectView) {
                 this.selectView.remove();
             }
         },
@@ -66,7 +73,7 @@ define([
             $("#" + type).append("<option value='" + id + "'>" + text + "</option>");
             holder.closest("tr").remove();
             var groupsAndUser_holder = $(".groupsAndUser");
-            if (groupsAndUser_holder.find("tr").length == 1) {
+            if (groupsAndUser_holder.find("tr").length === 1) {
                 groupsAndUser_holder.hide();
             }
         },
@@ -112,6 +119,8 @@ define([
             $(e.target).closest(".ui-dialog").find(".target").find(".temp").each(function () {
                 $(e.target).closest(".ui-dialog").find(".source").append($(this).removeClass("temp"));
             });
+
+            $(".addUserDialog").remove();
         },
         updateAssigneesPagination: function (el) {
             var pag = el.find(".userPagination .text");
@@ -153,7 +162,15 @@ define([
 
         addUser       : function () {
             var self = this;
-            $(".addUserDialog").dialog({
+            var addUser = _.template(addUserTemplate)();
+            var dialog;
+            var userDialog = $('#addUseDialog');
+
+            if (userDialog.length) {
+                return userDialog.dialog("open");
+            }
+
+            dialog = $(addUser).dialog({
                 dialogClass: "add-user-dialog",
                 width      : "900px",
                 buttons    : {
@@ -161,7 +178,7 @@ define([
                         text : "Choose",
                         class: "btn",
 
-                        click: function () {
+                        click: function (e) {
                             self.addUserToTable("#targetUsers");
                             $(this).find(".temp").removeClass("temp");
                             $(this).dialog("close");
@@ -172,23 +189,32 @@ define([
                         text : "Cancel",
                         class: "btn",
                         click: function (e) {
-                            self.closeDialog(e);
                             $(this).dialog("close");
-                            $("#targetUsers").unbind("click");
-                            $("#sourceUsers").unbind("click");
+                            self.closeDialog(e);
+                            //$("#targetUsers").unbind("click");
+                            //$("#sourceUsers").unbind("click");
                         }
                     }
                 }
 
             });
-            this.updateAssigneesPagination($("#sourceUsers").closest(".left"));
-            this.updateAssigneesPagination($("#targetUsers").closest(".left"));
-            $("#targetUsers").on("click", "li", {self: this}, this.removeUsers);
-            $("#sourceUsers").on("click", "li", {self: this}, this.addUsers);
-            $(document).on("click", ".nextUserList", {self: this}, function (e) {
+
+            if (this.model) {
+                common.populateUsersForGroups(dialog.find('#sourceUsers'), dialog.find('#targetUsers'), this.model.toJSON(), 1);
+            } else {
+                common.populateUsersForGroups(dialog.find('#sourceUsers'), dialog.find('#targetUsers'), null, 1);
+            }
+
+            this.updateAssigneesPagination(dialog.find("#sourceUsers").closest(".left"));
+            this.updateAssigneesPagination(dialog.find("#targetUsers").closest(".left"));
+            dialog.find("#targetUsers").unbind("click");
+            dialog.find("#sourceUsers").unbind("click");
+            dialog.find("#targetUsers").on("click", "li", {self: this}, this.removeUsers);
+            dialog.find("#sourceUsers").on("click", "li", {self: this}, this.addUsers);
+            $(dialog).on("click", ".nextUserList", {self: this}, function (e) {
                 self.nextUserList(e);
             });
-            $(document).on("click", ".prevUserList", {self: this}, function (e) {
+            $(dialog).on("click", ".prevUserList", {self: this}, function (e) {
                 self.prevUserList(e);
             });
         },
@@ -208,7 +234,7 @@ define([
                 groupsAndUser.hide();
             }
 
-            if (this.model){
+            if (this.model) {
                 this.model.trigger('chooseAssignee');
             }
 
@@ -216,14 +242,22 @@ define([
 
         addGroup: function () {
             var self = this;
-            $(".addGroupDialog").dialog({
+            var addGroup = _.template(addGroupTemplate)();
+            var userDialog = $('#addGroupDialog');
+            var dialog;
+
+            if (userDialog.length) {
+                return userDialog.dialog("open");
+            }
+
+            dialog = $(addGroup).dialog({
                 dialogClass: "add-group-dialog",
                 width      : "900px",
                 buttons    : {
                     save  : {
                         text : "Choose",
                         class: "btn",
-                        click: function () {
+                        click: function (e) {
                             self.addUserToTable("#targetGroups");
                             $(this).find(".temp").removeClass("temp");
                             $(this).dialog("close");
@@ -233,28 +267,35 @@ define([
                         text : "Cancel",
                         class: "btn",
                         click: function (e) {
-                            self.closeDialog(e);
                             $(this).dialog("close");
-                            $("#targetGroups").unbind("click");
-                            $("#sourceGroups").unbind("click");
-
+                            self.closeDialog(e);
+                            //$("#targetGroups").unbind("click");
+                            //$("#sourceGroups").unbind("click");
                         }
                     }
                 }
 
             });
-            this.updateAssigneesPagination($("#sourceGroups").closest(".left"));
-            this.updateAssigneesPagination($("#targetGroups").closest(".left"));
-            $("#targetGroups").on("click", "li", {self: this}, this.removeUsers);
-            $("#sourceGroups").on("click", "li", {self: this}, this.addUsers);
-            $(document).on("click", ".nextUserList", {self: this}, function (e) {
+
+            if (this.model) {
+                common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/DepartmentsForDd", this.model.toJSON(), 1);
+            } else {
+                common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/DepartmentsForDd", null, 1);
+            }
+
+            this.updateAssigneesPagination(dialog.find("#sourceGroups").closest(".left"));
+            this.updateAssigneesPagination(dialog.find("#targetGroups").closest(".left"));
+            dialog.find("#targetGroups").on("click", "li", {self: this}, this.removeUsers);
+            dialog.find("#sourceGroups").on("click", "li", {self: this}, this.addUsers);
+            $(dialog).on("click", ".nextUserList", {self: this}, function (e) {
                 self.nextUserList(e);
             });
-            $(document).on("click", ".prevUserList", {self: this}, function (e) {
+            $(dialog).on("click", ".prevUserList", {self: this}, function (e) {
                 self.prevUserList(e);
             });
         },
-        render  : function () {
+
+        render: function () {
             var owner = "";
             var whoCanRW = "everyOne";
 
@@ -264,13 +305,7 @@ define([
             }
 
             this.$el.html(this.template({owner: owner, whoCanRW: whoCanRW}));
-            if (this.model) {
-                common.populateUsersForGroups(this.$el.find('#sourceUsers'), this.$el.find('#targetUsers'), this.model.toJSON(), 1);
-                common.populateDepartmentsList(this.$el.find("#sourceGroups"), this.$el.find("#targetGroups"), "/DepartmentsForDd", this.model.toJSON(), 1);
-            } else {
-                common.populateUsersForGroups(this.$el.find('#sourceUsers'), this.$el.find('#targetUsers'), null, 1);
-                common.populateDepartmentsList(this.$el.find("#sourceGroups"), this.$el.find("#targetGroups"), "/DepartmentsForDd", null, 1);
-            }
+
             if (owner !== "") {
                 populate.get("#allUsersSelect", "/UsersForDd", {}, "login", this);
 

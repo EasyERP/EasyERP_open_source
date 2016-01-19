@@ -13,9 +13,10 @@ define([
         'views/Assignees/AssigneesView',
         "common",
         "populate",
-        "moment"
+        "moment",
+        'helpers/keyCodeHelper'
     ],
-    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment) {
+    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment, keyCodes) {
         'use strict';
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -71,29 +72,6 @@ define([
                     }
                 ];
 
-                this.responseObj['#statusInfoDd'] = [
-                    {
-                        _id : '',
-                        name: ''
-                    }, {
-                        _id : 'Update',
-                        name: 'Update'
-                    }, {
-                        _id : 'End Contract',
-                        name: 'End Contract'
-                    },
-                    {
-                        _id : 'Fired',
-                        name: 'Fired'
-                    }, {
-                        _id : 'Personal Issues',
-                        name: 'Personal Issues'
-                    }, {
-                        _id : 'Other',
-                        name: 'Other'
-                    }
-                ];
-
                 this.render();
             },
 
@@ -108,7 +86,19 @@ define([
                 "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption",
                 "click"                                                          : "hideNewSelect",
                 "click td.editable"                                              : "editJob",
-                "click #update"                                                  : "addNewRow"
+                "click #update"                                                  : "addNewRow",
+                "keyup .editing"                                                 : "validateNumbers"
+            },
+
+            validateNumbers: function (e) {
+                var $target = $(e.target);
+                var code = e.keyCode;
+                var inputValue = $target.val();
+
+                if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
+                    $target.val(parseFloat(inputValue) || "");
+                    return false;
+                }
             },
 
             addNewRow: function (e, contractEndReason) {
@@ -145,23 +135,20 @@ define([
                 if (targetId === 'update') {
                     $(tds[0]).text('Hired');
                     $(tds[1]).text(common.utcDateToLocaleDate(newDate));
-                    $(tds[7]).find('a').attr('data-id', 'Update');
-                    $(tds[7]).find('a').text('Update');
+                    $(tds[7]).find('input').val('Update');
                 } else if (contractEndReason) {
                     row.addClass('fired');
                     $(tds[0]).text('Fired');
+                    $(tds[1]).addClass('changeContent');
                     $(tds[1]).text(common.utcDateToLocaleDate(newDate));
                     $(tds[1]).removeClass('hireDate');
                     $(tds[1]).addClass('fireDate');
                     $(tds[1]).attr('data-id', 'fireDate');
                     $(tds[6]).removeClass('editable');
-                    $(tds[7]).find('a').text(contractEndReason);
-                    $(tds[7]).find('a').attr('data-id', contractEndReason);
+                    $(tds[7]).find('input').val(contractEndReason);
 
                     selects = row.find('.current-selected');
                     selects.removeClass('current-selected');
-
-                    $(tds[7]).find('a').addClass('current-selected');
                 }
             },
 
@@ -197,7 +184,7 @@ define([
                             var editingDates = self.$el.find('.editing');
 
                             editingDates.each(function () {
-                                $(this).parent().text($(this).val());
+                                $(this).parent().text($(this).val()).removeClass('changeContent');
                                 $(this).remove();
                             });
                         }
@@ -236,7 +223,7 @@ define([
                 var id = element.attr('id') || parentUl.attr('id');
                 var valueId = $target.attr('id');
 
-                if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'statusInfoDd' || 'hireFireDd') {
+                if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
                     element.text($target.text());
                     element.attr('data-id', valueId);
                 } else {
@@ -266,8 +253,30 @@ define([
                 return false;
             },
 
+            activeTab: function(){
+                var tabs;
+                var activeTab;
+                var activeTab;
+                var dialogHolder;
+                var tabId;
+
+                tabId = 'job';
+                tabs = $(".dialog-tabs");
+                activeTab = tabs.find('.active');
+
+                activeTab.removeClass('active');
+                tabs.find('#' + tabId + 'Tab').addClass("active");
+
+                dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
+
+            },
+
             endContract: function (e) {
                 var contractEndReason = $(e.target).text();
+
+                this.activeTab();
 
                 this.addNewRow(null, contractEndReason);
 
@@ -376,7 +385,7 @@ define([
                     var department = tr.find('#departmentsDd').attr('data-id');
                     var manager = tr.find('#projectManagerDD').attr('data-id');
                     var salary = parseInt(tr.find('[data-id="salary"]').text());
-                    var info = tr.find('#statusInfoDd').attr('data-id');
+                    var info = tr.find('#statusInfoDd').val();
                     var jobType = tr.find('#jobTypeDd').attr('data-id');
 
                     var trFire = $(self.$el.find("#fire" + key));
@@ -399,7 +408,7 @@ define([
                         newFire[key] = _.clone(newHireArray[key]);
 
                         newFire[key].date = new Date($.trim(trFire.find("[data-id='fireDate']").text()));
-                        newFire[key].info = trFire.find('#statusInfoDd').attr('data-id');
+                        newFire[key].info = trFire.find('#statusInfoDd').val();
 
                         newFireArray.push(newFire[key]);
                     } else if (!newFire[key]) {

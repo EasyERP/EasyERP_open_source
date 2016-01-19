@@ -183,7 +183,7 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var Ids = tr.data('id');
@@ -399,7 +399,8 @@ define([
                 var el = e.target;
                 var editedElement = this.$listTable.find('.editing');
 
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                this.$el.find(".allNumberPerPage").hide();
+                this.$el.find(".newSelectList").remove();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                 }
@@ -810,8 +811,9 @@ define([
                 var count = checkboxes$.length;
 
                 this.collectionLength = this.collection.length;
+                var checkId = isObjectId($('#listTable').find('tr').data('id'));  // check if new element
 
-                if (!this.changed) {
+                if (!this.changed || !checkId) {
                     var answer = confirm("Really DELETE items ?!");
                     var value;
 
@@ -826,6 +828,7 @@ define([
 
                                 that.createBtnEl.show();
                                 that.saveBtnEl.hide();
+                                that.changed = false; // in case of full field new element
 
                                 if (index === count - 1) {
                                     that.triggerDeleteItemsRender(localCounter);

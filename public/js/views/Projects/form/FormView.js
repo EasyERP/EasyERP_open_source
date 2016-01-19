@@ -1152,8 +1152,9 @@ define([
                 var activeTab;
                 var dialogHolder;
                 var tabId;
+                var dialogsDiv = $('#dialogContainer').is(':empty');
 
-                if (App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
+                if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
                     tabId = App.projectInfo.currentTab;
                     tabs = $(".chart-tabs");
                     activeTab = tabs.find('.active');
@@ -1164,16 +1165,6 @@ define([
                     dialogHolder = $(".dialog-tabs-items");
                     dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
                     dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
-
-                    //if (tabId === 'quotation'){
-                    //    dialogHolder.find('#quotations').closest('.dialog-tabs-item').addClass("active");
-                    //} else if (tabId === 'orders') {
-                    //    tabs.find('#ordersTab').addClass("active");
-                    //    dialogHolder.find('#orders').closest('.dialog-tabs-item').addClass("active");
-                    //} else if (tabId === 'invoices') {
-                    //    tabs.find('#invoiceTab').addClass("active");
-                    //    dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
-                    //}
                 }
             },
 
