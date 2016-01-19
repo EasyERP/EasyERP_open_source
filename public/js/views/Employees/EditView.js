@@ -134,6 +134,7 @@ define([
 
                 if (targetId === 'update') {
                     $(tds[0]).text('Hired');
+                    $(tds[1]).addClass('changeContent');
                     $(tds[1]).text(common.utcDateToLocaleDate(newDate));
                     $(tds[7]).find('input').val('Update');
                 } else if (contractEndReason) {
@@ -171,7 +172,7 @@ define([
                 var tempContainer;
 
                 tempContainer = ($target.text()).trim();
-                $target.html('<input class="editing" type="text" value="' + tempContainer + '">');
+                $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
 
                 if (dataId === 'salary') {
                     return false;
