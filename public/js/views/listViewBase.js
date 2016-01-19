@@ -170,6 +170,9 @@ define([
                         checkAll$.prop('checked', false);
                     }
                 }
+                if (this.setAllTotalVals){   // added in case of existing setAllTotalVals in View
+                    this.setAllTotalVals();
+                }
             },
 
             deleteItems: function () {
@@ -516,12 +519,16 @@ define([
             },
 
             renderCheckboxes: function () {
+                var self = this;
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     } else {
                         $("#top-bar-deleteBtn").hide();
+                    }
+                    if (self.setAllTotalVals){   // added in case of existing setAllTotalVals method in View
+                        self.setAllTotalVals();
                     }
                 });
             },
@@ -554,20 +561,25 @@ define([
                 $currentEl.append(_.template(paginationTemplate));
 
                 var pagenation = self.$el.find('.pagination');
+                var countNumber;
 
                 if (self.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
+                    // This is for counterPages at start
+                    countNumber = ([100, 200, 500].indexOf(this.defaultItemsNumber)!== -1) ? this.defaultItemsNumber: "all"; // changed in case of bad view after refreshing with not default counter
+
+                    this.previouslySelected = $('.itemsNumber:contains('+ countNumber +')');
+                    this.previouslySelected.addClass('selectedItemsNumber');
+                    // end
                 }
 
                 $(document).on("click", function (e) {
                     self.hidePagesPopup(e);
                 });
 
-                // This is for counterPages at start
-                this.previouslySelected = $('.itemsNumber').first();
-                this.previouslySelected.addClass('selectedItemsNumber');
+
             },
 
             renderFilter: function (self, baseFilter) {

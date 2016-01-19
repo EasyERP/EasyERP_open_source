@@ -115,6 +115,10 @@ define([
 
                 this.currentPage = this.currentPage || 1;
 
+                if (this.attr === "monthSelect") {
+                    data = this.responseObj["#monthSelect"];
+                }
+
                 if (targetParent.prop('tagName') !== 'TR') {
                     newSel = targetParent.find(".newSelectList");
                 } else {

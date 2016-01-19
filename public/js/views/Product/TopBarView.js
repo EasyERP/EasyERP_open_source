@@ -96,8 +96,8 @@ define([
                 var checkBoxes = $("input.checkbox:checked");
                 var values = [];
 
-                $.each(checkBoxes, function (el) {
-                    values.push(el.val());
+                $.each(checkBoxes, function (index, checkbox) {
+                    values.push(checkbox.value);
                 });
                 var permission = true;
 
