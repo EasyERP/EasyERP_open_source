@@ -1,28 +1,28 @@
 <% orderCollection.forEach(function(order, index){ %>
-  <tr data-id="<%=order._id%>"
-  <%if (order.workflow && order.workflow.name === 'Cancelled') { %>
-    class="canceledListItem"
-  <%} else if (order.workflow && order.workflow.name !== 'Not Invoiced'){ %>
-    class="notEditable"
+<tr data-id="<%=order._id%>"
+<%if (order.workflow && order.workflow.name === 'Cancelled') { %>
+class="canceledListItem"
+<%} else if (order.workflow && order.workflow.name !== 'Not Invoiced'){ %>
+class="notEditable"
 <% } %>>
-  <td class = "notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox <%if (order.workflow && order.workflow.name !== 'Not Invoiced') { %>
+<td class="notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox <%if (order.workflow && order.workflow.name !== 'Not Invoiced') { %>
                 notRemovable
-                <% } %>" /></td>
-  <td class="centerCell"><%=startNumber + index + 1%></td>
-  <td><%=order.name ? order.name : '------'%></td>
-  <td><%=order.project ? order.project.projectName : '------'%></td>
-  <td><%=(order.supplier) ? order.supplier.name : '------'%></td>
-  <td><%=(order.project) ? order.project.projectmanager.name : '------'%></td>
-  <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
-  <!--<td class="type"><%=order.type%></td>-->
+                <% } %>"/></td>
+<td class="centerCell"><%=startNumber + index + 1%></td>
+<td><%=order.name ? order.name : '------'%></td>
+<td><%=order.project ? order.project.projectName : '------'%></td>
+<td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : '------'%></td>
+<td><%=(order.project) ? order.projectmanager.name.first + ' ' + order.projectmanager.name.last : '------'%></td>
+<td class="total"><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total.toFixed(2)) : '0'%></td>
+<!--<td class="type"><%=order.type%></td>-->
 <td id='<%=order._id%>' class="centerCell workflow">
-  <%if(order.workflow.name !== 'Done'){%>
+    <%if(order.workflow.name !== 'Done'){%>
     <a href="javascript:;" class=""><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
-  <% } else {%>
-  <span class="done"><%=order.workflow.name%></span>
-  <%}%>
-  </td>
+    <% } else {%>
+    <span class="done"><%=order.workflow.name%></span>
+    <%}%>
+</td>
 <td><%=order.orderDate%></td>
-  </tr>
+</tr>
 <% }) %>
 

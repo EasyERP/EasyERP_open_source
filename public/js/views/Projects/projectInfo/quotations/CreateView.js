@@ -1,4 +1,5 @@
 define([
+        'Backbone',
         "views/salesQuotation/CreateView",
         "text!templates/Projects/projectInfo/quotations/CreateTemplate.html",
         "text!templates/Projects/projectInfo/quotations/newRow.html",
@@ -10,18 +11,20 @@ define([
         "populate",
         'constants',
         'views/Assignees/AssigneesView',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
-    function (createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
+    function (Backbone, createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, helpers) {
+        "use strict";
 
         var CreateView = createView.extend({
-
             el            : "#content-holder",
             contentType   : "Quotation",
             template      : _.template(CreateTemplate),
             templateNewRow: _.template(newRow),
 
             initialize: function (options) {
+                /*this.channelObject = _.extend({}, Backbone.Events);*/
 
                 if (options) {
                     this.visible = options.visible;
@@ -47,6 +50,14 @@ define([
                 this.forSales = true;
             },
 
+            recalculatePriceByJob: function () {
+                this.channelObject.trigger('recalculatePriceByJob');
+            },
+
+            validateForm: function(e){
+
+            },
+
             saveItem: function () {
                 var self = this;
                 var mid = 55;
@@ -68,17 +79,9 @@ define([
                     name: thisEl.find('#currencyDd').text()
                 };
 
-                var supplier = {};
-                var project = {};
+                var supplier = thisEl.find('#supplierDd').attr('data-id');
 
-                supplier._id = thisEl.find('#supplierDd').attr('data-id');
-                supplier.name = thisEl.find('#supplierDd').text();
-
-
-                project._id = thisEl.find('#projectDd').attr('data-id');
-                project.projectName = thisEl.find('#projectDd').text();
-                project.projectmanager = this.projectManager;
-
+                var project = thisEl.find('#projectDd').attr('data-id');
                 var destination = $.trim(thisEl.find('#destination').attr('data-id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').attr('data-id'));
@@ -125,8 +128,11 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
-                            if (!jobs) {
-                                return alert("Job field can't be empty. Please, choose or create one.");
+                            if (jobs.length < 24) {
+                                return App.render({
+                                    type   : 'error',
+                                    message: "Job field can't be empty. Please, choose or create one."
+                                });
                             }
 
                             products.push({
@@ -140,11 +146,13 @@ define([
                                 jobs         : jobs
                             });
                         } else {
-                            return alert("Products can't be empty.");
+                            return App.render({
+                                type   : 'error',
+                                message: "Products can't be empty."
+                            });
                         }
                     }
                 }
-
 
                 data = {
                     currency      : currency,
@@ -175,7 +183,7 @@ define([
                     workflow      : this.defaultWorkflow
                 };
 
-                if (supplier._id && selectedLength) {
+                if (supplier && selectedLength) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
@@ -190,7 +198,10 @@ define([
                     });
 
                 } else {
-                    return alert('Products can not be empty.');
+                    return App.render({
+                        type   : 'error',
+                        message: "Products can not be empty."
+                    });
                 }
             },
 
@@ -213,7 +224,8 @@ define([
                         canBeSold       : true,
                         service         : 'Service',
                         projectModel    : this.projectModel,
-                        wTrackCollection: this.wTrackCollection
+                        wTrackCollection: this.wTrackCollection,
+                        channelObject   : this.channelObject
                     }).render().el
                 );
 
@@ -232,9 +244,10 @@ define([
                 this.collection.add(model);
 
                 $currentEl.append(this.templateNewRow({
-                    quotation  : model.toJSON(),
-                    startNumber: currentNumber,
-                    dateToLocal: common.utcDateToLocaleDate
+                    quotation       : model.toJSON(),
+                    startNumber     : currentNumber,
+                    dateToLocal     : common.utcDateToLocaleDate,
+                    currencySplitter: helpers.currencySplitter
                 }));
             }
         });

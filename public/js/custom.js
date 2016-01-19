@@ -24,15 +24,18 @@ define([
         }
         if (success) {
             var url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
-            if ((url === "") || (url === "login")) url = 'easyErp';
+            if ((url === "") || (url === "login")) {
+                url = 'easyErp';
+            }
 
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
             getFiltersValues();
 
         } else {
-            if (App.requestedURL === null)
+            if (App.requestedURL === null) {
                 App.requestedURL = Backbone.history.fragment;
+            }
             Backbone.history.fragment = "";
             Backbone.history.navigate("login", {trigger: true});
         }
@@ -62,7 +65,9 @@ define([
             if (viewtype != "list" && (viewtype != "thumbnails")) {
                 url += "/" + id;
             }
-            if (collection) collection.setElement(id);
+            if (collection) {
+                collection.setElement(id);
+            }
         } else {
 
             if (viewtype == "form" && collection) {
@@ -241,8 +246,9 @@ define([
     var setCurrentCL = function (length) {
         var testLength = new RegExp(/^[0-9]{1}[0-9]*$/);
 
-        if (testLength.test(length) == false)
+        if (testLength.test(length) == false) {
             length = 0;
+        }
         App.currentContentLength = length;
 
         return length;
@@ -342,13 +348,13 @@ define([
         return filtersForContent;
     };
 
-    var getFiltersValues = function () {
+    var getFiltersValues = function (options) {
         var locationHash = window.location.hash;
         var filter = locationHash.split('/filter=')[1];//For startDate & endDate in EmployeeFinder for filters in dashVac
 
         filter = (filter) ? JSON.parse(decodeURIComponent(filter)) : null;
 
-        if (!App || !App.filtersValues) {
+        if (!App || !App.filtersValues || options) {
             dataService.getData('/filter/getFiltersValues', filter, function (response) {
                 if (response && !response.error) {
                     App.filtersValues = response;
@@ -432,6 +438,7 @@ define([
         savedFilters            : savedFilters,
         getFiltersForContentType: getFiltersForContentType,
         getFilterById           : getFilterById,
-        getWeeks                : getWeeks
+        getWeeks                : getWeeks,
+        getFiltersValues        : getFiltersValues
     };
 });

@@ -1,10 +1,10 @@
 ﻿define([
-    "text!templates/Workflows/list/ListItemTemplate.html"
-],
+        "text!templates/Workflows/list/ListItemTemplate.html"
+    ],
     function (ListItemTemplate) {
         var ListItemView = Backbone.View.extend({
-            tagName: "div",
-			className:"row",
+            tagName   : "div",
+            className : "row",
             initialize: function () {
                 //this.render();
             },
@@ -13,8 +13,8 @@
 
             render: function () {
                 this.$el.html("");
-				//console.log(this.template({ model: this.model }));
-                this.$el.html(this.template({ model: this.model }));
+                //console.log(this.template({ model: this.model }));
+                this.$el.html(this.template({model: this.model}));
                 return this;
             }
         });

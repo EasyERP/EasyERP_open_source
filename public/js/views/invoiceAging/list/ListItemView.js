@@ -151,7 +151,7 @@
                     startNumber     : this.startNumber
                 }));
 
-                async.parallel([calcTotalZero, calcTotalFifteen, calcTotalThirty, calcTotalSixty, calcTotalNinety, calcTotalMore], function(){
+                async.parallel([calcTotalZero, calcTotalFifteen, calcTotalThirty, calcTotalSixty, calcTotalNinety, calcTotalMore], function () {
 
                 });
             }

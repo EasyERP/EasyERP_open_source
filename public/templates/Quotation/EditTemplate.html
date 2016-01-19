@@ -11,9 +11,9 @@
                         <button class="confirmOrder">
                             <span>Confirm Order</span>
                         </button>
-                        <button class="cancelQuotation">
-                            <span>Cancel</span>
-                        </button>
+                        <!--<button class="cancelQuotation">-->
+                        <!--<span>Cancel</span>-->
+                        <!--</button>-->
                         <%} else {%>
                         <button class="setDraft">
                             <span>Set Draft</span>
@@ -33,21 +33,30 @@
                                     <dt><label for="supplierDd">
 
                                         <%if(model.supplier){%>
-                                          <%if (App.weTrack && this.forSales) {%>
-                                            Customer
-                                          <% } else { %>
-                                            Supplier
-                                          <% } %>
+                                        <%if (App.weTrack && this.forSales) {%>
+                                        Customer
+                                        <% } else { %>
+                                        Supplier
+                                        <% } %>
                                         <% } %>
                                     </label></dt>
                                     <dd>
-                                        <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.name%></a>
+                                        <%if(hidePrAndCust){%>
+                                        <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></span>
+                                        <%} else {%>
+                                        <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.name.first + ' ' + model.supplier.name.last%></a>
+                                        <% } %>
                                     </dd>
 
                                     <%if (App.weTrack && this.forSales) {%>
                                     <dt><label for="projectDd">Project</label></dt>
                                     <dd>
+                                        <%if(hidePrAndCust){%>
+                                        <span id="projectDd" data-id="<%=model.project._id%>"><%=model.project.projectName%></span>
+                                        <%} else {%>
                                         <a id="projectDd" class="current-selected" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.projectName%></a>
+                                        <% } %>
+
                                     </dd>
                                     <% } %>
                                 </dl>
@@ -56,20 +65,25 @@
                                 <dl class="person-info">
                                     <dt><label for="orderDate">Order Date</label></dt>
                                     <dd>
-                                        <input class="extrainfo" type="text" name="orderDate" id="orderDate" placeholder="Order Date" value="<%=model.orderDate%>">
+                                        <input class="extrainfo" type="text" name="orderDate" id="orderDate"
+                                               placeholder="Order Date" value="<%=model.orderDate%>">
                                     </dd>
                                     <dt class="hidden"><label for="deliveryDd">Deliver To</label></dt>
                                     <dd class="hidden">
                                         <%if(model.deliverTo){%>
-                                            <a id="deliveryDd" class="current-selected" href="javascript:;" data-id="<%=model.deliverTo._id%>"><%=model.deliverTo.name%></a>
+                                        <a id="deliveryDd" class="current-selected" href="javascript:;"
+                                           data-id="<%=model.deliverTo._id%>"><%=model.deliverTo.name%></a>
                                         <%} else {%>
-                                            <a id="deliveryDd" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                        <a id="deliveryDd" class="current-selected" href="javascript:;" data-id="">Select</a>
                                         <%}%>
                                     </dd>
 
                                     <dt><label for="currencyDd">Currency</label></dt>
                                     <dd>
-                                        <a id="currencyDd" class="current-selected" data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>" href="javascript:;"><%= model.currency && model.currency.name ? model.currency.name : ''%></a>
+                                        <a id="currencyDd" class="current-selected"
+                                           data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
+                                           href="javascript:;"><%= model.currency && model.currency._id ?
+                                            model.currency._id.name : ''%></a>
                                     </dd>
                                 </dl>
                             </div>
@@ -110,23 +124,27 @@
                                     <div class="half-block left">
                                         <dl class="quotation-info">
                                             <dt><label for="expectedDate">Expected Date</label></dt>
-                                            <dd><input id="expectedDate" placeholder="" type="text" readonly value="<%=model.expectedDate%>"/>
+                                            <dd><input id="expectedDate" placeholder="" type="text" readonly
+                                                       value="<%=model.expectedDate%>"/>
                                             </dd>
                                             <dt><label for="destination">Destination</label></dt>
                                             <dd>
                                                 <%if(model.destination){%>
-                                                    <a id="destination" class="current-selected"
-                                                       href="javascript:;" data-id="<%=model.destination._id%>"><%=model.destination.name%></a>
+                                                <a id="destination" class="current-selected"
+                                                   href="javascript:;" data-id="<%=model.destination._id%>"><%=model.destination.name%></a>
                                                 <%} else {%>
-                                                    <a id="destination" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <a id="destination" class="current-selected" href="javascript:;"
+                                                   data-id="">Select</a>
                                                 <%}%>
                                             </dd>
                                             <dt><label for="incoterm">Incoterm</label></dt>
                                             <dd>
                                                 <%if(model.incoterm){%>
-                                                    <a id="incoterm" class="current-selected" href="javascript:;" data-id="<%= model.incoterm._id%>"><%=model.incoterm.name %></a>
+                                                <a id="incoterm" class="current-selected" href="javascript:;"
+                                                   data-id="<%= model.incoterm._id%>"><%=model.incoterm.name %></a>
                                                 <%} else {%>
-                                                    <a id="incoterm" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <a id="incoterm" class="current-selected" href="javascript:;"
+                                                   data-id="">Select</a>
                                                 <%}%>
                                             </dd>
                                         </dl>
@@ -136,9 +154,11 @@
                                             <dt><label for="invoicingControl">Invoicing Control</label></dt>
                                             <dd>
                                                 <%if(model.invoiceControl){%>
-                                                    <a id="invoicingControl" class="current-selected" href="javascript:;" data-id="<%= model.invoiceControl._id %>"><%=model.invoiceControl.name%></a>
+                                                <a id="invoicingControl" class="current-selected" href="javascript:;"
+                                                   data-id="<%= model.invoiceControl._id %>"><%=model.invoiceControl.name%></a>
                                                 <%} else {%>
-                                                    <a id="invoicingControl" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <a id="invoicingControl" class="current-selected" href="javascript:;"
+                                                   data-id="">Select</a>
                                                 <%}%>
                                             </dd>
                                             <!--<dt><label for="invoiceReceived">Invoice Received</label></dt>-->
@@ -146,10 +166,12 @@
                                             <dt><label for="paymentTerm">Payment Term</label></dt>
                                             <dd>
                                                 <%if(model.paymentTerm){%>
-                                                    <a id="paymentTerm" class="current-selected"
-                                                       href="javascript:;" data-id="<%= model.paymentTerm._id %>"><%= model.paymentTerm.name %></a>
+                                                <a id="paymentTerm" class="current-selected"
+                                                   href="javascript:;" data-id="<%= model.paymentTerm._id %>"><%=
+                                                    model.paymentTerm.name %></a>
                                                 <%} else {%>
-                                                    <a id="paymentTerm" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <a id="paymentTerm" class="current-selected" href="javascript:;"
+                                                   data-id="">Select</a>
                                                 <%}%>
                                             </dd>
                                             <dt><label for="fiscalPosition">Fiscal Position</label></dt>

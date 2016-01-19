@@ -34,9 +34,7 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-            events: {
-
-            },
+            events: {},
 
             render: function () {
                 var $currentEl;
@@ -55,7 +53,6 @@ define([
                     itemsNumber: this.collection.namberToShow
                 });
                 itemView.bind('incomingStages', this.pushStages, this);
-
 
                 $currentEl.append(itemView.render());//added two parameters page and items number
 

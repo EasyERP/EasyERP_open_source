@@ -11,9 +11,10 @@ define([
     'collections/Quotation/filterCollection',
     'models/QuotationModel',
     'dataService',
-    'common'
+    'common',
+    'helpers'
 
-], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
+], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common, helpers) {
     var orderView = listView.extend({
 
         el                      : '#orders',
@@ -66,7 +67,10 @@ define([
                     new editView({model: model, redirect: true, projectManager: self.projectManager});
                 },
                 error  : function () {
-                    alert('Please refresh browser');
+                    App.render({
+                        type: 'error',
+                        message: 'Please refresh browser'
+                    });
                 }
             });
         },
@@ -89,14 +93,21 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true, projectManager: self.projectManager, onlyView: onlyView});
+                    new editView({
+                        model         : model,
+                        redirect      : true,
+                        projectManager: self.projectManager,
+                        onlyView      : onlyView
+                    });
                 },
                 error  : function () {
-                    alert('Please refresh browser');
+                    App.render({
+                        type: 'error',
+                        message: 'Please refresh browser'
+                    });
                 }
             });
         },
-
 
         showPage: function (event) {
 
@@ -223,7 +234,8 @@ define([
                 $currentEl.find('#orderTable').html(this.templateList({
                     orderCollection: this.collection.toJSON(),
                     startNumber    : 0,
-                    dateToLocal    : common.utcDateToLocaleDate
+                    dateToLocal    : common.utcDateToLocaleDate,
+                    currencySplitter: helpers.currencySplitter
                 }));
             }
 
@@ -234,7 +246,6 @@ define([
                 pagenation.show();
             }
         },
-
 
         goSort: function (e) {
             var target$;
@@ -360,7 +371,10 @@ define([
                         },
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                             that.listLength--;
                             count--;
@@ -433,9 +447,10 @@ define([
             $currentEl.prepend(this.templateHeader);
 
             $currentEl.find('#orderTable').html(this.templateList({
-                orderCollection: this.collection.toJSON(),
-                startNumber    : 0,
-                dateToLocal    : common.utcDateToLocaleDate
+                orderCollection : this.collection.toJSON(),
+                startNumber     : 0,
+                dateToLocal     : common.utcDateToLocaleDate,
+                currencySplitter: helpers.currencySplitter
             }));
 
             //this.renderPagination($currentEl, this);
@@ -459,7 +474,6 @@ define([
             }, function (stages) {
                 self.stages = stages;
             });
-
 
         }
     });

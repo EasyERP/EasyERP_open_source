@@ -3,14 +3,14 @@
         <input type="text" class="selectSerch">
     </li>
     <% collection.forEach(function(item){ %>
-        <li id="<%= item._id %>">"><%= item.name %></li>
+    <li id="<%= item._id %>">"><%= item.name %></li>
     <% }) %>
     <% if (dataLength > elementVisible){%>
-        <li class="miniStylePagination">
-            <a class="prev<%=currentPage==1?' disabled':''%>" href="javascript:;">&lt;Prev</a>
-            <span class="counter"><%=(start+1)%>-<%=end%> of <%=dataLength%></span>
-            <a class="next<%=(currentPage==allPages?' disabled':'')%>" href="javascript:;">Next&gt;</a>
-        </li>
+    <li class="miniStylePagination">
+        <a class="prev<%=currentPage==1?' disabled':''%>" href="javascript:;">&lt;Prev</a>
+        <span class="counter"><%=(start+1)%>-<%=end%> of <%=dataLength%></span>
+        <a class="next<%=(currentPage==allPages?' disabled':'')%>" href="javascript:;">Next&gt;</a>
+    </li>
     <%}%>
     <li>&nbsp;</li>
     <li class="createNeewElement">

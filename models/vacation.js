@@ -7,21 +7,13 @@ module.exports = (function () {
 
     var vacationSchema = new mongoose.Schema({
         ID: Number,
-        employee: {
-            _id: {type: ObjectId, ref: 'Employees', default: null},
-            name: String
-        },
-        department: {
-            _id: {type: ObjectId, ref: 'Department', default: null
-            },
-            name: String
-        },
-        vacations: {},
+        employee: {type: ObjectId, ref: 'Employees', default: null},
+        department: {type: ObjectId, ref: 'Department', default: null},
+        vacations: Object,
         month: Number,
         year: Number,
         vacArray: Array,
         monthTotal: Number
-
     }, {collection: 'Vacation'});
 
     vacationSchema.set('toJSON', {virtuals: true});

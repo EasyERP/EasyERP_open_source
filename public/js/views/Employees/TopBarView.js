@@ -9,21 +9,21 @@ define([
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Employees",
-            actionType: null, //Content, Edit, Create
-            template: _.template(ContentTopBarTemplate),
-            
-            events:{
-            	"click a.changeContentView": 'changeContentViewType',
-            	"click ul.changeContentIndex a": 'changeItemIndex',
-            	"click #top-bar-deleteBtn": "deleteEvent",
-            	"click #top-bar-discardBtn": "discardEvent",
-                "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-importBtn": "importEvent",
+            actionType : null, //Content, Edit, Create
+            template   : _.template(ContentTopBarTemplate),
+
+            events: {
+                "click a.changeContentView"     : 'changeContentViewType',
+                "click ul.changeContentIndex a" : 'changeItemIndex',
+                "click #top-bar-deleteBtn"      : "deleteEvent",
+                "click #top-bar-discardBtn"     : "discardEvent",
+                "click #top-bar-editBtn"        : "editEvent",
+                "click #top-bar-createBtn"      : "createEvent",
+                "click #top-bar-importBtn"      : "importEvent",
                 "click #top-bar-exportBtn"      : "export",
                 "click #top-bar-exportToCsvBtn" : "exportToCsv",
                 "click #top-bar-exportToXlsxBtn": "exportToXlsx",
-                "change .inputAttach": "importFiles"
+                "change .inputAttach"           : "importFiles"
             },
 
             changeContentViewType: function (e) {

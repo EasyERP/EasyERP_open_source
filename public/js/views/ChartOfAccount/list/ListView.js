@@ -72,7 +72,10 @@ define([
                                 },
                                 error  : function (model, res) {
                                     if (res.status === 403 && index === 0) {
-                                        alert("You do not have permission to perform this action");
+                                        App.render({
+                                            type: 'error',
+                                            message: "You do not have permission to perform this action"
+                                        });
                                     }
                                     that.listLength--;
                                     localCounter++;
@@ -196,7 +199,7 @@ define([
                 var checkLength;
                 var newRows = this.$listTable.find('#false');
 
-                if (newRows.length){
+                if (newRows.length) {
                     return false;
                 }
 
@@ -318,10 +321,10 @@ define([
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                    if (editedElementContent === 'code'){
+                    if (editedElementContent === 'code') {
                         editedElementValue = parseInt(editedElementValue);
 
-                        if (isNaN(editedElementValue)){
+                        if (isNaN(editedElementValue)) {
                             editedCol.addClass('errorContent');
                             editedElementValue = '';
                         } else {
@@ -458,8 +461,11 @@ define([
                 this.resetCollection(modelObject);
             },
 
-            errorFunction: function(){
-                alert("ERROR");
+            errorFunction: function () {
+                App.render({
+                    type: 'error',
+                    message: "Some error"
+                });
             },
 
             render: function () {

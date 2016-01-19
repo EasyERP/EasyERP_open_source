@@ -10,6 +10,7 @@ var Jobs = function (models, event) {
     var jobsInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var ProjectSchema = mongoose.Schemas['Project'];
     var PaymentSchema = mongoose.Schemas['Payment'];
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var access = require("../Modules/additions/access.js")(models);
     var objectId = mongoose.Types.ObjectId;
@@ -41,10 +42,14 @@ var Jobs = function (models, event) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                case 'paymentsCount':
+                    filtrElement[key] = {$in: condition.toNumber()};
+                    resArray.push(filtrElement);
+                    break;
             }
+        }
 
             return resArray;
-        }
     };
 
     this.create = function (req, res, next) {
@@ -54,15 +59,11 @@ var Jobs = function (models, event) {
         var jobId;
         var projectId;
 
-        data.workflow = {
-            _id: objectId("56337c705d49d8d6537832eb"),
-            name: "In Progress"
-        };
+        data.workflow = CONSTANTS.JOBSINPROGRESS;
         data.type = "Not Quoted";
         data.wTracks = [];
 
-        data.project._id = objectId(data.project._id);
-        data.project.projectManager._id = objectId(data.project.projectManager._id);
+        data.project = objectId(data.project);
 
         newModel = new JobsModel(data);
 
@@ -72,7 +73,7 @@ var Jobs = function (models, event) {
             }
 
             jobId = model._id;
-            projectId = model.project._id;
+            projectId = model.project;
 
             if (projectId) {
                 event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
@@ -91,13 +92,15 @@ var Jobs = function (models, event) {
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
         var queryObject = {};
+        var queryObjectStage2 = {};
 
         var data = req.query;
+        var forDashboard = data.forDashboard;
         var sort = {"budget.budgetTotal.costSum": -1};
 
         var filter = data ? data.filter : {};
 
-        if(data.sort){
+        if (data.sort) {
             sort = {};
 
             for (var sortKey in data.sort) {
@@ -111,7 +114,6 @@ var Jobs = function (models, event) {
             filter['project']['value'] = objectId(data.project);
         }
 
-
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 queryObject['$or'] = caseFilter(filter);
@@ -120,21 +122,73 @@ var Jobs = function (models, event) {
             }
         }
 
+        if (forDashboard) { //add for jobsDash need refactor
+            queryObjectStage2['$or'] = [];
+            queryObjectStage2['$or'].push({type: 'Not Quoted'});
+            queryObjectStage2['$or'].push({"invoice._type": 'wTrackInvoice'});
+            queryObjectStage2['$or'].push({quotation: {$exists: true}});
+        }
+
         JobsModel
             .aggregate([{
-                $match: queryObject
+                $lookup: {
+                    from                   : "Project",
+                    localField             : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from                   : "Invoice",
+                    localField             : "invoice",
+                    foreignField: "_id", as: "invoice"
+                }
+            }, {
+                $lookup: {
+                    from                   : "workflows",
+                    localField             : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from                   : "Quotation",
+                    localField             : "quotation",
+                    foreignField: "_id", as: "quotation"
+                }
             }, {
                 $project: {
-                    order: {
+                    name     : 1,
+                    workflow : {$arrayElemAt: ["$workflow", 0]},
+                    type     : 1,
+                    wTracks  : 1,
+                    project  : {$arrayElemAt: ["$project", 0]},
+                    budget   : 1,
+                    quotation: {$arrayElemAt: ["$quotation", 0]},
+                    invoice  : {$arrayElemAt: ["$invoice", 0]}
+                }
+            }, {
+                $lookup: {
+                    from                       : "Payment",
+                    localField                 : "invoice._id",
+                    foreignField: "invoice", as: "payments"
+                }
+            }, {
+                $lookup: {
+                    from                   : "Employees",
+                    localField             : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
+                $project: {
+                    order         : {
                         $cond: {
-                            if: {
+                            if  : {
                                 $eq: ['$type', 'Not Quoted']
                             },
                             then: -1,
                             else: {
                                 $cond: {
-                                    if: {
-                                        $eq : ['$type', 'Quoted']
+                                    if  : {
+                                        $eq: ['$type', 'Quoted']
                                     },
                                     then: 0,
                                     else: 1
@@ -142,158 +196,56 @@ var Jobs = function (models, event) {
                             }
                         }
                     },
-                    name: 1,
-                    workflow: 1,
-                    type: 1,
-                    wTracks  : 1,
-                    project  : 1,
-                    budget   : 1,
-                    quotation: 1,
-                    invoice  : 1,
-                    payments: 1
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    payment       : {
+                        paid : {$sum: '$payments.paidAmount'},
+                        count: {$size: '$payments'}
+                    }
                 }
+            }, {
+                $project: {
+                    order         : 1,
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    payment       : 1,
+                    projectmanager: 1
+                }
+            }, {
+                $match: queryObject
+            }, {
+                $match: queryObjectStage2
             }, {
                 $sort: sort
             }], function (err, jobs) {
-                //var parallelTasks = [/*projectPopulate,*/ invoicePopulate/*, quotationPopulate*/];
-
-                    Payment.populate(jobs, {
-                        path: 'payments',
-                        select: '_id paidAmount',
-                        opts: {
-                            lean: true
-                        }
-                    }, function (err, payments) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        async.map(jobs, function(job, cb){
-                            var payments = job.payments;
-                            var amount = 0;
-
-                            payments.forEach(function(payment){
-                                amount += payment.paidAmount;
-                            });
-
-                            job.payment = {};
-                            job.payment.amount = amount;
-
-                            cb(null, job);
-                        }, function(err, jobs){
-                            if(err){
-                                return next(err);
-                            }
-
-                            res.status(200).send(jobs)
-                        });
-                    });
-
-
-
-                function projectPopulate(parallelCb) {
-                    Project.populate(jobs, {
-                        path: 'project',
-                        opts: {
-                            lean: true
-                        }
-                    }, parallelCb);
-                };
-
-                function invoicePopulate(parallelCb) {
-                    var invoiceIds;
-
-                    invoiceIds = _.pluck(jobs, 'invoice._id');
-                    invoiceIds = _.compact(invoiceIds);
-
-                    Invoice.populate(jobs, {
-                        path: 'invoice._id',
-                        opts: {
-                            lean: true
-                        }
-                    }, function (err, invoices) {
-                        if (err) {
-                            return parallelCb(err);
-                        }
-
-                        Payment.aggregate([{
-                            $match: {
-                                'invoice._id': {$in: invoiceIds}
-                            }
-                        }, {
-                            $group:{
-                                _id: '$invoice._id',
-                                paid: {$sum: '$paidAmount'},
-                                count: {$sum: 1}
-                            }
-                        }], function (err, payments) {
-                            if(err){
-                                return parallelCb(err);
-                            }
-
-                            async.map(jobs, function(job, cb){
-                                var invoiceId = job.invoice && job.invoice._id ? job.invoice._id._id: null;
-                                var payment = _.filter(payments, '_id', invoiceId);
-
-                                payment = payment[0];
-
-                                job.payment = payment;
-
-                                cb(null, job);
-                            }, function(err, jobs){
-                                if(err){
-                                    return parallelCb(err);
-                                }
-
-                                parallelCb();
-                            });
-                        });
-                    });
-                };
-
-                function quotationPopulate(parallelCb) {
-                    Quotation.populate(jobs, {
-                        path: 'quotation._id',
-                        opts: {
-                            lean: true
-                        }
-                    }, parallelCb);
-                };
-
                 if (err) {
-                    return next(err);
+                    next(err);
                 }
-
-                //async.parallel(parallelTasks, function (err) {
-                //    if (err) {
-                //        return next(err);
-                //    }
-                //
-                //    res.status(200).send(jobs)
-                //});
+                res.status(200).send(jobs);
             });
-        /*.find(queryObject)
-         .sort(sort)
-         .populate('project')
-         .populate('invoice._id')
-         .populate('quotation._id')
-         .exec(function (err, result) {
-         if (err) {
-         return next(err);
-         }
-
-         res.status(200).send(result)
-         })*/
     };
 
     this.getForDD = function (req, res, next) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        query.find({type: "Not Quoted", 'project._id': objectId(pId)}, {
-            name: 1,
-            _id: 1,
-            "budget.budgetTotal.revenueSum": 1
+        query.find({type: "Not Quoted", 'project': objectId(pId)}, {
+            name    : 1,
+            _id     : 1,
+            "budget": 1
         }, function (err, jobs) {
             if (err) {
                 return next(err);
@@ -319,9 +271,9 @@ var Jobs = function (models, event) {
             }
 
             jobId = result.get('_id');
-            projectId = result.get('project._id');
+            projectId = result.get('project');
 
-            wTrack.find({"jobs._id": jobId}, function (err, result) {
+            wTrack.find({"jobs": jobId}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
@@ -338,7 +290,6 @@ var Jobs = function (models, event) {
                         event.emit('updateProjectDetails', {req: req, _id: projectId});
                     }
                 });
-
 
             });
 
@@ -360,10 +311,9 @@ var Jobs = function (models, event) {
 
         if (id) {
             if (data.workflowId) {
-                query = {workflow: {_id: data.workflowId, name: data.workflowName}};
+                query = {workflow: data.workflowId};
             } else if (data.name) {
                 query = {name: data.name};
-                updatewTracks = true;
             } else if (data.type) {
                 query = {type: data.type};
             }
@@ -371,24 +321,8 @@ var Jobs = function (models, event) {
             delete data._id;
 
             JobsModel.findByIdAndUpdate(id, query, {new: true}, function (err, result) {
-                var jobId;
-                var jobName;
-
                 if (err) {
                     return next(err);
-                }
-
-                jobId = result.get('_id');
-                jobName = result.get('name');
-
-                if (updatewTracks) {
-                    wTrack.update({"jobs._id": jobId}, {$set: {"jobs.name": jobName}}, {multi: true}, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        console.log('updated wTracks');
-                    })
                 }
 
                 res.status(200).send(result)
@@ -404,7 +338,7 @@ var Jobs = function (models, event) {
                         return next(err);
                     }
 
-                    project = result.get('project._id');
+                    project = result.get('project');
 
                     cb();
                 });

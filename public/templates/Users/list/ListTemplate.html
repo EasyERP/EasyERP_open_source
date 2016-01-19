@@ -1,10 +1,10 @@
-    <% usersCollection.forEach(function(user, index){ %>
-        <tr data-index="<%= index %>" data-id="<%= user._id%>">
-            <td class = "notForm centerCell"><input type="checkbox" value="<%=user._id%>" class="checkbox" /></td>
-            <td class="centerCell"><%=startNumber + index + 1 %></td>
-            <td><%=user.login%></td>
-            <td><%=user.email%></td>
-            <td><%=user.profile.profileName%></td>
-            <td><%=(user.lastAccess) ? user.lastAccess : ''%></td>
-        </tr>
-    <% }) %>
+<% usersCollection.forEach(function(user, index){ %>
+<tr data-index="<%= index %>" data-id="<%= user._id%>">
+    <td class="notForm centerCell"><input type="checkbox" value="<%=user._id%>" class="checkbox"/></td>
+    <td class="centerCell"><%=startNumber + index + 1 %></td>
+    <td><%=user.login%></td>
+    <td><%=user.email%></td>
+    <td><%=user.profile.profileName%></td>
+    <td><%=(user.lastAccess) ? user.lastAccess : ''%></td>
+</tr>
+<% }) %>

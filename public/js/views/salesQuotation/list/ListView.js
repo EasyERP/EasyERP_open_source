@@ -12,17 +12,18 @@ define([
         'views/Filter/FilterView',
         'common',
         'dataService',
-        'constants'
+        'constants',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
         var QuotationListView = listViewBase.extend({
             createView              : createView,
-            listTemplate: listTemplate,
-            listItemView: listItemView,
-            contentCollection: contentCollection,
-            contentType      : CONSTANTS.SALESQUOTATION, //needs in view.prototype.changeLocationHash
-            viewType         : 'list',//needs in view.prototype.changeLocationHash
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            contentType             : CONSTANTS.SALESQUOTATION, //needs in view.prototype.changeLocationHash
+            viewType                : 'list',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/quotation/totalCollectionLength',
             filterView              : filterView,
 
@@ -100,7 +101,7 @@ define([
                     headers : {
                         mid: 55
                     },
-                    patch  : true,
+                    patch   : true,
                     validate: false,
                     waite   : true,
                     success : function () {
@@ -147,22 +148,27 @@ define([
                     $currentEl.append(templ);
                     $currentEl.append(new listItemView({
                         collection : this.collection,
-                        page      : this.page,
+                        page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());//added two parameters page and items number
 
-                    $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 5}).render());
+                    $currentEl.append(new listTotalView({
+                        element : $currentEl.find("#listTable"),
+                        cellSpan: 5
+                    }).render());
                 } else {
                     $currentEl.append(_.template(listTemplate));
                     $currentEl.append(new listItemView({
                         collection : this.collection,
-                        page      : this.page,
+                        page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());//added two parameters page and items number
 
-                    $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 5}).render());
+                    $currentEl.append(new listTotalView({
+                        element : $currentEl.find("#listTable"),
+                        cellSpan: 5
+                    }).render());
                 }
-
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
@@ -172,7 +178,7 @@ define([
 
                 dataService.getData("/workflow/fetch", {
                     wId         : 'Sales Order',
-                    source: 'purchase',
+                    source      : 'purchase',
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;
@@ -193,7 +199,10 @@ define([
                         new editView({model: model});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
                     }
                 });
             }

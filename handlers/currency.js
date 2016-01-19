@@ -14,7 +14,7 @@ var Currency = function (models) {
                 if (err) {
                     return next(err);
                 }
-                    res.status(200).send({data: result});
+                res.status(200).send({data: result});
             });
         } else {
             res.status(401).send();

@@ -169,10 +169,9 @@
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
@@ -217,12 +216,12 @@
                 //};
             },
 
-            showMore       : function (event) {
+            showMore        : function (event) {
                 //event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
             //modified for filter Vasya
-            showMoreContent: function (newModels) {
+            showMoreContent : function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');

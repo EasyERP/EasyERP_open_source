@@ -1,14 +1,14 @@
 ﻿define([
-    'models/TasksModel'
-],
-function (TaskModel) {
+        'models/TasksModel'
+    ],
+    function (TaskModel) {
         var TasksCollection = Backbone.Collection.extend({
-            model: TaskModel,
-            url: "/Tasks/",
-            page: null,
+            model       : TaskModel,
+            url         : "/Tasks/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            initialize: function (options) {
+            viewType    : null,
+            initialize  : function (options) {
                 this.startTime = new Date();
                 this.parrentContentId = (options) ? options.parrentContentId : null;
                 if (options && options.count) {
@@ -21,17 +21,19 @@ function (TaskModel) {
                     this.url += options.viewType;
                 }
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
-            showMore: function (options) {
+            showMore    : function (options) {
                 var that = this;
                 var filterObject = {};
                 if (options) {
@@ -49,21 +51,23 @@ function (TaskModel) {
                 filterObject['count'] = this.namberToShow;
                 filterObject['filter'] = (options) ? options.filter : {};
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
-                        alert('Some Error');
+                    error  : function () {
+                        App.render({
+                            type   : 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             },
-            parse: true,
-            parse: function (response) {
+            parse       : function (response) {
                 return response.data;
             }
         });
         return TasksCollection;
-});
+    });

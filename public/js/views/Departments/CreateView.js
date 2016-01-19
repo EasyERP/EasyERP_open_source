@@ -1,57 +1,47 @@
 define([
-    "text!templates/Departments/CreateTemplate.html",
-    "collections/Departments/DepartmentsCollection",
-    "collections/Customers/AccountsDdCollection",
-    "models/DepartmentsModel",
-    "common",
-    "custom",
-	"populate"
-],
-    function (CreateTemplate, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate) {
+        "text!templates/Departments/CreateTemplate.html",
+        'views/selectView/selectView',
+        "collections/Departments/DepartmentsCollection",
+        "collections/Customers/AccountsDdCollection",
+        "models/DepartmentsModel",
+        "common",
+        "custom",
+        "populate"
+    ],
+    function (CreateTemplate, selectView, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Departments",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
-            initialize: function (options) {
+            initialize    : function (options) {
                 _.bindAll(this, "saveItem", "render");
                 this.departmentsCollection = new DepartmentsCollection();
                 this.model = new DepartmentsModel();
                 this.responseObj = {};
                 this.render();
             },
-            events: {
-                'click .dialog-tabs a': 'changeTab',
-                'click #sourceUsers li': 'addUsers',
-                'click #targetUsers li': 'removeUsers',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .prevUserList": "prevUserList",
-                "click .nextUserList": "nextUserList",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-               // 'keydown': 'keydownHandler'
+            events        : {
+                'click .dialog-tabs a'                                            : 'changeTab',
+                'click #sourceUsers li'                                           : 'addUsers',
+                'click #targetUsers li'                                           : 'removeUsers',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .prevUserList"                                             : "prevUserList",
+                "click .nextUserList"                                             : "nextUserList",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+                // 'keydown': 'keydownHandler'
             },
-            notHide: function (e) {
-                return false;
-            },
-            keydownHandler: function(e){
-                switch (e.which){
+
+            keydownHandler: function (e) {
+                switch (e.which) {
                     case 27:
                         this.hideDialog();
                         break;
                     default:
                         break;
                 }
-            },
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
             },
 
             updateAssigneesPagination: function (el) {
@@ -96,20 +86,20 @@ define([
                 $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) - 1);
                 this.updateAssigneesPagination($(e.target).closest(".left"));
             },
-            chooseUser: function (e) {
+            chooseUser  : function (e) {
                 $(e.target).toggleClass("choosen");
             },
-            changeTab: function (e) {
+            changeTab   : function (e) {
                 $(e.target).closest(".dialog-tabs").find("a.active").removeClass("active");
                 $(e.target).addClass("active");
                 var n = $(e.target).parents(".dialog-tabs").find("li").index($(e.target).parent());
                 $(".dialog-tabs-items").find(".dialog-tabs-item.active").removeClass("active");
                 $(".dialog-tabs-items").find(".dialog-tabs-item").eq(n).addClass("active");
             },
-            close: function () {
+            close       : function () {
                 this._modelBinder.unbind();
             },
-            addUsers: function (e) {
+            addUsers    : function (e) {
                 e.preventDefault();
                 var div = $(e.target).parents(".left");
                 $('#targetUsers').append($(e.target));
@@ -117,7 +107,7 @@ define([
                 div = $(e.target).parents(".left");
                 this.updateAssigneesPagination(div);
             },
-            removeUsers: function (e) {
+            removeUsers : function (e) {
                 e.preventDefault();
                 var div = $(e.target).parents(".left");
                 $('#sourceUsers').append($(e.target));
@@ -126,7 +116,7 @@ define([
                 this.updateAssigneesPagination(div);
             },
 
-            saveItem: function () {
+            saveItem     : function () {
                 var self = this;
                 var mid = 39;
                 var departmentName = $.trim($("#departmentName").val());
@@ -141,34 +131,56 @@ define([
                     return $(elm).attr('id');
                 });
                 this.model.save({
-                    departmentName: departmentName,
-                    parentDepartment: parentDepartment,
-                    departmentManager: departmentManager,
-                    nestingLevel: ++nestingLevel,
-                    users: users,
-                    sequence: res.length
-                },
-                {
-                    headers: {
-                        mid: mid
+                        departmentName   : departmentName,
+                        parentDepartment : parentDepartment,
+                        departmentManager: departmentManager,
+                        nestingLevel     : ++nestingLevel,
+                        users            : users,
+                        sequence         : res.length
                     },
-                    wait: true,
-                    success: function (model) {
-                        Backbone.history.navigate("easyErp/Departments", { trigger: true });
-                    },
-                    error: function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
-                });
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function (model) {
+                            Backbone.history.navigate("easyErp/Departments", {trigger: true});
+                        },
+                        error  : function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
             },
-            hideDialog: function () {
+            hideDialog   : function () {
                 $(".create-dialog").remove();
             },
             hideNewSelect: function (e) {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
+
             showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
 
@@ -181,23 +193,23 @@ define([
                 var formString = this.template({});
 
                 this.$el = $(formString).dialog({
-                    autoOpen:true,
-                    resizable:true,
-					dialogClass:"create-dialog",
-                    width: "950px",
-                    buttons: [
+                    autoOpen   : true,
+                    resizable  : true,
+                    dialogClass: "create-dialog",
+                    width      : "950px",
+                    buttons    : [
                         {
-                            text: "Create",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
-						{
-						    text: "Cancel",
-						    click: function () {
+                        {
+                            text : "Cancel",
+                            click: function () {
                                 self.hideDialog();
                             }
-						}]
+                        }]
 
                 });
                 populate.get2name("#departmentManager", "/getPersonsForDd", {}, this, true, true);

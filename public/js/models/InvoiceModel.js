@@ -5,17 +5,21 @@
 define(['Validation', 'common'], function (Validation, common) {
     var InvoiceModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize: function () {
+        initialize : function () {
             this.on('invalid', function (model, errors) {
+                var msg;
+
                 if (errors.length > 0) {
-                    if (errors.length > 0) {
-                        var msg = errors.join('\n');
-                        alert(msg);
-                    }
+                    msg = errors.join('\n');
+
+                    App.render({
+                        type: 'error',
+                        message: msg
+                    });
                 }
             });
         },
-        parse: function (response) {
+        parse      : function (response) {
             if (response) {
                 var payments = response.payments;
                 var balance;
@@ -23,19 +27,19 @@ define(['Validation', 'common'], function (Validation, common) {
                 var total;
                 var unTaxed;
 
-                if(response.paymentInfo){
+                if (response.paymentInfo) {
                     balance = response.paymentInfo.balance || 0;
                     total = response.paymentInfo.total || 0;
                     unTaxed = response.paymentInfo.unTaxed || 0;
                     paid = /*response.paymentInfo.unTaxed || 0;*/total - balance
                 }
 
-                if(isNaN(paid)){
+                if (isNaN(paid)) {
                     paid = 0;
                 }
 
-                balance = (balance/ 100).toFixed(2);
-                paid = (paid/100).toFixed(2);
+                balance = (balance / 100).toFixed(2);
+                paid = (paid / 100).toFixed(2);
                 total = (total / 100).toFixed(2);
                 unTaxed = (unTaxed / 100).toFixed(2);
 
@@ -54,7 +58,7 @@ define(['Validation', 'common'], function (Validation, common) {
                 }
                 if (payments && payments.length) {
                     payments = _.map(payments, function (payment) {
-                        if(payment.date){
+                        if (payment.date) {
                             payment.date = common.utcDateToLocaleDate(payment.date);
                         }
                         return payment;
@@ -64,7 +68,7 @@ define(['Validation', 'common'], function (Validation, common) {
                 return response;
             }
         },
-        validate: function (attrs) {
+        validate   : function (attrs) {
             var errors = [];
             //Validation.checkGroupsNameField(errors, true, attrs.dateBirth, "Date of Birth");
             //Validation.checkNameField(errors, true, attrs.name.first, "First name");
@@ -82,37 +86,38 @@ define(['Validation', 'common'], function (Validation, common) {
             //Validation.checkCountryCityStateField(errors, false, attrs.homeAddress.state, "State");
             //Validation.checkZipField(errors, false, attrs.homeAddress.zip, "Zip");
             //Validation.checkStreetField(errors, false, attrs.homeAddress.street, "Street");
-            if (errors.length > 0)
+            if (errors.length > 0) {
                 return errors;
+            }
         },
-        defaults: {
-            supplier: {
-                id: '',
+        defaults   : {
+            supplier   : {
+                id  : '',
                 name: ''
             },
             salesPerson: {
-                id: '',
+                id  : '',
                 name: ''
             },
 
-            fiscalPosition: '',
-            sourceDocument: '',
+            fiscalPosition       : '',
+            sourceDocument       : '',
             supplierInvoiceNumber: '',
-            paymentReference: '',
+            paymentReference     : '',
 
             invoiceDate: '',
-            dueDate: '',
-            account: '',
-            journal: '',
-            products: [],
+            dueDate    : '',
+            account    : '',
+            journal    : '',
+            products   : [],
             paymentInfo: {
-                total: 0,
+                total  : 0,
                 unTaxed: 0,
                 balance: 0
             }
 
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/Invoice";
         }
     });

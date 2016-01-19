@@ -1,75 +1,76 @@
 <div class="form-holder task-create-holder">
-  <form method="post" action="" id="createTaskForm" class="form notDialog">
-    <fieldset>
-      <div class="clearfix"></div>
-	  <input type="text" name="summary" class="" id="summaryTask" required maxlength="32" placeholder="Summary"/>
-      <div class="half-block left withPaddingLeftProject">
-        <div class="inner">
-          <div class="textarea-wrapper">
-            <textarea type="text" class="taskDescriptionCreate" name="description" placeholder="Add a Description..." id="description"  maxlength="500" required />
-          </div>
-        </div>
-      </div>
-      <div class="half-block left withPaddingRightProject">
-        <div class="inner">
-
-          <dl class="task-info">
-
-            <dt><label>Project</label></dt>
-            <dd>
-			  <a id="projectDd" class="current-selected" href="javascript:;"></a>
-            </dd>
-            <!--<dt><label for="workflowNamesDd">Workflow</label></dt>
-                <dd>
-				  <a id="workflowNamesDd" class="current-selected" href="javascript:;"></a>
-                </dd>-->
-
-            <dt><label for="workflowsDd">Stage</label></dt><dd id="selectWorkflow">
-			  <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
-            </dd>
-            <dt><label for="type">Type </label></dt>
-            <dd>
-			  <a id="type" data-id="Task" class="current-selected" href="javascript:;">Task</a>
-			  <ul class="newSelectList" style="display: none">
-                <li class="Task" id="Task">Task</li>
-                <li class="Bug" id="Bug">Bug</li>
-                <li class="Feature" id="Feature">Feature</li>
-			  </ul>
-            </dd>
-
-            <dt><label>Assigned to</label></dt>
-            <dd>
-			  <a id="assignedToDd" class="current-selected" href="javascript:;"></a>
-            </dd>
-
-
-            <!--<dt><label for="deadline">Deadline </label></dt>
-                <dd><input class="blueback" type="text" name="deadline" id="deadline" readonly /></dd>-->
-
-            <dt><label for="priorityDd">Priority </label></dt>
-            <dd>
-			  <a id="priorityDd" class="current-selected" href="javascript:;"></a>
-            </dd>
-
-
-            <dt><label for="StartDate">Start Date </label></dt>
-            <dd><input class="extrainfo" type="text" name="StartDate" id="StartDate" value="" readonly placeholder="Start Date"/></dd>
-
-            <dt><label for="logged">Logged </label></dt>
-            <dd>
-              <input type="text"  maxlength="4"  name="loged" id="logged" class="onlyNumber" placeholder="Logged"/>
-            </dd>
-            <dt><label for="estimated">Estimated</label></dt>
-            <dd><input type="text" maxlength="4" name="estimated" id="estimated" class="onlyNumber" placeholder="Estimated"/></dd>
+    <form method="post" action="" id="createTaskForm" class="form notDialog">
+        <fieldset>
             <div class="clearfix"></div>
-          </dl>
+            <input type="text" name="summary" class="" id="summaryTask" required maxlength="32" placeholder="Summary"/>
 
-        </div>
-      </div>
-      <div class="clearfix"></div>
-	  <div class="attach-container"></div>
+            <div class="half-block left withPaddingLeftProject">
+                <div class="inner">
+                    <div class="textarea-wrapper">
+                        <textarea type="text" class="taskDescriptionCreate" name="description"
+                                  placeholder="Add a Description..." id="description" maxlength="500" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="half-block left withPaddingRightProject">
+                <div class="inner">
 
-    </fieldset>
-  </form>
+                    <dl class="task-info">
+
+                        <dt><label>Project</label></dt>
+                        <dd>
+                            <a id="projectDd" class="current-selected" href="javascript:;"></a>
+                        </dd>
+                        <!--<dt><label for="workflowNamesDd">Workflow</label></dt>
+                            <dd>
+                              <a id="workflowNamesDd" class="current-selected" href="javascript:;"></a>
+                            </dd>-->
+
+                        <dt><label for="workflowsDd">Stage</label></dt>
+                        <dd id="selectWorkflow">
+                            <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
+                        </dd>
+                        <dt><label for="type">Type </label></dt>
+                        <dd>
+                            <a id="type" data-id="Task" class="current-selected" href="javascript:;">Task</a>
+                        </dd>
+
+                        <dt><label>Assigned to</label></dt>
+                        <dd>
+                            <a id="assignedToDd" class="current-selected" href="javascript:;"></a>
+                        </dd>
+
+
+                        <!--<dt><label for="deadline">Deadline </label></dt>
+                            <dd><input class="blueback" type="text" name="deadline" id="deadline" readonly /></dd>-->
+
+                        <dt><label for="priorityDd">Priority </label></dt>
+                        <dd>
+                            <a id="priorityDd" class="current-selected" href="javascript:;"></a>
+                        </dd>
+
+
+                        <dt><label for="StartDate">Start Date </label></dt>
+                        <dd><input class="extrainfo" type="text" name="StartDate" id="StartDate" value="" readonly
+                                   placeholder="Start Date"/></dd>
+
+                        <dt><label for="logged">Logged </label></dt>
+                        <dd>
+                            <input type="text" maxlength="4" name="loged" id="logged" class="onlyNumber"
+                                   placeholder="Logged"/>
+                        </dd>
+                        <dt><label for="estimated">Estimated</label></dt>
+                        <dd><input type="text" maxlength="4" name="estimated" id="estimated" class="onlyNumber"
+                                   placeholder="Estimated"/></dd>
+                        <div class="clearfix"></div>
+                    </dl>
+
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="attach-container"></div>
+
+        </fieldset>
+    </form>
 
 </div>

@@ -13,9 +13,9 @@
     function (CreateTemplate, InvoiceModel, common, populate, wTrackRows, AssigneesView, listHederInvoice, dataService, CONSTANTS, moment) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
-            contentType: "Invoice",
-            template: _.template(CreateTemplate),
+            el                    : "#content-holder",
+            contentType           : "Invoice",
+            template              : _.template(CreateTemplate),
             $linwoiceGenerateTable: null,
 
             initialize: function (options) {
@@ -37,11 +37,11 @@
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                "click td.editable": "editRow",
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "change .editing": "changeValue",
+                'keydown'                                          : 'keydownHandler',
+                "click td.editable"                                : "editRow",
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .current-selected"                          : "showNewSelect",
+                "change .editing"                                  : "changeValue",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
@@ -96,7 +96,6 @@
                 var editedElement;
                 var editedCol;
                 var editedElementValue;
-                var paymentInfo;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -113,7 +112,6 @@
                     }
                     this.wTrackId = wTrackId;
                 }
-
 
                 tempContainer = el.text();
                 width = el.width() - 6;
@@ -180,7 +178,7 @@
                 var projectName = project.text();
 
                 var payments = {
-                    total: total,
+                    total  : total,
                     unTaxed: /*unTaxed*/0,
                     balance: total
                 };
@@ -197,17 +195,16 @@
                             amount = targetEl.find('.amount').text();
 
                             products.push({
-                                product: productId,
+                                product    : productId,
                                 description: description,
-                                unitPrice: price,
-                                quantity: quantity,
-                                taxes: taxes,
-                                subTotal: amount
+                                unitPrice  : price,
+                                quantity   : quantity,
+                                taxes      : taxes,
+                                subTotal   : amount
                             });
                         }
                     }
                 }
-
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") === "targetUsers") {
@@ -221,56 +218,42 @@
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
-                    supplier: {
-                        _id: supplierId,
-                        name: supplierName
-                    },
-                    invoiceDate: invoiceDate,
-                    dueDate: dueDate,
-                    project: {
-                        _id: projectId,
-                        name: projectName
-                    },
-
-                    salesPerson: {
-                        _id: salesPersonId,
-                        name: salesPersonName
-                    },
+                    supplier    : supplierId,
+                    invoiceDate : invoiceDate,
+                    dueDate     : dueDate,
+                    project     : projectId,
+                    salesPerson : salesPersonId,
                     paymentTerms: paymentTermId,
-
-                    products: products,
-                    paymentInfo: payments,
-
-                    groups: {
+                    products    : products,
+                    paymentInfo : payments,
+                    groups      : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW,
-                    workflow: {
-                        _id: this.defaultWorkflow._id,
-                        name: this.defaultWorkflow.name,
-                        status: this.defaultWorkflow.status
-                    },
-                    name: name
-
+                    whoCanRW    : whoCanRW,
+                    workflow    : this.defaultWorkflow._id,
+                    name        : name
                 };
 
                 if (supplier) {
                     var model = new InvoiceModel();
                     model.save(data, {
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             self.hideDialog();
                             Backbone.history.navigate("easyErp/salesInvoice", {trigger: true});
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type: 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
 
             },
@@ -292,35 +275,32 @@
                 var dueDate = moment().add(15, 'days').toDate();
                 var formString = this.template(options);
                 var self = this;
-                var invoiceItemContainer;
                 var paymentContainer;
                 var invoiceContainer;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Create Invoice",
-                    width: '1200',
-                    //width: 'auto',
-                    position: {within: $("#wrapper")},
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create Invoice",
+                    width        : '1200',
+                    position     : {within: $("#wrapper")},
+                    buttons      : [
                         {
-                            id: "create-invoice-dialog",
-                            text: "Create",
+                            id   : "create-invoice-dialog",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         }]
-
                 });
 
                 notDiv = this.$el.find('.assignees-container');
@@ -329,7 +309,6 @@
                         model: this.currentModel
                     }).render().el
                 );
-
 
                 invoiceContainer = new wTrackRows(options);
 
@@ -340,8 +319,8 @@
 
                 populate.get("#paymentTerms", "/paymentTerm", {}, 'name', this, true);
                 populate.fetchWorkflow({
-                    wId: 'Sales Invoice',
-                    source: 'purchase',
+                    wId         : 'Sales Invoice',
+                    source      : 'purchase',
                     targetSource: 'invoice'
                 }, function (response) {
                     if (!response.error) {
@@ -350,17 +329,16 @@
                 });
 
                 this.$el.find('#invoiceDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 }).datepicker('setDate', now);
 
                 this.$el.find('#dueDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 }).datepicker('setDate', dueDate);
-
 
                 this.delegateEvents(this.events);
                 this.$linwoiceGenerateTable = this.$el.find('#linwoiceGenerateTable');

@@ -96,20 +96,23 @@ define([
                 var checkBoxes = $("input.checkbox:checked");
                 var values = [];
 
-                $.each(checkBoxes, function(el){
+                $.each(checkBoxes, function (el) {
                     values.push(el.val());
                 });
                 var permission = true;
 
-                values.forEach(function(val){
-                    if (val === CONSTANTS.PRODUCRSERVICE){
+                values.forEach(function (val) {
+                    if (val === CONSTANTS.PRODUCRSERVICE) {
                         permission = false;
                         return permission;
                     }
                 });
 
-                if(!permission){
-                    return alert("You do not have permission to delete this product");
+                if (!permission) {
+                    return App.render({
+                        type: 'error',
+                        message: "You do not have permission to perform this action"
+                    });
                 }
 
                 var answer = confirm("Really DELETE items ?!");

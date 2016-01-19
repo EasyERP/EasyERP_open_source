@@ -1,20 +1,29 @@
-    <% opportunitiesCollection.forEach(function(opportunity, index){ %>
-        <tr data-index="<%= index %>" data-id="<%=opportunity._id%>" class="stage-<%=(opportunity.workflow) ? opportunity.workflow.status.toLowerCase() : ''%>">
-            <td class="notForm centerCell"><input type="checkbox" value="<%=opportunity._id%>" class="checkbox" /></td>
-            <td class="centerCell"><%=startNumber + index + 1 %></td>
-            <td><%=opportunity.creationDate%></td>
-            <td><%=opportunity.name%></td>
-            <td><%=opportunity.expectedRevenue.value%></td>
-            <td><%=(opportunity.customer) ? opportunity.customer.name.first + ' ' + opportunity.customer.name.last : ''%></td>
-            <td><%=(opportunity.nextAction) ? opportunity.nextAction.date : ''%></td>
-            <td><%=(opportunity.nextAction) ? opportunity.nextAction.desc : ''%></td>
-            <td  id='<%=opportunity._id%>' data-sequence='<%=opportunity.sequence%>'>
-			  <a href="javascript:;" class="stageSelect" data-id="<%=(opportunity.workflow) ? opportunity.workflow._id : ''%>"><%=(opportunity.workflow) ? opportunity.workflow.name : 'Undefinded'%></a>
-			</td>
+<% opportunitiesCollection.forEach(function(opportunity, index){ %>
+<tr data-index="<%= index %>" data-id="<%=opportunity._id%>"
+    class="stage-<%=(opportunity.workflow) ? opportunity.workflow.status.toLowerCase() : ''%>">
+    <td class="notForm centerCell"><input type="checkbox" value="<%=opportunity._id%>" class="checkbox"/></td>
+    <td class="centerCell"><%=startNumber + index + 1 %></td>
+    <td><%=opportunity.creationDate%></td>
+    <td><%=opportunity.name%></td>
+    <td><%=opportunity.expectedRevenue.value%></td>
+    <td><%=(opportunity.customer) ? opportunity.customer.name.first + ' ' + opportunity.customer.name.last : ''%></td>
+    <td><%=(opportunity.nextAction) ? opportunity.nextAction.date : ''%></td>
+    <td><%=(opportunity.nextAction) ? opportunity.nextAction.desc : ''%></td>
+    <td id='<%=opportunity._id%>' data-sequence='<%=opportunity.sequence%>'>
+        <a href="javascript:;" class="stageSelect"
+           data-id="<%=(opportunity.workflow) ? opportunity.workflow._id : ''%>"><%=(opportunity.workflow) ?
+            opportunity.workflow.name : 'Undefinded'%></a>
+    </td>
 
-            <td><%=(opportunity.salesPerson && opportunity.salesPerson.name) ? opportunity.salesPerson.name.first + ' ' + opportunity.salesPerson.name.last : ''%></td>
-			<td><%=opportunity.createdBy.user?(opportunity.createdBy.date + ' (' + opportunity.createdBy.user.login + ')'):(opportunity.createdBy.date?opportunity.createdBy.date:'')%></td>
-			<td><%=(opportunity.editedBy&&opportunity.editedBy.date)?( opportunity.editedBy.date + ((opportunity.editedBy.user) ?(' (' + opportunity.editedBy.user.login + ')') : '')):''%></td>
-        </tr>
-    <% }) %>
+    <td><%=(opportunity.salesPerson && opportunity.salesPerson.name) ? opportunity.salesPerson.name.first + ' ' +
+        opportunity.salesPerson.name.last : ''%>
+    </td>
+    <td><%=opportunity.createdBy.user?(opportunity.createdBy.date + ' (' + opportunity.createdBy.user.login +
+        ')'):(opportunity.createdBy.date?opportunity.createdBy.date:'')%>
+    </td>
+    <td><%=(opportunity.editedBy&&opportunity.editedBy.date)?( opportunity.editedBy.date + ((opportunity.editedBy.user)
+        ?(' (' + opportunity.editedBy.user.login + ')') : '')):''%>
+    </td>
+</tr>
+<% }) %>
 

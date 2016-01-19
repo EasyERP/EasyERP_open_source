@@ -56,33 +56,50 @@ module.exports = function (app, mainDb) {
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
     var journalRouter = require('./journal')(models);
+    var userRouter = require('./user')(event, models);
 
-    var requestHandler = require("../requestHandler.js")(app, event, mainDb);
+    var async = require('async');
+
+    var requestHandler;
 
     var winston = require('winston');
     var logger = new (winston.Logger)({
-        transports: [
+        transports       : [
             new (winston.transports.Console)({
-                json: false,
+                json     : false,
                 timestamp: true
             }),
-            new winston.transports.File({
-                filename: 'debug.log',
-                json: false
+            new (winston.transports.File)({
+                name: 'infoFile',
+                filename: 'info.log',
+                level: 'info',
+                json     : false,
+                maxsize: 1024 * 1024 * 10
+            }),
+            new (winston.transports.File)({
+                name: 'errorFile',
+                filename: 'error.log',
+                json     : false,
+                level: 'error',
+                maxsize: 1024 * 1024 * 10
             })
         ],
         exceptionHandlers: [
             new (winston.transports.Console)({
-                json: false,
+                json     : false,
                 timestamp: true
             }),
             new winston.transports.File({
                 filename: 'exceptions.log',
-                json: false
+                json    : false
             })
         ],
-        exitOnError: false
+        exitOnError      : false
     });
+
+    app.set('logger', logger);
+
+    requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
     function caseFilter(filter) {
         var condition;
@@ -131,23 +148,6 @@ module.exports = function (app, mainDb) {
 
         return resArray;
     };
-
-    //ToDo changeIt in all views
-    function filterObjectComposer(req, res, next) {
-        var query = req.query;
-        var queryObject = {};
-        var filter = query.filter;
-        var condition = '$and';
-
-        if (filter && typeof filter === 'object') {
-            condition = filter.condition || 'and';
-            condition = '$' + condition;
-            queryObject[condition] = caseFilter(filter);
-        }
-
-        req.queryObject = queryObject;
-        next();
-    }
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -236,13 +236,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -250,10 +252,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -388,13 +391,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -402,10 +407,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -435,13 +441,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -449,10 +457,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -482,13 +491,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadProjectsFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -496,10 +507,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadProjectsFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -529,13 +541,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadTasksFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -543,10 +557,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadTasksFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -577,13 +592,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadOpportunitiesFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -591,10 +608,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadOpportunitiesFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -660,13 +678,15 @@ module.exports = function (app, mainDb) {
         requestHandler.updateCurrentUser(req, res, data);
     });
 
-    app.patch('/currentUser/:_id', function (req, res) {
+    app.use('/currentUser', userRouter);
+
+   /* app.patch('/currentUser/:_id', function (req, res) {
         var data = {};
         if (req.body.oldpass && req.body.pass) {
             data.changePass = true;
         }
         requestHandler.updateCurrentUser(req, res, data);
-    });
+    });*/
 
     app.get('/UsersForDd', function (req, res) {
         requestHandler.getUsersForDd(req, res);
@@ -727,7 +747,6 @@ module.exports = function (app, mainDb) {
     });
 
 //-----------------END----Users--and Profiles-----------------------------------------------
-
 
 //-----------------------------getTotalLength---------------------------------------------
     app.get('/totalCollectionLength/:contentType', function (req, res, next) {
@@ -855,7 +874,6 @@ module.exports = function (app, mainDb) {
         requestHandler.getProjectType(req, res);
     });
 
-
     app.get('/Projects/form/:_id', function (req, res) {
         var data = {};
         data.id = req.params._id;
@@ -916,7 +934,6 @@ module.exports = function (app, mainDb) {
                 break;
         }
     });
-
 
 //--------------Tasks----------------------------------------------------------
     app.get('/getTasksLengthByWorkflows', function (req, res) {
@@ -1168,7 +1185,6 @@ module.exports = function (app, mainDb) {
         requestHandler.removeJobPosition(req, res, id);
     });
 
-
 //------------------Departments---------------------------------------------------
     app.get('/Departments', function (req, res) {
         requestHandler.getDepartment(req, res);
@@ -1216,7 +1232,6 @@ module.exports = function (app, mainDb) {
         var id = req.param('id');
         requestHandler.getDepartmentForEditDd(req, res, id);
     });
-
 
 //------------------Employee---------------------------------------------------
 
@@ -1312,7 +1327,6 @@ module.exports = function (app, mainDb) {
                 requestHandler.getApplicationsForKanban(req, res, data);
                 break;
         }
-
 
     });
 
@@ -1487,9 +1501,163 @@ module.exports = function (app, mainDb) {
         }
     });
 
+    //ToDo remove it after test
+   /* app.get('/unlinkWtracks', function (req, res, next) {
+        require('..//models/index.js');
+
+        var mongoose = require('mongoose');
+        var ObjectId = mongoose.Schema.Types.ObjectId;
+        var async = require('async');
+        var _ = require('lodash');
+
+        var WtrackSchema = mongoose.Schemas['wTrack'];
+        var QuotationSchema = mongoose.Schemas['Quotation'];
+        var JobSchema = mongoose.Schemas['jobs'];
+
+        var dbObject = mongoose.createConnection('localhost', 'production');
+        dbObject.on('error', console.error.bind(console, 'connection error:'));
+        dbObject.once('open', function callback() {
+            console.log("Connection to weTrack is success");
+        });
+
+        var Wtrack = dbObject.model("wTrack", WtrackSchema);
+        var Quotation = dbObject.model("Quotation", QuotationSchema);
+        var Job = dbObject.model("jobs", JobSchema);
+
+        var query = Job
+            .aggregate([{
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'quotation',
+                    foreignField: '_id',
+                    as          : 'quotation'
+                }
+            }, {
+                $project: {
+                    payments : 1,
+                    quotation: {$arrayElemAt: ["$quotation", 0]},
+                    wTracks  : 1
+                }
+            }, {
+                $unwind: {
+                    path                      : '$wTracks',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'wTrack',
+                    localField  : 'wTracks',
+                    foreignField: '_id',
+                    as          : 'wTracks'
+                }
+            }, {
+                $project: {
+                    payments : 1,
+                    quotation: 1,
+                    wTracks  : {$arrayElemAt: ["$wTracks", 0]}
+                }
+            }, {
+                $group: {
+                    _id       : '$_id',
+                    totalHours: {$sum: '$wTracks.worked'},
+                    root      : {
+                        $push: {
+                            wTracks  : '$wTracks',
+                            quotation: '$quotation'
+                        }
+                    }
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    totalHours: 1,
+                    _id       : '$root.wTracks._id',
+                    oldRevenue: '$root.wTracks.revenue',
+                    revenue   : {
+                        $multiply: [{$divide: ['$root.wTracks.worked', '$totalHours']}, '$root.quotation.paymentInfo.total', 100]
+                    }
+
+                }
+            }/!*, {
+             $match: {
+             revenue: null
+             }
+             }*!/]);
+
+        query.exec(function (error, response) {
+            if (error) {
+                return console.dir(error);
+            }
+
+            async.each(response, function (foundObject, cb) {
+                var revenue = foundObject.revenue || 0;
+                var oldRevenue = foundObject.oldRevenue || 0;
+
+                console.log(revenue);
+
+                Wtrack.update({_id: foundObject._id}, {
+                    $set: {
+                        revenue   : revenue,
+                        oldRevenue: oldRevenue
+                    }
+                }, function (err, updated) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb();
+                });
+            }, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                async.each(response, function (foundObject, cb) {
+                    Wtrack.update({_id: foundObject._id}, {$unset: {rate: ''}}, function (err, updated) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb();
+                    });
+                }, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({success: 'All updated'});
+                });
+            });
+        });
+    });*/
+
+    app.get('/clean', function(req, res, next){
+        var dbId = req.session.lastDb;
+        var db = dbsObject[dbId];
+        var collections = ['Project', 'wTrack', 'Invoice', 'Quotation', 'Payment', 'jobs', 'savedFilters', 'payOut'];
+        var collection;
+
+        async.each(collections, function (colName, cb) {
+            collection = db.collection(colName);
+            collection.drop(function (err, reply) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb();
+            });
+        }, function (err) {
+            if(err){
+                return next(err);
+            }
+
+            res.status(200).send('droped');
+        });
+    });
+
     function notFound(req, res, next) {
         res.status(404);
-
 
         if (req.accepts('html')) {
             return res.send(RESPONSES.PAGE_NOT_FOUND);
@@ -1518,7 +1686,6 @@ module.exports = function (app, mainDb) {
             logger.error(err.message + '\n' + err.stack);
         }
     };
-
 
     requestHandler.initScheduler();
 

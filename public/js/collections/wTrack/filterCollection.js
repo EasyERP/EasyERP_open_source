@@ -4,12 +4,12 @@
     ],
     function (wTrackModel, common) {
         var wTrackCollection = Backbone.Collection.extend({
-            model: wTrackModel,
-            url: "/wTrack/",
-            page: null,
+            model       : wTrackModel,
+            url         : "/wTrack/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
+            viewType    : null,
+            contentType : null,
 
             initialize: function (options) {
                 this.startTime = new Date();
@@ -27,12 +27,12 @@
                 this.filter = options.filter;
 
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
+                    error  : function (models, xhr) {
                         if (xhr.status == 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
@@ -50,20 +50,22 @@
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 filterObject['filter'] = (options) ? options.filter : {};
 
-                if (options && options.contentType && !(options.filter))
-                {
+                if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
                 }
 
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
-                        alert('Some Error');
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             }

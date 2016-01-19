@@ -15,15 +15,15 @@ define([
 
     function (paginationTemplate, listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, custom) {
         var ProjectsListView = Backbone.View.extend({
-            el: '#content-holder',
+            el                : '#content-holder',
             defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            sort: null,
-            newCollection: null,
-            page: null, //if reload page, and in url is valid page
-            contentType: 'Projects',//needs in view.prototype.changeLocationHash
-            viewType: 'list',//needs in view.prototype.changeLocationHash
+            listLength        : null,
+            filter            : null,
+            sort              : null,
+            newCollection     : null,
+            page              : null, //if reload page, and in url is valid page
+            contentType       : 'Projects',//needs in view.prototype.changeLocationHash
+            viewType          : 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
                 $(document).off("click");
@@ -46,37 +46,37 @@ define([
             },
 
             events: {
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .checkbox": "checked",
-                "mouseover .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click .filterButton": "showfilter",
-                "click .filter-check-list li": "checkCheckbox",
-                "click .stageSelect": "showNewSelect",
-                "click .newSelectList li": "chooseOption",
-                "click #health .health-container": "showHealthDd",
-                "click #health ul li div": "chooseHealthDd",
+                "click .itemsNumber"                          : "switchPageCounter",
+                "click .showPage"                             : "showPage",
+                "change #currentShowPage"                     : "showPage",
+                "click #previousPage"                         : "previousPage",
+                "click #nextPage"                             : "nextPage",
+                "click .checkbox"                             : "checked",
+                "mouseover .currentPageList"                  : "itemsNumber",
+                "click"                                       : "hideItemsNumber",
+                "click .filterButton"                         : "showfilter",
+                "click .filter-check-list li"                 : "checkCheckbox",
+                "click .stageSelect"                          : "showNewSelect",
+                "click .newSelectList li"                     : "chooseOption",
+                "click #health .health-container"             : "showHealthDd",
+                "click #health ul li div"                     : "chooseHealthDd",
                 "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
-                "click .oe_sortable": "goSort",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage"
+                "click .oe_sortable"                          : "goSort",
+                "click #firstShowPage"                        : "firstPage",
+                "click #lastShowPage"                         : "lastPage"
             },
 
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
                 this.collection = new contentCollection({
-                    viewType: 'list',
-                    sort: sortObject,
-                    page: this.page,
-                    count: this.defaultItemsNumber,
-                    filter: this.filter,
+                    viewType        : 'list',
+                    sort            : sortObject,
+                    page            : this.page,
+                    count           : this.defaultItemsNumber,
+                    filter          : this.filter,
                     parrentContentId: this.parrentContentId,
-                    contentType: this.contentType,
-                    newCollection: this.newCollection
+                    contentType     : this.contentType,
+                    newCollection   : this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
                 this.collection.bind('showmore', this.showMoreContent, this);
@@ -129,8 +129,11 @@ define([
                     success: function (model) {
                         new editView({model: model});
                     },
-                    error: function () {
-                        alert('Please refresh browser');
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
                     }
                 });
             },
@@ -149,12 +152,12 @@ define([
                 var id = target.data("id");
                 var model = this.collection.get(id);
                 model.save({health: target.find("div a").data("value")}, {
-                    headers: {
+                    headers : {
                         mid: 39
                     },
-                    patch: true,
+                    patch   : true,
                     validate: false,
-                    success: function () {
+                    success : function () {
                         target$.parents("#health").find("ul").hide();
                     }
                 });
@@ -169,10 +172,10 @@ define([
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/totalCollectionLength/Projects', {
-                    type: 'Projects',
-                    currentNumber: currentNumber,
-                    filter: filter,
-                    newCollection: this.newCollection,
+                    type            : 'Projects',
+                    currentNumber   : currentNumber,
+                    filter          : filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     var page = context.page || 1;
@@ -195,7 +198,7 @@ define([
                     this.hideNewSelect();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
                 }
             },
@@ -208,12 +211,12 @@ define([
                 var model = this.collection.get(id);
 
                 model.save({'workflow._id': target$.attr("id"), 'workflow.name': target$.html()}, {
-                    headers: {
+                    headers : {
                         mid: 39
                     },
-                    patch: true,
+                    patch   : true,
                     validate: false,
-                    success: function () {
+                    success : function () {
                         self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
                     }
                 });
@@ -230,7 +233,6 @@ define([
 
                 this.startTime = new Date();
                 this.newCollection = false;
-
 
                 if (Object.keys(filter).length === 0) {
                     this.filter = {};
@@ -279,15 +281,15 @@ define([
                 $('#check_all').prop('checked', false);
                 event.preventDefault();
                 this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    sort            : this.sort,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
                 dataService.getData('/totalCollectionLength/Projects', {
-                    type: 'Projects',
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    type            : 'Projects',
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -299,15 +301,15 @@ define([
                 $('#check_all').prop('checked', false);
                 event.preventDefault();
                 this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    sort            : this.sort,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
                 dataService.getData('/totalCollectionLength/Projects', {
-                    type: 'Projects',
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    type            : 'Projects',
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -319,31 +321,31 @@ define([
                 $('#check_all').prop('checked', false);
                 event.preventDefault();
                 this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
+                    sort         : this.sort,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData('/totalCollectionLength/Projects', {
-                    type: 'Projects',
-                    filter: this.filter,
+                    type         : 'Projects',
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
             },
 
-            lastPage: function (event) {
+            lastPage         : function (event) {
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 event.preventDefault();
                 this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
+                    sort         : this.sort,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData('/totalCollectionLength/Projects', {
-                    type: 'Projects',
-                    filter: this.filter,
+                    type         : 'Projects',
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -357,9 +359,9 @@ define([
                 this.defaultItemsNumber = itemsNumber;
                 this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
+                    count        : itemsNumber,
+                    page         : 1,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 this.page = 1;
@@ -382,8 +384,8 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
                 itemView = new listItemView({
-                    collection: this.collection,
-                    page: this.page,
+                    collection : this.collection,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 });
                 itemView.bind('incomingStages', this.pushStages, this);
@@ -396,10 +398,11 @@ define([
                 $currentEl.append(itemView.render());//added two parameters page and items number
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0)
+                    if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                    else
+                    } else {
                         $("#top-bar-deleteBtn").hide();
+                    }
                 });
 
                 self.filterView = new filterView({
@@ -439,8 +442,8 @@ define([
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
-                    collection: this.collection,
-                    page: $currentEl.find("#currentShowPage").val(),
+                    collection : this.collection,
+                    page       : $currentEl.find("#currentShowPage").val(),
                     itemsNumber: $currentEl.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
@@ -457,8 +460,8 @@ define([
                 var tBody = holder.find('#listTable');
                 tBody.empty();
                 var itemView = new listItemView({
-                    collection: newModels,
-                    page: holder.find("#currentShowPage").val(),
+                    collection : newModels,
+                    page       : holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });
                 tBody.append(itemView.render());
@@ -510,13 +513,13 @@ define([
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 dataService.getData('/totalCollectionLength/Projects', {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
                 this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
 
@@ -541,7 +544,7 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             that.listLength--;
                             localCounter++;
@@ -554,9 +557,12 @@ define([
 
                             }
                         },
-                        error: function (model, res) {
+                        error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                             that.listLength--;
                             count--;

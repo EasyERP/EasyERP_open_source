@@ -4,12 +4,12 @@
 define(['models/bonusTypeModel'], function (bonusTypeModel) {
     var bonusTypeCollection = Backbone.Collection.extend({
 
-        model: bonusTypeModel,
-        url: '/bonusType/',
-        contentType: null,
-        page: null,
+        model       : bonusTypeModel,
+        url         : '/bonusType/',
+        contentType : null,
+        page        : null,
         numberToShow: null,
-        viewType: null,
+        viewType    : null,
 
         initialize: function (options) {
             this.startTime = new Date();
@@ -27,12 +27,12 @@ define(['models/bonusTypeModel'], function (bonusTypeModel) {
             this.filter = options.filter;
 
             this.fetch({
-                data: options,
-                reset: true,
+                data   : options,
+                reset  : true,
                 success: function () {
-                    that.page ++;
+                    that.page++;
                 },
-                error: function(err, xhr){
+                error  : function (err, xhr) {
                     console.log(xhr);
                 }
             });
@@ -53,14 +53,17 @@ define(['models/bonusTypeModel'], function (bonusTypeModel) {
             }
 
             this.fetch({
-                data: filterObject,
-                waite: true,
+                data   : filterObject,
+                waite  : true,
                 success: function (models) {
-                    that.page ++;
+                    that.page++;
                     that.trigger('showmore', models);
                 },
-                error: function() {
-                    alert('Some Error');
+                error  : function () {
+                    App.render({
+                        type: 'error',
+                        message: "Some Error."
+                    });
                 }
             });
         }

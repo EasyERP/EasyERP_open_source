@@ -1,5 +1,5 @@
 module.exports = (function () {
-
+    'use strict';
     var moment = require('../public/js/libs/moment/moment');
     var dateFormat = 'MMMM Do YYYY';
 
@@ -24,10 +24,10 @@ module.exports = (function () {
         },
         formatters: {
             'Created Date': function (date) {
-                return moment(date).utc().format(dateFormat);
+                return moment(date).format(dateFormat);
             },
             'Edited Date' : function (date) {
-                return moment(date).utc().format(dateFormat);
+                return moment(date).format(dateFormat);
             }
         }
 
@@ -181,7 +181,7 @@ module.exports = (function () {
             'kanbanSettings.tasks.countPerPage'         : 'Tasks Count Per Page',
             'kanbanSettings.tasks.foldWorkflows'        : 'Tasks Fold Workflows',
             savedFilters                                : 'Saved Filters',
-            RelatedEmployee                             : 'Related Employee'
+            relatedEmployee                             : 'Related Employee'
         }
     };
 
@@ -500,7 +500,7 @@ module.exports = (function () {
             'bonus.startYear'    : 'Bonus Start Year',
             'bonus.endDate'      : 'Bonus End Date',
             'bonus.endWeek'      : 'Bonus End Week',
-            'bonus.endYear'      : 'Bonus End Year',
+            'bonus.endYear'      : 'Bonus End Year'
 
         },
         arrayKeys  : {
@@ -631,6 +631,6 @@ module.exports = (function () {
         Industry    : industry,
         Tasks       : task,
         Products    : product
-    }
+    };
 
 })();

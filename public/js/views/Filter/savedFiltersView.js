@@ -9,10 +9,10 @@ define([
     function (ContentFilterTemplate, usersModel, custom) {
         var FilterView;
         FilterView = Backbone.View.extend({
-            el: '#favoritesContent',
-            contentType: null,
+            el          : '#favoritesContent',
+            contentType : null,
             savedFilters: {},
-            filter: null,
+            filter      : null,
 
             events: {},
 
@@ -31,10 +31,10 @@ define([
 
                     for (var j = this.savedFilters.length - 1; j >= 0; j--) {
                         if (this.savedFilters[j]) {
-                            if (this.savedFilters[j].byDefault === this.contentType){
-                               var keys = Object.keys(this.savedFilters[j]['_id']['filter']);
+                            if (this.savedFilters[j].byDefault === this.contentType) {
+                                var keys = Object.keys(this.savedFilters[j]['_id']['filter']);
 
-                               filter = this.savedFilters[j]['_id']['filter'][keys[0]];
+                                filter = this.savedFilters[j]['_id']['filter'][keys[0]];
 
                                 //url += '/filter=' + encodeURI(JSON.stringify(filter));
                                 //Backbone.history.fragment = "";

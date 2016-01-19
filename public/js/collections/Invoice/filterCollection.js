@@ -4,8 +4,8 @@
     function (InvoiceModel) {
         var InvoiceCollection = Backbone.Collection.extend({
             model       : InvoiceModel,
-            url  : "/Invoice/",
-            page : null,
+            url         : "/Invoice/",
+            page        : null,
             namberToShow: null,
             viewType    : null,
             contentType : null,
@@ -50,7 +50,7 @@
                 }
                 this.fetch({
                     data   : options,
-                    reset: true,
+                    reset  : true,
                     success: function (newCollection) {
                         that.page++;
 
@@ -59,7 +59,9 @@
                         }
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
@@ -89,13 +91,16 @@
 
                 this.fetch({
                     data   : filterObject,
-                    waite: true,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
                     error  : function () {
-                        alert('Some Error');
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             }

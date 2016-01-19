@@ -1,5 +1,6 @@
 define([
         "text!templates/Opportunities/CreateTemplate.html",
+        'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         "models/OpportunitiesModel",
         "common",
@@ -7,11 +8,11 @@ define([
         "dataService",
         'views/Notes/AttachView'
     ],
-    function (CreateTemplate, AssigneesView, OpportunityModel, common, populate, dataService, attachView) {
+    function (CreateTemplate, selectView, AssigneesView, OpportunityModel, common, populate, dataService, attachView) {
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Opportunities",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
@@ -22,41 +23,52 @@ define([
             },
 
             events: {
-                "click #tabList a": "switchTab",
-                "change #workflowNames": "changeWorkflows",
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect"
+                "click #tabList a"                                                : "switchTab",
+                "change #workflowNames"                                           : "changeWorkflows",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect"
             },
 
-            notHide: function () {
-                return false;
-            },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
-            },
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
-            },
-            chooseOption: function (e) {
-                var holder = $(e.target).parents("dd").find(".current-selected");
-                holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                if (holder.attr("id") == 'customerDd')
-                    this.selectCustomer($(e.target).attr("id"));
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
+                return false;
+            },
+
+            chooseOption : function (e) {
+                var holder = $(e.target).parents("dd").find(".current-selected");
+                holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                if (holder.attr("id") == 'customerDd') {
+                    this.selectCustomer($(e.target).attr("id"));
+                }
+            },
 
             keydownHandler: function (e) {
                 switch (e.which) {
@@ -149,7 +161,7 @@ define([
                 var expectedRevenue;
                 if (expectedRevenueValue || expectedRevenueProgress) {
                     expectedRevenue = {
-                        value: expectedRevenueValue,
+                        value   : expectedRevenueValue,
                         currency: '$',
                         progress: expectedRevenueProgress
                     };
@@ -157,7 +169,6 @@ define([
 
                 var customerId = this.$("#customerDd").data("id");
                 var email = $.trim($("#email").val());
-
 
                 var salesPersonId = this.$("#salesPersonDd").data("id");
 
@@ -188,7 +199,7 @@ define([
                 var last = $.trim($("#last").val());
                 var contactName = {
                     first: first,
-                    last: last
+                    last : last
                 };
 
                 var func = $.trim($("#func").val());
@@ -197,9 +208,9 @@ define([
                 var mobile = $.trim($("#mobile").val());
                 var fax = $.trim($("#fax").val());
                 var phones = {
-                    phone: phone,
+                    phone : phone,
                     mobile: mobile,
-                    fax: fax
+                    fax   : fax
                 };
 
                 var workflow = this.$("#workflowDd").data('id');
@@ -224,42 +235,42 @@ define([
                 });
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 opportunityModel.save({
-                        name: name,
+                        name           : name,
                         expectedRevenue: expectedRevenue,
-                        customer: customerId,
-                        email: email,
-                        salesPerson: salesPersonId,
-                        salesTeam: salesTeamId,
-                        nextAction: nextAction,
+                        customer       : customerId,
+                        email          : email,
+                        salesPerson    : salesPersonId,
+                        salesTeam      : salesTeamId,
+                        nextAction     : nextAction,
                         expectedClosing: expectedClosing,
-                        priority: priority,
-                        workflow: workflow,
-                        internalNotes: internalNotes,
-                        company: company,
-                        address: address,
-                        contactName: contactName,
-                        func: func,
-                        phones: phones,
-                        active: active,
-                        optout: optout,
-                        reffered: reffered,
-                        groups: {
+                        priority       : priority,
+                        workflow       : workflow,
+                        internalNotes  : internalNotes,
+                        company        : company,
+                        address        : address,
+                        contactName    : contactName,
+                        func           : func,
+                        phones         : phones,
+                        active         : active,
+                        optout         : optout,
+                        reffered       : reffered,
+                        groups         : {
                             owner: $("#allUsersSelect").data("id"),
                             users: usersId,
                             group: groupsId
                         },
-                        whoCanRW: whoCanRW
+                        whoCanRW       : whoCanRW
                     },
                     {
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function (model) {
                             var currentModel = model.changed.success;
                             self.attachView.sendToServer(null, currentModel);
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -272,17 +283,17 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    dialogClass: "edit-dialog",
-                    width: "900",
-                    title: "Create Opportunity",
-                    buttons: {
-                        save: {
-                            text: "Create",
+                    dialogClass  : "edit-dialog",
+                    width        : "900",
+                    title        : "Create Opportunity",
+                    buttons      : {
+                        save  : {
+                            text : "Create",
                             class: "btn",
                             click: self.saveItem
                         },
                         cancel: {
-                            text: "Cancel",
+                            text : "Cancel",
                             class: "btn",
                             click: function () {
                                 self.hideDialog();
@@ -294,9 +305,9 @@ define([
                 notDiv = this.$el.find('.attach-container');
 
                 this.attachView = new attachView({
-                    model: new OpportunityModel(),
-                    url: "/uploadOpportunitiesFiles",
-                    isCreate: true,
+                    model    : new OpportunityModel(),
+                    url      : "/uploadOpportunitiesFiles",
+                    isCreate : true,
                     elementId: this.elementId
                 });
 
@@ -307,7 +318,6 @@ define([
                         model: this.currentModel,
                     }).render().el
                 );
-
 
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});

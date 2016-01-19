@@ -1,6 +1,7 @@
 <% tasksCollection.forEach(function(task, index){ %>
-<tr data-index="<%=index%>" data-id="<%= task._id%>" class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
-    <td class="centerCell"><input type="checkbox" value="<%=task._id%>" class="checkbox" /></td>
+<tr data-index="<%=index%>" data-id="<%= task._id%>"
+    class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
+    <td class="centerCell"><input type="checkbox" value="<%=task._id%>" class="checkbox"/></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=(task.project) ? task.project.projectShortDesc : ''%><%=task.taskCount%></td>
     <td><%=task.summary%></td>
@@ -21,8 +22,12 @@
             <li class="Feature" id="Feature">Feature</li>
         </ul>
     </td>
-    <td><progress name="taskProgress" max="100" value="<%=task.progress%>" /></td>
-	<td><%=task.createdBy.user?(task.createdBy.date + ' (' + task.createdBy.user.login + ')'):(task.createdBy.date?task.createdBy.date:'')%></td>
-	<td><%=(task.editedBy&&task.editedBy.date)?( task.editedBy.date + ((task.editedBy.user) ?(' (' + task.editedBy.user.login + ')') : '')):''%></td>
+    <td>
+        <progress name="taskProgress" max="100" value="<%=task.progress%>"/>
+    </td>
+    <td><%=task.createdBy.user?(task.createdBy.date + ' (' + task.createdBy.user.login + ')'):(task.createdBy.date?task.createdBy.date:'')%>
+    </td>
+    <td><%=(task.editedBy&&task.editedBy.date)?( task.editedBy.date + ((task.editedBy.user) ?(' (' + task.editedBy.user.login + ')') : '')):''%>
+    </td>
 </tr>
 <% }) %>

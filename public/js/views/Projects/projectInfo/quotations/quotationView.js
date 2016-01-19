@@ -128,7 +128,8 @@ define([
                 $currentEl.find('#listTableQuotation').html(this.templateList({
                     quotations : this.collection.toJSON(),
                     startNumber: 0,
-                    dateToLocal: common.utcDateToLocaleDate
+                    dateToLocal: common.utcDateToLocaleDate,
+                    currencySplitter: helpers.currencySplitter
                 }));
             }
 
@@ -165,7 +166,6 @@ define([
             }, this);
         },
 
-
         goToEditDialog: function (e) {
             e.preventDefault();
             var self = this;
@@ -185,19 +185,22 @@ define([
             model.fetch({
                 success: function (model) {
                     new editView({
-                        model     : model,
-                        redirect  : true,
-                        pId       : self.projectID,
-                        customerId: self.customerId,
-                        collection: self.collection
+                        model        : model,
+                        redirect     : true,
+                        pId          : self.projectID,
+                        customerId   : self.customerId,
+                        collection   : self.collection,
+                        hidePrAndCust: true
                     });
-
 
                     //self.collection.remove(id);
 
                 },
                 error  : function (xhr) {
-                    alert('Please refresh browser');
+                    App.render({
+                        type: 'error',
+                        message: "Please refresh browser"
+                    });
                 }
             });
         },
@@ -261,7 +264,10 @@ define([
                         },
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                             that.listLength--;
                             count--;
@@ -317,9 +323,10 @@ define([
             $currentEl.prepend(this.templateHeader);
 
             $currentEl.find('#listTableQuotation').html(this.templateList({
-                quotations : this.collection.toJSON(),
-                startNumber: 0,
-                dateToLocal: common.utcDateToLocaleDate
+                quotations      : this.collection.toJSON(),
+                startNumber     : 0,
+                dateToLocal     : common.utcDateToLocaleDate,
+                currencySplitter: helpers.currencySplitter
             }));
 
             this.$el.find('#removeQuotation').hide();
@@ -341,7 +348,6 @@ define([
                 self.stages = stages;
             });
         }
-
 
     });
 

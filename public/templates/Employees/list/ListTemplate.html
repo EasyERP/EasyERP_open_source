@@ -1,19 +1,23 @@
-    <% employeesCollection.forEach(function(employee, index){ %>
-        <tr data-index="<%=index + 1%>" data-id="<%=employee._id%>">
-            <td class = "notForm centerCell">
-                <input type="checkbox" value="<%=employee._id%>" class="checkbox" />
-            </td>
-            <td class="centerCell"><%=startNumber +index + 1%></td>
-            <td><%=employee.name.first%> <%=employee.name.last%></td>
-            <td class = "notForm"><a href="skype:<%=employee.workPhones.mobile%>?call"><%=employee.workPhones.mobile%></a></td>
-            <td><%=employee.workEmail%></td>
-            <td class = "notForm"><a href="skype:<%=employee.skype%>?call"><%=employee.skype%></a></td>
-            <td><%=(employee.department) ? employee.department.name : ''%></td>
-            <td><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></td>
-            <td><%=(employee.manager.name) ? employee.manager.name : ''%></td>
-			<td><%=(employee.createdBy&&employee.createdBy.date)?( employee.createdBy.date + ((employee.createdBy.user) ?(' (' + employee.createdBy.user.login + ')') : '')):''%></td>
-			<td><%=(employee.editedBy&&employee.editedBy.date)?( employee.editedBy.date + ((employee.editedBy.user) ?(' (' + employee.editedBy.user.login + ')') : '')):''%></td>
+<% employeesCollection.forEach(function(employee, index){ %>
+<tr data-index="<%=index + 1%>" data-id="<%=employee._id%>">
+    <td class="notForm centerCell">
+        <input type="checkbox" value="<%=employee._id%>" class="checkbox"/>
+    </td>
+    <td class="centerCell"><%=startNumber +index + 1%></td>
+    <td><%=employee.name.first%> <%=employee.name.last%></td>
+    <td class="notForm"><a href="skype:<%=employee.workPhones.mobile%>?call"><%=employee.workPhones.mobile%></a></td>
+    <td><%=employee.workEmail%></td>
+    <td class="notForm"><a href="skype:<%=employee.skype%>?call"><%=employee.skype%></a></td>
+    <td><%=(employee.department) ? employee.department.departmentName : ''%></td>
+    <td><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></td>
+    <td><%=(employee.manager && employee.manager.name) ? employee.manager.name.first + ' ' + employee.manager.name.last : ''%></td>
+    <td><%=(employee.createdBy&&employee.createdBy.date)?( employee.createdBy.date + ((employee.createdBy.user) ?(' (' +
+        employee.createdBy.user.login + ')') : '')):''%>
+    </td>
+    <td><%=(employee.editedBy&&employee.editedBy.date)?( employee.editedBy.date + ((employee.editedBy.user) ?(' (' +
+        employee.editedBy.user.login + ')') : '')):''%>
+    </td>
 
-        </tr>
-    <% }) %>
+</tr>
+<% }) %>
 

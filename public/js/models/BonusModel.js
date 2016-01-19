@@ -4,10 +4,10 @@
 define([], function () {
     var BonusModel = Backbone.Model.extend({
         defaults: {
-            employee: {},
-            bonus: {},
+            employee : {},
+            bonus    : {},
             startDate: null,
-            endDate: null
+            endDate  : null
         }
     });
 

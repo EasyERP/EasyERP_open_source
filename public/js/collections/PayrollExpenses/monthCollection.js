@@ -3,9 +3,7 @@
  */
 define(
     function () {
-        var PayRollCollection = Backbone.Collection.extend({
-
-        });
+        var PayRollCollection = Backbone.Collection.extend({});
 
         return PayRollCollection;
     });

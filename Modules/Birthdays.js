@@ -154,11 +154,12 @@
                     console.log(err);
                 } else {
                     var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
-                    query.where('_id').in(res).
-	                    select('_id name dateBirth age jobPosition workPhones.mobile department').
-	                	//populate('jobPosition', 'name').
-						//populate('department', 'departmentName').
-                        exec(function (error, ress) {
+                    query.where('_id').in(res)
+                        .select('_id name dateBirth age jobPosition workPhones.mobile department')
+                        .populate('jobPosition', '_id name')
+                        .populate('department', ' _id departmentName')
+                        .lean()
+                        .exec(function (error, ress) {
                             if (error) {
                                 console.log(error);
                                 callback(req, separateWeklyAndMonthly([]), response);

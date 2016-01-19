@@ -29,7 +29,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = {
-                    key: 'forSales',
+                    key  : 'forSales',
                     value: ['false']
                 };
                 this.forSales = false;
@@ -60,10 +60,8 @@ define([
                 var model = this.collection.get(id);
 
                 model.save({
-                    workflow: {
-                        _id: target$.attr("id"),
-                        name:target$.text()
-                    }}, {
+                    workflow: target$.attr("id")
+                }, {
                     headers : {
                         mid: 55
                     },
@@ -95,7 +93,6 @@ define([
             render: function () {
                 var self;
                 var $currentEl;
-                var FilterView = filterView;
                 $('.ui-dialog ').remove();
 
                 self = this;
@@ -115,7 +112,6 @@ define([
                 this.renderPagination($currentEl, this);
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
 
                 this.renderFilter(self);
 
@@ -140,7 +136,10 @@ define([
                         new editView({model: model});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
                     }
                 });
             }

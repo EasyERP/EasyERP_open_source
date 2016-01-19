@@ -11,7 +11,8 @@
                         <dd>
                             <%if(model && model.supplier && model.supplier._id){%>
                             <a id="supplierDd" class="" href="javascript:;"
-                               data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></a>
+                               data-id="<%=model.supplier._id%>"><%=model.supplier.name.first + ' ' +
+                                model.supplier.name.last%></a>
                             <%} else {%>
                             <a id="supplierDd" class="" href="javascript:;">Select</a>
                             <%}%>
@@ -36,7 +37,8 @@
                 <div class="half-block left">
                     <dl class="opp-info">
                         <dt><label for="paymentDate">Date</label></dt>
-                        <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate" value="<%=model.date%>" readonly/></dd>
+                        <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate"
+                                   value="<%=model.date%>" readonly/></dd>
                         <dt><label for="paymentRef">Payment Ref</label></dt>
                         <dd>
                             <input type="text" name="paymentRef" id="paymentRef" maxlength="20"

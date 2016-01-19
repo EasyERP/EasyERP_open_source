@@ -1,28 +1,33 @@
 <tr data-id="<%=model._id%>">
-    <td class = "notForm"><input type="checkbox" value="<%=model._id%>" class="checkbox" /></td>
-    <td><%=model.startNumber%></td>
-    <td data-content="jobs" data-id="<%=model.jobs ? model.jobs.name : '------'%>"><%=model.jobs ? model.jobs.name : '------'%></td>
-    <td data-content="assigned"><%=model.project && model.project.projectmanager? model.project.projectmanager.name : ''%></td>
-    <td class="editable" data-content="project"><%=model.project ? model.project.projectName : ''%></td>
-    <td data-content="workflow"><%=model.project && model.project.workflow? model.project.workflow.name : ''%></td>
-    <td data-content="customer"><%=model.project && model.project.customer? model.project.customer.name : ''%></td>
-    <td class="editable" data-content="employee"><%=model.employee ? model.employee.name : ''%></td>
+    <td class="notForm"><input type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
+    <td data-content="number" class="centerCell"><%=model.startNumber%></td>
+    <td data-content="jobs" data-id="<%=model.jobs ? model.jobs.name : '------'%>"><%=model.jobs ? model.jobs.name :
+        '------'%>
+    </td>
+    <td data-content="assigned"><%=model.project && model.projectmanager? model.projectmanager.name.first + ' ' +
+        model.projectmanager.name.last :
+        ''%>
+    </td>
+    <td class="editable" data-content="project" data-id="<%= model.project._id%>"><%=model.project ? model.project.projectName : ''%></td>
+    <td data-content="workflow" data-id="<%= model.workflow ? model.workflow._id : ''%>"><%=model.project && model.workflow? model.workflow.name : ''%></td>
+    <td data-content="customer" data-id="<%= model.customer? model.customer.name.first + ' ' + model.customer.name.last : ''%>"><%= model.customer ? model.customer.name.first + ' ' + model.customer.name.last : ''%></td>
+    <td class="editable" data-content="employee" data-id="<%= model.employee._id%>"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last  : ''%></td>
     <td class="editable" data-content="department"><%=model.department ? model.department.departmentName : ''%></td>
     <td data-type="input" class="editable" data-content="year"><%=model.year%></td>
     <td data-type="input" class="editable" data-content="month"><%=model.month%></td>
     <td data-type="input" class="editable" data-content="week"><%=model.week%></td>
-    <td data-type="input" class="editable" data-content="rate"><%=model.rate%></td>
+    <!--<td data-type="input" class="editable" data-content="rate"><%=model.rate%></td>-->
     <td data-content="worked"><%=model.worked%></td>
-    <td data-type="input" class="editable autoCalc" data-content="1"><%=model['1'] ? model['1'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="2"><%=model['2'] ? model['2'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="3"><%=model['3'] ? model['3'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="4"><%=model['4'] ? model['4'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="5"><%=model['5'] ? model['5'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="6"><%=model['6'] ? model['6'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="7"><%=model['7'] ? model['7'] : '0'%></td>
-    <td><span class="<%=model.isPaid ? 'done' : ''%>"><%=model.isPaid ? 'Paid' : 'Unpaid'%></span></td>
+    <td data-type="input" class="editable autoCalc" data-content="1"><%=model['1'] ? model['1'] : ''%></td>
+    <td data-type="input" class="editable autoCalc" data-content="2"><%=model['2'] ? model['2'] : ''%></td>
+    <td data-type="input" class="editable autoCalc" data-content="3"><%=model['3'] ? model['3'] : ''%></td>
+    <td data-type="input" class="editable autoCalc" data-content="4"><%=model['4'] ? model['4'] : ''%></td>
+    <td data-type="input" class="editable autoCalc" data-content="5"><%=model['5'] ? model['5'] : ''%></td>
+    <td data-type="input" class="editable autoCalc" data-content="6"><%=model['6'] ? model['6'] : ''%></td>
+    <td data-type="input" class="editable autoCalc" data-content="7"><%=model['7'] ? model['7'] : ''%></td>
+    <!--<td><span class="<%=model.isPaid ? 'done' : ''%>"><%=model.isPaid ? 'Paid' : 'Unpaid'%></span></td>
     <td><%='$' + model.revenue%></td>
     <td><%='$' + model.cost%></td>
     <td><%='$' + model.profit%></td>
-    <td><%=model.amount ? '$' + model.amount : ''%></td>
+    <td><%=model.amount ? '$' + model.amount : ''%></td>-->
 </tr>

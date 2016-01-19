@@ -7,14 +7,14 @@ var Invoice = function (models, event) {
 
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
-    var InvoiceSchema = mongoose.Schemas['Invoice'];
-    var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
-    var OrderSchema = mongoose.Schemas['Quotation'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var CustomerSchema = mongoose.Schemas['Customer'];
-    var PaymentSchema = mongoose.Schemas['Payment'];
-    var wTrackSchema = mongoose.Schemas['wTrack'];
-    var JobsSchema = mongoose.Schemas['jobs'];
+    var InvoiceSchema = mongoose.Schemas.Invoice;
+    var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
+    var OrderSchema = mongoose.Schemas.Quotation;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var CustomerSchema = mongoose.Schemas.Customer;
+    var PaymentSchema = mongoose.Schemas.Payment;
+    var wTrackSchema = mongoose.Schemas.wTrack;
+    var JobsSchema = mongoose.Schemas.jobs;
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
@@ -22,14 +22,14 @@ var Invoice = function (models, event) {
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants.js');
 
-    var journalEntryHandler = require('./journalEntry');
-    var _journalEntryHandler = new journalEntryHandler(models);
+    var JournalEntryHandler = require('./journalEntry');
+    var _journalEntryHandler = new JournalEntryHandler(models);
 
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
 
         return validDbs.indexOf(db) !== -1;
-    };
+    }
 
     function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
@@ -42,7 +42,7 @@ var Invoice = function (models, event) {
         journalEntryBody.sourceDocument._id = invoice._id;
         journalEntryBody.sourceDocument.model = 'Invoice';
 
-        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb, uId)
+        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb, uId);
     }
 
     this.create = function (req, res, next) {
@@ -50,7 +50,7 @@ var Invoice = function (models, event) {
         var isWtrack = checkDb(dbIndex);
         var body = req.body;
         var forSales = body.forSales;
-        var waterfallTasks = [invoiceSaver, journalEntryComposer];
+        var waterfallTasks;
         var createdBy = {};
         var editedBy = {};
 
@@ -70,14 +70,24 @@ var Invoice = function (models, event) {
                     return waterfallCb(err);
                 }
 
-                waterfallCb(null, dbIndex, result);
+                result = result.toObject();
+                result.currency = result.currency || {};
+                result.currency.name = body.currency ? body.currency.name : 'USD';
+
+                if (forSales) {
+                    waterfallCb(null, dbIndex, result);
+                } else { // added in case of bad creating no forSales invoice ( property model undefined for Journal )
+                    waterfallCb(null, result);
+                }
             });
         }
 
         if (isWtrack && forSales) {
             Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
+            waterfallTasks = [invoiceSaver, journalEntryComposer];
         } else {
             Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
+           waterfallTasks = [invoiceSaver];   // added in case of bad creating no forSales invoice ( property model undefined for Journal )
         }
 
         async.waterfall(waterfallTasks, function (err, result) {
@@ -87,23 +97,6 @@ var Invoice = function (models, event) {
 
             res.status(201).send(result);
         });
-
-        /*invoice = new Invoice(body);
-
-         if (req.session.uId) {
-         invoice.createdBy.user = req.session.uId;
-         invoice.editedBy.user = req.session.uId;
-         }
-
-         invoice.save(function (err, result) {
-         if (err) {
-         return next(err);
-         }
-
-
-
-         res.status(200).send(result);
-         });*/
     };
 
     this.receive = function (req, res, next) {
@@ -122,18 +115,18 @@ var Invoice = function (models, event) {
         function fetchFirstWorkflow(callback) {
             if (forSales === "true") {
                 request = {
-                    query: {
-                        wId: 'Sales Invoice',
-                        source: 'purchase',
+                    query  : {
+                        wId         : 'Sales Invoice',
+                        source      : 'purchase',
                         targetSource: 'invoice'
                     },
                     session: req.session
                 };
             } else {
                 request = {
-                    query: {
-                        wId: 'Purchase Invoice',
-                        source: 'purchase',
+                    query  : {
+                        wId         : 'Purchase Invoice',
+                        source      : 'purchase',
                         targetSource: 'invoice'
                     },
                     session: req.session
@@ -148,7 +141,8 @@ var Invoice = function (models, event) {
 
             query//.populate('supplier', 'name')
                 .populate('products.product')
-                .populate('products.jobs');
+                .populate('products.jobs')
+                .populate('project', '_id projectName projectmanager');
 
             query.exec(callback)
         };
@@ -163,8 +157,6 @@ var Invoice = function (models, event) {
             var err;
             var invoice;
             var supplier;
-            var company;
-            var project;
             var query;
 
             if (parallelResponse && parallelResponse.length) {
@@ -193,34 +185,24 @@ var Invoice = function (models, event) {
             // invoice.sourceDocument = order.name;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
-            invoice.workflow = {};
-            invoice.workflow._id = workflow._id;
-            invoice.workflow.name = workflow.name;
-            invoice.workflow.status = workflow.status;
+            invoice.workflow = workflow._id;
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
             if (forSales === "true") {
                 if (!invoice.project) {
-                    invoice.project = {};
+                    invoice.project = order.project ? order.project._id : null;
                 }
-                invoice.project.name = order.project ? order.project.projectName : "";
             }
 
-            supplier = order['supplier'];
-
-            //if (supplier) {
-            //    invoice.supplier.name = supplier.name.first + ' ' + supplier.name.last;
-            //}
+            invoice.supplier = order['supplier'];
 
             if (forSales === "true") {
-                invoice.salesPerson = {};
-                invoice.salesPerson._id = order.project.projectmanager ? order.project.projectmanager._id : null;
-                invoice.salesPerson.name = order.project.projectmanager ? order.project.projectmanager.name : "";
+                invoice.salesPerson = order.project.projectmanager ? order.project.projectmanager : null;
 
                 invoice.save(callback);
 
             } else {
-                query = Company.findById(invoice.supplier._id).lean();
+                query = Company.findById(invoice.supplier).lean();
 
                 query.populate('salesPurchases.salesPerson', 'name');
 
@@ -230,9 +212,7 @@ var Invoice = function (models, event) {
                     }
 
                     if (result && result.salesPurchases.salesPerson) {
-                        invoice.salesPerson = {};
-                        invoice.salesPerson._id = result.salesPurchases.salesPerson._id;
-                        invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;
+                        invoice.salesPerson = result.salesPurchases.salesPerson._id;
                     }
 
                     invoice.save(callback);
@@ -253,19 +233,10 @@ var Invoice = function (models, event) {
             var invoiceId = result._id;
             var name = result.name;
             var products = result.products;
-            var setObj = {
-                _id: invoiceId,
-                name: name,
-                amount: result.paymentInfo.total
-            };
-
 
             Order.findByIdAndUpdate(id, {
                 $set: {
-                    workflow: {
-                        name: "Invoiced",
-                        _id: CONSTANTS.ORDERDONE
-                    }
+                    workflow: CONSTANTS.ORDERDONE
                 }
             }, {new: true}, function (err, result) {
                 if (err) {
@@ -273,24 +244,20 @@ var Invoice = function (models, event) {
                 }
             });
 
-
             async.each(products, function (result, cb) {
                 var jobs = result.jobs;
 
                 JobsModel.findByIdAndUpdate(jobs, {
                     $set: {
-                        invoice: setObj,
-                        type: "Invoiced",
-                        workflow: {
-                            _id: CONSTANTS.JOBSFINISHED,
-                            name: "Finished"
-                        }
+                        invoice : invoiceId,
+                        type    : "Invoiced",
+                        workflow: CONSTANTS.JOBSFINISHED
                     }
                 }, {new: true}, function (err, job) {
                     if (err) {
                         return cb(err);
                     }
-                    project = job.project ? job.project._id : null;
+                    project = job.project ? job.project : null;
                     cb();
                 });
 
@@ -316,8 +283,8 @@ var Invoice = function (models, event) {
         var updateName = false;
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
-        var options;
         var optionsForPayments;
+        var Customer = models.get(db, 'Customers', CustomerSchema);
 
         if (checkDb(db)) {
             moduleId = 64;
@@ -341,34 +308,9 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    if (data.name) {
-                        updateName = true;
-                    }
-
                     Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
                             return next(err);
-                        }
-
-                        if (updateName) {
-                            options = {
-                                id: invoice._id,
-                                targetModel: JobsModel,
-                                searchField: "invoice._id",
-                                fieldName: "invoice.name",
-                                fieldValue: invoice.name,
-                                projectId: invoice.project._id
-                            };
-
-                            optionsForPayments = {
-                                id: invoice._id,
-                                targetModel: PaymentModel,
-                                searchField: "invoice._id",
-                                fieldName: "invoice.name",
-                                fieldValue: invoice.name
-                            };
-                            event.emit("updateNames", options);
-                            event.emit("updateNames", optionsForPayments);
                         }
 
                         if (!invoice.journal) {
@@ -381,11 +323,31 @@ var Invoice = function (models, event) {
                                     if (err) {
                                         return next(err);
                                     }
-                                    res.status(200).send(invoice);
+
+                                    Customer.populate(invoice, {
+                                        path  : 'supplier',
+                                        select: '_id name fullName'
+                                    }, function (err, resp) {
+                                        if (err) {
+                                            return next(err);
+                                        }
+
+                                        res.status(200).send(invoice);
+                                    });
+
                                 }, req.session.uId);
                             });
                         } else {
-                            res.status(200).send(invoice);
+                            Customer.populate(invoice, {
+                                path  : 'supplier',
+                                select: '_id name fullName'
+                            }, function (err, resp) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.status(200).send(invoice);
+                            });
                         }
                     });
                 } else {
@@ -420,7 +382,7 @@ var Invoice = function (models, event) {
         }
 
         return element;
-    };
+    }
 
     function caseFilter(filter) {
         var condition;
@@ -489,8 +451,8 @@ var Invoice = function (models, event) {
 
                     var optionsObject = {};
                     var sort = {};
-                    var count = query.count ? query.count : 100;
-                    var page = query.page;
+                    var count = parseInt(query.count) ? parseInt(query.count) : 100;
+                    var page = parseInt(query.page);
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     var departmentSearcher;
@@ -499,9 +461,11 @@ var Invoice = function (models, event) {
                     var waterfallTasks;
 
                     if (req.query.sort) {
+                        var key = Object.keys(req.query.sort)[0];
+                        req.query.sort[key] = parseInt(req.query.sort[key]);
                         sort = req.query.sort;
-                        //} else {
-                        //    sort = {"supplier": 1};
+                    } else {
+                        sort = {"workflow": -1};
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -557,27 +521,100 @@ var Invoice = function (models, event) {
                             }
                         }
 
-                        optionsObject.$and.push({_id: {$in: invoicesIds}});
+                        optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
                         optionsObject.$and.push({expense: {$exists: false}});
 
-
-                        var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
-
-                        query
-                        //.populate('supplier', 'name _id')
-                        //.populate('salesPerson', 'name _id')
-                            .populate('department', '_id departmentName')
-                            .populate('createdBy.user')
-                            .populate('editedBy.user')
-                            .populate('groups.users')
-                            .populate('groups.group')
-                            .populate('groups.owner', '_id login')
-                            .populate('products.jobs')
-                            .populate('sourceDocument');
-                        /*.populate('project', '_id projectName').
-                         populate('workflow._id', '-sequence');*/
-
-                        query.lean().exec(waterfallCallback);
+                        Invoice
+                            .aggregate([{
+                                $lookup: {
+                                    from                   : "Employees",
+                                    localField             : "salesPerson",
+                                    foreignField: "_id", as: "salesPerson"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "Customers",
+                                    localField             : "supplier",
+                                    foreignField: "_id", as: "supplier"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "workflows",
+                                    localField             : "workflow",
+                                    foreignField: "_id", as: "workflow"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "Users",
+                                    localField             : "createdBy.user",
+                                    foreignField: "_id", as: "createdBy.user"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "Users",
+                                    localField             : "editedBy.user",
+                                    foreignField: "_id", as: "editedBy.user"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "Quotation",
+                                    localField             : "sourceDocument",
+                                    foreignField: "_id", as: "sourceDocument"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "Project",
+                                    localField             : "project",
+                                    foreignField: "_id", as: "project"
+                                }
+                            }, {
+                                $project: {
+                                    sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
+                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                    supplier        : {$arrayElemAt: ["$supplier", 0]},
+                                    salesPerson     : {$arrayElemAt: ["$salesPerson", 0]},
+                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                    project         : {$arrayElemAt: ["$project", 0]},
+                                    expense         : 1,
+                                    forSales        : 1,
+                                    paymentInfo     : 1,
+                                    invoiceDate     : 1,
+                                    name            : 1,
+                                    paymentDate     : 1,
+                                    dueDate         : 1,
+                                    payments        : 1
+                                }
+                            }, {
+                                $project: {
+                                    sourceDocument  : 1,
+                                    workflow        : 1,
+                                    supplier        : 1,
+                                    salesPerson     : 1,
+                                    'editedBy.user' : 1,
+                                    'createdBy.user': 1,
+                                    project         : 1,
+                                    expense         : 1,
+                                    forSales        : 1,
+                                    paymentInfo     : 1,
+                                    invoiceDate     : 1,
+                                    name            : 1,
+                                    paymentDate     : 1,
+                                    dueDate         : 1,
+                                    payments        : 1
+                                }
+                            }, {
+                                $match: optionsObject
+                            }, {
+                                $sort: sort
+                            }, {
+                                $skip: skip
+                            }, {
+                                $limit: count
+                            }
+                            ], function (err, result) {
+                                waterfallCallback(null, result)
+                            });
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -697,7 +734,7 @@ var Invoice = function (models, event) {
                     contentSearcher = function (invoicesIds, waterfallCallback) {
 
                         optionsObject = {
-                            _id: id,
+                            _id     : id,
                             forSales: forSales
                         };
 
@@ -705,6 +742,7 @@ var Invoice = function (models, event) {
 
                         query.populate('products.product')
                             .populate('products.jobs')
+                            .populate('currency._id')
                             .populate('payments', '_id name date paymentRef paidAmount')
                             .populate('department', '_id departmentName')
                             .populate('paymentTerms', '_id name')
@@ -713,7 +751,10 @@ var Invoice = function (models, event) {
                             .populate('groups.users')
                             .populate('groups.group')
                             .populate('groups.owner', '_id login')
-                            .populate('sourceDocument');
+                            .populate('sourceDocument')
+                            .populate('workflow', '_id name status')
+                            .populate('supplier', '_id name fullName')
+                            .populate('salesPerson', '_id name fullName');
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -770,10 +811,7 @@ var Invoice = function (models, event) {
 
                         Order.findByIdAndUpdate(objectId(orderId), {
                             $set: {
-                                workflow: {
-                                    name: "Not Invoiced",
-                                    _id: CONSTANTS.ORDERDRAFT
-                                }
+                                workflow: CONSTANTS.ORDERNEW
                             }
                         }, {new: true}, function (err, result) {
                             if (err) {
@@ -809,18 +847,15 @@ var Invoice = function (models, event) {
                                 };
 
                                 JobsModel.findByIdAndUpdate(id, {
-                                    type: "Ordered",
-                                    invoice: {_id: null, name: "", amount: 0},
-                                    workflow: {
-                                        _id: CONSTANTS.JOBSINPROGRESS,
-                                        name: "In Progress"
-                                    }
+                                    type    : "Ordered",
+                                    invoice : null,
+                                    workflow: CONSTANTS.JOBSINPROGRESS
                                 }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
 
-                                    project = result ? result.project._id : null;
+                                    project = result ? result.project : null;
                                     array = result ? result.wTracks : [];
 
                                     async.each(array, function (id) {
@@ -889,15 +924,6 @@ var Invoice = function (models, event) {
         if (req.session && req.session.loggedIn && db) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    //Invoice = models.get(db, 'Invoice', InvoiceSchema);
-                    //data.editedBy = {
-                    //    user: req.session.uId,
-                    //    date: new Date().toISOString()
-                    //}
-
-                    //if (data.supplier && data.supplier._id) {
-                    //    data.supplier = data.supplier._id;
-                    //}
 
                     Invoice.findByIdAndUpdate(_id, data.invoice, {new: true}, function (err, result) {
 
@@ -919,37 +945,23 @@ var Invoice = function (models, event) {
 
     };
 
+
     this.totalCollectionLength = function (req, res, next) {
-        var data = req.query;
-        var filter = data.filter;
-        //var forSales = data.forSales;
 
-        var optionsObject = {};
-        var result = {};
-
-        result['showMore'] = false;
 
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
-        var waterfallTasks;
-
-        if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject['$or'] = caseFilter(filter);
-            } else {
-                optionsObject['$and'] = caseFilter(filter);
-            }
+        var query = req.query;
+        var filter = query.filter;
+        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+        if (filter) {
+            var filterObj = {};
+            filterObj['$and'] = caseFilter(filter);
         }
 
-        //if (forSales){
-        //    optionsObject['$and'].push({forSales: false});
-        //} else {
-        //    optionsObject['$and'].push({forSales: true });
-        //
-        //}
+        var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
@@ -973,15 +985,15 @@ var Invoice = function (models, event) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    optionsObject,
+                    //  optionsObject,
                     {
                         $or: whoCanRw
                     }
                 ]
             };
-            var Model = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
 
-            Model.aggregate(
+
+            Invoice.aggregate(
                 {
                     $match: matchQuery
                 },
@@ -995,22 +1007,121 @@ var Invoice = function (models, event) {
         };
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
-            var query;
-            var queryObject = ({_id: {$in: invoicesIds}});
+            var queryObject = {};
 
-            query = Invoice.find(queryObject);
-            query.exec(waterfallCallback);
+            queryObject['$and'] = [];
+
+            if (filterObj) {
+                queryObject['$and'].push(filterObj);
+            }
+
+            queryObject['$and'].push({_id: {$in: _.pluck(invoicesIds, '_id')}});
+
+
+            Invoice.aggregate([{
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "salesPerson",
+                    foreignField: "_id", as: "salesPerson"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "createdBy.user",
+                    foreignField: "_id", as: "createdBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "editedBy.user",
+                    foreignField: "_id", as: "editedBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "Quotation",
+                    localField  : "sourceDocument",
+                    foreignField: "_id", as: "sourceDocument"
+                }
+            }, {
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $project: {
+                    sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
+                    workflow        : {$arrayElemAt: ["$workflow", 0]},
+                    supplier        : {$arrayElemAt: ["$supplier", 0]},
+                    salesPerson     : {$arrayElemAt: ["$salesPerson", 0]},
+                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                    project         : {$arrayElemAt: ["$project", 0]},
+                    expense         : 1,
+                    forSales        : 1,
+                    paymentInfo     : 1,
+                    invoiceDate     : 1,
+                    name            : 1,
+                    paymentDate     : 1,
+                    dueDate         : 1,
+                    payments        : 1
+                }
+            }, {
+                $project: {
+                    sourceDocument  : 1,
+                    workflow        : 1,
+                    supplier        : 1,
+                    salesPerson     : 1,
+                    'editedBy.user' : 1,
+                    'createdBy.user': 1,
+                    project         : 1,
+                    expense         : 1,
+                    forSales        : 1,
+                    paymentInfo     : 1,
+                    invoiceDate     : 1,
+                    name            : 1,
+                    paymentDate     : 1,
+                    dueDate         : 1,
+                    payments        : 1
+                }
+            }, {
+                $match: queryObject
+            }], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                waterfallCallback(null, result.length);
+            });
+
+
+            /* var query;
+             var queryObject = ({_id: {$in: invoicesIds}});
+
+             query = Invoice.find(queryObject);
+             query.exec(waterfallCallback);*/
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, invoice) {
+        async.waterfall(waterfallTasks, function (err, result) {
             if (err) {
                 return next(err);
             } else {
 
-                result['count'] = invoice.length;
-                res.status(200).send(result);
+                res.status(200).send({count: result});
             }
         });
     };
@@ -1022,8 +1133,8 @@ var Invoice = function (models, event) {
         var date = moment().format('DD/MM/YYYY');
 
         db.collection('settings').findOneAndUpdate({
-                dbName: currentDbName,
-                name: 'invoice',
+                dbName : currentDbName,
+                name   : 'invoice',
                 project: project
             },
             {
@@ -1031,7 +1142,7 @@ var Invoice = function (models, event) {
             },
             {
                 returnOriginal: false,
-                upsert: true
+                upsert        : true
             },
             function (err, rate) {
                 var resultName;
@@ -1056,13 +1167,10 @@ var Invoice = function (models, event) {
                     .aggregate([
                         {
                             $group: {
-                                _id: null,
+                                _id       : null,
                                 'Due date': {
                                     $addToSet: '$dueDate'
-                                }/*,
-                                 'salesPerson': {
-                                 $addToSet: '$salesPerson'
-                                 }*/
+                                }
                             }
                         }
                     ], function (err, invoice) {
@@ -1074,24 +1182,7 @@ var Invoice = function (models, event) {
                         }
 
                     })
-            }/*,
-             function (invoice, cb) {
-             Employee
-             .populate(invoice , {
-             path: 'salesPerson',
-             model: Employee,
-             select: 'name _id'
-             },
-             function (err, invoice) {
-             if (err) {
-             return cb(err)
-
-             }
-             cb(null, invoice)
-
-             })
-             }*/
-
+            }
         ], function (err, result) {
             if (err) {
                 return next(err)
@@ -1131,46 +1222,77 @@ var Invoice = function (models, event) {
 
         Invoice.aggregate([{
             $match: {
-                forSales: true,
+                forSales             : true,
                 'paymentInfo.balance': {
                     $gt: 0
                 }
             }
         }, {
+            $lookup: {
+                from        : "Project",
+                localField  : "project",
+                foreignField: "_id", as: "project"
+            }
+        }, {
+            $lookup: {
+                from        : "Customers",
+                localField  : "supplier",
+                foreignField: "_id", as: "supplier"
+            }
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "salesPerson",
+                foreignField: "_id", as: "salesPerson"
+            }
+        }, {
             $project: {
-                dueDate: 1,
-                project: 1,
-                supplier: 1,
-                name: 1,
-                paymentInfo: 1,
-                salesPerson: 1,
-                diffStatus: {
+                project    : {$arrayElemAt: ["$project", 0]},
+                supplier   : {$arrayElemAt: ["$supplier", 0]},
+                salesPerson: {$arrayElemAt: ["$salesPerson", 0]},
+                dueDate    : 1,
+                name       : 1,
+                paymentInfo: 1
+            }
+        }, {
+            $project: {
+                dueDate              : 1,
+                'project.projectName': 1,
+                'supplier.name'      : {
+                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                },
+                name                 : 1,
+                paymentInfo          : 1,
+                'salesPerson.name'   : {
+                    $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                },
+                diffStatus           : {
                     $cond: {
-                        if: {
+                        if  : {
                             $lt: [{$subtract: [now, '$dueDate']}, 0]
                         },
                         then: -1,
                         else: {
                             $cond: {
-                                if: {
+                                if  : {
                                     $lt: [{$subtract: [now, '$dueDate']}, 1296000000]
                                 },
                                 then: 0,
                                 else: {
                                     $cond: {
-                                        if: {
+                                        if  : {
                                             $lt: [{$subtract: [now, '$dueDate']}, 2592000000]
                                         },
                                         then: 1,
                                         else: {
                                             $cond: {
-                                                if: {
+                                                if  : {
                                                     $lt: [{$subtract: [now, '$dueDate']}, 5184000000]
                                                 },
                                                 then: 2,
                                                 else: {
                                                     $cond: {
-                                                        if: {
+                                                        if  : {
                                                             $lt: [{$subtract: [now, '$dueDate']}, 7776000000]
                                                         },
                                                         then: 3,
@@ -1218,7 +1340,6 @@ var Invoice = function (models, event) {
                     dueDate: {$gte: startDate, $lte: endDate}
                 }
             }])
-            /*.allowDiskUse(true)*/
             .exec(function (err, invoices) {
                 if (err) {
                     return next(err);
@@ -1316,34 +1437,57 @@ var Invoice = function (models, event) {
 
                         Invoice
                             .aggregate([{
+                                $lookup: {
+                                    from                   : "Project",
+                                    localField             : "project",
+                                    foreignField: "_id", as: "project"
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : "workflows",
+                                    localField             : "workflow",
+                                    foreignField: "_id", as: "workflow"
+                                }
+                            }, {
+                                $project: {
+                                    project    : {$arrayElemAt: ["$project", 0]},
+                                    name       : 1,
+                                    paymentInfo: 1,
+                                    status     : {$arrayElemAt: ["$workflow", 0]},
+                                    ammount    : {$divide: ['$paymentInfo.total', 100]},
+                                    paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
+                                    balance    : {$divide: ['$paymentInfo.balance', 100]}
+                                }
+                            }, {
                                 $match: optionsObject
                             }, {
                                 $project: {
-                                    name: 1,
+                                    project    : 1,
+                                    name       : 1,
                                     paymentInfo: 1,
-                                    status: '$workflow.name',
-                                    ammount: {$divide: ['$paymentInfo.total', 100]},
-                                    paid: {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
-                                    balance: {$divide: ['$paymentInfo.balance', 100]}
+                                    status     : '$status.name',
+                                    ammount    : 1,
+                                    paid       : 1,
+                                    balance    : 1
                                 }
                             }, {
                                 $group: {
-                                    _id: null,
+                                    _id     : null,
                                     invoices: {
                                         $push: {
-                                            _id: '$_id',
-                                            name: '$name',
-                                            status: '$status',
+                                            _id        : '$_id',
+                                            name       : '$name',
+                                            status     : '$status',
                                             paymentInfo: {
                                                 ammount: '$ammount',
-                                                paid: '$paid',
+                                                paid   : '$paid',
                                                 balance: '$balance'
                                             }
                                         }
                                     },
-                                    ammount: {$sum: '$ammount'},
-                                    paid: {$sum: '$paid'},
-                                    balance: {$sum: '$balance'}
+                                    ammount : {$sum: '$ammount'},
+                                    paid    : {$sum: '$paid'},
+                                    balance : {$sum: '$balance'}
                                 }
                             }])
                             .exec(waterfallCallback);

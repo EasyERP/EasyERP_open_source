@@ -11,9 +11,9 @@ define([
         'common',
         'dataService',
         'constants'
-],
+    ],
 
-    function (listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection,filterView, common, dataService, CONSTANT) {
+    function (listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService, CONSTANT) {
         var ProductsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -75,14 +75,19 @@ define([
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new productModel({ validate: false });
+                var model = new productModel({validate: false});
                 model.urlRoot = '/product/form';
                 model.fetch({
-                    data: { id: id },
+                    data   : {id: id},
                     success: function (model) {
-                        new editView({ model: model });
+                        new editView({model: model});
                     },
-                    error: function () { alert('Please refresh browser'); }
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
+                    }
                 });
             }
         });

@@ -1,77 +1,32 @@
 <div class="addUserAndGroup">
-  <a href="javascript:;" class="addUser">Manage User</a>
-  <span>|</span>
-  <a href="javascript:;" class="addGroup">Manage Group</a>
+    <a href="javascript:;" class="addUser">Manage User</a>
+    <span>|</span>
+    <a href="javascript:;" class="addGroup">Manage Group</a>
 </div>
 <div class="clearfix"></div>
 
 <div class="half-block left">
-  <div class="canReadAndWrite">
-    <input type="radio" name="whoCanRW" value="everyOne" <%= (whoCanRW === 'everyOne') ?  ' checked': '' %> /> <label>Everyone</label><br>
-    <input type="radio" name="whoCanRW" value="owner" <%= (whoCanRW === 'owner') ?  ' checked' : '' %> /> <label>Owner</label><br>
-    <input type="radio" name="whoCanRW" value="group"  <%= (whoCanRW === 'group') ?  ' checked' : '' %> /> <label>Owner, Users and Users in Groups</label>
-  </div>
+    <div class="canReadAndWrite">
+        <input type="radio" name="whoCanRW" value="everyOne" <%= (whoCanRW === 'everyOne') ? ' checked': '' %> />
+        <label>Everyone</label><br>
+        <input type="radio" name="whoCanRW" value="owner" <%= (whoCanRW === 'owner') ? ' checked' : '' %> /> <label>Owner</label><br>
+        <input type="radio" name="whoCanRW" value="group" <%= (whoCanRW === 'group') ? ' checked' : '' %> /> <label>Owner,
+        Users and Users in Groups</label>
+    </div>
 </div>
 <div class="half-block left">
-  <dl class="assignees-info">
-    <dt><label for="allUsersSelect">Owner</label></dt><dd>
-      <a href="javascript:;" class="current-selected" id="allUsersSelect" data-id="<%=owner._id%>"><%=owner?owner.login:"Select"%></a>
-    </dd>
-  </dl>
-</div>
-
-
-<div class="addUserDialog">
-
-  <div class="formTitle">
-    <h3 class="left">Choose Users</h3>
-    <div class="clearfix"></div>
-  </div>
-  <div class="groupsChooser">
-    <div class="left">
-      <ul id="sourceUsers" class="source">
-
-      </ul>
-    </div>
-    <div class="left">
-      <div class="swich"></div>
-    </div>
-    <div class="left">
-      <ul id="targetUsers" class="target">
-
-      </ul>
-    </div>
-  </div>
-
-  <div class="clearfix"></div>
-</div>
-<div class="addGroupDialog">
-  <div class="formTitle">
-    <h3 class="left">Choose Groups</h3>
-    <div class="clearfix"></div>
-  </div>
-
-  <div class="groupsChooser">
-    <div class="left">
-      <ul id="sourceGroups" class="source">
-
-      </ul>
-    </div>
-    <div class="left">
-      <div class="swich"></div>
-    </div>
-    <div class="left">
-      <ul id="targetGroups" class="target">
-
-      </ul>
-    </div>
-  </div>
-  <div class="clearfix"></div>
+    <dl class="assignees-info">
+        <dt><label for="allUsersSelect">Owner</label></dt>
+        <dd>
+            <a href="javascript:;" class="current-selected" id="allUsersSelect" data-id="<%=owner._id%>"><%=owner?owner.login:"Select"%></a>
+        </dd>
+    </dl>
 </div>
 
 <table class="groupsAndUser">
-  <tr>
-    <th>Groups and Users</th><th></th>
-  </tr>
+    <tr>
+        <th>Groups and Users</th>
+        <th></th>
+    </tr>
 </table>
 <div class="clearfix"></div>

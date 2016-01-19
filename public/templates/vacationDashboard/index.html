@@ -13,9 +13,9 @@
                 <span>IsLead</span>
             </th>
             <% weeks.forEach(function(week){ %>
-                <th id="<%= week.number %>" class="<%=getHeadClass(week, self)%>">
-                    <span><%= week.lastDate %> (<%= week.week %>)</span>
-                </th>
+            <th id="<%= week.number %>" class="<%=getHeadClass(week, self)%>">
+                <span><%= week.lastDate %> (<%= week.week %>)</span>
+            </th>
             <% }) %>
         </tr>
         </thead>
@@ -57,6 +57,7 @@
                 <%if(week.holidays){%>
                 <span class="viewCount"><%=week.holidays || 0%>d</span>
                 <%}%>
+                                <span class="view">
                                 <span class="view">
                                     <%if(week.vacations){%>
                                         <span class="vacation <%=getCellSize(week, true)%>"><%=(week.vacations || 0) * 8%> h</span>

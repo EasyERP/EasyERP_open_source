@@ -28,7 +28,7 @@ define([
             modelId                 : null,
             $listTable              : null,
             editCollection          : null,
-            contentCollection: paymentCollection,
+            contentCollection       : paymentCollection,
             totalCollectionLengthUrl: '/payment/customers/totalCollectionLength',
             changedModels           : {},
             responseObj             : {},
@@ -38,7 +38,7 @@ define([
                 "click td.editable"                                : "editRow",
                 "change .editable "                                : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click td:not(.checkbox, .date)": "goToEditDialog"
+                "click td:not(.checkbox, .date)"                   : "goToEditDialog"
             },
 
             initialize: function (options) {
@@ -59,7 +59,7 @@ define([
                 this.filterView;
             },
 
-            goToEditDialog: function(e){
+            goToEditDialog: function (e) {
                 e.preventDefault();
 
                 var id = $(e.target).closest('tr').data("id");
@@ -123,10 +123,14 @@ define([
                                 that.editCollection.on('remove', function () {
                                     this.listLength--;
                                     localCounter++;
+                                    //
+                                    //if (index === count - 1) {
+                                    //    that.triggerDeleteItemsRender(localCounter);
+                                    //}
 
-                                    if (index === count - 1) {
-                                        that.triggerDeleteItemsRender(localCounter);
-                                    }
+                                    that.deleteCounter = localCounter;
+                                    that.deletePage = $("#currentShowPage").val();
+                                    that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
                                 }, that);
                             } else {
@@ -141,20 +145,29 @@ define([
                                         that.listLength--;
                                         localCounter++;
 
-                                        if (index === count - 1) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
+                                        //if (index === count - 1) {
+                                        //    that.triggerDeleteItemsRender(localCounter);
+                                        //}
+                                        that.deleteCounter = localCounter;
+                                        that.deletePage = $("#currentShowPage").val();
+                                        that.deleteItemsRender(that.deleteCounter, that.deletePage);
                                     },
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
-                                            alert("You do not have permission to perform this action");
+                                            App.render({
+                                                type: 'error',
+                                                message: "You do not have permission to perform this action"
+                                            });
                                         }
                                         that.listLength--;
                                         localCounter++;
                                         if (index == count - 1) {
-                                            if (index === count - 1) {
-                                                that.triggerDeleteItemsRender(localCounter);
-                                            }
+                                            //if (index === count - 1) {
+                                            //    that.triggerDeleteItemsRender(localCounter);
+                                            //}
+                                            that.deleteCounter = localCounter;
+                                            that.deletePage = $("#currentShowPage").val();
+                                            that.deleteItemsRender(that.deleteCounter, that.deletePage);
                                         }
 
                                     }
@@ -207,7 +220,6 @@ define([
 
                 self.changedModels = {};
             },
-
 
             editRow: function (e, prev, next) {
                 var self = this;
@@ -458,7 +470,7 @@ define([
                     }).render());
                 }
 
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
                 this.renderCheckboxes();
 

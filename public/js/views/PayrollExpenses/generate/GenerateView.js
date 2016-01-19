@@ -110,7 +110,10 @@ define([
                 key = parseInt(self.year) * 100 + parseInt(self.month);
 
                 if (this.keys.indexOf(key.toString()) > -1) {
-                    return alert("Please, choose empty month!");
+                    return App.render({
+                        type: 'error',
+                        message: "Please, choose empty month!"
+                    });
                 }
 
                 data.month = this.month;
@@ -132,7 +135,10 @@ define([
 
                     },
                     error  : function () {
-                        alert('error');
+                        App.render({
+                            type: 'error',
+                            message: "error"
+                        });
                     }
                 });
             },

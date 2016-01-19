@@ -1,4 +1,7 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/vacationDashboard/index.html',
     'views/vacationDashboard/statisticsView',
     'collections/Dashboard/vacationDashboard',
@@ -9,7 +12,7 @@ define([
     'custom',
     'moment',
     'constants'
-], function (mainTemplate, StatisticsView, vacationDashboard, VacationDashEdit, filterView, dataService, async, custom, moment, CONSTANTS) {
+], function (Backbone, $, _, mainTemplate, StatisticsView, VacationDashboard, VacationDashEdit, FilterView, dataService, async, custom, moment, CONSTANTS) {
     "use strict";
     var View = Backbone.View.extend({
         el: '#content-holder',
@@ -23,16 +26,14 @@ define([
             "click .openAll"     : "openAll",
             "click .employeesRow": "openEmployee",
             "click .group"       : "openDepartment",
-            "click .wTrackInfo"  : "getWtrackInfo"
+            "click .wTrackInfo"  : "getWtrackInfo",
+            "click"              : "hideDateRange"
         },
 
         initialize: function (options) {
             var dashCollection;
-            var startWeek;
-            var self = this;
             var year;
             var week;
-            var socket = App.socket;
 
             this.startTime = options.startTime;
             this.filter = options.filter || custom.retriveFromCash('DashVacation.filter');
@@ -41,17 +42,7 @@ define([
             week = moment().isoWeek();
 
             this.dateByWeek = year * 100 + week;
-            this.week = week;
-            this.year = year;
-
-            startWeek = self.week - 1;
-
-            if (startWeek >= 0) {
-                this.startWeek = startWeek;
-            } else {
-                this.startWeek = startWeek + 53;
-                this.year -= 1;
-            }
+            this.momentDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
 
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
             custom.cacheToApp('DashVacation.filter', this.filter);
@@ -67,12 +58,12 @@ define([
         fetchData: function (options) {
             var dashCollection;
 
-            dashCollection = new vacationDashboard(options);
+            dashCollection = new VacationDashboard(options);
 
             return dashCollection;
         },
 
-        openAll: function (e) {
+        openAll: function (/*e*/) {
             var self = this;
             var rows = self.$el.find('tr');
             var length = rows.length;
@@ -80,19 +71,20 @@ define([
             var projectsRows = self.$el.find("tr[data-content='project']");
             var countEmployees = employeeRows.length;
             var countProjects = projectsRows.length;
+            var i;
 
             if (!self.expandAll) {
-                for (var i = length; i >= 0; i--) {
+                for (i = length; i >= 0; i--) {
                     rows.eq(i).show();
                 }
 
                 self.$el.find('.icon').text('-');
                 self.expandAll = true;
             } else {
-                for (var i = countEmployees; i >= 0; i--) {
+                for (i = countEmployees; i >= 0; i--) {
                     employeeRows.eq(i).hide();
                 }
-                for (var i = countProjects; i >= 0; i--) {
+                for (i = countProjects; i >= 0; i--) {
                     projectsRows.eq(i).hide();
                 }
 
@@ -134,12 +126,12 @@ define([
 
         leadComparator: function (isLeadNumber) {
             if (!isLeadNumber) {
-                return '<span class="low"><span class="label label-danger">Low</span></span>'
+                return '<span class="low"><span class="label label-danger">Low</span></span>';
             }
-            if (isLeadNumber == 1) {
-                return '<span class="medium"><span class="label label-warning">Medium</span></span>'
+            if (isLeadNumber === 1) {
+                return '<span class="medium"><span class="label label-warning">Medium</span></span>';
             }
-            return '<span class="high"><span class="label label-success">High</span></span>'
+            return '<span class="high"><span class="label label-success">High</span></span>';
         },
 
         isWorking: function (employee, week) {
@@ -150,29 +142,31 @@ define([
             var year = week.dateByWeek.toString().slice(0, 4);
             var _week = week.dateByWeek.toString().slice(4);
 
+            var _lastHiredObject = hiredArr[hiredArr.length - 1];
+            var _lastFiredObject = firedArr[firedArr.length - 1];
+            var _lastHiredDate = _lastHiredObject ? moment(_lastHiredObject.date, 'YYYY-MM-DD') : null;
+            var _lastFiredDate = _lastFiredObject ? moment(_lastFiredObject.date, 'YYYY-MM-DD') : null;
             var _hiredDate;
             var _firedDate;
-            var _lastHiredDate = moment(hiredArr[hiredArr.length - 1], 'YYYY-MM-DD');
-            var _lastFiredDate = moment(firedArr[firedArr.length - 1], 'YYYY-MM-DD');
+            var i;
 
             date = moment().set('year', year).set('week', _week);
 
             if (!firedLength) {
-                if (date > _lastHiredDate) {
+                return date > _lastHiredDate;
+            }
+
+            for (i = firedLength - 1; i >= 0; i--) {
+                _hiredDate = hiredArr[i] ? hiredArr[i].date : null;
+                _firedDate = firedArr[i] ? firedArr[i].date : null;
+                _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
+                _firedDate = moment(_firedDate).format('YYYY-MM-DD');
+
+                if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate > _lastFiredDate))) {
                     return true;
                 }
-                return false;
-            } else {
-                for (var i = firedLength - 1; i >= 0; i--) {
-                    _hiredDate = moment(hiredArr[i]).format('YYYY-MM-DD');
-                    _firedDate = moment(firedArr[i]).format('YYYY-MM-DD');
-
-                    if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && date < _lastFiredDate)) {
-                        return true;
-                    }
-                }
-                return false;
             }
+            return false;
         },
 
         getCellClass: function (week, self, employee) {
@@ -227,7 +221,8 @@ define([
                 v = workedHours ? "size16" : "size40";
                 w = workedHours ? "size24" : "size40";
             } else if (vacationHours > 0) {
-                v = workedHours ? "size8" : "size8";
+                //v = workedHours ? "size8" : "size8";
+                v = "size8";
                 w = "sizeFull";
             } else {
                 v = "size0";
@@ -236,13 +231,16 @@ define([
 
             if (vacation && vacationHours) {
                 return v;
-            } else {
-                return w;
             }
+
+            return w;
         },
 
         getDate: function (num, year) {
-            return moment().week(num).year(year).day("Monday").format("DD.MM");
+            var _moment = moment().hours(12).isoWeek(num).isoWeekYear(year);
+            var date = _moment.isoWeekday(5).format("DD.MM", true);
+
+            return date;
         },
 
         calculateStatistics: function () {
@@ -279,7 +277,6 @@ define([
                 result.startTime = startTime;
                 self.statisticsView$.render(result);
             });
-
 
         },
 
@@ -320,22 +317,21 @@ define([
             this.$endDate = $('#endDate');
         },
 
-        changeDateRange: function (e) {
+        changeDateRange: function (/*e*/) {
             var startDateStr = this.$startDate.val();
             var endDateStr = this.$endDate.val();
             var weeksArr = [];
 
             var dashCollection = this.dashCollection;
-            var startWeek;
-            var startYear;
-            var endYear;
             var startDate;
             var endDate;
-            var endWeek;
             var year;
             var week;
             var _dateStr;
             var filter;
+            var duration;
+            var i;
+            var weeks = 0;
 
             this.startTime = new Date();
 
@@ -343,36 +339,30 @@ define([
             week = moment().isoWeek();
 
             this.dateByWeek = year * 100 + week;
-            this.week = week;
-            this.year = year;
 
             startDateStr = moment(startDateStr);
-            endDateStr = moment(endDateStr);
-            startYear = startDateStr.isoWeekYear();
-            endYear = endDateStr.isoWeekYear();
-            startWeek = startDateStr.isoWeek();
-            endWeek = endDateStr.isoWeek();
+            endDate = endDateStr = moment(endDateStr);
+            startDate = moment(startDateStr);
+            duration = endDateStr.diff(startDateStr, 'weeks');
 
-            startDate = startYear * 100 + startWeek;
-            endDate = endYear * 100 + endWeek;
-
-            for (var i = startDate; i <= endDate; i++) {
-                _dateStr = i.toString();
-                week = _dateStr.substr(-2);
-                year = _dateStr.substr(0, 4);
+            for (i = 0; i <= duration; i++) {
+                _dateStr = startDateStr.add(weeks, 'weeks');
+                week = _dateStr.isoWeek();
+                year = _dateStr.isoWeekYear();
                 weeksArr.push({
                     lastDate: this.getDate(week, year),
                     week    : week,
                     year    : year
                 });
+                weeks = weeks || 1;
             }
 
             custom.cacheToApp('vacationDashWeeksArr', weeksArr);
 
             filter = this.filter || custom.retriveFromCash('DashVacation.filter') || {};
 
-            filter.startDate = startDate;
-            filter.endDate = endDate;
+            filter.startDate = startDate.toDate();
+            filter.endDate = endDate.toDate();
 
             if (dashCollection) {
                 dashCollection = this.dashCollection = this.fetchData({
@@ -389,30 +379,28 @@ define([
         },
 
         defaultDataGenerator: function () {
-            var startWeek = this.startWeek;
+            var startDate = this.momentDate;
+            var endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
+            var duration = endDate.diff(startDate, 'weeks');
             var weeksArr = custom.retriveFromCash('vacationDashWeeksArr') || [];
+            var weeks = 0;
             var week;
             var year;
+            var _dateStr;
+
+            var i;
 
             if (!weeksArr || !weeksArr.length) {
-                for (var i = 0; i <= 11; i++) {
-                    if (startWeek + i > 53) {
-                        week = startWeek + i - 53;
-                        year = this.year + 1;
-                        weeksArr.push({
-                            lastDate: this.getDate(week, year),
-                            week    : week,
-                            year    : year
-                        });
-                    } else {
-                        week = startWeek + i;
-                        year = this.year;
-                        weeksArr.push({
-                            lastDate: this.getDate(week, year),
-                            week    : week,
-                            year    : year
-                        });
-                    }
+                for (i = 0; i <= duration; i++) {
+                    _dateStr = startDate.add(weeks, 'weeks');
+                    week = _dateStr.isoWeek();
+                    year = _dateStr.isoWeekYear();
+                    weeksArr.push({
+                        lastDate: this.getDate(week, year),
+                        week    : week,
+                        year    : year
+                    });
+                    weeks = weeks || 1;
                 }
 
                 custom.cacheToApp('vacationDashWeeksArr', weeksArr);
@@ -449,6 +437,12 @@ define([
             dashCollection.on('reset sort', this.render, this);
         },
 
+        hideDateRange: function () {
+            var targetEl = $('.frameDetail');
+
+            targetEl.addClass('hidden');
+        },
+
         render: function (options) {
             var $currentEl = this.$el;
             var defaultData = options ? !options.defaultData : true;
@@ -458,6 +452,8 @@ define([
             var self = this;
             var statictics;
             var url = '#easyErp/DashBoardVacation';
+
+            App.filter = filter || {};
 
             if ('toJSON' in dashboardData) {
                 dashboardData.unbind();
@@ -491,24 +487,22 @@ define([
 
             this.findDataPickers();
 
+            if (filter) {
+                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+
+                Backbone.history.navigate(url);
+            }
+
             if (!this.filterView) {
-                this.filterView = new filterView({contentType: 'DashVacation'});
+                this.filterView = new FilterView({contentType: 'DashVacation'});
                 this.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter)
+                    self.showFilteredPage(filter);
                 });
                 this.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({});
                 });
 
                 this.filterView.render();
-            } /*else {
-                this.filterView.renderFilterContent();
-            }*/
-
-            if (filter) {
-                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-
-                Backbone.history.navigate(url);
             }
 
             return this;

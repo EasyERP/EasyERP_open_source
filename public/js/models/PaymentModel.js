@@ -7,35 +7,35 @@
 define(['Validation', 'common'], function (Validation, common, helpers) {
     var PaymentModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize: function () {
+        initialize : function () {
 
         },
-        defaults: {
-            supplier: {
-                _id: null,
+        defaults   : {
+            supplier        : {
+                _id     : null,
                 fullName: ''
             },
-            paidAmount: 0,
-            paymentMethod: null,
-            date: new Date(),
-            name: 'PP',
-            period: null,
-            paymentRef: null,
+            paidAmount      : 0,
+            paymentMethod   : null,
+            date            : new Date(),
+            name            : 'PP',
+            period          : null,
+            paymentRef      : null,
             differenceAmount: 0,
-            invoice: null,
-            invoiced: 0
+            invoice         : null,
+            invoiced        : 0
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/payment";
         },
-        parse: function (model) {
+        parse      : function (model) {
             var differenceAmount = model.differenceAmount || 0;
             var paidAmount = model.paidAmount || 0;
             var invoiced;
             var paid;
 
-            differenceAmount = differenceAmount/ 100;
-            paidAmount = paidAmount/100;
+            differenceAmount = differenceAmount / 100;
+            paidAmount = paidAmount / 100;
             invoiced = paidAmount + differenceAmount;
             paid = paidAmount - differenceAmount;
 
@@ -56,7 +56,6 @@ define(['Validation', 'common'], function (Validation, common, helpers) {
             if (model.period) {
                 model.period = common.utcDateToLocaleDate(model.period);
             }
-
 
             return model;
         }

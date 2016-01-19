@@ -53,7 +53,6 @@ define([
                 "click .setDraft"                                                 : "setDraft"
             },
 
-
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
@@ -118,14 +117,14 @@ define([
                     var redirectUrl = window.location.hash;//self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return  App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow : workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -159,7 +158,10 @@ define([
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             if (err) {
-                                alert('Can\'t receive invoice');
+                                App.render({
+                                    type: 'error',
+                                    message: 'Can\'t receive invoice'
+                                });
                             } else {
 
                                 if (self.redirect) {
@@ -179,7 +181,6 @@ define([
                                             value: [_id]
                                         }
                                     };
-
 
                                     self.collection = new invoiceCollection({
                                         count      : 50,
@@ -221,14 +222,14 @@ define([
                     var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return  App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -292,7 +293,6 @@ define([
                     }
                 }
 
-
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -305,13 +305,9 @@ define([
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
-                supplier._id = thisEl.find('#supplierDd').attr('data-id');
-                supplier.name = thisEl.find('#supplierDd').text();
+                supplier = thisEl.find('#supplierDd').attr('data-id');
 
-
-                project._id = thisEl.find('#projectDd').attr('data-id');
-                project.projectName = thisEl.find('#projectDd').text();
-                project.projectmanager = this.projectManager;
+                project = thisEl.find('#projectDd').attr('data-id');
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
@@ -325,17 +321,16 @@ define([
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
 
                         products.push({
-                            product  : productId,
-                            unitPrice: price,
-                            taxes: taxes,
-                            subTotal: subtotal,
-                            quantity : quantity,
-                            jobs     : jobs,
-                            scheduledDate : scheduledDate
+                            product      : productId,
+                            unitPrice    : price,
+                            taxes        : taxes,
+                            subTotal     : subtotal,
+                            quantity     : quantity,
+                            jobs         : jobs,
+                            scheduledDate: scheduledDate
                         });
                     }
                 }
-
 
                 data = {
                     currency         : currency,
@@ -353,7 +348,7 @@ define([
                     paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed,
-                        taxes: totalTaxes
+                        taxes  : totalTaxes
                     },
                     groups           : {
                         owner: $("#allUsersSelect").attr("data-id"),
@@ -374,6 +369,9 @@ define([
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
 
+                            App.projectInfo = App.projectInfo || {};
+                            App.projectInfo.currentTab = 'orders';
+
                             if (invoiceCb && typeof invoiceCb === 'function') {
                                 return invoiceCb(null);
                             }
@@ -388,7 +386,10 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type: 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
             },
 
@@ -402,6 +403,7 @@ define([
                 var mid = 55;
                 event.preventDefault();
                 var self = this;
+                var url = window.location.hash;
                 var answer = confirm("Really DELETE items ?!");
                 if (answer == true) {
                     this.currentModel.destroy({
@@ -410,11 +412,19 @@ define([
                         },
                         success: function () {
                             $('.edit-product-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
+
+                            App.projectInfo = App.projectInfo || {};
+                            App.projectInfo.currentTab = 'orders';
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });
@@ -426,8 +436,8 @@ define([
                 var self = this;
                 this.template = !this.onlyView ? _.template(EditTemplate) : _.template(ViewTemplate);
                 var formString = this.template({
-                    model  : this.currentModel.toJSON(),
-                    visible: this.visible,
+                    model   : this.currentModel.toJSON(),
+                    visible : this.visible,
                     onlyView: this.onlyView
                 });
                 var service = true;
@@ -467,7 +477,6 @@ define([
                     ]
                 }
 
-
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
                     autoOpen     : true,
@@ -485,7 +494,7 @@ define([
                     }).render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true, true);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this/*, true, true*/);
 
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
@@ -519,8 +528,7 @@ define([
                     }).render({model: model}).el
                 );
 
-
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -533,6 +541,7 @@ define([
                         });
 
                     }
+                }
                 return this;
             }
 

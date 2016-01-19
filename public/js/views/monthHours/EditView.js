@@ -13,7 +13,6 @@ define([
         var EditView = Backbone.View.extend({
             contentType: CONSTANTS.MONTHHOURS,
 
-
             initialize: function (options) {
                 if (options) {
                     this.visible = options.visible;
@@ -27,12 +26,12 @@ define([
             },
 
             events: {
-                'keydown': 'keyDown',
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                'keydown'                                                         : 'keyDown',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect"
             },
 
@@ -41,25 +40,25 @@ define([
                 var mid = 68;
                 var thisEl = this.$el;
                 var expenseCoefficient = thisEl.find('#expenseCoefficient').val();
-                var fixedExpense =  thisEl.find('#fixedExpense').val();
+                var fixedExpense = thisEl.find('#fixedExpense').val();
 
-               this.model.save({
-                   expenseCoefficient: expenseCoefficient,
-                   fixedExpense: fixedExpense
-               }, {
-                   headers: {
-                       mid: mid
-                   },
-                   wait: true,
-                   success: function () {
-                       self.hideDialog();
-                       Backbone.history.navigate("easyErp/monthHours/list", {trigger: true});
-                   },
-                   error: function (model, xhr) {
-                       self.errorNotification(xhr);
-                   }
+                this.model.save({
+                    expenseCoefficient: expenseCoefficient,
+                    fixedExpense      : fixedExpense
+                }, {
+                    headers: {
+                        mid: mid
+                    },
+                    wait   : true,
+                    success: function () {
+                        self.hideDialog();
+                        Backbone.history.navigate("easyErp/monthHours/list", {trigger: true});
+                    },
+                    error  : function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
 
-               });
+                });
             },
 
             nextSelect: function (e) {
@@ -103,7 +102,6 @@ define([
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
-
             keyDown: function (e) {
                 switch (e.which) {
                     case 27:
@@ -114,54 +112,54 @@ define([
                 }
             },
 
-            deleteItem: function(event) {
+            deleteItem: function (event) {
                 var mid = 68;
                 event.preventDefault();
                 var self = this;
-                    this.currentModel.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        success: function () {
-                            $('.edit-product-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType + '/list', {trigger: true});
-                        },
-                        error: function (model, xhr) {
-                            self.errorNotification(xhr);
-                        }
-                    });
+                this.currentModel.destroy({
+                    headers: {
+                        mid: mid
+                    },
+                    success: function () {
+                        $('.edit-product-dialog').remove();
+                        Backbone.history.navigate("easyErp/" + self.contentType + '/list', {trigger: true});
+                    },
+                    error  : function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
+                });
             },
 
             render: function () {
 
                 var formString = this.template({
-                    model: this.currentModel.toJSON(),
+                    model  : this.currentModel.toJSON(),
                     visible: this.visible
                 });
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Edit monthHours",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit monthHours",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            text: "Save",
+                            text : "Save",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         },
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
                         }
                     ]

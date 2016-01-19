@@ -1,15 +1,15 @@
 ﻿define([
         'models/ProductModel',
         "dataService"
-],
+    ],
     function (ProductModel, dataService) {
         var ProductCollection = Backbone.Collection.extend({
-            model: ProductModel,
-            url: "/product/",
-            page: null,
+            model       : ProductModel,
+            url         : "/product/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
+            viewType    : null,
+            contentType : null,
 
             initialize: function (options) {
                 var that = this;
@@ -22,13 +22,12 @@
                 this.contentType = options.contentType;
                 this.page = options.page || 1;
 
-                if (options && options.contentType && !(options.filter))
-                {
+                if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
                         options.filter = {
                             'canBeSold': {
-                                key: 'canBeSold',
+                                key  : 'canBeSold',
                                 value: ['true']
                             }
 
@@ -36,7 +35,7 @@
                     } else {
                         options.filter = {
                             'canBePurchased': {
-                                key: 'canBePurchased',
+                                key  : 'canBePurchased',
                                 value: ['true']
                             }
                         };
@@ -50,18 +49,20 @@
                 }
 
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
 
-            showMore: function (options) {
+            showMore        : function (options) {
                 var that = this;
                 var regex = /^sales/;
                 var filterObject = options || {};
@@ -72,13 +73,12 @@
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 filterObject['filter'] = (options) ? options.filter : {};
 
-                if (options && options.contentType && !(options.filter))
-                {
+                if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
                         filterObject.filter = {
                             'canBeSold': {
-                                key: 'canBeSold',
+                                key  : 'canBeSold',
                                 value: ['true']
                             }
 
@@ -86,7 +86,7 @@
                     } else {
                         filterObject.filter = {
                             'canBePurchased': {
-                                key: 'canBePurchased',
+                                key  : 'canBePurchased',
                                 value: ['true']
                             }
                         };
@@ -94,14 +94,17 @@
                 }
 
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
-                        alert('Some Error');
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             },
@@ -117,13 +120,12 @@
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 filterObject['filter'] = (options) ? options.filter : {}
 
-                if (options && options.contentType && !(options.filter))
-                {
+                if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
                         filterObject.filter = {
                             'canBeSold': {
-                                key: 'canBeSold',
+                                key  : 'canBeSold',
                                 value: ['true']
                             }
 
@@ -131,7 +133,7 @@
                     } else {
                         filterObject.filter = {
                             'canBePurchased': {
-                                key: 'canBePurchased',
+                                key  : 'canBePurchased',
                                 value: ['true']
                             }
                         };
@@ -139,18 +141,21 @@
                 }
 
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page++;
                         that.trigger('showmoreAlphabet', models);
                     },
-                    error: function () {
-                        alert('Some Error');
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             },
-            getAlphabet: function (callback) {
+            getAlphabet     : function (callback) {
                 var data = {};
 
                 data.mid = 58;
@@ -163,8 +168,6 @@
                     }
                 });
             },
-
-            parse: true,
             parse: function (response) {
                 return response.success;
             }

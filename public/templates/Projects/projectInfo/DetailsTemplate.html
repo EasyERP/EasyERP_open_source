@@ -42,7 +42,6 @@
             <th>Cost</th>
             <th>Revenue</th>
             <th>Profit</th>
-            <th>Rate</th>
         </tr>
         </thead>
 
@@ -53,33 +52,36 @@
         <%var totalCost = 0;%>
         <%var totalRevenue = 0;%>
         <%var totalProfit = 0;%>
-        <%var totalRate = 0;%>
         <% jobs.forEach(function(element,i){ %>
         <%if (element.budget) {%>
         <%var budgetTotal = element.budget.budgetTotal%>
 
         <tr data-id="<%=element._id%>" id="jobsItem">
 
-            <td class="remove"><a class="fa fa-trash hidden <%=(element.quotation._id || element.invoice._id) ? 'notRemovable' : ''%>" id="<%=element._id%>"></a></td>
+            <td class="remove"><a
+                    class="fa fa-trash hidden <%=((element.quotation && element.quotation._id) || (element.invoice && element.invoice._id)) ? 'notRemovable' : ''%>"
+                    id="<%=element._id%>"></a></td>
             <td class="expand">+</td>
             <td class="editableJobs" id="jobsName"><%=element.name%></td>
-            <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
-            <td class="selects"><a data-id="<%=element.type%>" id="type" class="current-selected"><%=element.type%></a>
-                <ul class="newSelectList" style="display: none;">
-                    <li>Ordered</li>
-                    <li>Quoted</li>
-                    <li>Invoiced</li>
-                    <li>Not Quoted</li>
-                </ul>
+            <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
             </td>
-            <td><a data-id="<%=element.quotation._id ? element.quotation._id : null%>" class="quotation"><%=element.quotation.name%></a></td>
-            <td><a data-id="<%=element.invoice._id ? element.invoice._id : null%>" class="invoice"><%=element.invoice.name%></a></td>
+            <td class="selects"><a data-id="<%=element.type%>" id="type"><%=element.type%></a>
+                <!--<ul class="newSelectList" style="display: none;">-->
+                    <!--<li>Ordered</li>-->
+                    <!--<li>Quoted</li>-->
+                    <!--<li>Invoiced</li>-->
+                    <!--<li>Not Quoted</li>-->
+                <!--</ul>-->
+            </td>
+            <td><a data-id="<%=element.quotation ? element.quotation._id : null%>" class="quotation"><%=element.quotation
+                ? element.quotation.name: ''%></a></td>
+            <td><a data-id="<%=element.invoice ? element.invoice._id : null%>" class="invoice"><%=element.invoice ?
+                element.invoice.name : ''%></a></td>
             <td><%=element.budget.projectTeam.length%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal ? isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2)) : 0%></td>
 
         </tr>
         <% count++ %>
@@ -87,7 +89,6 @@
         <% totalCost += budgetTotal.costSum %>
         <% totalRevenue += budgetTotal.revenueSum%>
         <% totalProfit += budgetTotal.profitSum%>
-        <% totalRate += isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : (budgetTotal.revenueSum / budgetTotal.hoursSum) %>
         <% } %>
         <% })%>
 
@@ -107,11 +108,9 @@
             <td id="totalCost" data-value="<%=totalCost%>"><%= currencySplitter(totalCost.toFixed())%></td>
             <td id="totalRevenue" data-value="<%=totalRevenue%>"><%= currencySplitter(totalRevenue.toFixed())%></td>
             <td id="totalProfit" data-value="<%=totalProfit%>"><%= currencySplitter(totalProfit.toFixed())%></td>
-            <td id="totalRate"><%= currencySplitter(totalRate.toFixed(2))%></td>
         </tr>
 
         </tfoot>
-
 
 
     </table>

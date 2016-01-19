@@ -29,37 +29,36 @@ define([
 
         contentType: CONSTANTS.HOURS,
 
-        template: _.template(mainTemplate),
-        weeksArrayTemplate: _.template(weeksArray),
-        monthsArrayTemplate: _.template(monthsArray),
-        hoursByDepTemplate: _.template(hoursByDepItem),
+        template               : _.template(mainTemplate),
+        weeksArrayTemplate     : _.template(weeksArray),
+        monthsArrayTemplate    : _.template(monthsArray),
+        hoursByDepTemplate     : _.template(hoursByDepItem),
         hoursByDepTotalTemplate: _.template(hoursByDepTotal),
-        totalHoursTemplate: _.template(tableTotalHours),
-        totalHoursByMonth: _.template(totalHours),
-        perMonthForTotalHours: _.template(perMonthForTotalHours),
+        totalHoursTemplate     : _.template(tableTotalHours),
+        totalHoursByMonth      : _.template(totalHours),
+        perMonthForTotalHours  : _.template(perMonthForTotalHours),
 
         tableSoldTemplate: _.template(tableSold),
 
-        hoursSoldTemplate: _.template(tableHoursSold),
-        hoursSoldByMonth: _.template(hoursSold),
+        hoursSoldTemplate   : _.template(tableHoursSold),
+        hoursSoldByMonth    : _.template(hoursSold),
         perMonthForHoursSold: _.template(perMonthForHoursSold),
 
         paidUnpaidDateRange: {},
 
         $currentStartWeek: null,
-        $revenueBySales: null,
+        $revenueBySales  : null,
 
         events: {
             'change #currentStartWeek': 'changeWeek',
             'click .ui-spinner-button': 'changeWeek',
-            'click .clickToShow': 'showBonus'
+            'click .clickToShow'      : 'showBonus'
         },
 
         initialize: function () {
             var self = this;
             var currentWeek = moment().week();
             var nowMonth = parseInt(moment().week(currentWeek).format("MM"));
-
 
             //this.hoursUnsold = _.after(2, self.changeHoursUnsold);
             this.model = new RevenueModel();
@@ -78,12 +77,11 @@ define([
 
             self.model.set({
                 currentStartWeek: currentStartWeek,
-                currentYear: currentYear,
-                currentMonth: currentMonth
+                currentYear     : currentYear,
+                currentMonth    : currentMonth
             });
 
             this.changeWeek = _.debounce(this.updateWeek, 1);
-
 
             dataService.getData('/employee/bySales', null, function (employess) {
 
@@ -137,9 +135,9 @@ define([
 
             modelData = {
                 currentStartWeek: currentStartWeek,
-                currentYear: currentYear,
-                yearOfMonth: yearOfMonth,
-                newCurrMonth: newCurrMonth
+                currentYear     : currentYear,
+                yearOfMonth     : yearOfMonth,
+                newCurrMonth    : newCurrMonth
             };
 
             this.model.set(modelData);
@@ -158,12 +156,12 @@ define([
                     this.paidUnpaidDateRange.startDate = (currentYear - 1) * 100 + (nowMonth - i + 12);
                     this.monthArr.push({
                         month: nowMonth - i + 12,
-                        year: currentYear - 1
+                        year : currentYear - 1
                     });
                 } else {
                     this.monthArr.push({
                         month: nowMonth - i,
-                        year: currentYear
+                        year : currentYear
                     });
                 }
             }
@@ -222,19 +220,18 @@ define([
                     week = model.currentStartWeek + i - 53;
                     weeksArr.push({
                         lastDate: this.getDate(week),
-                        week: week,
-                        year: model.currentYear + 1
+                        week    : week,
+                        year    : model.currentYear + 1
                     });
                 } else {
                     week = model.currentStartWeek + i;
                     weeksArr.push({
                         lastDate: this.getDate(week),
-                        week: week,
-                        year: model.currentYear
+                        week    : week,
+                        year    : model.currentYear
                     });
                 }
             }
-
 
             this.model.set('weeksArr', weeksArr);
 
@@ -250,20 +247,20 @@ define([
             var month = this.model.get('currentMonth');
 
             var data = {
-                byWeek: {
+                byWeek : {
                     year: year,
                     week: week
 
                 },
                 byMonth: {
-                    year: year - 1,
+                    year : year - 1,
                     month: month
                 }
             };
 
             dataService.getData('/revenue/getFromCash', data, function (result) {
-                self.model.set('hoursByDep', result['hoursByDep']);
-                self.model.trigger('change:hoursByDep');
+                //self.model.set('hoursByDep', result['hoursByDep']);
+                //self.model.trigger('change:hoursByDep');
 
                 self.model.set('totalHours', result['totalHours']);
                 self.model.trigger('change:totalHours');
@@ -317,35 +314,36 @@ define([
                 var total;
                 var hoursByDepPerEmployee;
 
-
                 hoursByDepPerEmployee = _.find(hoursByDep, function (el) {
                     return el._id === department;
                 });
-
 
                 if (hoursByDepPerEmployee) {
                     byWeekData = _.groupBy(hoursByDepPerEmployee.root, 'week');
                     total = hoursByDepPerEmployee.totalSold;
                     globalTotal += total;
                     target.html(self.hoursByDepTemplate({
-                        weeksArr: weeksArr,
-                        byWeekData: byWeekData,
-                        total: total,
+                        weeksArr           : weeksArr,
+                        byWeekData         : byWeekData,
+                        total              : total,
                         bySalesByDepPerWeek: hoursByDepPerWeek,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter   : helpers.currencySplitter
                     }));
                 }
                 cb();
             }, function (err) {
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 targetTotal.html(self.hoursByDepTotalTemplate({
-                    weeksArr: weeksArr,
+                    weeksArr           : weeksArr,
                     bySalesByDepPerWeek: hoursByDepPerWeek,
-                    globalTotal: globalTotal,
-                    currencySplitter: helpers.currencySplitter
+                    globalTotal        : globalTotal,
+                    currencySplitter   : helpers.currencySplitter
                 }));
 
                 return false;
@@ -359,7 +357,6 @@ define([
             var dataVal = target.closest('div').attr('data-cont');
             var table = this.$el.find('#' + dataVal);
             var bonusRows = table.find("[data-value='" + id + "bonus']");
-
 
             var bonusCells = table.find("#" + id + " .divRow");
 
@@ -387,10 +384,10 @@ define([
             var self = this;
 
             target.html(this.totalHoursTemplate({
-                departments: totalHours,
-                content: 'totalTotalHours',
-                className: 'totalTotalHours',
-                headName: 'Total Hours',
+                departments     : totalHours,
+                content         : 'totalTotalHours',
+                className       : 'totalTotalHours',
+                headName        : 'Total Hours',
                 currencySplitter: helpers.currencySplitter
             }));
             targetTotal = $(this.$el.find('[data-content="totalTotalHours"]'));
@@ -405,10 +402,10 @@ define([
                 total = element.totalForDep;
                 globalTotal += total;
                 departmentContainer.html(self.totalHoursByMonth({
-                    content: 'totalTotalHours',
-                    monthArr: monthArr,
-                    total: total,
-                    employees: element.employees,
+                    content         : 'totalTotalHours',
+                    monthArr        : monthArr,
+                    total           : total,
+                    employees       : element.employees,
                     currencySplitter: helpers.currencySplitter
                 }));
 
@@ -416,7 +413,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = totalHours.length - 1; i >= 0; i--) {
@@ -442,11 +442,11 @@ define([
                 }
 
                 targetTotal.html(self.perMonthForTotalHours({
-                    content: 'totalTotalHours',
-                    monthArr: monthArr,
-                    perMonth: bySalesPerMonth,
-                    globalTotal: globalTotal,
-                    totalName: 'Total Hours',
+                    content         : 'totalTotalHours',
+                    monthArr        : monthArr,
+                    perMonth        : bySalesPerMonth,
+                    globalTotal     : globalTotal,
+                    totalName       : 'Total Hours',
                     currencySplitter: helpers.currencySplitter
                 }));
 
@@ -473,12 +473,11 @@ define([
             var targetTotal;
             var self = this;
 
-
             target.html(this.totalHoursTemplate({
-                departments: resultForUnsold,
-                content: 'totalHoursUnsold',
-                className: 'totalHoursUnsold',
-                headName: 'Unsold Hours',
+                departments     : resultForUnsold,
+                content         : 'totalHoursUnsold',
+                className       : 'totalHoursUnsold',
+                headName        : 'Unsold Hours',
                 currencySplitter: helpers.currencySplitter
             }));
             targetTotal = $(this.$el.find('[data-content="totalHoursUnsold"]'));
@@ -493,19 +492,21 @@ define([
                 total = element.totalForDep;
                 globalTotal += total;
                 departmentContainer.html(self.totalHoursByMonth({
-                    content: 'totalHoursUnsold',
-                    monthArr: monthArr,
-                    total: total,
-                    employees: element.employees,
+                    content         : 'totalHoursUnsold',
+                    monthArr        : monthArr,
+                    total           : total,
+                    employees       : element.employees,
                     currencySplitter: helpers.currencySplitter
                 }));
-
 
                 cb();
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = resultForUnsold.length - 1; i >= 0; i--) {
@@ -522,7 +523,7 @@ define([
                                     bySalesPerMonth[key] = totalHours[key];
                                 }
                             } else {
-                                if (totalHours && totalHours[key]){
+                                if (totalHours && totalHours[key]) {
                                     bySalesPerMonth[key] += totalHours[key];
                                 }
                             }
@@ -531,11 +532,11 @@ define([
                 }
 
                 targetTotal.html(self.perMonthForTotalHours({
-                    content: 'totalHoursUnsold',
-                    monthArr: monthArr,
-                    perMonth: bySalesPerMonth,
-                    globalTotal: globalTotal,
-                    totalName: 'Total Hours',
+                    content         : 'totalHoursUnsold',
+                    monthArr        : monthArr,
+                    perMonth        : bySalesPerMonth,
+                    globalTotal     : globalTotal,
+                    totalName       : 'Total Hours',
                     currencySplitter: helpers.currencySplitter
                 }));
 
@@ -548,7 +549,6 @@ define([
                 return false;
             });
         },
-
 
         changeHoursSold: function () {
             var self = this;
@@ -563,10 +563,10 @@ define([
             var bySalesPerMonth = {};
 
             target.html(this.hoursSoldTemplate({
-                departments: hoursSold,
-                content: 'totalHoursSold',
-                className: 'totalHoursSold',
-                headName: 'Sold Hours',
+                departments     : hoursSold,
+                content         : 'totalHoursSold',
+                className       : 'totalHoursSold',
+                headName        : 'Sold Hours',
                 currencySplitter: helpers.currencySplitter
             }));
             targetTotal = $(this.$el.find('[data-content="totalHoursSold"]'));
@@ -582,10 +582,10 @@ define([
                 globalTotal += total;
 
                 departmentContainer.html(self.hoursSoldByMonth({
-                    content: 'totalHoursSold',
-                    monthArr: monthArr,
-                    total: total,
-                    employees: element.employees,
+                    content         : 'totalHoursSold',
+                    monthArr        : monthArr,
+                    total           : total,
+                    employees       : element.employees,
                     currencySplitter: helpers.currencySplitter
                 }));
 
@@ -593,7 +593,10 @@ define([
             }, function (err) {
 
                 if (err) {
-                    alert(err);
+                    App.render({
+                        type: 'error',
+                        message: err
+                    });
                 }
 
                 for (var i = hoursSold.length - 1; i >= 0; i--) {
@@ -620,11 +623,11 @@ define([
                 }
 
                 targetTotal.html(self.perMonthForHoursSold({
-                    content: 'totalHoursSold',
-                    monthArr: monthArr,
-                    perMonth: bySalesPerMonth,
-                    globalTotal: globalTotal,
-                    totalName: 'Total Hours',
+                    content         : 'totalHoursSold',
+                    monthArr        : monthArr,
+                    perMonth        : bySalesPerMonth,
+                    globalTotal     : globalTotal,
+                    totalName       : 'Total Hours',
                     currencySplitter: helpers.currencySplitter
                 }));
 

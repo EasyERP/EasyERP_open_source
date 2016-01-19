@@ -12,9 +12,7 @@ define([
             contentType: "customerPayment",
             template   : _.template(EditTemplate),
 
-            events: {
-
-            },
+            events: {},
 
             initialize: function (options) {
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
@@ -40,7 +38,7 @@ define([
 
                 buttons = [
                     {
-                        text : "Close" ,
+                        text : "Close",
                         click: function () {
                             self.hideDialog();
                         }
@@ -60,7 +58,6 @@ define([
                 });
                 return this;
             }
-
 
         });
 

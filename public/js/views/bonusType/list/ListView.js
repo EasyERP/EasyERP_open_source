@@ -49,10 +49,12 @@ define([
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+                this.previouslySelected = $('.itemsNumber').first();
+                this.previouslySelected.addClass('selectedItemsNumber');
             },
 
             events: {
-                "click .itemsNumber"                                              : "switchPageCounter",
+              //  "click .itemsNumber"                                              : "switchPageCounter",  // this method doesnt work
                 "click .showPage"                                                 : "showPage",
                 "change #currentShowPage"                                         : "showPage",
                 "click #previousPage"                                             : "previousPage",
@@ -68,9 +70,9 @@ define([
                 "click #lastShowPage"                                             : "lastPage",
                 "click .oe_sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .itemsNumber"                                              : "switchNumberEl" // added method from lisViewBase (switchPageCounter)
             },
-
 
             setChangedValueToModel: function () {
                 var editedElement = this.$listTable.find('.editing');
@@ -125,6 +127,53 @@ define([
                 return false;
             },
 
+            switchNumberEl: function (event) {
+                var newRows = this.$el.find('#false');
+
+                event.preventDefault();
+
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                    return App.render({
+                        type   : 'notify',
+                        message: 'Please, save previous changes or cancel them!'
+                    });
+                }
+
+                var targetEl = $(event.target);
+                var itemsNumber;
+
+                if (this.previouslySelected) {
+                    this.previouslySelected.removeClass("selectedItemsNumber");
+                }
+
+                this.previouslySelected = targetEl;
+                targetEl.addClass("selectedItemsNumber");
+
+                this.startTime = new Date();
+                itemsNumber = targetEl.text();
+
+                if (itemsNumber === 'all') {
+                    itemsNumber = this.listLength;
+                }
+
+                this.defaultItemsNumber = itemsNumber;
+
+                this.getTotalLength(null, itemsNumber, this.filter);
+
+                this.collection.showMore({
+                    count        : itemsNumber,
+                    page         : 1,
+                    filter       : this.filter,
+                    newCollection: this.newCollection
+                });
+                this.page = 1;
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                this.changeLocationHash(1, itemsNumber, this.filter);
+            },
+
             isEditRows: function () {
                 var edited = this.$listTable.find('.edited');
 
@@ -134,15 +183,24 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var Ids = tr.data('id');
                 var colType = el.data('type');
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var colContent = el.data('content');
+                var isType = (colContent === 'bonusType');
+                var isPercent = (colContent === 'isPercent' );
+                var self = this;
+                var isName = false;
                 var prevValue;
                 var width;
-                var self = this;
+                var ul;
+
+
+                if (el.attr('data-content') === 'name') {
+                    isName = true;
+                }
 
                 if (Ids && el.prop('tagName') !== 'INPUT') {
                     if (this.Ids) {
@@ -153,23 +211,30 @@ define([
                     this.setChangedValueToModel();
                 }
 
-                if (isSelect) {
-                    var ul = "<ul class='newSelectList'>" + "<li data-id='HR'>HR</li>" + "<li data-id='Sales'>Sales</li>" +
+                if (isType) {
+                    ul = "<ul class='newSelectList'>" + "<li data-id='HR'>HR</li>" + "<li data-id='Sales'>Sales</li>" +
                         "<li data-id='PM'>PM</li>" + "<li data-id='Developer'>Developer</li></ul>";
+                    el.append(ul);
+                } else if (isPercent) {
+                    ul = "<ul class='newSelectList'>" + "<li data-id='true'>true</li>" + "<li data-id='false'>false</li>";
                     el.append(ul);
                 } else {
                     prevValue = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + prevValue + '"   style="width:' + width + 'px">');
-                    el.find('.editing').on('keydown', function (e) {
+                    if (!isName){
+                        el.find('input').attr('maxlength','6');
+                    }
+
+                    el.find('.editing').keydown( function (e) {
                         var code = e.keyCode;
 
                         if (keyCodes.isEnter(code)) {
                             self.setChangedValueToModel();
-                        } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBackspace(code)) {
+                        } else if ( !isName && !keyCodes.isDigit(code) && !keyCodes.isBspaceAndDelete(code) ){
                             e.preventDefault();
                         }
-                    })
+                    });
                 }
 
                 return false;
@@ -184,7 +249,7 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(modelId);
                 var changedAttr;
-                var bonusType;
+                var datacontent;
 
                 if (!this.changedModels[modelId]) {
                     if (!model.id) {
@@ -198,8 +263,14 @@ define([
 
                 changedAttr = this.changedModels[modelId];
                 targetElement.attr('data-id', id);
-                bonusType = target.text();
-                changedAttr.bonusType = bonusType;
+
+                if (targetElement.attr('data-content') === 'bonusType' ){
+                    datacontent = 'bonusType';
+                } else {
+                    datacontent = 'isPercent';
+                }
+
+                changedAttr[datacontent] = target.text();
 
                 this.hideNewSelect();
                 // this.setChangedValueToModel();
@@ -213,15 +284,14 @@ define([
                 // validation for empty fields
                 var filled = true;
 
-                 $(".editable").each(function (){
-                     if (!$(this).html()){
+                 $(".editable").each(function (index, elem){
+                     if (!$(elem).html()){
                          return filled = false;
                      }
-                });
+                 });
 
-
-                if(!filled){
-                    return  App.render({type: 'error', message: 'Fill all fields please'});
+                if (!filled) {
+                    return App.render({type: 'error', message: 'Fill all fields please'});
                 }
                 // end
 
@@ -231,6 +301,11 @@ define([
                     model.changed = this.changedModels[id];
                 }
                 this.editCollection.save();
+
+                for (var id in this.changedModels) {
+                   delete this.changedModels[id];
+
+                }
             },
 
             savedNewModel: function (modelObject) {
@@ -322,11 +397,17 @@ define([
 
             hideItemsNumber: function (e) {
                 var el = e.target;
+                var editedElement = this.$listTable.find('.editing');
 
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                this.$el.find(".allNumberPerPage").hide();
+                this.$el.find(".newSelectList").remove();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                 }
+                if (editedElement.val()){
+                    this.setChangedValueToModel();
+                }
+
 
             },
 
@@ -730,12 +811,13 @@ define([
                 var count = checkboxes$.length;
 
                 this.collectionLength = this.collection.length;
+                var checkId = isObjectId($('#listTable').find('tr').data('id'));  // check if new element
 
-                if (!this.changed) {
+                if (!this.changed || !checkId) {
                     var answer = confirm("Really DELETE items ?!");
                     var value;
 
-                    if (answer){
+                    if (answer) {
                         $.each(checkboxes$, function (index, checkbox) {
                             value = checkbox.value;
 
@@ -746,6 +828,7 @@ define([
 
                                 that.createBtnEl.show();
                                 that.saveBtnEl.hide();
+                                that.changed = false; // in case of full field new element
 
                                 if (index === count - 1) {
                                     that.triggerDeleteItemsRender(localCounter);
@@ -769,7 +852,10 @@ define([
                                     },
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
-                                            alert("You do not have permission to perform this action");
+                                            App.render({
+                                                type: 'error',
+                                                message: "You do not have permission to perform this action"
+                                            });
                                         }
                                         that.listLength--;
                                         localCounter++;

@@ -1,8 +1,7 @@
 // JavaScript source code
 var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/weTrack';
-//var url = 'mongodb://localhost:27017/EasyERP';
-//var url = 'mongodb://localhost:27017/testCrm';
+var url = 'mongodb://localhost:27017/production';
+
 var async = require('async');
 
 MongoClient.connect(url, function (err, db) {
@@ -13,7 +12,7 @@ MongoClient.connect(url, function (err, db) {
     }
     console.log('connected');
 
-    var collections = ['birthdays', 'Opportunities', 'Customers', 'Department', 'Employees', 'JobPosition', 'Project', 'Salary', 'SalaryCash', 'Holiday', 'Vacation', 'wTrack', 'Invoice', 'Payment', 'MonthHours', 'bonusType', 'payOut'];
+    var collections = ['Project', 'wTrack', 'Invoice', 'Payment', 'jobs', 'savedFilters', 'payOut'];
 
     var collection;
 

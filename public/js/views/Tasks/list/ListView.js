@@ -28,10 +28,10 @@ define([
 
             events: {
                 "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
-                 "click .project": "goToProject",
-                "click .stageSelect"     : "showNewSelect",
-                "click .stageSelectType" : "showNewSelectType",
-                "click .newSelectList li": "chooseOption"
+                "click .project"                              : "goToProject",
+                "click .stageSelect"                          : "showNewSelect",
+                "click .stageSelectType"                      : "showNewSelectType",
+                "click .newSelectList li"                     : "chooseOption"
             },
 
             initialize: function (options) {
@@ -54,36 +54,42 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-             goToProject: function (e) {
-             var projectId = $(e.target).data('id');
-             var model = new projectModel({ validate: false });
-             model.urlRoot = '/Projects/form/' + projectId;
-             model.fetch({
-             success: function (model) {
-             new projectEditView({ model: model });
-             },
-             error: function () {
-             alert('Please refresh browser');
-             }
-             });
-             return false;
-             },
+            goToProject: function (e) {
+                var projectId = $(e.target).data('id');
+                var model = new projectModel({validate: false});
+                model.urlRoot = '/Projects/form/' + projectId;
+                model.fetch({
+                    success: function (model) {
+                        new projectEditView({model: model});
+                    },
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
+                    }
+                });
+                return false;
+            },
 
-             goToEditDialog: function (e) {
-             e.preventDefault();
-             var id = $(e.target).closest('tr').data("id");
-             var model = new currentModel({ validate: false });
-             model.urlRoot = '/Tasks/form';
-             model.fetch({
-             data: { id: id },
-             success: function (model) {
-             new editView({ model: model });
-             },
-             error: function () {
-             alert('Please refresh browser');
-             }
-             });
-             },
+            goToEditDialog: function (e) {
+                e.preventDefault();
+                var id = $(e.target).closest('tr').data("id");
+                var model = new currentModel({validate: false});
+                model.urlRoot = '/Tasks/form';
+                model.fetch({
+                    data   : {id: id},
+                    success: function (model) {
+                        new editView({model: model});
+                    },
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
+                    }
+                });
+            },
 
             pushStages: function (stages) {
                 this.stages = stages;

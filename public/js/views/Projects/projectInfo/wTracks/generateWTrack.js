@@ -1,13 +1,14 @@
 define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
         'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
+        'views/selectView/selectView',
         'collections/Jobs/filterCollection',
         'populate',
         'dataService',
         'moment',
         'common'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, JobsCollection, populate, dataService, moment, common) {
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common) {
         "use strict";
         var CreateView = Backbone.View.extend({
                 template                 : _.template(generateTemplate),
@@ -15,22 +16,26 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 responseObj              : {},
 
                 events: {
-                    "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                    "click .current-selected"                                         : "showNewSelect",
-                    "click .newSelectList li.miniStylePagination"                     : "notHide",
-                    "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                    "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                    "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
-                    "click a.generateType"                                            : "generateType",
-                    "click td.editable"                                               : "editRow",
-                    "change .editable "                                               : "setEditable",
-                    //"click": "hideNewSelect",
-                    //'keydown input.editing'                                           : 'keyDown',
-                    'mouseover tbody tr:not("#addNewItem")'                           : 'showRemove',
-                    'mouseleave tbody tr:not("#addNewItem")'                          : 'hideRemove',
-                    'click .remove'                                                   : 'deleteRow',
-                    "keydown input:not(#jobName)"                                     : "onKeyDownInput",
-                    "keyup input:not(#jobName)"                                       : "onKeyUpInput"
+                    "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                    "click .current-selected"                          : "showNewSelect",
+                    "click #addNewEmployeeRow"                         : "addNewEmployeeRow",
+                    "click a.generateType"                             : "generateType",
+                    "click td.editable"                                : "editRow",
+                    "change .editable "                                : "setEditable",
+                    'mouseover tbody tr:not("#addNewItem")'            : 'showRemove',
+                    'mouseleave tbody tr:not("#addNewItem")'           : 'hideRemove',
+                    'click .remove'                                    : 'deleteRow',
+                    "keydown input:not(#jobName, #selectInput)"        : "onKeyDownInput",
+                    "keyup input:not(#jobName, #selectInput)"          : "onKeyUpInput",
+                    "click"                                            : "hideSelects"
+                },
+
+                hideSelects: function (e) {
+                    if (this.selectView) {
+                        this.selectView.remove();
+                    }
+
+                    this.$el.find('.generateTypeUl').hide();
                 },
 
                 onKeyDownInput: function (e) {
@@ -52,6 +57,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (element.maxLength && element.value.length > element.maxLength) {
                         element.value = element.value.slice(0, element.maxLength);
+                    } else {
+                        if ($(element).attr('id') === 'inputHours') {
+                            this.setChangedValueToModel();
+                        }
                     }
                 },
 
@@ -117,11 +126,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 asyncLoadImgs: function (model) {
                     var currentModel = model.id ? model.toJSON() : model;
                     var id = currentModel._id;
-                    var pm = currentModel.projectmanager;
-                    var customer = currentModel.customer;
+                    var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
+                    var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
                     if (pm) {
-                        common.getImagesPM([pm._id], "/getEmployeesImages", "#" + id, function (result) {
+                        common.getImagesPM([pm], "/getEmployeesImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -129,7 +138,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     if (customer) {
-                        common.getImagesPM([customer._id], "/getCustomersImages", "#" + id, function (result) {
+                        common.getImagesPM([customer], "/getCustomersImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -143,6 +152,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var ul = td.find('.newSelectList');
 
                     ul.show();
+
+                    if (this.selectView) {
+                        this.selectView.remove();
+                    }
 
                     this.stopDefaultEvents(e);
                 },
@@ -158,23 +171,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         startDate : '',
                         endDate   : '',
                         hours     : '',
-                        project   : {
-                            projectName   : this.modelJSON.projectName,
-                            workflow      : this.modelJSON.workflow,
-                            customer      : this.modelJSON.customer,
-                            projectmanager: this.modelJSON.projectmanager,
-                            _id           : this.modelJSON._id
-                        },
-                        employee  : {},
-                        department: {},
+                        project   : this.modelJSON._id,
                         1         : 8,
                         2         : 8,
                         3         : 8,
                         4         : 8,
                         5         : 8,
                         6         : 0,
-                        7         : 0,
-                        revenue   : 120
+                        7         : 0
                     };
 
                     var target = $(e.target);
@@ -368,8 +372,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
 
+                        if (editedElement.attr('id') === 'inputHours') {
+                            editedElementValue = parseInt(editedElementValue);
+                        }
+
                         if (editedElementValue) {
                             editedCol.removeClass('errorContent');
+                        } else {
+                            editedCol.addClass('errorContent');
                         }
 
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
@@ -447,15 +457,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                                         return self.quotationDialog.generatedWtracks();
                                     }
 
+                                    App.projectInfo = App.projectInfo || {};
+                                    App.projectInfo.currentTab = 'timesheet';
+
                                     tabs = $(".chart-tabs");
                                     activeTab = tabs.find('.active');
 
                                     activeTab.removeClass('active');
-                                    tabs.find('#wTrackTab').addClass("active");
+                                    tabs.find('#' + App.projectInfo.currentTab + 'Tab').addClass("active");
 
                                     dialogHolder = $(".dialog-tabs-items");
                                     dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                                    dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
+                                    dialogHolder.find('#' + App.projectInfo.currentTab).closest('.dialog-tabs-item').addClass("active");
+
                                 },
                                 error  : function () {
                                     App.render({
@@ -478,28 +492,29 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 showNewSelect: function (e, prev, next) {
-                    var targetEl = $(e.target);
-                    var content = targetEl.closest('td').attr('data-content');
-                    var tr;
-                    var department;
+                    //var targetEl = $(e.target);
+                    //var content = targetEl.closest('td').attr('data-content');
+                    //
+                    //populate.showSelect(e, prev, next, this);
+                    var $target = $(e.target);
+                    e.stopPropagation();
 
-                    /*if(content === 'employee'){
-                     tr = targetEl.closest('tr');
-                     department = tr.find('td[data-content="department"]').attr('data-id');
+                    this.$el.find('.generateTypeUl').hide();
 
-                     populate.employeesByDep({
-                     e: e,
-                     prev: prev,
-                     next: next,
-                     context: this,
-                     department: department
-                     });
+                    if ($target.attr('id') === 'selectInput') {
+                        return false;
+                    }
 
-                     return false;
-                     }*/
+                    if (this.selectView) {
+                        this.selectView.remove();
+                    }
 
-                    populate.showSelect(e, prev, next, this);
+                    this.selectView = new selectView({
+                        e          : e,
+                        responseObj: this.responseObj
+                    });
 
+                    $target.append(this.selectView.render().el);
                     return false;
                 },
 
@@ -538,17 +553,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (elementType === '#employee') {
                         departmentContainer = tr.find('[data-content="department"]');
-                        departmentContainer.find('a.current-selected').text(element.department.name);
+                        departmentContainer.find('a.current-selected').text(element.department.departmentName);
                         departmentContainer.removeClass('errorContent');
 
-                        employee = {
-                            _id : element._id,
-                            name: element.name
-                        };
-                        department = {
-                            _id           : element.department._id,
-                            departmentName: element.department.name
-                        };
+                        employee = element._id;
+                        department = element.department._id;
 
                         editWtrackModel.employee = employee;
                         editWtrackModel.department = department;
@@ -558,10 +567,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         departmentContainer.find('a.current-selected').text(element.name);
                         departmentContainer.removeClass('errorContent');
 
-                        department = {
-                            _id           : element._id,
-                            departmentName: element.name
-                        };
+                        department = element._id;
 
                         editWtrackModel.department = department;
                     } else {

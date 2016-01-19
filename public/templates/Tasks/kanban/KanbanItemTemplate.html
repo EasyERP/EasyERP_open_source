@@ -5,7 +5,8 @@
         </div>-->
 
         <div class="left">
-            <div class="left"><span id="shortDesc<%=model._id%>"><%=model.project.projectShortDesc%></span>-<%=model.taskCount%>&nbsp;|&nbsp;</div>
+            <div class="left"><span id="shortDesc<%=model._id%>"><%=model.project.projectShortDesc%></span>-<%=model.taskCount%>&nbsp;|&nbsp;
+            </div>
             <div class="taskSelect left">
                 <a id="priority_<%=model._id%>" data-id="<%=model.priority%>" class="current-selected" href="javascript:;"><%=model.priority%></a>
             </div>
@@ -18,11 +19,14 @@
             <% _.each(model.tags,function(tag){ %>
             <% });%>
         </div>
-        <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right"><img class="person" src="" alt="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>" /></div>
+        <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right"><img class="person"
+                                                                                                     src=""
+                                                                                                     alt="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>"/>
+        </div>
 
         <div class="bottom taskSelect">
             <a id="type_<%=model._id%>" data-id="<%=model.type%>" class="current-selected bold" href="javascript:;"><%=model.type%></a>
-            <ul class="newSelectList hidden">
+            <ul class="newSelectList" style="display: none">
                 <li class="Task" id="Task">Task</li>
                 <li class="Bug" id="Bug">Bug</li>
                 <li class="Feature" id="Feature">Feature</li>

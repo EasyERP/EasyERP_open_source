@@ -4,21 +4,21 @@
 define(['text!templates/bonusType/list/listTemplate.html'], function (listTemplate) {
     var bonusTypeListItemView = Backbone.View.extend({
 
-        el: '#listTable',
+        el           : '#listTable',
         newCollection: null,
-        startNumber: null,
+        startNumber  : null,
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.collection = options.collection;
             this.startNumber = (options.page - 1 ) * options.itemsNumber;
-            if (!this.startNumber){
+            if (!this.startNumber) {
                 this.startNumber = 0;
             }
         },
 
-        render: function() {
+        render: function () {
             var collect = this.collection.toJSON();
-            this.$el.append(_.template(listTemplate, { bonusTypeCollection: collect, startNumber: this.startNumber }));
+            this.$el.append(_.template(listTemplate, {bonusTypeCollection: collect, startNumber: this.startNumber}));
         }
     });
 

@@ -6,8 +6,8 @@ define([
         "use strict";
 
         var CreateView = Backbone.View.extend({
-            el: '#content-holder',
-            template: _.template(CreateTemplate),
+            el           : '#content-holder',
+            template     : _.template(CreateTemplate),
             changedModels: {},
 
             initialize: function (options) {
@@ -16,9 +16,7 @@ define([
                 this.$bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
-            events: {
-
-            },
+            events: {},
 
             removeDialog: function () {
                 $(".edit-dialog").remove();
@@ -34,14 +32,14 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Create Payment",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create Payment",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            text: "OK",
+                            text : "OK",
                             click: function () {
                                 self.removeDialog();
                             }

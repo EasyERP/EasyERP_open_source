@@ -5,12 +5,12 @@ define(['models/MonthHoursModel'
 ], function (MonthHoursModel) {
     var MonthHoursCollection = Backbone.Collection.extend({
 
-        model: MonthHoursModel,
-        url: '/monthHours/',
-        contentType: null,
-        page: null,
+        model       : MonthHoursModel,
+        url         : '/monthHours/',
+        contentType : null,
+        page        : null,
         numberToShow: null,
-        viewType: null,
+        viewType    : null,
 
         initialize: function (options) {
             this.startTime = new Date();
@@ -28,15 +28,15 @@ define(['models/MonthHoursModel'
             this.filter = options.filter;
 
             this.fetch({
-               data: options,
-               reset: true,
-               success: function () {
-                   that.page ++;
-               },
-               error: function(err, xhr){
-                   console.log(xhr);
-               }
-           });
+                data   : options,
+                reset  : true,
+                success: function () {
+                    that.page++;
+                },
+                error  : function (err, xhr) {
+                    console.log(xhr);
+                }
+            });
         },
 
         showMore: function (options) {
@@ -54,14 +54,17 @@ define(['models/MonthHoursModel'
             }
 
             this.fetch({
-                data: filterObject,
-                waite: true,
+                data   : filterObject,
+                waite  : true,
                 success: function (models) {
-                    that.page ++;
+                    that.page++;
                     that.trigger('showmore', models);
                 },
-                error: function() {
-                    alert('Some Error');
+                error  : function () {
+                    App.render({
+                        type: 'error',
+                        message: "Some Error."
+                    });
                 }
             });
         }

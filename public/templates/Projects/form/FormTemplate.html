@@ -1,11 +1,11 @@
 <div class="form-holder employee">
     <form class="form employee" id="employeeForm" data-id="<%=model._id%>">
         <ul class="chart-tabs">
-            <li><a class="active" href="javascript:;">Overview</a></li>
-            <li><a href="javascript:;" id="wTrackTab" class="">Timesheet</a></li>
-            <li><a href="javascript:;"  id="quotation" class="">Quotations</a></li>
+            <li><a class="active" id="overviewTab" href="javascript:;">Overview</a></li>
+            <li><a href="javascript:;" id="timesheetTab" class="">Time Card</a></li>
+            <li><a href="javascript:;" id="quotationsTab" class="">Quotations</a></li>
             <li><a href="javascript:;" class="" id="ordersTab">Orders</a></li>
-            <li><a href="javascript:;" class="" id="invoiceTab">Invoices</a></li>
+            <li><a href="javascript:;" class="" id="invoicesTab">Invoices</a></li>
             <li><a href="javascript:;" class="" id="paymentsTab">Payments</a></li>
             <li><a href="javascript:;" class="">Comments</a></li>
             <li><a href="javascript:;" class="">Bonus</a></li>
@@ -20,45 +20,54 @@
                             <label for="projectName">Project Name </label>
                         </dt>
                         <dd>
-                            <input type="text" class="title-input blueback" name="projectName" id="projectName" required value="<%=model.projectName%>" maxlength="32" />
+                            <input type="text" class="title-input blueback" name="projectName" id="projectName" required
+                                   value="<%=model.projectName%>" maxlength="32"/>
                         </dd>
                         <dt>
                             <label for="projectShortDesc">Project Short Description </label>
                         </dt>
                         <dd>
-                            <input type="text" class="title-input blueback" name="projectShortDesc" id="projectShortDesc" required value="<%=model.projectShortDesc%>" maxlength="32" />
+                            <input type="text" class="title-input blueback" name="projectShortDesc"
+                                   id="projectShortDesc" required value="<%=model.projectShortDesc%>" maxlength="32"/>
                         </dd>
                         <dt>
                             <label for="projectManagerDD">Sales Manager</label>
                         </dt>
                         <dd>
-                            <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.name):'Select'%></a>
+                            <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>"
+                               class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):'Select'%></a>
                         </dd>
 
                         <dt><label for="projectTypeDD">Project Type </label></dt>
                         <dd>
-                            <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>" class="current-selected" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>
+                            <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>"
+                               class="current-selected" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>
                         </dd>
                         <dt>
                             <label for="customerDd">Project Customer </label>
                         </dt>
                         <dd>
-                            <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected " href="javascript:;"><%=model.customer?(model.customer.name):'Select'%></a>
+                            <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>"
+                               class="current-selected " href="javascript:;"><%=model.customer?(model.customer.fullName):'Select'%></a>
                         </dd>
                         <dt><label for="StartDate">Start / End Date </label></dt>
                         <dd>
-                            <input class="pikerSize extrainfo blueback " type="text" name="StartDate" id="StartDate" value="<%=model.StartDate%>" readonly />
-                            <input class="pikerSize info blueback" type="text" name="EndDate" id="EndDate" value="<%=model.EndDate%>" readonly />
+                            <input class="pikerSize extrainfo blueback " type="text" name="StartDate" id="StartDate"
+                                   value="<%=model.StartDate%>" readonly/>
+                            <input class="pikerSize info blueback" type="text" name="EndDate" id="EndDate"
+                                   value="<%=model.EndDate%>" readonly/>
                         </dd>
 
                         <dt><label for="EndDateTarget">Target End Date</label></dt>
-                        <dd><input class="info blueback " type="text" name="TargetEndtDate" id="EndDateTarget" value="<%=model.TargetEndDate%>" readonly /></dd>
+                        <dd><input class="info blueback " type="text" name="TargetEndtDate" id="EndDateTarget"
+                                   value="<%=model.TargetEndDate%>" readonly/></dd>
 
                         <dt>
                             <label for="workflowsDd">Status</label>
                         </dt>
                         <dd>
-                            <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected " href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
+                            <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
+                               class="current-selected " href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
                         </dd>
                         <dt><label for="health">Health</label></dt>
                         <dd id="health">
@@ -88,7 +97,7 @@
 
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div id="weTracks"></div>
+                <div id="timesheet" class="tableResponsive"></div>
             </div>
             <div class="dialog-tabs-item">
                 <div id="quotations"></div>
@@ -97,7 +106,7 @@
                 <div id="orders"></div>
             </div>
             <div class="clearfix"></div>
-            <div class="dialog-tabs-item">
+            <div class="dialog-tabs-item" id="invoice">
                 <div id="invoices"></div>
             </div>
             <div class="clearfix"></div>
@@ -108,7 +117,9 @@
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
                 <div class="textarea-wrapper">
-                    <textarea type="text" class="projectDescriptionEdit" name="description" placeholder="Add a Description..." id="description" maxlength="500" ><%=model.description%></textarea>
+                    <textarea type="text" class="projectDescriptionEdit" name="description"
+                              placeholder="Add a Description..." id="description"
+                              maxlength="500"><%=model.description%></textarea>
                 </div>
                 <div id="divForNote"></div>
 
@@ -123,7 +134,7 @@
             <div class="dialog-tabs-item">
                 <div id="assignees-container"></div>
             </div>
-            </div>
+        </div>
     </form>
 </div>
 </div>

@@ -201,7 +201,7 @@ var PayRoll = function (models) {
                 };
 
                 if (data.type) {
-                    data.type._id = objectId(data.type._id);
+                    data.type = objectId(data.type);
                 }
 
                 PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
@@ -295,7 +295,7 @@ var PayRoll = function (models) {
                     delete data._id;
 
                     if (data.type) {
-                        data.type._id = objectId(data.type._id);
+                        data.type = objectId(data.type);
                     }
 
                     PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
@@ -331,7 +331,7 @@ var PayRoll = function (models) {
                     next(error);
                 }
 
-                query = PayRoll.find(queryObject).sort(sort);
+                query = PayRoll.find(queryObject).sort(sort).populate('employee').populate('type');
 
                 query.exec(function (err, result) {
                     if (err) {
@@ -353,7 +353,7 @@ var PayRoll = function (models) {
         var db = req.session.lastDb;
         var dataKey = data.dataKey;
         var queryObject = {dataKey: parseInt(dataKey)};
-        var sort = data.sort ? data.sort : {"employee.name": 1};
+        var sort = data.sort ? data.sort : {"employee": 1};
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
 
         var query = Payroll.find(queryObject).sort(sort).lean();
@@ -503,13 +503,13 @@ var PayRoll = function (models) {
                         dataToSave.diff = (dataToSave.paid ? dataToSave.paid : 0) - (dataToSave.calc ? dataToSave.calc : 0);
 
                         var PRoll = new Payroll(dataToSave);
-
-                        if (dataToSave.type.name === "Salary Cash") {
-                            defObj = dataToSave;
-                        }
+                        //
+                        //if (dataToSave.type === "Salary Cash") {
+                        //    defObj = dataToSave;
+                        //}
 
                         PRoll.save(function (err, result) {
-                            createdIds.push(result.employee._id.toString());
+                            createdIds.push(result.employee.toString());
                             cb();
                         });
 
@@ -530,10 +530,7 @@ var PayRoll = function (models) {
                             defObj.diff = 0;
                             defObj.calc = 0;
 
-                            defObj.employee = {};
-                            defObj.employee._id = empl._id;
-                            defObj.employee.name = empl.name.first + ' ' + empl.name.last;
-
+                            defObj.employee = empl._id;
 
                             PRoll = new Payroll(defObj);
 

@@ -14,21 +14,27 @@
             Product
         </th>
         <% if (forSales) {%>
-           <th data-sort="jobs">
-               Job
-           </th>
+        <th data-sort="jobs">
+            Job
+        </th>
         <% } else { %>
-           <th data-sort="description">
-               Description
-           </th>
+        <th data-sort="description">
+            Description
+        </th>
         <% } %>
         <th data-sort="scheduledDate">
             Scheduled Date
         </th>
-        <th data-sort="quantity">
+        <% if (forSales) {%>
+        <th  data-sort="hours">
+            Hours
+        </th>
+        <% } else {%>
+        <th  data-sort="quantity">
             Quantity
         </th>
-        <th  data-sort="unitPrice">
+        <% } %>
+        <th data-sort="unitPrice">
             Unit Price
         </th>
         <th data-sort="taxes">

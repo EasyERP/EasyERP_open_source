@@ -13,16 +13,16 @@
     function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, filterView, dataService) {
         var collection = new ApplicationsCollection();
         var ApplicationsKanbanView = Backbone.View.extend({
-            el: '#content-holder',
+            el    : '#content-holder',
             events: {
-                "dblclick .item": "gotoEditForm",
-                "click .item": "selectItem",
+                "dblclick .item"    : "gotoEditForm",
+                "click .item"       : "selectItem",
                 "click .column.fold": "foldUnfoldKanban",
                 "click .fold-unfold": "foldUnfoldKanban"
             },
 
             columnTotalLength: null,
-            initialize: function (options) {
+            initialize       : function (options) {
                 this.startTime = options.startTime;
                 this.workflowsCollection = options.workflowCollection;
                 this.foldWorkflows = [];
@@ -38,7 +38,7 @@
                 if (this.foldWorkflows.length === 0) {
                     this.foldWorkflows = ["Empty"];
                 }
-                dataService.postData('/currentUser', { 'kanbanSettings.applications.foldWorkflows': this.foldWorkflows }, function (error, success) {
+                dataService.postData('/currentUser', {'kanbanSettings.applications.foldWorkflows': this.foldWorkflows}, function (error, success) {
                 });
             },
 
@@ -56,7 +56,7 @@
                     if (k < 0) {
                         k = -2 - k;
                     }
-                    el.find(".columnName .text").css({"left": "-" + k + "px", "top": Math.abs(w / 2 + 47) + "px" });
+                    el.find(".columnName .text").css({"left": "-" + k + "px", "top": Math.abs(w / 2 + 47) + "px"});
                     this.foldWorkflows.push(el.attr("data-id"));
                 } else {
                     var idx = this.foldWorkflows.indexOf(el.attr("data-id"));
@@ -64,8 +64,9 @@
                         this.foldWorkflows.splice(idx, 1);
                     }
                 }
-                if (!id)
+                if (!id) {
                     this.updateFoldWorkflow();
+                }
                 if (el.closest("table").find(".fold").length == el.closest("table").find(".column").length) {
                     el.closest("table").css({"min-width": "inherit"});
                     el.closest("table").css({"width": "auto"});
@@ -80,22 +81,24 @@
 
             isNumberKey: function (evt) {
                 var charCode = (evt.which) ? evt.which : event.keyCode;
-                if (charCode > 31 && (charCode < 48 || charCode > 57))
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
                     return false;
+                }
                 return true;
             },
 
             saveKanbanSettings: function () {
                 var countPerPage = $(this).find('#cPerPage').val();
-                if (countPerPage == 0)
+                if (countPerPage == 0) {
                     countPerPage = 5;
-                dataService.postData('/currentUser', { 'kanbanSettings.applications.countPerPage': countPerPage }, function (error, success) {
+                }
+                dataService.postData('/currentUser', {'kanbanSettings.applications.countPerPage': countPerPage}, function (error, success) {
                     if (success) {
                         $(".edit-dialog").remove();
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate("easyErp/Applications", { trigger: true });
+                        Backbone.history.navigate("easyErp/Applications", {trigger: true});
                     } else {
-                        Backbone.history.navigate("easyErp", { trigger: true });
+                        Backbone.history.navigate("easyErp", {trigger: true});
                     }
                 });
             },
@@ -106,19 +109,19 @@
 
             editKanban: function (e) {
                 dataService.getData('/currentUser', null, function (user, context) {
-                    var tempDom = _.template(kanbanSettingsTemplate, { applications: user.user.kanbanSettings.applications });
+                    var tempDom = _.template(kanbanSettingsTemplate, {applications: user.user.kanbanSettings.applications});
                     context.$el = $(tempDom).dialog({
                         dialogClass: "edit-dialog",
-                        width: "400",
-                        title: "Edit Kanban Settings",
-                        buttons: {
-                            save: {
-                                text: "Save",
+                        width      : "400",
+                        title      : "Edit Kanban Settings",
+                        buttons    : {
+                            save  : {
+                                text : "Save",
                                 class: "btn",
                                 click: context.saveKanbanSettings
                             },
                             cancel: {
-                                text: "Cancel",
+                                text : "Cancel",
                                 class: "btn",
                                 click: function () {
                                     context.hideDialog();
@@ -156,19 +159,22 @@
                 var model = new CurrentModel();
                 model.urlRoot = '/Applications/form';
                 model.fetch({
-                    data: { id: id },
+                    data   : {id: id},
                     success: function (model, response, options) {
-                        new EditView({ model: model });
+                        new EditView({model: model});
                     },
-                    error: function () {
-                        alert('Please refresh browser');
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: 'Please refresh browser'
+                        });
                     }
                 });
             },
 
             asyncFetc: function (workflows) {
                 _.each(workflows.toJSON(), function (wfModel) {
-                    dataService.getData('/Applications/kanban', { workflowId: wfModel._id }, this.asyncRender, this);
+                    dataService.getData('/Applications/kanban', {workflowId: wfModel._id}, this.asyncRender, this);
                 }, this);
             },
 
@@ -198,7 +204,7 @@
                 _.each(contentCollection.models, function (wfModel) {
                     var curEl;
 
-                    kanbanItemView = new KanbanItemView({ model: wfModel });
+                    kanbanItemView = new KanbanItemView({model: wfModel});
                     curEl = kanbanItemView.render().el;
                     forContent.append(curEl);
                 }, this);
@@ -206,7 +212,7 @@
             },
 
             editItem: function () {
-                new EditView({ collection: this.collection });
+                new EditView({collection: this.collection});
             },
 
             createItem: function () {
@@ -215,8 +221,9 @@
 
             updateSequence: function (item, workflow, sequence, workflowStart, sequenceStart) {
                 if (workflow == workflowStart) {
-                    if (sequence > sequenceStart)
+                    if (sequence > sequenceStart) {
                         sequence -= 1;
+                    }
                     var a = sequenceStart;
                     var b = sequence;
                     var inc = -1;
@@ -227,19 +234,22 @@
                     }
                     $(".column[data-id='" + workflow + "']").find(".item").each(function () {
                         var sec = parseInt($(this).find(".inner").attr("data-sequence"));
-                        if (sec >= a && sec <= b)
+                        if (sec >= a && sec <= b) {
                             $(this).find(".inner").attr("data-sequence", sec + inc);
+                        }
                     });
                     item.find(".inner").attr("data-sequence", sequence);
 
                 } else {
                     $(".column[data-id='" + workflow + "']").find(".item").each(function () {
-                        if (parseInt($(this).find(".inner").attr("data-sequence")) >= sequence)
+                        if (parseInt($(this).find(".inner").attr("data-sequence")) >= sequence) {
                             $(this).find(".inner").attr("data-sequence", parseInt($(this).find(".inner").attr("data-sequence")) + 1);
+                        }
                     });
                     $(".column[data-id='" + workflowStart + "']").find(".item").each(function () {
-                        if (parseInt($(this).find(".inner").attr("data-sequence")) > sequenceStart)
+                        if (parseInt($(this).find(".inner").attr("data-sequence")) > sequenceStart) {
                             $(this).find(".inner").attr("data-sequence", parseInt($(this).find(".inner").attr("data-sequence")) - 1);
+                        }
                     });
                     item.find(".inner").attr("data-sequence", sequence);
 
@@ -253,7 +263,8 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
                 //this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 //if (!el.closest('.search-view')) {
                 //    $('.search-content').removeClass('fa-caret-up');
@@ -270,11 +281,10 @@
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var condition = this.$el.find('.conditionAND > input')[0];
 
-
                 this.filter = {};
                 this.filter['condition'] = 'and';
 
-                if  (condition && !condition.checked) {
+                if (condition && !condition.checked) {
                     self.filter['condition'] = 'or';
                 }
 
@@ -294,17 +304,22 @@
 
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
-                        dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                        dataService.getData('/Applications/kanban', {
+                            workflowId: wfModel._id,
+                            filter    : this.filter
+                        }, this.asyncRender, this);
                     }, this);
 
                     return false
                 }
 
                 list_id = _.pluck(workflows, '_id');
-                if (savedFilter){
+                if (savedFilter) {
                     showList = savedFilter['workflow'];
                 } else {
-                    showList = checkedElements.map(function() {return this.value;}).get();
+                    showList = checkedElements.map(function () {
+                        return this.value;
+                    }).get();
                 }
 
                 foldList = _.difference(list_id, showList);
@@ -314,29 +329,33 @@
 
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
-                        dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                        dataService.getData('/Applications/kanban', {
+                            workflowId: wfModel._id,
+                            filter    : this.filter
+                        }, this.asyncRender, this);
                     }, this);
                     showList = _.pluck(workflows, '_id');
                     foldList = [];
-                };
+                }
+                ;
 
                 foldList.forEach(function (id) {
                     var w;
                     var k;
 
-                    el = $("td.column[data-id='"+id+"']");
+                    el = $("td.column[data-id='" + id + "']");
                     el.addClass("fold");
                     w = el.find(".columnName .text").width();
-                    k = w/2-20;
-                    if (k<=0){
-                        k= 20-w/2;
+                    k = w / 2 - 20;
+                    if (k <= 0) {
+                        k = 20 - w / 2;
                     }
-                    k=-k;
-                    el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
+                    k = -k;
+                    el.find(".columnName .text").css({"left": k + "px", "top": Math.abs(w / 2 + 47) + "px"});
                 });
 
                 showList.forEach(function (id) {
-                    el = $("td.column[data-id='"+id+"']");
+                    el = $("td.column[data-id='" + id + "']");
                     el.removeClass("fold");
                 });
 
@@ -346,7 +365,7 @@
                 var self = this;
                 var workflows = this.workflowsCollection.toJSON();
 
-                this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
+                this.$el.html(_.template(WorkflowsTemplate, {workflowsCollection: workflows}));
                 $(".column").last().addClass("lastColumn");
                 var itemCount;
 
@@ -359,14 +378,14 @@
 
                 this.$(".column").sortable({
                     connectWith: ".column",
-                    cancel: "h2",
-                    cursor: "move",
-                    items: ".item",
-                    opacity: 0.7,
-                    revert: true,
-                    helper: 'clone',
+                    cancel     : "h2",
+                    cursor     : "move",
+                    items      : ".item",
+                    opacity    : 0.7,
+                    revert     : true,
+                    helper     : 'clone',
                     containment: 'document',
-                    start: function (event, ui) {
+                    start      : function (event, ui) {
                         var column = ui.item.closest(".column");
                         column.find(".totalCount").html(parseInt(column.find(".totalCount").html()) - 1);
                     },
@@ -383,10 +402,15 @@
                         if (model) {
                             var secStart = parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence"));
                             var workStart = model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow;
-                            model.save({ workflow: column.data('id'), sequenceStart: parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence")), sequence: sequence, workflowStart: model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow}, {
-                                patch: true,
+                            model.save({
+                                workflow     : column.data('id'),
+                                sequenceStart: parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence")),
+                                sequence     : sequence,
+                                workflowStart: model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow
+                            }, {
+                                patch   : true,
                                 validate: false,
-                                success: function (model2) {
+                                success : function (model2) {
                                     self.updateSequence(ui.item, column.attr("data-id"), sequence, workStart, secStart);
 
                                     collection.add(model2, {merge: true});

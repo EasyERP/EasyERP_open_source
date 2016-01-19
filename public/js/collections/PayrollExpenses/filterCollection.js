@@ -4,8 +4,8 @@ define([
     ],
     function (PayRollModel, common) {
         var PayRollCollection = Backbone.Collection.extend({
-            model       : PayRollModel,
-            url         : "/payroll/",
+            model: PayRollModel,
+            url  : "/payroll/",
 
             showMore: function (options) {
                 var that = this;
@@ -21,7 +21,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Some error during fetching data'
                         });
                     }
@@ -63,7 +63,9 @@ define([
                     success: function () {
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             }

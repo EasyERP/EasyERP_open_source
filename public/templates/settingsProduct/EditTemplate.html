@@ -6,14 +6,19 @@
                     <div class="half-block left">
                         <dl class="department-info">
                             <dt><label>Department Name</label></dt>
-                            <dd><input type="text" class="title-input blueback" name="categoryName" id="categoryName" maxlength="32" placeholder="Category Name" required value="<%=model.name%>"/></dd>
+                            <dd><input type="text" class="title-input blueback" name="categoryName" id="categoryName"
+                                       maxlength="32" placeholder="Category Name" required value="<%=model.name%>"/>
+                            </dd>
                         </dl>
                     </div>
                     <div class="half-block left">
                         <dl class="department-info">
                             <dt><label for="parentCategory">Parent Category</label></dt>
                             <dd>
-                                <a id="parentCategory" class="current-selected" href="javascript:;" data-id="<%=(model.parent) ? model.parent._id: ''%>" data-level="<%=model.nestingLevel || ''%>" data-fullname="<%=model.fullName%>"><%=model.parent ? model.parent.name : model.name%></a>
+                                <a id="parentCategory" class="current-selected" href="javascript:;"
+                                   data-id="<%=(model.parent) ? model.parent._id: ''%>"
+                                   data-level="<%=model.nestingLevel || ''%>" data-fullname="<%=model.fullName%>"><%=model.parent
+                                    ? model.parent.name : model.name%></a>
                             </dd>
                         </dl>
                     </div>

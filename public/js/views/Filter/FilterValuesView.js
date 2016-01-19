@@ -24,7 +24,7 @@ define([
 
                 this.filteredCollection = new filterCollection(this.collection.toJSON(), sortOptions);
 
-                this.collection.on('change', function() {
+                this.collection.on('change', function () {
                     this.filteredCollection.set(this.collection.toJSON());
                 }, this);
 
@@ -63,7 +63,10 @@ define([
                 regex = new RegExp(value, 'i');
 
                 resultCollection = this.collection.filter(function (model) {
-                    return model.get('name').match(regex);
+
+                    var  searchItem = model.get('name').toString(); // added in case of not string values
+
+                    return searchItem.match(regex);
                 });
 
                 return resultCollection;
@@ -114,7 +117,7 @@ define([
                             status = '';
                         }
 
-                        if (element._id) {
+                        if (element._id || element._id === 0) {
                             ulElement.append('<li data-value="' + element._id + '"' + status + '>' + element.name + '</li>');
                         }
                     }

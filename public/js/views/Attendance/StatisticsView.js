@@ -5,7 +5,7 @@ define([
     'text!templates/Attendance/statisticsTemplate.html'
 ], function (statiscticsBlock) {
     var StatisticsView = Backbone.View.extend({
-        el: '#statictics',
+        el        : '#statictics',
         initialize: function (options) {
             this.leaveDays = options.leaveDays || 0;
             this.workingDays = options.workingDays || 0;
@@ -54,25 +54,25 @@ define([
             var percentEducation = self.percentDiff(self.education, self.lastEducation);
 
             self.$el.html(_.template(statiscticsBlock, {
-                leaveDays: self.leaveDays,
+                leaveDays  : self.leaveDays,
                 workingDays: self.workingDays,
-                vacation: self.vacation,
-                personal: self.personal,
-                sick: self.sick,
-                education: self.education,
+                vacation   : self.vacation,
+                personal   : self.personal,
+                sick       : self.sick,
+                education  : self.education,
 
-                lastLeave: self.lastLeave,
+                lastLeave      : self.lastLeave,
                 lastWorkingDays: self.lastWorkingDays,
-                lastVacation: self.lastVacation,
-                lastPersonal: self.lastPersonal,
-                lastSick: self.lastSick,
-                lastEducation: self.lastEducation,
+                lastVacation   : self.lastVacation,
+                lastPersonal   : self.lastPersonal,
+                lastSick       : self.lastSick,
+                lastEducation  : self.lastEducation,
 
-                percentLeave: percentLeave,
-                percentWork: percentWork,
-                percentVacation: percentVacation,
-                percentPersonal: percentPersonal,
-                percentSick: percentSick,
+                percentLeave    : percentLeave,
+                percentWork     : percentWork,
+                percentVacation : percentVacation,
+                percentPersonal : percentPersonal,
+                percentSick     : percentSick,
                 percentEducation: percentEducation
             }));
 

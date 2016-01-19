@@ -1,13 +1,13 @@
 ﻿define([
-    'models/ProjectsModel'
-],
+        'models/ProjectsModel'
+    ],
     function (ProjectModel) {
         var ProjectsCollection = Backbone.Collection.extend({
-            model: ProjectModel,
-            url: "/Projects/",
-            page: null,
+            model       : ProjectModel,
+            url         : "/Projects/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
+            viewType    : null,
 
             initialize: function (options) {
                 var that = this;
@@ -23,17 +23,19 @@
                     this.url += options.viewType;
                 }
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', { trigger: true });
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
-            showMore: function (options) {
+            showMore  : function (options) {
                 var that = this;
                 var filterObject = {};
 
@@ -54,14 +56,17 @@
                 filterObject['filter'] = (options && options.filter) ? options.filter : {};
 
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
-                        alert('Some Error');
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             },

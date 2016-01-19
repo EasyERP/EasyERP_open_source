@@ -17,11 +17,11 @@ define([
                 this.render();
             },
 
-            events: {
-                "click #showMore": "showMore",
-                "click .checkbox": "checked",
-                "click #groupList li": "editItem",
-                "click #groupList .edit": "editItem",
+            events                 : {
+                "click #showMore"        : "showMore",
+                "click .checkbox"        : "checked",
+                "click #groupList li"    : "editItem",
+                "click #groupList .edit" : "editItem",
                 "click #groupList .trash": "deleteItem"
             },
             createDepartmentListRow: function (department, index, className) {
@@ -29,21 +29,26 @@ define([
 
                 return ('<li class="' + className + disabled + '" data-id="' + department._id + '" data-level="' + department.nestingLevel + '" data-sequence="' + department.sequence + '"><span class="content"><span class="dotted-line"></span><span class="text">' + department.name + '<span title="Delete" class="trash icon">1</span><span title="Edit" class="edit icon">e</span></span></span></li>');
             },
-            editItem: function (e) {
+            editItem               : function (e) {
                 var self = this;
-                var model = new currentModel({ validate: false });
+                var model = new currentModel({validate: false});
                 var id = $(e.target).closest("li").data("id");
 
                 model.urlRoot = '/category/' + id;
                 model.fetch({
                     success: function (model) {
-                        new EditView({ myModel: model });
+                        new EditView({myModel: model});
                     },
-                    error: function () { alert('Please refresh browser'); }
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
+                    }
                 });
                 return false;
             },
-            deleteItem: function (e) {
+            deleteItem             : function (e) {
                 var myModel = this.collection.get($(e.target).closest("li").data("id"));
                 var mid = 39;
                 e.preventDefault();
@@ -54,22 +59,25 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             self.render();
                         },
-                        error: function (model, err) {
+                        error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             } else {
-                                Backbone.history.navigate("home", { trigger: true });
+                                Backbone.history.navigate("home", {trigger: true});
                             }
                         }
                     });
                 }
                 return false;
             },
-            groupMove: function () {
+            groupMove              : function () {
                 $("#groupList li").each(function () {
                     if ($(this).find("li").length > 0) {
                         $(this).attr("class", "parent");
@@ -79,7 +87,7 @@ define([
                     }
                 });
             },
-            render: function () {
+            render                 : function () {
                 $('.ui-dialog ').remove();
 
                 this.$el.html(_.template(ListTemplate));
@@ -101,7 +109,7 @@ define([
                 this.$("ul").sortable({
                     connectWith: 'ul',
                     containment: 'document',
-                    stop: function (event, ui) {
+                    stop       : function (event, ui) {
                         self.groupMove();
                         var model = self.collection.get(ui.item.attr("data-id"));
                         var sequence = 0;
@@ -114,10 +122,10 @@ define([
                         }
                         model.set({
                             "parentCategoryStart": model.toJSON().parent ? model.toJSON().parent._id : null,
-                            "sequenceStart": parseInt(ui.item.attr("data-sequence")),
-                            "parent": ui.item.parents("li").attr("data-id") ? ui.item.parents("li").attr("data-id") : null,
-                            "nestingLevel": nestingLevel,
-                            sequence: sequence
+                            "sequenceStart"      : parseInt(ui.item.attr("data-sequence")),
+                            "parent"             : ui.item.parents("li").attr("data-id") ? ui.item.parents("li").attr("data-id") : null,
+                            "nestingLevel"       : nestingLevel,
+                            sequence             : sequence
                         });
                         model.save();
                         ui.item.attr("data-sequence", sequence);
@@ -125,10 +133,11 @@ define([
                 });
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0)
+                    if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                    else
+                    } else {
                         $("#top-bar-deleteBtn").hide();
+                    }
                 });
 
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -136,11 +145,11 @@ define([
 
             showMore: function () {
                 _.bind(this.collection.showMore, this.collection);
-                this.collection.showMore({ count: 100 });
+                this.collection.showMore({count: 100});
             },
 
             showMoreContent: function (newModels) {
-                new ListItemView({ collection: newModels, startNumber: this.startNumber }).render();
+                new ListItemView({collection: newModels, startNumber: this.startNumber}).render();
                 this.startNumber += newModels.length;
             },
 
@@ -150,9 +159,9 @@ define([
 
             checked: function () {
                 if (this.collection.length > 0) {
-                    if ($("input.checkbox:checked").length > 0)
+                    if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                    else {
+                    } else {
                         $("#top-bar-deleteBtn").hide();
                         $('#check_all').prop('checked', false);
                     }

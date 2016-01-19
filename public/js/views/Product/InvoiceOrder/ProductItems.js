@@ -30,8 +30,7 @@ define([
             "mouseleave .editable"                                                    : "removeEdit",
             "click #cancelSpan"                                                       : "cancelClick",
             "click #saveSpan"                                                         : "saveClick",
-            "click #editSpan"                                                         : "editClick",
-            //"click #generateJobs"                                                     : "createJob"
+            "click #editSpan"                                                         : "editClick"
         },
 
         template: _.template(productItemTemplate),
@@ -71,29 +70,50 @@ define([
         },
 
         generateJob: function () {
+            var self = this;
             var model = this.projectModel;
             var projectsDdContainer = $('#projectDd');
+            var projectId = $("#projectDd").attr("data-id");
 
             if (!model) {
                 projectsDdContainer.css('color', 'red');
 
                 App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: CONSTANTS.SELECTP_ROJECT
                 });
             }
 
-            if (this.generatedView) {
-                this.generatedView.undelegateEvents();
+            if (projectId === model._id){
+                if (this.generatedView) {
+                    this.generatedView.undelegateEvents();
+                }
+
+                this.generatedView = new GenerateWTrack({
+                    model               : this.projectModel,
+                    wTrackCollection    : this.wTrackCollection,
+                    createJob           : true,
+                    forQuotationGenerate: true,
+                    quotationDialog     : this
+                });
+            } else {
+                dataService.getData("/project/getForWtrack", {_id: projectId}, function (project) {
+                   self.projectModel = project && project.data ? project.data[0] : {};
+
+                    if (self.generatedView) {
+                        self.generatedView.undelegateEvents();
+                    }
+
+                    self.generatedView = new GenerateWTrack({
+                        model               : self.projectModel,
+                        wTrackCollection    : self.wTrackCollection,
+                        createJob           : true,
+                        forQuotationGenerate: true,
+                        quotationDialog     : self
+                    });
+                });
             }
 
-            this.generatedView = new GenerateWTrack({
-                model               : this.projectModel,
-                wTrackCollection    : this.wTrackCollection,
-                createJob           : true,
-                forQuotationGenerate: true,
-                quotationDialog     : this
-            });
 
             return false;
         },
@@ -113,37 +133,39 @@ define([
         },
 
         showSelect: function (e, prev, next) {
-            var targetEl = $(e.target);
+            var $targetEl = $(e.target);
             var self = this;
-            var thisEl = this.$el;
+            var $thisEl = this.$el;
+            var project = $("#projectDd").attr("data-id");
 
-            if (!this.checkForQuickEdit(targetEl)) {
+            if (!this.checkForQuickEdit($targetEl)) {
                 return false;
             }
 
             e.preventDefault();
 
-            dataService.getData("/jobs/getForDD", {"projectId": $("#projectDd").attr("data-id")}, function (jobs) {
-                var aEl;
+            if (project && project.length >= 24){
+                dataService.getData("/jobs/getForDD", {"projectId": project}, function (jobs) {
+                    var aEl;
 
-                self.responseObj['#jobs'] = jobs;
+                    self.responseObj['#jobs'] = jobs;
 
-                if (!jobs.length) {
-                    /* $("#jobs").text("Select");
-                     $("#jobs").attr("data-id", null);*/
-                    aEl = thisEl.find('.current-selected.jobs');
-                    aEl.text("Select");
-                }
+                    if (!jobs.length) {
+                        /* $("#jobs").text("Select");
+                         $("#jobs").attr("data-id", null);*/
+                        aEl = $thisEl.find('.current-selected.jobs');
+                        aEl.text("Select");
+                    }
 
-                if (!self.projectModel){
-                    dataService.getData("/project/getForQuotation", {"projectId": $("#projectDd").attr("data-id")}, function (project) {
-                        self.projectModel = project;
-                    })
-                }
+                    if (!self.projectModel) {
+                        dataService.getData("/project/getForQuotation", {"projectId": project}, function (project) {
+                            self.projectModel = project;
+                        });
+                    }
 
-                populate.showSelect(e, prev, next, self);
-            });
-
+                    populate.showSelect(e, prev, next, self);
+                });
+            }
         },
 
         getProducts: function (e) {
@@ -152,24 +174,23 @@ define([
 
             var self = this;
             var target = $(e.target);
-            var parrent = target.closest('tbody');
-            var parrentRow = parrent.find('.productItem').last();
-            var rowId = parrentRow.attr("data-id");
-            var hasError = parrentRow.attr("data-error") === 'true';
-            var trEll = parrent.find('tr.productItem');
+            var $parrent = target.closest('tbody');
+            var $parrentRow = $parrent.find('.productItem').last();
+            var rowId = $parrentRow.attr("data-id");
+            var hasError = $parrentRow.attr("data-error") === 'true';
+            var $trEll = $parrent.find('tr.productItem');
             var products = this.products ? this.products.toJSON() : [];
 
             var templ = _.template(ProductInputContent);
 
-
             if (rowId === undefined || /*rowId !== 'false'*/ !hasError) {
-                if (!trEll.length) {
-                    return parrent.prepend(templ({
+                if (!$trEll.length) {
+                    return $parrent.prepend(templ({
                         forSales: self.forSales,
                         products: products
                     }));
                 }
-                $(trEll[trEll.length - 1]).after(templ({
+                $($trEll[$trEll.length - 1]).after(templ({
                     forSales: self.forSales,
                     products: products
                 }));
@@ -237,6 +258,7 @@ define([
                 prevParent.find('span').addClass('textarea');
             }
 
+            //ToDo change $(..) --> this.$el.find()
             $('.quickEdit #editInput').remove();
             $('.quickEdit #cancelSpan').remove();
             $('.quickEdit #saveSpan').remove();
@@ -255,8 +277,10 @@ define([
             } else {
                 if (datePicker.length) {
                     parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text" readonly/>');
+                } else if(parent.attr('data-name') === 'productDescr') {
+                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text"/>');
                 } else {
-                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="number"/>');
+                    parent.append('<input id="editInput" class="forNum"  maxlength="' + maxlength + '" type="text"/>'); // changed validation for numbers on keyValidator
                 }
 
                 $('#editInput').val(this.text);
@@ -286,11 +310,12 @@ define([
         saveClick: function (e) {
             e.preventDefault();
 
-            var targetEl = $(e.target);
-            var parent = targetEl.closest('td');
+            var $targetEl = $(e.target);
+            var parent = $targetEl.closest('td');
             var inputEl = parent.find('input');
-            if (!inputEl.length)
+            if (!inputEl.length) {
                 inputEl = parent.find('textarea');
+            }
             var val = inputEl.val();
 
             if (!val.length) {
@@ -313,8 +338,8 @@ define([
             e.preventDefault();
 
             var text = this.text ? this.text : '';
-            var targetEl = $(e.target);
-            var parent = targetEl.closest('td');
+            var $targetEl = $(e.target);
+            var parent = $targetEl.closest('td');
             var inputEl = parent.find('input');
 
             if (!inputEl.length) {
@@ -335,9 +360,9 @@ define([
         },
 
         showProductsSelect: function (e, prev, next) {
-            var targetEl = $(e.target);
+            var $targetEl = $(e.target);
 
-            if (!this.checkForQuickEdit(targetEl)) {
+            if (!this.checkForQuickEdit($targetEl)) {
                 return false;
             }
 
@@ -348,11 +373,14 @@ define([
 
         chooseOption: function (e) {
             var self = this;
-            var target = $(e.target);
-            var parrent = target.parents("td");
-            var trEl = target.parents("tr");
-            var parrents = trEl.find('td');
-            var _id = target.attr("id");
+            var $target = $(e.target);
+            var $parrent = $target.parents("td");
+            var $trEl = $target.parents("tr");
+            var $hoursContainer = $trEl.find('[data-name="quantity"] span');
+            var $parrents = $trEl.find('td');
+            var _id = $target.attr("id");
+            var quantity = $hoursContainer.text() || 0;
+            var salePrice = 0;
             var model;
             var taxes;
             var datePicker;
@@ -366,24 +394,26 @@ define([
 
             if (_id !== 'createJob') {
 
-                if (parrent.hasClass('jobs')) {
+                if ($parrent.hasClass('jobs')) {
                     _id = product.attr("data-id");
-                    jobId = target.attr("id");
+                    jobId = $target.attr("id");
 
                     currentJob = _.find(self.responseObj['#jobs'], function (job) {
                         return job._id === jobId
                     });
 
-                    parrent.find(".jobs").text(target.text()).attr("data-id", jobId);
+                    quantity = currentJob ? currentJob.budget.budgetTotal.hoursSum : 1;
+
+                    $parrent.find(".jobs").text($target.text()).attr("data-id", jobId);
+                    $hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
 
                     model = this.products.get(_id);
 
                 } else {
                     model = this.products.get(_id);
 
-                    trEl.attr('data-id', model.id);
-
-                    parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
+                    $trEl.attr('data-id', model.id);
+                    $parrent.find(".current-selected").text($target.text()).attr("data-id", _id);
                 }
 
                 selectedProduct = model ? model.toJSON() : null;
@@ -395,79 +425,168 @@ define([
                 }
 
                 if (!this.forSales && selectedProduct) {
-                    $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+                    $($parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
                 }
 
-
-                //trEl.find('.datepicker').removeClass('notVisible');
-
-
-                //$(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
-                $(parrents[2]).find('.datepicker.notVisible').datepicker({
+                $($parrents[2]).find('.datepicker.notVisible').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true
                 }).datepicker('setDate', new Date());
 
-                datePicker = trEl.find('input.datepicker');
-                spanDatePicker = trEl.find('span.datepicker');
+                datePicker = $trEl.find('input.datepicker');
+                spanDatePicker = $trEl.find('span.datepicker');
+                $trEl.attr('data-error', null);
 
                 spanDatePicker.text(datePicker.val());
                 datePicker.remove();
 
-                $(parrents[2]).attr('class', 'editable');
-                $(parrents[3]).attr('class', 'editable').find("span").text(1);
+                //$($parrents[2]).attr('class', 'editable');
+                $($parrents[3])/*.attr('class', 'editable')*/.find("span").text(quantity);
 
-                if (selectedProduct) {
-                    $(parrents[4]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
+                /*if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
+                    $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
+
+                    this.recalculatePriceByJob();
+                } else {*/
+                if (!this.forSales) {   // added possibility to edit quantity and scheduled date for Purchase Quotation
+                    $($parrents[2]).addClass('editable');
+                    $($parrents[3]).addClass('editable');
+                }
+                    salePrice = selectedProduct.info.salePrice;
+
+                    $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
                     total = parseFloat(selectedProduct.info.salePrice);
                     taxes = total * this.taxesRate;
                     subtotal = total + taxes;
                     taxes = taxes.toFixed(2);
                     subtotal = subtotal.toFixed(2);
 
-                    $(parrents[5]).text(taxes);
-                    $(parrents[6]).text(subtotal);
+                    $($parrents[5]).text(taxes);
+                    $($parrents[6]).text(subtotal);
 
-                    $(".newSelectList").hide();
-                    trEl.attr('data-error', null);
+                $(".newSelectList").remove();
 
                     this.calculateTotal(selectedProduct.info.salePrice);
-                }
+               /* }*/
             } else if (_id === 'createJob') {
                 self.generateJob();
             }
         },
 
-        recalculateTaxes: function (parent) {
-            parent = parent.closest('tr');
+        isNaN: function (val) {
+            return isNaN(val) ? 0 : val;
+        },
 
-            var quantity = parent.find('[data-name="quantity"] span').text();
-            quantity = parseFloat(quantity);
-            var cost = parent.find('[data-name="price"] span').text();
+        /*recalculatePriceByJob: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var $amountInput = $('#amountDd');
+            var $totalAmountEl = $thisEl.find('#totalAmountContainer');
+
+            var $totalUntaxContainer = $totalAmountEl.find('#totalUntaxes');
+            var $taxesContainer = $totalAmountEl.find('#taxes');
+            var $totalContainer = $totalAmountEl.find('#totalAmount');
+            var $resultForCalculate = $thisEl.find('tr.productItem');
+
+            var inputPrice = $amountInput.val() || 0;
+            var totalUntax = 0;
+            var totalHours = 0;
+            var $currentEl;
+            var quantity;
+            var cost;
+            var dates = [];
+            var date;
+            var taxes;
+            var total;
+
+            $resultForCalculate.each(function (index) {
+                var $tr = $(this);
+                var hours = $.trim($tr.find('[data-name="quantity"]').text()) || 0;
+
+                hours = parseInt(hours);
+
+                totalHours += hours;
+            });
+
+            $resultForCalculate.each(function (index) {
+                var $tr = $(this);
+                var hours = $.trim($tr.find('[data-name="quantity"]').text()) || 0;
+                var $priceContainer = $tr.find('[data-name="price"]');
+                var $subtotalContainer = $tr.find('td.subtotal');
+                var $taxesContainer = $tr.find('td.taxes');
+                var price = 0;
+
+                $priceContainer.removeClass('editable');
+
+                hours = parseInt(hours);
+
+                price = (hours / totalHours) * inputPrice;
+                price = self.isNaN(price);
+                price = price.toFixed(2);
+
+                $priceContainer.text(price);
+                $subtotalContainer.text(price);
+                $taxesContainer.text('0.00');
+            });
+
+            $totalUntaxContainer.text(inputPrice);
+            $totalContainer.text(inputPrice);
+        },*/
+
+        quantityRetriver: function($parent){
+            var selectedProduct = this.products || new Backbone.Collection();
+            var id;
+            var quantity;
+
+            $parent = $parent.closest('tr');
+            id = $parent.attr('data-id');
+
+            selectedProduct = selectedProduct.get(id) || null;
+
+            if (selectedProduct && selectedProduct.get('name') === CONSTANTS.IT_SERVICES) {
+                quantity = 1
+            } else {
+                quantity = $parent.find('[data-name="quantity"] span').text();
+                quantity = parseFloat(quantity);
+            }
+
+            return quantity;
+        },
+
+        recalculateTaxes: function ($parent) {
+            var quantity = this.quantityRetriver($parent);
+            var total;
+            var cost;
+            var taxes;
+            var subtotal;
+
+            $parent = $parent.closest('tr');
+
+            cost = $parent.find('[data-name="price"] span').text();
             cost = parseFloat(cost);
 
-            var total = quantity * cost;
-            var taxes = total * this.taxesRate;
-            var subtotal = total + taxes;
+            total = quantity * cost;
+            taxes = total * this.taxesRate;
+            subtotal = total + taxes;
 
             taxes = taxes.toFixed(2);
-            parent.find('.taxes').text(taxes);
+            $parent.find('.taxes').text(taxes);
 
             subtotal = subtotal.toFixed(2);
-            parent.find('.subtotal').text(subtotal);
+            $parent.find('.subtotal').text(subtotal);
 
             this.calculateTotal();
         },
 
         calculateTotal: function () {
-            var thisEl = this.$el;
-            var totalAmountEl = thisEl.find('#totalAmountContainer');
+            var $thisEl = this.$el;
+            var totalAmountEl = $thisEl.find('#totalAmountContainer');
 
             var totalUntaxContainer = totalAmountEl.find('#totalUntaxes');
             var taxesContainer = totalAmountEl.find('#taxes');
             var totalContainer = totalAmountEl.find('#totalAmount');
-            var resultForCalculate = thisEl.find('tr.productItem');
+            var resultForCalculate = $thisEl.find('tr.productItem');
 
             var totalUntax = 0;
             var totalEls = resultForCalculate.length;
@@ -482,7 +601,7 @@ define([
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
-                    quantity = $currentEl.find('[data-name="quantity"]').text();
+                    quantity = this.quantityRetriver($currentEl);
                     cost = $currentEl.find('[data-name="price"]').text();
                     totalUntax += (quantity * cost);
                     date = $currentEl.find('.datepicker').text();
@@ -504,7 +623,7 @@ define([
             totalContainer.text(total);
 
             date = helpers.minFromDates(dates);
-            thisEl.find('#minScheduleDate span').text(date);
+            $thisEl.find('#minScheduleDate span').text(date);
         },
 
         nextSelect: function (e) {
@@ -518,23 +637,23 @@ define([
         render: function (options) {
             var productsContainer;
             var totalAmountContainer;
-            var thisEl = this.$el;
+            var $thisEl = this.$el;
             var products;
             var self = this;
 
             if (options && options.model) {
                 products = options.model.products;
 
-                thisEl.html(_.template(ProductItemsEditList, {model: options.model, forSales: self.forSales}));
+                $thisEl.html(_.template(ProductItemsEditList, {model: options.model, forSales: self.forSales}));
 
                 if (products) {
-                    productsContainer = thisEl.find('#productList');
+                    productsContainer = $thisEl.find('#productList');
                     productsContainer.append(_.template(ItemsEditList, {
                         products: products,
                         editable: this.editable,
                         forSales: self.forSales
                     }));
-                    totalAmountContainer = thisEl.find('#totalAmountContainer');
+                    totalAmountContainer = $thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
                         model         : options.model,
                         balanceVisible: this.visible
@@ -542,7 +661,7 @@ define([
                 }
             } else {
                 this.$el.html(this.template({forSales: self.forSales}));
-                totalAmountContainer = thisEl.find('#totalAmountContainer');
+                totalAmountContainer = $thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
             }
 

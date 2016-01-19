@@ -6,8 +6,8 @@ define([
         "use strict";
 
         var CreateView = Backbone.View.extend({
-            el: '#content-holder',
-            template: _.template(CreateTemplate),
+            el           : '#content-holder',
+            template     : _.template(CreateTemplate),
             changedModels: {},
 
             initialize: function (options) {
@@ -21,12 +21,12 @@ define([
             },
 
             events: {
-                "click .checkbox": "checked",
-                "click td.editable": "editRow",
-                "change .autoCalc": "autoCalc",
-                "change .editable": "setEditable",
+                "click .checkbox"      : "checked",
+                "click td.editable"    : "editRow",
+                "change .autoCalc"     : "autoCalc",
+                "change .editable"     : "setEditable",
                 "keydown input.editing": "keyDown",
-                "click #deleteBtn": "deleteItems"
+                "click #deleteBtn"     : "deleteItems"
             },
 
             savedNewModel: function () {
@@ -57,9 +57,8 @@ define([
                     this.setChangedValueToModel();
                 }
 
-
                 if (!isInput) {
-                    tempContainer =  (target.text()).trim();
+                    tempContainer = (target.text()).trim();
                     inputHtml = '<input class="editing" type="text" data-value="' +
                     tempContainer + '" value="' + tempContainer +
                     '"  maxLength="4" style="display: block;" />';
@@ -353,14 +352,17 @@ define([
                     headers: {
                         mid: mid
                     },
-                    wait: true,
+                    wait   : true,
                     success: function () {
                         delete self.changedModels[id];
                         self.deleteItemsRender(tr, id);
                     },
-                    error: function (model, res) {
+                    error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
-                            alert("You do not have permission to perform this action");
+                            App.render({
+                                type: 'error',
+                                message: "You do not have permission to perform this action"
+                            });
                         }
                     }
                 });
@@ -390,22 +392,22 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Create Payment",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create Payment",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            id: "payButton",
-                            text: "Pay",
+                            id   : "payButton",
+                            text : "Pay",
                             click: function () {
                                 self.pay();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.removeDialog();
                             }

@@ -25,7 +25,7 @@ define([
 
             editItem: function () {
                 //create editView in dialog here
-                new EditView({ model: this.formModel });
+                new EditView({model: this.formModel});
             },
 
             deleteItems: function () {
@@ -36,7 +36,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate("#easyErp/Product/thumbnails", { trigger: true });
+                        Backbone.history.navigate("#easyErp/Product/thumbnails", {trigger: true});
                     }
                 });
 

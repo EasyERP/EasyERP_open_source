@@ -1,5 +1,6 @@
 define([
         'views/listViewBase',
+        'views/selectView/selectView',
         'text!templates/wTrack/list/ListHeader.html',
         'text!templates/wTrack/list/cancelEdit.html',
         'text!templates/wTrack/list/forWeek.html',
@@ -18,29 +19,30 @@ define([
         'async',
         'custom',
         'moment',
-        'constants'
+        'constants',
+        'helpers/keyCodeHelper'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS) {
+    function (listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
         var wTrackListView = listViewBase.extend({
-            createView: createView,
-            listTemplate: listTemplate,
-            listItemView: listItemView,
-            contentCollection: contentCollection,
-            filterView: filterView,
-            contentType: 'wTrack',
-            viewType: 'list',
-            responseObj: {},
-            wTrackId: null, //need for edit rows in listView
+            createView              : createView,
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            filterView              : filterView,
+            contentType             : 'wTrack',
+            viewType                : 'list',
+            responseObj             : {},
+            wTrackId                : null, //need for edit rows in listView
             totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable: null, //cashedJqueryEllemnt
-            editCollection: null,
-            selectedProjectId: [],
-            genInvoiceEl: null,
-            copyEl: null,
-            changedModels: {},
-            exportToCsvUrl: '/wTrack/exportToCsv',
-            exportToXlsxUrl: '/wTrack/exportToXlsx',
+            $listTable              : null, //cashedJqueryEllemnt
+            editCollection          : null,
+            selectedProjectId       : [],
+            genInvoiceEl            : null,
+            copyEl                  : null,
+            changedModels           : {},
+            exportToCsvUrl          : '/wTrack/exportToCsv',
+            exportToXlsxUrl         : '/wTrack/exportToXlsx',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -60,20 +62,20 @@ define([
             },
 
             events: {
-                "click .stageSelect": "showNewSelect",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable": "editRow",
+                "click .stageSelect"                               : "showNewSelect",
+                "click td.editable"                                : "editRow",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "change .autoCalc": "autoCalc",
-                "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown"
-                //"change .listCB": "setAllTotalVals"
-                // "click"                                                           : "removeInputs"
+                "change .autoCalc"                                 : "autoCalc",
+                "change .editable"                                : "setEditable",
+                "keydown input.editing"                           : "keyDown",
+                "click"                                            : "removeInputs"
             },
 
             removeInputs: function () {
-                this.setChangedValueToModel();
+                // this.setChangedValueToModel();
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             generateJob: function (e) {
@@ -87,13 +89,13 @@ define([
                     projectsDdContainer.css('color', 'red');
 
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.SELECTP_ROJECT
                     });
                 }
 
                 new CreateJob({
-                    model: model,
+                    model     : model,
                     wTrackView: this
                 });
 
@@ -114,10 +116,17 @@ define([
             },
 
             keyDown: function (e) {
-                if (e.which === 13) {
+                var code = e.keyCode;
+
+                if (keyCodes.isEnter(code)) {
+
                     this.autoCalc(e);
                     this.calculateCost(e, this.wTrackId);
                     this.setChangedValueToModel();
+                    this.showSaveCancelBtns();
+                    e.stopPropagation();
+                } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
+                    e.preventDefault();
                 }
             },
 
@@ -160,11 +169,11 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks: wTracks,
-                            project: project,
+                            wTracks : wTracks,
+                            project : project,
                             assigned: assigned,
                             customer: customer,
-                            total: total
+                            total   : total
                         });
                     }
                 });
@@ -177,33 +186,37 @@ define([
             },
 
             copyRow: function (e) {
-                this.hideGenerateCopy();
-
-                this.changed = true;
-                this.createdCopied = true;
+                var self = this;
                 var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
                 var length = checkedRows.length;
+                var selectedWtrack;
+                var target;
+                var id;
+                var row;
+                var model;
+                var _model;
+                var tdsArr;
+                var cid;
+                var hours;
+
+                this.hideGenerateCopy();
+                this.changed = true;
+                this.createdCopied = true;
 
                 for (var i = length - 1; i >= 0; i--) {
-                    var selectedWtrack = checkedRows[i];
-                    var self = this;
-                    var target = $(selectedWtrack);
-                    var id = target.val();
-                    var row = target.closest('tr');
-                    var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                    var _model;
-                    var tdsArr;
-                    var cid;
-                    var hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
-                    var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
-                    var revenue = parseInt(hours) * parseFloat(rate);
+                    selectedWtrack = checkedRows[i];
+                    target = $(selectedWtrack);
+                    id = target.val();
+                    row = target.closest('tr');
+                    model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
+                    hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
 
                     $(selectedWtrack).attr('checked', false);
 
                     model.set({"isPaid": false});
                     model.set({"amount": 0});
                     model.set({"cost": 0});
-                    model.set({"revenue": revenue});
+                    model.set({"revenue": 0});
                     model = model.toJSON();
                     delete model._id;
                     _model = new currentModel(model);
@@ -222,21 +235,8 @@ define([
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[21]).find('span').text('Unpaid');
-                    $(tdsArr[21]).find('span').addClass('unDone');
-                    $(tdsArr[25]).text(0);
-                    $(tdsArr[23]).text(0);
-                    $(tdsArr[22]).text(revenue.toFixed(2));
                     $(tdsArr[1]).text("New");
                 }
-            },
-
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
             },
 
             autoCalc: function (e) {
@@ -250,17 +250,14 @@ define([
                 var calcEl;
                 var editWtrackModel;
                 var workedEl = tr.find('[data-content="worked"]');
-                var revenueEl = tr.find('[data-content="revenue"]');
-                var rateEl = tr.find('[data-content="rate"]');
-                var rateVal;
-                var revenueVal;
 
                 function eplyDefaultValue(el) {
                     var value = el.text();
 
                     if (value === '') {
                         if (el.children('input').length) {
-                            value = input.val();
+                            value = input.val() || '0' ; // in case of empty input
+
                         } else {
                             value = '0';
                         }
@@ -277,22 +274,13 @@ define([
                     worked += parseInt(value);
                 }
 
-                rateVal = parseFloat(eplyDefaultValue(rateEl));
-                revenueVal = parseFloat(worked * rateVal).toFixed(2);
-
-                revenueEl.text(revenueVal);
-
-                editWtrackModel = this.editCollection.get(wTrackId);
-
                 workedEl.text(worked);
-                //editWtrackModel.set('worked', worked);
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
                 }
 
                 this.changedModels[wTrackId].worked = worked;
-                this.changedModels[wTrackId].revenue = revenueVal;
             },
 
             setEditable: function (td) {
@@ -304,8 +292,8 @@ define([
 
                 tr = td.parents('tr');
 
-                /*tr.addClass('edited');*/
-                td.addClass('edited');
+                tr.addClass('edited');
+                // td.addClass('edited');
 
                 if (this.isEditRows()) {
                     this.setChangedValue();
@@ -378,8 +366,6 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").remove();
-
                 var el = $(e.target);
                 var self = this;
                 var tr = $(e.target).closest('tr');
@@ -391,18 +377,18 @@ define([
                 var isYear = el.attr("data-content") === 'year';
                 var isMonth = el.attr("data-content") === 'month';
                 var isDay = el.hasClass("autoCalc");
+                var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+                var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
+                var maxValue = 100;
                 var tempContainer;
                 var width;
                 var value;
                 var insertedInput;
                 var weeks;
-                var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
-                var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                 var template;
                 var currentYear;
                 var previousYear;
                 var nextYear;
-                var maxValue;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -412,17 +398,25 @@ define([
                     this.setChangedValueToModel();
                 }
 
+                if (el.hasClass('editing')) {  // added in case of double click on el
+                    el = el.parent('td');
+                }
+
                 if (isSelect) {
-                    if (content === 'jobs'){
+                    if (content === 'jobs') {
                         dataService.getData("/jobs/getForDD", {"projectId": tr.find('[data-content="project"]').attr('data-id')}, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
 
                             tr.find('[data-content="jobs"]').addClass('editable');
-                            populate.showSelect(e, prev, next, self);
+                            // populate.showSelect(e, prev, next, self);
+                            self.showNewSelect(e);
+                            return false;
                         });
                     } else {
-                        populate.showSelect(e, prev, next, this);
+                        //populate.showSelect(e, prev, next, this);
+                        this.showNewSelect(e);
+                        return false;
                     }
                 } else if (isWeek) {
                     weeks = custom.getWeeks(month, year);
@@ -443,6 +437,8 @@ define([
                     el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
 
                     this.calculateCost(e, wTrackId);
+                } else if (el.attr('id') === 'selectInput') {
+                    return false;
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -452,7 +448,7 @@ define([
                     insertedInput.focus();
 
                     // validation for month and days of week
-                    if(isMonth || isDay) {
+                    if (isMonth || isDay) {
                         insertedInput.attr("maxLength", "2");
                         if (isMonth) {
                             maxValue = 12;
@@ -460,18 +456,22 @@ define([
                         if (isDay) {
                             maxValue = 24;
                         }
-                        insertedInput.keyup( function(e) {
-                            if( insertedInput.val() > maxValue ) {
-                                e.preventDefault();
-                                insertedInput.val("" + maxValue);
-                            }
-                        });
                     }
+
+                    insertedInput.keyup(function (e) {
+                        if (insertedInput.val() > maxValue) {
+                            e.preventDefault();
+                            insertedInput.val("" + maxValue);
+                        }
+                    });
+
                     // end
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
-                    this.calculateCost(e, wTrackId);
+                    if (wTrackId) {
+                        this.calculateCost(e, wTrackId);
+                    }
                 }
 
                 return false;
@@ -479,6 +479,10 @@ define([
 
             calculateCost: function (e, wTrackId) {
                 var self = this;
+                var tr = $(e.target).closest('tr');
+                var profit = tr.find('[data-content="profit"]');
+                var revenueVal = tr.find('[data-content="revenue"]').text();
+                var profitVal = tr.find('[data-content="profit"]').text();
                 var expenseCoefficient;
                 var baseSalaryValue;
                 var editWtrackModel;
@@ -490,10 +494,6 @@ define([
                 var hours;
                 var calc;
                 var year;
-                var tr = $(e.target).closest('tr');
-                var profit = tr.find('[data-content="profit"]');
-                var revenueVal = tr.find('[data-content="revenue"]').text();
-                var profitVal = tr.find('[data-content="profit"]').text();
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
@@ -502,10 +502,8 @@ define([
                 costElement = $(e.target).closest('tr').find('[data-content="cost"]');
                 month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
 
-
                 if (wTrackId.length < 24) {
                     employeeId = this.changedModels[wTrackId].employee ? this.changedModels[wTrackId].employee._id : $(e.target).attr("data-id");
-
 
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
@@ -563,8 +561,8 @@ define([
                     dataService.getData('/payroll/getByMonth',
                         {
                             month: month,
-                            year: year,
-                            _id: employeeId
+                            year : year,
+                            _id  : employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -634,7 +632,7 @@ define([
                     if (elementType === '#project') {
                         this.projectModel = element;
 
-                        projectManager = element.projectmanager.name;
+                        projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
                         assignedContainer = tr.find('[data-content="assigned"]');
                         assignedContainer.text(projectManager);
                         targetElement.attr('data-id', id);
@@ -642,22 +640,13 @@ define([
                         tr.find('[data-content="jobs"]').text("");
 
                         tr.find('[data-content="workflow"]').text(element.workflow.name);
-                        tr.find('[data-content="customer"]').text(element.customer.name);
+                        tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
 
-                        project = _.clone(editWtrackModel.get('project'));
-                        project._id = element._id;
-                        project.projectName = element.projectName;
-                        project.workflow._id = element.workflow._id;
-                        project.workflow.name = element.workflow.name;
-                        project.customer._id = element.customer._id;
-                        project.customer.name = element.customer.name;
-
-                        project.projectmanager.name = element.projectmanager.name;
-                        project.projectmanager._id = element.projectmanager._id;
+                        project = element._id;
 
                         changedAttr.project = project;
 
-                        dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
+                        dataService.getData("/jobs/getForDD", {"projectId": project}, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
 
@@ -666,23 +655,17 @@ define([
 
                     } else if (elementType === '#jobs') {
 
-                        jobs._id = element._id;
-                        jobs.name = element.name;
+                        jobs = element._id;
 
                         changedAttr.jobs = jobs;
 
                         tr.find('[data-content="jobs"]').removeClass('errorContent');
                     } else if (elementType === '#employee') {
-                        tr.find('[data-content="department"]').text(element.department.name);
+                        tr.find('[data-content="department"]').text(element.department.departmentName);
 
-                        employee = _.clone(editWtrackModel.get('employee'));
-                        department = _.clone(editWtrackModel.get('department'));
+                        employee = element._id;
 
-                        employee._id = element._id;
-                        employee.name = target.text();
-
-                        department._id = element.department._id;
-                        department.departmentName = element.department.name;
+                        department = element.department._id;
 
                         changedAttr.employee = employee;
                         changedAttr.department = department;
@@ -693,9 +676,7 @@ define([
 
                         tr.find('[data-content="department"]').removeClass('errorContent');
                     } else if (elementType === '#department') {
-                        department = _.clone(editWtrackModel.get('department'));
-                        department._id = element._id;
-                        department.departmentName = element.departmentName;
+                        department = element._id;
 
                         changedAttr.department = department;
                     } else if (elementType === '#week') {
@@ -727,6 +708,7 @@ define([
                 var rawRows;
                 var $checkedEls;
                 var checkLength;
+                var changedRows = Object.keys(this.changedModels);
 
                 if (this.collection.length > 0) {
                     $checkedEls = $thisEl.find("input.listCB:checked");
@@ -739,7 +721,6 @@ define([
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
                         $("#top-bar-createBtn").hide();
-                        $("#top-bar-saveBtn").hide();
 
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
@@ -756,6 +737,12 @@ define([
                     } else {
                         this.$saveBtn.show();
                     }
+
+                    if (changedRows.length) {
+                        this.$saveBtn.show();
+                    } else {
+                        this.$saveBtn.hide();
+                    }
                 }
 
                 this.setAllTotalVals();
@@ -767,7 +754,7 @@ define([
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
-                    model = this.editCollection.get(id);// ? this.editCollection.get(id) : this.collection.get(id);
+                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
                 }
 
@@ -776,10 +763,12 @@ define([
                 }
                 this.editCollection.save();
 
-                for (var id in this.changedModels) {
-                    delete this.changedModels[id];
-                    this.editCollection.remove(id);
-                }
+                //for (var id in this.changedModels) {
+                //    delete this.changedModels[id];
+                //    this.editCollection.remove(id);
+                //}
+
+                this.$el.find('.edited').removeClass('edited');
             },
 
             savedNewModel: function (modelObject) {
@@ -794,6 +783,7 @@ define([
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
+                    savedRow.removeClass('false');
                 }
 
                 this.hideSaveCancelBtns();
@@ -807,6 +797,13 @@ define([
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
                 }
+
+                for (var id in this.changedModels) {
+                    delete this.changedModels[id];
+                    this.editCollection.remove(id);
+                }
+
+                this.editCollection.add(this.collection.models);
             },
 
             updatedOptions: function () {
@@ -815,13 +812,373 @@ define([
             },
 
             showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+                //populate.showSelect(e, prev, next, this);
+
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
 
                 return false;
             },
 
             hideNewSelect: function (e) {
-                $(".newSelectList").remove();
+                // $(".newSelectList").remove();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+            },
+
+            bindingEventsToEditedCollection: function (context) {
+                if (context.editCollection) {
+                    context.editCollection.unbind();
+                }
+                context.editCollection = new EditCollection(context.collection.toJSON());
+                context.editCollection.on('saved', context.savedNewModel, context);
+                context.editCollection.on('updated', context.updatedOptions, context);
+            },
+
+            setChangedValue: function () {
+                if (!this.changed) {
+                    this.changed = true;
+                    this.showSaveCancelBtns()
+                }
+            },
+
+            isNewRow: function () {
+                var newRow = $('.false');
+
+                return !!newRow.length;
+            },
+
+            createItem: function () {
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = now.getMonth() + 1;
+                var week = now.getWeek();
+                // var rate = 3;
+                var startData = {
+                    year        : year,
+                    month       : month,
+                    week        : week,
+                    //rate        : rate,
+                    projectModel: null
+                };
+
+                var model = new currentModel(startData);
+
+                startData.cid = model.cid;
+
+                if (!this.isNewRow()) {
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(model);
+
+                    new createView(startData);
+                } else {
+                    App.render({
+                        type   : 'notify',
+                        message: 'Please confirm or discard changes befor create a new item'
+                    });
+                }
+
+                this.createdCopied = true;
+                this.changed = true;
+            },
+
+            showSaveCancelBtns: function () {
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+                var createBtnEl = $('#top-bar-createBtn');
+
+                if (!this.changed) {
+                    createBtnEl.hide();
+                }
+                saveBtnEl.show();
+                cancelBtnEl.show();
+                createBtnEl.hide();
+
+                return false;
+            },
+
+            hideSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                this.changed = false;
+
+                saveBtnEl.hide();
+                cancelBtnEl.hide();
+                createBtnEl.show();
+
+                return false;
+            },
+
+            checkProjectId: function (e, checkLength) {
+                var totalCheckLength = $("input.checkbox:checked").length;
+                var element = e.target ? e.target : e;
+                var checked = element ? element.checked : true;
+                var targetEl = $(element);
+                var tr = targetEl.closest('tr');
+                var wTrackId = tr.attr('data-id');
+                var model = this.collection.get(wTrackId);
+                var projectContainer = tr.find('td[data-content="project"]');
+                var projectId = projectContainer.attr('data-id');
+
+                if (checkLength >= 1) {
+                    this.copyEl.show();
+                } else {
+                    this.copyEl.hide();
+                }
+
+                if (!checkLength || !model || model.get('isPaid')) {
+                    this.selectedProjectId = [];
+                    //this.genInvoiceEl.hide();
+
+                    return false;
+                }
+
+                if (checked) {
+                    this.selectedProjectId.push(projectId);
+                } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
+                    this.selectedProjectId = _.without(this.selectedProjectId, projectId);
+                }
+
+                this.selectedProjectId = _.uniq(this.selectedProjectId);
+
+                //if (this.selectedProjectId.length !== 1) {
+                //    this.genInvoiceEl.hide();
+                //} else {
+                //    this.genInvoiceEl.show();
+                //}
+            },
+
+            getAutoCalcField: function (idTotal, dataRow, money) {
+                var footerRow = this.$el.find('#listFooter');
+
+                var checkboxes = this.$el.find('#listTable .listCB:checked');
+
+                var totalTd = $(footerRow).find('#' + idTotal);
+                var rowTdVal = 0;
+                var row;
+                var rowTd;
+
+                $(checkboxes).each(function (index, element) {
+                    row = $(element).closest('tr');
+                    rowTd = row.find('[data-content="' + dataRow + '"]');
+
+                    rowTdVal += parseFloat(rowTd.html() || 0) * 100;
+                });
+
+                if (money) {
+                    totalTd.text((rowTdVal / 100).toFixed(2));
+                } else {
+                    totalTd.text(rowTdVal / 100);
+                }
+            },
+
+            setAllTotalVals: function (e) {
+                //e.stopPropagation();
+
+                this.getAutoCalcField('hours', 'worked');
+                this.getAutoCalcField('monHours', '1');
+                this.getAutoCalcField('tueHours', '2');
+                this.getAutoCalcField('wedHours', '3');
+                this.getAutoCalcField('thuHours', '4');
+                this.getAutoCalcField('friHours', '5');
+                this.getAutoCalcField('satHours', '6');
+                this.getAutoCalcField('sunHours', '7');
+            },
+
+            deleteItemsRender: function (deleteCounter, deletePage) {
+                var pagenation;
+                var holder;
+
+                dataService.getData(this.collectionLengthUrl, {
+                    filter       : this.filter,
+                    newCollection: this.newCollection
+                }, function (response, context) {
+                    context.listLength = response.count || 0;
+                    context.getTotalLength(null, context.defaultItemsNumber, context.filter);
+                    context.fetchSortCollection({});
+
+                }, this);
+                //this.deleteRender(deleteCounter, deletePage, {
+                //    filter: this.filter,
+                //    newCollection: this.newCollection,
+                //    parrentContentId: this.parrentContentId
+                //});
+
+                holder = this.$el;
+
+                if (deleteCounter !== this.collectionLength) {
+                    var created = holder.find('#timeRecivingDataFromServer');
+                    created.before(new listItemView({
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
+                        itemsNumber: holder.find("span#itemsNumber").text()
+                    }).render());//added two parameters page and items number
+                }
+
+                pagenation = this.$el.find('.pagination');
+
+                if (this.collection.length === 0) {
+                    pagenation.hide();
+                } else {
+                    pagenation.show();
+                }
+
+                this.editCollection.reset(this.collection.models);
+
+                this.hideGenerateCopy();
+            },
+
+            triggerDeleteItemsRender: function (deleteCounter) {
+                this.deleteCounter = deleteCounter;
+                this.deletePage = $("#currentShowPage").val();
+
+                this.deleteItemsRender(deleteCounter, this.deletePage);
+            },
+
+            deleteItems: function () {
+                var $currentEl = this.$el;
+                var that = this,
+                    mid = 39,
+                    model;
+                var localCounter = 0;
+                var count = $("#listTable input:checked").length;
+                this.collectionLength = this.collection.length;
+
+                if (!this.changed) {
+                    var answer = confirm("Really DELETE items ?!");
+                    var value;
+
+                    if (answer === true) {
+                        $.each($("#listTable input:checked"), function (index, checkbox) {
+                            value = checkbox.value;
+
+                            if (value.length < 24) {
+                                that.editCollection.remove(value);
+                                that.editCollection.on('remove', function () {
+                                    this.listLength--;
+                                    localCounter++;
+
+                                    if (index === count - 1) {
+                                        that.triggerDeleteItemsRender(localCounter);
+                                    }
+
+                                }, that);
+                            } else {
+
+                                model = that.collection.get(value);
+                                model.destroy({
+                                    headers: {
+                                        mid: mid
+                                    },
+                                    wait   : true,
+                                    success: function () {
+                                        that.listLength--;
+                                        localCounter++;
+
+                                        if (index === count - 1) {
+                                            that.triggerDeleteItemsRender(localCounter);
+                                        }
+                                    },
+                                    error  : function (model, res) {
+                                        if (res.status === 403 && index === 0) {
+                                            App.render({
+                                                type   : 'error',
+                                                message: "You do not have permission to perform this action"
+                                            });
+                                        }
+                                        that.listLength--;
+                                        localCounter++;
+                                        if (index == count - 1) {
+                                            if (index === count - 1) {
+                                                that.triggerDeleteItemsRender(localCounter);
+                                            }
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            cancelChanges: function () {
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+                var editedCollectin = this.editCollection;
+                var copiedCreated;
+                var dataId;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.attr('data-id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    } else if (id.length < 24) {
+                        tr.remove();
+                        model = self.changedModels;
+
+                        if (model) {
+                            delete model[id];
+                        }
+
+                        return cb();
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.startNumber = rowNumber;
+                    tr.replaceWith(template({model: model}));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        /*self.editCollection = new EditCollection(collection.toJSON());*/
+                        self.bindingEventsToEditedCollection(self);
+                        self.hideSaveCancelBtns();
+                        self.copyEl.hide();
+                    }
+                });
+
+                if (this.createdCopied) {
+                    copiedCreated = this.$el.find('.false');
+                    copiedCreated.each(function () {
+                        dataId = $(this).attr('data-id');
+                        self.editCollection.remove(dataId);
+                        delete self.changedModels[dataId];
+                        $(this).remove();
+                    });
+
+                    this.createdCopied = false;
+                }
+
+                self.changedModels = {};
+                self.responseObj['#jobs'] = [];
             },
 
             render: function () {
@@ -834,8 +1191,8 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
                 $currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
+                    collection : this.collection,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -917,350 +1274,11 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
-                //this.genInvoiceEl = $('#top-bar-generateBtn');
                 this.copyEl = $('#top-bar-copyBtn');
                 this.$saveBtn = $('#top-bar-saveBtn');
+
                 return this;
             },
-
-            bindingEventsToEditedCollection: function (context) {
-                if (context.editCollection) {
-                    context.editCollection.unbind();
-                }
-                context.editCollection = new EditCollection(context.collection.toJSON());
-                context.editCollection.on('saved', context.savedNewModel, context);
-                context.editCollection.on('updated', context.updatedOptions, context);
-            },
-
-            setChangedValue: function () {
-                if (!this.changed) {
-                    this.changed = true;
-                    this.showSaveCancelBtns()
-                }
-            },
-
-            isNewRow: function () {
-                var newRow = $('.false');
-
-                return !!newRow.length;
-            },
-
-            createItem: function () {
-                var now = new Date();
-                var year = now.getFullYear();
-                var month = now.getMonth() + 1;
-                var week = now.getWeek();
-                var rate = 3;
-                var startData = {
-                    year: year,
-                    month: month,
-                    week: week,
-                    rate: rate,
-                    projectModel: null
-                };
-
-                var model = new currentModel(startData);
-
-                startData.cid = model.cid;
-
-                if (!this.isNewRow()) {
-                    this.showSaveCancelBtns();
-                    this.editCollection.add(model);
-
-                    new createView(startData);
-                } else {
-                    App.render({
-                        type: 'notify',
-                        message: 'Please confirm or discard changes befor create a new item'
-                    });
-                }
-
-                this.createdCopied = true;
-                this.changed = true;
-            },
-
-            showSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn');
-                var saveBtnEl = $('#top-bar-saveBtn');
-                var cancelBtnEl = $('#top-bar-deleteBtn');
-                var createBtnEl = $('#top-bar-createBtn');
-
-                if (!this.changed) {
-                    createBtnEl.hide();
-                }
-                saveBtnEl.show();
-                cancelBtnEl.show();
-                createBtnEl.hide();
-
-                return false;
-            },
-
-            hideSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn');
-                var saveBtnEl = $('#top-bar-saveBtn');
-                var cancelBtnEl = $('#top-bar-deleteBtn');
-
-                this.changed = false;
-
-                saveBtnEl.hide();
-                cancelBtnEl.hide();
-                createBtnEl.show();
-
-                return false;
-            },
-
-            checkProjectId: function (e, checkLength) {
-                var totalCheckLength = $("input.checkbox:checked").length;
-                var element = e.target ? e.target : e;
-                var checked = element ? element.checked : true;
-                var targetEl = $(element);
-                var tr = targetEl.closest('tr');
-                var wTrackId = tr.attr('data-id');
-                var model = this.collection.get(wTrackId);
-                var projectContainer = tr.find('td[data-content="project"]');
-                var projectId = projectContainer.attr('data-id');
-
-                if (checkLength >= 1) {
-                    this.copyEl.show();
-                } else {
-                    this.copyEl.hide();
-                }
-
-                if (!checkLength || !model || model.get('isPaid')) {
-                    this.selectedProjectId = [];
-                    //this.genInvoiceEl.hide();
-
-                    return false;
-                }
-
-                if (checked) {
-                    this.selectedProjectId.push(projectId);
-                } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
-                    this.selectedProjectId = _.without(this.selectedProjectId, projectId);
-                }
-
-                this.selectedProjectId = _.uniq(this.selectedProjectId);
-
-                //if (this.selectedProjectId.length !== 1) {
-                //    this.genInvoiceEl.hide();
-                //} else {
-                //    this.genInvoiceEl.show();
-                //}
-            },
-
-            getAutoCalcField: function (idTotal, dataRow, money) {
-                var footerRow = this.$el.find('#listFooter');
-
-                var checkboxes = this.$el.find('#listTable .listCB:checked');
-
-                var totalTd = $(footerRow).find('#' + idTotal);
-                var rowTdVal = 0;
-                var row;
-                var rowTd;
-
-                $(checkboxes).each(function (index, element) {
-                    row = $(element).closest('tr');
-                    rowTd = row.find('[data-content="' + dataRow + '"]')
-
-                    rowTdVal += parseFloat(rowTd.html()) * 100;
-                });
-
-                if (money) {
-                    totalTd.text((rowTdVal / 100).toFixed(2));
-                } else {
-                    totalTd.text(rowTdVal / 100);
-                }
-            },
-
-            setAllTotalVals: function (e) {
-                //e.stopPropagation();
-
-                this.getAutoCalcField('hours', 'worked');
-                this.getAutoCalcField('monHours', '1');
-                this.getAutoCalcField('tueHours', '2');
-                this.getAutoCalcField('wedHours', '3');
-                this.getAutoCalcField('thuHours', '4');
-                this.getAutoCalcField('friHours', '5');
-                this.getAutoCalcField('satHours', '6');
-                this.getAutoCalcField('sunHours', '7');
-                this.getAutoCalcField('revenue', 'revenue', true);
-                this.getAutoCalcField('cost', 'cost', true);
-                this.getAutoCalcField('profit', 'profit', true);
-                this.getAutoCalcField('amount', 'amount', true);
-            },
-
-            deleteItemsRender: function (deleteCounter, deletePage) {
-                var pagenation;
-                var holder;
-
-                dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                    context.getTotalLength(null, context.defaultItemsNumber, context.filter);
-                    context.fetchSortCollection({});
-
-                }, this);
-                //this.deleteRender(deleteCounter, deletePage, {
-                //    filter: this.filter,
-                //    newCollection: this.newCollection,
-                //    parrentContentId: this.parrentContentId
-                //});
-
-                holder = this.$el;
-
-                if (deleteCounter !== this.collectionLength) {
-                    var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
-                        itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());//added two parameters page and items number
-                }
-
-                pagenation = this.$el.find('.pagination');
-
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
-
-                this.editCollection.reset(this.collection.models);
-
-                this.hideGenerateCopy();
-            },
-
-            triggerDeleteItemsRender: function (deleteCounter) {
-                this.deleteCounter = deleteCounter;
-                this.deletePage = $("#currentShowPage").val();
-
-                this.deleteItemsRender(deleteCounter, this.deletePage);
-            },
-
-            deleteItems: function () {
-                var $currentEl = this.$el;
-                var that = this,
-                    mid = 39,
-                    model;
-                var localCounter = 0;
-                var count = $("#listTable input:checked").length;
-                this.collectionLength = this.collection.length;
-
-                if (!this.changed) {
-                    var answer = confirm("Really DELETE items ?!");
-                    var value;
-
-                    if (answer === true) {
-                        $.each($("#listTable input:checked"), function (index, checkbox) {
-                            value = checkbox.value;
-
-                            if (value.length < 24) {
-                                that.editCollection.remove(value);
-                                that.editCollection.on('remove', function () {
-                                    this.listLength--;
-                                    localCounter++;
-
-                                    if (index === count - 1) {
-                                        that.triggerDeleteItemsRender(localCounter);
-                                    }
-
-                                }, that);
-                            } else {
-
-                                model = that.collection.get(value);
-                                model.destroy({
-                                    headers: {
-                                        mid: mid
-                                    },
-                                    wait: true,
-                                    success: function () {
-                                        that.listLength--;
-                                        localCounter++;
-
-                                        if (index === count - 1) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    },
-                                    error: function (model, res) {
-                                        if (res.status === 403 && index === 0) {
-                                            alert("You do not have permission to perform this action");
-                                        }
-                                        that.listLength--;
-                                        localCounter++;
-                                        if (index == count - 1) {
-                                            if (index === count - 1) {
-                                                that.triggerDeleteItemsRender(localCounter);
-                                            }
-                                        }
-
-                                    }
-                                });
-                            }
-                        });
-                    }
-                } else {
-                    this.cancelChanges();
-                }
-            },
-
-            cancelChanges: function () {
-                var self = this;
-                var edited = this.edited;
-                var collection = this.collection;
-                var editedCollectin = this.editCollection;
-                var copiedCreated;
-                var dataId;
-
-                async.each(edited, function (el, cb) {
-                    var tr = $(el).closest('tr');
-                    var rowNumber = tr.find('[data-content="number"]').text();
-                    var id = tr.attr('data-id');
-                    var template = _.template(cancelEdit);
-                    var model;
-
-                    if (!id) {
-                        return cb('Empty id');
-                    } else if (id.length < 24) {
-                        tr.remove();
-                        model = self.changedModels;
-
-                        if (model) {
-                            delete model[id];
-                        }
-
-                        return cb();
-                    }
-
-                    model = collection.get(id);
-                    model = model.toJSON();
-                    model.startNumber = rowNumber;
-                    tr.replaceWith(template({model: model}));
-                    cb();
-                }, function (err) {
-                    if (!err) {
-                        /*self.editCollection = new EditCollection(collection.toJSON());*/
-                        self.bindingEventsToEditedCollection(self);
-                        self.hideSaveCancelBtns();
-                    }
-                });
-
-                if (this.createdCopied) {
-                    copiedCreated = this.$el.find('.false');
-                    copiedCreated.each(function(){
-                        dataId = $(this).attr('data-id');
-                        self.editCollection.remove(dataId);
-                        delete self.changedModels[dataId];
-                        $(this).remove();
-                    });
-
-                    this.createdCopied = false;
-                }
-
-                self.changedModels = {};
-                self.responseObj['#jobs'] = [];
-            }
         });
 
         return wTrackListView;

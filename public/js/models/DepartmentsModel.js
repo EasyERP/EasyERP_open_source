@@ -1,26 +1,33 @@
-﻿define(['Validation'],function (Validation) {
+﻿define(['Validation'], function (Validation) {
     var DepartmentsModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize: function(){
-            this.on('invalid', function(model, errors){
-                if(errors.length > 0){
-                    var msg = errors.join('\n');
-                    alert(msg);
+        initialize : function () {
+            this.on('invalid', function (model, errors) {
+                var msg;
+
+                if (errors.length > 0) {
+                    msg = errors.join('\n');
+
+                    App.render({
+                        type: 'error',
+                        message: msg
+                    });
                 }
             });
         },
-        validate: function(attrs){
+        validate   : function (attrs) {
             var errors = [];
             Validation.checkGroupsNameField(errors, true, attrs.departmentName, "Department name");
-            if(errors.length > 0)
+            if (errors.length > 0) {
                 return errors;
+            }
         },
-        defaults: {
-            departmentName: '',
-            parentDepartment:"", 
+        defaults   : {
+            departmentName   : '',
+            parentDepartment : "",
             departmentManager: ""
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/Departments";
         }
     });

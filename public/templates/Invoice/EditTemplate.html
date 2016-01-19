@@ -2,32 +2,32 @@
     <form method="post" action="" class="form" id="invoiceForm">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs" >
+                <ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
-                            <%if(model.workflow.status === 'New'){%>
-                                <button class="btn newPayment">
-                                    <span>Pay</span>
-                                </button>
-                                <!--<button class="btn cancelInvoice">-->
-                                    <!--<span>Cancel</span>-->
-                                <!--</button>-->
-                            <%} else if(model.workflow.status === 'Done'){%>
-                                <% if(!isWtrack) {%>
-                                    <!--<button class="red refund">-->
-                                        <!--<span>Refund</span>-->
-                                    <!--</button>-->
-                                <%}%>
-                            <%} else {%>
-                                <button class="red newPayment">
-                                    <span>Pay</span>
-                                </button>
-                                <!--<button class="red refund">-->
-                                    <!--<span>Refund</span>-->
-                                <!--</button>-->
-                            <%}%>
+                        <%if(model.workflow.status === 'New'){%>
+                        <button class="btn newPayment">
+                            <span>Pay</span>
+                        </button>
+                        <!--<button class="btn cancelInvoice">-->
+                        <!--<span>Cancel</span>-->
+                        <!--</button>-->
+                        <%} else if(model.workflow.status === 'Done'){%>
+                        <% if(!isWtrack) {%>
+                        <!--<button class="red refund">-->
+                        <!--<span>Refund</span>-->
+                        <!--</button>-->
+                        <%}%>
+                        <%} else {%>
+                        <button class="red newPayment">
+                            <span>Pay</span>
+                        </button>
+                        <!--<button class="red refund">-->
+                        <!--<span>Refund</span>-->
+                        <!--</button>-->
+                        <%}%>
                         <%} else {%>
                         <button class="red setDraft">
                             <span>Set Draft</span>
@@ -39,170 +39,190 @@
                 <div class="dialog-tabs-items mainTabs">
                     <div class="dialog-tabs-item mainTabs active">
                         <%if(!isWtrack){%>
-                            <%if(!isPaid){%>
-                                <div class="half-block left">
-                                    <dl class="opp-info">
+                        <%if(!isPaid){%>
+                        <div class="half-block left">
+                            <dl class="opp-info">
 
-                                        <dt><label for="supplier">Supplier</label></dt>
-                                        <dd>
-                                            <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier)?model.supplier.name:"Select"%></a>
-                                        </dd>
+                                <dt><label for="supplier">Supplier</label></dt>
+                                <dd>
+                                    <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first
+                                        + ' ' + model.supplier.name.last:"Select"%></a>
+                                </dd>
 
-                                        <!--<dt><label for="fiscal_pos">Fiscal Position</label></dt>
-                                        <dd>
-                                            <a id="fiscal_pos" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                        </dd>
+                                <!--<dt><label for="fiscal_pos">Fiscal Position</label></dt>
+                                <dd>
+                                    <a id="fiscal_pos" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                </dd>
 -->
-                                        <dt><label for="source_document">Source Document</label></dt>
-                                        <dd>
-                                            <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
-                                        </dd>
+                                <dt><label for="source_document">Source Document</label></dt>
+                                <dd>
+                                    <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
+                                </dd>
 
-                                        <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
-                                        <dd>
-                                            <input type="text" id="supplier_invoice_num" value="<%=(model.name) ? model.name : ''%>" placeholder="Supplier Invoice Number"  maxlength="32"/>
-                                        </dd>
+                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                <dd>
+                                    <input type="text" id="supplier_invoice_num"
+                                           value="<%=(model.name) ? model.name : ''%>"
+                                           placeholder="Supplier Invoice Number" maxlength="32"/>
+                                </dd>
 
-                                        <dt>
-                                            <label for="payment_reference">Payment Reference</label>
-                                        </dt>
-                                        <dd>
-                                            <input type="text" id="payment_reference" value="<%=(model.paymentReference) ? model.paymentReference : ''%>" placeholder="Payment Reference"  maxlength="32"/>
-                                        </dd>
-                                    </dl>
-                                </div>
-                                <div class="half-block left">
-                                    <dl class="opp-info">
+                                <dt>
+                                    <label for="payment_reference">Payment Reference</label>
+                                </dt>
+                                <dd>
+                                    <input type="text" id="payment_reference"
+                                           value="<%=(model.paymentReference) ? model.paymentReference : ''%>"
+                                           placeholder="Payment Reference" maxlength="32"/>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
 
-                                        <dt><label for="invoice_date">Invoice Date </label></dt>
-                                        <dd>
-                                            <input type="text" class="date" id="invoice_date" value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32" placeholder="Invoice Date" readonly />
-                                        </dd>
+                                <dt><label for="invoice_date">Invoice Date </label></dt>
+                                <dd>
+                                    <input type="text" class="date" id="invoice_date"
+                                           value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32"
+                                           placeholder="Invoice Date" readonly/>
+                                </dd>
 
-                                        <dt><label for="due_date">Due Date </label></dt>
-                                        <dd>
-                                            <input type="text" class="date
+                                <dt><label for="due_date">Due Date </label></dt>
+                                <dd>
+                                    <input type="text" class="date
                                             <% if (!model.dueDate) {%>
                                               errorContent"
-                                              <% } else { %>
-                                              "
-                                            <% } %>
-                                            id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
-                                        </dd>
+                                    <% } else { %>
+                                    "
+                                    <% } %>
+                                    id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32"
+                                    placeholder="Due Date" readonly />
+                                </dd>
 
-                                        <!--<dt><label for="account">Account</label></dt>
-                                        <dd>
-                                            <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                        </dd>-->
+                                <!--<dt><label for="account">Account</label></dt>
+                                <dd>
+                                    <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                </dd>-->
 
-                                        <dt><label for="journal">Journal</label></dt>
-                                        <dd>
-                                            <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class="current-selected" href="javascript:;"><%=model.journal ? model.journal._id : 'Select'%></a>
-                                        </dd>
+                                <dt><label for="journal">Journal</label></dt>
+                                <dd>
+                                    <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>"
+                                       class="current-selected" href="javascript:;"><%=model.journal ? model.journal._id
+                                        : 'Select'%></a>
+                                </dd>
 
-                                        <dt><label for="currencyDd">Currency</label></dt>
-                                        <dd>
-                                            <a id="currencyDd" class="current-selected" data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>" href="javascript:;"><%= model.currency && model.currency.name ? model.currency.name : ''%></a>
-                                        </dd>
+                                <dt><label for="currencyDd">Currency</label></dt>
+                                <dd>
+                                    <a id="currencyDd" class="current-selected"
+                                       data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
+                                       href="javascript:;"><%= model.currency && model.currency._id ?
+                                        model.currency._id.name : ''%></a>
+                                </dd>
 
-                                    </dl>
-                                </div>
-                            <%} else {%>
-                                <div class="half-block left">
-                                    <dl class="opp-info">
+                            </dl>
+                        </div>
+                        <%} else {%>
+                        <div class="half-block left">
+                            <dl class="opp-info">
 
-                                        <dt><label for="supplier">Supplier</label></dt>
-                                        <dd>
-                                            <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" href="javascript:;"><%=(model.supplier)?model.supplier.name:""%></span>
-                                        </dd>
+                                <dt><label for="supplier">Supplier</label></dt>
+                                <dd>
+                                    <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
+                                          href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first + ' ' + model.supplier.name.last:""%></span>
+                                </dd>
 
-                                        <dt><label for="source_document">Source Document</label></dt>
-                                        <dd>
-                                            <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
-                                        </dd>
+                                <dt><label for="source_document">Source Document</label></dt>
+                                <dd>
+                                    <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
+                                </dd>
 
-                                        <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
-                                        <dd>
-                                            <span type="text" id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>
-                                        </dd>
-                                        <dt>
-                                            <label for="payment_reference">Payment Reference</label>
-                                        </dt>
-                                        <dd>
-                                            <span><%=(model.paymentReference) ? model.paymentReference : ''%></span>
-                                        </dd>
-                                    </dl>
-                                </div>
-                                <div class="half-block left">
-                                    <dl class="opp-info">
+                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                <dd>
+                                    <span type="text"
+                                          id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>
+                                </dd>
+                                <dt>
+                                    <label for="payment_reference">Payment Reference</label>
+                                </dt>
+                                <dd>
+                                    <span><%=(model.paymentReference) ? model.paymentReference : ''%></span>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
 
-                                        <dt><label for="inv_date">Invoice Date </label></dt>
-                                        <dd>
-                                            <span id="inv_date"><%=(model.invoiceDate) ? model.invoiceDate : ''%></span>
-                                        </dd>
+                                <dt><label for="inv_date">Invoice Date </label></dt>
+                                <dd>
+                                    <span id="inv_date"><%=(model.invoiceDate) ? model.invoiceDate : ''%></span>
+                                </dd>
 
-                                        <dt><label for="d_date">Due Date </label></dt>
-                                        <dd>
-                                            <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
-                                        </dd>
+                                <dt><label for="d_date">Due Date </label></dt>
+                                <dd>
+                                    <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
+                                </dd>
 
-                                        <dt><label for="journal">Journal</label></dt>
-                                        <dd>
-                                            <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class="" href="javascript:;"><%=model.journal ? model.journal._id : ''%></a>
-                                        </dd>
+                                <dt><label for="journal">Journal</label></dt>
+                                <dd>
+                                    <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class=""
+                                       href="javascript:;"><%=model.journal ? model.journal._id : ''%></a>
+                                </dd>
 
-                                        <dt><label for="currencyDd">Currency</label></dt>
-                                        <dd>
-                                            <a id="currencyDd" class="" data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>" href="javascript:;"><%= model.currency && model.currency.name ? model.currency.name : ''%></a>
-                                        </dd>
+                                <dt><label for="currencyDd">Currency</label></dt>
+                                <dd>
+                                    <a id="currencyDd" class=""
+                                       data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>"
+                                       href="javascript:;"><%= model.currency && model.currency.name ?
+                                        model.currency.name : ''%></a>
+                                </dd>
 
-                                    </dl>
-                                </div>
-                            <%}%>
+                            </dl>
+                        </div>
+                        <%}%>
 
                         <%} else {%>
-                            <div class="half-block left">
-                                <dl class="opp-info">
-                                    <dt><label for="assigned">Assigned</label></dt>
-                                    <dd>
-                                        <span id="assigned" data-id="<%= assigned._id%>"><%= assigned.name ? assigned.name : ''%></span>
-                                    </dd>
-                                    <dt><label for="supplier">Customer</label></dt>
-                                    <dd>
-                                        <span id="supplier" data-id="<%= customer._id%>"><%= customer.name ? customer.name : ''%></span>
-                                    </dd>
-                                    <dt><label for="project">Project</label></dt>
-                                    <dd>
-                                        <span id="project" data-id="<%= project._id%>"><%= project.name%></span>
-                                    </dd>
-                                    <dt><label for="paymentTerms">Payment Terms</label></dt>
-                                    <dd>
-                                        <span id="paymentTerms"><%= model.paymentTerms ? model.paymentTerms.name : ''%></span>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="half-block left">
-                                <dl class="opp-info">
-                                    <dt><label for="invoiceName">Invoice Name</label></dt>
-                                    <dd>
-                                        <span id="invoiceName"><%= model.name%></span>
-                                    </dd>
-                                    <dt><label for="invoiceDate">Invoice Date</label></dt>
-                                    <dd>
-                                        <span id="invoiceDate"><%= model.invoiceDate%></span>
-                                    </dd>
-                                    <dt><label for="dueDate">Due Date</label></dt>
-                                    <dd>
-                                        <span id="dueDate"><%= model.dueDate%></span>
-                                    </dd>
-                                </dl>
-                            </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="assigned">Assigned</label></dt>
+                                <dd>
+                                    <span id="assigned" data-id="<%= assigned._id%>"><%= assigned.name ? assigned.name : ''%></span>
+                                </dd>
+                                <dt><label for="supplier">Customer</label></dt>
+                                <dd>
+                                    <span id="supplier" data-id="<%= customer._id%>"><%= customer.name ? customer.name : ''%></span>
+                                </dd>
+                                <dt><label for="project">Project</label></dt>
+                                <dd>
+                                    <span id="project" data-id="<%= project._id%>"><%= project.name%></span>
+                                </dd>
+                                <dt><label for="paymentTerms">Payment Terms</label></dt>
+                                <dd>
+                                    <span id="paymentTerms"><%= model.paymentTerms ? model.paymentTerms.name : ''%></span>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="invoiceName">Invoice Name</label></dt>
+                                <dd>
+                                    <span id="invoiceName"><%= model.name%></span>
+                                </dd>
+                                <dt><label for="invoiceDate">Invoice Date</label></dt>
+                                <dd>
+                                    <span id="invoiceDate"><%= model.invoiceDate%></span>
+                                </dd>
+                                <dt><label for="dueDate">Due Date</label></dt>
+                                <dd>
+                                    <span id="dueDate"><%= model.dueDate%></span>
+                                </dd>
+                            </dl>
+                        </div>
                         <%}%>
                         <div class="clearfix"></div>
                         <ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Invoice</a></li>
                             <%if(!isWtrack){%>
-                                <li><a href="javascript:;">Other Info</a></li>
+                            <li><a href="javascript:;">Other Info</a></li>
                             <%}%>
                             <li><a href="javascript:;">Payments</a></li>
                         </ul>
@@ -336,7 +356,7 @@
                                 <%}%>
                             </div>
                             <%if(!isWtrack){%>
-                                <div class="dialog-tabs-item childTabs">
+                            <div class="dialog-tabs-item childTabs">
                                 <div class="other-info-container">
                                     <div class="half-block left">
                                         <dl class="opp-info">
@@ -347,7 +367,10 @@
 
                                             <dt><label for="salesPerson">Responsible</label></dt>
                                             <dd>
-                                                <a id="salesPerson" data-id="<%=(model.salesPerson)? model.salesPerson._id : ''%>" class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name):"Select"%></a>
+                                                <a id="salesPerson"
+                                                   data-id="<%=(model.salesPerson)? model.salesPerson._id : ''%>"
+                                                   class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name.first
+                                                    + ' ' + model.salesPerson.name.last):"Select"%></a>
                                             </dd>
 
                                             <dt><label for="payment_terms">Payment Terms</label></dt>

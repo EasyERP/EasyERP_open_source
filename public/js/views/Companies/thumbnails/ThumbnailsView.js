@@ -55,7 +55,7 @@
             importFiles: function () {
                 new attachView({
                     modelName: this.contentType,
-                    import: true
+                    import   : true
                 });
             },
 
@@ -144,10 +144,9 @@
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);

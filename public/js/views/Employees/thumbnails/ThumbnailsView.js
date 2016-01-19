@@ -43,15 +43,13 @@
                 //this.filterView;
             },
 
-            events: {
+            events        : {
                 "click #showMore"           : "showMore",
                 "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)" : "alpabeticalRender",
                 "click .saveFilterButton"   : "saveFilter",
                 "click .removeFilterButton" : "removeFilter"
             },
-
-
 
             //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
@@ -74,7 +72,7 @@
                 }, this);
             },
 
-            asyncLoadImgs: function (collection) {
+            asyncLoadImgs    : function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
@@ -144,10 +142,9 @@
                     $('#startLetter').remove();
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null;
+                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
@@ -224,13 +221,16 @@
                             new editView({model: model});
                         },
                         error  : function () {
-                            alert('Please refresh browser');
+                            App.render({
+                                type: 'error',
+                                message: 'Please refresh browser'
+                            });
                         }
                     });
                 }
             },
 
-            showMore: function (event) {
+            showMore       : function (event) {
                 event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },

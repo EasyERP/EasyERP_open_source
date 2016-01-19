@@ -198,7 +198,7 @@ define([
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            deleteItem   : function (event) {
+            deleteItem: function (event) {
                 var mid = 58;
                 var id = this.currentModel.get('_id');
                 var self = this;
@@ -206,7 +206,7 @@ define([
 
                 event.preventDefault();
 
-                if (CONSTANTS.PRODUCRSERVICE !== id.toString()){
+                if (CONSTANTS.PRODUCRSERVICE !== id.toString()) {
                     if (answer == true) {
                         this.currentModel.destroy({
                             headers: {
@@ -218,17 +218,23 @@ define([
                             },
                             error  : function (model, err) {
                                 if (err.status === 403) {
-                                    alert("You do not have permission to perform this action");
+                                    App.render({
+                                        type: 'error',
+                                        message: "You do not have permission to perform this action"
+                                    });
                                 }
                             }
                         });
                     }
                 } else {
-                    alert("You do not have permission to delete this product");
+                    App.render({
+                        type: 'error',
+                        message: "You do not have permission to perform this action"
+                    });
                 }
             },
 
-            render       : function () {
+            render: function () {
                 var self = this;
                 var formString = this.template({
                     model: this.currentModel.toJSON()
@@ -259,7 +265,6 @@ define([
                     }
                 });
 
-
                 var model = this.currentModel.toJSON();
                 this.$el.find("#bcTarget").barcode(model.info.barcode, "code128");
 
@@ -283,7 +288,7 @@ define([
 
                 this.delegateEvents(this.events);
 
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -296,6 +301,7 @@ define([
                         });
 
                     }
+                }
                 return this;
             }
 

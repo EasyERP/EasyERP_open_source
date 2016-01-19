@@ -1,4 +1,5 @@
 ﻿define([
+    'Underscore',
         "text!templates/Projects/thumbnails/ThumbnailsItemTemplate.html",
         'text!templates/stages.html',
         'views/Projects/EditView',
@@ -12,7 +13,7 @@
         'custom'
     ],
 
-    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
+    function (_, thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -49,12 +50,26 @@
                 "click .dropDown"                        : "dropDown",
                 "click .filterButton"                    : "showfilter",
                 "click .health-wrapper .health-container": "showHealthDd",
-                "click .health-wrapper ul li div": "chooseHealthDd",
-                "click .tasksByProject": "dropDown",
-                "click .stageSelect": "showNewSelect",
-                "click .newSelectList li": "chooseOption",
-                "click": "hideHealth",
-                "click .filter-check-list li": "checkCheckbox"
+                "click .health-wrapper ul li div"        : "chooseHealthDd",
+                "click .tasksByProject"                  : "dropDown",
+                "click .stageSelect"                     : "showNewSelect",
+                "click .newSelectList li"                : "chooseOption",
+                "click"                                  : "hideHealth",
+                "click .filter-check-list li"            : "checkCheckbox",
+                "click .project"                         : "useProjectFilter"
+            },
+
+            useProjectFilter: function (e) {
+                e.preventDefault();
+                var project = $(e.target).attr('id');
+                var filter = {
+                    project: {
+                        key  : 'project._id',
+                        value: [project]
+                    }
+                };
+
+                Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
             },
 
             dropDown: function (e) {
@@ -85,7 +100,7 @@
                 var model = this.collection.get(id);
                 var filter;
 
-                model.save({'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text()}, {
+                model.save({'workflow': $(e.target).attr("id")}, {
                     headers : {
                         mid: 39
                     },

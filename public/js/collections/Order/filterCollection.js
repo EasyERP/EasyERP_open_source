@@ -4,12 +4,12 @@
     ],
     function (QuotationModel, common) {
         var QuotationCollection = Backbone.Collection.extend({
-            model: QuotationModel,
-            url: "/quotation/",
-            page: null,
+            model       : QuotationModel,
+            url         : "/quotation/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
+            viewType    : null,
+            contentType : null,
 
             showMore: function (options) {
                 var that = this;
@@ -19,14 +19,17 @@
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
-                        alert('Some Error');
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             },
@@ -43,14 +46,12 @@
                 this.count = options.count;
                 this.page = options.page || 1;
 
-
-
                 if (regex.test(this.contentType) && !(options.filter)) {
                     options.filter = {};
 
                     options.filter = {
                         'forSales': {
-                            key: 'forSales',
+                            key  : 'forSales',
                             value: ['true']
                         }
                     }
@@ -59,7 +60,7 @@
 
                     options.filter = {
                         'forSales': {
-                            key: 'forSales',
+                            key  : 'forSales',
                             value: ['false']
                         }
                     }
@@ -74,13 +75,15 @@
                 this.filter = options.filter;
 
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
@@ -88,7 +91,7 @@
             parse: function (quotations) {
                 _.map(quotations, function (quotation) {
                     quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
-                    if(quotation.expectedDate){
+                    if (quotation.expectedDate) {
                         quotation.expectedDate = common.utcDateToLocaleDate(quotation.expectedDate);
                     }
 

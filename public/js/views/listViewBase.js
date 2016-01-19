@@ -18,13 +18,10 @@ define([
             viewType          : 'list',
 
             events: {
+                "click #previousPage, #nextPage, #firstShowPage, #lastShowPage": "checkPage",
                 "click .itemsNumber"          : "switchPageCounter",
                 "click .showPage"             : "showPage",
                 "change #currentShowPage"     : "showPage",
-                "click #previousPage"         : "previousPage",
-                "click #nextPage"             : "nextPage",
-                "click #firstShowPage"        : "firstPage",
-                "click #lastShowPage"         : "lastPage",
                 "click .checkbox"             : "checked",
                 "click .list td:not(.notForm)": "gotoForm",
                 "mouseover .currentPageList"  : "showPagesPopup",
@@ -67,7 +64,7 @@ define([
                 var sortObject;
                 var newRows = this.$el.find('#false');
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -226,7 +223,10 @@ define([
                         },
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                             that.listLength--;
                             count--;
@@ -245,40 +245,19 @@ define([
 
             //<editor-fold desc="Pagination">
 
-            previousPage: function (event) {
+            // carried off eventHandlers for pages in one
+            checkPage: function (event) {
                 var newRows = this.$el.find('#false');
-
-                event.preventDefault();
-
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
-                    return App.render({
-                        type   : 'notify',
-                        message: 'Please, save previous changes or cancel them!'
-                    });
-                }
-
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.prevP({
+                var elementId = $(event.target).attr('id');
+                var data = {
                     sort         : this.sort,
                     filter       : this.filter,
                     newCollection: this.newCollection
-                });
-                dataService.getData(this.totalCollectionLengthUrl, {
-                    filter       : this.filter,
-                    contentType  : this.contentType,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            nextPage: function (event) {
-                var newRows = this.$el.find('#false');
+                };
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) ||(this.isNewRow ? this.isNewRow() : newRows.length)){
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -288,65 +267,24 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.nextP({
-                    sort         : this.sort,
-                    filter       : this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData(this.totalCollectionLengthUrl, {
-                    filter       : this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
+                switch(elementId) {
+                    case 'previousPage':
+                        this.prevP(data);
+                        break;
 
-            firstPage: function (event) {
-                var newRows = this.$el.find('#false');
+                    case 'nextPage':
+                        this.nextP(data);
+                        break;
 
-                event.preventDefault();
+                    case 'firstShowPage':
+                        this.firstP(data);
+                        break;
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
-                    return App.render({
-                        type   : 'notify',
-                        message: 'Please, save previous changes or cancel them!'
-                    });
+                    case 'lastShowPage':
+                        this.lastP(data);
+                        break;
                 }
 
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.firstP({
-                    sort         : this.sort,
-                    filter       : this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData(this.totalCollectionLengthUrl, {
-                    sort  : this.sort,
-                    filter: this.filter
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            lastPage: function (event) {
-                var newRows = this.$el.find('#false');
-
-                event.preventDefault();
-
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
-                    return App.render({
-                        type   : 'notify',
-                        message: 'Please, save previous changes or cancel them!'
-                    });
-                }
-
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.lastP({
-                    sort         : this.sort,
-                    filter       : this.filter,
-                    newCollection: this.newCollection
-                });
                 dataService.getData(this.totalCollectionLengthUrl, {
                     sort  : this.sort,
                     filter: this.filter
@@ -360,7 +298,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -410,6 +348,10 @@ define([
             hidePagesPopup: function (e) {
                 var el = e.target;
 
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
@@ -453,7 +395,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -594,10 +536,9 @@ define([
                     //$currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
                     $('#searchContainer').after(_.template(aphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null;
+                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
                     if (currentLetter) {
                         $('#startLetter').find('a').each(function () {
                             var target = $(this);
@@ -625,7 +566,7 @@ define([
                 });
 
                 // This is for counterPages at start
-                this.previouslySelected = $('.itemsNumber').last();
+                this.previouslySelected = $('.itemsNumber').first();
                 this.previouslySelected.addClass('selectedItemsNumber');
             },
 

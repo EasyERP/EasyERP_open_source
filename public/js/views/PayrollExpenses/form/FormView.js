@@ -9,6 +9,7 @@ define([
         'collections/PayrollExpenses/sortCollection',
         'collections/PayrollPayments/editCollection',
         'models/PayRollModel',
+        'views/selectView/selectView',
         "views/PayrollPayments/CreateView",
         'views/PayrollExpenses/CreateView',
         "helpers",
@@ -18,7 +19,7 @@ define([
         "async"
     ],
 
-    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
+    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
@@ -41,8 +42,8 @@ define([
                 "click #expandAll"                                                : "expandAll",
                 "click"                                                           : "removeNewSelect",
                 "click .diff"                                                     : "newPayment",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+               // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .oe_sortable"                                              : "goSort"
             },
 
@@ -164,22 +165,34 @@ define([
                 }
             },
 
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
 
                 return false;
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").remove();
-            },
 
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
+                if (this.selectView){
+                    this.selectView.remove();
+                }
             },
 
             newPayment: function (e) {
@@ -206,14 +219,8 @@ define([
                                 differenceAmount: 0,
                                 month           : jsonModel.month,
                                 year            : jsonModel.year,
-                                supplier        : {
-                                    _id     : jsonModel.employee._id,
-                                    fullName: jsonModel.employee.name
-                                },
-                                paymentMethod   : {
-                                    _id : jsonModel.type._id,
-                                    name: jsonModel.type.name
-                                },
+                                supplier        : jsonModel.employee,
+                                paymentMethod   : jsonModel.type,
                                 period          : jsonModel.year + '-' + jsonModel.month + '-01',
                                 paymentRef      : dataId
                             };
@@ -237,14 +244,8 @@ define([
                             differenceAmount: 0,
                             month           : jsonModel.month,
                             year            : jsonModel.year,
-                            supplier        : {
-                                _id     : jsonModel.employee._id,
-                                fullName: jsonModel.employee.name
-                            },
-                            paymentMethod   : {
-                                _id : jsonModel.type._id,
-                                name: jsonModel.type.name
-                            },
+                            supplier        : jsonModel.employee,
+                            paymentMethod   : jsonModel.type,
                             period          : jsonModel.year + '-' + jsonModel.month + '-01',
                             paymentRef      : dataId
                         };
@@ -253,14 +254,16 @@ define([
                     }
                 }
 
-
                 if (this.forPayments.length) {
                     new paymentCreateView({
                         redirect  : this.redirect,
                         collection: this.forPayments
                     });
                 } else {
-                    return alert("Please, check at most one unpaid item.")
+                    return App.render({
+                        type: 'error',
+                        message: "Please, check at most one unpaid item."
+                    });
                 }
 
             },
@@ -345,7 +348,6 @@ define([
                 var elCalc = parseFloat(this.editCollection.get(id).get("calc"));
                 var elPaid = parseFloat(this.editCollection.get(id).get("paid"));
 
-
                 totalNew = totalDiffOld + elDiff;
                 totalNewCalc = totalCalcOld + elCalc;
                 totalNewPaid = totalPaidOld + elPaid;
@@ -370,7 +372,10 @@ define([
                         },
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });
@@ -540,6 +545,10 @@ define([
 
             removeNewSelect: function () {
                 $('.newSelectList').remove();
+
+                if (this.selectView){
+                    this.selectView.remove()
+                }
             },
 
             keyDown: function (e) {
@@ -681,7 +690,6 @@ define([
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var payBtnEl = $('#topBarPaymentGenerate');
 
-
                 createBtnEl.hide();
 
                 saveBtnEl.show();
@@ -766,7 +774,7 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").remove();
+                //$(".newSelectList").remove();
 
                 var self = this;
                 var target = $(e.target);
@@ -788,9 +796,11 @@ define([
                 }
 
                 if (dataContent === 'employee') {
-                    populate.showSelect(e, prev, next, this);
+                    this.showNewSelect(e);
+                    return false;
                 } else if (dataContent === 'paymentType') {
-                    populate.showSelect(e, prev, next, this);
+                    this.showNewSelect(e);
+                    return false;
                 } else if (dataContent === 'dataKey') {
 
                     tempContainer = target.text();
@@ -827,8 +837,8 @@ define([
                 } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
-                        tempContainer + '" value="' + tempContainer +
-                        '"  maxLength="4" style="display: block;" />';
+                    tempContainer + '" value="' + tempContainer +
+                    '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -841,7 +851,6 @@ define([
 
                 return false;
             },
-
 
             checked: function (e) {
                 if (this.$el.find('#false').length) {
@@ -871,7 +880,6 @@ define([
                 totalNew = totalDiffOld + elDiff;
                 totalNewCalc = totalCalcOld + elCalc;
                 totalNewPaid = totalPaidOld + elPaid;
-
 
                 if (this.editCollection.length > 0) {
                     checkLength = $("input.checkbox:checked").length;
@@ -1138,13 +1146,11 @@ define([
                     }
                 });
 
-
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.models);
 
                     self.forPayments = new PaymentCollection();
                 }, 10);
-
 
                 return this;
             }

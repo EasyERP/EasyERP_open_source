@@ -1,34 +1,42 @@
 <div class="form-holder">
 
-  <form method="post" action="" id="createUserForm" class="form">
-    <div class="avatar left">
-      <div class="upload">
-        Edit
-        <input type="file" value="Edit" id="inputImg" accept="image/*">
-      </div>
-      <canvas id="avatar" width="140" height="140"></canvas>
-    </div>
+    <form method="post" action="" id="createUserForm" class="form">
+        <div class="avatar left">
+            <div class="upload">
+                Edit
+                <input type="file" value="Edit" id="inputImg" accept="image/*">
+            </div>
+            <canvas id="avatar" width="140" height="140"></canvas>
+        </div>
 
-	<div style="margin-left:160px;">
-	  <div class="left full-width">
-		<dl class="person-info">
-		  <dt><label for="login">User Name</label></dt><dd><input type="text" name="login" id="login" value="<%=login %>" required maxlength="32"/></dd>
-		  <dt><label for="email">Email </label></dt><dd><input type="text" name="email" id="email" value="<%= email %>" required maxlength="48"/></dd>
-		  <dt><label for="profilesDd">Profile</label></dt><dd>
-            <a id="profilesDd" data-id="<%=(profile) ? profile._id : ''%>" class="current-selected" href="javascript:;"><%=(profile)?profile.profileName:'Select'%></a>
-		</dl>
-	  </div>
-	</div>
-    <div class="clearfix">
-    </div>
-    <div class="cropImages form" style="display:none;">
-      <div class="formTitle">
-		<h3 class="left">Crop Images</h3>
-		<div class="clearfix"></div>
-	  </div><br />	
-      <div class="image_input" style="float: left;margin-right: 20px;"></div>
-      <img class="image_output" />
-      <div class="clearfix"></div>
-    </div>
-  </form>
+        <div style="margin-left:160px;">
+            <div class="left full-width">
+                <dl class="person-info">
+                    <dt><label for="login">User Name</label></dt>
+                    <dd><input type="text" name="login" id="login" value="<%=login %>" required maxlength="32"/></dd>
+                    <dt><label for="email">Email </label></dt>
+                    <dd><input type="text" name="email" id="email" value="<%= email %>" required maxlength="48"/></dd>
+                    <dt><label for="profilesDd">Profile</label></dt>
+                    <dd>
+                        <a id="profilesDd" data-id="<%=(profile) ? profile._id : ''%>" class="current-selected"
+                           href="javascript:;"><%=(profile)?profile.profileName:'Select'%></a>
+                </dl>
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="cropImages form" style="display:none;">
+            <div class="formTitle">
+                <h3 class="left">Crop Images</h3>
+
+                <div class="clearfix"></div>
+            </div>
+            <br/>
+
+            <div class="image_input" style="float: left;margin-right: 20px;"></div>
+            <img class="image_output"/>
+
+            <div class="clearfix"></div>
+        </div>
+    </form>
 </div>

@@ -1,29 +1,29 @@
 define([
-    'views/menu/MenuItem',
-    'collections/menu/MenuItems'
-],
+        'views/menu/MenuItem',
+        'collections/menu/MenuItems'
+    ],
     function (MenuItemView) {
 
         var LeftMenuView = Backbone.View.extend({
-            tagName: 'nav',
-            className: 'menu',
-            el: '#submenu-holder nav',
+            tagName       : 'nav',
+            className     : 'menu',
+            el            : '#submenu-holder nav',
             currentSection: null,
-            selectedId: null,
+            selectedId    : null,
 
             events: {
-                "click a": "selectMenuItem",
-                "mouseover a": "hoverItem",
+                "click a"     : "selectMenuItem",
+                "mouseover a" : "hoverItem",
                 "mouseleave a": "mouseLeave"
             },
 
             setCurrentSection: function (section) {
                 this.leftMenu.currentSection = section;
-				this.leftMenu.lastClickedLeftMenuItem = null;
-				this.leftMenu.selectedId = null;
+                this.leftMenu.lastClickedLeftMenuItem = null;
+                this.leftMenu.selectedId = null;
                 this.leftMenu.render();
             },
-            mouseOver: function (section, selectedId) {
+            mouseOver        : function (section, selectedId) {
                 if (this.leftMenu) {
                     this.leftMenu.currentSection = section;
                     this.leftMenu.render(true, selectedId);
@@ -35,14 +35,16 @@ define([
             },
 
             initialize: function (options) {
-                if (!options.collection) throw "No collection specified!";
+                if (!options.collection) {
+                    throw "No collection specified!";
+                }
                 this.collection = options.collection;
-                if (options.currentRoot){
+                if (options.currentRoot) {
                     this.currentSection = options.currentRoot[0] ? options.currentRoot[0].get('mname') : null;
-				}
+                }
                 this.currentChildren = options.currentChildren;
                 if (this.currentChildren && this.currentChildren.length > 0) {
-					this.selectedId = this.currentChildren[0].get("_id");
+                    this.selectedId = this.currentChildren[0].get("_id");
                     this.render(null, this.currentChildren[0].get("_id"));
                 } else {
                     this.render();
@@ -52,20 +54,23 @@ define([
                 _.bindAll(this, 'render');
             },
 
-            render: function (onMouseOver, selectedId) {
+            render        : function (onMouseOver, selectedId) {
                 var $el = $(this.el);
                 $el.html('');
                 var currentModule = null;
                 var root = this.collection.root();
-                if (this.currentSection === null)
+                if (this.currentSection === null) {
                     this.currentSection = root[0].get('mname');
+                }
                 for (var i = 0, len = root.length; i < len; i++) {
                     if (root[i].get('mname') == this.currentSection) {
                         currentModule = root[i];
                         break;
                     }
                 }
-                if (currentModule === null) currentModule = root[0];
+                if (currentModule === null) {
+                    currentModule = root[0];
+                }
                 var elem = $el.append(this.renderMenu(this.collection.children(currentModule), onMouseOver));
                 var currentSelElem = document.getElementById(selectedId);
                 if ($(currentSelElem).length === 0) {
@@ -75,13 +80,13 @@ define([
                 $(currentSelElem).addClass('selected');
                 return this;
             },
-			updateLeftMenu:function(currentChildren, currentRoot){
+            updateLeftMenu: function (currentChildren, currentRoot) {
                 this.currentChildren = currentChildren;
                 this.currentSection = currentRoot[0] ? currentRoot[0].get('mname') : null;
-				this.selectedId = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get("_id") : null;
-				this.render(null, this.selectedId);
-			},
-            hoverItem: function (e) {
+                this.selectedId = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get("_id") : null;
+                this.render(null, this.selectedId);
+            },
+            hoverItem     : function (e) {
                 this.$el.find('li.hover').removeClass('hover');
                 $(e.target).closest('li').addClass('hover');
             },
@@ -112,12 +117,12 @@ define([
                 };
                 unSelect(option);
             },
-            mouseLeave: function (event) {
+            mouseLeave  : function (event) {
                 this.mouseLeaveEl = _.bind(this.mouseLeaveEl, this, this.currentSection);
                 this.mouseLeaveEl = _.debounce(this.mouseLeaveEl, 2000);
                 this.mouseLeaveEl();
             },
-            renderMenu: function (list, onMouseOver) {
+            renderMenu  : function (list, onMouseOver) {
                 if (_.size(list) === 0) {
                     return null;
                 }
@@ -138,7 +143,7 @@ define([
 
                 var _el = $('.selected > a').text();
                 var that = this;
-                $(clickEl).on("click", { mouseOver: onMouseOver }, function (option) {
+                $(clickEl).on("click", {mouseOver: onMouseOver}, function (option) {
                     if (_el == that.currentSection) {
                         $(clickEl).closest('li').addClass('selected');
                     }
@@ -156,7 +161,7 @@ define([
             },
 
             renderMenuItem: function (model) {
-                var view = new MenuItemView({ model: model });
+                var view = new MenuItemView({model: model});
                 var elem = view.render().el;
                 return elem;
             }

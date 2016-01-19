@@ -74,7 +74,10 @@
                         if (xhr.status == 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
-                        alert('Some error');
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             },

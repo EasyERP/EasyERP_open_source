@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose');
 var Incoterm = function (models) {
     var access = require("../Modules/additions/access.js")(models);

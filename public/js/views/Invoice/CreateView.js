@@ -1,4 +1,5 @@
 define([
+        'Backbone',
         "text!templates/Invoice/CreateTemplate.html",
         "models/InvoiceModel",
         "common",
@@ -9,7 +10,7 @@ define([
         "dataService",
         'constants'
     ],
-    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
+    function (Backbone, CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -170,10 +171,7 @@ define([
                 var data = {
                     forSales: forSales,
 
-                    supplier             : {
-                        _id : supplier,
-                        name: supplierName
-                    },
+                    supplier             : supplier,
                     fiscalPosition       : null,
                     sourceDocument       : null,//$.trim($('#source_document').val()),
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
@@ -183,10 +181,7 @@ define([
                     account              : null,
                     journal              : null,
 
-                    salesPerson : {
-                        _id : salesPersonId,
-                        name: salesPersonName
-                    },
+                    salesPerson : salesPersonId,
                     paymentTerms: paymentTermId,
 
                     products   : products,
@@ -222,7 +217,10 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type   : 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
 
             },
@@ -239,6 +237,7 @@ define([
                 var self = this;
                 var invoiceItemContainer;
                 var paymentContainer;
+                var notDiv;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -283,14 +282,14 @@ define([
                     new listHederInvoice().render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, false);
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
                 populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                     if (!response.error) {
-                        self.defaultWorkflow = {_id: response._id, name: response.name, status: response.status};
+                        self.defaultWorkflow = response._id;
                     }
                 });
 

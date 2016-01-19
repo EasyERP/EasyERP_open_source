@@ -1,34 +1,45 @@
 <% projectsCollection.forEach(function(project, index){ %>
-<tr data-index="<%= index %>" data-id="<%=project._id%>" class="stage-<%=(project.workflow) ? project.workflow._id : ''%>">
-  <td class = "notForm centerCell">
-    <input type="checkbox" value="<%=project._id%>" class="checkbox  <%=project.notRemovable ? 'notRemovable' : ''%>" /></td>
-  <td class="centerCell"><%=startNumber + index + 1 %></td>
-  <td><%=project.projectName%></td>
-  <td><%=(project.customer) ? project.customer.name : ''%></td>
-  <td><%=project.StartDate%></td>
-  <td <%=(project.EndDate && project.TargetEndDate && (new Date(project.TargetEndDate)<new Date(project.EndDate))) ? "class='red-border' " : " "%>><%=project.EndDate%></td>
-      <td><%=project.TargetEndDate%></td>
-<td><progress name="projectProgress" max="100" value="<%=project.progress%>" /></td>
-<td id='<%=project._id%>'>
-  <a href="javascript:;" class="stageSelect"><%=(project.workflow) ? project.workflow.name : 'Undefinded'%></a>
-</td>
-<td id="health" data-id="<%=project._id%>">
-  <div class="health-container">
-    <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
-  </div>
-  <ul class="with-div">
-    <li>
-      <div class="health1"></div>
-    </li>
-    <li>
-      <div class="health2"></div>
-    </li>
-    <li>
-      <div class="health3"></div>
-    </li>
-  </ul>
-</td>
-<td><%=project.createdBy.user?(project.createdBy.date + ' (' + project.createdBy.user.login + ')'):(project.createdBy.date?project.createdBy.date:'')%></td>
-<td><%=(project.editedBy&&project.editedBy.date)?( project.editedBy.date + ((project.editedBy.user) ?(' (' + project.editedBy.user.login + ')') : '')):''%></td>
+<tr data-index="<%= index %>" data-id="<%=project._id%>"
+    class="stage-<%=(project.workflow) ? project.workflow._id : ''%>">
+    <td class="notForm centerCell">
+        <input type="checkbox" value="<%=project._id%>"
+               class="checkbox  <%=project.notRemovable ? 'notRemovable' : ''%>"/></td>
+    <td class="centerCell"><%=startNumber + index + 1 %></td>
+    <td><%=project.projectName%></td>
+    <td><%=(project.customer) ? project.customer.name.first + ' ' + project.customer.name.last : ''%></td>
+    <td><%=project.StartDate%></td>
+    <td
+    <%=(project.EndDate && project.TargetEndDate && (new Date(project.TargetEndDate)
+    <new Date(project.EndDate))) ?
+    "class='red-border' " : " "%>><%=project.EndDate%></td>
+    <td><%=project.TargetEndDate%></td>
+    <td>
+        <progress name="projectProgress" max="100" value="<%=project.progress%>"/>
+    </td>
+    <td id='<%=project._id%>'>
+        <a href="javascript:;" class="stageSelect"><%=(project.workflow) ? project.workflow.name : 'Undefinded'%></a>
+    </td>
+    <td id="health" data-id="<%=project._id%>">
+        <div class="health-container">
+            <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
+        </div>
+        <ul class="with-div">
+            <li>
+                <div class="health1"></div>
+            </li>
+            <li>
+                <div class="health2"></div>
+            </li>
+            <li>
+                <div class="health3"></div>
+            </li>
+        </ul>
+    </td>
+    <td><%=project.createdBy.user?(project.createdBy.date + ' (' + project.createdBy.user.login +
+        ')'):(project.createdBy.date?project.createdBy.date:'')%>
+    </td>
+    <td><%=(project.editedBy&&project.editedBy.date)?( project.editedBy.date + ((project.editedBy.user) ?(' (' +
+        project.editedBy.user.login + ')') : '')):''%>
+    </td>
 </tr>
 <% }) %>

@@ -1,6 +1,10 @@
 define([
+        "Backbone",
+        "jQuery",
+        "Underscore",
         "text!templates/Employees/EditTemplate.html",
         'views/Notes/AttachView',
+        'views/selectView/selectView',
         "collections/Employees/EmployeesCollection",
         "collections/JobPositions/JobPositionsCollection",
         "collections/Departments/DepartmentsCollection",
@@ -8,19 +12,23 @@ define([
         "collections/Users/UsersCollection",
         'views/Assignees/AssigneesView',
         "common",
-        "populate"
+        "populate",
+        "moment",
+        'helpers/keyCodeHelper'
     ],
-    function (EditTemplate, attachView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate) {
-
+    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment, keyCodes) {
+        'use strict';
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Employees",
             imageSrc   : '',
             template   : _.template(EditTemplate),
+            responseObj: {},
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
                 _.bindAll(this, "render", "deleteItem");
+
                 if (options.collection) {
                     this.employeesCollection = options.collection;
                     this.currentModel = this.employeesCollection.getElement();
@@ -28,75 +36,267 @@ define([
                     this.currentModel = options.model;
                 }
                 this.currentModel.urlRoot = '/Employees';
-                this.responseObj = {};
+
+                this.responseObj['#sourceDd'] = [
+                    {
+                        _id : 'www.rabota.ua',
+                        name: 'www.rabota.ua'
+                    }, {
+                        _id : 'www.work.ua',
+                        name: 'www.work.ua'
+                    }, {
+                        _id : 'www.ain.net',
+                        name: 'www.ain.net'
+                    }, {
+                        _id : 'other',
+                        name: 'other'
+                    }
+                ];
+
+                this.responseObj['#genderDd'] = [
+                    {
+                        _id : 'male',
+                        name: 'male'
+                    }, {
+                        _id : 'female',
+                        name: 'female'
+                    }
+                ];
+                this.responseObj['#maritalDd'] = [
+                    {
+                        _id : 'married',
+                        name: 'married'
+                    }, {
+                        _id : 'unmarried',
+                        name: 'unmarried'
+                    }
+                ];
+
                 this.render();
             },
 
             events: {
-                "click #tabList a"                                                : "switchTab",
-                "mouseenter .avatar"                                              : "showEdit",
-                "mouseleave .avatar"                                              : "hideEdit",
-                'click .dialog-tabs a'                                            : 'changeTab',
-                'click .endContractReasonList, .withEndContract .arrow'           : 'showEndContractSelect',
-                'click .withEndContract .newSelectList li'                        : 'endContract',
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click"                                                           : "hideNewSelect"
+                "click #tabList a"                                               : "switchTab",
+                "mouseenter .avatar"                                             : "showEdit",
+                "mouseleave .avatar"                                             : "hideEdit",
+                'click .dialog-tabs a'                                           : 'changeTab',
+                'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
+                'click .withEndContract .newSelectList li'                       : 'endContract',
+                "click .current-selected"                                        : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination, #selectInput)": "chooseOption",
+                "click"                                                          : "hideNewSelect",
+                "click td.editable"                                              : "editJob",
+                "click #update"                                                  : "addNewRow",
+                "keyup .editing"                                                 : "validateNumbers"
             },
 
-            notHide              : function () {
+            validateNumbers: function (e) {
+                var $target = $(e.target);
+                var code = e.keyCode;
+                var inputValue = $target.val();
+
+                if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
+                    $target.val(parseFloat(inputValue) || "");
+                    return false;
+                }
+            },
+
+            addNewRow: function (e, contractEndReason) {
+                var $target = e ? $(e.target) : null;
+                var targetId = $target ? $target.attr('id') : null;
+                var table = this.$el.find('#hireFireTable');
+                var tr = table.find('tr').last();
+                var dataContent = tr.attr('data-content');
+                var dataId = parseInt(tr.attr('data-id'));
+                var newId;
+                var row;
+                var tds;
+                var newDate = new Date();
+                var selects;
+
+                this.$el.find('#update').hide();
+                this.$el.find('.withEndContract').hide();
+
+                if (contractEndReason) {
+                    dataContent = 'fire';
+                    dataId = table.find('[data-content="fire"]').length ? parseInt(table.find('[data-content="fire"]').last().attr('data-id')) : parseInt(table.find('[data-content="hire"]').last().attr('data-id')) - 1;
+                }
+
+                newId = dataContent + (dataId + 1).toString();
+
+                table.append('<tr id="' + newId + '">' + tr.html() + '</tr>');
+
+                row = table.find('tr').last();
+                row.attr('data-id', dataId + 1);
+                row.attr('data-content', dataContent);
+
+                tds = row.find('td');
+
+                if (targetId === 'update') {
+                    $(tds[0]).text('Hired');
+                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[7]).find('input').val('Update');
+                } else if (contractEndReason) {
+                    row.addClass('fired');
+                    $(tds[0]).text('Fired');
+                    $(tds[1]).addClass('changeContent');
+                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[1]).removeClass('hireDate');
+                    $(tds[1]).addClass('fireDate');
+                    $(tds[1]).attr('data-id', 'fireDate');
+                    $(tds[6]).removeClass('editable');
+                    $(tds[7]).find('input').val(contractEndReason);
+
+                    selects = row.find('.current-selected');
+                    selects.removeClass('current-selected');
+                }
+            },
+
+            showSelect: function (e) {
+                var $target = $(e.target);
+
+                e.stopPropagation();
+
+                if ($target.children()) {
+                    $target.children().show();
+                }
+
                 return false;
             },
-            showNewSelect        : function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
+
+            editJob: function (e) {
+                var self = this;
+                var $target = $(e.target);
+                var dataId = $target.attr('data-id');
+                var tempContainer;
+
+                tempContainer = ($target.text()).trim();
+                $target.html('<input class="editing" type="text" value="' + tempContainer + '">');
+
+                if (dataId === 'salary') {
+                    return false;
+                } else {
+                    $target.find('.editing').datepicker({
+                        dateFormat : "d M, yy",
+                        changeMonth: true,
+                        changeYear : true,
+                        onSelect   : function () {
+                            var editingDates = self.$el.find('.editing');
+
+                            editingDates.each(function () {
+                                $(this).parent().text($(this).val()).removeClass('changeContent');
+                                $(this).remove();
+                            });
+                        }
+                    }).addClass('datepicker');
+                }
+
                 return false;
             },
-            chooseOption         : function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                $(".newSelectList").hide();
+
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
+                return false;
             },
-            nextSelect           : function (e) {
-                this.showNewSelect(e, false, true);
+
+            chooseOption: function (e) {
+                var $target = $(e.target);
+                var parentUl = $target.parent();
+                var element = $target.closest('a') || parentUl.closest('a');
+                var id = element.attr('id') || parentUl.attr('id');
+                var valueId = $target.attr('id');
+
+                if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
+                    element.text($target.text());
+                    element.attr('data-id', valueId);
+                } else {
+                    $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                }
             },
-            prevSelect           : function (e) {
-                this.showNewSelect(e, true, false);
+
+            hideNewSelect: function () {
+                var editingDates = this.$el.find('.editing');
+
+                editingDates.each(function () {
+                    $(this).parent().text($(this).val());
+                    $(this).remove();
+                });
+
+                this.$el.find('.newSelectList').hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
-            hideNewSelect        : function () {
-                $(".newSelectList").hide();
-            },
+
             showEndContractSelect: function (e) {
                 e.preventDefault();
                 $(e.target).parent().find(".newSelectList").toggle();
+
                 return false;
             },
-            endContract          : function (e) {
-                var wfId = $('.endContractReasonList').attr('data-id');
+
+            activeTab: function(){
+                var tabs;
+                var activeTab;
+                var activeTab;
+                var dialogHolder;
+                var tabId;
+
+                tabId = 'job';
+                tabs = $(".dialog-tabs");
+                activeTab = tabs.find('.active');
+
+                activeTab.removeClass('active');
+                tabs.find('#' + tabId + 'Tab').addClass("active");
+
+                dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
+
+            },
+
+            endContract: function (e) {
                 var contractEndReason = $(e.target).text();
 
-                this.currentModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: true});
-                this.currentModel.save(this.currentModel.changed, {
-                    patch  : true,
-                    success: function () {
-                        Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
-                    },
-                    error  : function () {
-                        Backbone.history.navigate("home", {trigger: true});
-                    }
-                });
+                this.activeTab();
+
+                this.addNewRow(null, contractEndReason);
+
+                this.$el.find('.withEndContract').hide();
             },
-            changeTab            : function (e) {
+
+            changeTab: function (e) {
+                var n;
+                var dialog_holder;
                 var holder = $(e.target);
+
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = holder.closest(".dialog-tabs").parent().find(".dialog-tabs-items");
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = holder.closest(".dialog-tabs").parent().find(".dialog-tabs-items");
                 dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
-            keydownHandler       : function (e) {
+
+            keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
                         this.hideDialog();
@@ -105,20 +305,23 @@ define([
                         break;
                 }
             },
-            hideDialog           : function () {
+
+            hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
-            showEdit             : function () {
+
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
                 }, 250);
 
             },
-            hideEdit             : function () {
+
+            hideEdit: function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"
@@ -126,97 +329,120 @@ define([
             },
 
             switchTab: function (e) {
+                var index;
+                var link;
+
                 e.preventDefault();
-                var link = this.$("#tabList a");
+                link = this.$("#tabList a");
+
                 if (link.hasClass("selected")) {
                     link.removeClass("selected");
                 }
-                var index = link.index($(e.target).addClass("selected"));
+
+                index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
 
             saveItem  : function () {
+
+                this.hideNewSelect();
+
+                var jobType;
+                var department;
+                var jobPosition;
+                var manager;
                 var empThumb;
                 var self = this;
+                var redirect = false;
+                var $tableFire = this.$el.find('#hireFireTable');
+                var lastRow = $tableFire.find('tr').last();
+                var fireDate;
+                var fireReason;
+                var gender = $("#genderDd").data("id") || null;
 
-                var depForTransfer = this.currentModel.get('department');
-
-                var gender = $("#genderDd").data("id");
-                gender = gender ? gender : null;
-
-                var jobType = $("#jobTypeDd").data("id");
-                jobType = jobType ? jobType : null;
-
-                var marital = $("#maritalDd").data("id");
-                marital = marital ? marital : null;
-
-                var relatedUser = this.$el.find("#relatedUsersDd").data("id");
-                relatedUser = relatedUser ? relatedUser : null;
-
-                var department = {
-                    _id : this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null,
-                    name: this.$el.find("#departmentsDd").text() ? this.$el.find("#departmentsDd").text() : null
-                };
-
-                var jobPosition = {
-                    _id : this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null,
-                    name: this.$el.find("#jobPositionDd").text() ? this.$el.find("#jobPositionDd").text() : null
-                };
-
-                var manager = {
-                    _id : this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null,
-                    name: this.$el.find("#projectManagerDD").text() ? this.$el.find("#projectManagerDD").text() : null
-                };
-
-                var coach = $.trim(this.$el.find("#coachDd").data("id"));
-                coach = coach ? coach : null;
-
+                var marital = $("#maritalDd").data("id") || null;
+                var relatedUser = this.$el.find("#relatedUsersDd").data("id") || null;
+                var coach = $.trim(this.$el.find("#coachDd").data("id")) || null;
                 var homeAddress = {};
+
                 $("dd").find(".homeAddress").each(function () {
                     var el = $(this);
                     homeAddress[el.attr("name")] = $.trim(el.val());
                 });
-                // date parse 
-                var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
 
-                var hireArray = this.currentModel.get('hire');
+                var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
+                var hireArray = $tableFire.find('[data-content="hire"]');
                 var newHireArray = [];
+                var lengthHire = hireArray.length - 1;
+                var fireArray = this.currentModel.get('fire');
+                var newFire = _.clone(fireArray);
+                var newFireArray = [];
 
                 _.each(hireArray, function (hire, key) {
-                    var date = new Date($.trim(self.$el.find("#hire" + key).val()));
-                    newHireArray.push(date);
+                    var tr = self.$el.find("#hire" + key);
+                    var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
+                    var jobPosition = tr.find('#jobPositionDd').attr('data-id');
+                    var department = tr.find('#departmentsDd').attr('data-id');
+                    var manager = tr.find('#projectManagerDD').attr('data-id');
+                    var salary = parseInt(tr.find('[data-id="salary"]').text());
+                    var info = tr.find('#statusInfoDd').val();
+                    var jobType = tr.find('#jobTypeDd').attr('data-id');
+
+                    var trFire = $(self.$el.find("#fire" + key));
+
+                    newHireArray.push({
+                        date       : date,
+                        department : department,
+                        jobPosition: jobPosition,
+                        manager    : manager,
+                        jobType    : jobType,
+                        salary     : salary,
+                        info       : info
+                    });
+
+                    if (lengthHire === key && !lastRow.hasClass('fired')) {
+                        return newHireArray;
+                    }
+
+                    if (trFire && trFire.length) {
+                        newFire[key] = _.clone(newHireArray[key]);
+
+                        newFire[key].date = new Date($.trim(trFire.find("[data-id='fireDate']").text()));
+                        newFire[key].info = trFire.find('#statusInfoDd').val();
+
+                        newFireArray.push(newFire[key]);
+                    } else if (!newFire[key]) {
+                        newFire[key] = _.clone(newHireArray[key]);
+
+                        newFire[key].date = date;
+                        newFire[key].info = 'Update';
+
+                        newFireArray.push(newFire[key]);
+                    } else {
+                        newFireArray.push(newFire[key]);
+                    }
+
                     return newHireArray;
                 });
 
-                var fireArray = this.currentModel.get('fire');
-                var newFireArray = [];
+                lengthHire = newHireArray.length;
+                jobPosition = newHireArray[lengthHire - 1].jobPosition;
+                department = newHireArray[lengthHire - 1].department;
+                manager = newHireArray[lengthHire - 1].manager;
+                jobType = newHireArray[lengthHire - 1].jobType;
 
-                _.each(fireArray, function (hire, key) {
-                    var date = new Date($.trim(self.$el.find("#fire" + key).val()));
-                    newFireArray.push(date);
-                    return newFireArray;
-                });
-
-                var transferArray = this.currentModel.get('transferred');
-                var newTransfer = [];
-
-                _.each(transferArray, function (obj, key) {
-                    var date = $.trim(self.$el.find("#date" + key).val());
-                    var dep = obj.department;
-                    var result = {};
-
-                    result.department = dep;
-                    result.date = new Date(date);
-
-                    newTransfer.push(result);
-                    return newTransfer;
-                });
+                if (lastRow.hasClass('fired')) {
+                    redirect = true;
+                    fireDate = newFireArray[newFireArray.length - 1].date;
+                    fireReason = newFireArray[newFireArray.length - 1].info;
+                }
 
                 var active = (this.$el.find("#active").is(":checked")) ? true : false;
                 var sourceId = $("#sourceDd").data("id");
 
                 var usersId = [];
                 var groupsId = [];
+
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -278,16 +504,18 @@ define([
                     },
                     whoCanRW      : whoCanRW,
                     hire          : newHireArray,
-                    fire          : newFireArray,
-                    transferred   : newTransfer,
-                    // depForTransfer: depForTransfer
+                    fire          : newFireArray
                 };
-                if (department._id !== depForTransfer._id) {
-                    data.depForTransfer=depForTransfer.name;
+
+                if (redirect) {
+                    data.isEmployee = false;
+                    data.lastFire = moment(fireDate).year() * 100 + moment(fireDate).isoWeek();
+                    data.contractEnd = {
+                        "date"  : new Date(fireDate),
+                        "reason": fireReason
+                    };
                 }
-                //if (!relatedUser){
-                //    data['currentUser']= App.currentUser._id;
-                //}
+
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                     headers: {
@@ -295,26 +523,26 @@ define([
                     },
                     patch  : true,
                     success: function (model) {
-                        //App.currentUser.imageSrc =  self.imageSrc;
-                        //if (relatedUser){
-                        //    $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
-                        //    $("#loginPanel #userName").text(model.toJSON().fullName);
-                        //} else {
-                        //    $("#loginPanel .iconEmployee").attr("src", App.currentUser.imageSrc);
-                        //    $("#loginPanel  #userName").text(App.currentUser.login);
-                        //}
+                        if (redirect) {
+                            return Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
+                        }
+
+                        if (model.get('relatedUser') === App.currentUser._id) {
+                            App.currentUser.imageSrc = self.imageSrc;
+
+                            $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                            $("#loginPanel #userName").text(model.toJSON().fullName);
+                        }
 
                         if (self.firstData === data.name.first &&
                             self.lastData === data.name.last &&
-                            self.departmentData === data.department.name &&
-                            self.jobPositionData === data.jobPosition.name &&
-                            self.projectManagerData === data.manager.name) {
+                            self.departmentData === department &&
+                            self.jobPositionData === jobPosition &&
+                            self.projectManagerData === manager) {
 
                             model = model.toJSON();
                             empThumb = $('#' + model._id);
 
-                            //empThumb.find('.fullName').html(model.name.first + ' ' + model.name.last);
-                            //empThumb.find('.jobPos').html(model.jobPosition.name);
                             empThumb.find('.age').html(model.result.age);
                             empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
                             empThumb.find('.telephone a').html(model.workPhones.mobile);
@@ -338,10 +566,11 @@ define([
 
             },
             deleteItem: function (event) {
-                var mid = 39;
                 event.preventDefault();
+                var mid = 39;
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
+
                 if (answer == true) {
                     this.currentModel.urlRoot = "/Employees";
                     this.currentModel.destroy({
@@ -365,8 +594,6 @@ define([
                 var jobPosElement;
                 var departmentElement;
                 var projectManagerElement;
-                var hireArray;
-                var fireArray;
 
                 if (this.currentModel.get('dateBirth')) {
                     this.currentModel.set({
@@ -375,23 +602,6 @@ define([
                         silent: true
                     });
                 }
-                this.currentModel.set({
-                    hire: this.currentModel.get('hire')
-                }, {
-                    silent: true
-                });
-
-                this.currentModel.set({
-                    fire: this.currentModel.get('fire')
-                }, {
-                    silent: true
-                });
-
-                this.currentModel.set({
-                    transferred: this.currentModel.get('transferred')
-                }, {
-                    silent: true
-                });
 
                 var formString = this.template({
                     model: this.currentModel.toJSON()
@@ -449,22 +659,6 @@ define([
                     changeYear : true,
                     yearRange  : '-100y:c+nn',
                     maxDate    : '-18y'
-                    //onChangeMonthYear: function (year, month) {
-                    //    var target = $(this);
-                    //    var day = target.val().split('/')[0];
-                    //    target.val(day + '/' + month + '/' + year);
-                    //}
-                });
-                $('.hire').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true
-                });
-
-                $('.fire').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true
                 });
 
                 $('.date').datepicker({
@@ -492,15 +686,15 @@ define([
 
                 lastElement = this.$el.find("#last");
                 firstElement = this.$el.find("#first");
-                jobPosElement = this.$el.find("#jobPositionDd");
-                departmentElement = this.$el.find("#departmentsDd");
-                projectManagerElement = this.$el.find("#projectManagerDD");
+                jobPosElement = this.$el.find("#jobPosition");
+                departmentElement = this.$el.find("#department");
+                projectManagerElement = this.$el.find("#manager");
 
                 this.lastData = $.trim(lastElement.val());
                 this.firstData = $.trim(firstElement.val());
-                this.jobPositionData = $.trim(jobPosElement.val());
-                this.departmentData = $.trim(departmentElement.val());
-                this.projectManagerData = $.trim(projectManagerElement.val());
+                this.jobPositionData = $.trim(jobPosElement.attr('data-id'));
+                this.departmentData = $.trim(departmentElement.attr('data-id'));
+                this.projectManagerData = $.trim(projectManagerElement.attr('data-id'));
 
                 return this;
             }

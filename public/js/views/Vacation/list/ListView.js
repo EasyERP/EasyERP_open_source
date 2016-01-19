@@ -1,7 +1,11 @@
 define([
+        "Backbone",
+        "jQuery",
+        "Underscore",
         'text!templates/Vacation/list/ListHeader.html',
         'text!templates/Vacation/list/cancelEdit.html',
         'text!templates/Vacation/list/ListTotal.html',
+        'views/selectView/selectView',
         'views/Vacation/CreateView',
         'views/Vacation/list/ListItemView',
         'models/VacationModel',
@@ -11,11 +15,10 @@ define([
         'dataService',
         'constants',
         'async',
-        'moment',
-        'populate'
+        'moment'
     ],
 
-    function (listTemplate, cancelEdit, listTotal, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+    function (Backbone, $, _, listTemplate, cancelEdit, listTotal, selectView, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var VacationListView = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -50,23 +53,28 @@ define([
             },
 
             events: {
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "blur td.editable input"                                          : "hideInput",
-                "click td.editable"                                               : "editRow",
-                "click .current-selected"                                         : "showNewCurrentSelect",
+                //"blur td.editable input"                                          : "hideInput",
+                "click td.editable, .current-selected"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .oe_sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect"
             },
 
-            showNewCurrentSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this, 12);
-            },
-
             hideNewSelect: function () {
-                $(".newSelectList").remove();
+               // $(".newSelectList").remove();
+                var editingDates = this.$el.find('.editing');
+
+                editingDates.each(function () {
+                    $(this).parent().text($(this).val());
+                    $(this).remove();
+                });
+
+                this.$el.find('.newSelectList').hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             savedNewModel: function (modelObject) {
@@ -152,6 +160,10 @@ define([
                     model.changed = this.changedModels[id];
                     model.changed.year = this.yearElement.text();
                     model.changed.month = this.monthElement.attr('data-content');
+
+                    if (!model.id && !model.changed.vacArray) {
+                        this.deleteItem(id);
+                    }
                 }
                 this.editCollection.save();
             },
@@ -246,25 +258,45 @@ define([
                 });
             },
 
-            hideInput: function (e) {
+           /* hideInput: function (e) {
                 var target = $(e.target);
 
                 target.hide();
-            },
+            },*/
 
-            editRow: function (e, prev, next) {
-                var self = this;
-                var el = $(e.target);
-                var hasInput = el.find('input').length;
-                var isInput = el.prop("tagName") === 'INPUT';
-                var tr = $(e.target).closest('tr');
+            showNewSelect: function (e) {
 
-                if (!isInput && !hasInput) {
-                    populate.showSelect(e, prev, next, this);
-                } else if (hasInput) {
-                    el.find('input').show();
+                var $target = $(e.target);
+
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                if ($target.hasClass('current-selected')){
+
+                    this.selectView = new selectView({
+                        e          : e,
+                        responseObj: this.responseObj,
+                        number     : 12
+                    });
+                    $target.append(this.selectView.render().el);
+
                 } else {
-                    populate.showSelect(e, prev, next, this);
+
+                    this.selectView = new selectView({
+                        e          : e,
+                        responseObj: this.responseObj
+                    });
+
+                    $target.append(this.selectView.render().el);
+                    $target.find('input').show();
+
                 }
 
                 return false;
@@ -418,7 +450,7 @@ define([
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
                 daysNumRow = '<tr class="subHeaderHolder borders"><th class="oe_sortable" data-sort="employee.name">Employee Name</th>' +
-                    '<th class="oe_sortable" data-sort="department.name">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
+                '<th class="oe_sortable" data-sort="department.departmentName">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
 
                 this.daysCount = daysInMonth;
 
@@ -436,21 +468,21 @@ define([
                 $(subHeaderContainer[2]).replaceWith(daysNumRow);
             },
 
-            nextSelect: function (e) {
+            /*nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
 
             prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
-            },
+            },*/
 
-            showNewSelect: function (e, prev, next) {
+            /*showNewSelect: function (e, prev, next) {
                 e.stopPropagation();
                 populate.showSelect(e, prev, next, this);
 
                 return false;
             },
-
+*/
             changedDataOptions: function () {
                 var month = this.monthElement.attr('data-content');
                 var year = this.yearElement.attr('data-content');
@@ -537,16 +569,11 @@ define([
                     //}
 
                     tr.find('[data-content="employee"]').text(element.name);
-                    tr.find('.department').text(element.department.name);
+                    tr.find('.department').text(element.department.departmentName);
 
-                    employee = _.clone(editVacationModel.get('employee'));
-                    department = _.clone(editVacationModel.get('department'));
+                    employee = element._id;
 
-                    employee._id = element._id;
-                    employee.name = target.text();
-
-                    department._id = element.department._id;
-                    department.name = element.department.name;
+                    department = element.department._id;
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;
@@ -824,7 +851,10 @@ define([
                             },
                             error  : function (model, res) {
                                 if (res.status === 403 && index === 0) {
-                                    alert("You do not have permission to perform this action");
+                                    App.render({
+                                        type: 'error',
+                                        message: "You do not have permission to perform this action"
+                                    });
                                 }
                                 self.deleteItemsRender(1, 1);
 

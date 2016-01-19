@@ -14,10 +14,10 @@ define([
                     response.date = common.utcDateToLocaleDate(response.date);
                 }
 
-                if(response.debit){
+                if (response.debit) {
                     response.debit = response.debit / 100;
                 }
-                if(response.credit){
+                if (response.credit) {
                     response.credit = response.credit / 100;
                 }
             }

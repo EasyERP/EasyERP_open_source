@@ -44,25 +44,29 @@ define([
                 "click .setDraft"                                                 : "setDraft"
             },
 
-
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
 
             },
-            notHide      : function () {
+
+            notHide: function () {
                 return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption : function (e) {
+
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            nextSelect   : function (e) {
+
+            nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect   : function (e) {
+
+            prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -109,14 +113,14 @@ define([
                     var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return  App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -146,7 +150,10 @@ define([
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             if (err) {
-                                alert('Can\'t receive invoice');
+                                App.render({
+                                    type: 'error',
+                                    message: 'Can\'t receive invoice'
+                                });
                             } else {
                                 Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
@@ -166,14 +173,14 @@ define([
                     var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id : workflow._id,
-                            name: workflow.name
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -198,9 +205,7 @@ define([
                 var productId;
                 var quantity;
                 var price;
-                var supplier = {};
-                supplier._id = thisEl.find('#supplierDd').data('id');
-                supplier.name = thisEl.find('#supplierDd').text();
+                var supplier = thisEl.find('#supplierDd').data('id');
 
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
@@ -258,7 +263,6 @@ define([
                     }
                 }
 
-
                 data = {
                     currency         : currency,
                     supplier         : supplier,
@@ -308,7 +312,10 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type: 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
             },
 
@@ -320,7 +327,9 @@ define([
             },
             deleteItem: function (event) {
                 var mid = 55;
+
                 event.preventDefault();
+
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
                 if (answer == true) {
@@ -334,7 +343,10 @@ define([
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });
@@ -404,7 +416,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                    maxDate: "+0D"
+                    maxDate    : "+0D"
                 })/*.datepicker('setDate', model.expectedDate)*/;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
@@ -413,8 +425,7 @@ define([
                     new ProductItemView({editable: false, balanceVissible: false}).render({model: model}).el
                 );
 
-
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -427,6 +438,7 @@ define([
                         });
 
                     }
+                }
                 return this;
             }
 

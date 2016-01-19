@@ -1,16 +1,23 @@
 <% collection.forEach(function(project, index){ %>
 <tr>
     <td><%=startNumber + index + 1 %></td>
-    <td><a href='#easyErp/Employees/form/<%=project.projectmanager._id%>'><%=project.projectmanager.name%></a></td>
+    <td><a href='#easyErp/Employees/form/<%=project.projectmanager._id%>'><%=project.projectmanager.name.first + ' ' + project.projectmanager.name.last%></a></td>
     <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
-    <td><%=(project.total && project.total.revenueSum) ? currencySplitter(project.total.revenueSum.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.total && project.total.revenueSum) ? currencySplitter(project.total.revenueSum.toFixed()) :
+        '&nbsp'%>
+    </td>
     <td><%=(project.total && project.total.costSum) ? currencySplitter(project.total.costSum.toFixed()) : '&nbsp'%></td>
-    <td><%=(project.total && project.total.profitSum) ? currencySplitter(project.total.profitSum.toFixed()) : '&nbsp'%></td>
-    <td><%=(project.total && project.total.rateSum) ? currencySplitter(project.total.rateSum.byDev ? project.total.rateSum.byDev.toFixed(2) : '') : '&nbsp'%></td>
-    <td><%=(project.total && project.total.rateSum) ? currencySplitter(project.total.rateSum.byQA ?project.total.rateSum.byQA.toFixed(2) : '') : '&nbsp'%></td>
-    <td><%=(project.total && project.total.hoursSum) ? currencySplitter(project.total.hoursSum.toFixed()) : '&nbsp'%></td>
-    <td class="procent"><%=(project.total && project.total.markUp) ? (project.total.markUp ? project.total.markUp.toFixed()  : '&nbsp') : '&nbsp'%></td>
-    <td class="procent"><%=(project.total && project.total.radio) ? (project.total.radio ? project.total.radio.toFixed() : '&nbsp') : '&nbsp'%></td>
+    <td><%=(project.total && project.total.profitSum) ? currencySplitter(project.total.profitSum.toFixed()) :
+        '&nbsp'%>
+    </td>
+    <td><%=(project.total && project.total.hoursSum) ? currencySplitter(project.total.hoursSum.toFixed()) : '&nbsp'%>
+    </td>
+    <td class="<%=(project.total && project.total.markUp) ? 'procent' : '' %>"><%=(project.total && project.total.markUp) ? (project.total.markUp ?
+        project.total.markUp.toFixed() : '&nbsp') : '&nbsp'%>
+    </td>
+    <td class="procent"><%=(project.total && project.total.radio) ? (project.total.radio ? project.total.radio.toFixed()
+        : '&nbsp') : '&nbsp'%>
+    </td>
     <td><%=(project.total && project.total.minDate) ? weekSplitter(project.total.minDate.toFixed()) : '&nbsp'%></td>
     <td><%=(project.total && project.total.maxDate) ? weekSplitter(project.total.maxDate.toFixed()) : '&nbsp'%></td>
 </tr>

@@ -34,12 +34,18 @@ require.config({
         socketio     : '/socket.io/socket.io.js'
     },
     shim : {
+        'Underscore': {
+            exports: '_'
+        },
+        'jQuery': {
+            exports: '$'
+        },
         'jqueryui'  : ['jQuery'],
         'ajaxForm'  : ['jQuery'],
         'imageCrop' : ['jQuery'],
         'spinJs'    : ['jQuery'],
         'Backbone'  : ['Underscore', 'jQuery'],
-        'app'       : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop'],
+        'app'       : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3'],
         'd3'        : {
             exports: 'd3'
         },
@@ -102,7 +108,10 @@ require(['app'], function (app) {
                 if (xhr.status === 401) {
                     Backbone.history.navigate("login", {trigger: true});
                 } else {
-                    alert("You do not have permission to perform this action");
+                    App.render({
+                        type: 'error',
+                        message: "You do not have permission to perform this action."
+                    });
                 }
             } else {
                 if (xhr.responseJSON) {
@@ -261,7 +270,6 @@ require(['app'], function (app) {
             }
         }
     };
-
 
     Backbone.View.prototype.changeLocationHash = function (page, count, filter) {
         var location = window.location.hash;
@@ -614,7 +622,6 @@ require(['app'], function (app) {
             _.extend(serchObject, dataObject);
         }
 
-
         if (!disableChangeHash) {
             this.changeLocationHash(page, itemsNumber);
         }
@@ -665,7 +672,6 @@ require(['app'], function (app) {
         if (dataObject) {
             _.extend(serchObject, dataObject);
         }
-
 
         if (!disableChangeHash) {
             this.changeLocationHash(page, itemsNumber);

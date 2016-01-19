@@ -6,14 +6,7 @@ module.exports = (function () {
 
     var basePaymentSchema = new Schema({
         ID              : Number,
-        invoice         : {
-            _id     : {type: ObjectId, ref: 'Invoice', default: null},
-            name    : String,
-            assigned: {
-                _id : {type: ObjectId, ref: 'Employee', default: null},
-                name: String
-            }
-        },
+        invoice         : {type: ObjectId, ref: 'Invoice', default: null},
         paidAmount      : {type: Number, default: 0, set: setPrice},
         date            : {type: Date, default: Date.now},
         name            : {type: String, default: '', unique: true},
@@ -23,10 +16,10 @@ module.exports = (function () {
         month           : {type: Number},
         year            : {type: Number},
         currency: {
-            name: {type: String, default: 'USD'},
+            _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         },
-        groups: {
+        groups          : {
             owner: {type: ObjectId, ref: 'Users', default: null},
             users: [{type: ObjectId, ref: 'Users', default: null}],
             group: [{type: ObjectId, ref: 'Department', default: null}]
@@ -43,21 +36,25 @@ module.exports = (function () {
     }, {collection: 'Payment', discriminatorKey: '_type'});
 
     var PaymentSchema = basePaymentSchema.extend({
+        invoice      : {type: ObjectId, ref: 'Invoice', default: null},
         forSale      : {type: Boolean, default: true},
         paymentRef   : {type: String, default: ''},
-        supplier     : {
-            _id     : {type: ObjectId, ref: 'Customers', default: null},
-            fullName: String
-        },
-        paymentMethod: {
-            _id : {type: ObjectId, ref: 'PaymentMethod', default: null},
-            name: String
-        },
+        supplier     : {type: ObjectId, ref: 'Customers', default: null},
+        paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         period       : {type: ObjectId, ref: 'Destination', default: null},
         bonus        : {type: Boolean}
     });
 
     var salaryPaymentSchema = basePaymentSchema.extend({
+        //invoice      : {
+        //    _id     : {type: ObjectId, ref: 'Invoice', default: null},
+        //    name    : String,
+        //    assigned: {
+        //        _id : {type: ObjectId, ref: 'Employee', default: null},
+        //        name: String
+        //    }
+        //},
+        invoice: {type: ObjectId, ref: 'Invoice', default: null},
         isExpense    : {type: Boolean, default: true},
         supplier     : [{
             _id             : {type: ObjectId, ref: 'Employees', default: null},
@@ -65,24 +62,15 @@ module.exports = (function () {
             paidAmount      : Number,
             differenceAmount: {type: Number, default: 0, set: setPrice}
         }],
-        paymentMethod: {
-            _id : {type: ObjectId, ref: 'ProductCategory', default: null},
-            name: String
-        },
+        paymentMethod: {type: ObjectId, ref: 'ProductCategory', default: null},
         paymentRef   : {type: ObjectId, ref: 'PayRoll', default: null},//ref to PayRoll
         period       : {type: Date, default: null}
     });
 
     var payOutSchema = basePaymentSchema.extend({
-        forSale         : {type: Boolean, default: false},
-        supplier     : {
-            _id             : {type: ObjectId, ref: 'Employees', default: null},
-            fullName        : String
-        },
-        paymentMethod: {
-            _id : {type: ObjectId, ref: 'ProductCategory', default: null},
-            name: String
-        },
+        forSale      : {type: Boolean, default: false},
+        supplier     : {type: ObjectId, ref: 'Employees', default: null},
+        paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         paymentRef   : {type: String, default: ''},
         period       : {type: Date, default: null}
     });
@@ -118,38 +106,38 @@ module.exports = (function () {
             });
     });
     /*PaymentSchema.post('save', function (doc) {
-        var payment = this;
-        var paymentDate = new Date(this.date);
-        var db = payment.db.db;
-        var invoiceId = doc.invoice._id;
+     var payment = this;
+     var paymentDate = new Date(this.date);
+     var db = payment.db.db;
+     var invoiceId = doc.invoice._id;
 
-        console.log('===================================================');
-        console.log('||' + invoiceId + '||');
-        console.log('===================================================');
+     console.log('===================================================');
+     console.log('||' + invoiceId + '||');
+     console.log('===================================================');
 
-        if(paymentDate === 'Invalid Date'){
-            paymentDate = new Date();
-        }
+     if(paymentDate === 'Invalid Date'){
+     paymentDate = new Date();
+     }
 
-        db.collection('Invoice').findOneAndUpdate({
-                _id: doc.invoice._id
-            },
-            //[['name', 1]],
-            {
-                $set: {paymentDate: paymentDate.toString()}
-            },
-            {
-                returnOriginal: false
-            },
-            function (err, result) {
-                if (err) {
-                    return console.error('An error was occurred during updating %s', doc.invoice);
-                }
+     db.collection('Invoice').findOneAndUpdate({
+     _id: doc.invoice._id
+     },
+     //[['name', 1]],
+     {
+     $set: {paymentDate: paymentDate.toString()}
+     },
+     {
+     returnOriginal: false
+     },
+     function (err, result) {
+     if (err) {
+     return console.error('An error was occurred during updating %s', doc.invoice);
+     }
 
-                console.log('Invoice %s was updated success', doc.invoice);
-                console.dir(result);
-            });
-    });*/
+     console.log('Invoice %s was updated success', doc.invoice);
+     console.dir(result);
+     });
+     });*/
 
     salaryPaymentSchema.pre('save', function (next) {
         var payment = this;
@@ -178,25 +166,25 @@ module.exports = (function () {
             });
     });
     /*salaryPaymentSchema.post('save', function (doc) {
-        var payment = this;
-        var db = payment.db.db;
+     var payment = this;
+     var db = payment.db.db;
 
-        db.collection('Invoice').findOneAndUpdate({
-                _id: doc.invoice._id
-            },
-            [['name', 1]],
-            {
-                $set: {paymentDate: new Date()}
-            },
-            null,
-            function (err) {
-                if (err) {
-                    return console.error('An error was occurred during updating %s', doc.invoice);
-                }
+     db.collection('Invoice').findOneAndUpdate({
+     _id: doc.invoice._id
+     },
+     [['name', 1]],
+     {
+     $set: {paymentDate: new Date()}
+     },
+     null,
+     function (err) {
+     if (err) {
+     return console.error('An error was occurred during updating %s', doc.invoice);
+     }
 
-                console.log('Invoice %s was updated success', doc.invoice);
-            });
-    });*/
+     console.log('Invoice %s was updated success', doc.invoice);
+     });
+     });*/
 
     payOutSchema.pre('save', function (next) {
         var payment = this;
@@ -213,7 +201,7 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Payment'] = PaymentSchema;
-    mongoose.Schemas['salaryPayment'] = salaryPaymentSchema;
-    mongoose.Schemas['wTrackPayOut'] = payOutSchema;
+    mongoose.Schemas.Payment = PaymentSchema;
+    mongoose.Schemas.salaryPayment = salaryPaymentSchema;
+    mongoose.Schemas.wTrackPayOut = payOutSchema;
 })();

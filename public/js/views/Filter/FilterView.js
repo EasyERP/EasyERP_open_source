@@ -23,7 +23,7 @@ define([
 
             events: {
                 "mouseover .search-content"            : 'showSearchContent',
-                "mouseleave .drop-down-filter"         : 'showSearchContent',
+                "mouseleave .search-options"           : 'showSearchContent',
                 "click .search-content"                : 'showSearchContent',
                 "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'                   : 'applyFilter',
@@ -147,11 +147,18 @@ define([
                 var allFilterNames = this.$el.find('.filters');
                 var allowName = true;
 
-                _.forEach(allFilterNames, function (filter) {
-                    if (filter.innerHTML === filterName) {
+                /*_.forEach(allFilterNames, function (filter) {
+                 if (filter.innerHTML === filterName) {
+                 return allowName = false;
+                 }
+                 });*/
+                // changed to easier method
+                allFilterNames.each(function (index, elem) {
+                    if (elem.innerHTML === filterName) {
                         return allowName = false;
                     }
                 });
+                // end
 
                 key = this.parentContentType;
 
@@ -161,13 +168,22 @@ define([
                     App.savedFilters[this.parentContentType] = [];
                 }
 
+                if (byDefault.length) {
+                    App.savedFilters[this.parentContentType].forEach(function (el) {
+                        el.byDefault = '';
+                    });
+                }
+
                 if (!allowName) {
-                    alert('Filter with same name already exists! Please, change filter name.');
+                    App.render({
+                        type   : 'error',
+                        message: 'Filter with same name already exists! Please, change filter name.'
+                    });
                     bool = false;
                 }
 
                 if ((Object.keys(App.filter)).length === 0) {
-                    alert('Please, use some filter!');
+                    App.render({type: 'error', message: 'Please, use some filter!'});
                     bool = false;
                 }
 
@@ -208,6 +224,9 @@ define([
                                 );
                                 favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
                                 self.$el.find('.defaultFilter').attr('checked', false);
+                                // added for changing name after saving favourite filter
+                                self.showFilterName(filterName);
+                                //self.$el.find('.forFilterIcons').html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
                                 self.selectedFilter(id);
                             },
                             error   : function (model, xhr) {
@@ -326,7 +345,7 @@ define([
 
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
-                    groupName = self.$el.find('#' + key).text();
+                    groupName = $('#' + key).text();
 
                     if (groupName.length > 0) {
                         filterIc.addClass('active');
@@ -336,19 +355,20 @@ define([
                             groupName = 'Letter';
                             filterIc.addClass('active');
                             filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                            console.log(key, typeof key, key === 'department', key === 'name');
                         }
                     }
                 });
             },
 
             showFilterName: function (filterName) {
-                var filterIc = this.$el.find('.fa.fa-filter');
                 var filterValues = this.$el.find('.forFilterIcons');
-                filterValues.empty();
+                filterValues.remove();
 
-                filterIc.addClass('active');
-                filterValues.append('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
+                this.$el.find('#searchFilterContainer').html('<div class="forFilterIcons"></div>');
+
+                filterValues = this.$el.find('.forFilterIcons');
+
+                filterValues.html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
 
             },
 
@@ -542,7 +562,6 @@ define([
                 var groupName = this.$el.find('#' + filterObjectName).text(); //  added groupname for finding constantsObject filter
                 var filterType = this.constantsObject[groupName].type; // filterType searches in types of constantsObject filters
 
-
                 if (!App.filter[filterObjectName]) {
                     App.filter[filterObjectName] = {
                         key  : groupType,
@@ -645,7 +664,17 @@ define([
 
                             self.clickSearchResult(element);
                         });
-                        searchInput.html(""); // to prevent appearing previous values by pressing Backspace
+
+                        if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
+                            App.render({
+                                type   : 'error',
+                                message: 'No such result'
+                            });
+                        }
+
+                        allResults.remove(); // to prevent appearing last filters after selecting new
+                        searchInput.html("");// to prevent appearing value in Search after selecting
+                        e.preventDefault();  // to prevent appearing previous values by pressing Backspace
                     }
                 });
 

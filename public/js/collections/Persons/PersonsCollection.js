@@ -1,29 +1,29 @@
 define([
-    "models/PersonsModel",
-    'common'
-],
+        "models/PersonsModel",
+        'common'
+    ],
     function (PersonModel, common) {
         var PersonsCollection = Backbone.Collection.extend({
-            model: PersonModel,
+            model      : PersonModel,
             idAttribute: "_id",
-            url: function () {
+            url        : function () {
                 return "/Persons";
             },
-            initialize: function(){
+            initialize : function () {
                 var mid = 39;
 
                 this.fetch({
-                    data: $.param({
+                    data   : $.param({
                         mid: mid
                     }),
-                    reset:true,
+                    reset  : true,
                     success: this.fetchSuccess,
-                    error: this.fetchError
+                    error  : this.fetchError
                 });
             },
 
-            filterByLetter: function(letter){
-                var filtered = this.filter(function(data){
+            filterByLetter: function (letter) {
+                var filtered = this.filter(function (data) {
                     return data.get("name").last.toUpperCase().startsWith(letter);
                 });
                 return new PersonsCollection(filtered);
@@ -34,10 +34,10 @@ define([
                 return response.data;
             },
 
-            fetchSuccess:function(){
+            fetchSuccess: function () {
                 console.log("Persons fetchSuccess");
             },
-            fetchError: function(error){
+            fetchError  : function (error) {
             }
         });
 

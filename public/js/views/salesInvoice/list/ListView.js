@@ -208,12 +208,6 @@ define([
 
             },
 
-            /*gotoForm: function (e) {
-             App.ownContentType = true;
-             var id = $(e.target).closest("tr").data("id");
-             window.location.hash = "#easyErp/Invoice/form/" + id;
-             },*/
-
             goToEditDialog: function (e) {
                 e.preventDefault();
 
@@ -227,12 +221,13 @@ define([
                         currentDb: App.currentDb
                     },
                     success: function (model) {
-                        // var isWtrack = App.weTrack;
-
                         new editView({model: model});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: 'Please refresh browser'
+                        });
                     }
                 });
             },

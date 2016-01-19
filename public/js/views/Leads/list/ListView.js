@@ -51,8 +51,6 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-
-
             chooseOption: function (e) {
                 var self = this;
                 var targetElement = $(e.target).parents("td");
@@ -140,7 +138,10 @@ define([
                         new editView({model: model});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
                     }
                 });
             }

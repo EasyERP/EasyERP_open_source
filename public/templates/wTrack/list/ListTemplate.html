@@ -1,30 +1,44 @@
 <% wTracks.forEach(function(wTrack, index){ %>
-<tr data-id="<%=wTrack._id%>">
-    <td class = "notForm"><input type="checkbox" value="<%=wTrack._id%>" class="checkbox listCB" /></td>
-    <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
-    <td data-content="jobs" data-id="<%=wTrack.jobs ? wTrack.jobs.name : '------'%>" class="<%=wTrack.project && wTrack.project.workflow.name === 'In Progress' ? 'editable' : ''%>" ><%=wTrack.jobs ? wTrack.jobs.name : '------'%></td>
-    <td data-content="assigned"><%=wTrack.project && wTrack.project.projectmanager ? wTrack.project.projectmanager.name : ''%></td>
-    <td class="editable" data-content="project" data-id="<%= wTrack.project._id%>"><%=wTrack.project ? wTrack.project.projectName : ''%></td>
-    <td data-content="workflow" data-id="<%=wTrack.project && wTrack.project.workflow ? wTrack.project.workflow._id : ''%>"><%=wTrack.project && wTrack.project.workflow? wTrack.project.workflow.name : ''%></td>
-    <td data-content="customer" data-id="<%=wTrack.project && wTrack.project.customer? wTrack.project.customer.name : ''%>"><%=wTrack.project && wTrack.project.customer? wTrack.project.customer.name : ''%></td>
-    <td class="editable" data-content="employee" data-id="<%= wTrack.employee._id%>"><%=wTrack.employee ? wTrack.employee.name : ''%></td>
-    <td class="editable" data-content="department"><%=wTrack.department ? wTrack.department.departmentName : ''%></td>
-    <td data-type="input" class="editable" data-content="year"><%=wTrack.year%></td>
-    <td data-type="input" class="editable" data-content="month"><%=wTrack.month%></td>
-    <td data-type="input" class="editable" data-content="week"><%=wTrack.week%></td>
-    <td data-type="input" class="editable" data-content="rate"><%=wTrack.rate%></td>
-    <td data-content="worked"><%=wTrack.worked%></td>
-    <td data-type="input" class="editable autoCalc" data-content="1"><%=wTrack['1'] ? wTrack['1'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="2"><%=wTrack['2'] ? wTrack['2'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="3"><%=wTrack['3'] ? wTrack['3'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="4"><%=wTrack['4'] ? wTrack['4'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="5"><%=wTrack['5'] ? wTrack['5'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="6"><%=wTrack['6'] ? wTrack['6'] : '0'%></td>
-    <td data-type="input" class="editable autoCalc" data-content="7"><%=wTrack['7'] ? wTrack['7'] : '0'%></td>
-    <td><span class="<%=wTrack.isPaid ? 'done' : 'unDone'%>"><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></span></td>
-    <td data-content="revenue" class="money"><%=wTrack.revenue%></td>
-    <td data-content="cost" class="money"><%=wTrack.cost%></td>
-    <td data-content="profit" class="money"><%=wTrack.profit%></td>
-    <td data-content="amount" class="money"><%=wTrack.amount ? wTrack.amount : 0%></td>
-</tr>
+    <tr data-id="<%=wTrack._id%>">
+        <td class="notForm"><input type="checkbox" value="<%=wTrack._id%>" class="checkbox listCB"/></td>
+        <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
+        <td data-content="jobs" data-id="<%=wTrack.jobs ? wTrack.jobs.name : '------'%>"
+            class="<%=wTrack.workflow && wTrack.workflow.name === 'In Progress' ? 'editable' : ''%>"><%=wTrack.jobs ?
+            wTrack.jobs.name : '------'%>
+        </td>
+        <td data-content="assigned"><%=wTrack && wTrack.projectmanager ? wTrack.projectmanager.name.first + ' ' +
+            wTrack.projectmanager.name.last : ''%>
+        </td>
+        <td class="editable" data-content="project" data-id="<%= wTrack.project._id%>"><%=wTrack.project ?
+            wTrack.project.projectName : ''%>
+        </td>
+        <td data-content="workflow" data-id="<%=wTrack.workflow ? wTrack.workflow._id : ''%>"><%=wTrack.workflow?
+            wTrack.workflow.name : ''%>
+        </td>
+        <td data-content="customer"
+            data-id="<%= wTrack.customer? wTrack.customer.name.first + ' ' + wTrack.customer.name.last : ''%>">
+            <%=wTrack.customer?wTrack.customer.name.first + ' ' + wTrack.customer.name.last: ''%>
+        </td>
+        <td class="editable" data-content="employee" data-id="<%= wTrack.employee._id%>"><%=wTrack.employee && wTrack.employee.name ?
+            wTrack.employee.name.first + ' ' + wTrack.employee.name.last : ''%>
+        </td>
+        <td class="editable" data-content="department"><%=wTrack.department ? wTrack.department.departmentName : ''%></td>
+        <td data-type="input" class="editable" data-content="year"><%=wTrack.year%></td>
+        <td data-type="input" class="editable" data-content="month"><%=wTrack.month%></td>
+        <td data-type="input" class="editable" data-content="week"><%=wTrack.week%></td>
+        <!--<td data-type="input" class="editable" data-content="rate"><%=wTrack.rate%></td>-->
+        <td data-content="worked"><%=wTrack.worked%></td>
+        <td data-type="input" class="editable autoCalc" data-content="1"><%=wTrack['1'] ? wTrack['1'] : ''%></td>
+        <td data-type="input" class="editable autoCalc" data-content="2"><%=wTrack['2'] ? wTrack['2'] : ''%></td>
+        <td data-type="input" class="editable autoCalc" data-content="3"><%=wTrack['3'] ? wTrack['3'] : ''%></td>
+        <td data-type="input" class="editable autoCalc" data-content="4"><%=wTrack['4'] ? wTrack['4'] : ''%></td>
+        <td data-type="input" class="editable autoCalc" data-content="5"><%=wTrack['5'] ? wTrack['5'] : ''%></td>
+        <td data-type="input" class="editable autoCalc" data-content="6"><%=wTrack['6'] ? wTrack['6'] : ''%></td>
+        <td data-type="input" class="editable autoCalc" data-content="7"><%=wTrack['7'] ? wTrack['7'] : ''%></td>
+        <!--<td><span class="<%=wTrack.isPaid ? 'done' : 'unDone'%>"><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></span></td>
+        <td data-content="revenue" class="money"><%=wTrack.revenue%></td>
+        <td data-content="cost" class="money"><%=wTrack.cost%></td>
+        <td data-content="profit" class="money"><%=wTrack.profit%></td>
+        <td data-content="amount" class="money"><%=wTrack.amount ? wTrack.amount : 0%></td>-->
+    </tr>
 <% }) %>

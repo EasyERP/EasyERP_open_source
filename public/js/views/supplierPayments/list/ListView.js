@@ -6,6 +6,7 @@ define([
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/cancelEdit.html',
+        'views/selectView/selectView',
         'views/supplierPayments/CreateView',
         'views/Filter/FilterView',
         'models/PaymentModel',
@@ -19,7 +20,7 @@ define([
         'helpers/keyCodeHelper',
         'views/listViewBase',
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase) {
         var PaymentListView = ListViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -35,11 +36,8 @@ define([
             responseObj             : {},
 
             events: {
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable"                                               : "editRow",
-                "click"                                                           : "hideItemsNumber",
-                "change .editable "                                               : "setEditable",
+                "change .editable"                                               : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "focusout .editing"                                               : "onChangeInput",
                 "keydown .editing"                                                : "onKeyDownInput"
@@ -97,10 +95,9 @@ define([
 
                     tr.find('[data-content="employee"]').text(element.name);
 
-                    supplier = _.clone(editModel.get('supplier'));
+                    //supplier = _.clone(editModel.get('supplier'));
 
-                    supplier._id = element._id;
-                    supplier.fullName = target.text();
+                    supplier = element._id;
 
                     changedAttr.supplier = supplier;
                 } else if (elementType === '#bonusType') {
@@ -117,7 +114,7 @@ define([
                 }
                 targetW.text(target.text());
 
-                this.hidePagesPopup();
+                this.hidePagesPopup(e);
                 this.setEditable(targetElement);
 
                 return false;
@@ -166,35 +163,55 @@ define([
                     ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
                     el.append(ul);
                 } else if (isSelect) {
-                    populate.showSelect(e, prev, next, this);
+                    this.showNewSelect(e);
+                    return false;
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
-                    el.html('<input class="editing" type="number" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
 
-                    dataContent = $(el).attr('data-content');
-                    editingEl = $(el).find('.editing');
+
+                    dataContent = el.attr('data-content');
+                    editingEl = el.find('.editing');
 
                     if (dataContent === 'month') {
-                        editingEl.attr({
-                            "min"      : 1,
-                            "max"      : 12,
-                            "maxLength": 2
-                        });
+                        editingEl.attr("maxLength", "2");
                     } else if (dataContent === 'year') {
-                        editingEl.attr({
-                            "min"      : 1980,
-                            "maxLength": 4
-                        });
+                        editingEl.attr("maxLength", "4");
                     }
                 }
 
                 return false;
             },
 
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
+                return false;
+            },
+
             onKeyDownInput: function (e) {
+                var code = e.keyCode;
                 if (keyCodes.isEnter(e.keyCode)) {
                     this.setChangedValueToModel();
+                } else if ( !keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code) ){
+                    e.preventDefault();
                 }
             },
 
@@ -414,7 +431,7 @@ define([
 
                 self.renderCheckboxes();
 
-                self.renderPagination($currentEl,self);
+                self.renderPagination($currentEl, self);
 
                 dataService.getData("/employee/getForDD", null, function (employees) {
                     employees = _.map(employees.data, function (employee) {

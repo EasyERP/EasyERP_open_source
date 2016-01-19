@@ -1,0 +1,77 @@
+<thead>
+    <tr>
+        <th width="<%=tdWidth%>">#</th>
+        <%var _class = count > 17 ? 'rotated' : ''%>
+        <% for (var i = 0; i < count; i++){%>
+            <th width="<%=tdWidth%>" class="<%= _class%>"><%=collection.at(i).get('date')%></th>
+        <%}%>
+    </tr>
+</thead>
+<tbody>
+    <tr class="revenueBySales">
+        <td colspan="<%= count + 1%>">Synthetic Sales</td>
+    </tr>
+    <%collection.sales.forEach(function(sales){
+    if(sales._id) {%>
+    <tr>
+        <td data-id="<%=sales._id%>"><%=sales.name.first + ' ' + sales.name.last%></td>
+        <% collection.forEach(function(payments){%>
+        <td ><%=currencySplitter(payments.get('revenueBySales') ? (payments.get('revenueBySales').get(sales._id) ? (payments.get('revenueBySales').get(sales._id).get('revenueBySales') / 100).toFixed(0): '') : '')%></td>
+        <%})%>
+    </tr>
+    <%}%>
+    <%})%>
+    <tr class="boldPaid">
+        <td>Paid</td>
+        <% collection.forEach(function(payments){%>
+        <td ><%=currencySplitter(payments.get('revenue').toFixed(0))%></td>
+        <%})%>
+    </tr>
+    <tr>
+        <td colspan="<%= count + 1%>">&nbsp;</td>
+    </tr>
+    <tr class="totalBySales">
+        <td colspan="<%= count + 1%>">Sales</td>
+    </tr>
+    <%collection.sales.forEach(function(sales){
+        if(sales._id) {%>
+            <tr>
+                <td data-id="<%=sales._id%>"><%=sales.name.first + ' ' + sales.name.last%></td>
+                <% collection.forEach(function(payments){%>
+                    <td ><%=currencySplitter(payments.get('sales') ? (payments.get('sales').get(sales._id) ? (payments.get('sales').get(sales._id).get('invoicedBySales') / 100).toFixed(0): '') : '')%></td>
+                <%})%>
+            </tr>
+        <%}%>
+    <%})%>
+    <tr class="boldInvoiced">
+        <td>Invoiced</td>
+        <% collection.forEach(function(payments){%>
+                <td ><%=currencySplitter(payments.get('invoiced').toFixed(0))%></td>
+        <%})%>
+    </tr>
+    <tr>
+        <td colspan="<%= count + 1%>">&nbsp;</td>
+    </tr>
+    <tr class="paidBySales">
+        <td colspan="<%= count + 1%>">Income Payments</td>
+    </tr>
+    <%collection.sales.forEach(function(sales){
+        if(sales._id) {%>
+            <tr>
+                <td data-id="<%=sales._id%>"><%=sales.name.first + ' ' + sales.name.last%></td>
+                <% collection.forEach(function(payments){%>
+                    <td ><%=currencySplitter(payments.get('paidBySales') ? (payments.get('paidBySales').get(sales._id) ? (payments.get('paidBySales').get(sales._id).get('paidBySales') / 100).toFixed(0): '') : '')%></td>
+                <%})%>
+            </tr>
+        <%}%>
+    <%})%>
+    <tr class="boldPaid">
+        <td>Paid</td>
+        <% collection.forEach(function(payments){%>
+                <td ><%=currencySplitter(payments.get('paid').toFixed(0))%></td>
+        <%})%>
+    </tr>
+</tbody>
+<tfoot>
+
+</tfoot>

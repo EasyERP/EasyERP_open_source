@@ -7,12 +7,12 @@ define([
     ],
     function (PaymentModel, common) {
         var PaymentCollection = Backbone.Collection.extend({
-            model: PaymentModel,
-            url: "/payment/supplier/",
-            page: null,
+            model       : PaymentModel,
+            url         : "/payment/supplier/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
+            viewType    : null,
+            contentType : null,
 
             showMore: function (options) {
                 var that = this;
@@ -24,14 +24,17 @@ define([
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
 
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
-                        alert('Some Error');
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: "Some Error."
+                        });
                     }
                 });
             },
@@ -50,27 +53,28 @@ define([
                 }
 
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
+                    error  : function (models, xhr) {
+                        if (xhr.status == 401) {
+                            Backbone.history.navigate('#login', {trigger: true});
+                        }
                     }
                 });
             },
 
-
             parse: function (payments) {
                 /*_.map(quotations, function (quotation) {
-                    quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
-                    if(quotation.expectedDate){
-                        quotation.expectedDate = common.utcDateToLocaleDate(quotation.expectedDate);
-                    }
+                 quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
+                 if(quotation.expectedDate){
+                 quotation.expectedDate = common.utcDateToLocaleDate(quotation.expectedDate);
+                 }
 
-                    return quotation;
-                });*/
+                 return quotation;
+                 });*/
 
                 return payments;
             }

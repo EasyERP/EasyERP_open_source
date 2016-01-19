@@ -7,18 +7,18 @@ define([
 ], function (MainTemplate, LeftMenuView, MenuItemsCollection, TopMenuView, dataService) {
 
     var MainView = Backbone.View.extend({
-        el: '#wrapper',
-        events: {
+        el             : '#wrapper',
+        events         : {
             'click #loginPanel': 'showSelect',
-            'click': 'hideProp'
+            'click'            : 'hideProp'
         },
-        initialize: function (options) {
+        initialize     : function (options) {
             this.contentType = options ? options.contentType : null;
             this.render();
             this.collection = new MenuItemsCollection();
             this.collection.bind('reset', this.createMenuViews, this);
         },
-        hideProp: function (e) {
+        hideProp       : function (e) {
             if ($(e.target).closest("#loginPanel").length === 0) {
                 var select = this.$el.find('#loginSelect');
                 select.hide();
@@ -30,30 +30,30 @@ define([
             var currentChildren = null;
             if (this.contentType) {
                 currentChildren = this.collection.where({href: this.contentType});
-                var currentRootId = currentChildren[0] ?  currentChildren[0].get("parrent") : null;
+                var currentRootId = currentChildren[0] ? currentChildren[0].get("parrent") : null;
                 currentRoot = this.collection.where({_id: currentRootId});
             }
             this.leftMenu = new LeftMenuView({
-                collection: this.collection,
+                collection     : this.collection,
                 currentChildren: currentChildren,
-                currentRoot: currentRoot
+                currentRoot    : currentRoot
             });
             this.topMenu = new TopMenuView({
-                collection: this.collection.getRootElements(),
+                collection : this.collection.getRootElements(),
                 currentRoot: currentRoot,
-                leftMenu: this.leftMenu
+                leftMenu   : this.leftMenu
             });
             this.topMenu.bind('changeSelection', this.leftMenu.setCurrentSection, {leftMenu: this.leftMenu});
             this.topMenu.bind('mouseOver', this.leftMenu.mouseOver, {leftMenu: this.leftMenu});
         },
-        updateMenu: function (contentType) {
+        updateMenu     : function (contentType) {
             var currentChildren = this.collection.where({href: contentType});
-            var currentRootId = currentChildren[0] ?  currentChildren[0].get("parrent") : null;
+            var currentRootId = currentChildren[0] ? currentChildren[0].get("parrent") : null;
             var currentRoot = this.collection.where({_id: currentRootId});
             this.leftMenu.updateLeftMenu(currentChildren, currentRoot);
             this.topMenu.updateTopMenu(currentRoot);
         },
-        showSelect: function (e) {
+        showSelect     : function (e) {
             var select = this.$el.find('#loginSelect');
             if (select.prop('hidden')) {
                 select.show();
@@ -63,7 +63,7 @@ define([
                 select.prop('hidden', true);
             }
         },
-        render: function () {
+        render         : function () {
             var currentUser;
             if (!App || !App.currentUser || !App.currentUser.login) {
                 dataService.getData('/currentUser', null, function (response, context) {
@@ -77,10 +77,10 @@ define([
                         context.$el.find("#top-bar").addClass("banned");
                         context.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                     }
-                    if (currentUser.RelatedEmployee) {
-                        $("#loginPanel .iconEmployee").attr("src", currentUser.RelatedEmployee.imageSrc);
-                        if (currentUser.RelatedEmployee.name) {
-                            $("#loginPanel  #userName").text(currentUser.RelatedEmployee.name.first + " " + currentUser.RelatedEmployee.name.last);
+                    if (currentUser.relatedEmployee) {
+                        $("#loginPanel .iconEmployee").attr("src", currentUser.relatedEmployee.imageSrc);
+                        if (currentUser.relatedEmployee.name) {
+                            $("#loginPanel  #userName").text(currentUser.relatedEmployee.name.first + " " + currentUser.relatedEmployee.name.last);
                         } else {
                             $("#loginPanel  #userName").text(currentUser.login);
                         }
@@ -102,10 +102,10 @@ define([
                     this.$el.find("#top-bar").addClass("banned");
                     this.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                 }
-                if (App.currentUser.RelatedEmployee) {
-                    $("#loginPanel .iconEmployee").attr("src", App.currentUser.RelatedEmployee.imageSrc);
-                    if (App.currentUser.RelatedEmployee.name) {
-                        $("#loginPanel  #userName").text(App.currentUser.RelatedEmployee.name.first + " " + App.currentUser.RelatedEmployee.name.last);
+                if (App.currentUser.relatedEmployee) {
+                    $("#loginPanel .iconEmployee").attr("src", App.currentUser.relatedEmployee.imageSrc);
+                    if (App.currentUser.relatedEmployee.name) {
+                        $("#loginPanel  #userName").text(App.currentUser.relatedEmployee.name.first + " " + App.currentUser.relatedEmployee.name.last);
                     } else {
                         $("#loginPanel  #userName").text(App.currentUser.login);
                     }

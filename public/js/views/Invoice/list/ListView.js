@@ -36,7 +36,7 @@ define([
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
                 this.forSales = false;
-                this.filter = {'forSales' : {key:'forSales',value:['false']}};
+                this.filter = {'forSales': {key: 'forSales', value: ['false']}};
 
                 this.render();
 
@@ -59,11 +59,9 @@ define([
                 var status = target$.attr("data-status");
                 var model = this.collection.get(id);
 
-                model.save({workflow: {
-                    _id: target$.attr("id"),
-                    name: target$.text(),
-                    status: status
-                }}, {
+                model.save({
+                    workflow: target$.attr("id"),
+                }, {
                     headers : {
                         mid: 55
                     },
@@ -117,11 +115,12 @@ define([
 
                 $currentEl.append(itemView.render());
 
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 8}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
                 this.renderCheckboxes();
 
                 this.renderPagination($currentEl, this);
+                this.renderFilter(self,  {name: 'forSales', value: {key: 'forSales', value: [false]}});
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -132,9 +131,9 @@ define([
                 }, function (stages) {
                     self.stages = stages;
 
-                    dataService.getData('/invoice/getFilterValues', null, function (values) {
-                        self.renderFilter(self, stages, values);
-                    })
+                    /*dataService.getData('/invoice/getFilterValues', null, function (values) {
+                        self.renderFilter(self);
+                    })*/
 
                 });
             },
@@ -155,26 +154,29 @@ define([
                         new editView({model: model});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: 'Please refresh browser'
+                        });
                     }
                 });
             },
 
-            renderFilter: function (self, stages, values) {
+            /*renderFilter: function (self, stages, values) {
                 self.filterView = new this.filterView({collection: stages, customCollection: values});
 
                 self.filterView.bind('filter', function (filter) {
-                    filter.forSales = {key:'forSales',value:false};
+                    filter.forSales = {key: 'forSales', value: false};
                     self.showFilteredPage(filter, self)
                 });
                 self.filterView.bind('defaultFilter', function () {
-                    filter.forSales = {key:'forSales',value:false};
+                    filter.forSales = {key: 'forSales', value: false};
                     self.showFilteredPage({}, self);
                 });
 
-                //self.filterView.render();
+                self.filterView.render();
 
-            },
+            },*/
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 var holder = this.$el;
@@ -205,7 +207,7 @@ define([
                     }).render());//added two parameters page and items number
                 }
 
-                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 8}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 7}).render());
 
                 //this.recalculateTotal();   //-----------------------------!
                 if (this.collection.length === 0) {

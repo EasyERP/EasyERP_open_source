@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose');
 
 var BonusType = function (models) {
@@ -6,17 +5,17 @@ var BonusType = function (models) {
     var bonusTypeSchema = mongoose.Schemas['bonusType'];
     var async = require('async');
 
-    this.create = function(req, res, next){
+    this.create = function (req, res, next) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
         var body = req.body;
-        var bonusType = new  bonusTypeModel(body);
+        var bonusType = new bonusTypeModel(body);
         access.getEditWritAccess(req, req.session.uId, 72, function (access) {
             if (access) {
                 bonusType.save(function (err, bonusType) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(200).send({success:bonusType});
+                    res.status(200).send({success: bonusType});
                 });
             } else {
                 res.status(403).send();
@@ -64,7 +63,9 @@ var BonusType = function (models) {
 
         if (query.sort) {
             sort = query.sort;
-        } else sort = {};
+        } else {
+            sort = {};
+        }
         access.getReadAccess(req, req.session.uId, 72, function (access) {
             if (access) {
                 bonusTypeModel
@@ -85,20 +86,19 @@ var BonusType = function (models) {
         });
     };
 
-    this.totalCollectionLength = function(req, res, next) {
+    this.totalCollectionLength = function (req, res, next) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
 
-        bonusTypeModel.find().count(function(err, count){
-            if (err){
+        bonusTypeModel.find().count(function (err, count) {
+            if (err) {
                 next(err)
             }
-            res.status(200).send( {count: count});
+            res.status(200).send({count: count});
 
         });
     };
 
-
-    this.remove = function(req, res, id, next) {
+    this.remove = function (req, res, id, next) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
         access.getDeleteAccess(req, req.session.uId, 72, function (access) {
             if (access) {

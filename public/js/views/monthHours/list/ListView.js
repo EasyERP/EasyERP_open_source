@@ -53,7 +53,7 @@ define([
 
         keyDown: function (e) {
             if (e.which === 13) {
-                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(e);
                 }
 
@@ -376,7 +376,10 @@ define([
                                 },
                                 error  : function (model, res) {
                                     if (res.status === 403 && index === 0) {
-                                        alert("You do not have permission to perform this action");
+                                        App.render({
+                                            type: 'error',
+                                            message: "You do not have permission to perform this action"
+                                        });
                                     }
                                     that.listLength--;
                                     localCounter++;

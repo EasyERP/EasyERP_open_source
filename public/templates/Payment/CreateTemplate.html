@@ -11,7 +11,8 @@
                         <dd>
                             <%if(invoice && invoice.supplier && invoice.supplier._id){%>
                             <a id="supplierDd" class="" href="javascript:;"
-                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name%></a>
+                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name.first + ' ' +
+                                invoice.supplier.name.last%></a>
                             <%} else {%>
                             <a id="supplierDd" class="" href="javascript:;">Select</a>
                             <%}%>
@@ -44,7 +45,7 @@
                         <dt><label for="paymentRef">Payment Ref</label></dt>
                         <dd>
                             <input type="text" name="paymentRef" id="paymentRef" maxlength="20"
-                                   value="<%=invoice.name%>">
+                                   value="<%=invoice.name%>" readonly />
                         </dd>
                         <!--                        <dt><label for="memo">Memo</label></dt>
                                                 <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->

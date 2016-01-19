@@ -1,14 +1,14 @@
 define([
-        "text!templates/Invoice/EditTemplate.html",
+        'text!templates/Invoice/EditTemplate.html',
         'views/Assignees/AssigneesView',
-        "views/Invoice/InvoiceProductItems",
-        "views/salesInvoice/wTrack/wTrackRows",
-        "views/Payment/CreateView",
-        "views/Payment/list/ListHeaderInvoice",
-        "common",
-        "custom",
-        "dataService",
-        "populate",
+        'views/Invoice/InvoiceProductItems',
+        'views/salesInvoice/wTrack/wTrackRows',
+        'views/Payment/CreateView',
+        'views/Payment/list/ListHeaderInvoice',
+        'common',
+        'custom',
+        'dataService',
+        'populate',
         'constants',
         'helpers'
     ],
@@ -92,12 +92,6 @@ define([
                         });
                     }
                 });
-
-                /*paymentView = new PaymentCreateView({
-                 model     : this.currentModel,
-                 redirect: this.redirect,
-                 collection: this.collection
-                 });*/
             },
 
             cancelInvoice: function (e) {
@@ -122,15 +116,14 @@ define([
                     order       : 1
                 }, function (workflow) {
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id   : workflow._id,
-                            name  : workflow.name,
-                            status: workflow.status
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -161,15 +154,14 @@ define([
                     wId: wId
                 }, function (workflow) {
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return  App.render({
+                            type: 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
-                        workflow: {
-                            _id   : workflow._id,
-                            name  : workflow.name,
-                            status: workflow.status
-                        }
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -253,7 +245,7 @@ define([
                 var invoiceDate = $thisEl.find("#invoice_date").val();
                 var dueDate = $thisEl.find("#due_date").val();
 
-                var supplier = {};
+                var supplier = $thisEl.find('#supplier').attr("data-id");
 
                 var total = parseFloat($thisEl.find("#totalAmount").text());
                 var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text());
@@ -275,12 +267,8 @@ define([
                 var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
 
                 if (errors.length) {
-                    return
+                    return false;
                 }
-
-                supplier._id = $thisEl.find('#supplier').attr("data-id");
-                supplier.name = $thisEl.find('#supplier').text();
-
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
@@ -317,17 +305,17 @@ define([
                 });
 
                 data = {
-                    currency             : currency,
-                    supplier             : supplier,
-                    fiscalPosition       : null,
+                    currency        : currency,
+                    supplier        : supplier,
+                    fiscalPosition  : null,
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     //supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
-                    name                 : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
-                    paymentReference     : $.trim(this.$el.find('#payment_reference').val()),
-                    invoiceDate          : invoiceDate,
-                    dueDate              : dueDate,
-                    account              : null,
-                    journal              : journalId,
+                    name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
+                    paymentReference: $.trim(this.$el.find('#payment_reference').val()),
+                    invoiceDate     : invoiceDate,
+                    dueDate         : dueDate,
+                    account         : null,
+                    journal         : journalId,
 
                     salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
@@ -381,7 +369,10 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type: 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
             },
 
@@ -416,7 +407,10 @@ define([
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });
@@ -537,12 +531,12 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                    maxDate: 0,
+                    maxDate    : 0,
                     onSelect   : function () {
                         var dueDatePicker = $('#due_date');
                         var endDate = $(this).datepicker('getDate');
 
-                        endDate.setDate(endDate.getDate()+14);
+                        endDate.setDate(endDate.getDate() + 14);
 
                         dueDatePicker.datepicker('option', 'minDate', endDate);
                     }
@@ -550,39 +544,19 @@ define([
 
                 this.$el.find('#due_date').datepicker({
                     defaultValue: invoiceDate,
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
+                    dateFormat  : "d M, yy",
+                    changeMonth : true,
+                    changeYear  : true,
+                    onSelect    : function () {
                         var targetInput = $(this);
 
                         targetInput.removeClass('errorContent');
                     }
-                }).datepicker('option', 'minDate', "+2W");
+                }).datepicker('option', 'minDate', new Date());
 
                 this.delegateEvents(this.events);
 
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
-
-                //if currentDb = 'weTrack' render wTrackRows instead of ProductItems
-                //if (!this.isWtrack) {
-                //    invoiceItemContainer.append(
-                //        new InvoiceItemView({balanceVisible: true, forSales: self.forSales}).render({model: model}).el
-                //    );
-                //} else {
-                //    //wTracksDom = new wTrackRows({stopRender: true}).render({
-                //    //    wTracks: wTracks,
-                //    //    project: project,
-                //    //    assigned: assigned,
-                //    //    customer: customer,
-                //    //    total: total
-                //    //}).el;
-                //    //
-                //    //invoiceItemContainer.append(wTracksDom);
-                //    invoiceItemContainer.append(
-                //        new InvoiceItemView({balanceVisible: true}).render({model: model}).el
-                //    );
-                //}
 
                 invoiceItemContainer.append(
                     new InvoiceItemView({

@@ -1,101 +1,114 @@
 <div class="form-holder" id="">
-  <form id="editProjectForm" class="form" data-id="<%=model._id%>">
-    <fieldset>
-      <div class="inner">
-		<ul class="dialog-tabs">
-		  <li><a class="active" href="javascript:;">Main</a></li>
-		  <li><a href="javascript:;">Assignees</a></li>
-		  <li><a href="javascript:;">Bonus</a></li>
-		</ul>
-		<div class="clearfix"></div>
-        <div class="dialog-tabs-items">
-          <div class="dialog-tabs-item active">
-            <div class="half-block left projectNote">
-              <div class="inner">
-                <div class="textarea-wrapper">
-                  <textarea type="text" class="projectDescriptionEdit" name="description" placeholder="Add a Description..." id="description" maxlength="500"><%=model.description%></textarea>
+    <form id="editProjectForm" class="form" data-id="<%=model._id%>">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                    <li><a href="javascript:;">Bonus</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div class="half-block left projectNote">
+                            <div class="inner">
+                                <div class="textarea-wrapper">
+                                    <textarea type="text" class="projectDescriptionEdit" name="description"
+                                              placeholder="Add a Description..." id="description" maxlength="500"><%=model.description%></textarea>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="project-edit-info">
+                                <dt>
+                                    <label for="projectName">Project Name </label>
+                                </dt>
+                                <dd>
+                                    <input type="text" class="title-input blueback" name="projectName" id="projectName"
+                                           required value="<%=model.projectName%>" maxlength="32"/>
+                                </dd>
+                                <dt>
+                                    <label for="projectShortDesc">Project Short Description </label>
+                                </dt>
+                                <dd>
+                                    <input type="text" class="title-input blueback" name="projectShortDesc"
+                                           id="projectShortDesc" required value="<%=model.projectShortDesc%>"
+                                           maxlength="32"/>
+                                </dd>
+                                <dt>
+                                    <label for="projectManagerDD">Project Manager</label>
+                                </dt>
+                                <dd>
+                                    <a id="projectManagerDD"
+                                       data-id="<%=model.projectmanager?model.projectmanager._id:''%>"
+                                       class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):'Select'%></a>
+                                </dd>
+
+                                <dt><label for="projectTypeDD">Project Type </label></dt>
+                                <dd>
+                                    <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>"
+                                       class="current-selected" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>
+                                </dd>
+                                <dt><label for="StartDate">Start Date </label></dt>
+                                <dd><input class="extrainfo blueback" type="text" name="StartDate" id="StartDate"
+                                           value="<%=model.StartDate%>" readonly/></dd>
+                                <dt>
+                                    <label for="customerDd">Project Customer </label>
+                                </dt>
+                                <dd>
+                                    <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>"
+                                       class="current-selected" href="javascript:;"><%=model.customer?(model.customer.fullName):'Select'%></a>
+                                </dd>
+                                <dt>
+                                    <label for="workflowsDd">Status</label>
+                                </dt>
+                                <dd>
+                                    <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
+                                </dd>
+                                <dt><label for="health">Health</label></dt>
+                                <dd id="health">
+                                    <a href="javascript:;" data-value="<%=model.health%>"
+                                       class="health<%=model.health%>"></a>
+                                    <ul>
+                                        <li>
+                                            <div class="health1"></div>
+                                        </li>
+                                        <li>
+                                            <div class="health2"></div>
+                                        </li>
+                                        <li>
+                                            <div class="health3"></div>
+                                        </li>
+                                    </ul>
+                                </dd>
+                                <dt><label for="EndDate">End Date </label></dt>
+                                <dd><input class="info blueback" type="text" name="EndDate" id="EndDate"
+                                           value="<%=model.EndDate%>" readonly/></dd>
+                                <dt><label for="targetEndDate">Target End Date</label></dt>
+                                <dd><input class="info blueback" type="text" name="TargetEndtDate" id="EndDateTarget"
+                                           value="<%=model.TargetEndDate%>" readonly/></dd>
+                            </dl>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="divForNote">
+
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+
+                    <div class="dialog-tabs-item">
+                        <div class="assignees-container"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="dialog-tabs-item">
+                        <div class="bonus-container"></div>
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
-              </div>
-              <div class="clearfix"></div>
             </div>
-            <div class="half-block left">
-              <dl class="project-edit-info">
-                <dt>
-                  <label for="projectName">Project Name </label>
-                </dt>
-                <dd>
-                  <input type="text" class="title-input blueback" name="projectName" id="projectName" required value="<%=model.projectName%>" maxlength="32" />
-                </dd>
-                <dt>
-                  <label for="projectShortDesc">Project Short Description </label>
-                </dt>
-                <dd>
-                  <input type="text" class="title-input blueback" name="projectShortDesc" id="projectShortDesc" required value="<%=model.projectShortDesc%>" maxlength="32" />
-                </dd>
-                <dt>
-                  <label for="projectManagerDD">Project Manager</label>
-                </dt>
-                <dd>
-				  <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.name):'Select'%></a>
-                </dd>
-
-                <dt><label for="projectTypeDD">Project Type </label></dt>
-				<dd>
-				  <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>" class="current-selected" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>
-				</dd>
-                <dt><label for="StartDate">Start Date </label></dt>
-                <dd><input class="extrainfo blueback" type="text" name="StartDate" id="StartDate" value="<%=model.StartDate%>" readonly /></dd>
-                <dt>
-                  <label for="customerDd">Project Customer </label>
-                </dt>
-                <dd>
-				  <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected" href="javascript:;"><%=model.customer?(model.customer.name):'Select'%></a>
-                </dd>
-                <dt>
-                  <label for="workflowsDd">Status</label>
-                </dt>
-                <dd>
-                  <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
-                </dd>
-                <dt><label for="health">Health</label></dt>
-                <dd id="health">
-                  <a href="javascript:;" data-value="<%=model.health%>" class="health<%=model.health%>"></a>
-                  <ul>
-                    <li>
-                      <div class="health1"></div>
-                    </li>
-                    <li>
-                      <div class="health2"></div>
-                    </li>
-                    <li>
-                      <div class="health3"></div>
-                    </li>
-                  </ul>
-                </dd>
-                <dt><label for="EndDate">End Date </label></dt>
-                <dd><input class="info blueback" type="text" name="EndDate" id="EndDate" value="<%=model.EndDate%>" readonly /></dd>
-                <dt><label for="targetEndDate">Target End Date</label></dt>
-                <dd><input class="info blueback" type="text" name="TargetEndtDate" id="EndDateTarget" value="<%=model.TargetEndDate%>" readonly /></dd>
-              </dl>
-            </div>
-            <div class="clearfix"></div>
-			<div id="divForNote">
-
-			</div>
-		  </div>
-		  <div class="clearfix"></div>
-
-
-          <div class="dialog-tabs-item">
-			<div class="assignees-container"></div>
-		  </div>
-          <div class="clearfix"></div>
-          <div class="dialog-tabs-item">
-            <div class="bonus-container"></div>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-    </fieldset>
-  </form>
+        </fieldset>
+    </form>
 </div>

@@ -4,118 +4,118 @@
 <div class="grid-conatiner">
     <table class="grid hrTop" cellspacing="0" cellpadding="0">
         <thead>
-            <tr>
-                <th>
-                    <span>&nbsp</span>
-                </th>
-                <% arrOfDates.forEach(function(dateObject){%>
-                    <th>
-                        <span><%=dateObject.month + '/' + dateObject.year%> </span>
-                    </th>
-                <%})%>
-            </tr>
+        <tr>
+            <th>
+                <span>&nbsp</span>
+            </th>
+            <% arrOfDates.forEach(function(dateObject){%>
+            <th>
+                <span><%=dateObject.month + '/' + dateObject.year%> </span>
+            </th>
+            <%})%>
+        </tr>
         </thead>
         <tbody id="dashboardBody">
-            <tr class="double">
-                <td class="vcenter">
-                    <span>Hired</span>
-                </td>
-                <%var employeesData = hired.get('data');
-                    if(employeesData){
-                        arrOfDates.forEach(function(dateObject){
-                            var employees = employeesData.get(dateObject.dateByMonth);
-                                employees = employees ? employees.get('hiredEmployees') : null;
+        <tr class="double">
+            <td class="vcenter">
+                <span>Hired</span>
+            </td>
+            <%var employeesData = hired.get('data');
+            if(employeesData){
+            arrOfDates.forEach(function(dateObject){
+            var employees = employeesData.get(dateObject.dateByMonth);
+            employees = employees ? employees.get('hiredEmployees') : null;
 
-                            if(employees && employees.length){%>
-                                <td>
-                                    <%employees.forEach(function(employee){%>
-                                        <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.departmentName : ''%></span>
-                                    <%})%>
-                                </td>
-                            <%} else {%>
-                                <td><span>&nbsp</span></td>
-                            <%}
-                        })
-                    } else {%>
-                        <td><span>&nbsp</span></td>
-                    <%}%>
-            </tr>
-            <tr class="double">
-                <td class="count">
-                    <span>Hired count</span>
-                </td>
-                <%var employeesData = hired.get('data');
-                    if(employeesData){
-                        arrOfDates.forEach(function(dateObject){
-                            var employees = employeesData.get(dateObject.dateByMonth);
-
-                            if(employees){%>
-                                <td>
-                                    <span id="hired_<%=dateObject.dateByMonth%>"><%=employees.get('hiredCount') || 0%></span>
-                                </td>
-                            <%} else {%>
-                                <td><span  id="hired_<%=dateObject.dateByMonth%>">0</span></td>
-                            <%}
-                        });
-                    } else {%>
-                            <td><span>0</span></td>
-                    <%}%>
-            </tr>
-            <tr class="double">
-                <td class="vcenter">
-                    <span>Fired</span>
-                </td>
-                <%var employeesData = fired.get('data');
-                    if(employeesData){
-                        arrOfDates.forEach(function(dateObject){
-                            var employees = employeesData.get(dateObject.dateByMonth);
-                                employees = employees ? employees.get('firedEmployees') : null;
-
-                            if(employees && employees.length){%>
-                                <td>
-                                    <%employees.forEach(function(employee){%>
-                                        <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.departmentName : ''%></span>
-                                    <%})%>
-                                </td>
-                            <%} else {%>
-                                <td><span>&nbsp</span></td>
-                            <%}
-                        })
-                    } else {%>
-                        <td><span>&nbsp</span></td>
-                    <%}%>
-            </tr>
-            <tr class="double">
-                <td class="count">
-                    <span>Fired count</span>
-                </td>
-                <%var employeesData = fired.get('data');
-                    if(employeesData){
-                        arrOfDates.forEach(function(dateObject){
-                            var employees = employeesData.get(dateObject.dateByMonth);
-
-                            if(employees){%>
-                                <td>
-                                    <span  id="fired_<%=dateObject.dateByMonth%>"><%=employees.get('firedCount') || 0%></span>
-                                </td>
-                            <%} else {%>
-                                <td><span id="fired_<%=dateObject.dateByMonth%>">0</span></td>
-                            <%}
-                        });
-                    } else {%>
-                            <td><span>0</span></td>
-                    <%}%>
-            </tr>
-            <tr class="double">
-                <td>
-                    <span>Hired Total</span>
-                </td>
-                <% arrOfDates.forEach(function(dateObject){%>
-                    <td>
-                        <span id="total_<%=dateObject.dateByMonth%>"></span>
-                    </td>
+            if(employees && employees.length){%>
+            <td>
+                <%employees.forEach(function(employee){%>
+                <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.departmentName : ''%></span>
                 <%})%>
-            </tr>
+            </td>
+            <%} else {%>
+            <td><span>&nbsp</span></td>
+            <%}
+            })
+            } else {%>
+            <td><span>&nbsp</span></td>
+            <%}%>
+        </tr>
+        <tr class="double">
+            <td class="count">
+                <span>Hired count</span>
+            </td>
+            <%var employeesData = hired.get('data');
+            if(employeesData){
+            arrOfDates.forEach(function(dateObject){
+            var employees = employeesData.get(dateObject.dateByMonth);
+
+            if(employees){%>
+            <td>
+                <span id="hired_<%=dateObject.dateByMonth%>"><%=employees.get('hiredCount') || 0%></span>
+            </td>
+            <%} else {%>
+            <td><span id="hired_<%=dateObject.dateByMonth%>">0</span></td>
+            <%}
+            });
+            } else {%>
+            <td><span>0</span></td>
+            <%}%>
+        </tr>
+        <tr class="double">
+            <td class="vcenter">
+                <span>Fired</span>
+            </td>
+            <%var employeesData = fired.get('data');
+            if(employeesData){
+            arrOfDates.forEach(function(dateObject){
+            var employees = employeesData.get(dateObject.dateByMonth);
+            employees = employees ? employees.get('firedEmployees') : null;
+
+            if(employees && employees.length){%>
+            <td>
+                <%employees.forEach(function(employee){%>
+                <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.departmentName : ''%></span>
+                <%})%>
+            </td>
+            <%} else {%>
+            <td><span>&nbsp</span></td>
+            <%}
+            })
+            } else {%>
+            <td><span>&nbsp</span></td>
+            <%}%>
+        </tr>
+        <tr class="double">
+            <td class="count">
+                <span>Fired count</span>
+            </td>
+            <%var employeesData = fired.get('data');
+            if(employeesData){
+            arrOfDates.forEach(function(dateObject){
+            var employees = employeesData.get(dateObject.dateByMonth);
+
+            if(employees){%>
+            <td>
+                <span id="fired_<%=dateObject.dateByMonth%>"><%=employees.get('firedCount') || 0%></span>
+            </td>
+            <%} else {%>
+            <td><span id="fired_<%=dateObject.dateByMonth%>">0</span></td>
+            <%}
+            });
+            } else {%>
+            <td><span>0</span></td>
+            <%}%>
+        </tr>
+        <tr class="double">
+            <td>
+                <span>Hired Total</span>
+            </td>
+            <% arrOfDates.forEach(function(dateObject){%>
+            <td>
+                <span id="total_<%=dateObject.dateByMonth%>"></span>
+            </td>
+            <%})%>
+        </tr>
         </tbody>
     </table>
 </div>

@@ -6,13 +6,11 @@ define([
     ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: CONSTANTS.INVOICEAGING,
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
-            events: {
-
-            },
+            events: {},
 
             initialize: function (options) {
                 if (options.collection) {

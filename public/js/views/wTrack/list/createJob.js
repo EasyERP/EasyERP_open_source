@@ -6,8 +6,8 @@ define(["text!templates/wTrack/createJob.html"
     function (generateTemplate) {
         "use strict";
         var CreateView = Backbone.View.extend({
-                template                 : _.template(generateTemplate),
-                responseObj              : {},
+                template   : _.template(generateTemplate),
+                responseObj: {},
 
                 events: {},
 
@@ -76,10 +76,7 @@ define(["text!templates/wTrack/createJob.html"
                     var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
                     var data = {};
 
-                    data.project = {};
-                    data.project._id =  self.modelJSON._id;
-                    data.project.name =  self.modelJSON.projectName;
-                    data.project.projectManager =  self.modelJSON.projectmanager;
+                    data.project = self.modelJSON._id;
                     data.name = jobName;
 
                     this.stopDefaultEvents(e);
@@ -89,7 +86,7 @@ define(["text!templates/wTrack/createJob.html"
                             type       : 'Post',
                             url        : '/jobs/',
                             contentType: "application/json",
-                            data: JSON.stringify(data),
+                            data       : JSON.stringify(data),
 
                             success: function () {
                                 self.hideDialog();
@@ -99,11 +96,17 @@ define(["text!templates/wTrack/createJob.html"
                                 }
                             },
                             error  : function () {
-                                alert('error');
+                                App.render({
+                                    type: 'error',
+                                    message: "Error"
+                                });
                             }
                         });
                     } else {
-                        alert("Please, enter correct Job name!");
+                        App.render({
+                            type: 'error',
+                            message: "Please, enter correct Job name!"
+                        });
                     }
 
                 },

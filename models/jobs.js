@@ -4,36 +4,19 @@ module.exports = (function () {
 
     var jobsSchema = mongoose.Schema({
         name     : {type: String, default: ''},
-        workflow : {
-            _id : {type: ObjectId, ref: 'workflows', default: null},
-            name: String
-        },
+        workflow : {type: ObjectId, ref: 'workflows', default: null},
         type     : {type: String, enum: ["Not Quoted", 'Quoted', "Ordered", "Invoiced", "Paid"], default: 'Not Quoted'},
         wTracks  : [{type: ObjectId, ref: 'wTrack', default: null}],
-        project  : {
-            _id: {type: ObjectId, ref: 'Project', default: null},
-            name: String,
-            projectManager: JSON
-        },
+        project  : {type: ObjectId, ref: 'Project', default: null},
         budget   : {
             _id          : false,
             projectTeam  : {type: Array, default: []},
-            budget       : {type: Array, default: []},//weetrackInfo
+            projectValues: {type: Array, default: []},
+            budget       : {type: Array, default: []},
             budgetTotal  : {type: Object, default: {}}
         },
-        quotation: {
-            _id : {type: ObjectId, ref: 'Quotation', default: null},
-            name: String,
-            status: {type: String, default: ''},
-            amount: Number
-        },
-        invoice  : {
-            _id : {type: ObjectId, ref: 'Invoice', default: null},
-            name: String,
-            amount: Number
-        },
-        payments: [{type: ObjectId, ref: 'Payment', default: null}]
-
+        quotation: {type: ObjectId, ref: 'Quotation', default: null},
+        invoice  : {type: ObjectId, ref: 'Invoice', default: null}
     }, {collection: 'jobs'});
 
     mongoose.model('jobs', jobsSchema);

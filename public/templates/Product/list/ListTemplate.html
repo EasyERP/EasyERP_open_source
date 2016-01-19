@@ -1,6 +1,6 @@
 <% productCollection.forEach(function(product, index){ %>
 <tr data-id="<%=product._id%>">
-    <td class = "notForm centerCell"><input type="checkbox" value="<%=product._id%>" class="checkbox" /></td>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=product._id%>" class="checkbox"/></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=product.name.substr(0,15)%></td>
     <td><%=product.info.productType%></td>

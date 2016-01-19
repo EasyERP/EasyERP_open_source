@@ -775,9 +775,16 @@ define([
 
             renderCapacity: function (row, subNameClass, name) {
                 var collection;
+                var oldMonth;
+                var oldYear;
                 var status = row.find('.departmentCB').prop("checked");
 
-                if (!this.departmentsCollections[name]) {
+                if (this.departmentsCollections[name]) {
+                    oldMonth = this.departmentsCollections[name].models[0].attributes.month;
+                    oldYear = this.departmentsCollections[name].models[0].attributes.year;
+                }
+
+                if (!this.departmentsCollections[name] || oldMonth !== this.capacityObject[name][0].month || oldYear !== this.capacityObject[name][0].year ) {
                     this.departmentsCollections[name] = new departmentCollection(this.capacityObject[name]);
                 }
 
@@ -850,13 +857,13 @@ define([
                 }
             },
 
-            checked: function(e) {
+            checked: function (e) {
                 var target = $(e.target);
                 var tr = target.closest('tr');
                 var dataName = tr.attr('data-name');
                 var subRowsCheckboxes = this.$el.find('.subRows' + dataName).find('.checkbox:checked');
                 var length = this.departmentsCollections[dataName] ? this.departmentsCollections[dataName].length : 0;
-                var depRow = this.$el.find('.departmentRow[data-name="'+ dataName +'"]');
+                var depRow = this.$el.find('.departmentRow[data-name="' + dataName + '"]');
                 var checkDepartment = depRow.find('.departmentCB');
 
                 if (length > 0) {
@@ -1088,7 +1095,10 @@ define([
                         },
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });

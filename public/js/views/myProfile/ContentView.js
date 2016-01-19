@@ -1,83 +1,94 @@
 define([
-    "text!templates/myProfile/UsersPagesTemplate.html",
-    "text!templates/myProfile/ChangePassword.html",
-    'common',
-    "models/UsersModel",
-    'dataService',
-	"populate"
-],
-    function (UsersPagesTemplate, ChangePassword, common, UsersModel, dataService, populate) {
+        'Backbone',
+        'Underscore',
+        'jQuery',
+        'text!templates/myProfile/UsersPagesTemplate.html',
+        'text!templates/myProfile/ChangePassword.html',
+        'common',
+        'models/UsersModel',
+        'dataService',
+        'populate'
+    ],
+    function (Backbone, _, $, UsersPagesTemplate, ChangePassword, common, UsersModel, dataService, populate) {
+        'use strict';
         var ContentView = Backbone.View.extend({
-            el: '#content-holder',
+            el         : '#content-holder',
             contentType: "myProfile",
-            actionType: "Content",
-            template: _.template(ChangePassword),
-            imageSrc: '',
+            actionType : "Content",
+            template   : _.template(ChangePassword),
+            imageSrc   : '',
+
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.render();
-				this.responseObj = {};
+                this.responseObj = {};
             },
+
             events: {
-                "click .changePassword": "changePassword",
-                "mouseenter .avatar": "showEdit",
-                "mouseleave .avatar": "hideEdit",
-                "click #resetBtn": "resetForm",
-                "click #saveBtn": "save",
-                "click #RelatedEmployee li > a": "gotoEmployeesForm",
-                "click": "hideNewSelect",
-                "click .current-selected": "showNewSelect",
-				"click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                "click .changePassword"                                           : "changePassword",
+                "mouseenter .avatar"                                              : "showEdit",
+                "mouseleave .avatar"                                              : "hideEdit",
+                "click #resetBtn"                                                 : "resetForm",
+                "click #saveBtn"                                                  : "save",
+                "click #relatedEmployee li > a"                                   : "gotoEmployeesForm",
+                "click"                                                           : "hideNewSelect",
+                "click .current-selected"                                         : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
-         
+
             },
-            showNewSelect:function(e,prev,next){
-                populate.showSelect(e,prev,next,this);
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
                 return false;
-                
+
             },
-            hideNewSelect: function () {
-                $(".newSelectList").hide();
-            },
+
             notHide: function () {
-				return false;
+                return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
+
             chooseOption: function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id",$(e.target).attr("id"));
+                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-			nextSelect:function(e){
-				this.showNewSelect(e,false,true);
-			},
-			prevSelect:function(e){
-				this.showNewSelect(e,true,false);
-			},
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
 
             changePassword: function (e) {
                 e.preventDefault();
+
                 var formString = this.template();
                 var self = this;
+
                 this.$el = $(formString).dialog({
-                    dialogClass: "change-password-dialog",
-                    width: "500px",
-                    title: "Change Password",
- 					closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    buttons: {
-                        save: {
-                            text: "Save",
+                    dialogClass  : "change-password-dialog",
+                    width        : "500px",
+                    title        : "Change Password",
+                    closeOnEscape: false,
+                    autoOpen     : true,
+                    resizable    : true,
+                    buttons      : {
+                        save  : {
+                            text : "Save",
                             class: "btn",
                             click: function () {
-                                self.ChangePassword(self);
+                                self._changePassword(self);
                             }
                         },
                         cancel: {
-                            text: "Cancel",
+                            text : "Cancel",
                             class: "btn",
                             click: function () {
                                 self.hideDialog();
@@ -87,35 +98,35 @@ define([
                 });
             },
 
-            ChangePassword: function (self) {
-                    oldpass = $.trim(this.$el.find('#old_password').val());
-                    pass = $.trim(this.$el.find('#new_password').val());
-                    confirmPass = $.trim(this.$el.find('#confirm_new_password').val());
+            _changePassword: function (self) {
+                var oldpass = $.trim(this.$el.find('#old_password').val());
+                var pass = $.trim(this.$el.find('#new_password').val());
+                var confirmPass = $.trim(this.$el.find('#confirm_new_password').val());
 
                 dataService.getData('/currentUser', null, function (response, context) {
+                    var mid = 39;
+
                     context.UsersModel = new UsersModel(response.user);
                     context.UsersModel.urlRoot = '/currentUser';
-
-                    var mid = 39;
                     context.UsersModel.save({
-                        oldpass: oldpass,
-                        pass: pass
-                    },
-	                {
-	                    headers: {
-	                        mid: mid
-	                    },
-	                    wait: true,
-	                    patch:true,
-	                    success: function (model) {
-	                        self.hideDialog();
-	                    },
-                        error: function (model,xhr) {
-                            self.errorNotification(xhr);
+                            oldpass: oldpass,
+                            pass   : pass
                         },
-	                    editMode: false,
-	                    confirmPass:confirmPass
-	                });
+                        {
+                            headers    : {
+                                mid: mid
+                            },
+                            wait       : true,
+                            patch      : true,
+                            success    : function (/*model*/) {
+                                self.hideDialog();
+                            },
+                            error      : function (model, xhr) {
+                                self.errorNotification(xhr);
+                            },
+                            editMode   : false,
+                            confirmPass: confirmPass
+                        });
                 }, this);
 
             },
@@ -125,36 +136,39 @@ define([
                 var ids = [];
                 var email = $.trim($("#email").val());
                 var login = $.trim($("#login").val());
-                var RelatedEmployee = $("input[type='radio']:checked").attr("data-id");
+                var relatedEmployee = $("input[type='radio']:checked").attr("data-id");
 
-                if (RelatedEmployee){
-                    ids.push(RelatedEmployee);
+                if (relatedEmployee) {
+                    ids.push(relatedEmployee);
                 } else {
-                    RelatedEmployee = null;
+                    relatedEmployee = null;
                 }
 
                 dataService.getData('/currentUser', null, function (response, context) {
-
-                    context.UsersModel = new UsersModel(response.user);
-                    context.UsersModel.urlRoot = '/currentUser';
                     var self = this;
                     var mid = 39;
-                    context.UsersModel.save({
-                        imageSrc: imageSrc,
-                        email: email,
-                        login: login,
-                        RelatedEmployee: RelatedEmployee
-                    },
-	                {
-	                    headers: {
-	                        mid: mid
-	                    },
-	                    patch:true,
-	                    wait: true,
-	                    success: function (model) {
-                            if (RelatedEmployee) {
+                    var user = response.user;
+                    var _login = user.login;
+
+                    context.UsersModel = new UsersModel(user);
+                    context.UsersModel.urlRoot = '/currentUser';
+
+                    context.UsersModel.set({
+                        email          : email,
+                        login          : login,
+                        relatedEmployee: relatedEmployee
+                    });
+
+                    context.UsersModel.save(context.UsersModel.changedAttributes(), {
+                        headers : {
+                            mid: mid
+                        },
+                        patch   : true,
+                        wait    : true,
+                        success : function (model) {
+                            if (relatedEmployee) {
                                 common.getImages(ids, '/getEmployeesImages', function (response) {
-                                   // App.currentUser.imageSrc = response.data[0].imageSrc;
+                                    // App.currentUser.imageSrc = response.data[0].imageSrc;
                                     $("#loginPanel .iconEmployee").attr("src", response.data[0].imageSrc);
                                     $("#loginPanel #userName").text(response.data[0].fullName);
                                 });
@@ -162,35 +176,35 @@ define([
                                 $("#loginPanel .iconEmployee").attr("src", model.toJSON().imageSrc);
                                 $("#loginPanel  #userName").text(model.toJSON().login);
                             }
-	                        Backbone.history.fragment = "";
-	                        Backbone.history.navigate("easyErp/myProfile", { trigger: true });
-	                    },
-                        error: function (model, xhr) {
+                            Backbone.history.fragment = "";
+                            Backbone.history.navigate("easyErp/myProfile", {trigger: true});
+                        },
+                        error   : function (model, xhr) {
                             self.errorNotification(xhr);
                         },
-	                    editMode: true
-	                });
+                        editMode: true
+                    });
                 }, this.render());
             },
 
             resetForm: function (e) {
                 e.preventDefault();
                 $(':input', '#createUserForm')
-            	 .not(':button, :submit, :reset, :hidden')
-            	 .val('')
-            	 .removeAttr('checked')
+                    .not(':button, :submit, :reset, :hidden')
+                    .val('')
+                    .removeAttr('checked');
             },
 
             showEdit: function () {
                 $(".upload").animate({
-                    height: "20px",
+                    height : "20px",
                     display: "block"
                 }, 250);
 
             },
             hideEdit: function () {
                 $(".upload").animate({
-                    height: "0px",
+                    height : "0px",
                     display: "block"
                 }, 250);
 
@@ -208,24 +222,29 @@ define([
 
             render: function () {
                 dataService.getData('/currentUser', null, function (response, context) {
-                    dataService.getData('/getForDdByRelatedUser', null, function (RelatedEmployee) {
+                    dataService.getData('/getForDdByRelatedUser', null, function (relatedEmployee) {
                         var date = new Date();
                         var minutes = date.getTimezoneOffset();
-                        if (minutes < 0)
-                            var timezone = ("UTC +" + (minutes / 60)*(-1));
-                        else
-                            var timezone = ("UTC -" + (minutes / 60)*(-1));
-                        var model = response.user;
-                        context.$el.html(_.template(UsersPagesTemplate,
-	                            {
-	                                model: model,
-	                                RelatedEmployee: RelatedEmployee.data,
-	                                timezone: timezone
-	                            }));
-                        common.canvasDraw({ model: model }, this);
+                        var timezone;
+                        var model;
 
-                        if (response.user.RelatedEmployee) {
-                            $("input[type='radio'][value=" + response.user.RelatedEmployee._id + "]").attr("checked", true);
+                        if (minutes < 0) {
+                            timezone = ("UTC +" + (minutes / 60) * (-1));
+                        } else {
+                            timezone = ("UTC -" + (minutes / 60) * (-1));
+                        }
+
+                        model = response.user;
+                        context.$el.html(_.template(UsersPagesTemplate,
+                            {
+                                model          : model,
+                                relatedEmployee: relatedEmployee.data,
+                                timezone       : timezone
+                            }));
+                        common.canvasDraw({model: model}, this);
+
+                        if (response.user.relatedEmployee) {
+                            $("input[type='radio'][value=" + response.user.relatedEmployee._id + "]").attr("checked", true);
                         }
                         else {
                             $("input[type='radio']:first").attr("checked", true);

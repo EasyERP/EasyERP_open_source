@@ -1,104 +1,117 @@
 define([
-    "text!templates/Leads/CreateTemplate.html",
-    'views/Assignees/AssigneesView',
-    "models/LeadsModel",
-    "common",
-    "populate",
-    "dataService"
-],
-    function (CreateTemplate, AssigneesView, LeadModel, common, populate, dataService) {
+        "text!templates/Leads/CreateTemplate.html",
+        'views/selectView/selectView',
+        'views/Assignees/AssigneesView',
+        "models/LeadsModel",
+        "common",
+        "populate",
+        "dataService"
+    ],
+    function (CreateTemplate, selectView, AssigneesView, LeadModel, common, populate, dataService) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Leads",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function () {
                 _.bindAll(this, "saveItem", "render");
                 this.model = new LeadModel();
                 this.responseObj = {};
+
                 this.render();
             },
 
             events: {
-                "click #tabList a": "switchTab",
-                "change #workflowNames": "changeWorkflows",
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click": "hideNewSelect",
-                "click .current-selected": "showNewSelect"
+                "click #tabList a"                                                : "switchTab",
+                "change #workflowNames"                                           : "changeWorkflows",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click"                                                           : "hideNewSelect",
+                "click .current-selected"                                         : "showNewSelect"
             },
 
             selectCustomer: function (id) {
-				if (id!=""){
-					dataService.getData('/Customer', {
-						id: id
-					}, function (response, context) {
-						var customer = response.data[0];
-						if (customer.type == 'Person') {
-							context.$el.find('#first').val(customer.name.first);
-							context.$el.find('#last').val(customer.name.last);
+                if (id != "") {
+                    dataService.getData('/Customer', {
+                        id: id
+                    }, function (response, context) {
+                        var customer = response.data[0];
+                        if (customer.type == 'Person') {
+                            context.$el.find('#first').val(customer.name.first);
+                            context.$el.find('#last').val(customer.name.last);
 
-							context.$el.find('#company').val('');
-						} else {
-							context.$el.find('#company').val(customer.name.first);
+                            context.$el.find('#company').val('');
+                        } else {
+                            context.$el.find('#company').val(customer.name.first);
 
-							context.$el.find('#first').val('');
-							context.$el.find('#last').val('');
+                            context.$el.find('#first').val('');
+                            context.$el.find('#last').val('');
 
-						}
-						context.$el.find('#email').val(customer.email);
-						context.$el.find('#phone').val(customer.phones.phone);
-						context.$el.find('#mobile').val(customer.phones.mobile);
-						context.$el.find('#street').val(customer.address.street);
-						context.$el.find('#city').val(customer.address.city);
-						context.$el.find('#state').val(customer.address.state);
-						context.$el.find('#zip').val(customer.address.zip);
-						context.$el.find('#country').val(customer.address.country);
+                        }
+                        context.$el.find('#email').val(customer.email);
+                        context.$el.find('#phone').val(customer.phones.phone);
+                        context.$el.find('#mobile').val(customer.phones.mobile);
+                        context.$el.find('#street').val(customer.address.street);
+                        context.$el.find('#city').val(customer.address.city);
+                        context.$el.find('#state').val(customer.address.state);
+                        context.$el.find('#zip').val(customer.address.zip);
+                        context.$el.find('#country').val(customer.address.country);
 
-					}, this);
-				}else{
-					this.$el.find('#email').val('');
-					this.$el.find('#phone').val('');
-					this.$el.find('#mobile').val('');
-					this.$el.find('#street').val('');
-					this.$el.find('#city').val('');
-					this.$el.find('#state').val('');
-					this.$el.find('#zip').val('');
-					this.$el.find('#country').val('');
+                    }, this);
+                } else {
+                    this.$el.find('#email').val('');
+                    this.$el.find('#phone').val('');
+                    this.$el.find('#mobile').val('');
+                    this.$el.find('#street').val('');
+                    this.$el.find('#city').val('');
+                    this.$el.find('#state').val('');
+                    this.$el.find('#zip').val('');
+                    this.$el.find('#country').val('');
                     this.$el.find('#company').val('');
                     this.$el.find('#first').val('');
                     this.$el.find('#last').val('');
-				}
+                }
 
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
-            notHide: function () {
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
-            },
-            chooseOption: function (e) {
+
+            chooseOption : function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                if (holder.attr("id") == 'customerDd')
+                if (holder.attr("id") == 'customerDd') {
                     this.selectCustomer($(e.target).attr("id"));
+                }
             },
 
             keydownHandler: function (e) {
@@ -123,7 +136,7 @@ define([
 
             changeWorkflows: function () {
                 var name = this.$("#workflowNames option:selected").val();
-                var value = this.workflowsCollection.findWhere({ name: name }).toJSON().value;
+                var value = this.workflowsCollection.findWhere({name: name}).toJSON().value;
                 //$("#selectWorkflow").html(_.template(selectTemplate, { workflows: this.getWorkflowValue(value) }));
             },
 
@@ -151,7 +164,7 @@ define([
                 var name = $.trim(this.$el.find("#name").val());
                 var company = {
                     name: $company.val(),
-                    id: $company.data('id')
+                    id  : $company.data('id')
                 };
                 var idCustomer = this.$("#customerDd").data("id");
                 var address = {};
@@ -166,7 +179,7 @@ define([
                 var last = $.trim(this.$el.find("#last").val());
                 var contactName = {
                     first: first,
-                    last: last
+                    last : last
                 };
                 var email = $.trim(this.$el.find("#e-mail").val());
                 var func = $.trim(this.$el.find("#func").val());
@@ -175,9 +188,9 @@ define([
                 var mobile = $.trim(this.$el.find("#mobile").val());
                 var fax = $.trim(this.$el.find("#fax").val());
                 var phones = {
-                    phone: phone,
+                    phone : phone,
                     mobile: mobile,
-                    fax: fax
+                    fax   : fax
                 };
                 var workflow = this.$("#workflowsDd").data('id');
                 var priority = $("#priorityDd").data("id");
@@ -199,31 +212,31 @@ define([
                 });
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 this.model.save({
-                        name: name,
-                        company: company,
-                        campaign: $('#campaignDd').data("id"),
-                        source: $('#sourceDd').data("id"),
-                        customer: idCustomer,
-                        address: address,
-                        salesPerson: salesPersonId,
-                        salesTeam: salesTeamId,
-                        contactName: contactName,
-                        email: email,
-                        func: func,
-                        phones: phones,
-                        fax: fax,
-                        priority: priority,
+                        name         : name,
+                        company      : company,
+                        campaign     : $('#campaignDd').data("id"),
+                        source       : $('#sourceDd').data("id"),
+                        customer     : idCustomer,
+                        address      : address,
+                        salesPerson  : salesPersonId,
+                        salesTeam    : salesTeamId,
+                        contactName  : contactName,
+                        email        : email,
+                        func         : func,
+                        phones       : phones,
+                        fax          : fax,
+                        priority     : priority,
                         internalNotes: internalNotes,
-                        active: active,
-                        optout: optout,
-                        reffered: reffered,
-                        workflow: workflow,
-                        groups: {
-							owner: $("#allUsersSelect").data("id"),
+                        active       : active,
+                        optout       : optout,
+                        reffered     : reffered,
+                        workflow     : workflow,
+                        groups       : {
+                            owner: $("#allUsersSelect").data("id"),
                             users: usersId,
                             group: groupsId
                         },
-                        whoCanRW: whoCanRW
+                        whoCanRW     : whoCanRW
                     },
                     {
                         headers: {
@@ -232,12 +245,12 @@ define([
                         success: function () {
                             self.hideDialog();
                             Backbone.history.fragment = "";                                  //Masalovych bag 803
-                            Backbone.history.navigate(location, { trigger: true });          //Masalovych bag 803
-                          // Backbone.history.navigate("easyErp/Users", { trigger: true });
+                            Backbone.history.navigate(location, {trigger: true});          //Masalovych bag 803
+                            // Backbone.history.navigate("easyErp/Users", { trigger: true });
                         },
-						error: function (model, xhr) {
-							self.errorNotification(xhr);
-						}
+                        error  : function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
 
                     });
             },
@@ -253,21 +266,21 @@ define([
                 var formString = this.template();
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Edit Company",
-                    width: "800",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Company",
+                    width        : "800",
+                    buttons      : [
                         {
-                            text: "Create",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
@@ -275,7 +288,7 @@ define([
                     ]
 
                 });
- 				var notDiv = this.$el.find('.assignees-container');
+                var notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel

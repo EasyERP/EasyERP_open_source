@@ -40,11 +40,13 @@ var Filters = function (models) {
             var modelName;
             var filterName;
 
-            for (modelName in result) {
-                for (filterName in result[modelName]) {
+            for (modelName in
+                result) {
+                for (filterName in
+                    result[modelName]) {
                     if (_.isArray(result[modelName][filterName])) {
                         result[modelName][filterName] = _.reject(result[modelName][filterName], function (element) {
-                            return (element.name == '' || element.name == 'None');
+                            return (element.name === '' || element.name === 'None');
                         });
                     }
                 }
@@ -62,7 +64,9 @@ var Filters = function (models) {
             var year = moment().isoWeekYear();
             var week;
 
-            for (var i = 0; i <= 11; i++) {
+            for (var i = 0;
+                 i <= 11;
+                 i++) {
                 if (startWeek + i > 53) {
                     week = startWeek + i - 53;
                     weeksArr.push((year + 1) * 100 + week);
@@ -107,6 +111,7 @@ var Filters = function (models) {
                 Projects        : getProjectFiltersValues,
                 Tasks           : getTasksFiltersValues,
                 salesInvoice    : getSalesInvoiceFiltersValues,
+                Invoice         : getInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
@@ -132,63 +137,123 @@ var Filters = function (models) {
             });
 
         function getWtrackFiltersValues(callback) {
-            WTrack.aggregate([
-                {
-                    $group: {
-                        _id             : null,
-                        'jobs'          : {
-                            $addToSet: {
-                                _id : '$jobs._id',
-                                name: '$jobs.name'
+            WTrack.aggregate([{
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "employee",
+                    foreignField: "_id", as: "employee"
+                }
+            }, {
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id", as: "department"
+                }
+            }, {
+                $project: {
+                    project   : {$arrayElemAt: ["$project", 0]},
+                    employee  : {$arrayElemAt: ["$employee", 0]},
+                    department: {$arrayElemAt: ["$department", 0]},
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    isPaid    : 1,
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "project.customer",
+                    foreignField: "_id", as: "customer"
+                }
+            }, {
+                $project: {
+                    customer      : {$arrayElemAt: ["$customer", 0]},
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    project       : 1,
+                    employee      : 1,
+                    department    : 1,
+                    month         : 1,
+                    year          : 1,
+                    week          : 1,
+                    isPaid        : 1
+                }
+            }, {
+                $group: {
+                    _id             : null,
+                    'jobs'          : {
+                        $addToSet: {
+                            _id : '$jobs._id',
+                            name: '$jobs.name'
+                        }
+                    },
+                    'projectManager': {
+                        $addToSet: {
+                            _id : '$projectmanager._id',
+                            name: {
+                                $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
                             }
-                        },
-                        'projectManager': {
-                            $addToSet: {
-                                _id : '$project.projectmanager._id',
-                                name: '$project.projectmanager.name'
+                        }
+                    },
+                    'projectName'   : {
+                        $addToSet: {
+                            _id : '$project._id',
+                            name: '$project.projectName'
+                        }
+                    },
+                    'customer'      : {
+                        $addToSet: {
+                            _id : '$customer._id',
+                            name: {
+                                $concat: ['$customer.name.first', ' ', '$customer.name.last']
                             }
-                        },
-                        'projectName'   : {
-                            $addToSet: {
-                                _id : '$project._id',
-                                name: '$project.projectName'
+                        }
+                    },
+                    'employee'      : {
+                        $addToSet: {
+                            _id : '$employee._id',
+                            name: {
+                                $concat: ['$employee.name.first', ' ', '$employee.name.last']
                             }
-                        },
-                        'customer'      : {
-                            $addToSet: {
-                                _id : '$project.customer._id',
-                                name: '$project.customer.name'
-                            }
-                        },
-                        'employee'      : {
-                            $addToSet: '$employee'
-                        },
-                        'department'    : {
-                            $addToSet: {
-                                _id : '$department._id',
-                                name: '$department.departmentName'
-                            }
-                        },
-                        'year'          : {
-                            $addToSet: {
-                                _id : '$year',
-                                name: '$year'
-                            }
-                        },
-                        'month'         : {
-                            $addToSet: {
-                                _id : '$month',
-                                name: '$month'
-                            }
-                        },
-                        'week'          : {
-                            $addToSet: {
-                                _id : '$week',
-                                name: '$week'
-                            }
+                        }
+                    },
+                    'department'    : {
+                        $addToSet: {
+                            _id : '$department._id',
+                            name: '$department.departmentName'
+                        }
+                    },
+                    'year'          : {
+                        $addToSet: {
+                            _id : '$year',
+                            name: '$year'
+                        }
+                    },
+                    'month'         : {
+                        $addToSet: {
+                            _id : '$month',
+                            name: '$month'
+                        }
+                    },
+                    'week'          : {
+                        $addToSet: {
+                            _id : '$week',
+                            name: '$week'
                         }
                     }
                 }
+            }
             ], function (err, result) {
                 if (err) {
                     return callback(err);
@@ -310,8 +375,45 @@ var Filters = function (models) {
             Employee.aggregate([
                 {
                     $match: {'isEmployee': true}
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Department",
+                        localField  : "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "manager",
+                        foreignField: "_id",
+                        as: "manager"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "JobPosition",
+                        localField  : "jobPosition",
+                        foreignField: "_id",
+                        as: "jobPosition"
+                    }
+                }, {
+                    $project: {
+                        department : {$arrayElemAt: ["$department", 0]},
+                        manager    : {$arrayElemAt: ["$manager", 0]},
+                        jobPosition: {$arrayElemAt: ["$jobPosition", 0]},
+                        name       : 1
+                    }
+                }, {
+                    $project: {
+                        department    : 1,
+                        'manager._id' : 1,
+                        'manager.name': {
+                            $concat: ['$manager.name.first', ' ', '$manager.name.last']
+                        },
+                        jobPosition   : 1,
+                        name          : 1
+                    }
+                }, {
                     $group: {
                         _id          : null,
                         'name'       : {
@@ -323,7 +425,7 @@ var Filters = function (models) {
                         'department' : {
                             $addToSet: {
                                 _id : '$department._id',
-                                name: {'$ifNull': ['$department.name', 'None']}
+                                name: {'$ifNull': ['$department.departmentName', 'None']}
                             }
                         },
                         'jobPosition': {
@@ -355,8 +457,31 @@ var Filters = function (models) {
             Employee.aggregate([
                 {
                     $match: {'isEmployee': false}
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Department",
+                        localField  : "department",
+                        foreignField: "_id", as: "department"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "JobPosition",
+                        localField  : "jobPosition",
+                        foreignField: "_id", as: "jobPosition"
+                    }
+                }, {
+                    $project: {
+                        department : {$arrayElemAt: ["$department", 0]},
+                        jobPosition: {$arrayElemAt: ["$jobPosition", 0]},
+                        name       : 1
+                    }
+                }, {
+                    $project: {
+                        department : 1,
+                        jobPosition: 1,
+                        name       : 1
+                    }
+                }, {
                     $group: {
                         _id          : null,
                         'name'       : {
@@ -368,19 +493,13 @@ var Filters = function (models) {
                         'department' : {
                             $addToSet: {
                                 _id : '$department._id',
-                                name: {'$ifNull': ['$department.name', 'None']}
+                                name: {'$ifNull': ['$department.departmentName', 'None']}
                             }
                         },
                         'jobPosition': {
                             $addToSet: {
                                 _id : '$jobPosition._id',
                                 name: {'$ifNull': ['$jobPosition.name', 'None']}
-                            }
-                        },
-                        'manager'    : {
-                            $addToSet: {
-                                _id : '$manager._id',
-                                name: {'$ifNull': ['$manager.name', 'None']}
                             }
                         }
                     }
@@ -397,48 +516,80 @@ var Filters = function (models) {
         };
 
         function getProjectFiltersValues(callback) {
-            Project.aggregate([
-                {
+            Project
+                .aggregate([{
+                    $lookup: {
+                        from                   : "Employees",
+                        localField             : "projectmanager",
+                        foreignField: "_id", as: "projectmanager"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "Customers",
+                        localField             : "customer",
+                        foreignField: "_id", as: "customer"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "workflows",
+                        localField             : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $project: {
+                        projectName   : 1,
+                        workflow      : {$arrayElemAt: ["$workflow", 0]},
+                        customer      : {$arrayElemAt: ["$customer", 0]},
+                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                    }
+                }, {
+                    $project: {
+                        projectName   : 1,
+                        workflow      : 1,
+                        customer      : 1,
+                        projectmanager: 1
+                    }
+                }, {
                     $group: {
                         _id             : null,
-                        'name'          : {
+                        'workflow'      : {
                             $addToSet: {
-                                _id : '$_id',
-                                name: '$projectName'
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
                             }
                         },
                         'customer'      : {
                             $addToSet: {
                                 _id : '$customer._id',
-                                name: {'$ifNull': ['$customer.name', 'None']}
-                            }
-                        },
-                        'workflow'      : {
-                            $addToSet: {
-                                _id : '$workflow._id',
-                                name: {'$ifNull': ['$workflow.name', 'None']}
+                                name: {$concat: ['$customer.name.first', ' ', '$customer.name.last']}
                             }
                         },
                         'projectmanager': {
                             $addToSet: {
                                 _id : '$projectmanager._id',
-                                name: {'$ifNull': ['$projectmanager.name', 'None']}
+                                name: {$concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']}
+                            }
+                        },
+                        'name'          : {
+                            $addToSet: {
+                                _id : '$_id',
+                                name: '$projectName'
                             }
                         }
                     }
                 }
-            ], function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
+                ], function (err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
 
-                if (result) {
-                    result = result[0];
+                    if (result) {
+                        result = result[0];
 
-                    callback(null, result);
-                }
+                        callback(null, result);
+                    }
 
-            });
+                });
         };
 
         function getDashVacationFiltersValues(callback) {
@@ -461,8 +612,19 @@ var Filters = function (models) {
             Employee.aggregate([
                 {
                     $match: matchObjectForDash
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Department",
+                        localField  : "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                }, {
+                    $project: {
+                        name: 1,
+                        department: {$arrayElemAt: ['$department', 0]}
+                    }
+                }, {
                     $group: {
                         _id         : null,
                         'name'      : {
@@ -474,7 +636,7 @@ var Filters = function (models) {
                         'department': {
                             $addToSet: {
                                 _id : '$department._id',
-                                name: {'$ifNull': ['$department.name', 'None']}
+                                name: {'$ifNull': ['$department.departmentName', 'None']}
                             }
                         }
                     }
@@ -490,21 +652,56 @@ var Filters = function (models) {
             });
         };
 
-        function getTasksFiltersValues(callback) {
-            Task.aggregate([
-                {
-                    $group: {
+        function getTasksFiltersValues(callback) {   // added $lookups in aggregation and one new field Summary
+            Task.aggregate([  {
+
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id",
+                    as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "assignedTo",
+                    foreignField: "_id",
+                    as: "assignedTo"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id",
+                    as: "workflow"
+                }
+            }, {
+                $project: {
+                    summary   : 1,
+                    type      :1,
+                    workflow   : {$arrayElemAt: ["$workflow", 0]},
+                    assignedTo   : {$arrayElemAt: ["$assignedTo", 0]},
+                    project    : {$arrayElemAt: ["$project", 0]}
+                }
+            }, {
+                $group: {
                         _id         : null,
                         'project'   : {
                             $addToSet: {
-                                _id : '$project',
-                                name: '$project.name'
+                                _id : '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'summary'   : {
+                            $addToSet: {
+                                _id : '$_id',
+                                name: '$summary'
                             }
                         },
                         'assignedTo': {
                             $addToSet: {
                                 _id : '$assignedTo._id',
-                                name: {'$ifNull': ['$assignedTo.name', 'None']}
+                                name: {'$ifNull': [{$concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']}, 'None']}
                             }
                         },
                         'workflow'  : {
@@ -521,6 +718,7 @@ var Filters = function (models) {
                         }
                     }
                 }
+
             ], function (err, result) {
                 if (err) {
                     callback(err);
@@ -528,57 +726,159 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                //Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
-                //    if (err){
-                //        return callback(err);
-                //    }
-                //
-                //    callback(null, result);
-                //});
+                /*Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
+                    if (err){
+                       return callback(err);
+                   }
+
+                    callback(null, result);
+                });*/
+
+                callback(null, result);
+            });
+        };
+        function getInvoiceFiltersValues(callback) {
+            wTrackInvoice.aggregate([{
+                $match: {
+                    forSales: false
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    workflow   : {$arrayElemAt: ["$workflow", 0]},
+                    supplier   : {$arrayElemAt: ["$supplier", 0]}
+                }
+            },  {
+                $group: {
+                    _id          : null,
+                    'workflow'   : {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
+                        }
+                    },
+                    /*'project'    : {
+                        $addToSet: {
+                            _id : '$project._id',
+                            name: '$project.projectName'
+                        }
+                    },
+                    'salesPerson': {
+                        $addToSet: {
+                            _id : '$salesPerson._id',
+                            name: {
+                                $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                            }
+                        }
+                    },*/
+                    'supplier'   : {
+                        $addToSet: {
+                            _id : '$supplier._id',
+                            name: {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                            }
+                        }
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
 
                 callback(null, result);
             });
         };
 
         function getSalesInvoiceFiltersValues(callback) {
-            wTrackInvoice.aggregate([
-                {
-                    $match: {
-                        forSales: true,
-                        _type   : "wTrackInvoice"
-                        //invoiceType: 'wTrack'
-                    }
-                },
-                {
-                    $group: {
-                        _id          : null,
-                        'project'    : {
-                            $addToSet: {
-                                _id : '$project._id',
-                                name: '$project.name'
+            wTrackInvoice.aggregate([{
+                $match: {
+                    forSales: true,
+                    _type   : "wTrackInvoice"
+                }
+            }, {
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "salesPerson",
+                    foreignField: "_id", as: "salesPerson"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    workflow   : {$arrayElemAt: ["$workflow", 0]},
+                    supplier   : {$arrayElemAt: ["$supplier", 0]},
+                    salesPerson: {$arrayElemAt: ["$salesPerson", 0]},
+                    project    : {$arrayElemAt: ["$project", 0]}
+                }
+            }, {
+                $project: {
+                    workflow   : 1,
+                    supplier   : 1,
+                    salesPerson: 1,
+                    project    : 1
+                }
+            }, {
+                $group: {
+                    _id          : null,
+                    'workflow'   : {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
+                        }
+                    },
+                    'project'    : {
+                        $addToSet: {
+                            _id : '$project._id',
+                            name: '$project.projectName'
+                        }
+                    },
+                    'salesPerson': {
+                        $addToSet: {
+                            _id : '$salesPerson._id',
+                            name: {
+                                $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
                             }
-                        },
-                        'salesPerson': {
-                            $addToSet: {
-                                _id : '$salesPerson._id',
-                                name: {'$ifNull': ['$salesPerson.name', 'None']}
-                            }
-                        },
-                        'supplier'   : {
-                            $addToSet: {
-                                _id : '$supplier._id',
-                                name: {'$ifNull': ['$supplier.name', 'None']}
-                            }
-                        },
-                        'workflow'   : {
-                            $addToSet: {
-                                _id : '$workflow._id',
-                                name: {'$ifNull': ['$workflow.name', 'None']}
+                        }
+                    },
+                    'supplier'   : {
+                        $addToSet: {
+                            _id : '$supplier._id',
+                            name: {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                             }
                         }
                     }
                 }
-            ], function (err, result) {
+            }], function (err, result) {
                 if (err) {
                     callback(err);
                 }
@@ -595,43 +895,84 @@ var Filters = function (models) {
                     $match: {
                         forSale: true
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Invoice",
+                        localField  : "invoice",
+                        foreignField: "_id", as: "invoice"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customers",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "PaymentMethod",
+                        localField  : "paymentMethod",
+                        foreignField: "_id", as: "paymentMethod"
+                    }
+                }, {
+                    $project: {
+                        supplier     : {$arrayElemAt: ["$supplier", 0]},
+                        invoice      : {$arrayElemAt: ["$invoice", 0]},
+                        paymentMethod: {$arrayElemAt: ["$paymentMethod", 0]},
+                        name         : 1
+                    }
+                }, {
+                    $project: {
+                        supplier     : 1,
+                        invoice      : 1,
+                        name         : 1,
+                        paymentMethod: 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "invoice.salesPerson",
+                        foreignField: "_id", as: "assigned"
+                    }
+                }, {
+                    $project: {
+                        supplier     : 1,
+                        assigned     : {$arrayElemAt: ["$assigned", 0]},
+                        name         : 1,
+                        paymentMethod: 1
+                    }
+                }, {
                     $group: {
                         _id            : null,
                         'assigned'     : {
                             $addToSet: {
-                                _id : '$invoice.assigned._id',
-                                name: '$invoice.assigned.name'
+                                _id : '$assigned._id',
+                                name: {
+                                    $concat: ['$assigned.name.first', ' ', '$assigned.name.last']
+                                }
                             }
                         },
                         'supplier'     : {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: {'$ifNull': ['$supplier.fullName', 'None']}
-                            }
-                        },
-                        'paymentMethod': {
-                            $addToSet: {
-                                _id : '$paymentMethod._id',
-                                name: {'$ifNull': ['$paymentMethod.name', 'None']}
-                            }
-                        },
-                        'workflow'     : {
-                            $addToSet: {
-                                _id : '$workflow',
-                                name: {'$ifNull': ['$workflow', 'None']}
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
                         'name'         : {
                             $addToSet: {
                                 _id : '$_id',
-                                name: {'$ifNull': ['$name', 'None']}
+                                name: '$name'
+                            }
+                        },
+                        'paymentMethod': {
+                            $addToSet: {
+                                _id : '$paymentMethod._id',
+                                name: '$paymentMethod.name'
                             }
                         }
                     }
-                }
-            ], function (err, result) {
+                }], function (err, result) {
                 if (err) {
                     callback(err);
                 }
@@ -643,48 +984,70 @@ var Filters = function (models) {
         };
 
         function getSupplierPaymentsFiltersValues(callback) {
-            customerPayments.aggregate([
-                {
-                    $match: {
-                        forSale: false,
-                        bonus  : true
-                    }
-                },
-                {
-                    $group: {
-                        _id         : null,
-                        'supplier'  : {
-                            $addToSet: {
-                                _id : '$supplier._id',
-                                name: '$supplier.fullName'
+            customerPayments.aggregate([{
+                $match: {
+                    forSale: false,
+                    bonus  : true
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    supplier  : {$arrayElemAt: ["$supplier", 0]},
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $project: {
+                    supplier  : 1,
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $group: {
+                    _id         : null,
+                    'supplier'  : {
+                        $addToSet: {
+                            _id : '$supplier._id',
+                            name: {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                             }
-                        },
-                        'paymentRef': {
-                            $addToSet: {
-                                _id : '$paymentRef',
-                                name: {'$ifNull': ['$paymentRef', 'None']}
-                            }
-                        },
-                        'year'      : {
-                            $addToSet: {
-                                _id : '$year',
-                                name: {'$ifNull': ['$year', 'None']}
-                            }
-                        },
-                        'month'     : {
-                            $addToSet: {
-                                _id : '$month',
-                                name: {'$ifNull': ['$month', 'None']}
-                            }
-                        },
-                        'workflow'  : {
-                            $addToSet: {
-                                _id : '$workflow',
-                                name: {'$ifNull': ['$workflow', 'None']}
-                            }
+                        }
+                    },
+                    'paymentRef': {
+                        $addToSet: {
+                            _id : '$paymentRef',
+                            name: {'$ifNull': ['$paymentRef', 'None']}
+                        }
+                    },
+                    'year'      : {
+                        $addToSet: {
+                            _id : '$year',
+                            name: {'$ifNull': ['$year', 'None']}
+                        }
+                    },
+                    'month'     : {
+                        $addToSet: {
+                            _id : '$month',
+                            name: {'$ifNull': ['$month', 'None']}
+                        }
+                    },
+                    'workflow'  : {
+                        $addToSet: {
+                            _id : '$workflow',
+                            name: {'$ifNull': ['$workflow', 'None']}
                         }
                     }
                 }
+            }
             ], function (err, result) {
                 if (err) {
                     callback(err);
@@ -768,22 +1131,34 @@ var Filters = function (models) {
                         forSales: false,
                         isOrder : false
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customers",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $project: {
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                    }
+                }, {
                     $group: {
                         _id       : null,
                         'supplier': {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: '$supplier.name'
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
-                        //'type': {
-                        //    $addToSet: {
-                        //        _id : '$type',
-                        //        name: '$type'
-                        //    }
-                        //},
                         'workflow': {
                             $addToSet: {
                                 _id : '$workflow._id',
@@ -815,8 +1190,44 @@ var Filters = function (models) {
                         forSales: true,
                         isOrder : false
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "project",
+                        foreignField: "_id", as: "project"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customers",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $project: {
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        project : {$arrayElemAt: ["$project", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.projectmanager",
+                        foreignField: "_id", as: "projectmanager"
+                    }
+                }, {
+                    $project: {
+                        workflow      : 1,
+                        project       : 1,
+                        supplier      : 1,
+                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                    }
+                }, {
                     $group: {
                         _id             : null,
                         'projectName'   : {
@@ -828,21 +1239,19 @@ var Filters = function (models) {
                         'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: '$supplier.name'
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
                         'projectmanager': {
                             $addToSet: {
-                                _id : '$project.projectmanager._id',
-                                name: '$project.projectmanager.name'
+                                _id : '$projectmanager._id',
+                                name: {
+                                    $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                                }
                             }
                         },
-                        //'type': {
-                        //    $addToSet: {
-                        //        _id : '$type',
-                        //        name: '$type'
-                        //    }
-                        //},
                         'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
@@ -873,8 +1282,44 @@ var Filters = function (models) {
                         forSales: true,
                         isOrder : true
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "project",
+                        foreignField: "_id", as: "project"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customers",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $project: {
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        project : {$arrayElemAt: ["$project", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.projectmanager",
+                        foreignField: "_id", as: "projectmanager"
+                    }
+                }, {
+                    $project: {
+                        workflow      : 1,
+                        project       : 1,
+                        supplier      : 1,
+                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                    }
+                }, {
                     $group: {
                         _id             : null,
                         'projectName'   : {
@@ -886,21 +1331,19 @@ var Filters = function (models) {
                         'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: '$supplier.name'
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
                         'projectmanager': {
                             $addToSet: {
-                                _id : '$project.projectmanager._id',
-                                name: '$project.projectmanager.name'
+                                _id : '$projectmanager._id',
+                                name: {
+                                    $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                                }
                             }
                         },
-                        //'type': {
-                        //    $addToSet: {
-                        //        _id : '$type',
-                        //        name: '$type'
-                        //    }
-                        //},
                         'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
@@ -926,30 +1369,146 @@ var Filters = function (models) {
 
         function getDashJobsFiltersValues(callback) {
             Jobs.aggregate([{
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id",
+                    as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Invoice",
+                    localField  : "invoice",
+                    foreignField: "_id",
+                    as: "invoice"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id",
+                    as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Quotation",
+                    localField  : "quotation",
+                    foreignField: "_id",
+                    as: "quotation"
+                }
+            }, {
+                $project: {
+                    name     : 1,
+                    workflow : {$arrayElemAt: ["$workflow", 0]},
+                    type     : 1,
+                    wTracks  : 1,
+                    project  : {$arrayElemAt: ["$project", 0]},
+                    budget   : 1,
+                    quotation: {$arrayElemAt: ["$quotation", 0]},
+                    invoice  : {$arrayElemAt: ["$invoice", 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : "Payment",
+                    localField  : "invoice._id",
+                    foreignField: "invoice._id",
+                    as: "payments"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "project.projectmanager",
+                    foreignField: "_id",
+                    as: "projectmanager"
+                }
+            }, {
+                $project: {
+                    order         : {
+                        $cond: {
+                            if  : {
+                                $eq: ['$type', 'Not Quoted']
+                            },
+                            then: -1,
+                            else: {
+                                $cond: {
+                                    if  : {
+                                        $eq: ['$type', 'Quoted']
+                                    },
+                                    then: 0,
+                                    else: 1
+                                }
+                            }
+                        }
+                    },
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    payment       : {
+                        paid : {$sum: '$payments.paidAmount'},
+                        count: {$size: '$payments'}
+                    }
+                }
+            }, {
+                $project: {
+                    order         : 1,
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    projectmanager: 1,
+                    payment       : 1
+                }
+            }, {
+                $match: {
+                    $or: [
+                        {"invoice._type": 'wTrackInvoice'},
+                        {quotation: {$exists: true}},
+                        {type: 'Not Quoted'}
+                    ]
+                }
+            }, {
                 $group: {
-                    _id       : null,
-                    'type'    : {
+                    _id             : null,
+                    'type'          : {
                         $addToSet: {
                             _id : '$type',
                             name: '$type'
                         }
                     },
-                    'workflow': {
+                    'workflow'      : {
                         $addToSet: {
                             _id : '$workflow._id',
                             name: '$workflow.name'
                         }
                     },
-                    'project'    : {
+                    'project'       : {
                         $addToSet: {
                             _id : '$project._id',
-                            name: '$project.name'
+                            name: '$project.projectName'
                         }
                     },
-                    'projectManager'    : {
+                    'projectManager': {
                         $addToSet: {
-                            _id : '$project.projectManager._id',
-                            name: '$project.projectManager.name'
+                            _id : '$projectmanager._id',
+                            name: {
+                                $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                            }
+                        }
+                    },
+                    'paymentsCount' : {
+                        $addToSet: {
+                            _id : '$payment.count',
+                            name: '$payment.count'
                         }
                     }
                 }
@@ -976,8 +1535,24 @@ var Filters = function (models) {
                         forSales: false,
                         isOrder : true
                     }
-                },
-                {
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customer",
+                        localField  : "supplier",
+                        foreignField: "_id", as: "supplier"
+                    }
+                }, {
+                    $project: {
+                        workflow: {$arrayElemAt: ["$workflow", 0]},
+                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                    }
+                }, {
                     $group: {
                         _id             : null,
                         'projectName'   : {
@@ -989,7 +1564,9 @@ var Filters = function (models) {
                         'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
-                                name: '$supplier.name'
+                                name: {
+                                    $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                                }
                             }
                         },
                         'projectmanager': {
@@ -998,12 +1575,6 @@ var Filters = function (models) {
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        //'type': {
-                        //    $addToSet: {
-                        //        _id : '$type',
-                        //        name: '$type'
-                        //    }
-                        //},
                         'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',

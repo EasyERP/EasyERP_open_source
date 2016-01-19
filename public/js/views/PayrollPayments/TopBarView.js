@@ -6,16 +6,16 @@ define([
     ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: CONSTANTS.PAYROLLPAYMENTS,
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
             events: {
                 "click a.changeContentView": 'changeContentViewType',
-                "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-saveBtn": "saveEvent"
+                "click #top-bar-deleteBtn" : "deleteEvent",
+                "click #top-bar-editBtn"   : "editEvent",
+                "click #top-bar-createBtn" : "createEvent",
+                "click #top-bar-saveBtn"   : "saveEvent"
             },
 
             changeContentViewType: function (e) {

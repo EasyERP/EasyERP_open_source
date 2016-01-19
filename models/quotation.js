@@ -3,6 +3,8 @@
  */
 
 module.exports = (function () {
+    'use strict';
+
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
     var Schema = mongoose.Schema;
@@ -25,30 +27,19 @@ module.exports = (function () {
         unitPrice    : Number,
         product      : {type: ObjectId, ref: 'Product', default: null},
         description  : {type: String, default: ''},
-        jobs: {type: ObjectId, ref: "jobs", default: null}
+        jobs         : {type: ObjectId, ref: "jobs", default: null}
     };
 
     var quotationSchema = new Schema({
-        currency: {
+        currency      : {
             _id : {type: ObjectId, ref: 'currency', default: null},
-            name: {type: String, default: ''},
             rate: {type: Number, default: 1}
         },
         forSales      : {type: Boolean, default: true},
         type          : {type: String, default: 'Not Ordered', enum: ['Not Ordered', 'Not Invoiced', 'Invoiced']},
         isOrder       : {type: Boolean, default: false},
-        supplier      : {
-            _id: {type: ObjectId, ref: 'Customers', default: null},
-            name: {type: String, default: ''}
-        },
-        project       : {
-            _id: {type: ObjectId, ref: 'Project', default: null},
-            projectmanager: {
-                _id: {type: ObjectId, ref: 'Employees', default: null},
-                name: {type: String, default: ''}
-            },
-            projectName: {type: String, default: ''}
-        },
+        supplier      : {type: ObjectId, ref: 'Customers', default: null},
+        project       : {type: ObjectId, ref: 'Project', default: null},
         deliverTo     : {type: ObjectId, ref: 'DeliverTo', default: null},
         orderDate     : {type: Date, default: Date.now},
         expectedDate  : Date,
@@ -60,10 +51,7 @@ module.exports = (function () {
         paymentTerm   : {type: ObjectId, ref: 'PaymentTerm', default: null},
         paymentInfo   : payments,
         products      : [products],
-        workflow      : {
-            _id: {type: ObjectId, ref: 'workflows', default: null},
-            name: {type: String, default: ''}
-        },
+        workflow      : {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW      : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups        : {
             owner: {type: ObjectId, ref: 'Users', default: null},
@@ -97,7 +85,7 @@ module.exports = (function () {
             },
             {
                 returnOriginal: false,
-                upsert: true
+                upsert        : true
             },
             function (err, rate) {
                 if (err) {

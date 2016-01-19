@@ -5,9 +5,9 @@ define([
         "text!templates/monthHours/createTemplate.html"
 
     ],
-    function (CreateTemplate){
+    function (CreateTemplate) {
         var CreateView = Backbone.View.extend({
-            el: "#listTable",
+            el      : "#listTable",
             template: _.template(CreateTemplate),
 
             initialize: function (options) {
@@ -15,7 +15,7 @@ define([
             },
 
             render: function (options) {
-               this.$el.prepend(this.template(options));
+                this.$el.prepend(this.template(options));
                 return this;
             }
         });

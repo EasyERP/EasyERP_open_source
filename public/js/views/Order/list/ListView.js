@@ -34,7 +34,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = {
-                    key: 'forSales',
+                    key  : 'forSales',
                     value: ['false']
                 };
                 this.forSales = false;
@@ -58,10 +58,9 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({ workflow: {
-                    _id: target$.attr("id"),
-                    name:target$.text()
-                }}, {
+                model.save({
+                    workflow: target$.attr("id")
+                }, {
                     headers : {
                         mid: 55
                     },
@@ -108,7 +107,7 @@ define([
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
@@ -134,7 +133,7 @@ define([
                 var notEditable = tr.hasClass('notEditable');
                 var model = new quotationModel({validate: false});
 
-                if (notEditable){
+                if (notEditable) {
                     return false;
                 }
 
@@ -145,7 +144,10 @@ define([
                         new editView({model: model});
                     },
                     error  : function () {
-                        alert('Please refresh browser');
+                        App.render({
+                            type: 'error',
+                            message: "Please refresh browser"
+                        });
                     }
                 });
             }

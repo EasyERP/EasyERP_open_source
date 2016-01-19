@@ -1,5 +1,6 @@
 define([
         "text!templates/Persons/EditTemplate.html",
+        'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
         "common",
@@ -7,12 +8,12 @@ define([
         "dataService",
         "populate"
     ],
-    function (EditTemplate, AssigneesView, SalesPurchasesView, common, Custom, dataService, populate) {
+    function (EditTemplate, selectView, AssigneesView, SalesPurchasesView, common, Custom, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             contentType: "Persons",
-            imageSrc: '',
-            template: _.template(EditTemplate),
+            imageSrc   : '',
+            template   : _.template(EditTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "render", "saveItem");
@@ -24,31 +25,19 @@ define([
             },
 
             events: {
-                "click #saveBtn": "saveItem",
-                "click #cancelBtn": "hideDialog",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "mouseenter .avatar": "showEdit",
-                "mouseleave .avatar": "hideEdit",
-                'click .dialog-tabs a': 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .details": "showDetailsBox"
+                "click #saveBtn"                                                  : "saveItem",
+                "click #cancelBtn"                                                : "hideDialog",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "mouseenter .avatar"                                              : "showEdit",
+                "mouseleave .avatar"                                              : "hideEdit",
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .details"                                                  : "showDetailsBox"
             },
 
             showDetailsBox: function (e) {
                 $(e.target).parent().find(".details-box").toggle();
-            },
-            notHide: function () {
-                return false;
-            },
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
             },
 
             changeTab: function (e) {
@@ -64,27 +53,31 @@ define([
             chooseUser: function (e) {
                 $(e.target).toggleClass("choosen");
             },
+
             hideDialog: function () {
                 $('.edit-person-dialog').remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
-            showEdit: function () {
+
+            showEdit  : function () {
                 $(".upload").animate({
-                    height: "20px",
+                    height : "20px",
                     display: "block"
                 }, 250);
 
             },
-            hideEdit: function () {
+
+            hideEdit  : function () {
                 $(".upload").animate({
-                    height: "0px",
+                    height : "0px",
                     display: "block"
                 }, 250);
 
             },
-            saveItem: function () {
+
+            saveItem  : function () {
                 var self = this;
                 var mid = 39;
                 var thisEl = this.$el;
@@ -97,7 +90,7 @@ define([
                 company = (company) ? company : null;
 
                 /*var department = $("#departmentDd").data("id");
-                department = (department) ? department : null;*/
+                 department = (department) ? department : null;*/
 
                 var jobPosition = $.trim(thisEl.find('#jobPositionInput').val());
                 jobPosition = (jobPosition) ? jobPosition : null;
@@ -138,50 +131,50 @@ define([
                 whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
 
                 data = {
-                    imageSrc: this.imageSrc,
-                    name: {
+                    imageSrc      : this.imageSrc,
+                    name          : {
                         first: $.trim(thisEl.find('#firstName').val()),
-                        last: $.trim(thisEl.find('#lastName').val())
+                        last : $.trim(thisEl.find('#lastName').val())
                     },
-                    dateBirth: dateBirth,
+                    dateBirth     : dateBirth,
                     /*department: department,*/
-                    company: company,
-                    address: {
-                        street: $.trim(thisEl.find('#addressInput').val()),
-                        city: $.trim(thisEl.find('#cityInput').val()),
-                        state: $.trim(thisEl.find('#stateInput').val()),
-                        zip: $.trim(thisEl.find('#zipInput').val()),
+                    company       : company,
+                    address       : {
+                        street : $.trim(thisEl.find('#addressInput').val()),
+                        city   : $.trim(thisEl.find('#cityInput').val()),
+                        state  : $.trim(thisEl.find('#stateInput').val()),
+                        zip    : $.trim(thisEl.find('#zipInput').val()),
                         country: $.trim(thisEl.find('#countryInput').val())
                     },
-                    website: $.trim(thisEl.find('#websiteInput').val()),
-                    jobPosition: jobPosition,
-                    skype: $.trim(thisEl.find('#skype').val()),
-                    phones: {
-                        phone: $.trim(thisEl.find('#phoneInput').val()),
+                    website       : $.trim(thisEl.find('#websiteInput').val()),
+                    jobPosition   : jobPosition,
+                    skype         : $.trim(thisEl.find('#skype').val()),
+                    phones        : {
+                        phone : $.trim(thisEl.find('#phoneInput').val()),
                         mobile: $.trim(thisEl.find('#mobileInput').val()),
-                        fax: $.trim(thisEl.find('#faxInput').val())
+                        fax   : $.trim(thisEl.find('#faxInput').val())
                     },
-                    social: {
+                    social        : {
                         LI: $.trim(thisEl.find('#LI').val()),
                         FB: $.trim(thisEl.find('#FB').val())
                     },
-                    email: $.trim(thisEl.find('#emailInput').val()),
+                    email         : $.trim(thisEl.find('#emailInput').val()),
                     salesPurchases: {
-                        isCustomer: isCustomer,
-                        isSupplier: isSupplier,
-                        active: active,
-                        salesPerson: salesPerson,
-                        salesTeam: salesTeam,
+                        isCustomer   : isCustomer,
+                        isSupplier   : isSupplier,
+                        active       : active,
+                        salesPerson  : salesPerson,
+                        salesTeam    : salesTeam,
                         implementedBy: implementedBy,
-                        reference: reference,
-                        language: language
+                        reference    : reference,
+                        language     : language
                     },
-                    groups: {
+                    groups        : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW      : whoCanRW
                 };
 
                 this.currentModel.save(data, {
@@ -194,25 +187,47 @@ define([
                         Backbone.history.fragment = "";
                         Backbone.history.navigate("#easyErp/Persons/form/" + model.id, {trigger: true});
                     },
-                    error: function (model, xhr) {
+                    error  : function (model, xhr) {
                         self.errorNotification(xhr);
                     }
                 });
             },
 
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
 
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
+                return false;
             },
 
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
-            chooseOption: function (e) {
+
+            chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            deleteItem: function (event) {
+
+            deleteItem   : function (event) {
                 var mid = 39;
                 event.preventDefault();
                 var self = this;
@@ -226,16 +241,20 @@ define([
                             $('.edit-person-dialog').remove();
                             Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         },
-                        error: function (model, err) {
+                        error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });
                 }
 
             },
-            render: function () {
+
+            render       : function () {
                 var self = this;
                 var notDiv;
                 var thisEl;
@@ -246,27 +265,27 @@ define([
                 });
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-person-dialog",
-                    title: "Edit Person",
-                    width: "900",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-person-dialog",
+                    title        : "Edit Person",
+                    width        : "900",
+                    buttons      : [
                         {
-                            text: "Save",
+                            text : "Save",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         },
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
                         }
                     ]
@@ -285,8 +304,8 @@ define([
 
                 salesPurchasesEl.append(
                     new SalesPurchasesView({
-                        parrent: self,
-                        model: this.currentModel,
+                        parrent  : self,
+                        model    : this.currentModel,
                         editState: true
                     }).render().el
                 );
@@ -295,15 +314,15 @@ define([
 
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
                 thisEl.find('.dateBirth').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    yearRange: '-100y:c+nn',
-                    maxDate: '-18y'
+                    changeYear : true,
+                    yearRange  : '-100y:c+nn',
+                    maxDate    : '-18y'
                 });
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -316,6 +335,7 @@ define([
                         });
 
                     }
+                }
                 this.delegateEvents(this.events);
                 return this;
             }

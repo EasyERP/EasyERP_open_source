@@ -11,7 +11,7 @@ define([
             this.isCreate = options.isCreate;
             this.elementId = options.elementId;
         },
-        events: {
+        events    : {
             "change .inputAttach": "addAttach",
             "click .deleteAttach": "deleteAttach"
         },
@@ -46,10 +46,9 @@ define([
             var fileArr = [];
             var addInptAttach;
 
-            if (!self){
+            if (!self) {
                 self = this;
             }
-
 
             if (this.isCreate) {
                 currentModel = model;
@@ -61,7 +60,7 @@ define([
 
                     if (!self.fileSizeIsAcceptable(addInptAttach)) {
                         return App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
                         });
                     }
@@ -74,13 +73,13 @@ define([
                 }
                 addInptAttach = fileArr;
             } else {
-               // event.preventDefault();
+                // event.preventDefault();
                 addInptAttach = addFrmAttach.find("#inputAttach")[0].files[0];
 
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     this.$el.find('#inputAttach').val('');
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
                     });
                 }
@@ -92,7 +91,7 @@ define([
                 var status = self.$el.find('.status');
                 var formURL;
 
-                if (self.import){
+                if (self.import) {
                     formURL = "http://" + window.location.host + "/importFile";
                 } else {
                     formURL = "http://" + window.location.host + ((self.url) ? self.url : "/uploadFiles");
@@ -100,11 +99,11 @@ define([
 
                 e.preventDefault();
                 addFrmAttach.ajaxSubmit({
-                    url: formURL,
-                    type: "POST",
+                    url        : formURL,
+                    type       : "POST",
                     processData: false,
                     contentType: false,
-                    data: [addInptAttach],
+                    data       : [addInptAttach],
 
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("id", currentModelId);
@@ -127,7 +126,7 @@ define([
                             self.hideDialog();
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
-                        } else if (self.import){
+                        } else if (self.import) {
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                         } else {
@@ -154,8 +153,9 @@ define([
                     error: function (xhr) {
                         $('.attachContainer').empty();
                         $('.bar .status').empty();
-                        if (self)
+                        if (self) {
                             self.errorNotification(xhr);
+                        }
                     }
                 });
             });
@@ -191,7 +191,7 @@ define([
                             headers: {
                                 mid: 39
                             },
-                            patch: true,//Send only changed attr(add Roma)
+                            patch  : true,//Send only changed attr(add Roma)
                             success: function () {
                                 self.$el.find('.attachFile_' + id).remove();
                             }
@@ -208,7 +208,7 @@ define([
 
             this.$el.html(this.template({
                 attachments: attachments,
-                elementId: this.elementId || 'addAttachments'
+                elementId  : this.elementId || 'addAttachments'
             }));
             return this;
         }

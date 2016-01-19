@@ -99,7 +99,7 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({'workflow._id': target$.attr("id"), 'workflow.name': target$.html()}, {
+                model.save({'workflow': target$.attr("id")}, {
                     headers : {
                         mid: 39
                     },
@@ -140,7 +140,6 @@ define([
                     }
                 }
             },
-
 
             pushStages: function (stages) {
                 this.stages = stages;

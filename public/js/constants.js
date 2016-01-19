@@ -6,7 +6,7 @@ define([], function () {
         wTrack          : {
             'Assigned'    : {
                 view   : 'projectManager',
-                backend: 'project.projectmanager._id',
+                backend: 'projectmanager._id',
                 type   : 'ObjectId'
             },
             'Employee'    : {
@@ -16,7 +16,7 @@ define([], function () {
             },
             'Customer'    : {
                 view   : 'customer',
-                backend: 'project.customer._id',
+                backend: 'customer._id',
                 type   : 'ObjectId'
             },
             'Project Name': {
@@ -182,6 +182,10 @@ define([], function () {
                 view   : 'project',
                 backend: 'project'
             },
+            'Task Summary': {
+                view   : 'summary',
+                backend: 'summary'
+            },
             'Status'     : {
                 view   : 'workflow',
                 backend: 'workflow'
@@ -198,23 +202,19 @@ define([], function () {
         customerPayments: {
             'Assigned'   : {
                 view   : 'assigned',
-                backend: 'invoice.assigned._id'
+                backend: 'assigned._id'
             },
             'Company'    : {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Payment Way': {
+            'Payment way': {
                 view   : 'paymentMethod',
                 backend: 'paymentMethod._id'
             },
             'Name'       : {
                 view   : 'name',
                 backend: '_id'
-            },
-            'Status'     : {
-                view   : 'workflow',
-                backend: 'workflow'
             }
         },
         supplierPayments: {
@@ -288,11 +288,17 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Type'    : {
-                view   : 'type',
-                backend: 'type'
-            },
             'Status'  : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        Invoice     : {
+            'Supplier'    : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Status'      : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
@@ -308,11 +314,7 @@ define([], function () {
             },
             'Sales Manager': {
                 view   : 'projectmanager',
-                backend: 'project.projectmanager._id'
-            },
-            'Type'         : {
-                view   : 'type',
-                backend: 'type'
+                backend: 'projectmanager._id'
             },
             'Status'       : {
                 view   : 'workflow',
@@ -330,11 +332,7 @@ define([], function () {
             },
             'Sales Manager': {
                 view   : 'projectmanager',
-                backend: 'project.projectmanager._id'
-            },
-            'Type'         : {
-                view   : 'type',
-                backend: 'type'
+                backend: 'projectmanager._id'
             },
             'Status'       : {
                 view   : 'workflow',
@@ -345,10 +343,6 @@ define([], function () {
             'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
-            },
-            'Type'    : {
-                view   : 'type',
-                backend: 'type'
             },
             'Status'  : {
                 view   : 'workflow',
@@ -370,21 +364,25 @@ define([], function () {
             }
         },
         "Dashboard"     : {
-            "Sales Manager" : {
+            "Sales Manager": {
                 view   : 'projectManager',
-                backend: 'project.projectManager._id'
+                backend: 'projectmanager._id'
             },
-            "Project" : {
+            "Project"      : {
                 view   : 'project',
                 backend: 'project._id'
             },
-            "Status": {
+            "Status"       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
-            "Type"  : {
+            "Type"         : {
                 view   : 'type',
                 backend: 'type'
+            },
+            "Payment Count": {
+                view   : 'paymentsCount',
+                backend: 'payment.count'
             }
         }
     };
@@ -428,7 +426,7 @@ define([], function () {
         ATTENDANCE        : 'Attendance',
         DASHBOARD_VACATION: 'DashBoardVacation',
         DASHBOARD_HR      : 'HrDashboard',
-        HOURS             : 'Hours',
+        EFFICIENCY        : 'Efficiency',
         CAPACITY          : 'Capacity',
         JOBSDASHBOARD     : 'jobsDashboard',
         PAYROLLPAYMENTS   : 'PayrollPayments',
@@ -437,6 +435,7 @@ define([], function () {
         CHARTOFACCOUNT    : "ChartOfAccount",
         JOURNAL           : "journal",
         JOURNALENTRY      : "journalEntry",
+        INVOICECHARTS     : "invoiceCharts",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -459,6 +458,11 @@ define([], function () {
             'Design',
             'PM'
         ],
-        SELECTP_ROJECT   : 'Please select a Project'
-    }
+        SELECTP_ROJECT   : 'Please select a Project',
+
+        IT_SERVICES: 'IT services',
+
+        DASH_VAC_WEEK_BEFORE: 2,
+        DASH_VAC_WEEK_AFTER: 8
+    };
 });

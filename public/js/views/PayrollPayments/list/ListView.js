@@ -193,7 +193,6 @@ define([
                     }
                 }
 
-
                 return false;
             },
 
@@ -672,7 +671,6 @@ define([
 
                 $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
-
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
 
@@ -785,7 +783,10 @@ define([
                                     },
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
-                                            alert("You do not have permission to perform this action");
+                                            App.render({
+                                                type: 'error',
+                                                message: "You do not have permission to perform this action"
+                                            });
                                         }
                                         that.listLength--;
                                         localCounter++;
