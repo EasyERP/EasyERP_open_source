@@ -158,6 +158,8 @@ define([
                         currencySplitter: helpers.currencySplitter,
                         getClass        : self.getClass
                     }));
+
+                    self.renderFilter(self);
                 }
             },
 
@@ -165,8 +167,6 @@ define([
                 var filter = this.filter;
                 var url = '#easyErp/jobsDashboard';
                 this.$el.html(this.template());
-
-                this.renderFilter(this);
 
                 this.renderJobs();
 
