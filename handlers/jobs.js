@@ -84,6 +84,137 @@ var Jobs = function (models, event) {
         });
     };
 
+    this.totalCollectionLength = function (req, res, next) {
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var queryObject = {};
+        var queryObjectStage2 = {};
+        var data = req.query;
+        var forDashboard = true;
+        var filter = data ? data.filter : {};
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
+        }
+
+        if (forDashboard) { //add for jobsDash need refactor
+            queryObjectStage2['$or'] = [];
+            queryObjectStage2['$or'].push({type: 'Not Quoted'});
+            queryObjectStage2['$or'].push({"invoice._type": 'wTrackInvoice'});
+            queryObjectStage2['$or'].push({quotation: {$exists: true}});
+        }
+
+        JobsModel
+            .aggregate([{
+                $lookup: {
+                    from                   : "Project",
+                    localField             : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from                   : "Invoice",
+                    localField             : "invoice",
+                    foreignField: "_id", as: "invoice"
+                }
+            }, {
+                $lookup: {
+                    from                   : "workflows",
+                    localField             : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from                   : "Quotation",
+                    localField             : "quotation",
+                    foreignField: "_id", as: "quotation"
+                }
+            }, {
+                $project: {
+                    name     : 1,
+                    workflow : {$arrayElemAt: ["$workflow", 0]},
+                    type     : 1,
+                    wTracks  : 1,
+                    project  : {$arrayElemAt: ["$project", 0]},
+                    budget   : 1,
+                    quotation: {$arrayElemAt: ["$quotation", 0]},
+                    invoice  : {$arrayElemAt: ["$invoice", 0]}
+                }
+            }, {
+                $lookup: {
+                    from                       : "Payment",
+                    localField                 : "invoice._id",
+                    foreignField: "invoice", as: "payments"
+                }
+            }, {
+                $lookup: {
+                    from                   : "Employees",
+                    localField             : "project.projectmanager",
+                    foreignField: "_id", as: "projectmanager"
+                }
+            }, {
+                $project: {
+                    order         : {
+                        $cond: {
+                            if  : {
+                                $eq: ['$type', 'Not Quoted']
+                            },
+                            then: -1,
+                            else: {
+                                $cond: {
+                                    if  : {
+                                        $eq: ['$type', 'Quoted']
+                                    },
+                                    then: 0,
+                                    else: 1
+                                }
+                            }
+                        }
+                    },
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    payment       : {
+                        paid : {$sum: '$payments.paidAmount'},
+                        count: {$size: '$payments'}
+                    }
+                }
+            }, {
+                $project: {
+                    order         : 1,
+                    name          : 1,
+                    workflow      : 1,
+                    type          : 1,
+                    wTracks       : 1,
+                    project       : 1,
+                    budget        : 1,
+                    quotation     : 1,
+                    invoice       : 1,
+                    payment       : 1,
+                    projectmanager: 1
+                }
+            }, {
+                $match: queryObject
+            }, {
+                $match: queryObjectStage2
+            }], function (err, jobs) {
+                if (err) {
+                    next(err);
+                }
+                res.status(200).send({count: jobs.length});
+            });
+
+    };
+
     this.getData = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
@@ -97,6 +228,9 @@ var Jobs = function (models, event) {
         var data = req.query;
         var forDashboard = data.forDashboard;
         var sort = {"budget.budgetTotal.costSum": -1};
+        var count = parseInt(data.count, 10) || 100;
+        var page = parseInt(data.page, 10);
+        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         var filter = data ? data.filter : {};
 
@@ -230,6 +364,10 @@ var Jobs = function (models, event) {
                 $match: queryObjectStage2
             }, {
                 $sort: sort
+            }, {
+                $skip: skip
+            }, {
+                $limit: count
             }], function (err, jobs) {
                 if (err) {
                     next(err);

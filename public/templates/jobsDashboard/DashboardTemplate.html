@@ -1,6 +1,6 @@
 <<% collection.forEach(function(job, count){ %>
 <tr data-id="<%=job._id%>" class="<%=getClass(job)%>">
-    <td><%=count + 1%></a></td>
+    <td><%=startNumber + count + 1%></a></td>
     <td><%=job.project && job.projectmanager? job.projectmanager.name.first + ' ' + job.projectmanager.name.last : "---"%></td>
     <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
         job.project.projectName : "---"%></a></td>
