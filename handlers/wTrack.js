@@ -1402,7 +1402,7 @@ var wTrack = function (event, models) {
                     if (hours) {
                         weekCounter = Math.ceil(hours / totalForWeek);
 
-                        endDate = moment(startDate).isoWeek(startIsoWeek + weekCounter).day(5);
+                        endDate = moment(startDate).isoWeek(startIsoWeek + weekCounter + 1).day(5);
                     }
 
                     endIsoWeek = moment(endDate).isoWeek();

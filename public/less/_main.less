@@ -4523,6 +4523,7 @@ h3.dashboard {
       width: auto !important;
     }
   }
+
   .project-edit-info {
     .dl-auto(200px, 42%);
     input {
@@ -4534,8 +4535,8 @@ h3.dashboard {
     #health {
       width: 25px;
     }
-
   }
+
   .job-create-info {
     .dl-auto(200px, 42%);
     input {
@@ -4544,7 +4545,17 @@ h3.dashboard {
     select {
       width: 212px;
     }
+  }
 
+  input {
+    &.statusInfo {
+      width: 100%;
+      border-color: transparent;
+      &:focus {
+        border: 1px solid transparent;
+        box-shadow: none;
+      }
+    }
   }
 
   .create-employee-info {
