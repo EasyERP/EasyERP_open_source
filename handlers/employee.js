@@ -58,7 +58,7 @@ var Employee = function (models) {
             }
         }, {
             $group: {
-                _id: {$min: '$year'}
+                _id: '$year'
             }
         }], function (err, result) {
             if (err) {
@@ -66,8 +66,9 @@ var Employee = function (models) {
             }
 
             var arr = _.pluck(result, '_id');
+            var min = _.min(arr);
 
-            res.status(200).send(_.min(arr));
+            res.status(200).send({min: min});
         });
 
     };
