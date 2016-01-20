@@ -134,6 +134,7 @@ define([
 
                 if (targetId === 'update') {
                     $(tds[0]).text('Hired');
+                    $(tds[1]).addClass('changeContent');
                     $(tds[1]).text(common.utcDateToLocaleDate(newDate));
                     $(tds[7]).find('input').val('Update');
                 } else if (contractEndReason) {
@@ -171,7 +172,7 @@ define([
                 var tempContainer;
 
                 tempContainer = ($target.text()).trim();
-                $target.html('<input class="editing" type="text" value="' + tempContainer + '">');
+                $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
 
                 if (dataId === 'salary') {
                     return false;
@@ -648,7 +649,7 @@ define([
                 populate.get("#jobTypeDd", "/jobType", {}, "name", this);
                 populate.get("#nationality", "/nationality", {}, "_id", this);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
-                populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, false, true);
+                populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, false, false);
                 populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
                 populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this);
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);

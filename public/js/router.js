@@ -35,7 +35,7 @@ define([
             "easyErp/invoiceCharts(/filter=:filter)"                                                        : "invoiceCharts",
             "easyErp/HrDashboard"                                                                           : "hrDashboard",
             "easyErp/projectDashboard"                                                                      : "goToProjectDashboard",
-            "easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
+            //"easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
             "easyErp/:contentType"                                                                          : "getList",
 
             "*any": "any"
@@ -600,15 +600,18 @@ define([
 
                     custom.setCurrentVT('list');
 
+                    var topbarView = new topBarView({
+                        actionType: "Content"
+                    });
+
                     var contentview = new contentView({
                         startTime: startTime,
                         filter   : filter
                     });
-                    var topbarView = new topBarView({
-                        actionType: "Content"
-                    });
-                    self.changeView(contentview);
+
                     self.changeTopBarView(topbarView);
+
+                    self.changeView(contentview);
                 });
             }
         },

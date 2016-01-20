@@ -151,9 +151,9 @@ query.exec(function (error, _res) {
                 date: obj.date,
                 department: obj.department,
                 jobPosition: obj.jobPosition,
-                manager: emp.manager,
-                jobType: emp.jobType,
-                salary: 0,
+                manager: obj.manager,
+                jobType: obj.jobType && obj.jobType.length > 0 ? obj.jobType : 'Full-time',
+                salary: obj.salary,
                 info: ""
             });
         });
@@ -163,17 +163,18 @@ query.exec(function (error, _res) {
                 date: obj.date,
                 department: obj.department,
                 jobPosition: obj.jobPosition,
-                manager: emp.manager,
-                jobType: emp.jobType,
-                salary: 0,
-                info: emp.contractEnd ? emp.contractEnd.reason : ''
+                manager: obj.manager,
+                jobType:  obj.jobType && obj.jobType.length > 0 ? obj.jobType : 'Full-time',
+                salary: obj.salary,
+                info: obj.contractEnd ? obj.contractEnd.reason : ''
             });
         });
 
         if (emp) {
             objectToSave = {
                 hire: hire,
-                fire: fire
+                fire: fire,
+                jobType: emp.jobType && emp.jobType.length ? emp.jobType : 'Full-time'
             };
         }
 

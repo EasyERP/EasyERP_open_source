@@ -153,7 +153,7 @@ define([
 
                 if (isDTPicker) {
                     tempContainer = (el.text()).trim();
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '">');
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '" readonly>');
                     el.find('.editing').datepicker({
                         dateFormat : "d M, yy",
                         changeMonth: true,

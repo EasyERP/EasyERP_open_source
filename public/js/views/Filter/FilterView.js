@@ -9,9 +9,10 @@ define([
         'common',
         'constants',
         'models/UsersModel',
-        'dataService'
+        'dataService',
+        "async"
     ],
-    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, usersModel, dataService) {
+    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, usersModel, dataService, async) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el                 : '#searchContainer',
@@ -451,7 +452,7 @@ define([
                 filtersGroupContainer = this.$el.find('#filtersContent');
 
                 if (keys.length) {
-                    keys.forEach(function (key) {
+                    async.each(keys, function (key, cb) {
                         filterView = self.constantsObject[key].view;
                         filterBackend = self.constantsObject[key].backend;
 
@@ -470,17 +471,14 @@ define([
                         }
                         groupOptions = options && options[filterView] ? options[filterView] : null;
 
-                        self.renderGroup(key, filterView, filterBackend, groupStatus, groupOptions);
+                        self.renderGroup(key, filterView, filterBackend, groupStatus, groupOptions, cb);
+                    }, function () {
+                        self.showFilterIcons(App.filter);
                     });
                 }
-
-                if (App.filter && this.enable) {
-                    this.showFilterIcons(App.filter);
-                }
-
             },
 
-            renderGroup: function (key, filterView, filterBackend, groupStatus, groupOptions) {
+            renderGroup: function (key, filterView, filterBackend, groupStatus, groupOptions, cb) {
                 var itemView;
                 var idString = '#' + filterView + 'FullContainer';
                 var container = this.$el.find(idString);
@@ -492,7 +490,7 @@ define([
 
                 if (!App.filtersValues || !App.filtersValues[self.parentContentType]) {
                     return setTimeout(function () {
-                        self.renderGroup(key, filterView, groupStatus);
+                        self.renderGroup(key, filterView, groupStatus, null, null, cb);
                     }, 10);
                 }
 
@@ -546,6 +544,11 @@ define([
 
                 container.html('');
                 container.html(itemView.render());
+
+                if (cb){
+                    cb();
+                }
+
             },
 
             toggleSearchResultGroup: function (e) {
@@ -611,7 +614,7 @@ define([
                 $currentEl.html(this.template({filterCollection: this.constantsObject}));
 
                 this.renderFilterContent(options);
-                this.showFilterIcons(filters);
+                //this.showFilterIcons(filters);
                 this.renderSavedFilters();
 
                 $.widget("custom.catcomplete", $.ui.autocomplete, {
