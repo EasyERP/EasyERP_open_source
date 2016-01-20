@@ -43,15 +43,39 @@ var Employee = function (models) {
             });
     };
 
+    this.getYears = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+       Employee.aggregate([{
+           $project: {
+               hire: 1
+           }
+       }, {
+           $unwind: '$hire'
+       }, {
+           $project: {
+               year: {$year: '$hire.date'}
+           }
+       }
+       ], function(err, result){
+           if (err){
+              return next(err);
+           }
+
+           res.status(200).send(result[0]);
+       });
+
+    };
+
     this.getForDD = function (req, res, next) {
         var isEmployee = req.query.isEmployee;
 
         getNameAndDepartment(req.session.lastDb, isEmployee, function (err, result) {
             if (err) {
-                return next(err)
+                return next(err);
             }
 
-            res.status(200).send({data: result})
+            res.status(200).send({data: result});
         });
     };
 

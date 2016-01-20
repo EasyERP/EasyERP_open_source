@@ -1,0 +1,52 @@
+<div id="searchContainer"></div>
+<div>
+    <table class="report-list">
+        <colgroup class="borders">
+            <col width="14%">
+            <col width="14%">
+        </colgroup>
+
+        <colgroup id="columnForMonth" class="borders">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+        </colgroup>
+        <thead>
+            <tr id="caption">
+                <th>Department</th>
+                <th>Employee</th>
+                <th id="legandCaption" class="subHeaderHolder">
+                 Months
+                </th>
+                <th rowspan="2">
+                    <a id="yearSelect" class="current-selected" data-content="<%=year%>" href="javascript:;"><%=year%></a>
+                </th>
+            </tr>
+            <tr class="subHeaderHolder">
+                <th>January</th>
+                <th>February</th>
+                <th>March</th>
+                <th>April</th>
+                <th>May</th>
+                <th>Jun</th>
+                <th>July</th>
+                <th>August</th>
+                <th>September</th>
+                <th>October</th>
+                <th>November</th>
+                <th>December</th>
+            </tr>
+        </thead>
+
+        <tbody id="listTable"></tbody>
+        </table>
+</div>

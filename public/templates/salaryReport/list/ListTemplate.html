@@ -1,0 +1,11 @@
+<% collection.forEach(function(emp, index){ %>
+<tr data-id="<%=emp._id%>">
+    <td>
+        <%=emp.department ? emp.department.departmentName : ''%>
+    </td>
+    <td>
+        <%=emp.employee ? emp.employee.name.first + ' ' + emp.employee.name.last : ''%>
+    </td>
+
+</tr>
+<% }) %>
