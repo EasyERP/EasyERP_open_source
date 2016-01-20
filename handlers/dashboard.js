@@ -663,7 +663,7 @@ var wTrack = function (models) {
                 .aggregate([
                     {
                         $match: {
-                            hire: {$gte: startDate, $lte: endDate}
+                            'hire.date': {$gte: startDate, $lte: endDate}
                         }
                     },
                     {
@@ -694,14 +694,14 @@ var wTrack = function (models) {
                         $unwind: '$hire'
                     }, {
                         $match: {
-                            hire: {$gte: startDate, $lte: endDate}
+                            'hire.date': {$gte: startDate, $lte: endDate}
                         }
                     }, {
                         $project: {
                             isEmployee: 1,
                             department: 1,
                             isLead    : 1,
-                            hireDate  : {$add: [{$multiply: [{$year: '$hire'}, 100]}, {$month: '$hire'}]},
+                            hireDate  : {$add: [{$multiply: [{$year: '$hire.date'}, 100]}, {$month: '$hire.date'}]},
                             name      : 1
                         }
                     }, {
@@ -737,7 +737,7 @@ var wTrack = function (models) {
                 .aggregate([
                     {
                         $match: {
-                            $and: [{fire: {$gte: startDate}}, {fire: {$lte: endDate}}]
+                            $and: [{'fire.date': {$gte: startDate}}, {'fire.date': {$lte: endDate}}]
                         }
                     },
                     {
@@ -768,14 +768,14 @@ var wTrack = function (models) {
                         $unwind: '$fire'
                     }, {
                         $match: {
-                            fire: {$gte: startDate, $lte: endDate}
+                            'fire.date': {$gte: startDate, $lte: endDate}
                         }
                     }, {
                         $project: {
                             isEmployee: 1,
                             department: 1,
                             isLead    : 1,
-                            fireDate  : {$add: [{$multiply: [{$year: '$fire'}, 100]}, {$month: '$fire'}]},
+                            fireDate  : {$add: [{$multiply: [{$year: '$fire.date'}, 100]}, {$month: '$fire.date'}]},
                             name      : 1
                         }
                     }, {

@@ -363,7 +363,7 @@ define([], function () {
                 backend: 'dataKey'
             }
         },
-        "Dashboard"     : {
+        "jobsDashboard"     : {
             "Sales Manager": {
                 view   : 'projectManager',
                 backend: 'projectmanager._id'

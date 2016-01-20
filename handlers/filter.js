@@ -122,7 +122,7 @@ var Filters = function (models) {
                 Order           : getOrdersFiltersValues,
                 PayrollExpenses : getPayRollFiltersValues,
                 DashVacation    : getDashVacationFiltersValues,
-                Dashboard       : getDashJobsFiltersValues
+                jobsDashboard       : getDashJobsFiltersValues
             },
             function (err, result) {
                 if (err) {

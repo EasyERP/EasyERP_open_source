@@ -358,7 +358,7 @@ define([
                     this.$el.find('.search-options').addClass('hidden');
                 }
 
-                if (typeof(this.setChangedValueToModel) === "function"){ //added for SetChangesToModel in ListView
+                if (typeof(this.setChangedValueToModel) === "function" && el.tagName !== 'SELECT'){ //added for SetChangesToModel in ListView
                     this.setChangedValueToModel();
                 }
             },

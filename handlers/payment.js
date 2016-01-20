@@ -1036,12 +1036,7 @@ var Payment = function (models, event) {
                                         } else {
                                             paymentInfoNew.balance = paymentInfo.balance;
                                         }
-                                        Invoice.findByIdAndUpdate(invoiceId, {
-                                            $set: {
-                                                workflow   : workflowObj,
-                                                paymentInfo: paymentInfoNew
-                                            }
-                                        }, {new: true}, function (err, result) {
+                                        Invoice.findByIdAndUpdate(invoiceId, {workflow   : workflowObj, paymentInfo: paymentInfoNew}, {new: true}, function (err, result) {
                                             if (err) {
                                                 return next(err);
                                             }
