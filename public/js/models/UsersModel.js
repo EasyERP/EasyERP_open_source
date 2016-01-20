@@ -1,4 +1,7 @@
-define(['Validation'], function (Validation) {
+define([
+    'Backbone',
+    'Validation'
+], function (Backbone, Validation) {
     var UserModel = Backbone.Model.extend({
         idAttribute: "_id",
         defaults   : {
@@ -25,7 +28,7 @@ define(['Validation'], function (Validation) {
         },
         validate   : function (attrs, options) {
             var errors = [];
-            if (options.editMode == false) {
+            if (options.editMode === false) {
                 Validation.checkLoginField(errors, true, attrs.login, "Login");
                 Validation.checkEmailField(errors, false, attrs.email, "Email");
                 Validation.checkPasswordField(errors, true, attrs.pass, "Password");
@@ -33,7 +36,7 @@ define(['Validation'], function (Validation) {
                 Validation.checkPasswordField(errors, true, attrs.oldpass, "Old password");
                 Validation.comparePasswords(errors, attrs.pass, options.confirmPass);
             }
-            else if (options.editMode == true) {
+            else if (options.editMode === true) {
                 Validation.checkLoginField(errors, true, attrs.login, "Login");
                 Validation.checkEmailField(errors, false, attrs.email, "Email");
             }
