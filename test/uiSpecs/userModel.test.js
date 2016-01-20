@@ -24,7 +24,7 @@ define([
             it('Set within validation, should fail', function () {
                 user.set({login: 234234234234234}, {validate: true});
 
-                expect().to.be.equal('pupkin');
+                expect(user.get('login')).to.be.equal('pupkin');
             });
         });
     });
