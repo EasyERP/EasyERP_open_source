@@ -411,10 +411,10 @@ var PayRoll = function (models) {
                         error = new Error();
                         error.status = 403;
 
-                        return next(error);
+                        next(error);
                     }
 
-                    composeSalaryReport(req, function (err, result) {
+                    salaryReport(req, function (err, result) {
                         if (err) {
                             return next(err);
                         }
@@ -426,11 +426,11 @@ var PayRoll = function (models) {
                 error = new Error();
                 error.status = 401;
 
-                return next(error);
+                next(error);
             }
         };
 
-        function composeSalaryReport(req, cb) {
+        function salaryReport(req, cb) {
             var self = this;
             var date = new Date();
             var db = req.session.lastDb;
@@ -438,7 +438,7 @@ var PayRoll = function (models) {
             var query = req.query;
             var year = parseInt(query.year) || date.getFullYear();
             var filter = query.filter || '';
-            var key = 'salaryReport' + filter;
+            var key = 'salaryReport' + filter + year.toString();
             var redisStore = require('../helpers/redisClient');
 
             var waterfallTasks = [checkFilter, getResult];
@@ -482,8 +482,6 @@ var PayRoll = function (models) {
                         matchObj['$and'] = caseFilterEmployee(filter);
                     }
                 }
-
-
 
                 Employee
                     .aggregate([{
@@ -583,6 +581,10 @@ var PayRoll = function (models) {
                 }
             });
         }
+
+        this.composeSalaryReport = function (req, cb) {
+            salaryReport(req, cb);
+        };
 
         this.generate = function (req, res, next) {
             var db = req.session.lastDb;
@@ -726,7 +728,6 @@ var PayRoll = function (models) {
             }
 
         };
-    }
-    ;
+    };
 
 module.exports = PayRoll;
