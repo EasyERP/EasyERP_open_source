@@ -25,8 +25,8 @@ MongoClient.connect(url, function (err, db) {
     function childModule(callback) {
         var module = {
             _id: 88,
-            mname: 'salaryReport',
-            href: 'Salary Report',
+            mname: 'Salary Report',
+            href: 'salaryReport',
             sequence: 69,
             parrent: 9,
             link: true,

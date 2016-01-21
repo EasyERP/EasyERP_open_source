@@ -56,6 +56,7 @@ module.exports = function (app, mainDb) {
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
     var journalRouter = require('./journal')(models);
+    var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
 
     var async = require('async');
@@ -175,7 +176,7 @@ module.exports = function (app, mainDb) {
     app.use('/employee', employeeRouter);
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
-    //app.use('/payroll', salaryRouter);
+    app.use('/salaryReport', salaryReportRouter);
     app.use('/opportunity', opportunityRouter);
     app.use('/task', taskRouter);
     app.use('/jobPosition', jobPositionRouter);

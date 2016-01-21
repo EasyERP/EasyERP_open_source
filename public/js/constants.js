@@ -384,6 +384,16 @@ define([], function () {
                 view   : 'paymentsCount',
                 backend: 'payment.count'
             }
+        },
+        "salaryReport": {
+            "Employee": {
+                view   : 'employee',
+                backend: '_id'
+            },
+            "Department": {
+                view   : 'department',
+                backend: 'department._id'
+            }
         }
     };
 
@@ -436,6 +446,7 @@ define([], function () {
         JOURNAL           : "journal",
         JOURNALENTRY      : "journalEntry",
         INVOICECHARTS     : "invoiceCharts",
+        SALARYREPORT: "salaryReport",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

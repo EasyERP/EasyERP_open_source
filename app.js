@@ -3,8 +3,6 @@
  * @class MyClass
  * @type {exports|module.exports}
  */
-
-
 module.exports = function (mainDb, dbsNames) {
     'use strict';
     //mongoose is delegated because it encapsulated main connection
