@@ -14,7 +14,7 @@ define([
         viewType    : 'list',
 
         initialize: function (options) {
-            this.sortOrder = 1;
+           // this.sortOrder = 1;
             options = options || {};
             this.startTime = new Date();
             var self = this;
@@ -40,17 +40,14 @@ define([
             var nameB = getSortName(modelB);
 
             function getSortName(model) {
-                var sortAttr = self.sortKey ? model.get(self.sortKey) : model.get('employee');
+                var sortAttr = self.sortKey ? model.get(self.sortKey) : model.get('name');
 
                 if (sortAttr) {
-                    if (self.sortSubKey) {
-                        return sortAttr[self.sortSubKey];
-                    } else {
-                        return sortAttr['name'];
-                    }
+                    return sortAttr;
                 }
 
-                return false;
+
+                return sortAttr;
             }
 
             if (nameA && nameB) {
@@ -64,10 +61,9 @@ define([
             }
         },
 
-        sortByOrder: function (key, subKey, order) {
+        sortByOrder: function (key, order) {
             this.sortOrder = order;
             this.sortKey = key;
-            this.sortSubKey = subKey;
             this.sort();
         },
 

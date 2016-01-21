@@ -58,7 +58,7 @@ define([
                 var target = $(e.target);
                 var currentParrentSortClass = target.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
-                var dataSort = target.attr('data-sort').split('.');
+                var dataSort = target.attr('data-sort');
                 var sortConst = 1;
                 var collection;
                 var itemView;
@@ -84,7 +84,7 @@ define([
                         break;
                 }
 
-                this.collection.sortByOrder(dataSort[0], dataSort[1], sortConst);
+                this.collection.sortByOrder(dataSort, sortConst);
 
                 this.$el.find("#listTable").html('');
 
