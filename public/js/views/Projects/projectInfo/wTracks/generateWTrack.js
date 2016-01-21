@@ -244,7 +244,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             var endDate = moment(targetInput.datepicker('getDate'));
                             var endContainer = $(endDatePicker);
 
-                            endDate.add(7, 'days');
+                            endDate.add(6, 'days');
                             endDate = endDate.toDate();
 
                             endContainer.datepicker('option', 'minDate', endDate);
