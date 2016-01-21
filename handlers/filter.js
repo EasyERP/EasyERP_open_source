@@ -122,7 +122,8 @@ var Filters = function (models) {
                 Order           : getOrdersFiltersValues,
                 PayrollExpenses : getPayRollFiltersValues,
                 DashVacation    : getDashVacationFiltersValues,
-                jobsDashboard       : getDashJobsFiltersValues
+                jobsDashboard       : getDashJobsFiltersValues,
+                salaryReport       : getsalaryReportFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -370,6 +371,55 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
+        function getsalaryReportFiltersValues(callback) {
+            Employee.aggregate([
+                {
+                    $match: {'isEmployee': true}
+                }, {
+                    $lookup: {
+                        from        : "Department",
+                        localField  : "department",
+                        foreignField: "_id",
+                        as: "department"
+                    }
+                }, {
+                    $project: {
+                        department : {$arrayElemAt: ["$department", 0]},
+                        name       : 1
+                    }
+                }, {
+                    $project: {
+                        department    : 1,
+                        name          : 1
+                    }
+                }, {
+                    $group: {
+                        _id          : null,
+                        'employee'       : {
+                            $addToSet: {
+                                _id : '$_id',
+                                name: {$concat: ['$name.first', ' ', '$name.last']}
+                            }
+                        },
+                        'department' : {
+                            $addToSet: {
+                                _id : '$department._id',
+                                name: {'$ifNull': ['$department.departmentName', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
 
         function getEmployeeFiltersValues(callback) {
             Employee.aggregate([

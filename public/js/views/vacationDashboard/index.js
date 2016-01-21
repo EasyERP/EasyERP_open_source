@@ -34,15 +34,22 @@ define([
             var dashCollection;
             var year;
             var week;
+            var filter;
 
             this.startTime = options.startTime;
-            this.filter = options.filter || custom.retriveFromCash('DashVacation.filter');
+            filter = this.filter = options.filter || custom.retriveFromCash('DashVacation.filter');
 
             year = moment().isoWeekYear();
             week = moment().isoWeek();
 
             this.dateByWeek = year * 100 + week;
-            this.momentDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
+
+            if(filter && filter.startDate){
+                filter.startDate = new Date(filter.startDate);
+                this.momentDate = moment(filter.startDate);
+            } else {
+                this.momentDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
+            }
 
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
             custom.cacheToApp('DashVacation.filter', this.filter);
@@ -380,8 +387,9 @@ define([
 
         defaultDataGenerator: function () {
             var startDate = this.momentDate;
-            var endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
-            var duration = endDate.diff(startDate, 'weeks');
+            var filter = this.filter;
+            var endDate;
+            var duration;
             var weeksArr = custom.retriveFromCash('vacationDashWeeksArr') || [];
             var weeks = 0;
             var week;
@@ -389,6 +397,15 @@ define([
             var _dateStr;
 
             var i;
+
+            if(filter && filter.endDate){
+                endDate = new Date(filter.endDate);
+                endDate = moment(endDate);
+            } else {
+                endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
+            }
+
+            duration = endDate.diff(startDate, 'weeks');
 
             if (!weeksArr || !weeksArr.length) {
                 for (i = 0; i <= duration; i++) {

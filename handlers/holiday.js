@@ -154,9 +154,9 @@ var Holiday = function (models, event) {
     };
 
     this.create = function (req, res, next) {
-        var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+        var HolidayModel = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var body = mapObject(req.body);
-        var Holiday = new Holiday(body);
+        var Holiday = new HolidayModel(body);
         access.getEditWritAccess(req, req.session.uId, 69, function (access) {
             if (access) {
                 Holiday.save(function (err, Holiday) {
