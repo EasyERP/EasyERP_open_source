@@ -205,9 +205,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     });
                     var errors = this.$el.find('.errorContent');
 
-                    this.resultArray.push(defaultObject);
+
 
                     if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
+
+                        this.resultArray.push(defaultObject);
 
                         if (!trEll.length) {
                             parrent.prepend(elem);
