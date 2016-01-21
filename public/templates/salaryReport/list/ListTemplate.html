@@ -1,5 +1,6 @@
 <% collection.forEach(function(emp, index){ %>
 <tr data-id="<%=emp._id%>">
+    <td><%= index + 1 %></td>
     <td>
         <%=emp.department ? emp.department : ''%>
     </td>

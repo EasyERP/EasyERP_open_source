@@ -14,6 +14,7 @@ define([
         viewType    : 'list',
 
         initialize: function (options) {
+            this.sortOrder = 1;
             options = options || {};
             this.startTime = new Date();
             var self = this;
@@ -31,6 +32,43 @@ define([
                     console.log(xhr);
                 }
             });
+        },
+
+        comparator: function (modelA, modelB) {
+            var self = this;
+            var nameA = getSortName(modelA);
+            var nameB = getSortName(modelB);
+
+            function getSortName(model) {
+                var sortAttr = self.sortKey ? model.get(self.sortKey) : model.get('employee');
+
+                if (sortAttr) {
+                    if (self.sortSubKey) {
+                        return sortAttr[self.sortSubKey];
+                    } else {
+                        return sortAttr['name'];
+                    }
+                }
+
+                return false;
+            }
+
+            if (nameA && nameB) {
+                if (nameA > nameB) {
+                    return self.sortOrder;
+                } else if (nameA < nameB) {
+                    return self.sortOrder * (-1);
+                } else {
+                    return 0;
+                }
+            }
+        },
+
+        sortByOrder: function (key, subKey, order) {
+            this.sortOrder = order;
+            this.sortKey = key;
+            this.sortSubKey = subKey;
+            this.sort();
         },
 
         showMore: function (options) {

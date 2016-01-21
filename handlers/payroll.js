@@ -430,32 +430,6 @@ var PayRoll = function (models) {
             }
         };
 
-        this.caseFilterEmployee = function (filter) {
-            var condition;
-            var resArray = [];
-            var filtrElement = {};
-            var key;
-
-            for (var filterName in filter) {
-                condition = filter[filterName]['value'];
-                key = filter[filterName]['key'];
-
-                switch (filterName) {
-                    case '_id':
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'department':
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                }
-            }
-            ;
-
-            return resArray;
-        };
-
         function composeSalaryReport(req, cb) {
             var self = this;
             var date = new Date();
@@ -464,31 +438,55 @@ var PayRoll = function (models) {
             var query = req.query;
             var year = parseInt(query.year) || date.getFullYear();
             var filter = query.filter || '';
-            var queryObject = {};
             var key = 'salaryReport' + filter;
             var redisStore = require('../helpers/redisClient');
 
             var waterfallTasks = [checkFilter, getResult];
+
+            function caseFilterEmployee(filter) {
+                var condition;
+                var resArray = [];
+                var filtrElement = {};
+                var key;
+
+                for (var filterName in filter) {
+                    condition = filter[filterName]['value'];
+                    key = filter[filterName]['key'];
+
+                    switch (filterName) {
+                        case 'employee':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                }
+
+                return resArray;
+            };
 
             function checkFilter(callback) {
                 callback(null, filter);
             }
 
             function getResult(filter, callback) {
+                var matchObj = {isEmployee: true};
+
                 if (filter && typeof filter === 'object') {
                     if (filter.condition && filter.condition === 'or') {
-                        queryObject['$or'] = self.caseFilterEmployee(filter);
+                        matchObj['$or'] = caseFilterEmployee(filter);
                     } else {
-                        queryObject['$and'] = self.caseFilterEmployee(filter);
+                        matchObj['$and'] = caseFilterEmployee(filter);
                     }
                 }
 
+
+
                 Employee
                     .aggregate([{
-                        $match: {
-                            isEmployee: true
-                        }
-                    }, {
                         $lookup: {
                             from                   : 'Department',
                             localField             : 'department',
@@ -511,6 +509,8 @@ var PayRoll = function (models) {
                             name      : 1
                         }
                     }, {
+                        $match: matchObj
+                    }, {
                         $unwind: '$hire'
                     }, {
                         $project: {
@@ -523,7 +523,7 @@ var PayRoll = function (models) {
                         }
                     }, {
                         $match: {
-                            'year': {$lt: year + 1},
+                            'year': {$lt: year + 1}
                         }
                     }, {
                         $project: {

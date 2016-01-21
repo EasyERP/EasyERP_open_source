@@ -387,7 +387,7 @@ define([], function () {
         },
         "salaryReport": {
             "Employee": {
-                view   : '_id',
+                view   : 'employee',
                 backend: '_id'
             },
             "Department": {
