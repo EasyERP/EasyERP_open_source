@@ -34,36 +34,37 @@ define([
             });
         },
 
-        comparator: function (modelA, modelB) {
-            var self = this;
-            var nameA = getSortName(modelA);
-            var nameB = getSortName(modelB);
-
-            function getSortName(model) {
-                var sortAttr = self.sortKey ? model.get(self.sortKey) : model.get('name');
-
-                if (sortAttr) {
-                    return sortAttr;
-                }
-
-
-                return sortAttr;
-            }
-
-            if (nameA && nameB) {
-                if (nameA > nameB) {
-                    return self.sortOrder;
-                } else if (nameA < nameB) {
-                    return self.sortOrder * (-1);
-                } else {
-                    return 0;
-                }
-            }
-        },
-
         sortByOrder: function (key, order) {
             this.sortOrder = order;
             this.sortKey = key;
+
+            this.comparator = function (modelA, modelB) {
+                var self = this;
+                var nameA = getSortName(modelA);
+                var nameB = getSortName(modelB);
+
+                function getSortName(model) {
+                    var sortAttr = self.sortKey ? model.get(self.sortKey) : model.get('name');
+
+                    if (sortAttr) {
+                        return sortAttr;
+                    }
+
+
+                    return sortAttr;
+                }
+
+                if (nameA && nameB) {
+                    if (nameA > nameB) {
+                        return self.sortOrder;
+                    } else if (nameA < nameB) {
+                        return self.sortOrder * (-1);
+                    } else {
+                        return 0;
+                    }
+                }
+            };
+            
             this.sort();
         },
 

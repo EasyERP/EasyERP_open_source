@@ -32,7 +32,7 @@ define([
             filterView        : FilterView,
 
             events: {
-                "click .current-selected"                          : "showNewSelect",
+                "click .salaryReport-selected"                          : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click"                                            : "hideNewSelect",
                 "click .oe_sortable"                                              : "goSort"
