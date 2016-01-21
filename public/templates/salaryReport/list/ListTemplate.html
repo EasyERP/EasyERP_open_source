@@ -14,14 +14,18 @@
 
     <% for (var j = 0; j <= length - 1; j++) {%>
 
-    <%if (key >= emp.hire[j].hireDate) {%>
+      <%if (key >= emp.hire[j].hireDate) {%>
 
-    <% salary = emp.hire[j].hire.salary; %>;
+       <% salary = emp.hire[j].hire.salary; %>;
 
-    <%}%>
       <%}%>
+    <%}%>
 
     <td><%=salary%></td>
+    <%}%>
+
+    <%for (var i = 12 - month; i > 0; i--) {%>
+    <td>&nbsp;</td>
     <%}%>
 
 </tr>

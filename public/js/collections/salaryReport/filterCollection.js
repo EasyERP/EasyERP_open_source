@@ -64,7 +64,7 @@ define([
                     }
                 }
             };
-            
+
             this.sort();
         },
 
