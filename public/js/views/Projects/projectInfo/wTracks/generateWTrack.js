@@ -16,18 +16,18 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 responseObj              : {},
 
                 events: {
-                    "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                    "click .current-selected"                          : "showNewSelect",
-                    "click #addNewEmployeeRow"                         : "addNewEmployeeRow",
-                    "click a.generateType"                             : "generateType",
-                    "click td.editable"                                : "editRow",
-                    "change .editable "                                : "setEditable",
-                    'mouseover tbody tr:not("#addNewItem")'            : 'showRemove',
-                    'mouseleave tbody tr:not("#addNewItem")'           : 'hideRemove',
-                    'click .remove'                                    : 'deleteRow',
-                    "keydown input:not(#jobName, #selectInput)"        : "onKeyDownInput",
-                    "keyup input:not(#jobName, #selectInput)"          : "onKeyUpInput",
-                    "click"                                            : "hideSelects"
+                    "click .newSelectList li:not(.miniStylePagination)"       : "chooseOption",
+                    "click .current-selected"                                 : "showNewSelect",
+                    "click #addNewEmployeeRow"                                : "addNewEmployeeRow",
+                    "click a.generateType"                                    : "generateType",
+                    "click td.editable"                                       : "editRow",
+                    "change .editable "                                       : "setEditable",
+                    'mouseover tbody tr:not("#addNewItem")'                   : 'showRemove',
+                    'mouseleave tbody tr:not("#addNewItem")'                  : 'hideRemove',
+                    'click .remove'                                           : 'deleteRow',
+                    "keydown input:not(#jobName, #selectInput)"               : "onKeyDownInput",
+                    "keyup input:not(#jobName, #selectInput, .hasDatepicker)" : "onKeyUpInput",
+                    "click"                                                   : "hideSelects"
                 },
 
                 hideSelects: function (e) {
