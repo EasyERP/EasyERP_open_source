@@ -9609,3 +9609,14 @@ textarea#editInput {
   background-color: #66b5d4;
   color: white;
 }
+.salaryReport {
+  padding-top: 20px;
+}
+.salaryReport .salaryReport-selected {
+  position: absolute;
+  top: -30px;
+  left: 155px;
+  text-decoration: underline;
+  line-height: 30px;
+  font-size: 18px;
+}
