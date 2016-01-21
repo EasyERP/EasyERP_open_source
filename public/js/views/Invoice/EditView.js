@@ -536,7 +536,7 @@ define([
                         var dueDatePicker = $('#due_date');
                         var endDate = $(this).datepicker('getDate');
 
-                        endDate.setDate(endDate.getDate() + 14);
+                        endDate.setDate(endDate.getDate());
 
                         dueDatePicker.datepicker('option', 'minDate', endDate);
                     }

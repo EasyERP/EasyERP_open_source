@@ -1,0 +1,32 @@
+<% collection.forEach(function(emp, index){ %>
+<tr data-id="<%=emp._id%>">
+    <td><%= index + 1 %></td>
+    <td>
+        <%=emp.department ? emp.department : ''%>
+    </td>
+    <td>
+        <%=emp ? emp.name: ''%>
+    </td>
+    <% for (var i = 1; i <= month; i++) {%>
+    <%var salary = '&nbsp;'%>
+    <%var key = year * 100 + i;%>
+    <%var length =  emp.hire.length; %>
+
+    <% for (var j = 0; j <= length - 1; j++) {%>
+
+      <%if (key >= emp.hire[j].hireDate) {%>
+
+       <% salary = emp.hire[j].hire.salary; %>;
+
+      <%}%>
+    <%}%>
+
+    <td><%=salary%></td>
+    <%}%>
+
+    <%for (var i = 12 - month; i > 0; i--) {%>
+    <td>&nbsp;</td>
+    <%}%>
+
+</tr>
+<% }) %>
