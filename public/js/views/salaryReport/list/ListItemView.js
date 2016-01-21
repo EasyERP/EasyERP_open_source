@@ -11,10 +11,12 @@ define([
 
             initialize: function (options) {
                 this.collection = options.collection;
+                this.year = options.year;
+                this.month = options.month;
             },
 
             render: function () {
-                this.$el.append(_.template(listTemplate, {collection: this.collection}));
+                this.$el.append(_.template(listTemplate, {collection: this.collection, year: this.year, month: this.month}));
             }
         });
 

@@ -2,9 +2,8 @@
  * Created by liliy on 20.01.2016.
  */
 define([
-    'models/EmployeeDashboardItem',
-    'custom'
-], function (EmpModel, custom) {
+    'models/EmployeeDashboardItem'
+], function (EmpModel) {
     var salatyCollection = Backbone.Collection.extend({
 
         model       : EmpModel,
@@ -20,32 +19,13 @@ define([
             var self = this;
 
             this.filter = options ? options.filter : {};
-            this.projectId = options.projectId;
-            this.bySocket = options.bySocket;
+            this.year = options.year;
 
             this.fetch({
                 data   : options,
                 reset  : true,
                 success: function (newCollection) {
 
-                    var key = 'jobs_projectId:' + self.projectId;
-                    var collection = custom.retriveFromCash(key);
-
-                    self.page++;
-
-                    if (collection && collection.length) {
-
-                        if (!App.projectInfo || (App.projectInfo && App.projectInfo.currentTab !== 'overview')) {
-                            collection.reset(newCollection.models);
-                        } else if (self.bySocket) {
-                            App.render({
-                                type   : 'notify',
-                                message: 'Data were changed, please refresh browser'
-                            });
-                        }
-                    } else {
-                        custom.cacheToApp(key, newCollection, true);
-                    }
                 },
                 error  : function (err, xhr) {
                     console.log(xhr);

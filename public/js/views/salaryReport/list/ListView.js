@@ -30,7 +30,7 @@ define([
             responseObj: {},
 
             events: {
-                "click td.editable, .current-selected"             : "showNewSelect",
+                "click .current-selected"             : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click"                                            : "hideNewSelect"
             },
@@ -43,6 +43,8 @@ define([
                 this.sort = options.sort ? options.sort : {};
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.page = options.collection.page;
+
+                this.year = options.year || (new Date()).getFullYear();
 
                 this.render();
 
@@ -101,7 +103,12 @@ define([
                 var collection;
                 var itemView;
 
-                var year = this.startTime.getFullYear();
+                var year = this.year;
+                var month = 12;
+
+                if (year === (new Date()).getFullYear()){
+                    month = (new Date()).getMonth() + 1;
+                }
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate, {year: year}));
@@ -113,7 +120,9 @@ define([
                 this.$el.find("#listTable").html('');
 
                 itemView = new listItemView({
-                    collection: collection
+                    collection: collection,
+                    year: this.year,
+                    month: month
                 });
 
                 $currentEl.append(itemView.render());

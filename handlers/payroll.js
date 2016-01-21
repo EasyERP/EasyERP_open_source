@@ -411,7 +411,7 @@ var PayRoll = function (models) {
                         error = new Error();
                         error.status = 403;
 
-                       return next(error);
+                        return next(error);
                     }
 
                     composeSalaryReport(req, function (err, result) {
@@ -426,7 +426,7 @@ var PayRoll = function (models) {
                 error = new Error();
                 error.status = 401;
 
-               return next(error);
+                return next(error);
             }
         };
 
@@ -460,9 +460,9 @@ var PayRoll = function (models) {
             var self = this;
             var date = new Date();
             var db = req.session.lastDb;
-            var Employee =  models.get(db, 'Employees', EmployeeSchema);
+            var Employee = models.get(db, 'Employees', EmployeeSchema);
             var query = req.query;
-            var year = query.year || date.getFullYear();
+            var year = parseInt(query.year) || date.getFullYear();
             var filter = query.filter || '';
             var queryObject = {};
             var key = 'salaryReport' + filter;
@@ -484,55 +484,86 @@ var PayRoll = function (models) {
                 }
 
                 Employee
-                    .aggregate([
-                        {
-                            $match: {
-                                "isEmployee": true
-                            }
-                        }, {
-                            $project: {
-                                isEmployee: 1,
-                                department: 1,
-                                hire      : 1,
-                                fire      : 1,
-                                name      : 1
-                            }
-                        }, {
-                            $unwind: '$hire'
-                        }, {
-                            $project: {
-                                isEmployee: 1,
-                                department: 1,
-                                hire      : 1,
-                                fire      : 1,
-                                name      : 1,
-                                year: {$year: '$hire.date'}
-                            }
-                        }, {
-                            $match: {
-                                'year': {$gte: year, $lt: year + 1}
-                            }
-                        }, {
-                            $project: {
-                                isEmployee: 1,
-                                department: 1,
-                                hire      : 1,
-                                fire      : 1,
-                                name      : 1,
-                                hireDate: {$add: [{$multiply: [{$year: '$hire.date'}, 100]}, {$month: '$hire.date'}]}
-                            }
-                        }, {
-                            $group: {
-                                _id           : '$hireDate',
-                                hiredCount    : {$sum: 1},
-                                hiredEmployees: {$addToSet: '$$ROOT'}
-                            }
-                        }, {
-                            $sort: {
-                                _id: 1
-                            }
-                        }], function(err, result){
-                        if (err){
+                    .aggregate([{
+                        $match: {
+                            isEmployee: true
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : 'Department',
+                            localField             : 'department',
+                            foreignField: '_id', as: 'department'
+                        }
+                    }, {
+                        $project: {
+                            department: {$arrayElemAt: ["$department", 0]},
+                            isEmployee: 1,
+                            hire      : 1,
+                            fire      : 1,
+                            name      : 1
+                        }
+                    }, {
+                        $project: {
+                            isEmployee: 1,
+                            department: 1,
+                            hire      : 1,
+                            fire      : 1,
+                            name      : 1
+                        }
+                    }, {
+                        $unwind: '$hire'
+                    }, {
+                        $project: {
+                            isEmployee: 1,
+                            department: 1,
+                            hire      : 1,
+                            fire      : 1,
+                            name      : 1,
+                            year      : {$year: '$hire.date'}
+                        }
+                    }, {
+                        $match: {
+                            'year': {$lt: year + 1},
+                        }
+                    }, {
+                        $project: {
+                            isEmployee: 1,
+                            department: 1,
+                            hire      : 1,
+                            fire      : 1,
+                            name      : 1,
+                            month     : {$month: '$hire.date'},
+                            year      : 1,
+                            hireDate  : {$add: [{$multiply: [{$year: '$hire.date'}, 100]}, {$month: '$hire.date'}]}
+                        }
+                    }, {
+                        $group: {
+                            _id       : '$_id',
+                            department: {$addToSet: '$department'},
+                            name      : {$addToSet: '$name'},
+                            hire      : {$push: '$$ROOT'}
+                        }
+                    }, {
+                        $project: {
+                            _id       : 1,
+                            department: {$arrayElemAt: ["$department", 0]},
+                            name      : {$arrayElemAt: ["$name", 0]},
+                            hire      : 1
+                        }
+                    }, {
+                        $project: {
+                            _id       : 1,
+                            department: '$department.departmentName',
+                            name      : {$concat: ['$name.first', ' ', '$name.last']},
+                            hire      : 1
+                        }
+                    }, {
+                        $sort: {
+                            department: 1,
+                            name      : 1
+                        }
+                    }], function (err, result) {
+                        if (err) {
                             callback(err);
                         }
 

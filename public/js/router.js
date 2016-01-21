@@ -728,6 +728,7 @@ define([
                 var newCollection = true;
                 var self = context;
                 var savedFilter;
+                var year;
                 var startTime = new Date();
                 var contentViewUrl = "views/" + contentType + "/list/ListView";
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
@@ -759,6 +760,8 @@ define([
                         };
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
+                    } else if (contentType === 'salaryReport') {
+                        year = (new Date()).getFullYear();
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -780,7 +783,8 @@ define([
                         filter          : savedFilter,
                         parrentContentId: parrentContentId,
                         contentType     : contentType,
-                        newCollection   : newCollection
+                        newCollection   : newCollection,
+                        year            : year
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
