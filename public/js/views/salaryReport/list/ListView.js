@@ -32,10 +32,10 @@ define([
             filterView        : FilterView,
 
             events: {
-                "click .salaryReport-selected"                          : "showNewSelect",
+                "click .salaryReport-selected"                     : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click"                                            : "hideNewSelect",
-                "click .oe_sortable"                                              : "goSort"
+                "click .oe_sortable"                               : "goSort"
             },
 
             initialize: function (options) {
@@ -117,7 +117,7 @@ define([
                 this.year = year;
 
                 var searchObject = {
-                    year: year,
+                    year  : year,
                     filter: this.filter
                 };
 
@@ -151,9 +151,6 @@ define([
                 var $target = $(e.target);
                 e.stopPropagation();
 
-                if ($target.attr('id') === 'selectInput') {
-                    return false;
-                }
                 $target.append(this.ul);
 
                 return false;
@@ -183,17 +180,15 @@ define([
                 var $currentEl = this.$el;
                 var collection;
                 var itemView;
-
-                var year = this.year;
-
+                var dateNow = new Date();
                 this.month = 12;
 
-                if (year === (new Date()).getFullYear()) {
-                    this.month = (new Date()).getMonth() + 1;
+                if (this.year === dateNow.getFullYear()) {
+                    this.month = dateNow.getMonth() + 1;
                 }
 
                 $currentEl.html('');
-                $currentEl.append(_.template(listTemplate, {year: year}));
+                $currentEl.append(_.template(listTemplate, {year: this.year}));
 
                 this.yearElement = $currentEl.find('#yearSelect');
 
