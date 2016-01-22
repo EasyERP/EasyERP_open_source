@@ -465,8 +465,8 @@ var PayRoll = function (models) {
             var key;
 
             for (filterName in filter) {
-                condition = filter[filterName]['value'];
-                key = filter[filterName]['key'];
+                condition = filter[filterName].value;
+                key = filter[filterName].key;
 
                 switch (filterName) {
                     case 'employee':
