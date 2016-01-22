@@ -2195,21 +2195,21 @@ var requestHandler = function (app, event, mainDb) {
         employee.getTotalCount(req, res);
     }
 
-    function createEmployee(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    data.employee.uId = req.session.uId;
-                    employee.create(req, data.employee, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function createEmployee(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                data.employee.uId = req.session.uId;
+    //                employee.create(req, data.employee, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     function uploadEmployeesFile(req, res, id, files) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2226,37 +2226,37 @@ var requestHandler = function (app, event, mainDb) {
     };
 
     // get employee or Applications for list or thumbnails
-    function getEmployeesFilter(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.getFilter(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    }
+    //function getEmployeesFilter(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.getFilter(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     // Get Employee form by employee id
-    function getEmployeesById(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.getById(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-
-    };
+    //function getEmployeesById(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.getById(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //
+    //};
 
     function updateEmployees(req, res, id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2295,20 +2295,20 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function removeEmployees(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function removeEmployees(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
     function getEmployeesAlphabet(req, res) {
         try {
             if (req.session && req.session.loggedIn && req.session.lastDb) {

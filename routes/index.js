@@ -31,7 +31,7 @@ module.exports = function (app, mainDb) {
     var periodRouter = require('./period')(models);
     var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models);
-    var employeeRouter = require('./employee')(models);
+    var employeeRouter = require('./employee')(event, models);
     var departmentRouter = require('./department')(models);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
@@ -1244,31 +1244,31 @@ module.exports = function (app, mainDb) {
         requestHandler.getForDdByRelatedUser(req, res);
     });
 
-    app.get('/Employees/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "list":
-                requestHandler.getEmployeesFilter(req, res);
-                break;
-            case "thumbnails":
-                requestHandler.getEmployeesFilter(req, res);
-                break;
-            case "form":
-                requestHandler.getEmployeesById(req, res);
-                break;
-        }
+    //app.get('/Employees/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "list":
+    //            requestHandler.getEmployeesFilter(req, res);
+    //            break;
+    //        case "thumbnails":
+    //            requestHandler.getEmployeesFilter(req, res);
+    //            break;
+    //        case "form":
+    //            requestHandler.getEmployeesById(req, res);
+    //            break;
+    //    }
+    //
+    //});
 
-    });
-
-    app.post('/Employees', function (req, res) {
-        var data = {};
-        data.employee = req.body;
-        requestHandler.createEmployee(req, res, data);
-    });
+    //app.post('/Employees', function (req, res) {
+    //    var data = {};
+    //    data.employee = req.body;
+    //    requestHandler.createEmployee(req, res, data);
+    //});
 
     app.put('/Employees/:_id', function (req, res) {
         var data = {};
@@ -1281,10 +1281,10 @@ module.exports = function (app, mainDb) {
         requestHandler.employeesUpdateOnlySelectedFields(req, res, id, req.body);
     });
 
-    app.delete('/Employees/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeEmployees(req, res, id);
-    });
+    //app.delete('/Employees/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeEmployees(req, res, id);
+    //});
 
     app.get('/getSalesPerson', function (req, res) {
         var data = {};

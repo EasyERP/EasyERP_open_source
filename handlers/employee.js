@@ -6,7 +6,7 @@ var Employee = function (models) {
     /**
      * @module Employee
      */
-    //var access = require("../Modules/additions/access.js")(models);
+    var access = require("../Modules/additions/access.js")(models);
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var _ = require('underscore');
@@ -41,7 +41,7 @@ var Employee = function (models) {
 
                 callback(null, employees);
             });
-    };
+    }
 
     this.getYears = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -169,6 +169,65 @@ var Employee = function (models) {
                 res.status(200).send(result);
             });
 
+    };
+
+    function getDate(date) {
+        var _date = new Date(date);
+        var currentTimeZoneOffsetInMiliseconds = -_date.getTimezoneOffset() * 60 * 1000;
+        var valaueOf_date = _date.valueOf();
+
+        valaueOf_date += currentTimeZoneOffsetInMiliseconds;
+
+        return new Date(valaueOf_date);
+    }
+
+    function getAge(birthday) {
+        var today = new Date();
+        var years;
+
+        birthday = new Date(birthday);
+        years = today.getFullYear() - birthday.getFullYear();
+
+        birthday.setFullYear(today.getFullYear());
+
+        if (today < birthday) {
+            years--;
+        }
+        return (years < 0) ? 0 : years;
+    }
+
+    this.create = function (req, res, next) {
+        var employee;
+
+        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+            if (access) {
+
+                var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+                var body =req.body;
+
+                if (body.dateBirth) {
+                    body.dateBirth = getDate(body.dateBirth);
+                    body.age = getAge(body.dateBirth);
+                }
+
+                employee = new Employee(body);
+
+                employee.save(function (err, employee) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.send(201, {success: 'A new Employees create success', result: employee, id: employee._id});
+
+                    if (employee.isEmployee) {
+                        event.emit('recalculate', req);
+                    }
+
+                });
+            } else {
+                res.status(403).send();
+            }
+        });
     };
 
 };
