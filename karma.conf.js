@@ -9,11 +9,13 @@ module.exports = function (config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['mocha', 'requirejs', 'chai'],
+        frameworks: ['mocha', 'requirejs', 'chai', 'nodeunit'],
 
         // list of files / patterns to load in the browser
         files: [
             'test/uiSpecs/testMain.js',
+
+            {pattern: 'test/uiSpecs/index.html', watched: false},
 
             {pattern: 'public/js/libs/jquery-2.1.0.min.map.js', included: false, watching: false},
             {pattern: 'public/js/libs/underscore-min.map.1.6.0.js', included: false, watching: false},
@@ -63,7 +65,11 @@ module.exports = function (config) {
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: false,
-
+        client: {
+            mocha: {
+                ui: "bdd"
+            }
+        },
         // Concurrency level
         // how many browser should be started simultaneous
         concurrency: Infinity

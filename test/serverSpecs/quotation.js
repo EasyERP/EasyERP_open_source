@@ -1,7 +1,7 @@
 /**
  * Created by Roman on 24.08.2015.
  */
-require('../config/development');
+require('../../config/development');
 
 var request = require('supertest');
 var expect = require('chai').expect;

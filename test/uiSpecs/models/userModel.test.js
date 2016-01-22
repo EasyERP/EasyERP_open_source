@@ -8,7 +8,7 @@ define([
 
         describe('#initialize()', function () {
             it('should be a user object', function () {
-                user = new UserModel();
+                user = new UserModel({});
 
                 expect(user).to.be.instanceOf(Object);
             });
