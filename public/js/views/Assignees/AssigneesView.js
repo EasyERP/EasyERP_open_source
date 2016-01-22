@@ -167,6 +167,8 @@ define([
             var userDialog = $('#addUseDialog');
 
             if (userDialog.length) {
+                this.updateAssigneesPagination(userDialog.find("#sourceUsers").closest(".left")); // need refresh if cancel Dialog
+                this.updateAssigneesPagination(userDialog.find("#targetUsers").closest(".left"));
                 return userDialog.dialog("open");
             }
 
@@ -247,6 +249,8 @@ define([
             var dialog;
 
             if (userDialog.length) {
+                this.updateAssigneesPagination(userDialog.find("#sourceGroups").closest(".left")); // need refresh if cancel Dialog
+                this.updateAssigneesPagination(userDialog.find("#targetGroups").closest(".left"));
                 return userDialog.dialog("open");
             }
 
