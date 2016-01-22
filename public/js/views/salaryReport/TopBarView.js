@@ -1,12 +1,16 @@
 /**
  * Created by liliy on 20.01.2016.
  */
+"use strict";
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/salaryReport/TopBarTemplate.html',
         'custom',
         'constants'
     ],
-    function (ContentTopBarTemplate, Custom, CONSTANTS) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.SALARYREPORT,

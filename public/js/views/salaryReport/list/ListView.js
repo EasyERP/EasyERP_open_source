@@ -1,14 +1,13 @@
 /**
  * Created by liliy on 20.01.2016.
  */
+"use strict";
 define([
-        "Backbone",
         "jQuery",
         "Underscore",
         'views/listViewBase',
         'text!templates/salaryReport/list/ListHeader.html',
         'views/salaryReport/list/ListItemView',
-        'views/selectView/selectView',
         'views/Filter/FilterView',
         'collections/salaryReport/filterCollection',
         'constants',
@@ -17,7 +16,7 @@ define([
         'dataService'
     ],
 
-    function (Backbone, $, _, listViewBase, listTemplate, listItemView, selectView, FilterView, reportCollection, CONSTANTS, async, moment, dataService) {
+    function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, async, moment, dataService) {
         var ListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -90,7 +89,7 @@ define([
 
                 collection = this.collection.toJSON();
 
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection: collection,
                     year      : this.year,
                     month     : this.month
@@ -103,7 +102,7 @@ define([
                 this.hideNewSelect();
 
                 var $target = $(e.target);
-                var year = parseInt($target.text());
+                var year = parseInt($target.text(), 0);
 
                 this.yearElement.attr('data-content', year);
                 this.yearElement.text(year);
@@ -134,7 +133,7 @@ define([
 
                 collection = newModels.toJSON();
 
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection: collection,
                     year      : this.year,
                     month     : this.month
@@ -142,7 +141,7 @@ define([
 
                 $currentEl.append(itemView.render());
 
-                $(document).on("click", function (e) {
+                $(document).on("click", function () {
                     self.hideNewSelect();
                 });
             },
@@ -162,12 +161,14 @@ define([
 
             yearForDD: function (context) {
                 var year = new Date().getFullYear();
+                var i;
+
                 dataService.getData('/employee/getYears', {}, function (response, context) {
-                    var startYear = parseInt(response.min) || year;
+                    var startYear = parseInt(response.min, 0) || year;
 
                     context.ul = '<ul class="newSelectList">';
 
-                    for (var i = year; i >= startYear; i--) {
+                    for (i = year; i >= startYear; i--) {
                         context.ul = context.ul + '<li>' + i.toString() + '</li>';
                     }
 
@@ -196,7 +197,7 @@ define([
 
                 this.$el.find("#listTable").html('');
 
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection: collection,
                     year      : this.year,
                     month     : this.month
@@ -208,7 +209,7 @@ define([
 
                 this.yearForDD(this);
 
-                $(document).on("click", function (e) {
+                $(document).on("click", function () {
                     self.hideNewSelect();
                 });
 
