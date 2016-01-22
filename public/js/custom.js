@@ -15,7 +15,7 @@ define([
             var store = localStorage.getItem(name);
 
             return (store && JSON.parse(store)) || null;
-        }
+        };
     };
 
     var runApplication = function (success) {

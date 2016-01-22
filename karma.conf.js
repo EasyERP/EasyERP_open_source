@@ -21,13 +21,22 @@ module.exports = function (config) {
             {pattern: 'public/js/libs/underscore-min.map.1.6.0.js', included: false, watching: false},
             {pattern: 'public/js/libs/backbone-min.map.1.1.2.js', included: false, watching: false},
             {pattern: 'public/js/libs/text.js', included: false, watching: false},
+            {pattern: 'public/js/libs/moment/moment.js', included: false, watching: false},
+            {pattern: 'public/js/libs/date.format.js', included: false, watching: false},
+
             {pattern: 'public/js/Validation.js', included: false, watching: false},
             {pattern: 'public/js/models/**/*.js', included: false, watching: false},
+            {pattern: 'public/js/views/**/*.js', included: false, watching: false},
+            {pattern: 'public/templates/**/*.html', included: false, watching: false},
+            {pattern: 'public/js/*.js', included: false, watching: false},
+
             {pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
         ],
 
         // list of files to exclude
-        exclude: [],
+        exclude: [
+           /* 'public/js/libs/!**!/!*.js'*/
+        ],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor

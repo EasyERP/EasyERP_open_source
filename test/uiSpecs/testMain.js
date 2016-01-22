@@ -23,12 +23,19 @@ require.config({
     baseUrl: '/base',
     paths  : {
         models       : './public/js/models',
+        views       : './public/js/views',
+        templates    : './public/templates',
         jQuery       : './public/js/libs/jquery-2.1.0.min.map',
         Underscore   : './public/js/libs/underscore-min.map.1.6.0',
         Backbone     : './public/js/libs/backbone-min.map.1.1.2',
-        templates    : './public/templates',
         text         : './public/js/libs/text',
-        Validation: './public/js/Validation'
+        Validation: './public/js/Validation',
+        custom: './public/js/custom',
+        common: './public/js/common',
+        constants: './public/js/constants',
+        dataService: './public/js/dataService',
+        moment: './public/js/libs/moment/moment',
+        libs: './public/js/libs'
     },
     shim   : {
         'Underscore': {
