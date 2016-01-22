@@ -33,17 +33,11 @@ describe("Employee Specs", function () {
             },
             "department" : "55b92ace21e4b7c40f00000f",
             "jobPosition": "55b92acf21e4b7c40f00001d",
-            "dateOfBirth": "28 Dec, 1990"
-        };
-
-        var bodyError = {
-            "department" : "55b92ace21e4b7c40f00000f",
-            "jobPosition": "55b92acf21e4b7c40f00001d",
-            "dateOfBirth": "cccccc"
+            "dateBirth": "28 Dec, 1990"
         };
 
         aggent
-            .post('Employees')
+            .post('employee')
             .send(body)
             .expect(201)
             .end(function (err, res) {
@@ -66,34 +60,43 @@ describe("Employee Specs", function () {
 
                 done();
             });
+    });
 
-        //aggent
-        //    .post('Employees')
-        //    .send(bodyError)
-        //    .expect(500)
-        //    .end(function (err, res) {
-        //        var body = res.body;
-        //
-        //        if (err) {
-        //            return done(err);
-        //        }
-        //
-        //        expect(body)
-        //            .to.be.instanceOf(Object);
-        //        expect(body)
-        //            .to.have.property('error');
-        //
-        //        done();
-        //    });
+    it("should not create employee", function (done) {
+
+        var bodyError = {
+            "department" : "55b92ace21e4b7c40f00000f",
+            "jobPosition": "55b92acf21e4b7c40f00001d",
+            "dateBirth": "cccccc"
+        };
+
+        aggent
+            .post('employee')
+            .send(bodyError)
+            .expect(500)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('error');
+
+                done();
+            });
     });
 
     it("should delete employee", function (done) {
         aggent
-            .delete('Employees/' + id)
+            .delete('employee/' + id)
             .expect(200, done);
 
         aggent
-            .delete('Employees/' + 'kkk')
+            .delete('employee/' + 'kkk')
             .expect(500, done);
     });
 

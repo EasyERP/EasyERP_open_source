@@ -2867,7 +2867,7 @@ var requestHandler = function (app, event, mainDb) {
 
     return {
 
-        mongoose            : mongoose,
+        //mongoose            : mongoose,
         getModules          : getModules,
         redirectFromModuleId: redirectFromModuleId,
 
@@ -2950,11 +2950,11 @@ var requestHandler = function (app, event, mainDb) {
         getJobPositionById               : getJobPositionById,
         getJobPositionForDd              : getJobPositionForDd,
 
-        createEmployee       : createEmployee,
+        //createEmployee       : createEmployee,
         getFilterJobPosition : getFilterJobPosition,
         getForDdByRelatedUser: getForDdByRelatedUser,
-        getEmployeesById     : getEmployeesById,
-        removeEmployees      : removeEmployees,
+        //getEmployeesById     : getEmployeesById,
+        //removeEmployees      : removeEmployees,
         updateEmployees      : updateEmployees,
         getEmployeesAlphabet : getEmployeesAlphabet,
         getEmployeesImages   : getEmployeesImages,
@@ -2986,7 +2986,7 @@ var requestHandler = function (app, event, mainDb) {
 
         getCampaigns                  : getCampaigns,
         employeesTotalCollectionLength: employeesTotalCollectionLength,
-        getEmployeesFilter            : getEmployeesFilter,
+        //getEmployeesFilter            : getEmployeesFilter,
         uploadEmployeesFile           : uploadEmployeesFile,
         getApplicationById            : getApplicationById,
         getApplicationsForKanban      : getApplicationsForKanban,

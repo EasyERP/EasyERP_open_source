@@ -6,7 +6,7 @@
     function (EmployeeModel, common, dataService) {
         var EmployeesCollection = Backbone.Collection.extend({
             model       : EmployeeModel,
-            url         : "/Employees/",
+            url         : "/employee/",
             page        : null,
             namberToShow: null,
             viewType    : null,

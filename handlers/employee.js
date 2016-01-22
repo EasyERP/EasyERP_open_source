@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var Employee = function (models) {
+var Employee = function (event, models) {
     'use strict';
     /**
      * @module Employee
@@ -201,9 +201,8 @@ var Employee = function (models) {
 
         access.getEditWritAccess(req, req.session.uId, 42, function (access) {
             if (access) {
-
                 var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-                var body =req.body;
+                var body = req.body;
 
                 if (body.dateBirth) {
                     body.dateBirth = getDate(body.dateBirth);
@@ -212,21 +211,134 @@ var Employee = function (models) {
 
                 employee = new Employee(body);
 
-                employee.save(function (err, employee) {
-                    if (err) {
-                        return next(err);
-                    }
+                employee.createdBy.user = req.session.uId;
+                employee.editedBy.user = req.session.uId;
+                employee.createdBy.date = new Date();
+                employee.editedBy.date = new Date();
 
-                    res.send(201, {success: 'A new Employees create success', result: employee, id: employee._id});
+                event.emit('updateSequence', Employee, "sequence", 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
+                    employee.sequence = sequence;
 
-                    if (employee.isEmployee) {
-                        event.emit('recalculate', req);
-                    }
+                    employee.save(function (err, employee) {
+                        if (err) {
+                            return next(err);
+                        }
 
+                        res.send(201, {success: 'A new Employees create success', result: employee, id: employee._id});
+
+                        if (employee.isEmployee) {
+                            event.emit('recalculate', req);
+                        }
+
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+
+                    });
                 });
             } else {
                 res.status(403).send();
             }
+        });
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+        var filterName;
+
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
+
+            switch (filterName) {
+                case 'name':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'letter':
+                    filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                    resArray.push(filtrElement);
+                    break;
+                case 'department':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'manager':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'jobPosition':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+
+        return resArray;
+    }
+
+    this.getFilter = function(req, res, next){
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var data = req.query;
+        var contentType = data.contentType;
+        var optionsObject = {};
+        var filter = data.filter || {};
+
+        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count, 10));
+        var limit = parseInt(data.count, 10);
+
+        if (contentType === 'Employees'){
+            optionsObject.isEmployee = true;
+        } else if (contentType === 'Applications'){
+            optionsObject.isEmployee = false;
+        }
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject.$or = caseFilter(filter);
+            } else {
+                optionsObject.$and = caseFilter(filter);
+            }
+        }
+
+        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+            if (access) {
+
+            } else {
+                res.status(403).send();
+            }
+        })
+
+    };
+
+    this.remove = function (req, res, next) {
+        var _id = req.params.id;
+
+        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+            var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+            if (access) {
+                Employee.findByIdAndRemove(_id, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (result && !result.isEmployee) {
+                        event.emit('updateSequence', Employee, "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
+                    }
+
+                    event.emit('recalculate', req);
+                    event.emit('dropHoursCashes', req);
+                    event.emit('recollectVacationDash', req);
+
+                    res.status(200).send({success: 'Employees removed'});
+                });
+            } else {
+                res.status(403).send();
+            }
+
         });
     };
 
