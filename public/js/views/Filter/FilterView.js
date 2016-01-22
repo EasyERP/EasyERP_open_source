@@ -46,7 +46,7 @@ define([
             },
 
             showManyFilters : function (){
-                this.$el.find('.forFilterIcons').slice(0,4).toggle();
+                this.$el.find('.forFilterIcons').slice(0,3).toggle();
             },
 
             initialize: function (options) {
@@ -352,7 +352,7 @@ define([
 
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
-                    if ( filterValues.find('.forFilterIcons').length > 3) {  // toDO  overflow for many filters
+                    if ( filterValues.find('.forFilterIcons').length > 2 && !self.$el.find(".showLast").length) {  // toDO  overflow for many filters
                         filterValues.append('<span class="showLast"> ...&nbsp </span>');
                     }
 
