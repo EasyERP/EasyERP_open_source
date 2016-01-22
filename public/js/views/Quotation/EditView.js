@@ -350,7 +350,7 @@ define([
             var i;
             var whoCanRW;
 
-            $(".groupsAndUser tr").each(function () {
+            thisEl.find(".groupsAndUser tr").each(function () {
                 if ($(this).data("type") === "targetUsers") {
                     usersId.push($(this).data("id"));
                 }
