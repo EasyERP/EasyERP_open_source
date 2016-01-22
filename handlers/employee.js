@@ -9,7 +9,7 @@ var Employee = function (models) {
     //var access = require("../Modules/additions/access.js")(models);
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
-    //var _ = require('../node_modules/underscore');
+    var _ = require('underscore');
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
@@ -43,15 +43,45 @@ var Employee = function (models) {
             });
     };
 
+    this.getYears = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        Employee.aggregate([{
+            $project: {
+                hire: 1
+            }
+        }, {
+            $unwind: '$hire'
+        }, {
+            $project: {
+                year: {$year: '$hire.date'}
+            }
+        }, {
+            $group: {
+                _id: '$year'
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            var arr = _.pluck(result, '_id');
+            var min = _.min(arr);
+
+            res.status(200).send({min: min});
+        });
+
+    };
+
     this.getForDD = function (req, res, next) {
         var isEmployee = req.query.isEmployee;
 
         getNameAndDepartment(req.session.lastDb, isEmployee, function (err, result) {
             if (err) {
-                return next(err)
+                return next(err);
             }
 
-            res.status(200).send({data: result})
+            res.status(200).send({data: result});
         });
     };
 
@@ -100,7 +130,7 @@ var Employee = function (models) {
                 $match: {isEmployee: true}
             }, {
                 $group: {
-                    _id: "$department",
+                    _id      : "$department",
                     employees: {
                         $push: {
                             name: {$concat: ['$name.first', ' ', '$name.last']},
@@ -131,13 +161,13 @@ var Employee = function (models) {
             .find({_id: {$in: ids}})
             .populate('jobPosition', '_id name')
             .populate('department', '_id departmentName')
-            .exec( function (err, result) {
-            if (err) {
-                return next(err);
-            }
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-            res.status(200).send(result);
-        });
+                res.status(200).send(result);
+            });
 
     };
 

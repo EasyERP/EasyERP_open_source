@@ -10,6 +10,8 @@ var Employee = function (event, models) {
 	var _ = require('../node_modules/underscore');
 
 	var CONSTANTS = require('../constants/mainConstants');
+	var Payroll = require('../handlers/payroll');
+	var payrollHandler = new Payroll(models);
 
 	function getTotalCount(req, response) {
 		var res = {};
@@ -1350,15 +1352,10 @@ var Employee = function (event, models) {
 							data.sequence -= 1;
 						}
 
-						//if (data.fire && data.fire.length) {
-						//	updateObject.lastFire = moment(data.fire[data.fire.length - 1]).year() * 100 + moment(data.fire[data.fire.length - 1]).isoWeek();
-						//}
-
 						if (data.fired) {
 							dataObj = {
 								'fire': data.fired
 							};
-							//dataObj.lastFire = moment(new Date()).year() * 100 + moment(new Date()).isoWeek();
 						} else if (data.hired) {
 							dataObj = {
 								'hire': data.hired
@@ -1375,7 +1372,6 @@ var Employee = function (event, models) {
 							if (!err) {
 								res.send(200, {success: 'Employees updated', sequence: result.sequence});
 
-								//updateRefs(result, dbName, _id);
 							} else {
 								res.send(500, {error: "Can't update Employees"});
 							}
@@ -1392,7 +1388,6 @@ var Employee = function (event, models) {
 						if (!err) {
 							res.send(200, {success: 'Employees updated'});
 
-							//updateRefs(result, dbName, _id);
 						} else {
 							res.send(500, {error: "Can't update Employees"});
 						}
@@ -1422,10 +1417,6 @@ var Employee = function (event, models) {
 					}
 				};
 			}
-
-			//if (data.fire && data.fire.length) {
-			//	updateObject.lastFire = moment(data.fire[data.fire.length - 1].date).year() * 100 + moment(data.fire[data.fire.length - 1].date).isoWeek();
-			//}
 
 			if (dataObj.hire || dataObj.fire) {
 				query = {$set: updateObject, $push: dataObj};
@@ -1491,7 +1482,8 @@ var Employee = function (event, models) {
 
 					res.send(200, {success: 'Employees updated', result: result});
 
-					//updateRefs(result, dbName, _id);
+					payrollHandler.composeSalaryReport(req);
+
 				} else {
 					res.send(500, {error: "Can't update Employees"});
 				}
