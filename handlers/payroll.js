@@ -16,12 +16,14 @@ var PayRoll = function (models) {
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
     function ConvertType(array, type) {
+        var i;
+
         if (type === 'integer') {
-            for (var i = array.length - 1; i >= 0; i--) {
+            for (i = array.length - 1; i >= 0; i--) {
                 array[i] = parseInt(array[i]);
             }
         } else if (type === 'boolean') {
-            for (var i = array.length - 1; i >= 0; i--) {
+            for (i = array.length - 1; i >= 0; i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
                 } else if (array[i] === 'false') {
@@ -38,8 +40,9 @@ var PayRoll = function (models) {
         var resArray = [];
         var filtrElement = {};
         var key;
+        var filterName;
 
-        for (var filterName in filter) {
+        for (filterName in filter) {
             condition = filter[filterName]['value'];
             key = filter[filterName]['key'];
 
@@ -69,15 +72,15 @@ var PayRoll = function (models) {
                     break;
             }
         }
-        ;
 
         return resArray;
-    };
+    }
 
     this.create = function (req, res, next) {
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var body = req.body;
         var payRollModel;
+        var error;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, mid, function (access) {
@@ -114,6 +117,7 @@ var PayRoll = function (models) {
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
+        var error;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -143,6 +147,7 @@ var PayRoll = function (models) {
 
     this.removeByDataKey = function (req, res, next) {
         var body = req.body;
+        var error;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var dataKeys = body && body.dataKeys ? body.dataKeys : null;
 
@@ -158,14 +163,14 @@ var PayRoll = function (models) {
                 if (dataKeys && dataKeys.length) {
                     async.each(dataKeys, function (dataKey, cb) {
                         PayRoll.remove({'dataKey': parseInt(dataKey)}, cb);
-                    }, function (err, result) {
+                    }, function (err) {
                         if (err) {
                             return next(err);
                         }
-                    })
+                    });
                 }
 
-                composeExpensesAndCache(req, function (err, result) {
+                composeExpensesAndCache(req, function (err) {
                     if (err) {
                         return next(err);
                     }
@@ -185,6 +190,7 @@ var PayRoll = function (models) {
     this.putchModel = function (req, res, next) {
         var data = mapObject(req.body);
         var id = req.params.id;
+        var error;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -205,12 +211,13 @@ var PayRoll = function (models) {
                     data.type = objectId(data.type);
                 }
 
-                PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
+                PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err) {
                     if (err) {
                         return next(err);
                     }
 
                     res.status(200).send({success: 'updated'});
+
                     composeExpensesAndCache(req);
                 });
 
@@ -226,6 +233,7 @@ var PayRoll = function (models) {
     this.patchByDataKey = function (req, res, next) {
         var body = req.body;
         var uId;
+        var error;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         var keys = body ? Object.keys(body) : null;
@@ -250,14 +258,14 @@ var PayRoll = function (models) {
                         };
 
                         PayRoll.update({'dataKey': key}, {$set: data}, {multi: true, new: true}, cb);
-                    }, function (err, result) {
+                    }, function (err) {
                         if (err) {
                             return next(err);
                         }
-                    })
+                    });
                 }
 
-                composeExpensesAndCache(req, function (err, result) {
+                composeExpensesAndCache(req, function (err) {
                     if (err) {
                         return next(err);
                     }
@@ -274,6 +282,7 @@ var PayRoll = function (models) {
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var uId;
+        var error;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -306,6 +315,7 @@ var PayRoll = function (models) {
                     }
 
                     res.status(200).send({success: 'updated'});
+
                     composeExpensesAndCache(req);
                 });
             });
@@ -317,7 +327,8 @@ var PayRoll = function (models) {
     function getByDataKey(req, res, next) {
         var id = req.query.id;
         var data = req.query;
-        var sort = data.sort ? data.sort : {"employee.name": 1};
+        var error;
+        var sort = data.sort || {"employee.name": 1};
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         var queryObject = {dataKey: parseInt(id)};
@@ -347,14 +358,14 @@ var PayRoll = function (models) {
 
             next(error);
         }
-    };
+    }
 
     this.getSorted = function (req, res, next) {
         var data = req.query;
         var db = req.session.lastDb;
         var dataKey = data.dataKey;
         var queryObject = {dataKey: parseInt(dataKey)};
-        var sort = data.sort ? data.sort : {"employee": 1};
+        var sort = data.sort || {"employee": 1};
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
 
         var query = Payroll.find(queryObject).sort(sort).lean();
@@ -369,6 +380,8 @@ var PayRoll = function (models) {
     };
 
     function getForView(req, res, next) {
+        var error;
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, mid, function (access) {
                 if (!access) {
@@ -405,6 +418,8 @@ var PayRoll = function (models) {
     };
 
     this.getSalaryReport = function (req, res, next) {
+        var error;
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, mid, function (access) {
                 if (!access) {
@@ -431,7 +446,6 @@ var PayRoll = function (models) {
     };
 
     function salaryReport(req, cb) {
-        var self = this;
         var date = new Date();
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
@@ -447,9 +461,10 @@ var PayRoll = function (models) {
             var condition;
             var resArray = [];
             var filtrElement = {};
+            var filterName;
             var key;
 
-            for (var filterName in filter) {
+            for (filterName in filter) {
                 condition = filter[filterName]['value'];
                 key = filter[filterName]['key'];
 
@@ -466,7 +481,7 @@ var PayRoll = function (models) {
             }
 
             return resArray;
-        };
+        }
 
         function checkFilter(callback) {
             callback(null, filter);
@@ -477,9 +492,9 @@ var PayRoll = function (models) {
 
             if (filter && typeof filter === 'object') {
                 if (filter.condition && filter.condition === 'or') {
-                    matchObj['$or'] = caseFilterEmployee(filter);
+                    matchObj.$or = caseFilterEmployee(filter);
                 } else {
-                    matchObj['$and'] = caseFilterEmployee(filter);
+                    matchObj.$and = caseFilterEmployee(filter);
                 }
             }
 
@@ -496,7 +511,6 @@ var PayRoll = function (models) {
                         department: {$arrayElemAt: ["$department", 0]},
                         isEmployee: 1,
                         hire      : 1,
-                        fire      : 1,
                         name      : 1
                     }
                 },  {
@@ -508,7 +522,6 @@ var PayRoll = function (models) {
                         isEmployee: 1,
                         department: 1,
                         hire      : 1,
-                        fire      : 1,
                         name      : 1,
                         year      : {$year: '$hire.date'}
                     }
@@ -591,18 +604,17 @@ var PayRoll = function (models) {
         var maxKey = 0;
         var createdIds = [];
         var difference;
-        var defObj;
         var employees;
         var ids = [];
 
         waterfallTasks = [getEmployees, savePayroll];
 
-        async.waterfall(waterfallTasks, function (err, results) {
+        async.waterfall(waterfallTasks, function (err) {
             if (err) {
                 return next(err);
             }
 
-            composeExpensesAndCache(req, function (err, results) {
+            composeExpensesAndCache(req, function (err) {
                 if (err) {
                     return next(err);
                 }
@@ -630,7 +642,7 @@ var PayRoll = function (models) {
                 });
 
                 callback(null, ids);
-            })
+            });
         }
 
         function savePayroll(ids, callback) {
@@ -675,15 +687,15 @@ var PayRoll = function (models) {
                         dataToSave.month = month;
                         dataToSave.year = year;
                         dataToSave.paid = 0;
-                        dataToSave.diff = (dataToSave.paid ? dataToSave.paid : 0) - (dataToSave.calc ? dataToSave.calc : 0);
+                        dataToSave.diff = (dataToSave.paid || 0) - (dataToSave.calc || 0);
 
                         var PRoll = new Payroll(dataToSave);
-                        //
-                        //if (dataToSave.type === "Salary Cash") {
-                        //    defObj = dataToSave;
-                        //}
 
                         PRoll.save(function (err, result) {
+                            if (err){
+                                cb(err);
+                            }
+
                             createdIds.push(result.employee.toString());
                             cb();
                         });
@@ -710,7 +722,11 @@ var PayRoll = function (models) {
                             PRoll = new Payroll(defObj);
 
                             PRoll.save(function (err, result) {
-                                callB();
+                                if (err){
+                                    callB(err);
+                                }
+
+                                callB(null, result);
                             });
                         }, function () {
                             callback();
