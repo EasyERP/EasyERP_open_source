@@ -138,9 +138,9 @@ define([
                 var editedElementValue;
                 var editHolidayModel;
 
-                /*if (navigator.userAgent.indexOf("Firefox") > -1) { // fireFox work correctly without this condition
+                if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(editedElement);
-                }*/
+                }
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -148,18 +148,18 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    editHolidayModel = this.editCollection.get(editedElementRowId);
+                   // editHolidayModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
-                        if (!editHolidayModel.id) {
+                        /*if (!editHolidayModel.id) {
                             this.changedModels[editedElementRowId] = editHolidayModel.attributes;
-                        } else {
+                        } else {*/
                             this.changedModels[editedElementRowId] = {};
-                        }
+                      /*  }*/
                     }
 
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     editedCol.text(editedElementValue);
                     editedElement.remove();
                 }
@@ -201,18 +201,16 @@ define([
             },
 
             setEditable: function (td) {
-                var tr;
-
                 if (!td.parents) {
                     td = $(td.target).closest('td');
                 }
 
-                tr = td.parents('tr');
+                td = td.closest('td');  // in case of no changing cancel after enter on input
 
                 td.addClass('edited');
 
                 if (this.isEditRows()) {
-                    this.setChangedValueToModel();
+                   // this.setChangedValueToModel(); in case of recursion
                     this.setChangedValue();
                 }
 
@@ -465,7 +463,7 @@ define([
                     cb();
                 }, function (err) {
                     if (!err) {
-                        self.editCollection = new editCollection(collection.toJSON());
+                       // self.editCollection = new editCollection(collection.toJSON()); // took off in case of not hiding saveCancelButtons
                         self.hideSaveCancelBtns();
                     }
                 });
