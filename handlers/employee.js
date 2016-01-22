@@ -7,6 +7,7 @@ var Employee = function (event, models) {
      * @module Employee
      */
     var access = require("../Modules/additions/access.js")(models);
+    var accessRoll = require("../helpers/accessRollHelper.js")(models);
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var _ = require('underscore');
@@ -285,6 +286,9 @@ var Employee = function (event, models) {
         var contentType = data.contentType;
         var optionsObject = {};
         var filter = data.filter || {};
+        var waterfallTasks;
+        var accessRollSearcher;
+        var contentSearcher;
 
         var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count, 10));
         var limit = parseInt(data.count, 10);
@@ -302,6 +306,12 @@ var Employee = function (event, models) {
                 optionsObject.$and = caseFilter(filter);
             }
         }
+
+        accessRollSearcher = function (){
+
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
         access.getEditWritAccess(req, req.session.uId, 42, function (access) {
             if (access) {
