@@ -102,7 +102,7 @@ define([
                 this.hideNewSelect();
 
                 var $target = $(e.target);
-                var year = parseInt($target.text(), 0);
+                var year = parseInt($target.text(), 10);
 
                 this.yearElement.attr('data-content', year);
                 this.yearElement.text(year);
@@ -164,7 +164,7 @@ define([
                 var i;
 
                 dataService.getData('/employee/getYears', {}, function (response, context) {
-                    var startYear = parseInt(response.min, 0) || year;
+                    var startYear = parseInt(response.min, 10) || year;
 
                     context.ul = '<ul class="newSelectList">';
 

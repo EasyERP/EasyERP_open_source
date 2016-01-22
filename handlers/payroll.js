@@ -20,7 +20,7 @@ var PayRoll = function (models) {
 
         if (type === 'integer') {
             for (i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i], 0);
+                array[i] = parseInt(array[i], 10);
             }
         } else if (type === 'boolean') {
             for (i = array.length - 1; i >= 0; i--) {
@@ -162,7 +162,7 @@ var PayRoll = function (models) {
 
                 if (dataKeys && dataKeys.length) {
                     async.each(dataKeys, function (dataKey, cb) {
-                        PayRoll.remove({'dataKey': parseInt(dataKey, 0)}, cb);
+                        PayRoll.remove({'dataKey': parseInt(dataKey, 10)}, cb);
                     }, function (err) {
                         if (err) {
                             return next(err);
@@ -331,7 +331,7 @@ var PayRoll = function (models) {
         var sort = data.sort || {"employee.name": 1};
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
-        var queryObject = {dataKey: parseInt(id, 0)};
+        var queryObject = {dataKey: parseInt(id, 10)};
         var query;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -364,7 +364,7 @@ var PayRoll = function (models) {
         var data = req.query;
         var db = req.session.lastDb;
         var dataKey = data.dataKey;
-        var queryObject = {dataKey: parseInt(dataKey, 0)};
+        var queryObject = {dataKey: parseInt(dataKey, 10)};
         var sort = data.sort || {"employee": 1};
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
 
@@ -422,7 +422,7 @@ var PayRoll = function (models) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var query = req.query;
-        var year = parseInt(query.year, 0) || date.getFullYear();
+        var year = parseInt(query.year, 10) || date.getFullYear();
         var filter = query.filter || '';
         var key = 'salaryReport' + filter + year.toString();
         var redisStore = require('../helpers/redisClient');
@@ -598,8 +598,8 @@ var PayRoll = function (models) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
         var data = req.body;
-        var month = parseInt(data.month, 0);
-        var year = parseInt(data.year, 0);
+        var month = parseInt(data.month, 10);
+        var year = parseInt(data.year, 10);
         var dateKey = year * 100 + month;
         var waterfallTasks;
         var maxKey = 0;
@@ -646,12 +646,12 @@ var PayRoll = function (models) {
                 keys = Object.keys(newResult);
 
                 keys.forEach(function (key) {
-                    if (parseInt(key, 0) >= maxKey) {
+                    if (parseInt(key, 10) >= maxKey) {
                         maxKey = key;
                     }
                 });
 
-                var parseKey = parseInt(maxKey, 0);
+                var parseKey = parseInt(maxKey, 10);
 
                 var neqQuery = Payroll.find({dataKey: parseKey}).lean();
 
