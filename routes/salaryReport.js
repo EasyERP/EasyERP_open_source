@@ -1,6 +1,7 @@
 /**
  * Created by liliy on 20.01.2016.
  */
+"use strict";
 var express = require('express');
 var router = express.Router();
 var SalaryHandler = require('../handlers/payroll');
@@ -18,7 +19,7 @@ module.exports = function (models) {
         redisStore.readFromStorage('salaryReport', key, function(err, reportStringObject){
             var report;
 
-            if(!reportStringObject) {
+            if(!reportStringObject || err) {
                 return next();
             }
 
