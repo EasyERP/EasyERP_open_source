@@ -4,8 +4,8 @@ var moment = require('../public/js/libs/moment/moment');
 var PayRoll = function (models) {
     "use strict";
     var access = require("../Modules/additions/access.js")(models);
-    var PayRollSchema = mongoose.Schemas['PayRoll'];
-    var EmployeeSchema = mongoose.Schemas['Employees'];
+    var PayRollSchema = mongoose.Schemas.PayRoll;
+    var EmployeeSchema = mongoose.Schemas.Employees;
     var _ = require('lodash');
 
     var async = require('async');
@@ -15,12 +15,12 @@ var PayRoll = function (models) {
 
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
-    function ConvertType(array, type) {
+    /*function convertType(array, type) {
         var i;
 
         if (type === 'integer') {
             for (i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i]);
+                array[i] = parseInt(array[i], 0);
             }
         } else if (type === 'boolean') {
             for (i = array.length - 1; i >= 0; i--) {
@@ -33,9 +33,9 @@ var PayRoll = function (models) {
                 }
             }
         }
-    };
+    }*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -43,8 +43,8 @@ var PayRoll = function (models) {
         var filterName;
 
         for (filterName in filter) {
-            condition = filter[filterName]['value'];
-            key = filter[filterName]['key'];
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
 
             switch (filterName) {
                 case 'employee':
@@ -56,17 +56,17 @@ var PayRoll = function (models) {
                     resArray.push(filtrElement);
                     break;
                 case 'year':
-                    ConvertType(condition, 'integer');
+                    convertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'month':
-                    ConvertType(condition, 'integer');
+                    convertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'dataKey':
-                    ConvertType(condition, 'integer');
+                    convertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
@@ -74,7 +74,7 @@ var PayRoll = function (models) {
         }
 
         return resArray;
-    }
+    }*/
 
     this.create = function (req, res, next) {
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
@@ -162,7 +162,7 @@ var PayRoll = function (models) {
 
                 if (dataKeys && dataKeys.length) {
                     async.each(dataKeys, function (dataKey, cb) {
-                        PayRoll.remove({'dataKey': parseInt(dataKey)}, cb);
+                        PayRoll.remove({'dataKey': parseInt(dataKey, 0)}, cb);
                     }, function (err) {
                         if (err) {
                             return next(err);
@@ -331,7 +331,7 @@ var PayRoll = function (models) {
         var sort = data.sort || {"employee.name": 1};
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
-        var queryObject = {dataKey: parseInt(id)};
+        var queryObject = {dataKey: parseInt(id, 0)};
         var query;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -364,7 +364,7 @@ var PayRoll = function (models) {
         var data = req.query;
         var db = req.session.lastDb;
         var dataKey = data.dataKey;
-        var queryObject = {dataKey: parseInt(dataKey)};
+        var queryObject = {dataKey: parseInt(dataKey, 0)};
         var sort = data.sort || {"employee": 1};
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
 
@@ -417,64 +417,35 @@ var PayRoll = function (models) {
         }
     };
 
-    this.getSalaryReport = function (req, res, next) {
-        var error;
-
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, mid, function (access) {
-                if (!access) {
-                    error = new Error();
-                    error.status = 403;
-
-                    next(error);
-                }
-
-                salaryReport(req, function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send(result);
-                });
-            });
-        } else {
-            error = new Error();
-            error.status = 401;
-
-            next(error);
-        }
-    };
-
     function salaryReport(req, cb) {
         var date = new Date();
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var query = req.query;
-        var year = parseInt(query.year) || date.getFullYear();
+        var year = parseInt(query.year, 0) || date.getFullYear();
         var filter = query.filter || '';
         var key = 'salaryReport' + filter + year.toString();
         var redisStore = require('../helpers/redisClient');
-
-        var waterfallTasks = [checkFilter, getResult];
+        var waterfallTasks;
 
         function caseFilterEmployee(filter) {
             var condition;
             var resArray = [];
             var filtrElement = {};
             var filterName;
-            var key;
+            var keyCase;
 
             for (filterName in filter) {
                 condition = filter[filterName].value;
-                key = filter[filterName].key;
+                keyCase = filter[filterName].key;
 
                 switch (filterName) {
                     case 'employee':
-                        filtrElement[key] = {$in: condition.objectID()};
+                        filtrElement[keyCase] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
                         break;
                     case 'department':
-                        filtrElement[key] = {$in: condition.objectID()};
+                        filtrElement[keyCase] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
                         break;
                 }
@@ -575,6 +546,8 @@ var PayRoll = function (models) {
                 });
         }
 
+        waterfallTasks = [checkFilter, getResult];
+
         async.waterfall(waterfallTasks, function (err, result) {
             redisStore.writeToStorage('salaryReport', key, JSON.stringify(result));
 
@@ -588,6 +561,34 @@ var PayRoll = function (models) {
         });
     }
 
+    this.getSalaryReport = function (req, res, next) {
+        var error;
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, mid, function (access) {
+                if (!access) {
+                    error = new Error();
+                    error.status = 403;
+
+                    next(error);
+                }
+
+                salaryReport(req, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(result);
+                });
+            });
+        } else {
+            error = new Error();
+            error.status = 401;
+
+            next(error);
+        }
+    };
+
     this.composeSalaryReport = function (req, cb) {
         salaryReport(req, cb);
     };
@@ -597,8 +598,8 @@ var PayRoll = function (models) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
         var data = req.body;
-        var month = parseInt(data.month);
-        var year = parseInt(data.year);
+        var month = parseInt(data.month, 0);
+        var year = parseInt(data.year, 0);
         var dateKey = year * 100 + month;
         var waterfallTasks;
         var maxKey = 0;
@@ -606,22 +607,6 @@ var PayRoll = function (models) {
         var difference;
         var employees;
         var ids = [];
-
-        waterfallTasks = [getEmployees, savePayroll];
-
-        async.waterfall(waterfallTasks, function (err) {
-            if (err) {
-                return next(err);
-            }
-
-            composeExpensesAndCache(req, function (err) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send("ok");
-            });
-        });
 
         function getEmployees(callback) {
             var queryObject = {
@@ -661,12 +646,12 @@ var PayRoll = function (models) {
                 keys = Object.keys(newResult);
 
                 keys.forEach(function (key) {
-                    if (parseInt(key) >= maxKey) {
+                    if (parseInt(key, 0) >= maxKey) {
                         maxKey = key;
                     }
                 });
 
-                var parseKey = parseInt(maxKey);
+                var parseKey = parseInt(maxKey, 0);
 
                 var neqQuery = Payroll.find({dataKey: parseKey}).lean();
 
@@ -735,6 +720,23 @@ var PayRoll = function (models) {
                 });
             });
         }
+
+        waterfallTasks = [getEmployees, savePayroll];
+
+        async.waterfall(waterfallTasks, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            composeExpensesAndCache(req, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send("ok");
+            });
+        });
+
 
     };
 };
