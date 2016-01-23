@@ -167,7 +167,12 @@ define([
             var userDialog = $('#addUseDialog');
 
             if (userDialog.length) {
-                return userDialog.dialog("open");
+                userDialog.dialog("open");
+
+                this.updateAssigneesPagination(userDialog.find("#sourceUsers").closest(".left"));
+                this.updateAssigneesPagination(userDialog.find("#targetUsers").closest(".left"));
+
+                return false;
             }
 
             dialog = $(addUser).dialog({
@@ -198,6 +203,14 @@ define([
                 }
 
             });
+
+            //if (this.model) {
+            //    common.populateUsersForGroups(dialog.find('#sourceUsers'), dialog.find('#targetUsers'), this.model.toJSON(), 1);
+            //    common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/DepartmentsForDd", this.model.toJSON(), 1);
+            //} else {
+            //    common.populateUsersForGroups(dialog.find('#sourceUsers'), dialog.find('#targetUsers'), null, 1);
+            //    common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/DepartmentsForDd", null, 1);
+            //}
 
             if (this.model) {
                 common.populateUsersForGroups(dialog.find('#sourceUsers'), dialog.find('#targetUsers'), this.model.toJSON(), 1);
@@ -247,7 +260,12 @@ define([
             var dialog;
 
             if (userDialog.length) {
-                return userDialog.dialog("open");
+                userDialog.dialog("open");
+
+                this.updateAssigneesPagination(userDialog.find("#sourceGroups").closest(".left"));
+                this.updateAssigneesPagination(userDialog.find("#targetGroups").closest(".left"));
+
+                return false;
             }
 
             dialog = $(addGroup).dialog({
