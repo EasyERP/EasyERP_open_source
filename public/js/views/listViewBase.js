@@ -170,7 +170,7 @@ define([
                         checkAll$.prop('checked', false);
                     }
                 }
-                if (this.setAllTotalVals){   // added in case of existing setAllTotalVals in View
+                if (typeof(this.setAllTotalVals) === "function"){   // added in case of existing setAllTotalVals in View
                     this.setAllTotalVals();
                 }
             },
@@ -527,7 +527,7 @@ define([
                     } else {
                         $("#top-bar-deleteBtn").hide();
                     }
-                    if (self.setAllTotalVals){   // added in case of existing setAllTotalVals method in View
+                    if (typeof(self.setAllTotalVals) === "function"){   // added in case of existing setAllTotalVals method in View
                         self.setAllTotalVals();
                     }
                 });
