@@ -196,21 +196,11 @@ define([
                         click: function (e) {
                             $(this).dialog("close");
                             self.closeDialog(e);
-                            //$("#targetUsers").unbind("click");
-                            //$("#sourceUsers").unbind("click");
                         }
                     }
                 }
 
             });
-
-            //if (this.model) {
-            //    common.populateUsersForGroups(dialog.find('#sourceUsers'), dialog.find('#targetUsers'), this.model.toJSON(), 1);
-            //    common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/DepartmentsForDd", this.model.toJSON(), 1);
-            //} else {
-            //    common.populateUsersForGroups(dialog.find('#sourceUsers'), dialog.find('#targetUsers'), null, 1);
-            //    common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/DepartmentsForDd", null, 1);
-            //}
 
             if (this.model) {
                 common.populateUsersForGroups(dialog.find('#sourceUsers'), dialog.find('#targetUsers'), this.model.toJSON(), 1);
@@ -287,8 +277,6 @@ define([
                         click: function (e) {
                             $(this).dialog("close");
                             self.closeDialog(e);
-                            //$("#targetGroups").unbind("click");
-                            //$("#sourceGroups").unbind("click");
                         }
                     }
                 }
