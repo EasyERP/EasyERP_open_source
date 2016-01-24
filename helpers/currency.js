@@ -11,6 +11,8 @@ var Module = function (date, cb) {
     if(typeof date === 'function'){
         cb = date;
         date = moment();
+    } else {
+        date = new Date();
     }
 
     date = moment(date) || now;

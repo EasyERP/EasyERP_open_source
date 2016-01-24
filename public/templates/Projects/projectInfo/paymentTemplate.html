@@ -21,8 +21,6 @@
 
             <th class="oe_sortable" data-sort="paymentMethod.name">Payment Way<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paidAmount">Invoiced<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <!--<th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span-->
@@ -46,9 +44,6 @@
             </td>
             <td><%=payment.invoice ? payment.invoice.name : ''%></td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
-            <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
-                <%=currencySplitter((parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)).toFixed(2))%>
-            </td>
             <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
                 <%=currencySplitter(parseFloat(payment.paidAmount).toFixed(2))%>
             </td>
@@ -56,7 +51,6 @@
             <td data-type="dtPicker" class="editable date" data-content="date">
                 <%=utcDateToLocaleDate(payment.date)%>
             </td>
-            <%total += parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)%>
             <%totalPaidAmount += parseFloat(payment.paidAmount)%>
         </tr>
         <%})%>
@@ -64,7 +58,6 @@
         <tfoot id="listTotal">
         <tr>
             <td colspan="6"></td>
-            <td><span id="total" class="money"><%=currencySplitter(total.toFixed(2))%></span></td>
             <td><span id="totalPaidAmount" class="money"><%=currencySplitter(totalPaidAmount.toFixed(2))%></span></td>
             <td></td>
         </tr>

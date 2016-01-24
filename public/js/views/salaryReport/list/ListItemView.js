@@ -1,11 +1,14 @@
 /**
  * Created by liliy on 20.01.2016.
  */
+"use strict";
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/salaryReport/list/ListTemplate.html'
     ],
 
-    function (listTemplate) {
+    function (Backbone, _, listTemplate) {
         var ListItemView = Backbone.View.extend({
             el: '#listTable',
 

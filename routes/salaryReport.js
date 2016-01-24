@@ -1,6 +1,7 @@
 /**
  * Created by liliy on 20.01.2016.
  */
+"use strict";
 var express = require('express');
 var router = express.Router();
 var SalaryHandler = require('../handlers/payroll');
@@ -15,15 +16,15 @@ module.exports = function (models) {
         var year = query.year;
         var key = 'salaryReport' + JSON.stringify(filter) + year;
 
-        redisStore.readFromStorage('salaryReport', key, function(err, expensesStringObject){
-            var expenses;
+        redisStore.readFromStorage('salaryReport', key, function(err, reportStringObject){
+            var report;
 
-            if(!expensesStringObject) {
+            if(!reportStringObject || err) {
                 return next();
             }
 
-            expenses = JSON.parse(expensesStringObject);
-            res.status(200).send(expenses);
+            report = JSON.parse(reportStringObject);
+            res.status(200).send(report);
         });
     }
 

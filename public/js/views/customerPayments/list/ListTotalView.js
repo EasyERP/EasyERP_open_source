@@ -23,11 +23,11 @@ define([
                     currencySplitter: helpers.currencySplitter
                 };
 
-                this.element.find(".total").each(function () {
-                    var currentText = $(this).text().replace(' ', '');
-
-                    result.total += parseFloat(currentText);
-                });
+                //this.element.find(".total").each(function () {
+                //    var currentText = $(this).text().replace(' ', '');
+                //
+                //    result.total += parseFloat(currentText);
+                //});
 
                 this.element.find(".totalPaidAmount").each(function () {
                     var currentText = $(this).text().replace(' ', '');
