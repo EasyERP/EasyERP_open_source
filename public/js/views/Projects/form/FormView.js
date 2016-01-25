@@ -790,7 +790,7 @@ define([
                     callback();
 
                     var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
-                    var itemsNumber = parseInt($('.selectedItemsNumber').text());
+                    var itemsNumber = parseInt($('.selectedItemsNumber').text()) || 'all';
                     var defaultItemsNumber = itemsNumber  || self.wCollection.namberToShow;
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
