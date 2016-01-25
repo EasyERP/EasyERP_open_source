@@ -1,7 +1,7 @@
 /**
  * Created by Roman on 24.08.2015.
  */
-require('../config/development');
+require('../../config/development');
 
 var request = require('supertest');
 var expect = require('chai').expect;
@@ -28,7 +28,7 @@ describe("Quotation Specs", function () {
     it("should create quotation", function (done) {
         var body = {
             "supplier"         : "55b92ad621e4b7c40f00064f",
-            "project"          : "56867a800692dc4c0eb63fe8",
+            "project"          : "55b92ad621e4b7c40f00069c",
             "workflow"         : "5555bf276a3f01acae0b5560",
             "supplierReference": null,
             "orderDate"        : "28 Dec, 2015",
@@ -49,7 +49,7 @@ describe("Quotation Specs", function () {
                     "taxes"        : "0.00",
                     "description"  : "",
                     "subTotal"     : "500",
-                    "jobs"         : "56867a950692dc4c0eb63fe9"
+                    "jobs"         : "564cfd8ba6e6390160c9edf7"
                 }
             ],
             "currency"         : {

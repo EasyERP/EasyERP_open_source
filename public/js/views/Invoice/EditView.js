@@ -552,7 +552,7 @@ define([
 
                         targetInput.removeClass('errorContent');
                     }
-                }).datepicker('option', 'minDate', new Date());
+                }).datepicker('option', 'minDate', invoiceDate);
 
                 this.delegateEvents(this.events);
 

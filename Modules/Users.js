@@ -184,7 +184,7 @@ var Users = function (mainDb, models) {
                             if (_user && _user._id) {
                                 shaSum = crypto.createHash('sha256');
                                 shaSum.update(data.pass);
-                                if (/*((_user.login == data.login) || (_user.email == data.login)) && */_user.pass == shaSum.digest('hex')) {
+                                if (/*((_user.login == data.login) || (_user.email == data.login)) && */_user.pass === shaSum.digest('hex')) {
                                     req.session.loggedIn = true;
                                     req.session.uId = _user._id;
                                     req.session.uName = _user.login;
@@ -199,7 +199,7 @@ var Users = function (mainDb, models) {
                                     });
                                     res.send(200);
                                 } else {
-                                    res.send(406, {error: "Incorect Incoming Password"});
+                                    res.send(400, {error: "Incorect Incoming Password"});
                                 }
                             } else {
                                 if (err) {
