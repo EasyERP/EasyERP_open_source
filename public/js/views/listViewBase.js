@@ -551,23 +551,31 @@ define([
             },
 
             renderPagination: function ($currentEl, self) {
+                var countNumber;
+                var pagenation;
+
                 $currentEl.append(_.template(paginationTemplate));
 
-                var pagenation = self.$el.find('.pagination');
+                pagenation = self.$el.find('.pagination');
+
 
                 if (self.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
+                    // This is for counterPages at start
+                    countNumber = ([100, 200, 500].indexOf(this.defaultItemsNumber)!== -1) ? this.defaultItemsNumber : "all"; // changed in case of bad view after refreshing with not default counter
+
+                    this.previouslySelected = $('.itemsNumber:contains('+ countNumber +')');
+                    this.previouslySelected.addClass('selectedItemsNumber');
+                    // end
                 }
 
                 $(document).on("click", function (e) {
                     self.hidePagesPopup(e);
                 });
 
-                // This is for counterPages at start
-                this.previouslySelected = $('.itemsNumber').first();
-                this.previouslySelected.addClass('selectedItemsNumber');
+
             },
 
             renderFilter: function (self, baseFilter) {
