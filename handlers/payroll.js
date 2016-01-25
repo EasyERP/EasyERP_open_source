@@ -427,6 +427,8 @@ var PayRoll = function (models) {
         var key = 'salaryReport' + filter + year.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
+        var startDate = year * 100 + 1;
+        var endDate = year * 100 + moment([year]).isoWeeksInYear();
 
         function caseFilterEmployee(filter) {
             var condition;
@@ -459,13 +461,48 @@ var PayRoll = function (models) {
         }
 
         function getResult(filter, callback) {
-            var matchObj = {isEmployee: true};
+            var matchObj; // = {isEmployee: true};
+
+            matchObj = {
+                $and: [{
+                    $or         : [{
+                        $and: [{
+                            isEmployee: true
+                        }, {
+                            $or: [{
+                                lastFire: null
+                            }, {
+                                lastFire: {
+                                    $ne : null,
+                                    $gte: startDate
+                                }
+                            }, {
+                                lastHire: {
+                                    $ne : null,
+                                    $lte: endDate
+                                }
+                            }]
+                        }]
+                    }, {
+                        $and: [{
+                            isEmployee: false
+                        }, {
+                            lastFire: {
+                                $ne : null,
+                                $gte: startDate
+                            }
+                        }]
+                    }
+                    ]
+                }]
+            };
+
 
             if (filter && typeof filter === 'object') {
                 if (filter.condition && filter.condition === 'or') {
                     matchObj.$or = caseFilterEmployee(filter);
                 } else {
-                    matchObj.$and = caseFilterEmployee(filter);
+                    matchObj.$and.push({$and: caseFilterEmployee(filter)});
                 }
             }
 
@@ -482,7 +519,16 @@ var PayRoll = function (models) {
                         department: {$arrayElemAt: ["$department", 0]},
                         isEmployee: 1,
                         hire      : 1,
-                        name      : 1
+                        name      : 1,
+                        lastFire  : 1,
+                        lastHire: {
+                            $let: {
+                                vars: {
+                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                },
+                                in: {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                            }
+                        }
                     }
                 },  {
                     $match: matchObj
@@ -494,6 +540,7 @@ var PayRoll = function (models) {
                         department: 1,
                         hire      : 1,
                         name      : 1,
+                        lastFire  : 1,
                         year      : {$year: '$hire.date'}
                     }
                 }, {
@@ -509,6 +556,7 @@ var PayRoll = function (models) {
                         name      : 1,
                         month     : {$month: '$hire.date'},
                         year      : 1,
+                        lastFire  : 1,
                         hireDate  : {$add: [{$multiply: [{$year: '$hire.date'}, 100]}, {$month: '$hire.date'}]}
                     }
                 }, {
@@ -516,21 +564,24 @@ var PayRoll = function (models) {
                         _id       : '$_id',
                         department: {$addToSet: '$department'},
                         name      : {$addToSet: '$name'},
-                        hire      : {$push: '$$ROOT'}
+                        hire      : {$push: '$$ROOT'},
+                        lastFire: {$addToSet: '$lastFire'}
                     }
                 }, {
                     $project: {
                         _id       : 1,
                         department: {$arrayElemAt: ["$department", 0]},
                         name      : {$arrayElemAt: ["$name", 0]},
-                        hire      : 1
+                        hire      : 1,
+                        lastFire: {$arrayElemAt: ["$lastFire", 0]}
                     }
                 }, {
                     $project: {
                         _id       : 1,
                         department: '$department.departmentName',
                         name      : {$concat: ['$name.first', ' ', '$name.last']},
-                        hire      : 1
+                        hire      : 1,
+                        lastFire: 1
                     }
                 }, {
                     $sort: {

@@ -6,10 +6,11 @@ define([
         'Backbone',
         'Underscore',
         'text!templates/salaryReport/list/ListTemplate.html',
-        'helpers'
+        'helpers',
+    'moment'
     ],
 
-    function (Backbone, _, listTemplate, helpers) {
+    function (Backbone, _, listTemplate, helpers, moment) {
         var ListItemView = Backbone.View.extend({
             el: '#listTable',
 
@@ -62,7 +63,8 @@ define([
                 this.$el.append(_.template(listTemplate, {
                     collection: this.collection,
                     year: this.year,
-                    month: this.month
+                    month: this.month,
+                    moment: moment
                 }));
 
                 this.setAllTotalVals();
