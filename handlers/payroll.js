@@ -422,13 +422,15 @@ var PayRoll = function (models) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var query = req.query;
-        var year = parseInt(query.year, 10) || date.getFullYear();
+        //var year = parseInt(query.year, 10) || date.getFullYear();
+        var startDate = new Date (query.startDate);
+        var endDate = new Date (query.endDate);
         var filter = query.filter || '';
-        var key = 'salaryReport' + filter + year.toString();
+        var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
-        var startDate = year * 100 + 1;
-        var endDate = year * 100 + moment([year]).isoWeeksInYear();
+        var startDateKey = moment(startDate).year() * 100 +  moment(startDate).isoWeek();
+        var endDateKey = moment(endDate).year() * 100 +  moment(endDate).isoWeek();
 
         function caseFilterEmployee(filter) {
             var condition;
@@ -474,12 +476,12 @@ var PayRoll = function (models) {
                             }, {
                                 lastFire: {
                                     $ne : null,
-                                    $gte: startDate
+                                    $gte: startDateKey
                                 }
                             }, {
                                 lastHire: {
                                     $ne : null,
-                                    $lte: endDate
+                                    $lte: endDateKey
                                 }
                             }]
                         }]
@@ -489,7 +491,7 @@ var PayRoll = function (models) {
                         }, {
                             lastFire: {
                                 $ne : null,
-                                $gte: startDate
+                                $gte: startDateKey
                             }
                         }]
                     }
@@ -542,10 +544,10 @@ var PayRoll = function (models) {
                         lastFire  : 1,
                         year      : {$year: '$hire.date'}
                     }
-                }, {
-                    $match: {
-                        'year': {$lt: year + 1}
-                    }
+                //}, {
+                //    $match: {
+                //        'year': {$lt: year + 1}
+                //    }
                 }, {
                     $project: {
                         isEmployee: 1,

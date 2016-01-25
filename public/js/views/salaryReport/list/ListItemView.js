@@ -16,23 +16,16 @@ define([
 
             initialize: function (options) {
                 this.collection = options.collection;
-                this.year = options.year;
-                this.month = options.month;
+                this.startDate = options.startDate;
+                this.endDate = options.endDate;
+                //this.year = options.year;
+                //this.month = options.month;
             },
 
             setAllTotalVals: function () {
-                this.calcTotal('1');
-                this.calcTotal('2');
-                this.calcTotal('3');
-                this.calcTotal('4');
-                this.calcTotal('5');
-                this.calcTotal('6');
-                this.calcTotal('7');
-                this.calcTotal('8');
-                this.calcTotal('9');
-                this.calcTotal('10');
-                this.calcTotal('11');
-                this.calcTotal('12');
+               for (var i = this.endKey; i >= this.startKey; i--){
+                   this.calcTotal(i);
+               }
             },
 
             calcTotal: function (idTotal) {
@@ -60,10 +53,15 @@ define([
             },
 
             render: function () {
+                this.startKey = moment(this.startDate).year() * 100 + moment(this.startDate).month();
+                this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
+
                 this.$el.append(_.template(listTemplate, {
                     collection: this.collection,
-                    year: this.year,
-                    month: this.month,
+                    startKey: this.startKey,
+                    endKey: this.endKey,
+                    //year: this.year,
+                    //month: this.month,
                     moment: moment
                 }));
 

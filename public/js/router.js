@@ -728,7 +728,8 @@ define([
                 var newCollection = true;
                 var self = context;
                 var savedFilter;
-                var year;
+                var startDate;
+                var endDate;
                 var startTime = new Date();
                 var contentViewUrl = "views/" + contentType + "/list/ListView";
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
@@ -761,7 +762,12 @@ define([
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
                     } else if (contentType === 'salaryReport') {
-                        year = (new Date()).getFullYear();
+                        startDate = new Date();
+                       startDate.setMonth(0);
+                       startDate.setDate(1);
+                        endDate = new Date();
+                        endDate.setMonth(11);
+                        endDate.setDate(31);
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -784,7 +790,8 @@ define([
                         parrentContentId: parrentContentId,
                         contentType     : contentType,
                         newCollection   : newCollection,
-                        year            : year
+                        startDate       : startDate,
+                        endDate         : endDate
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
@@ -793,12 +800,19 @@ define([
                     function createViews() {
                         collection.unbind('reset');
 
-                        var topbarView = new topBarView({actionType: "Content", collection: collection});
+                        var topbarView = new topBarView({
+                            actionType: "Content",
+                            collection: collection,
+                            startDate : startDate,
+                            endDate   : endDate
+                        });
                         var contentview = new contentView({
                             collection   : collection,
                             startTime    : startTime,
                             filter       : savedFilter,
-                            newCollection: newCollection
+                            newCollection: newCollection,
+                            startDate : startDate,
+                            endDate   : endDate
                         });
 
                         topbarView.bind('copyEvent', contentview.copy, contentview);
@@ -813,6 +827,7 @@ define([
                         topbarView.bind('exportToXlsx', contentview.exportToXlsx, contentview);
                         topbarView.bind('importEvent', contentview.importFiles, contentview);
                         topbarView.bind('pay', contentview.newPayment, contentview);
+                        topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);

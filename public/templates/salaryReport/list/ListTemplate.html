@@ -1,9 +1,8 @@
 <% collection.forEach(function(emp, index){ %>
 <%var fireMonth = emp.lastFire ? moment().isoWeek(parseInt(emp.lastFire.toString().slice(4, 6))).month() : null;%>
 <%var checkYear = fireMonth ? parseInt(emp.lastFire.toString().slice(0, 4)) : 0 ;%>
-<%var emdMonth =  month;%>
-<%if (checkYear === year) {%>
- <%emdMonth = fireMonth ? fireMonth : emdMonth; %>
+<%if (fireMonth) {%>
+ <%var fireKey = fireMonth ? checkYear * 100 + fireMonth : 0; %>
 <%}%>
 <tr data-id="<%=emp._id%>">
     <td><%= index + 1 %></td>
@@ -13,24 +12,31 @@
     <td>
         <%=emp ? emp.name: ''%>
     </td>
-    <% for (var i = 1; i <= emdMonth; i++) {%>
+    <% for (var i = startKey; i <= endKey; i++) {%>
     <%var salary = '&nbsp;'%>
-    <%var key = year * 100 + i;%>
 
     <%var length =  emp.hire.length; %>
+    <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 12) {%>
     <% for (var j = 0; j <= length - 1; j++) {%>
-      <%if (key >= emp.hire[j].hireDate) {%>
+      <%if (i >= emp.hire[j].hireDate) {%>
 
        <% salary = emp.hire[j].hire.salary; %>;
 
       <%}%>
     <%}%>
-
     <td data-id="<%=i%>"><%=salary%></td>
+    <% } else if (i >= fireKey) {%>
+    <% i = endKey; %>
+    <td data-id="<%=i%>">&nbsp;</td>
+    <%} else {%>
+     <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
     <%}%>
 
-    <%for (var i = 12 - emdMonth; i > 0; i--) {%>
-    <td data-id="<%=i%>">&nbsp;</td>
+
+    <%}%>
+
+    <%for (var j = endKey - i; j > 0; j--) {%>
+    <td data-id="<%=j%>">&nbsp;</td>
     <%}%>
 
 </tr>

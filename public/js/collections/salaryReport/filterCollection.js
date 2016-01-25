@@ -17,7 +17,9 @@ define([
             options = options || {};
             this.startTime = new Date();
             this.filter = options ? options.filter : {};
-            this.year = options.year;
+            this.startDate = options.startDate;
+            this.endDate = options.endDate;
+           // this.year = options.year;
 
             this.fetch({
                 data   : options,
