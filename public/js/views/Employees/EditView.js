@@ -35,7 +35,7 @@ define([
                 } else {
                     this.currentModel = options.model;
                 }
-                this.currentModel.urlRoot = '/Employees';
+                this.currentModel.urlRoot = '/employee';
 
                 this.responseObj['#sourceDd'] = [
                     {
@@ -573,7 +573,7 @@ define([
                 var answer = confirm("Really DELETE items ?!");
 
                 if (answer == true) {
-                    this.currentModel.urlRoot = "/Employees";
+                    this.currentModel.urlRoot = "/employee";
                     this.currentModel.destroy({
                         headers: {
                             mid: mid

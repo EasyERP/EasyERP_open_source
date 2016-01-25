@@ -10,7 +10,7 @@ define([
             el                  : '#content-holder',
             initialize          : function (options) {
                 this.formModel = options.model;
-                this.formModel.urlRoot = "/Employees";
+                this.formModel.urlRoot = "/employee";
             },
             events              : {
                 'click .chart-tabs a'                                  : 'changeTab',
@@ -95,7 +95,7 @@ define([
                 } else {
                     var id = e.target.id;
                     var currentModel = this.formModel;
-                    currentModel.urlRoot = "/Employees/";
+                    currentModel.urlRoot = "/employee/";
                     var attachments = currentModel.get('attachments');
                     var new_attachments = _.filter(attachments, function (attach) {
                         if (attach._id != id) {
@@ -161,7 +161,7 @@ define([
 
             deleteItems: function () {
                 var mid = 39;
-                this.formModel.urlRoot = "/Employees";
+                this.formModel.urlRoot = "/employee";
                 this.formModel.destroy({
                     headers: {
                         mid: mid

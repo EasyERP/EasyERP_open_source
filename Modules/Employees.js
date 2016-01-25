@@ -1556,7 +1556,7 @@ var Employee = function (event, models) {
 		//create                        : create,
 		get                           : get,
 		getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
-		getFilter                     : getFilter,
+		//getFilter                     : getFilter,
 		getEmployeesAlphabet          : getEmployeesAlphabet,
 		getForDd                      : getForDd,
 		getForDdByRelatedUser         : getForDdByRelatedUser,
@@ -1566,7 +1566,7 @@ var Employee = function (event, models) {
 		getApplications               : getApplications,
 		getApplicationsForKanban      : getApplicationsForKanban,
 		getEmployeesImages            : getEmployeesImages,
-		getById                       : getById
+		//getById                       : getById
 	};
 };
 

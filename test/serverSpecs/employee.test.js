@@ -33,7 +33,7 @@ describe("Employee Specs", function () {
             },
             "department" : "55b92ace21e4b7c40f00000f",
             "jobPosition": "55b92acf21e4b7c40f00001d",
-            "dateBirth": "28 Dec, 1990"
+            "dateBirth"  : "28 Dec, 1990"
         };
 
         aggent
@@ -67,7 +67,7 @@ describe("Employee Specs", function () {
         var bodyError = {
             "department" : "55b92ace21e4b7c40f00000f",
             "jobPosition": "55b92acf21e4b7c40f00001d",
-            "dateBirth": "cccccc"
+            "dateBirth"  : "cccccc"
         };
 
         aggent
@@ -85,6 +85,57 @@ describe("Employee Specs", function () {
                     .to.be.instanceOf(Object);
                 expect(body)
                     .to.have.property('error');
+
+                done();
+            });
+    });
+
+    it("should getById employee", function (done) {
+        var query = {
+            id: "55b92ad221e4b7c40f000032"
+        };
+        aggent
+            .get('employee/form')
+            .query(query)
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('_id');
+
+                done();
+            });
+    });
+
+    it("should get by viewType employee", function (done) {
+        var query = {
+            viewType: "list",
+            contentType: "Employees",
+            page: 1,
+            count: 100
+        };
+        aggent
+            .get('employee/thumbnails')
+            .query(query)
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
 
                 done();
             });
