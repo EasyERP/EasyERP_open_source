@@ -146,6 +146,18 @@ define([
         saveItem: function () {
             var id;
             var model;
+            var filled = true;
+
+            $(".editable").each(function (index, elem){
+                if (!$(elem).html()){
+                    filled = false;
+                    return false;
+                }
+            });
+
+            if (!filled) {
+                return  App.render({type: 'error', message: 'Fill all fields please'});
+            }
 
             this.setChangedValueToModel();
             for (id in this.changedModels) {
