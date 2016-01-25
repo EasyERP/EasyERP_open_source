@@ -31,10 +31,6 @@ define([
             "click .itemsNumber"                                     : "switchPageCounter",
             "click .showPage"                                        : "showPage",
             "change #currentShowPage"                                : "showPage",
-            "click #previousPage"                                    : "previousPage",
-            "click #nextPage"                                        : "nextPage",
-            "click #firstShowPage"                                   : "firstPage",
-            "click #lastShowPage"                                    : "lastPage",
             "click .checkbox"                                        : "checked",
             "change .listCB"                                         : "setAllTotalVals",
             "click #top-bar-copyBtn"                                 : "copyRow",
@@ -48,13 +44,13 @@ define([
         initialize: function (options) {
             this.remove();
             this.collection = options.model;
-            this.defaultItemsNumber = 50;
+            this.defaultItemsNumber = options.defaultItemsNumber;
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
 
             this.startNumber = options.startNumber;
 
-            if (this.startNumber < 50) {
+            if (this.startNumber < 100) {
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             }
 
@@ -234,7 +230,7 @@ define([
             }, this);
         },
 
-        renderPagination: function ($currentEl, self) {
+        /*renderPagination: function ($currentEl, self) {
             $currentEl.append(_.template(paginationTemplate));
 
             var pagenation = self.$el.find('.pagination');
@@ -248,8 +244,7 @@ define([
             $(document).on("click", function (e) {
                 self.hidePagesPopup(e);
             });
-        },
-
+        },*/
         showPage: function (event) {
             event.preventDefault();
             event.stopPropagation();
@@ -264,85 +259,43 @@ define([
             }, true, this);
         },
 
-        previousPage: function (event) {
+        checkPage: function (event) {
+            var elementId = $(event.target).attr('id');
+            var checkProject;
+            var data = {
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            };
+
             event.preventDefault();
             event.stopPropagation();
 
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
 
-            $('#check_all').prop('checked', false);
-            this.prevPProject({
-                sort         : this.sort,
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, true, this);
-            dataService.getData(this.totalCollectionLengthUrl, {
-                filter       : this.filter,
-                contentType  : this.contentType,
-                newCollection: this.newCollection
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-            }, this);
-        },
-
-        nextPage: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            this.collection.unbind('reset');
-            this.collection.unbind('showmore');
 
             $('#check_all').prop('checked', false);
+            switch(elementId) {
+                case 'previousPage':
+                    this.prevPProject(data, true, this);
+                    break;
 
-            this.nextPProject({
-                sort         : this.sort,
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, true, this);
+                case 'nextPage':
+                    this.nextPProject(data, true, this);
+                    break;
+
+                case 'firstShowPage':
+                    this.firstPProject(data, true, this);
+                    break;
+
+                case 'lastShowPage':
+                    this.lastPProject(data, true, this);
+                    break;
+            }
             dataService.getData(this.totalCollectionLengthUrl, {
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-            }, this);
-        },
-
-        firstPage: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            this.collection.unbind('reset');
-            this.collection.unbind('showmore');
-
-            $('#check_all').prop('checked', false);
-            this.firstPProject({
-                sort         : this.sort,
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, true, this);
-            dataService.getData(this.totalCollectionLengthUrl, {
-                sort  : this.sort,
-                filter: this.filter
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-            }, this);
-        },
-
-        lastPage: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            $('#check_all').prop('checked', false);
-
-            this.lastPProject({
-                sort         : this.sort,
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, true, this);
-            dataService.getData(this.totalCollectionLengthUrl, {
-                sort  : this.sort,
-                filter: this.filter
             }, function (response, context) {
                 context.listLength = response.count || 0;
             }, this);
@@ -536,6 +489,53 @@ define([
             return false;
         },
 
+        switchPageCounter: function (event) {
+            var newRows = this.$el.find('#false');
+
+            event.preventDefault();
+
+            if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+                return App.render({
+                    type   : 'notify',
+                    message: 'Please, save previous changes or cancel them!'
+                });
+            }
+
+            var targetEl = $(event.target);
+            var itemsNumber;
+
+            if (this.previouslySelected) {
+                this.previouslySelected.removeClass("selectedItemsNumber");
+            }
+
+            this.previouslySelected = targetEl;
+            targetEl.addClass("selectedItemsNumber");
+
+            this.startTime = new Date();
+            itemsNumber = targetEl.text();
+
+            if (itemsNumber === 'all') {
+                itemsNumber = this.listLength;
+            }
+
+            this.defaultItemsNumber = itemsNumber;
+
+            this.getTotalLength(null, itemsNumber, this.filter);
+
+            this.collection.showMore({
+                count        : itemsNumber,
+                page         : 1,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            });
+            this.page = 1;
+
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+         //   this.changeLocationHash(1, itemsNumber, this.filter);
+        },
+
         saveItem: function (e) {
             e.preventDefault();
 
@@ -710,7 +710,7 @@ define([
             var allInputs;
             var checkedInputs;
 
-            if (this.startNumber < 50) {
+            if (this.startNumber < 100) {
                 $currentEl.html('');
                 $currentEl.prepend(this.templateHeader);
             }
@@ -720,7 +720,7 @@ define([
                 startNumber: self.startNumber - 1
             }));
 
-            if (this.startNumber < 50) {
+            if (this.startNumber < 100) {
                 this.renderPagination(self.$el, self);
             }
 
