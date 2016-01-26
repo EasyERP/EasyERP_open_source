@@ -27,7 +27,7 @@
 
                 <% for (var i = startKey; i <= endKey; i++) {   %>
                 <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 11) {%>
-                <th><%=weekSplitter((i + 1).toString())%></th>
+                <th class="dates" data-id="<%=i + 1%>"><%=weekSplitter((i + 1).toString())%></th>
                 <% } else { %>
 
                 <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
@@ -53,8 +53,8 @@
         <tfoot id="salaryReportFooter">
         <tr>
             <td colspan="3" class="centerCell">Total</td>
-            <% for (var i = startKey; i <= endKey; i++) {%>
-            <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 11) {%>
+            <% for (var i = startKey + 1; i <= endKey + 1; i++) {%>
+            <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 12) {%>
             <td id="<%= i %>"></td>
             <% } else { %>
 

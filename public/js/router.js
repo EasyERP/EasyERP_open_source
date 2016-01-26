@@ -771,6 +771,15 @@ define([
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
+
+                    if (contentType === 'salaryReport') {
+                        startDate = new Date();
+                        startDate.setMonth(0);
+                        startDate.setDate(1);
+                        endDate = new Date();
+                        endDate.setMonth(11);
+                        endDate.setDate(31);
+                    }
                 }
 
                 //savedFilter = custom.savedFilters(contentType, filter);

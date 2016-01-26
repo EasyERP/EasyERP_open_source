@@ -7,7 +7,7 @@ define([
         'Underscore',
         'text!templates/salaryReport/list/ListTemplate.html',
         'helpers',
-    'moment'
+        'moment'
     ],
 
     function (Backbone, _, listTemplate, helpers, moment) {
@@ -18,14 +18,17 @@ define([
                 this.collection = options.collection;
                 this.startDate = options.startDate;
                 this.endDate = options.endDate;
-                //this.year = options.year;
-                //this.month = options.month;
             },
 
             setAllTotalVals: function () {
-               for (var i = this.endKey; i >= this.startKey; i--){
-                   this.calcTotal(i);
-               }
+                var self = this;
+                var ths = $('#caption').find('th');
+
+                ths.each(function () {
+                    if ($(this).hasClass('dates')) {
+                        self.calcTotal($(this).attr('data-id'));
+                    }
+                });
             },
 
             calcTotal: function (idTotal) {
@@ -47,7 +50,7 @@ define([
 
                 totalTd.text('');
 
-                if (rowTdVal){
+                if (rowTdVal) {
                     totalTd.text(helpers.currencySplitter(rowTdVal.toFixed()));
                 }
             },
@@ -58,11 +61,9 @@ define([
 
                 this.$el.append(_.template(listTemplate, {
                     collection: this.collection,
-                    startKey: this.startKey,
-                    endKey: this.endKey,
-                    //year: this.year,
-                    //month: this.month,
-                    moment: moment
+                    startKey  : this.startKey,
+                    endKey    : this.endKey,
+                    moment    : moment
                 }));
 
                 this.setAllTotalVals();

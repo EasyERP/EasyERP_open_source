@@ -31,13 +31,6 @@ define([
             yearElement       : null,
             filterView        : FilterView,
 
-            events: {
-                //"click .salaryReport-selected"                     : "showNewSelect",
-                //"click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                //"click"                                            : "hideNewSelect",
-                "click .oe_sortable": "goSort"
-            },
-
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -46,8 +39,6 @@ define([
                 this.sort = options.sort || {};
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.page = options.collection.page;
-
-                //this.year = options.year || (new Date()).getFullYear();
 
                 this.startDate = options.startDate;
                 this.endDate = options.endDate;
@@ -102,31 +93,6 @@ define([
                 this.$el.append(itemView.render());
             },
 
-            //chooseOption: function (e) {
-            //    this.hideNewSelect();
-            //
-            //    var $target = $(e.target);
-            //    var year = parseInt($target.text(), 10);
-            //
-            //    this.yearElement.attr('data-content', year);
-            //    this.yearElement.text(year);
-            //
-            //    if (year !== (new Date()).getFullYear()) {
-            //        this.month = 12;
-            //    } else {
-            //        this.month = (new Date()).getMonth() + 1;
-            //    }
-            //
-            //    this.year = year;
-            //
-            //    var searchObject = {
-            //        year  : year,
-            //        filter: this.filter
-            //    };
-            //
-            //    this.collection.showMore(searchObject);
-            //},
-
             changeDateRange: function () {
 
                 var stDate = $('#startDate').val();
@@ -151,7 +117,6 @@ define([
                 var $currentEl = this.$el;
                 var collection;
                 var itemView;
-                var self = this;
 
                 $currentEl.find('#salaryReport').html('');
                 $currentEl.find('#salaryReport').html(_.template(listTemplate, {weekSplitter: helpers.weekSplitter, startKey: this.startKey, endKey: this.endKey}));
@@ -168,40 +133,14 @@ define([
                 });
 
                 $currentEl.append(itemView.render());
-
-                //$(document).on("click", function () {
-                //    self.hideNewSelect();
-                //});
             },
 
-            //showNewSelect: function (e) {
-            //    var $target = $(e.target);
-            //    e.stopPropagation();
-            //
-            //    $target.append(this.ul);
-            //
-            //    return false;
-            //},
+            getMinDate: function (context) {
+                dataService.getData('/employee/getYears', {}, function (response, context) {
+                    var minDate = new Date(response.min);
 
-            //hideNewSelect: function () {
-            //    this.$el.find('.newSelectList').remove();
-            //},
-
-            yearForDD: function (context) {
-                var year = new Date().getFullYear();
-                var i;
-                //
-                //dataService.getData('/employee/getYears', {}, function (response, context) {
-                //    var startYear = parseInt(response.min, 10) || year;
-                //
-                //    context.ul = '<ul class="newSelectList">';
-                //
-                //    for (i = year; i >= startYear; i--) {
-                //        context.ul = context.ul + '<li>' + i.toString() + '</li>';
-                //    }
-                //
-                //    context.ul = context.ul + '</ul>';
-                //}, context);
+                    $('#startDate').datepicker('option', 'minDate', minDate);
+                }, context);
             },
 
             render: function () {
@@ -212,13 +151,6 @@ define([
 
                 this.startKey = moment(this.startDate).year() * 100 + moment(this.startDate).month();
                 this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
-
-
-                //this.month = 12;
-                //
-                //if (this.year === dateNow.getFullYear()) {
-                //    this.month = dateNow.getMonth() + 1;
-                //}
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate, {weekSplitter: helpers.weekSplitter, startKey: this.startKey, endKey: this.endKey}));
@@ -239,11 +171,7 @@ define([
 
                 this.renderFilter(self);
 
-                this.yearForDD(this);
-
-                //$(document).on("click", function () {
-                //    self.hideNewSelect();
-                //});
+                this.getMinDate(this);
 
                 return this;
             }
