@@ -1,7 +1,9 @@
 define([
-    'models/UsersModel'
-], function(UserModel) {
+    'models/UsersModel',
+    'chai'
+], function(UserModel, chai) {
     'use strict';
+    var expect = chai.expect;
 
     describe('UserModel', function () {
         var user;
