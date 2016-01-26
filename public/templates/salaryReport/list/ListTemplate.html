@@ -14,20 +14,18 @@
     </td>
     <% for (var i = startKey + 1; i <= endKey + 1; i++) {%>
     <%var salary = '&nbsp;';%>
-
     <%var length =  emp.hire.length; %>
     <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 12) {%>
-    <% for (var j = 0; j <= length - 1; j++) {%>
-      <%if (i >= emp.hire[j].hireDate) {%>
+       <% for (var j = 0; j <= length - 1; j++) {%>
+         <%if (i >= emp.hire[j].hireDate) {%>
+           <% salary = emp.hire[j].hire.salary; %>;
 
-       <% salary = emp.hire[j].hire.salary; %>;
+           <%if (fireKey && fireKey < i && fireKey > emp.hire[j].hireDate) {%>
+               <% salary ='&nbsp;' %>;
+           <%}%>
 
-    <%if (fireKey && fireKey < i && fireKey > emp.hire[j].hireDate) {%>
-    <% salary ='&nbsp;' %>;
-    <%}%>
-
-      <%}%>
-    <%}%>
+          <%}%>
+       <%}%>
 
     <%} else {%>
      <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
@@ -37,8 +35,5 @@
     <td data-id="<%=i%>"><%=salary%></td>
 
     <%}%>
-
-
-
 </tr>
 <% }) %>

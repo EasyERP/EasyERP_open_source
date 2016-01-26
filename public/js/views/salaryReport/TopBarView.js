@@ -87,12 +87,12 @@ define([
                         onSelect   : function () {
                             var targetInput = $(this);
                             var endDatePicker = self.$endDate;
-                            var endDate = moment(targetInput.datepicker('getDate'));
+                            var endD = moment(targetInput.datepicker('getDate'));
 
-                            endDate.add(1, 'month').day('Monday');
-                            endDate = endDate.toDate();
+                            endD.add(1, 'month').day('Monday');
+                            endD = endD.toDate();
 
-                            endDatePicker.datepicker('option', 'minDate', endDate);
+                            endDatePicker.datepicker('option', 'minDate', endD);
 
                             return false;
                         }

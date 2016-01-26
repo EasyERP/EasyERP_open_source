@@ -4,13 +4,14 @@
 "use strict";
 define([
         'Backbone',
+        'jQuery',
         'Underscore',
         'text!templates/salaryReport/list/ListTemplate.html',
         'helpers',
         'moment'
     ],
 
-    function (Backbone, _, listTemplate, helpers, moment) {
+    function (Backbone, $, _, listTemplate, helpers, moment) {
         var ListItemView = Backbone.View.extend({
             el: '#listTable',
 

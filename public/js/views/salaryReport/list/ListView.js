@@ -11,13 +11,12 @@ define([
         'views/Filter/FilterView',
         'collections/salaryReport/filterCollection',
         'constants',
-        'async',
         'moment',
         'dataService',
     'helpers'
     ],
 
-    function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, async, moment, dataService, helpers) {
+    function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, moment, dataService, helpers) {
         var ListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -136,7 +135,7 @@ define([
             },
 
             getMinDate: function (context) {
-                dataService.getData('/employee/getYears', {}, function (response, context) {
+                dataService.getData('/employee/getYears', {}, function (response) {
                     var minDate = new Date(response.min);
 
                     $('#startDate').datepicker('option', 'minDate', minDate);

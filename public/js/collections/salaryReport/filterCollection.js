@@ -1,9 +1,11 @@
 /**
  * Created by liliy on 20.01.2016.
  */
+'use strict';
 define([
+    'Backbone',
     'models/EmployeeDashboardItem'
-], function (EmpModel) {
+], function (Backbone, EmpModel) {
     var salatyCollection = Backbone.Collection.extend({
 
         model       : EmpModel,
@@ -19,7 +21,6 @@ define([
             this.filter = options ? options.filter : {};
             this.startDate = options.startDate;
             this.endDate = options.endDate;
-           // this.year = options.year;
 
             this.fetch({
                 data   : options,
@@ -66,7 +67,7 @@ define([
             var that = this;
             var filterObject = options || {};
 
-            filterObject['filter'] = (options) ? options.filter : {};
+            filterObject.filter = (options) ? options.filter : {};
 
             this.fetch({
                 data   : filterObject,
