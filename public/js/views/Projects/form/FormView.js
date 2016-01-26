@@ -781,7 +781,7 @@ define([
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
                     filter  : filter,
-                    count   : 50
+                    count   : 100
                 });
 
                 var callback = _.once(cb);
@@ -790,13 +790,15 @@ define([
                     callback();
 
                     var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
-
+                    var itemsNumber = parseInt($('.selectedItemsNumber').text()) || 'all';
+                    var defaultItemsNumber = itemsNumber  || self.wCollection.namberToShow;
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
 
                     this.wTrackView = new wTrackView({
                         model      : self.wCollection,
+                        defaultItemsNumber : defaultItemsNumber,
                         filter     : filter,
                         startNumber: startNumber,
                         project    : self.formModel
