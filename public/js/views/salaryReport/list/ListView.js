@@ -153,8 +153,9 @@ define([
                 var itemView;
                 var self = this;
 
-                $currentEl.html('');
-                $currentEl.append(_.template(listTemplate, {weekSplitter: helpers.weekSplitter, startKey: this.startKey, endKey: this.endKey}));
+                $currentEl.find('#salaryReport').html('');
+                $currentEl.find('#salaryReport').html(_.template(listTemplate, {weekSplitter: helpers.weekSplitter, startKey: this.startKey, endKey: this.endKey}));
+
 
                 this.$el.find("#listTable").html('');
 

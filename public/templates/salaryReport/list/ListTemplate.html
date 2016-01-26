@@ -12,8 +12,8 @@
     <td>
         <%=emp ? emp.name: ''%>
     </td>
-    <% for (var i = startKey; i <= endKey; i++) {%>
-    <%var salary = '&nbsp;'%>
+    <% for (var i = startKey + 1; i <= endKey + 1; i++) {%>
+    <%var salary = '&nbsp;';%>
 
     <%var length =  emp.hire.length; %>
     <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 12) {%>
@@ -22,22 +22,23 @@
 
        <% salary = emp.hire[j].hire.salary; %>;
 
+    <%if (fireKey && fireKey < i && fireKey > emp.hire[j].hireDate) {%>
+    <% salary ='&nbsp;' %>;
+    <%}%>
+
       <%}%>
     <%}%>
-    <td data-id="<%=i%>"><%=salary%></td>
-    <% } else if (i >= fireKey) {%>
-    <% i = endKey; %>
-    <td data-id="<%=i%>">&nbsp;</td>
+
     <%} else {%>
      <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
+    <%continue;%>
+    <%}%>
+
+    <td data-id="<%=i%>"><%=salary%></td>
+
     <%}%>
 
 
-    <%}%>
-
-    <%for (var j = endKey - i; j > 0; j--) {%>
-    <td data-id="<%=j%>">&nbsp;</td>
-    <%}%>
 
 </tr>
 <% }) %>
