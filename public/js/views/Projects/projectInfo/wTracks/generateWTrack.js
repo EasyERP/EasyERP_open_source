@@ -27,15 +27,18 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     'click .remove'                                    : 'deleteRow',
                     "keydown input:not(#jobName, #selectInput)"        : "onKeyDownInput",
                     "keyup input:not(#jobName, #selectInput)"          : "onKeyUpInput",
-                    "click"                                            : "hideSelects"
+                    "click div:not(input.endDateInput)"                : "hideSelects"
                 },
 
                 hideSelects: function (e) {
+                    e.stopPropagation();
                     if (this.selectView) {
                         this.selectView.remove();
                     }
 
                     this.$el.find('.generateTypeUl').hide();
+
+                    this.setChangedValueToModel();
                 },
 
                 onKeyDownInput: function (e) {
@@ -168,17 +171,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var self = this;
 
                     var defaultObject = {
-                        startDate : '',
-                        endDate   : '',
-                        hours     : '',
-                        project   : this.modelJSON._id,
-                        1         : 8,
-                        2         : 8,
-                        3         : 8,
-                        4         : 8,
-                        5         : 8,
-                        6         : 0,
-                        7         : 0
+                        startDate: '',
+                        endDate  : '',
+                        hours    : '',
+                        project  : this.modelJSON._id,
+                        1        : 8,
+                        2        : 8,
+                        3        : 8,
+                        4        : 8,
+                        5        : 8,
+                        6        : 0,
+                        7        : 0
                     };
 
                     var target = $(e.target);
@@ -232,8 +235,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         yearRange        : yearRange,
                         onSelect         : function (text, datPicker) {
                             var targetInput = $(this);
-                            var td = targetInput.closest('tr');
-                            var endDatePicker = td.find('.endDateDP');
+                            var tr = targetInput.closest('tr');
+                            var endDatePicker = tr.find('.endDateDP');
                             var endDate = moment(targetInput.datepicker('getDate'));
                             var endContainer = $(endDatePicker);
 
@@ -245,6 +248,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             targetInput.parent().removeClass('errorContent');
 
                             self.setChangedValueToModel(targetInput);
+
+                            self.calculateHours(tr.attr('data-id'));
 
                             return false;
                         },
@@ -260,10 +265,13 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         yearRange        : yearRange,
                         onSelect         : function (text, datPicker) {
                             var targetInput = $(this);
+                            var tr = targetInput.closest('tr');
 
                             targetInput.parent().removeClass('errorContent');
 
                             self.setChangedValueToModel(targetInput);
+
+                            self.calculateHours(tr.attr('data-id'));
 
                             return false;
                         },
@@ -271,6 +279,80 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             return false;
                         }
                     }).removeClass('datapicker');
+                },
+
+                calculateHours: function (number) {
+                    var length = number;
+                    var hours;
+                    var startDate = moment(new Date(this.resultArray[length].startDate));
+                    var endDate = moment(new Date(this.resultArray[length].endDate));
+                    var hoursValue = parseInt(this.resultArray[length].hours, 10);
+                    var totalPerWeek = 0;
+                    var row = this.$el.find("[data-id='" + length + "']");
+                    var i;
+                    var dayCount = 0;
+                    var satWork = false;
+                    var sunWork = false;
+
+                    if (row.find('.generateType').text() === 'Hours') {
+                        if (isNaN(hoursValue)) {
+                            row.find('.totalHours').text('');
+                        } else {
+                            row.find('.totalHours').text(hoursValue);
+                        }
+
+                        return false;
+                    }
+
+                    for (i = 7; i >= 1; i--) {
+                        var tr = this.$el.find('[data-id="' + number + '"]');
+                        var value = parseInt(tr.find('[data-content="' + i + '"]').text(), 10);
+
+                        if (i === 7 && value) {
+                            sunWork = true;
+                        }
+
+                        if (i === 6 && value) {
+                            satWork = true;
+                        }
+
+                        if (value) {
+                            dayCount++;
+                        }
+                        totalPerWeek += value;
+                    }
+
+                    function workDays(start, end) {
+                        var first = start.clone().endOf('week');
+                        var last = end.clone().startOf('week');
+                        var days = last.diff(first, 'days') * dayCount / 7;
+                        var weekFirst = first.day() - start.day();
+                        var weekLast = end.day() - last.day();
+
+                        if (satWork) {
+                            weekFirst++;
+                        }
+
+                        if (sunWork) {
+                            weekLast++;
+                        }
+
+                        if (dayCount < 7 && start.day() === 0) {
+                            --weekFirst;
+                        }
+
+                        if (dayCount < 6 && end.day() === 6) {
+                            --weekLast;
+                        }
+
+                        return ((weekFirst + weekLast + days) * totalPerWeek / dayCount);
+                    }
+
+                    hours = workDays(startDate, endDate);
+
+                    if (isFinite(hours)) {
+                        this.$el.find("[data-id='" + length + "']").find('.totalHours').text(hours.toFixed());
+                    }
                 },
 
                 editRow: function (e) {
@@ -374,6 +456,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                         if (editedElement.attr('id') === 'inputHours') {
                             editedElementValue = parseInt(editedElementValue);
+                            this.calculateHours(editedElementRowId);
                         }
 
                         if (editedElementValue) {
@@ -387,6 +470,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         if (!elem) {
                             editedCol.not('.endDateTD').text(editedElementValue);
                             editedElement.not('.endDateInput').remove();
+
+                            this.calculateHours(editedElementRowId);
                         }
                     }
                 },
