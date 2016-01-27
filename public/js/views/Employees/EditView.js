@@ -387,7 +387,7 @@ define([
                     var manager = tr.find('#projectManagerDD').attr('data-id');
                     var salary = parseInt(tr.find('[data-id="salary"]').text());
                     var info = tr.find('#statusInfoDd').val();
-                    var jobType = tr.find('#jobTypeDd').attr('data-id');
+                    var jobType = tr.find('#jobTypeDd').text();
 
                     var trFire = $(self.$el.find("#fire" + key));
 

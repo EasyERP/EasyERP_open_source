@@ -2258,42 +2258,42 @@ var requestHandler = function (app, event, mainDb) {
     //
     //};
 
-    function updateEmployees(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    data.employee.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-
-                    employee.update(req, id, data.employee, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-    function employeesUpdateOnlySelectedFields(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    employee.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateEmployees(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                data.employee.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //
+    //                employee.update(req, id, data.employee, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
+    //function employeesUpdateOnlySelectedFields(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                employee.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //function removeEmployees(req, res, id) {
     //    if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2955,7 +2955,7 @@ var requestHandler = function (app, event, mainDb) {
         getForDdByRelatedUser: getForDdByRelatedUser,
         //getEmployeesById     : getEmployeesById,
         //removeEmployees      : removeEmployees,
-        updateEmployees      : updateEmployees,
+        //updateEmployees      : updateEmployees,
         getEmployeesAlphabet : getEmployeesAlphabet,
         getEmployeesImages   : getEmployeesImages,
 
@@ -2970,7 +2970,7 @@ var requestHandler = function (app, event, mainDb) {
         updateApplication                 : updateApplication,
         uploadApplicationFile             : uploadApplicationFile,
         aplicationUpdateOnlySelectedFields: aplicationUpdateOnlySelectedFields,
-        employeesUpdateOnlySelectedFields : employeesUpdateOnlySelectedFields,
+        //employeesUpdateOnlySelectedFields : employeesUpdateOnlySelectedFields,
 
         getDepartment         : getDepartment,
         createDepartment      : createDepartment,

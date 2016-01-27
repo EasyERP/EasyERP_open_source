@@ -19,6 +19,9 @@ module.exports = function (event, models) {
 
 
     router.post('/',handler.create);
+
+    router.patch('/:id',handler.updateOnlySelectedFields);
+
     router.delete('/:id',handler.remove);
 
 

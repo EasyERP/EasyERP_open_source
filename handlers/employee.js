@@ -11,6 +11,10 @@ var Employee = function (event, models) {
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var _ = require('underscore');
+    var fs = require('fs');
+
+    var Payroll = require('../handlers/payroll');
+    var payrollHandler = new Payroll(models);
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
@@ -280,10 +284,10 @@ var Employee = function (event, models) {
         return resArray;
     }
 
-    this.getById = function(req, res, next){
+    this.getById = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
-        var query =Employee.findById(data.id);
+        var query = Employee.findById(data.id);
 
         query.populate('coach', 'name _id')
             .populate('relatedUser', 'login _id')
@@ -305,7 +309,7 @@ var Employee = function (event, models) {
 
         query.exec(function (err, employee) {
             if (err) {
-             return next(err);
+                return next(err);
             }
 
             res.status(200).send(employee);
@@ -363,9 +367,9 @@ var Employee = function (event, models) {
                     }
 
                     if (contentType === 'Employees') {
-                        queryObject.$and.push({isEmployee : true});
+                        queryObject.$and.push({isEmployee: true});
                     } else if (contentType === 'Applications') {
-                        queryObject.$and.push({isEmployee : false});
+                        queryObject.$and.push({isEmployee: false});
                     }
 
                     queryObject.$and.push({_id: {$in: ids}});
@@ -579,6 +583,162 @@ var Employee = function (event, models) {
             }
         });
 
+    };
+
+    this.updateOnlySelectedFields = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var _id = req.params.id;
+        var dbName = req.session.lastDb;
+        var UsersSchema = mongoose.Schemas.User;
+        var UsersModel = models.get(dbName, 'Users', UsersSchema);
+
+        var data = req.body;
+        var fileName = data.fileName;
+        var updateObject = data;
+        var dataObj = {};
+        var query = {};
+
+        updateObject.editedBy = {
+            user: req.session.uId,
+            date: new Date().toISOString()
+        };
+
+        if (data.workflow && data.sequenceStart && data.workflowStart) {
+            if (data.sequence === -1) {
+                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
+                    event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                        data.sequence = sequence;
+                        if (data.workflow === data.workflowStart) {
+                            data.sequence -= 1;
+                        }
+
+                        if (data.fired) {
+                            dataObj = {
+                                'fire': data.fired
+                            };
+                        } else if (data.hired) {
+                            dataObj = {
+                                'hire': data.hired
+                            };
+                        }
+
+                        if (dataObj.hire || dataObj.fire) {
+                            query = {$set: updateObject, $push: dataObj};
+                        } else {
+                            query = {$set: updateObject};
+                        }
+
+                        Employee.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            res.status(200).send({success: 'Employees updated', sequence: result.sequence});
+                        });
+                    });
+                });
+            } else {
+                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                    delete data.sequenceStart;
+                    delete data.workflowStart;
+                    data.sequence = sequence;
+
+                    Employee.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'Employees updated'});
+                    });
+                });
+            }
+        } else {
+            if (updateObject.dateBirth) {
+                updateObject.age = getAge(updateObject.dateBirth);
+            }
+
+            if (data.fired) {
+                dataObj = {
+                    'fire': data.fired
+                };
+
+            } else if (data.hired) {
+                dataObj = {
+                    'hire': data.hired
+                };
+            }
+
+            if (dataObj.hire || dataObj.fire) {
+                query = {$set: updateObject, $push: dataObj};
+            } else if (data.relatedUser) {
+                query = {$set: updateObject};
+                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
+            } else if (data.currentUser) {
+                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
+                delete data.currentUser;
+                query = {$set: updateObject};
+            } else {
+                query = {$set: updateObject};
+            }
+
+            Employee.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {
+                    event.emit('recalculate', req);
+                }
+                if (fileName) {
+                    var os = require("os");
+                    var osType = (os.type().split('_')[0]);
+                    var path;
+                    var dir;
+                    var newDirname;
+
+                    switch (osType) {
+                        case "Windows":
+                        {
+                            newDirname = __dirname.replace("\\Modules", "");
+                            while (newDirname.indexOf("\\") !== -1) {
+                                newDirname = newDirname.replace("\\", "\/");
+                            }
+                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                            dir = newDirname + "\/uploads\/" + _id;
+                        }
+                            break;
+                        case "Linux":
+                        {
+                            newDirname = __dirname.replace("/Modules", "");
+                            while (newDirname.indexOf("\\") !== -1) {
+                                newDirname = newDirname.replace("\\", "\/");
+                            }
+                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                            dir = newDirname + "\/uploads\/" + _id;
+                        }
+                            break;
+                    }
+
+                    fs.unlink(path, function (err) {
+                        console.log(err);
+                        fs.readdir(dir, function (err, files) {
+                            if (files && files.length === 0) {
+                                fs.rmdir(dir, function () {
+                                });
+                            }
+                        });
+                    });
+
+                }
+                event.emit('dropHoursCashes', req);
+                event.emit('recollectVacationDash');
+
+                res.status(200).send({success: 'Employees updated', result: result});
+
+                payrollHandler.composeSalaryReport(req);
+
+            });
+        }
     };
 
     this.remove = function (req, res, next) {

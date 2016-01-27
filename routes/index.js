@@ -1270,16 +1270,16 @@ module.exports = function (app, mainDb) {
     //    requestHandler.createEmployee(req, res, data);
     //});
 
-    app.put('/Employees/:_id', function (req, res) {
-        var data = {};
-        var id = req.body._id;
-        data.employee = req.body;
-    });
+    //app.put('/Employees/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.body._id;
+    //    data.employee = req.body;
+    //});
 
-    app.patch('/Employees/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.employeesUpdateOnlySelectedFields(req, res, id, req.body);
-    });
+    //app.patch('/Employees/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.employeesUpdateOnlySelectedFields(req, res, id, req.body);
+    //});
 
     //app.delete('/Employees/:_id', function (req, res) {
     //    var id = req.param('_id');
