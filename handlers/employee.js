@@ -50,7 +50,7 @@ var Employee = function (event, models) {
             });
     }
 
-    this.getYears = function (req, res, next) {
+    this.getMinHireDate = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
         Employee.aggregate([{
@@ -161,7 +161,7 @@ var Employee = function (event, models) {
     };
 
     this.getForProjectDetails = function (req, res, next) {
-        var ids = req.query.data;
+        var ids = req.query.data || [];
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
         Employee

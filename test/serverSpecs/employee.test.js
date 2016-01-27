@@ -141,14 +141,178 @@ describe("Employee Specs", function () {
             });
     });
 
-    it("should delete employee", function (done) {
+    it("should get employee for project details", function (done) {
+        var ids = [
+            "55b92ad221e4b7c40f000032",
+            "55b92ad221e4b7c40f000033"
+        ];
         aggent
-            .delete('employee/' + id)
-            .expect(200, done);
+            .get('employee/getForProjectDetails')
+            .query({data: ids})
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
 
-        aggent
-            .delete('employee/' + 'kkk')
-            .expect(500, done);
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Array);
+
+                done();
+            });
     });
+
+    it("should not get employee for project details", function (done) {
+        var ids = 'dddd';
+        aggent
+            .get('employee/getForProjectDetails')
+            .query({data: ids})
+            .expect(500)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('error');
+
+                done();
+            });
+    });
+
+    it("should get employees forDD", function (done) {
+        aggent
+            .get('employee/getForDD')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
+
+                done();
+            });
+    });
+
+    it("should get only employees forDD", function (done) {
+        aggent
+            .get('employee/getForDD')
+            .query({isEmployee: true})
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
+
+                done();
+            });
+    });
+
+    it("should get employees for salesManager", function (done) {
+        aggent
+            .get('employee/bySales')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Array);
+
+                done();
+            });
+    });
+
+    it("should get employees grouped by department", function (done) {
+        aggent
+            .get('employee/byDepartment')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Array)
+                    .and.to.be.not.empty;
+
+                done();
+            });
+    });
+
+    it("should get employees grouped by department", function (done) {
+        aggent
+            .get('employee/byDepartment')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Array)
+                    .and.to.be.not.empty;
+
+                done();
+            });
+    });
+
+    it("should get employees min hire date of employees", function (done) {
+        aggent
+            .get('employee/getMinHireDate')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('min');
+
+                done();
+            });
+    });
+
+    //it("should delete employee", function (done) {
+    //    aggent
+    //        .delete('employee/' + id)
+    //        .expect(200, done);
+    //});
+    //
+    //it("should not delete employee", function (done) {
+    //    aggent
+    //        .delete('employee/' + 'kkk')
+    //        .expect(500, done);
+    //});
 
 });

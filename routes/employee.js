@@ -4,6 +4,7 @@ var router = express.Router();
 var EmployeeHandler = require('../handlers/employee');
 
 module.exports = function (event, models) {
+    'use strict';
     var handler = new EmployeeHandler(event, models);
 
     router.get('/list', handler.getFilter);
@@ -15,7 +16,7 @@ module.exports = function (event, models) {
     router.get('/byDepartment', handler.byDepartment);
     router.get('/exportToXlsx', handler.exportToXlsx);
     router.get('/exportToCsv', handler.exportToCsv);
-    router.get('/getYears', handler.getYears);
+    router.get('/getMinHireDate', handler.getMinHireDate);
     router.get('/getForDdByRelatedUser', handler.getForDdByRelatedUser);
     router.get('/getSalesPerson', handler.getSalesPerson);
     router.get('/getPersonsForDd', handler.getSalesPerson);
