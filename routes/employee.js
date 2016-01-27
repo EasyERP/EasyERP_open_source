@@ -22,9 +22,9 @@ module.exports = function (event, models) {
     router.get('/getPersonsForDd', handler.getSalesPerson);
     router.get('/getEmployeesAlphabet', handler.getEmployeesAlphabet);
     router.get('/getEmployeesImages', handler.getEmployeesImages);
-    router.post('/',handler.create);
-    router.patch('/:id',handler.updateOnlySelectedFields);
-    router.delete('/:id',handler.remove);
+    router.post('/', handler.create);
+    router.patch('/:id', handler.updateOnlySelectedFields);
+    router.delete('/:id', handler.remove);
 
 
 

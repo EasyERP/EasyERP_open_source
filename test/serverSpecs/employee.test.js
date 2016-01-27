@@ -33,7 +33,15 @@ describe("Employee Specs", function () {
             },
             "department" : "55b92ace21e4b7c40f00000f",
             "jobPosition": "55b92acf21e4b7c40f00001d",
-            "dateBirth"  : "28 Dec, 1990"
+            "dateBirth"  : "28 Dec, 1990",
+            hire         : [{
+                department : "55b92ace21e4b7c40f00000f",
+                jobPosition: "55b92acf21e4b7c40f00001d",
+                manager    : "56938d2cd87c9004552b639e",
+                jobType    : 'Full-time',
+                info       : "Hired",
+                date       : new Date()
+            }]
         };
 
         aggent
@@ -116,10 +124,10 @@ describe("Employee Specs", function () {
 
     it("should get by viewType employee", function (done) {
         var query = {
-            viewType: "list",
+            viewType   : "list",
             contentType: "Employees",
-            page: 1,
-            count: 100
+            page       : 1,
+            count      : 100
         };
         aggent
             .get('employee/thumbnails')
@@ -298,6 +306,96 @@ describe("Employee Specs", function () {
                     .to.be.instanceOf(Object);
                 expect(body)
                     .to.have.property('min');
+
+                done();
+            });
+    });
+
+    it("should get employee for related user", function (done) {
+        aggent
+            .get('employee/getForDdByRelatedUser')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
+                expect(body.data)
+                    .to.be.instanceOf(Array);
+
+                done();
+            });
+    });
+
+    it("should get employee as salesPerson for dropDown", function (done) {
+        aggent
+            .get('employee/getSalesPerson')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
+                expect(body.data)
+                    .to.be.instanceOf(Array);
+
+                done();
+            });
+    });
+
+    it("should get first letters of last name of employee", function (done) {
+        aggent
+            .get('employee/getEmployeesAlphabet')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
+                expect(body.data)
+                    .to.be.instanceOf(Array);
+
+                done();
+            });
+    });
+
+    it("should update employee", function (done) {
+        var body = {
+            source: 'testSource'
+        };
+        aggent
+            .patch('employee/56938d2cd87c9004552b639e')
+            .send(body)
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('success');
 
                 done();
             });
