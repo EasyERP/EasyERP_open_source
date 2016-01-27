@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Applications/kanban/WorkflowsTemplate.html',
         'text!templates/Applications/kanbanSettings.html',
         'collections/Workflows/WorkflowsCollection',
@@ -7,10 +10,10 @@
         'views/Applications/CreateView',
         'collections/Applications/ApplicationsCollection',
         'models/ApplicationsModel',
-        'views/Filter/FilterView',
         'dataService'
     ],
-    function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, filterView, dataService) {
+    function (Backbone, $, _, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, dataService) {
+        'use strict';
         var collection = new ApplicationsCollection();
         var ApplicationsKanbanView = Backbone.View.extend({
             el    : '#content-holder',
@@ -89,7 +92,7 @@
 
             saveKanbanSettings: function () {
                 var countPerPage = $(this).find('#cPerPage').val();
-                if (countPerPage == 0) {
+                if (countPerPage === 0) {
                     countPerPage = 5;
                 }
                 dataService.postData('/currentUser', {'kanbanSettings.applications.countPerPage': countPerPage}, function (error, success) {
@@ -107,7 +110,7 @@
                 $(".edit-dialog").remove();
             },
 
-            editKanban: function (e) {
+            editKanban: function () {
                 dataService.getData('/currentUser', null, function (user, context) {
                     var tempDom = _.template(kanbanSettingsTemplate, {applications: user.user.kanbanSettings.applications});
                     context.$el = $(tempDom).dialog({
@@ -160,7 +163,7 @@
                 model.urlRoot = '/Applications/form';
                 model.fetch({
                     data   : {id: id},
-                    success: function (model, response, options) {
+                    success: function (model) {
                         new EditView({model: model});
                     },
                     error  : function () {
@@ -200,7 +203,7 @@
                 if (response.fold) {
                     context.foldUnfoldKanban(null, response.workflowId);
                 }
-                column.find(".counter").html(parseInt(column.find(".counter").html()) + contentCollection.models.length);
+                column.find(".counter").html(parseInt(column.find(".counter").html(), 10) + contentCollection.models.length);
                 _.each(contentCollection.models, function (wfModel) {
                     var curEl;
 
@@ -220,7 +223,7 @@
             },
 
             updateSequence: function (item, workflow, sequence, workflowStart, sequenceStart) {
-                if (workflow == workflowStart) {
+                if (workflow === workflowStart) {
                     if (sequence > sequenceStart) {
                         sequence -= 1;
                     }
@@ -233,7 +236,7 @@
                         inc = 1;
                     }
                     $(".column[data-id='" + workflow + "']").find(".item").each(function () {
-                        var sec = parseInt($(this).find(".inner").attr("data-sequence"));
+                        var sec = parseInt($(this).find(".inner").attr("data-sequence"), 10);
                         if (sec >= a && sec <= b) {
                             $(this).find(".inner").attr("data-sequence", sec + inc);
                         }
@@ -242,13 +245,13 @@
 
                 } else {
                     $(".column[data-id='" + workflow + "']").find(".item").each(function () {
-                        if (parseInt($(this).find(".inner").attr("data-sequence")) >= sequence) {
-                            $(this).find(".inner").attr("data-sequence", parseInt($(this).find(".inner").attr("data-sequence")) + 1);
+                        if (parseInt($(this).find(".inner").attr("data-sequence"), 10) >= sequence) {
+                            $(this).find(".inner").attr("data-sequence", parseInt($(this).find(".inner").attr("data-sequence"), 10) + 1);
                         }
                     });
                     $(".column[data-id='" + workflowStart + "']").find(".item").each(function () {
-                        if (parseInt($(this).find(".inner").attr("data-sequence")) > sequenceStart) {
-                            $(this).find(".inner").attr("data-sequence", parseInt($(this).find(".inner").attr("data-sequence")) - 1);
+                        if (parseInt($(this).find(".inner").attr("data-sequence"), 10) > sequenceStart) {
+                            $(this).find(".inner").attr("data-sequence", parseInt($(this).find(".inner").attr("data-sequence"), 10) - 1);
                         }
                     });
                     item.find(".inner").attr("data-sequence", sequence);
@@ -264,11 +267,6 @@
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
-                ;
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //};
             },
 
             showFiltredPage: function (workflows, savedFilter) {
@@ -282,10 +280,10 @@
                 var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.filter = {};
-                this.filter['condition'] = 'and';
+                this.filter.condition = 'and';
 
                 if (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
+                    self.filter.condition = 'or';
                 }
 
                 if (chosen.length) {
@@ -293,12 +291,12 @@
                         if (self.filter[elem.children[1].value]) {
                             $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
                                 self.filter[elem.children[1].value].push(element.value);
-                            })
+                            });
                         } else {
                             self.filter[elem.children[1].value] = [];
                             $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
                                 self.filter[elem.children[1].value].push(element.value);
-                            })
+                            });
                         }
                     });
 
@@ -310,12 +308,12 @@
                         }, this.asyncRender, this);
                     }, this);
 
-                    return false
+                    return false;
                 }
 
                 list_id = _.pluck(workflows, '_id');
                 if (savedFilter) {
-                    showList = savedFilter['workflow'];
+                    showList = savedFilter.workflow;
                 } else {
                     showList = checkedElements.map(function () {
                         return this.value;
@@ -337,7 +335,6 @@
                     showList = _.pluck(workflows, '_id');
                     foldList = [];
                 }
-                ;
 
                 foldList.forEach(function (id) {
                     var w;
@@ -396,17 +393,17 @@
                         var column = ui.item.closest(".column");
                         var sequence = 0;
                         if (ui.item.next().hasClass("item")) {
-                            sequence = parseInt(ui.item.next().find(".inner").attr("data-sequence")) + 1;
+                            sequence = parseInt(ui.item.next().find(".inner").attr("data-sequence"), 10) + 1;
                         }
 
                         if (model) {
-                            var secStart = parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence"));
-                            var workStart = model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow;
+                            var secStart = parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence"), 10);
+                            var workStart = model.toJSON().workflow._id || model.toJSON().workflow;
                             model.save({
                                 workflow     : column.data('id'),
-                                sequenceStart: parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence")),
+                                sequenceStart: parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence"), 10),
                                 sequence     : sequence,
-                                workflowStart: model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow
+                                workflowStart: model.toJSON().workflow._id || model.toJSON().workflow
                             }, {
                                 patch   : true,
                                 validate: false,
@@ -416,8 +413,8 @@
                                     collection.add(model2, {merge: true});
                                 }
                             });
-                            column.find(".counter").html(parseInt(column.find(".counter").html()) + 1);
-                            column.find(".totalCount").html(parseInt(column.find(".totalCount").html()) + 1);
+                            column.find(".counter").html(parseInt(column.find(".counter").html(), 10) + 1);
+                            column.find(".totalCount").html(parseInt(column.find(".totalCount").html(), 10) + 1);
                         }
                     }
                 }).disableSelection();

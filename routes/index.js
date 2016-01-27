@@ -32,6 +32,7 @@ module.exports = function (app, mainDb) {
     var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models);
     var employeeRouter = require('./employee')(event, models);
+    var applicationRouter = require('./application')(event, models);
     var departmentRouter = require('./department')(models);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
@@ -174,6 +175,7 @@ module.exports = function (app, mainDb) {
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);
     app.use('/employee', employeeRouter);
+    app.use('/application', applicationRouter);
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);
@@ -1311,48 +1313,48 @@ module.exports = function (app, mainDb) {
         requestHandler.getApplicationsLengthByWorkflows(req, res);
     });
 
-    app.get('/Applications/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getApplicationById(req, res, data);
-                break;
-            case "list":
-                requestHandler.getEmployeesFilter(req, res);
-                break;
-            case "kanban":
-                requestHandler.getApplicationsForKanban(req, res, data);
-                break;
-        }
+    //app.get('/Applications/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getApplicationById(req, res, data);
+    //            break;
+    //        case "list":
+    //            requestHandler.getEmployeesFilter(req, res);
+    //            break;
+    //        case "kanban":
+    //            requestHandler.getApplicationsForKanban(req, res, data);
+    //            break;
+    //    }
+    //
+    //});
 
-    });
+    //app.post('/Applications', function (req, res) {
+    //    var data = {};
+    //    data.employee = req.body;
+    //    requestHandler.createApplication(req, res, data);
+    //});
 
-    app.post('/Applications', function (req, res) {
-        var data = {};
-        data.employee = req.body;
-        requestHandler.createApplication(req, res, data);
-    });
+    //app.put('/Applications/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.body._id;
+    //    data.employee = req.body;
+    //    requestHandler.updateApplication(req, res, id, data);
+    //});
 
-    app.put('/Applications/:_id', function (req, res) {
-        var data = {};
-        var id = req.body._id;
-        data.employee = req.body;
-        requestHandler.updateApplication(req, res, id, data);
-    });
+    //app.patch('/Applications/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.aplicationUpdateOnlySelectedFields(req, res, id, req.body);
+    //});
 
-    app.patch('/Applications/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.aplicationUpdateOnlySelectedFields(req, res, id, req.body);
-    });
-
-    app.delete('/Applications/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeApplication(req, res, id);
-    });
+    //app.delete('/Applications/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeApplication(req, res, id);
+    //});
 
     app.get('/Degrees', function (req, res) {
         requestHandler.getDegrees(req, res);

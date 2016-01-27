@@ -1,33 +1,44 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Applications/form/FormTemplate.html',
         'views/Applications/EditView',
-        'collections/Workflows/WorkflowsCollection'
+        'collections/Workflows/WorkflowsCollection',
+        'constants'
     ],
 
-    function (ApplicationsFormTemplate, EditView, WorkflowsCollection) {
+    function (Backbone, $, _, ApplicationsFormTemplate, EditView, WorkflowsCollection, CONSTANTS) {
+        'use strict';
         var FormApplicationsView = Backbone.View.extend({
-            el        : '#content-holder',
+            el         : '#content-holder',
+            contentType: CONSTANTS.APPLICATIONS,
+            mId        : CONSTANTS.MID[this.contentType],
+
             initialize: function (options) {
                 this.workflowsCollection = new WorkflowsCollection({id: 'Applications'});
                 this.formModel = options.model;
             },
-            events    : {
+
+            events: {
                 "click .breadcrumb a, .refuseEmployee": "changeWorkflow",
                 "click .hireEmployee"                 : "isEmployee"
             },
-            render    : function () {
+
+            render: function () {
                 var formModel = this.formModel.toJSON();
                 this.$el.html(_.template(ApplicationsFormTemplate, formModel));
                 return this;
             },
 
-            editItem      : function () {
+            editItem: function () {
                 new EditView({model: this.formModel});
             },
+
             changeWorkflow: function (e) {
                 var mid = 39;
-                var model;
-                var name = '', status = '';
+                var name = '';
+                var status = '';
                 var id;
                 if ($(e.target).hasClass("applicationWorkflowLabel")) {
                     var breadcrumb = $(e.target).closest('li');
@@ -54,29 +65,31 @@ define([
                         mid: mid
                     },
                     wait   : true,
-                    success: function (model) {
+                    success: function () {
                         Backbone.history.navigate("easyErp/Applications", {trigger: true});
                     },
-                    error  : function (model, xhr, options) {
+                    error  : function () {
                         Backbone.history.navigate("easyErp", {trigger: true});
                     }
                 });
 
             },
-            isEmployee    : function (e) {
+            isEmployee    : function () {
+                var mid = this.mId;
+
                 this.model.save({
                     isEmployee: true
                 }, {
                     headers: {
-                        mid: 39
+                        mid: mid
                     },
-                    success: function (model) {
+                    success: function () {
                         Backbone.history.navigate("easyErp/Employees", {trigger: true});
                     }
                 });
             },
             deleteItems   : function () {
-                var mid = 39;
+                var mid = this.mId;
 
                 this.formModel.destroy({
                     headers: {

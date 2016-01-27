@@ -4,10 +4,11 @@ define([
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
         'common',
-        'dataService'
+        'dataService',
+    'constants'
     ],
 
-    function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
+    function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService, CONSTANTS) {
         var ListViewBase = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -174,7 +175,7 @@ define([
 
             deleteItems: function () {
                 var that = this;
-                var mid = 39;
+                var mid = CONSTANTS.MID[this.contentType];
                 var model;
                 var localCounter = 0;
                 var listTableCheckedInput;

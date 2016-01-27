@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Applications/CreateTemplate.html",
         "models/ApplicationsModel",
         "common",
@@ -6,7 +9,8 @@ define([
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView'
     ],
-    function (CreateTemplate, ApplicationModel, common, populate, attachView, AssigneesView) {
+    function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, AssigneesView) {
+        'use strict';
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Applications",
@@ -19,9 +23,9 @@ define([
                 this.responseObj = {};
                 this.render();
             },
-            events    : {
+
+            events: {
                 "click #tabList a"                                                : "switchTab",
-                //"click #hire": "isEmployee",
                 "change #workflowNames"                                           : "changeWorkflows",
                 "mouseenter .avatar"                                              : "showEdit",
                 "mouseleave .avatar"                                              : "hideEdit",
@@ -34,16 +38,19 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
-            notHide   : function (e) {
+
+            notHide: function () {
                 return false;
             },
 
-            nextSelect    : function (e) {
+            nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect    : function (e) {
+
+            prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
+
             keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
@@ -72,7 +79,9 @@ define([
             },
             getWorkflowValue: function (value) {
                 var workflows = [];
-                for (var i = 0; i < value.length; i++) {
+                var i;
+
+                for (i = 0; i < value.length; i++) {
                     workflows.push({name: value[i].name, status: value[i].status});
                 }
                 return workflows;
@@ -97,14 +106,16 @@ define([
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
-            showEdit : function () {
+
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
                 }, 250);
 
             },
-            hideEdit : function () {
+
+            hideEdit: function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"
@@ -112,12 +123,9 @@ define([
 
             },
 
-            saveItem     : function () {
+            saveItem: function () {
                 var self = this;
-                var mid = 39;
-
-                //var isEmployee = false;
-
+                var mid = this.mId;
                 var el = this.$el;
                 var name = {
                     first: $.trim(this.$el.find("#first").val()),
@@ -125,13 +133,13 @@ define([
                 };
 
                 var gender = $("#genderDd").data("id");
-                gender = gender ? gender : null;
+                gender = gender || null;
 
                 var jobType = $("#jobTypeDd").data("id");
-                jobType = jobType ? jobType : null;
+                jobType = jobType || null;
 
                 var marital = $("#maritalDd").data("id");
-                marital = marital ? marital : null;
+                marital = marital || null;
 
                 var workAddress = {
                     street : $.trim(el.find('#street').val()),
@@ -162,23 +170,20 @@ define([
                 var bankAccountNo = $.trim($("#bankAccountNo").val());
 
                 var relatedUser = this.$el.find("#relatedUsersDd").data("id");
-                relatedUser = relatedUser ? relatedUser : null;
+                relatedUser = relatedUser || null;
 
                 var departmentDd = this.$el.find("#departmentDd");
                 var departmentId = departmentDd.data("id");
-                var departmentName = departmentDd.text()
 
-                var department = departmentId ? departmentId : null;
+                var department = departmentId || null;
 
                 var jobPositionDd = this.$el.find("#jobPositionDd");
                 var jobPositionId = jobPositionDd.data("id");
-                var jobPositionName = jobPositionDd.text();
-                var jobPosition = jobPositionId ? jobPositionId : null;
+                var jobPosition = jobPositionId || null;
 
                 var projectManagerDD = this.$el.find("#projectManagerDD");
                 var projectManagerId = projectManagerDD.data("id");
-                var projectManagerName = projectManagerDD.text();
-                var manager = projectManagerId ? projectManagerId : null;
+                var manager = projectManagerId || null;
 
                 var identNo = $.trim($("#identNo").val());
 
@@ -188,8 +193,8 @@ define([
 
                 var homeAddress = {};
                 $("dd").find(".homeAddress").each(function () {
-                    var el = $(this);
-                    homeAddress[el.attr("name")] = $.trim(el.val());
+                    var elem = $(this);
+                    homeAddress[elem.attr("name")] = $.trim(elem.val());
                 });
 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
@@ -201,10 +206,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -224,19 +229,12 @@ define([
 
                 var proposedSalary = parseInt($.trim(el.find("#proposedSalary").val()), 10);
 
-                var workflowId = this.$el.find("#workflowsDd").data("id")
-                var workflow = workflowId ? workflowId : null;
-
-                //if (this.$("#hire>span").hasClass("pressed")) {
-                //    isEmployee = true;
-                //    self.contentType = "Employees";
-                //}
+                var workflowId = this.$el.find("#workflowsDd").data("id");
+                var workflow = workflowId || null;
 
                 var nextAction = $.trim($("#nextAction").val());
-                //    var otherInfo = $("#otherInfo").val();
 
                 this.model.save({
-                        //isEmployee: isEmployee,
                         name       : name,
                         gender     : gender,
                         jobType    : jobType,
@@ -273,8 +271,7 @@ define([
                         expectedSalary: expectedSalary,
                         proposedSalary: proposedSalary,
 
-                        /// otherInfo: otherInfo,
-                        workflow      : workflow,
+                        workflow: workflow
 
                     },
                     {
@@ -282,7 +279,7 @@ define([
                             mid: mid
                         },
                         wait   : true,
-                        success: function (model, response) {
+                        success: function (model) {
                             var currentModel = model.changed;
                             self.attachView.sendToServer(null, currentModel);
                         },
@@ -291,9 +288,11 @@ define([
                         }
                     });
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
+
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
@@ -325,7 +324,7 @@ define([
                     }
                 });
                 var notDiv = this.$el.find('.attach-container');
-                this.attachView = new attachView({
+                this.attachView = new AttachView({
                     model   : new ApplicationModel(),
                     url     : "/uploadApplicationFiles",
                     isCreate: true
@@ -334,15 +333,16 @@ define([
                 notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
-                        model: this.currentModel,
+                        model: this.currentModel
                     }).render().el
                 );
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
-                    var id;
-                    for (var i = 0; i < data.length; i++) {
-                        if (data[i].name == "Refused") {
+                    var i;
+
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].name === "Refused") {
                             self.refuseId = data[i]._id;
-                            if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id == data[i]._id) {
+                            if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id === data[i]._id) {
                                 $(".refuseEmployee").hide();
                             }
                             break;

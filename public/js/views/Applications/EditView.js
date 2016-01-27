@@ -1,22 +1,25 @@
 ﻿define([
-    "Backbone",
-    "jQuery",
-    "Underscore",
-    "text!templates/Applications/EditTemplate.html",
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Applications/EditTemplate.html',
     'views/selectView/selectView',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
-    "common",
-    "populate",
-    "custom"
-], function (Backbone, $, _, EditTemplate, selectView, attachView, AssigneesView, common, populate, custom) {
+    'common',
+    'populate',
+    'custom',
+    'constants'
+], function (Backbone, $, _, EditTemplate, SelectView, AttachView, AssigneesView, common, populate, custom, CONSTANTS) {
     'use strict';
     var EditView = Backbone.View.extend({
         el         : "#content-holder",
         contentType: "Applications",
         imageSrc   : '',
         template   : _.template(EditTemplate),
-        initialize : function (options) {
+        mId        : CONSTANTS.MID[this.contentType],
+
+        initialize: function (options) {
             _.bindAll(this, "saveItem");
             _.bindAll(this, "render", "deleteItem");
             this.employeesCollection = options.collection;
@@ -69,7 +72,7 @@
             "change #workflowNames"                            : "changeWorkflows",
             'keydown'                                          : 'keydownHandler',
             "mouseenter .avatar"                               : "showEdit",
-            "mouseleave .avatar"                                              : "hideEdit",
+            "mouseleave .avatar"                               : "hideEdit",
             "click .current-selected"                          : "showNewSelect",
             "click"                                            : "hideNewSelect",
             'click .dialog-tabs a'                             : 'changeTab',
@@ -90,21 +93,21 @@
 
             if (dataId === 'salary') {
                 return false;
-            } else {
-                $target.find('.editing').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
-                        var editingDates = self.$el.find('.editing');
-
-                        editingDates.each(function () {
-                            $(this).parent().text($(this).val());
-                            $(this).remove();
-                        });
-                    }
-                }).addClass('datepicker');
             }
+
+            $target.find('.editing').datepicker({
+                dateFormat : "d M, yy",
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function () {
+                    var editingDates = self.$el.find('.editing');
+
+                    editingDates.each(function () {
+                        $(this).parent().text($(this).val());
+                        $(this).remove();
+                    });
+                }
+            }).addClass('datepicker');
 
             return false;
         },
@@ -143,7 +146,7 @@
                     }
                     self.hideDialog();
                 },
-                error  : function (model, xhr, options) {
+                error  : function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
@@ -151,9 +154,10 @@
 
         },
 
-        isEmployee    : function (e) {
+        isEmployee: function (e) {
             e.preventDefault();
             var hired = {};
+            var mid = this.mId;
 
             hired.date = new Date();
             hired.department = this.$el.find("#department").attr("data-id") || null;
@@ -166,7 +170,7 @@
                 hired     : hired
             }, {
                 headers: {
-                    mid: 39
+                    mid: mid
                 },
                 patch  : true,
                 success: function () {
@@ -175,7 +179,7 @@
             });
         },
 
-        changeTab     : function (e) {
+        changeTab: function (e) {
             var holder = $(e.target);
             var n;
             var dialog_holder;
@@ -200,7 +204,9 @@
 
         getWorkflowValue: function (value) {
             var workflows = [];
-            for (var i = 0; i < value.length; i++) {
+            var i;
+
+            for (i = 0; i < value.length; i++) {
                 workflows.push({name: value[i].name, status: value[i].status});
             }
             return workflows;
@@ -227,14 +233,14 @@
             $(".crop-images-dialog").remove();
         },
 
-        showEdit  : function () {
+        showEdit: function () {
             $(".upload").animate({
                 height : "20px",
                 display: "block"
             }, 250);
         },
 
-        hideEdit  : function () {
+        hideEdit: function () {
             $(".upload").animate({
                 height : "0px",
                 display: "block"
@@ -242,9 +248,9 @@
 
         },
 
-        saveItem     : function () {
+        saveItem  : function () {
             var self = this;
-            var mid = 39;
+            var mid = this.mId;
             var lengthHire;
             var jobType;
             var department;
@@ -284,8 +290,8 @@
             var homeAddress = {};
 
             $("dd").find(".homeAddress").each(function () {
-                var el = $(this);
-                homeAddress[el.attr("name")] = $.trim(el.val());
+                var elem = $(this);
+                homeAddress[elem.attr("name")] = $.trim(elem.val());
             });
 
             var dateBirthSt = $.trim(el.find("#dateBirth").val());
@@ -295,10 +301,10 @@
             var groupsId = [];
 
             $(".groupsAndUser tr").each(function () {
-                if ($(this).data("type") == "targetUsers") {
+                if ($(this).data("type") === "targetUsers") {
                     usersId.push($(this).data("id"));
                 }
-                if ($(this).data("type") == "targetGroups") {
+                if ($(this).data("type") === "targetGroups") {
                     groupsId.push($(this).data("id"));
                 }
 
@@ -348,50 +354,49 @@
 
             var data = {
 
-                name       : name,
-                gender     : gender,
-                jobType    : jobType,
-                marital    : marital,
-                workAddress: workAddress,
-                social     : social,
-                tags         : tags,
-                workEmail    : workEmail,
-                personalEmail: personalEmail,
-                skype        : skype,
-                workPhones   : workPhones,
-                bankAccountNo: bankAccountNo,
-                relatedUser: relatedUser,
-                department : department,
-                jobPosition: jobPosition,
-                manager    : manager,
-                identNo    : identNo,
-                passportNo : passportNo,
-                otherId    : otherId,
-                homeAddress: homeAddress,
-                dateBirth  : dateBirthSt,
-                source     : sourceId,
-                imageSrc   : this.imageSrc,
-                nationality: nationality,
-                groups     : groups,
-                whoCanRW  : whoCanRW,
-                hire      : hireArray,
-                fire      : newFireArray,
-                nextAction: nextAction,
+                name          : name,
+                gender        : gender,
+                jobType       : jobType,
+                marital       : marital,
+                workAddress   : workAddress,
+                social        : social,
+                tags          : tags,
+                workEmail     : workEmail,
+                personalEmail : personalEmail,
+                skype         : skype,
+                workPhones    : workPhones,
+                bankAccountNo : bankAccountNo,
+                relatedUser   : relatedUser,
+                department    : department,
+                jobPosition   : jobPosition,
+                manager       : manager,
+                identNo       : identNo,
+                passportNo    : passportNo,
+                otherId       : otherId,
+                homeAddress   : homeAddress,
+                dateBirth     : dateBirthSt,
+                source        : sourceId,
+                imageSrc      : this.imageSrc,
+                nationality   : nationality,
+                groups        : groups,
+                whoCanRW      : whoCanRW,
+                hire          : hireArray,
+                fire          : newFireArray,
+                nextAction    : nextAction,
                 referredBy    : referredBy,
                 expectedSalary: expectedSalary,
                 proposedSalary: proposedSalary
             };
 
             var workflowId = el.find("#workflowsDd").data("id");
-            var workflow = workflowId ? workflowId : null;
+            var workflow = workflowId || null;
             var currentWorkflow = this.currentModel.get('workflow');
-            if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id != workflow)) {
-                data['workflow'] = workflow;
-                data['sequence'] = -1;
-                data['sequenceStart'] = this.currentModel.toJSON().sequence;
-                data['workflowStart'] = currentWorkflow._id;
+            if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow)) {
+                data.workflow = workflow;
+                data.sequence = -1;
+                data.sequenceStart = this.currentModel.toJSON().sequence;
+                data.workflowStart = currentWorkflow._id;
             }
-            ;
 
             this.currentModel.save(data, {
                 headers: {
@@ -401,7 +406,6 @@
                 success: function (model, result) {
                     model = model.toJSON();
                     result = result.result;
-                    var editHolder = self.$el;
                     switch (viewType) {
                         case 'list':
                         {
@@ -461,14 +465,14 @@
                 }
             });
         },
-        deleteItem   : function (event) {
+        deleteItem: function (event) {
             event.preventDefault();
 
-            var mid = 39;
+            var mid = this.mId;
             var self = this;
             var answer = confirm("Really DELETE items ?!");
 
-            if (answer == true) {
+            if (answer === true) {
                 this.currentModel.destroy({
                     headers: {
                         mid: mid
@@ -500,7 +504,7 @@
             }
         },
 
-        hideNewSelect: function (e) {
+        hideNewSelect: function () {
             var editingDates = this.$el.find('.editing');
 
             editingDates.each(function () {
@@ -527,7 +531,7 @@
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
+            this.selectView = new SelectView({
                 e          : e,
                 responseObj: this.responseObj
             });
@@ -538,17 +542,12 @@
         },
 
         chooseOption: function (e) {
-            var $target = $(e.target);
-            var parentUl = $target.parent();
-            var element = $target.closest('a') || parentUl.closest('a');
-            var id = element.attr('id') || parentUl.attr('id');
 
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
         },
 
         render: function () {
-            var id = null;
             var self = this;
             var notDiv;
             var formString = this.template({
@@ -581,7 +580,7 @@
 
             notDiv = this.$el.find('.attach-container');
             notDiv.append(
-                new attachView({
+                new AttachView({
                     model: this.currentModel,
                     url  : "/uploadApplicationFiles"
                 }).render().el
@@ -593,11 +592,12 @@
                 }).render().el
             );
             populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
-                var id;
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].name == "Refused") {
+                var i;
+
+                for (i = 0; i < data.length; i++) {
+                    if (data[i].name === "Refused") {
                         self.refuseId = data[i]._id;
-                        if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id == data[i]._id) {
+                        if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id === data[i]._id) {
                             $(".refuseEmployee").hide();
                         }
                         break;

@@ -12,6 +12,7 @@ var Employee = function (event, models) {
     var ProjectSchema = mongoose.Schemas.Project;
     var _ = require('underscore');
     var fs = require('fs');
+    var objectId = mongoose.Types.ObjectId;
 
     var Payroll = require('../handlers/payroll');
     var payrollHandler = new Payroll(models);
@@ -743,8 +744,9 @@ var Employee = function (event, models) {
 
     this.remove = function (req, res, next) {
         var _id = req.params.id;
+        var mId = req.headers.mid;
 
-        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+        access.getEditWritAccess(req, req.session.uId, mId, function (access) {
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
             if (access) {
@@ -768,6 +770,125 @@ var Employee = function (event, models) {
             }
 
         });
+    };
+
+    this.getApplicationsForKanban = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var response = {};
+        var startTime = new Date();
+        var filterObj = {};
+        var condition;
+        var data = req.query;
+
+        response.data = [];
+        response.workflowId = data.workflowId;
+        models.get(req.session.lastDb, "Department", department).aggregate(
+            {
+                $match: {
+                    users: objectId(req.session.uId)
+                }
+            }, {
+                $project: {
+                    _id: 1
+                }
+            },
+            function (err, deps) {
+                if (err) {
+                    return next(err);
+                }
+
+                var arrOfObjectId = deps.objectID();
+                filterObj.$and = [];
+                filterObj.$and.push({isEmployee: false});
+                filterObj.$and.push({workflow: objectId(data.workflowId)});
+                /*filterObj['$and'].push({$or: []});
+                 or = filterObj['$and'][2]['$or'];*/
+
+                if (data && data.filter) {
+                    if (data.filter.condition === 'or') {
+                        filterObj.$and.push({$or: []});
+                        condition = filterObj.$and[2]['$or'];
+                    } else {
+                        filterObj.$and.push({$and: []});
+                        condition = filterObj.$and[2]['$and'];
+                    }
+
+                    if (data.filter && data.filter.Name) {
+                        condition.push({'name.last': {$in: data.filter.Name}});
+                    }
+                    if (data.filter && data.filter.Email) {
+                        condition.push({'workEmail': {$in: data.filter.Email}});
+                    }
+                    if (!condition.length) {
+                        filterObj.$and.pop();
+                    }
+                }
+                Employee.aggregate(
+                    {
+                        $match: {
+                            $and: [
+                                filterObj,
+                                {
+                                    $or: [
+                                        {
+                                            $or: [
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'group'},
+                                                        {'groups.users': objectId(req.session.uId)}
+                                                    ]
+                                                },
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'group'},
+                                                        {'groups.group': {$in: arrOfObjectId}}
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'owner'},
+                                                {'groups.owner': objectId(req.session.uId)}
+                                            ]
+                                        },
+                                        {whoCanRW: "everyOne"}
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1
+                        }
+                    },
+                    function (err, responseApplications) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        Employee
+                            .where('_id').in(responseApplications)
+                            .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
+                            .populate('workflow', '_id')
+                            .populate('jobPosition', '_id name')
+                            .sort({lastFire: -1, 'sequence': -1})
+                            .limit(req.session.kanbanSettings.applications.countPerPage)
+                            .exec(function (err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                result.data = result;
+                                result.time = (new Date() - startTime);
+                                result.workflowId = data.workflowId;
+                                result.fold = (req.session.kanbanSettings.applications.foldWorkflows && req.session.kanbanSettings.applications.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
+
+                                res.status(200).send(res);
+                            });
+                    });
+            });
     };
 
 };

@@ -1,17 +1,17 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
-
         'text!templates/Employees/list/ListHeader.html',
         'views/Employees/CreateView',
         'views/Employees/list/ListItemView',
         'views/Filter/FilterView',
-
         'collections/Employees/filterCollection',
         'common'
-
     ],
 
-    function (listViewBase, listTemplate, createView, listItemView, filterView, contentCollection, common) {
+    function ($, _, listViewBase, listTemplate, createView, listItemView, filterView, contentCollection, common) {
+        'use strict';
         var EmployeesListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,

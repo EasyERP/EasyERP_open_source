@@ -1,13 +1,21 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Employees/form/FormTemplate.html',
         'views/Employees/EditView',
         'text!templates/Notes/AddAttachments.html',
-        "common"
+        'common',
+        'constants'
     ],
 
-    function (EmployeesFormTemplate, EditView, addAttachTemplate, common) {
+    function (Backbone, $, _, EmployeesFormTemplate, EditView, addAttachTemplate, common, CONSTANTS) {
+        'use strict';
         var FormEmployeesView = Backbone.View.extend({
-            el                  : '#content-holder',
+            el         : '#content-holder',
+            contentType: 'Employees',
+            mId        : CONSTANTS.MID[this.contentType],
+
             initialize          : function (options) {
                 this.formModel = options.model;
                 this.formModel.urlRoot = "/employee";
@@ -36,7 +44,7 @@ define([
                 var addInptAttach = $("#employeeForm .input-file .inputAttach")[0].files[0];
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
                     });
 
@@ -89,6 +97,7 @@ define([
                 addFrmAttach.off('submit');
             },
             deleteAttach: function (e) {
+                var mid = this.mId;
                 var target = $(e.target);
                 if (target.closest("li").hasClass("attachFile")) {
                     target.closest(".attachFile").remove();
@@ -98,17 +107,17 @@ define([
                     currentModel.urlRoot = "/employee/";
                     var attachments = currentModel.get('attachments');
                     var new_attachments = _.filter(attachments, function (attach) {
-                        if (attach._id != id) {
+                        if (attach._id !== id) {
                             return attach;
                         }
                     });
                     currentModel.save({'attachments': new_attachments},
                         {
                             headers: {
-                                mid: 39
+                                mid: mid
                             },
                             patch  : true,
-                            success: function (model, response, options) {
+                            success: function () {
                                 $('.attachFile_' + id).remove();
                             }
                         });
@@ -160,7 +169,7 @@ define([
             },
 
             deleteItems: function () {
-                var mid = 39;
+                var mid = this.mId;
                 this.formModel.urlRoot = "/employee";
                 this.formModel.destroy({
                     headers: {
@@ -170,7 +179,6 @@ define([
                         Backbone.history.navigate("#easyErp/Employees/list", {trigger: true});
                     }
                 });
-
             }
         });
 

@@ -1,22 +1,27 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Employees/CreateTemplate.html",
         "models/EmployeesModel",
         "common",
         "populate",
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
-        'views/selectView/selectView'
+        'views/selectView/selectView',
+        'constants'
     ],
-    function (CreateTemplate, EmployeeModel, common, populate, attachView, AssigneesView, selectView) {
-
+    function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, SelectView, CONSTANTS) {
+        "use strict";
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Employees",
             template   : _.template(CreateTemplate),
             imageSrc   : '',
             responseObj: {},
+            mId        : CONSTANTS.MID[this.contentType],
 
-            initialize : function () {
+            initialize: function () {
                 _.bindAll(this, "saveItem");
                 this.model = new EmployeeModel();
                 this.responseObj['#sourceDd'] = [
@@ -57,18 +62,18 @@ define([
                 this.render();
             },
 
-            events                   : {
-                "click #tabList a"                                                : "switchTab",
-                "mouseenter .avatar"                                              : "showEdit",
-                "mouseleave .avatar"                                              : "hideEdit",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click"                                                           : "hideNewSelect"
+            events: {
+                "click #tabList a"                                 : "switchTab",
+                "mouseenter .avatar"                               : "showEdit",
+                "mouseleave .avatar"                               : "hideEdit",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .current-selected"                          : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click"                                            : "hideNewSelect"
             },
 
-            showNewSelect            : function (e, prev, next) {
+            showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
@@ -80,7 +85,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -90,11 +95,11 @@ define([
                 return false;
             },
 
-            chooseOption             : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            hideNewSelect            : function () {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
 
                 if (this.selectView) {
@@ -102,7 +107,7 @@ define([
                 }
             },
 
-            addAttach                : function (event) {
+            addAttach: function () {
                 var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
                 $(".attachContainer").append('<li class="attachFile">' +
                     '<a href="javascript:;">' + s + '</a>' +
@@ -112,31 +117,32 @@ define([
                 $(".input-file").append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
             },
 
-            deleteAttach             : function (e) {
+            deleteAttach: function (e) {
                 $(e.target).closest(".attachFile").remove();
             },
 
             updateAssigneesPagination: function (el) {
-                var pag = el.find(".userPagination .text");
                 el.find(".userPagination .nextUserList").remove();
                 el.find(".userPagination .prevUserList").remove();
                 el.find(".userPagination .nextGroupList").remove();
                 el.find(".userPagination .prevGroupList").remove();
 
+                var pag = el.find(".userPagination .text");
+                var i;
                 var list = el.find("ul");
                 var count = list.find("li").length;
                 var s = "";
-                var page = parseInt(list.attr("data-page"));
+                var page = parseInt(list.attr("data-page"), 10);
                 if (page > 1) {
                     el.find(".userPagination").prepend("<a class='prevUserList' href='javascript:;'>« prev</a>");
                 }
                 if (count === 0) {
                     s += "0-0 of 0";
                 } else {
-                    if ((page) * 20 - 1 < count) {
-                        s += ((page - 1) * 20 + 1) + "-" + ((page) * 20) + " of " + count;
+                    if (page * 20 - 1 < count) {
+                        s += ((page - 1) * 20 + 1) + "-" + (page * 20) + " of " + count;
                     } else {
-                        s += ((page - 1) * 20 + 1) + "-" + (count) + " of " + count;
+                        s += ((page - 1) * 20 + 1) + "-" + count + " of " + count;
                     }
                 }
 
@@ -144,7 +150,7 @@ define([
                     el.find(".userPagination").append("<a class='nextUserList' href='javascript:;'>next »</a>");
                 }
                 el.find("ul li").hide();
-                for (var i = (page - 1) * 20; i < 20 * page; i++) {
+                for (i = (page - 1) * 20; i < 20 * page; i++) {
                     el.find("ul li").eq(i).show();
                 }
 
@@ -161,7 +167,7 @@ define([
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
-            keydownHandler      : function (e) {
+            keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
                         this.hideDialog();
@@ -171,14 +177,14 @@ define([
                 }
             },
 
-            hideDialog          : function () {
+            hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
 
-            showEdit            : function () {
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
@@ -186,7 +192,7 @@ define([
 
             },
 
-            hideEdit            : function () {
+            hideEdit: function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"
@@ -213,7 +219,7 @@ define([
 
             saveItem: function () {
                 var self = this;
-                var mid = 39;
+                var mid = this.mId;
                 var thisEl = this.$el;
                 var employeeModel = new EmployeeModel();
                 var name = {
@@ -226,7 +232,7 @@ define([
                     var el = $(this);
                     workAddress[el.attr("name")] = $.trim(el.val());
                 });
-                var tags = $.trim(thisEl.find("#tags").val()).split(',');
+                //var tags = $.trim(thisEl.find("#tags").val()).split(',');
                 var workEmail = $.trim(thisEl.find("#workEmail").val());
                 var personalEmail = $.trim(thisEl.find("#personalEmail").val());
                 var skype = $.trim(thisEl.find("#skype").val());
@@ -275,10 +281,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).attr("data-id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).attr("data-id"));
                     }
 
@@ -286,9 +292,9 @@ define([
                 var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
                 var valid = employeeModel.save({
                         name          : name,
-                        gender        : gender ? gender : "",
-                        jobType       : jobType ? jobType : "",
-                        marital       : marital ? marital : "",
+                        gender        : gender || "",
+                        jobType       : jobType || "",
+                        marital       : marital || "",
                         imageSrc      : this.imageSrc,
                         workAddress   : workAddress,
                         workEmail     : workEmail,
@@ -296,12 +302,12 @@ define([
                         skype         : skype,
                         workPhones    : workPhones,
                         officeLocation: officeLocation,
-                        relatedUser   : relatedUser ? relatedUser : "",
+                        relatedUser   : relatedUser || "",
                         department    : department,
-                        jobPosition   : jobPosition ? jobPosition : "",
+                        jobPosition   : jobPosition || "",
                         bankAccountNo : bankAccountNo,
-                        manager       : manager ? manager : "",
-                        coach         : coach ? coach : "",
+                        manager       : manager || "",
+                        coach         : coach || "",
                         identNo       : identNo,
                         passportNo    : passportNo,
                         otherId       : otherId,
@@ -327,7 +333,7 @@ define([
                             mid: mid
                         },
                         wait   : true,
-                        success: function (model, response) {
+                        success: function (model) {
                             self.attachView.sendToServer(null, model.changed);
                         },
                         error  : function (model, xhr) {
@@ -363,7 +369,7 @@ define([
                     }
                 });
                 var notDiv = this.$el.find('.attach-container');
-                this.attachView = new attachView({
+                this.attachView = new AttachView({
                     model   : new EmployeeModel(),
                     url     : "/uploadEmployeesFiles",
                     isCreate: true

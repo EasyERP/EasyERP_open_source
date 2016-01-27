@@ -2327,51 +2327,51 @@ var requestHandler = function (app, event, mainDb) {
         employee.getCollectionLengthByWorkflows(req, res);
     }
 
-    function createApplication(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    data.employee.uId = req.session.uId;
-                    employee.create(req, data.employee, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createApplication(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                data.employee.uId = req.session.uId;
+    //                employee.create(req, data.employee, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function getApplicationById(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                employee.getById(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getApplicationById(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    employee.getById(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function getApplicationsForKanban(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    employee.getApplicationsForKanban(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function getApplicationsForKanban(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                employee.getApplicationsForKanban(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     function getEmployeesImages(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2388,25 +2388,25 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function updateApplication(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    data.employee.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    }
-
-                    employee.update(req, id, data.employee, res);
-                } else {
-                    res.send(403);
-                }
-            })
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function updateApplication(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                data.employee.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                }
+    //
+    //                employee.update(req, id, data.employee, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        })
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     function uploadApplicationFile(req, res, id, files) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2421,38 +2421,38 @@ var requestHandler = function (app, event, mainDb) {
             res.send(401);
         }
     };
-    function aplicationUpdateOnlySelectedFields(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    employee.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function aplicationUpdateOnlySelectedFields(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                employee.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function removeApplication(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    employee.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function removeApplication(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                employee.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //---------------------Department--------------------------------
     function createDepartment(req, res, data) {
@@ -2965,11 +2965,11 @@ var requestHandler = function (app, event, mainDb) {
         getDepartmentForDd: getDepartmentForDd,
 
         getApplicationsLengthByWorkflows  : getApplicationsLengthByWorkflows,
-        createApplication                 : createApplication,
-        removeApplication                 : removeApplication,
-        updateApplication                 : updateApplication,
+       // createApplication                 : createApplication,
+       // removeApplication                 : removeApplication,
+       // updateApplication                 : updateApplication,
         uploadApplicationFile             : uploadApplicationFile,
-        aplicationUpdateOnlySelectedFields: aplicationUpdateOnlySelectedFields,
+        //aplicationUpdateOnlySelectedFields: aplicationUpdateOnlySelectedFields,
         //employeesUpdateOnlySelectedFields : employeesUpdateOnlySelectedFields,
 
         getDepartment         : getDepartment,
@@ -2988,8 +2988,8 @@ var requestHandler = function (app, event, mainDb) {
         employeesTotalCollectionLength: employeesTotalCollectionLength,
         //getEmployeesFilter            : getEmployeesFilter,
         uploadEmployeesFile           : uploadEmployeesFile,
-        getApplicationById            : getApplicationById,
-        getApplicationsForKanban      : getApplicationsForKanban,
+        //getApplicationById            : getApplicationById,
+        //getApplicationsForKanban      : getApplicationsForKanban,
 
         createLead      : createLead,
         updateLead      : updateLead,
