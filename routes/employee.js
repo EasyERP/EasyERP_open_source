@@ -16,19 +16,13 @@ module.exports = function (event, models) {
     router.get('/exportToXlsx', handler.exportToXlsx);
     router.get('/exportToCsv', handler.exportToCsv);
     router.get('/getYears', handler.getYears);
-
-
     router.get('/getForDdByRelatedUser', handler.getForDdByRelatedUser);
     router.get('/getSalesPerson', handler.getSalesPerson);
     router.get('/getPersonsForDd', handler.getSalesPerson);
     router.get('/getEmployeesAlphabet', handler.getEmployeesAlphabet);
     router.get('/getEmployeesImages', handler.getEmployeesImages);
-
-
     router.post('/',handler.create);
-
     router.patch('/:id',handler.updateOnlySelectedFields);
-
     router.delete('/:id',handler.remove);
 
 
