@@ -25,7 +25,6 @@ define([
             contentType             : "Applications",
             totalCollectionLengthUrl: '/totalCollectionLength/Applications',
             formUrl                 : "#easyErp/Applications/form/",
-            mId                     : CONSTANTS.MID[this.contentType],
 
             events: {
                 "click .list td:not(.notForm)": "goToEditDialog",
@@ -36,6 +35,7 @@ define([
 
             initialize: function (options) {
                 $(document).off("click");
+                this.mId =  CONSTANTS.MID[this.contentType];
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
@@ -135,7 +135,7 @@ define([
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
                 var model = new CurrentModel({validate: false});
-                model.urlRoot = '/Applications/form';
+                model.urlRoot = '/application/form';
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {

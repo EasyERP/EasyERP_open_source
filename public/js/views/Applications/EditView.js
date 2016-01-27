@@ -17,14 +17,14 @@
         contentType: "Applications",
         imageSrc   : '',
         template   : _.template(EditTemplate),
-        mId        : CONSTANTS.MID[this.contentType],
 
         initialize: function (options) {
+            this.mId =  CONSTANTS.MID[this.contentType];
             _.bindAll(this, "saveItem");
             _.bindAll(this, "render", "deleteItem");
             this.employeesCollection = options.collection;
             this.currentModel = options.model || options.collection.getElement();
-            this.currentModel.urlRoot = "/Applications";
+            this.currentModel.urlRoot = "/application";
             this.responseObj = {};
             this.refuseId = 0;
 

@@ -160,7 +160,7 @@
                 e.preventDefault();
                 var id = $(e.target).closest(".inner").data("id");
                 var model = new CurrentModel();
-                model.urlRoot = '/Applications/form';
+                model.urlRoot = '/application/form';
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {
@@ -177,7 +177,7 @@
 
             asyncFetc: function (workflows) {
                 _.each(workflows.toJSON(), function (wfModel) {
-                    dataService.getData('/Applications/kanban', {workflowId: wfModel._id}, this.asyncRender, this);
+                    dataService.getData('/application/kanban', {workflowId: wfModel._id}, this.asyncRender, this);
                 }, this);
             },
 
@@ -195,7 +195,7 @@
                     collection.set(collection.parse(response));
                 }
 
-                column = this.$("[data-id='" + response.workflowId + "']");
+                column = $("[data-id='" + response.workflowId + "']");
 
                 forContent = column.find('#forContent');
                 forContent.html(''); // for duplicated content edited by Lilya
@@ -302,7 +302,7 @@
 
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
-                        dataService.getData('/Applications/kanban', {
+                        dataService.getData('/application/kanban', {
                             workflowId: wfModel._id,
                             filter    : this.filter
                         }, this.asyncRender, this);
@@ -327,7 +327,7 @@
 
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
-                        dataService.getData('/Applications/kanban', {
+                        dataService.getData('/application/kanban', {
                             workflowId: wfModel._id,
                             filter    : this.filter
                         }, this.asyncRender, this);

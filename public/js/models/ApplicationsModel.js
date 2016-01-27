@@ -112,7 +112,7 @@
                 }
             },
             urlRoot    : function () {
-                return "/Applications";
+                return "/application";
             }
         });
         return ApplicationModel;

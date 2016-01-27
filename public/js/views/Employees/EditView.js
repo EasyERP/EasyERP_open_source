@@ -20,9 +20,10 @@ define([
             imageSrc   : '',
             template   : _.template(EditTemplate),
             responseObj: {},
-            mId        : CONSTANTS.MID[this.contentType],
 
             initialize: function (options) {
+                this.mId =  CONSTANTS.MID[this.contentType];
+
                 _.bindAll(this, "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 

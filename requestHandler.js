@@ -2952,7 +2952,7 @@ var requestHandler = function (app, event, mainDb) {
 
         //createEmployee       : createEmployee,
         getFilterJobPosition : getFilterJobPosition,
-        getForDdByRelatedUser: getForDdByRelatedUser,
+        //getForDdByRelatedUser: getForDdByRelatedUser,
         //getEmployeesById     : getEmployeesById,
         //removeEmployees      : removeEmployees,
         //updateEmployees      : updateEmployees,

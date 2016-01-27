@@ -14,9 +14,9 @@ define([
         var FormEmployeesView = Backbone.View.extend({
             el         : '#content-holder',
             contentType: 'Employees',
-            mId        : CONSTANTS.MID[this.contentType],
 
             initialize          : function (options) {
+                this.mId =  CONSTANTS.MID[this.contentType];
                 this.formModel = options.model;
                 this.formModel.urlRoot = "/employee";
             },

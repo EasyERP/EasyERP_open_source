@@ -26,9 +26,9 @@
             //page: null, //if reload page, and in url is valid page
             contentType       : 'Employees',//needs in view.prototype.changeLocationHash
             viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
-            mId               : CONSTANTS.MID[this.contentType],
 
             initialize: function (options) {
+                this.mId =  CONSTANTS.MID[this.contentType];
                 this.asyncLoadImgs(this.collection);
                 this.startTime = options.startTime;
                 this.collection = options.collection;

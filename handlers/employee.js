@@ -10,6 +10,7 @@ var Employee = function (event, models) {
     var accessRoll = require("../helpers/accessRollHelper.js")(models);
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
+    var DepartmentSchema = mongoose.Schemas.Department;
     var _ = require('underscore');
     var fs = require('fs');
     var objectId = mongoose.Types.ObjectId;
@@ -264,7 +265,7 @@ var Employee = function (event, models) {
                     resArray.push(filtrElement);
                     break;
                 case 'letter':
-                    filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                    filtrElement['name.last'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
                     resArray.push(filtrElement);
                     break;
                 case 'department':
@@ -782,7 +783,7 @@ var Employee = function (event, models) {
 
         response.data = [];
         response.workflowId = data.workflowId;
-        models.get(req.session.lastDb, "Department", department).aggregate(
+        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
             {
                 $match: {
                     users: objectId(req.session.uId)
@@ -880,12 +881,12 @@ var Employee = function (event, models) {
                                     return next(err);
                                 }
 
-                                result.data = result;
-                                result.time = (new Date() - startTime);
-                                result.workflowId = data.workflowId;
-                                result.fold = (req.session.kanbanSettings.applications.foldWorkflows && req.session.kanbanSettings.applications.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
+                                response.data = result;
+                                response.time = (new Date() - startTime);
+                                response.workflowId = data.workflowId;
+                                response.fold = (req.session.kanbanSettings.applications.foldWorkflows && req.session.kanbanSettings.applications.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
 
-                                res.status(200).send(res);
+                                res.status(200).send(response);
                             });
                     });
             });

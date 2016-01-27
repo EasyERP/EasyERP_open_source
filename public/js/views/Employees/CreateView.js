@@ -19,9 +19,9 @@ define([
             template   : _.template(CreateTemplate),
             imageSrc   : '',
             responseObj: {},
-            mId        : CONSTANTS.MID[this.contentType],
 
             initialize: function () {
+                this.mId =  CONSTANTS.MID[this.contentType];
                 _.bindAll(this, "saveItem");
                 this.model = new EmployeeModel();
                 this.responseObj['#sourceDd'] = [

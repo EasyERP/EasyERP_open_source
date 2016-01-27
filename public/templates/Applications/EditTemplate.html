@@ -471,12 +471,7 @@
                                 </td>
                                 <td data-id="salary"><%=model.hire[key].salary%></td>
                                 <td>
-                                    <!--<a id="statusInfoDd" data-id="<%=model.hire[key].info ? model.hire[key].info : ''%> " href="javascript:;">-->
-                                        <!--<%=model.hire[key].info && model.hire[key].info.length > 1 ? model.hire[key].info : "Select"%>-->
-                                    <!--</a>-->
                                     <%=model.hire[key].info && model.hire[key].info.length > 1 ? model.hire[key].info : ""%>
-                                    <!--<input id="statusInfoDd" data-id="<%=model.hire[key].info ? model.hire[key].info : ''%> " value='<%=model.hire[key].info && model.hire[key].info.length > 1 ? model.hire[key].info : ""%>' readonly/>-->
-
                                 </td>
                             </tr>
 
@@ -490,10 +485,7 @@
                                 <td><%=model.fire[key].jobType !== model.hire[key].jobType ? model.fire[key].jobType : ''%></td>
                                 <td><%=model.fire[key].salary%></td>
                                 <td>
-                                    <!--<a id="statusInfoDd" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " class="current-selected" href="javascript:;">-->
-                                    <!--<%=model.fire[key].info ? model.fire[key].info : "Select"%>-->
-                                <!--</a>-->
-                                    <input id="statusInfoDd" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " value='<%=model.fire[key].info && model.fire[key].info.length > 1 ? model.fire[key].info : ""%>' />
+                                    <input id="statusInfoDd" class="statusInfo" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " value='<%=model.fire[key].info && model.fire[key].info.length > 1 ? model.fire[key].info : ""%>' />
                                 </td>
                             </tr>
                             <% } %>

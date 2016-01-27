@@ -6,7 +6,7 @@ define([
         var ApplicationsCollection = Backbone.Collection.extend({
             model: ApplicationModel,
             url  : function () {
-                return "/Applications";
+                return "/application";
             },
 
             initialize: function () {
