@@ -1065,24 +1065,24 @@ var Employee = function (event, models) {
 		});
 	};
 
-	function getForDdByRelatedUser(req, uId, response) {
-		var res = {};
-		res['data'] = [];
-		var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({relatedUser: uId});
-		query.where('isEmployee', true);
-		query.select('_id name ');
-		query.sort({'name.first': 1});
-		query.exec(function (err, result) {
-			if (err) {
-				console.log(err);
-				logWriter.log('Employees.js get Employee.find' + err);
-				response.send(500, {error: "Can't find Employee"});
-			} else {
-				res['data'] = result;
-				response.send(res);
-			}
-		});
-	};
+	//function getForDdByRelatedUser(req, uId, response) {
+	//	var res = {};
+	//	res['data'] = [];
+	//	var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({relatedUser: uId});
+	//	query.where('isEmployee', true);
+	//	query.select('_id name ');
+	//	query.sort({'name.first': 1});
+	//	query.exec(function (err, result) {
+	//		if (err) {
+	//			console.log(err);
+	//			logWriter.log('Employees.js get Employee.find' + err);
+	//			response.send(500, {error: "Can't find Employee"});
+	//		} else {
+	//			res['data'] = result;
+	//			response.send(res);
+	//		}
+	//	});
+	//};
 
 	function getApplications(req, response) {
 		var res = {};
@@ -1559,7 +1559,7 @@ var Employee = function (event, models) {
 		//getFilter                     : getFilter,
 		getEmployeesAlphabet          : getEmployeesAlphabet,
 		getForDd                      : getForDd,
-		getForDdByRelatedUser         : getForDdByRelatedUser,
+		//getForDdByRelatedUser         : getForDdByRelatedUser,
 		addAtach                      : addAtach,
 		//updateOnlySelectedFields      : updateOnlySelectedFields,
 		//remove                        : remove,

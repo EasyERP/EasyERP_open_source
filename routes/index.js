@@ -1242,9 +1242,9 @@ module.exports = function (app, mainDb) {
         requestHandler.Birthdays(req, res);
     });
 
-    app.get('/getForDdByRelatedUser', function (req, res) {
-        requestHandler.getForDdByRelatedUser(req, res);
-    });
+    //app.get('/getForDdByRelatedUser', function (req, res) {
+    //    requestHandler.getForDdByRelatedUser(req, res);
+    //});
 
     //app.get('/Employees/:viewType', function (req, res) {
     //    var data = {};

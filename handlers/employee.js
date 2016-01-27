@@ -891,6 +891,26 @@ var Employee = function (event, models) {
             });
     };
 
+    this.getForDdByRelatedUser = function(req, res, next){
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var result = {};
+        var uId = req.session.uId;
+
+        var query =Employee.find({relatedUser: uId});
+        query.where('isEmployee', true);
+        query.select('_id name ');
+        query.sort({'name.first': 1});
+        query.exec(function (err, user) {
+            if (err){
+                return next(err);
+            }
+
+            result.data = user;
+            res.status(200).send(result);
+
+        });
+    };
+
 };
 /**
  * __Type__ `GET`

@@ -13,9 +13,12 @@ module.exports = function (event, models) {
     router.get('/getForDD', handler.getForDD);
     router.get('/bySales', handler.getBySales);
     router.get('/byDepartment', handler.byDepartment);
-    router.get('/exportToXlsx',handler.exportToXlsx);
-    router.get('/exportToCsv',handler.exportToCsv);
-    router.get('/getYears',handler.getYears);
+    router.get('/exportToXlsx', handler.exportToXlsx);
+    router.get('/exportToCsv', handler.exportToCsv);
+    router.get('/getYears', handler.getYears);
+
+
+    router.get('/getForDdByRelatedUser', handler.getForDdByRelatedUser);
 
 
     router.post('/',handler.create);

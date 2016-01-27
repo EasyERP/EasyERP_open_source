@@ -1355,18 +1355,18 @@ var requestHandler = function (app, event, mainDb) {
     };
 
     //---------------Persons--------------------------------
-    function getForDdByRelatedUser(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                employee.getForDdByRelatedUser(req, req.session.uId, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-        }
-    };
+    //function getForDdByRelatedUser(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            employee.getForDdByRelatedUser(req, req.session.uId, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //    }
+    //};
 
     function Birthdays(req, res) {
         try {
