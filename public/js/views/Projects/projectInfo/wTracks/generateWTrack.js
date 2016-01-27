@@ -27,7 +27,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     'click .remove'                                           : 'deleteRow',
                     "keydown input:not(#jobName, #selectInput)"               : "onKeyDownInput",
                     "keyup input:not(#jobName, #selectInput, .hasDatepicker)" : "onKeyUpInput",
-                    "click"                                                   : "hideSelects"
+                    "click div:not(input.endDateInput)"                       : "hideSelects"
                 },
 
                 hideSelects: function (e) {
