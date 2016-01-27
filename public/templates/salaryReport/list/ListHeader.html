@@ -1,42 +1,21 @@
 <div id="searchContainer"></div>
-<div class="salaryReport">
-    <a id="yearSelect" class="salaryReport-selected" data-content="<%=year%>" href="javascript:;"><%=year%></a>
+<div id="salaryReport">
     <table class="list report-list">
-        <colgroup>
-            <col width="1%">
-            <col width="13%">
-            <col width="14%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-            <col width="6%">
-        </colgroup>
-
         <thead>
             <tr id="caption">
                 <th>#</th>
                 <th class="oe_sortable" data-sort="department">Department</th>
                 <th class="oe_sortable" data-sort="name">Employee</th>
-                <th>January</th>
-                <th>February</th>
-                <th>March</th>
-                <th>April</th>
-                <th>May</th>
-                <th>Jun</th>
-                <th>July</th>
-                <th>August</th>
-                <th>September</th>
-                <th>October</th>
-                <th>November</th>
-                <th>December</th>
+
+                <% for (var i = startKey; i <= endKey; i++) {   %>
+                <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 11) {%>
+                <th class="dates" data-id="<%=i + 1%>"><%=weekSplitter((i + 1).toString())%></th>
+                <% } else { %>
+
+                <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
+                <%i--;%>
+                <% } %>
+                <% } %>
             </tr>
         </thead>
 
@@ -44,18 +23,14 @@
         <tfoot id="salaryReportFooter">
         <tr>
             <td colspan="3" class="centerCell">Total</td>
-            <td id="1"></td>
-            <td id="2"></td>
-            <td id="3"></td>
-            <td id="4"></td>
-            <td id="5"></td>
-            <td id="6"></td>
-            <td id="7"></td>
-            <td id="8"></td>
-            <td id="9"></td>
-            <td id="10"></td>
-            <td id="11"></td>
-            <td id="12"></td>
+            <% for (var i = startKey + 1; i <= endKey + 1; i++) {%>
+            <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 12) {%>
+            <td id="<%= i %>"></td>
+            <% } else { %>
+
+            <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
+            <% } %>
+            <% } %>
         </tr>
         </tfoot>
         </table>

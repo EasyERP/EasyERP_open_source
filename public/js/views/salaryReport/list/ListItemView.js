@@ -4,35 +4,32 @@
 "use strict";
 define([
         'Backbone',
+        'jQuery',
         'Underscore',
         'text!templates/salaryReport/list/ListTemplate.html',
         'helpers',
-    'moment'
+        'moment'
     ],
 
-    function (Backbone, _, listTemplate, helpers, moment) {
+    function (Backbone, $, _, listTemplate, helpers, moment) {
         var ListItemView = Backbone.View.extend({
             el: '#listTable',
 
             initialize: function (options) {
                 this.collection = options.collection;
-                this.year = options.year;
-                this.month = options.month;
+                this.startDate = options.startDate;
+                this.endDate = options.endDate;
             },
 
             setAllTotalVals: function () {
-                this.calcTotal('1');
-                this.calcTotal('2');
-                this.calcTotal('3');
-                this.calcTotal('4');
-                this.calcTotal('5');
-                this.calcTotal('6');
-                this.calcTotal('7');
-                this.calcTotal('8');
-                this.calcTotal('9');
-                this.calcTotal('10');
-                this.calcTotal('11');
-                this.calcTotal('12');
+                var self = this;
+                var ths = $('#caption').find('th');
+
+                ths.each(function () {
+                    if ($(this).hasClass('dates')) {
+                        self.calcTotal($(this).attr('data-id'));
+                    }
+                });
             },
 
             calcTotal: function (idTotal) {
@@ -54,17 +51,20 @@ define([
 
                 totalTd.text('');
 
-                if (rowTdVal){
+                if (rowTdVal) {
                     totalTd.text(helpers.currencySplitter(rowTdVal.toFixed()));
                 }
             },
 
             render: function () {
+                this.startKey = moment(this.startDate).year() * 100 + moment(this.startDate).month();
+                this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
+
                 this.$el.append(_.template(listTemplate, {
                     collection: this.collection,
-                    year: this.year,
-                    month: this.month,
-                    moment: moment
+                    startKey  : this.startKey,
+                    endKey    : this.endKey,
+                    moment    : moment
                 }));
 
                 this.setAllTotalVals();

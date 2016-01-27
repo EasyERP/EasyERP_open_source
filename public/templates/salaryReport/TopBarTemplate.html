@@ -1,1 +1,27 @@
 <h3>Salary Report</h3>
+<div class="vocationFilter">
+    <ul class="dateFilter">
+        <li class="dateRange">
+            <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
+            <i class="fa fa-caret-down"></i>
+        </li>
+        <li>
+            <ul class="frameDetail hidden">
+                <li class="customTime">
+                    <span>
+                        <label for="startDate">From </label><input readonly type="text" id="startDate"><br/>
+                        <label for="endDate">To </label><input readonly type="text" id="endDate">
+                    </span>
+                </li>
+                <li class="buttons">
+                    <button id="updateDate" class="btn">
+                        <span>Update</span>
+                    </button>
+                    <button id="cancelBtn" class="btn">
+                        <span>Cancel</span>
+                    </button>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
