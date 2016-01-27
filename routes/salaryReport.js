@@ -13,8 +13,14 @@ module.exports = function (models) {
     function cacheRetriver(req, res, next){
         var query = req.query;
         var filter = query.filter;
-        var year = query.year;
-        var key = 'salaryReport' + JSON.stringify(filter) + year;
+        var startDate = query.startDate;
+        var endDate = query.endDate;
+        var dateKey = '';
+
+        if (startDate && endDate){
+            dateKey = startDate.toString() + endDate.toString();
+        }
+        var key = 'salaryReport' + JSON.stringify(filter) + dateKey;
 
         redisStore.readFromStorage('salaryReport', key, function(err, reportStringObject){
             var report;
