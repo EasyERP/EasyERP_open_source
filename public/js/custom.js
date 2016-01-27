@@ -1,10 +1,11 @@
 define([
+    'Backbone',
     'libs/date.format',
     'common',
     'constants',
     'dataService',
     'moment'
-], function (dateformat, common, CONTENT_TYPES, dataService, moment) {
+], function (Backbone, dateformat, common, CONTENT_TYPES, dataService, moment) {
     'use strict';
 
     var Store = function () {
@@ -19,7 +20,7 @@ define([
     };
 
     var runApplication = function (success) {
-        if (!Backbone.history.fragment) {
+        if (!Backbone.History.started) {
             Backbone.history.start({silent: true});
         }
         if (success) {
@@ -31,7 +32,6 @@ define([
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
             getFiltersValues();
-
         } else {
             if (App.requestedURL === null) {
                 App.requestedURL = Backbone.history.fragment;

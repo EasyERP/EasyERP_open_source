@@ -28,6 +28,7 @@ define([
         },
 
         usernameFocus: function () {
+            console.log(this);
             this.$el.find(".icon-login").toggleClass("active");
         },
         passwordFocus: function () {
@@ -53,6 +54,8 @@ define([
             var currentDb = this.$el.find("#dbs :selected").data("id");
             var $loginForm = this.$el.find("#loginForm");
             var $errorContainer = $loginForm.find('.error');
+            var login = this.$("#ulogin").val() || '';
+            var pass = this.$("#upass").val() || '';
             var data;
 
             App.currentDb = currentDb;
@@ -61,17 +64,20 @@ define([
             $loginForm.removeClass("notRegister");
 
             data = {
-                login: this.$("#ulogin").val(),
-                pass : this.$("#upass").val(),
+                login: login,
+                pass : pass,
                 dbId : currentDb
             };
 
+            if (!data.login || !data.pass) {
+                $loginForm.addClass("notRegister");
+            }
 
             if (data.login.length < 3) {
-                err += "Login must be longer than 3 characters<br/>";
+                err += 'Login must be longer than 3 characters' + '<br/>';
             }
             if (data.pass.length < 3) {
-                err += "Password must be longer than 3 characters";
+                err += 'Password must be longer than 3 characters';
             }
             if (err) {
                 $errorContainer.html(err);
@@ -79,14 +85,11 @@ define([
 
                 return;
             }
-            if (data.login === "") {
-                $loginForm.addClass("notRegister");
-            }
 
             $.ajax({
-                url    : "/login",
-                type   : "POST",
-                data   : data,
+                url : "/login",
+                type: "POST",
+                data: data,
 
                 success: function () {
                     Custom.runApplication(true);

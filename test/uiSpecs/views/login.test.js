@@ -20,10 +20,12 @@ define([
         before(function () {
             $fixture = $(fixtures);
             $elFixture = $fixture.find('#wrapper');
+            $fixture.appendTo(document.body);
         });
 
         after(function () {
             $fixture.empty();
+            $fixture.remove();
         });
 
         describe('#initialize()', function () {
@@ -61,40 +63,26 @@ define([
 
         describe('Test events', function () {
             var loginSpy;
+            var usernameFocusSpy;
+            var passwordFocusSpy;
             var view;
+            var server;
 
             before(function () {
-                loginSpy = sinon.spy(LoginView.prototype, "login");
-                view = new LoginView({el: $elFixture, dbs: ['production', 'development']});
-            });
+                server = sinon.fakeServer.create();
+                server.autoRespond = true;
+                server.respondWith("GET", "/filter/getFiltersValues", [200, {"Content-Type": "application/json"}, JSON.stringify([{filter1: 'fakeFilter'}])]);
 
-            beforeEach(function () {
-                this.server = sinon.fakeServer.create();
-                this.server.autoRespond = true;
-            });
-            afterEach(function () {
-                this.server.restore();
+                loginSpy = sinon.spy(LoginView.prototype, "login");
+                usernameFocusSpy = sinon.spy(LoginView.prototype, "usernameFocus");
+                passwordFocusSpy = sinon.spy(LoginView.prototype, "passwordFocus");
+                view = new LoginView({el: $elFixture, dbs: ['production', 'development']});
             });
 
             after(function () {
                 view.remove();
                 loginSpy.restore();
-            });
-
-            it('should have call login event, with predefined login & pass, trigger success callback', function () {
-                var $loginButton = view.$el.find('.login-button');
-                var $login = view.$el.find('#ulogin');
-                var $password = view.$el.find('#upass');
-
-                $login.val('pupkin');
-                $password.val('pupkin');
-
-                this.server.respondWith("POST", "/login", [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'loggedIn'})]);
-
-                $loginButton.click();
-
-                expect($loginButton).to.exist;
-                expect(loginSpy.called).to.be.true;
+                server.restore();
             });
 
             it('should have call login event, with predefined login & pass, trigger error callback, within status code !== 406', function () {
@@ -103,16 +91,84 @@ define([
                 var $login = $thisEl.find('#ulogin');
                 var $password = $thisEl.find('#upass');
                 var $loginForm = $thisEl.find("#loginForm");
+                var $errorContainer = $loginForm.find('.error');
 
                 $login.val('pupkin');
                 $password.val('pupkin');
 
-                this.server.respondWith("POST", "/login", [400, {"Content-Type": "application/json"}, JSON.stringify({error: 'Fail'})]);
+                server.respondWith("POST", "/login", [400, {"Content-Type": "application/json"}, JSON.stringify({error: 'Fail'})]);
 
                 $loginButton.click();
-                console.log($loginForm.hasClass('notRegister'));
+                server.respond();
 
                 expect($loginForm).to.have.class('notRegister');
+                expect($errorContainer).to.contain('Wrong Password or such user');
+                expect($loginButton).to.exist;
+            });
+
+            it('should return err & not send ajax call', function () {
+                var $thisEl = view.$el;
+                var $loginButton = $thisEl.find('.login-button');
+                var $login = $thisEl.find('#ulogin');
+                var $password = $thisEl.find('#upass');
+                var $loginForm = $thisEl.find("#loginForm");
+                var $errorContainer = $loginForm.find('.error');
+
+                $login.val('');
+                $password.val('p');
+
+                $loginButton.click();
+
+                expect($loginForm).to.have.class('notRegister');
+                expect($errorContainer).to.contain('Login must be longer than 3 characters');
+                expect($errorContainer).to.contain('Password must be longer than 3 characters');
+                expect($loginButton).to.exist;
+            });
+
+            it('should have call login event, with predefined login & pass, trigger success callback', function () {
+                var $thisEl = view.$el;
+                var $loginButton = $thisEl.find('.login-button');
+                var $login = $thisEl.find('#ulogin');
+                var $password = $thisEl.find('#upass');
+
+                $login.val('pupkin');
+                $password.val('pupkin');
+
+                server.respondWith("POST", "/login", [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'loggedIn'})]);
+
+                $loginButton.click();
+                server.respond();
+
+                expect($loginButton).to.exist;
+                expect(loginSpy.called).to.be.true;
+            });
+
+            it('should focused in login input', function () {
+                var $thisEl = view.$el;
+                var $login = $thisEl.find('#ulogin');
+                var $password = $thisEl.find('#upass');
+                var $loginIcon = $thisEl.find(".icon-login");
+                var $passwordIcon = $thisEl.find(".icon-pass");
+
+                var loginHasActiveClass = $loginIcon.hasClass('active');
+                var passwordHasActiveClass = $passwordIcon.hasClass('active');
+
+
+                $login.focus();
+                //$password.focus();
+                expect(loginSpy.called).to.be.true;
+
+               /* if (!loginHasActiveClass) {
+                    expect($loginIcon).to.have.class('active');
+                } else {
+                    expect($loginIcon).to.not.have.class('active');
+                }
+
+                if (!passwordHasActiveClass) {
+                    expect($passwordIcon).to.have.class('active');
+                } else {
+                    expect($passwordIcon).to.not.have.class('active');
+                }*/
             });
         });
     });
