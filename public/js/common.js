@@ -157,7 +157,7 @@
 
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Invalid file type!"
                     });
                 }
@@ -440,6 +440,8 @@
             var selectList = $(selectId);
             var targetList = $(targetId);
             var self = this;
+            var options2;
+
             selectList.next(".userPagination").remove();
             dataService.getData(url, {mid: 39}, function (response) {
                 var options = [];
@@ -450,6 +452,19 @@
                     options = $.map(
                         _.filter(response.data, function (filteredItem) {
                             return (ids.indexOf(filteredItem._id) == -1);
+                        }),
+                        function (item) {
+                            return $('<li/>').attr('id', item._id).text(item.departmentName);
+                        }
+                    );
+
+                    var tt = _.filter(response.data, function (filteredItem) {
+                        return (ids.indexOf(filteredItem._id) == -1);
+                    });
+
+                    options2 = $.map(
+                        _.filter(response.data, function (filteredItem) {
+                            return (ids.indexOf(filteredItem._id) !== -1);
                         }),
                         function (item) {
                             return $('<li/>').attr('id', item._id).text(item.departmentName);
@@ -490,22 +505,29 @@
                     }
                 }
                 selectList.append(options);
-                if (response.data.length >= 20) {
+                targetList.append(options2);
+
+                var selectLength = Math.abs(response.data.length - ids.length);
+                if (selectLength >= 20) {
                     if (page == 1) {
-                        selectList.after("<div class='userPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + response.data.length) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
+                        selectList.after("<div class='userPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + selectLength) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
+                        targetList.after("<div class='userPagination  targetPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + ids.length) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
                     } else {
-                        selectList.after("<div class='userPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + response.data.length) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
+                        selectList.after("<div class='userPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + selectLength) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
+                        targetList.after("<div class='userPagination targetPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + ids.length) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
                     }
                 } else {
                     if (page == 1) {
-                        selectList.after("<div class='userPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + response.data.length) + " of " + (20 * (page - 1) + response.data.length) + "</span></div>");
+                        selectList.after("<div class='userPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + selectLength) + " of " + (20 * (page - 1) + selectLength) + "</span></div>");
+                        targetList.after("<div class='userPagination targetPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + ids.length) + " of " + (20 * (page - 1) + ids.length) + "</span></div>");
                     } else {
-                        selectList.after("<div class='userPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + response.data.length) + " of " + (20 * (page - 1) + response.data.length) + "</span></div>");
+                        selectList.after("<div class='userPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + selectLength) + " of " + (20 * (page - 1) + selectLength) + "</span></div>");
+                        targetList.after("<div class='userPagination targetPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + ids.length) + " of " + (20 * (page - 1) + ids.length) + "</span></div>");
                     }
                 }
                 selectList.attr("data-page", 1);
                 targetList.attr("data-page", 1);
-                $(targetId).after("<div class='userPagination targetPagination'><span class='text'>0-0 of 0</span></div>");
+                // $(targetId).after("<div class='userPagination targetPagination'><span class='text'>0-0 of 0</span></div>");
                 if (callback) {
                     callback();
                 }
@@ -749,11 +771,16 @@
             var selectList = $(selectId);
             var targetList = $(targetId);
             selectList.empty();
+            targetList.empty();
             selectList.next(".userPagination").remove();
             targetList.next(".targetPagination").remove();
             var self = this;
+            var selectLength;
+
             dataService.getData('/UsersForDd', {mid: 39}, function (response) {
                 var options = [];
+                var options2 = [];
+
                 if (model) {
                     var users = [];
                     if (model.users) {
@@ -766,6 +793,7 @@
                     var ids = $.map(users, function (item) {
                         return item._id;
                     });
+
                     options = $.map(
                         _.filter(response.data, function (filteredItem) {
                             return (ids.indexOf(filteredItem._id) == -1);
@@ -773,6 +801,15 @@
                         function (item) {
                             return $('<li/>').attr('id', item._id).text(item.login);
                         });
+
+                    options2 = $.map(
+                        _.filter(response.data, function (filteredItem) {
+                            return (ids.indexOf(filteredItem._id) !== -1);
+                        }),
+                        function (item) {
+                            return $('<li/>').attr('id', item._id).text(item.login);
+                        }
+                    );
                 } else {
                     if (targetList.length) {
                         var ids = [];
@@ -808,14 +845,23 @@
                     }
                 }
                 selectList.append(options);
+                targetList.append(options2);
+                selectLength = Math.abs(response.data.length - ids.length);
+
                 if (response.data.length >= 20) {
-                    selectList.after("<div class='userPagination'><span class='text'>1-20 of " + (response.data.length) + "</span><a class='nextUserList' href='javascript:;'>next »</a></div>");
+                    selectList.after("<div class='userPagination'><span class='text'>1-20 of " + (selectLength) + "</span><a class='nextUserList' href='javascript:;'>next »</a></div>");
+                    if (ids.length > 20) {
+                        targetList.after("<div class='userPagination targetPagination'><span class='text'>1-" + ids.length + " of " + (ids.length) + "</span><a class='nextUserList' href='javascript:;'>next »</a></div>");
+                    } else {
+                        targetList.after("<div class='userPagination targetPagination'><span class='text'> 1-" + ids.length + " of " + ids.length + "</span></div>");
+                    }
                 } else {
-                    selectList.after("<div class='userPagination'><span class='text'> 1-" + response.data.length + " of " + response.data.length + "</span></div>");
+                    selectList.after("<div class='userPagination'><span class='text'> 1-" + selectLength + " of " + selectLength + "</span></div>");
+                    targetList.after("<div class='userPagination targetPagination'><span class='text'> 1-" + ids.length + " of " + ids.length + "</span></div>");
                 }
                 selectList.attr("data-page", 1);
                 targetList.attr("data-page", 1);
-                $(targetId).after("<div class='userPagination targetPagination'><span class='text'>0-0 of 0</span></div>");
+                // $(targetId).after("<div class='userPagination targetPagination'><span class='text'>0-0 of 0</span></div>");
 
                 if (callback) {
                     callback();

@@ -54,11 +54,11 @@ var Employee = function (models) {
             $unwind: '$hire'
         }, {
             $project: {
-                year: {$year: '$hire.date'}
+                date: '$hire.date'
             }
         }, {
             $group: {
-                _id: '$year'
+                _id: '$date'
             }
         }], function (err, result) {
             if (err) {

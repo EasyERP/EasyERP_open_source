@@ -16,7 +16,7 @@ define([
             imageSrc   : '',
             responseObj: {},
 
-            initialize : function () {
+            initialize: function () {
                 _.bindAll(this, "saveItem");
                 this.model = new EmployeeModel();
                 this.responseObj['#sourceDd'] = [
@@ -57,18 +57,18 @@ define([
                 this.render();
             },
 
-            events                   : {
-                "click #tabList a"                                                : "switchTab",
-                "mouseenter .avatar"                                              : "showEdit",
-                "mouseleave .avatar"                                              : "hideEdit",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click"                                                           : "hideNewSelect"
+            events: {
+                "click #tabList a"                                 : "switchTab",
+                "mouseenter .avatar"                               : "showEdit",
+                "mouseleave .avatar"                               : "hideEdit",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .current-selected"                          : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click"                                            : "hideNewSelect"
             },
 
-            showNewSelect            : function (e, prev, next) {
+            showNewSelect: function (e, prev, next) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
@@ -90,11 +90,11 @@ define([
                 return false;
             },
 
-            chooseOption             : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            hideNewSelect            : function () {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
 
                 if (this.selectView) {
@@ -102,7 +102,7 @@ define([
                 }
             },
 
-            addAttach                : function (event) {
+            addAttach: function (event) {
                 var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
                 $(".attachContainer").append('<li class="attachFile">' +
                     '<a href="javascript:;">' + s + '</a>' +
@@ -112,7 +112,7 @@ define([
                 $(".input-file").append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
             },
 
-            deleteAttach             : function (e) {
+            deleteAttach: function (e) {
                 $(e.target).closest(".attachFile").remove();
             },
 
@@ -161,7 +161,7 @@ define([
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
-            keydownHandler      : function (e) {
+            keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
                         this.hideDialog();
@@ -171,14 +171,14 @@ define([
                 }
             },
 
-            hideDialog          : function () {
+            hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
 
-            showEdit            : function () {
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
@@ -186,7 +186,7 @@ define([
 
             },
 
-            hideEdit            : function () {
+            hideEdit: function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"

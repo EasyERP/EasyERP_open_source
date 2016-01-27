@@ -11,12 +11,12 @@ define([
         'views/Filter/FilterView',
         'collections/salaryReport/filterCollection',
         'constants',
-        'async',
         'moment',
-        'dataService'
+        'dataService',
+    'helpers'
     ],
 
-    function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, async, moment, dataService) {
+    function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, moment, dataService, helpers) {
         var ListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -30,13 +30,6 @@ define([
             yearElement       : null,
             filterView        : FilterView,
 
-            events: {
-                "click .salaryReport-selected"                     : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click"                                            : "hideNewSelect",
-                "click .oe_sortable"                               : "goSort"
-            },
-
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -46,7 +39,8 @@ define([
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.page = options.collection.page;
 
-                this.year = options.year || (new Date()).getFullYear();
+                this.startDate = options.startDate;
+                this.endDate = options.endDate;
 
                 this.render();
 
@@ -91,32 +85,27 @@ define([
 
                 itemView = new ListItemView({
                     collection: collection,
-                    year      : this.year,
-                    month     : this.month
+                    startDate : this.startDate,
+                    endDate   : this.endDate
                 });
 
                 this.$el.append(itemView.render());
             },
 
-            chooseOption: function (e) {
-                this.hideNewSelect();
+            changeDateRange: function () {
 
-                var $target = $(e.target);
-                var year = parseInt($target.text(), 0);
+                var stDate = $('#startDate').val();
+                var enDate = $('#endDate').val();
 
-                this.yearElement.attr('data-content', year);
-                this.yearElement.text(year);
+                this.startDate = new Date(stDate);
+                this.endDate = new Date(enDate);
 
-                if (year !== (new Date()).getFullYear()) {
-                    this.month = 12;
-                } else {
-                    this.month = (new Date()).getMonth() + 1;
-                }
-
-                this.year = year;
+                this.startKey = moment(this.startDate).year() * 100 + moment(this.startDate).month();
+                this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
 
                 var searchObject = {
-                    year  : year,
+                    startDate  : this.startDate,
+                    endDate: this.endDate,
                     filter: this.filter
                 };
 
@@ -127,7 +116,10 @@ define([
                 var $currentEl = this.$el;
                 var collection;
                 var itemView;
-                var self = this;
+
+                $currentEl.find('#salaryReport').html('');
+                $currentEl.find('#salaryReport').html(_.template(listTemplate, {weekSplitter: helpers.weekSplitter, startKey: this.startKey, endKey: this.endKey}));
+
 
                 this.$el.find("#listTable").html('');
 
@@ -135,44 +127,31 @@ define([
 
                 itemView = new ListItemView({
                     collection: collection,
-                    year      : this.year,
-                    month     : this.month
+                    startDate : this.startDate,
+                    endDate   : this.endDate
                 });
 
                 $currentEl.append(itemView.render());
-
-                $(document).on("click", function () {
-                    self.hideNewSelect();
-                });
             },
 
-            showNewSelect: function (e) {
-                var $target = $(e.target);
-                e.stopPropagation();
+            showFilteredPage: function (filter, context) {
+                var itemsNumber = $("#itemsNumber").text();
 
-                $target.append(this.ul);
+                context.startTime = new Date();
+                context.newCollection = false;
 
-                return false;
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
+
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({count: itemsNumber, page: 1, filter: filter, starDate:this.startDate, endDate: this.endDate});
             },
 
-            hideNewSelect: function () {
-                this.$el.find('.newSelectList').remove();
-            },
 
-            yearForDD: function (context) {
-                var year = new Date().getFullYear();
-                var i;
+            getMinDate: function (context) {
+                dataService.getData('/employee/getYears', {}, function (response) {
+                    var minDate = new Date(response.min);
 
-                dataService.getData('/employee/getYears', {}, function (response, context) {
-                    var startYear = parseInt(response.min, 0) || year;
-
-                    context.ul = '<ul class="newSelectList">';
-
-                    for (i = year; i >= startYear; i--) {
-                        context.ul = context.ul + '<li>' + i.toString() + '</li>';
-                    }
-
-                    context.ul = context.ul + '</ul>';
+                    $('#startDate').datepicker('option', 'minDate', minDate);
                 }, context);
             },
 
@@ -181,15 +160,12 @@ define([
                 var $currentEl = this.$el;
                 var collection;
                 var itemView;
-                var dateNow = new Date();
-                this.month = 12;
 
-                if (this.year === dateNow.getFullYear()) {
-                    this.month = dateNow.getMonth() + 1;
-                }
+                this.startKey = moment(this.startDate).year() * 100 + moment(this.startDate).month();
+                this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
 
                 $currentEl.html('');
-                $currentEl.append(_.template(listTemplate, {year: this.year}));
+                $currentEl.append(_.template(listTemplate, {weekSplitter: helpers.weekSplitter, startKey: this.startKey, endKey: this.endKey}));
 
                 this.yearElement = $currentEl.find('#yearSelect');
 
@@ -199,19 +175,15 @@ define([
 
                 itemView = new ListItemView({
                     collection: collection,
-                    year      : this.year,
-                    month     : this.month
+                    startDate : this.startDate,
+                    endDate   : this.endDate
                 });
 
                 $currentEl.append(itemView.render());
 
                 this.renderFilter(self);
 
-                this.yearForDD(this);
-
-                $(document).on("click", function () {
-                    self.hideNewSelect();
-                });
+                this.getMinDate(this);
 
                 return this;
             }
