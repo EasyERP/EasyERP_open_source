@@ -202,7 +202,7 @@ define([
 
             setEditable: function (td) {
                 if (!td.parents) {
-                    td = $(td.target).closest('td');
+                    td = $(td.target);
                 }
 
                 td = td.closest('td');  // in case of no changing cancel after enter on input

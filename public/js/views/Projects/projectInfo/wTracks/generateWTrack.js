@@ -60,7 +60,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (element.maxLength && element.value.length > element.maxLength) {
                         element.value = element.value.slice(0, element.maxLength);
-                    } else if ($(element).hasClass('editing' && ($(element).parent('td').data('content') !== 'hours')) ){  // added validation for hours fields
+                    } else if ($(element).hasClass('editing') && ($(element).attr('id') !== 'inputHours') ){  // added validation for hours fields
                         if ($(element).val() > 24) {
                             $(element).val(24);
                         }
@@ -207,8 +207,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         id   : this.resultArray.length
                     });
                     var errors = this.$el.find('.errorContent');
-
-
 
                     if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
 

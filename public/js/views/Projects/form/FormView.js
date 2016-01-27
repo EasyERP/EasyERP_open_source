@@ -637,7 +637,7 @@ define([
 
                 App.projectInfo = App.projectInfo || {};
 
-                App.projectInfo.currentTab = $aEllement.prop("id").slice(0, -3);
+                App.projectInfo.currentTab = $aEllement.attr("id").slice(0, -3);  // todo id
 
                 target.closest(".chart-tabs").find("a.active").removeClass("active");
                 target.addClass("active");

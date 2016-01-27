@@ -672,9 +672,9 @@ var Project = function (models, event) {
                                 }
                             }, {
                                 $project: {
-                                    notRemovable : {
+                                    /*notRemovable : {
                                         $size: {"$ifNull": [ "$budget.projectTeam", [] ]} // added check on field value null
-                                    },
+                                    },*/
                                     projectmanager  : {$arrayElemAt: ["$projectmanager", 0]},
                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                                     customer        : {$arrayElemAt: ["$customer", 0]},
@@ -1411,11 +1411,14 @@ var Project = function (models, event) {
     };
 
     function updateOnlySelectedFields(req, _id, data, res) {
-        delete data._id;
+        var obj;
         var fileName = data.fileName;
+
+        delete data._id;
+
         delete data.fileName;
         if (data.notes && data.notes.length != 0) {
-            var obj = data.notes[data.notes.length - 1];
+            obj = data.notes[data.notes.length - 1];
             if (!obj._id) {
                 obj._id =  mongoose.Types.ObjectId();
             }
@@ -1424,17 +1427,19 @@ var Project = function (models, event) {
             data.notes[data.notes.length - 1] = obj;
         }
         models.get(req.session.lastDb, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, {$set: data}, {new: true}, function (err, projects) {
+            var os = require("os");
+            var osType = (os.type().split('_')[0]);
+            var path;
+            var dir;
+            var newDirname;
+
             if (err) {
                 console.log(err);
                 logWriter.log("Project.js update project.update " + err);
                 res.send(500, {error: "Can't update Project"});
             } else {
                 if (fileName) {
-                    var os = require("os");
-                    var osType = (os.type().split('_')[0]);
-                    var path;
-                    var dir;
-                    var newDirname;
+
                     switch (osType) {
                         case "Windows":
                         {
@@ -1478,13 +1483,16 @@ var Project = function (models, event) {
     };
 
     function taskUpdateOnlySelectedFields(req, _id, data, res) {
+        var fileName = data.fileName;
+        var obj;
+
         delete data._id;
         delete data.createdBy;
-        var fileName = data.fileName;
-        var progress
+
+
         delete data.fileName;
         if (data.notes && data.notes.length != 0) {
-            var obj = data.notes[data.notes.length - 1];
+            obj = data.notes[data.notes.length - 1];
             if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
             }

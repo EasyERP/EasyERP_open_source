@@ -115,7 +115,7 @@ define([
 
                 this.currentPage = this.currentPage || 1;
 
-                if (this.attr === "monthSelect") {
+                if (this.attr === "monthSelect") { // todo sorting
                     data = this.responseObj["#monthSelect"];
                 }
 

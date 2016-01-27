@@ -151,7 +151,7 @@ define([
             } else {
                 wId = 'Purchase Order';
                 mid = 57;
-                status = 'In Progress';
+                status = 'In Progress'; // todo workflow for purchase
             }
 
             populate.fetchWorkflow({

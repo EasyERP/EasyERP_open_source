@@ -39,7 +39,6 @@ define([
             editCollection          : null,
             selectedProjectId       : [],
             genInvoiceEl            : null,
-            inputValue              : null,  // need for correct work after double click
             changedModels           : {},
             exportToCsvUrl          : '/wTrack/exportToCsv',
             exportToXlsxUrl         : '/wTrack/exportToXlsx',
@@ -265,23 +264,23 @@ define([
 
                     return value;
                 };
-                if (wTrackId) {   // added in case of loss id after double-click
-                    for (var i = days.length - 1; i >= 0; i--) {
-                        calcEl = $(days[i]);
 
-                        value = eplyDefaultValue(calcEl);
+                for (var i = days.length - 1; i >= 0; i--) {
+                    calcEl = $(days[i]);
 
-                        worked += parseInt(value);
-                    }
+                    value = eplyDefaultValue(calcEl);
 
-                    workedEl.text(worked);
-
-                    if (!this.changedModels[wTrackId]) {
-                        this.changedModels[wTrackId] = {};
-                    }
-
-                    this.changedModels[wTrackId].worked = worked;
+                    worked += parseInt(value);
                 }
+
+                workedEl.text(worked);
+
+                if (!this.changedModels[wTrackId]) {
+                    this.changedModels[wTrackId] = {};
+                }
+
+                this.changedModels[wTrackId].worked = worked;
+
             },
 
             setEditable: function (td) {
@@ -298,7 +297,6 @@ define([
 
                 if (this.isEditRows()) {
                     this.setChangedValue();
-                    this.inputValue = td.text();  // if there was changes
                 }
 
                 return false;
@@ -351,7 +349,7 @@ define([
                             self.changedModels[editedElementRowId]['week'] = weeks[0].week;
                         });
                     } else {
-                        editedCol.text(editedElementValue || this.inputValue);  // in case of appearing empty cell
+                        editedCol.text(editedElementValue);
                         editedElement.remove();
                     }
 
@@ -401,9 +399,7 @@ define([
                 }
 
                 if (el.hasClass('editing')) {  // added in case of double click on el
-                    el = el.closest('td');
-                }  else {
-                    this.inputValue = el.text();  // save old value
+                    return false;
                 }
 
                 if (isSelect) {
