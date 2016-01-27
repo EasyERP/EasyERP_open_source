@@ -23,7 +23,7 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Applications",
-            totalCollectionLengthUrl: '/totalCollectionLength/Applications',
+            totalCollectionLengthUrl: '/application/totalCollectionLength',
             formUrl                 : "#easyErp/Applications/form/",
 
             events: {

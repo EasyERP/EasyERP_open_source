@@ -13,6 +13,7 @@ module.exports = function (event, models) {
     router.get('/form', handler.getById);
     router.get('/kanban', handler.getApplicationsForKanban);
     router.get('/getApplicationsLengthByWorkflows', handler.getCollectionLengthByWorkflows);
+    router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.post('/', handler.create);
     router.patch('/:id', handler.updateOnlySelectedFields);
     router.delete('/:id', handler.remove);

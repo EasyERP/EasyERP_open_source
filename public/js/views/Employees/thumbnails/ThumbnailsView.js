@@ -28,7 +28,7 @@
             viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
-                this.mId =  CONSTANTS.MID[this.contentType];
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.asyncLoadImgs(this.collection);
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -57,10 +57,12 @@
 
             //modified for filter Vasya
             getTotalLength: function (currentNumber) {
-                dataService.getData('/totalCollectionLength/Employees', {
+                dataService.getData('/employee/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    contentType  : this.contentType,
+                    mid          : this.mId
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {

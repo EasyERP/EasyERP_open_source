@@ -5,7 +5,7 @@ define([
         'views/Notes/AttachView',
         'common',
         'dataService',
-    'constants'
+        'constants'
     ],
 
     function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService, CONSTANTS) {
@@ -20,18 +20,18 @@ define([
 
             events: {
                 "click #previousPage, #nextPage, #firstShowPage, #lastShowPage": "checkPage",
-                "click .itemsNumber"          : "switchPageCounter",
-                "click .showPage"             : "showPage",
-                "change #currentShowPage"     : "showPage",
-                "click .checkbox"             : "checked",
-                "click .list td:not(.notForm)": "gotoForm",
-                "mouseover .currentPageList"  : "showPagesPopup",
-                "click"                       : "hidePagesPopup",
-                "click .oe_sortable"          : "goSort"
+                "click .itemsNumber"                                           : "switchPageCounter",
+                "click .showPage"                                              : "showPage",
+                "change #currentShowPage"                                      : "showPage",
+                "click .checkbox"                                              : "checked",
+                "click .list td:not(.notForm)"                                 : "gotoForm",
+                "mouseover .currentPageList"                                   : "showPagesPopup",
+                "click"                                                        : "hidePagesPopup",
+                "click .oe_sortable"                                           : "goSort"
             },
 
             //to remove zombies was needed for event after recieveInvoice on projectInfo
-            remove: function() {
+            remove: function () {
                 this.$el.empty().off();
                 this.stopListening();
 
@@ -65,7 +65,7 @@ define([
                 var sortObject;
                 var newRows = this.$el.find('#false');
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -114,7 +114,8 @@ define([
                     currentNumber: currentNumber,
                     filter       : filter,
                     contentType  : this.contentType,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    mid          : this.mId
                 }, function (response, context) {
 
                     var page = context.page || 1;
@@ -225,7 +226,7 @@ define([
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -258,7 +259,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) ||(this.isNewRow ? this.isNewRow() : newRows.length)){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -268,7 +269,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                switch(elementId) {
+                switch (elementId) {
                     case 'previousPage':
                         this.prevP(data);
                         break;
@@ -287,8 +288,10 @@ define([
                 }
 
                 dataService.getData(this.totalCollectionLengthUrl, {
-                    sort  : this.sort,
-                    filter: this.filter
+                    sort       : this.sort,
+                    filter     : this.filter,
+                    contentType: this.contentType,
+                    mid        : this.mId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -299,7 +302,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -359,7 +362,7 @@ define([
                     this.$el.find('.search-options').addClass('hidden');
                 }
 
-                if (typeof(this.setChangedValueToModel) === "function" && el.tagName !== 'SELECT'){ //added for SetChangesToModel in ListView
+                if (typeof(this.setChangedValueToModel) === "function" && el.tagName !== 'SELECT') { //added for SetChangesToModel in ListView
                     this.setChangedValueToModel();
                 }
             },
@@ -396,7 +399,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -432,8 +435,8 @@ define([
                 $('#check_all').prop('checked', false);
 
                 /*if (this.filterView) {
-                    this.filterView.renderFilterContent();
-                }*/
+                 this.filterView.renderFilterContent();
+                 }*/
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -485,7 +488,7 @@ define([
                     pagenation.show();
                 }
 
-                if (this.editCollection){ // add for reset editCollection after sort
+                if (this.editCollection) { // add for reset editCollection after sort
                     this.editCollection.reset(this.collection.models);
                 }
             },
@@ -597,7 +600,9 @@ define([
                 $('#check_all').prop('checked', false);
                 dataService.getData(this.totalCollectionLengthUrl, {
                     filter       : this.filter,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    contentType  : this.contentType,
+                    mid          : this.mId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);

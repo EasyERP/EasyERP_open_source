@@ -1084,28 +1084,28 @@ var Employee = function (event, models) {
 	//	});
 	//};
 
-	function getApplications(req, response) {
-		var res = {};
-		res['data'] = [];
-		var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
-
-		query.where('isEmployee', false);
-		query.populate('relatedUser department jobPosition workflow').
-		populate('createdBy.user').
-		populate('editedBy.user');
-
-		query.sort({'name.first': 1});
-		query.exec(function (err, applications) {
-			if (err) {
-				console.log(err);
-				logWriter.log('Employees.js get Application.find' + err);
-				response.send(500, {error: "Can't find Application"});
-			} else {
-				res['data'] = applications;
-				response.send(res);
-			}
-		});
-	};
+	//function getApplications(req, response) {
+	//	var res = {};
+	//	res['data'] = [];
+	//	var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
+    //
+	//	query.where('isEmployee', false);
+	//	query.populate('relatedUser department jobPosition workflow').
+	//	populate('createdBy.user').
+	//	populate('editedBy.user');
+    //
+	//	query.sort({'name.first': 1});
+	//	query.exec(function (err, applications) {
+	//		if (err) {
+	//			console.log(err);
+	//			logWriter.log('Employees.js get Application.find' + err);
+	//			response.send(500, {error: "Can't find Application"});
+	//		} else {
+	//			res['data'] = applications;
+	//			response.send(res);
+	//		}
+	//	});
+	//};
 
 	function getApplicationsForKanban(req, data, response) {
 
@@ -1552,9 +1552,9 @@ var Employee = function (event, models) {
 	//};
 
 	return {
-		getTotalCount                 : getTotalCount,
+		//getTotalCount                 : getTotalCount,
 		//create                        : create,
-		get                           : get,
+		//get                           : get,//usage was not found
 		//getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
 		//getFilter                     : getFilter,
 		//getEmployeesAlphabet          : getEmployeesAlphabet,
@@ -1563,7 +1563,7 @@ var Employee = function (event, models) {
 		addAtach                      : addAtach,
 		//updateOnlySelectedFields      : updateOnlySelectedFields,
 		//remove                        : remove,
-		getApplications               : getApplications,
+		//getApplications               : getApplications, //usage was not found
 		//getApplicationsForKanban      : getApplicationsForKanban,
 		//getEmployeesImages            : getEmployeesImages,
 		//getById                       : getById

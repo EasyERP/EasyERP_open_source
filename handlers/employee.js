@@ -318,6 +318,222 @@ var Employee = function (event, models) {
         });
     };
 
+    this.totalCollectionLength = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var data = req.query;
+        var contentType = data.contentType;
+        var optionsObject = {};
+        var filter = data.filter || {};
+        var waterfallTasks;
+        var accessRollSearcher;
+        var contentSearcher;
+        var mid = parseInt(data.mid, 10) || 42;
+        var project;
+        var projectSecond;
+        var  response = {};
+
+        response.showMore = false;
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject.$or = caseFilter(filter);
+            } else {
+                optionsObject.$and = caseFilter(filter);
+            }
+        }
+
+        access.getEditWritAccess(req, req.session.uId, mid, function (access) {
+            if (access) {
+
+                accessRollSearcher = function (cb) {
+                    accessRoll(req, Employee, cb);
+                };
+
+                contentSearcher = function (ids, cb) {
+                    var queryObject = {};
+
+                    queryObject.$and = [];
+
+                    if (optionsObject.$and.length) {
+                        queryObject.$and.push(optionsObject);
+                    }
+
+                    if (contentType === 'Employees') {
+                        queryObject.$and.push({isEmployee: true});
+                    } else if (contentType === 'Applications') {
+                        queryObject.$and.push({isEmployee: false});
+                    }
+
+                    queryObject.$and.push({_id: {$in: ids}});
+
+                    switch (contentType) {
+                        case ('Employees'):
+
+                                    project = {
+                                        manager         : {$arrayElemAt: ["$manager", 0]},
+                                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                                        department      : {$arrayElemAt: ["$department", 0]},
+                                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                        name            : 1,
+                                        'editedBy.date' : 1,
+                                        'createdBy.date': 1,
+                                        dateBirth       : 1,
+                                        skype           : 1,
+                                        workEmail       : 1,
+                                        workPhones      : 1,
+                                        jobType         : 1,
+                                        isEmployee      : 1
+                                    };
+
+                                    projectSecond = {
+                                        manager         : 1,
+                                        jobPosition     : 1,
+                                        department      : 1,
+                                        'createdBy.user': 1,
+                                        'editedBy.user' : 1,
+                                        'editedBy.date' : 1,
+                                        'createdBy.date': 1,
+                                        name            : 1,
+                                        dateBirth       : 1,
+                                        skype           : 1,
+                                        workEmail       : 1,
+                                        workPhones      : 1,
+                                        jobType         : 1,
+                                        isEmployee      : 1
+                                    };
+                            break;
+                        case ('Applications'):
+
+                                    if (data && data.filter && data.filter.workflow) {
+                                        data.filter.workflow = data.filter.workflow.map(function (item) {
+                                            return item === "null" ? null : item;
+                                        });
+                                    }
+
+                                    project = {
+                                        manager         : {$arrayElemAt: ["$manager", 0]},
+                                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                                        department      : {$arrayElemAt: ["$department", 0]},
+                                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                        name            : 1,
+                                        'editedBy.date' : 1,
+                                        'createdBy.date': 1,
+                                        dateBirth       : 1,
+                                        skype           : 1,
+                                        workEmail       : 1,
+                                        workPhones      : 1,
+                                        jobType         : 1,
+                                        isEmployee      : 1,
+                                        creationDate    : 1,
+                                        workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                        personalEmail   : 1,
+                                        sequence        : 1,
+                                        hire            : 1,
+                                        fire            : 1
+                                    };
+
+                                    projectSecond = {
+                                        manager         : 1,
+                                        jobPosition     : 1,
+                                        department      : 1,
+                                        'createdBy.user': 1,
+                                        'editedBy.user' : 1,
+                                        'editedBy.date' : 1,
+                                        'createdBy.date': 1,
+                                        name            : 1,
+                                        dateBirth       : 1,
+                                        skype           : 1,
+                                        workEmail       : 1,
+                                        workPhones      : 1,
+                                        jobType         : 1,
+                                        isEmployee      : 1,
+                                        creationDate    : 1,
+                                        workflow        : 1,
+                                        personalEmail   : 1,
+                                        sequence        : 1,
+                                        hire            : 1,
+                                        fire            : 1
+                                    };
+                            break;
+                    }
+
+                    Employee.aggregate([{
+                        $lookup: {
+                            from        : "Employees",
+                            localField  : "manager",
+                            foreignField: "_id", as: "manager"
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "JobPosition",
+                            localField  : "jobPosition",
+                            foreignField: "_id", as: "jobPosition"
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "Department",
+                            localField  : "department",
+                            foreignField: "_id", as: "department"
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "Users",
+                            localField  : "relatedUser",
+                            foreignField: "_id", as: "relatedUser"
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "Users",
+                            localField  : "createdBy.user",
+                            foreignField: "_id", as: "createdBy.user"
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "Users",
+                            localField  : "editedBy.user",
+                            foreignField: "_id", as: "editedBy.user"
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "workflows",
+                            localField  : "workflow",
+                            foreignField: "_id", as: "workflow"
+                        }
+                    }, {
+                        $project: project
+                    }, {
+                        $project: projectSecond
+                    }, {
+                        $match: queryObject
+                    }], function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+                };
+
+                waterfallTasks = [accessRollSearcher, contentSearcher];
+
+                async.waterfall(waterfallTasks, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+                    if (data.currentNumber && data.currentNumber < result.length) {
+                        response.showMore = true;
+                    }
+                    response.count = result.length;
+                    res.status(200).send(response);
+                });
+            } else {
+                res.status(403).send();
+            }
+        });
+    };
+
     this.getFilter = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;

@@ -775,12 +775,12 @@ module.exports = function (app, mainDb) {
             case ('Opportunities'):
                 requestHandler.opportunitiesTotalCollectionLength(req, res);
                 break;
-            case ('Employees'):
-                requestHandler.employeesTotalCollectionLength(req, res);
-                break;
-            case ('Applications'):
-                requestHandler.employeesTotalCollectionLength(req, res);
-                break;
+            //case ('Employees'):
+            //    requestHandler.employeesTotalCollectionLength(req, res);
+            //    break;
+            //case ('Applications'):
+            //    requestHandler.employeesTotalCollectionLength(req, res);
+            //    break;
             case ('JobPositions'):
                 requestHandler.jobPositionsTotalCollectionLength(req, res);
                 break;

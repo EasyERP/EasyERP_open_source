@@ -19,7 +19,7 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Employees",
-            totalCollectionLengthUrl: '/totalCollectionLength/Employees',
+            totalCollectionLengthUrl: '/employee/totalCollectionLength',
             formUrl                 : "#easyErp/Employees/form/",
             exportToXlsxUrl         : '/employee/exportToXlsx',
             exportToCsvUrl          : '/employee/exportToCsv',

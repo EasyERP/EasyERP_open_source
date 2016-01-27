@@ -2191,9 +2191,9 @@ var requestHandler = function (app, event, mainDb) {
 
     //---------------------Employee--------------------------------
 
-    function employeesTotalCollectionLength(req, res) {
-        employee.getTotalCount(req, res);
-    }
+    //function employeesTotalCollectionLength(req, res) {
+    //    employee.getTotalCount(req, res);
+    //}
 
     //function createEmployee(req, res, data) {
     //    if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2985,7 +2985,7 @@ var requestHandler = function (app, event, mainDb) {
         removeDegree          : removeDegree,
 
         getCampaigns                  : getCampaigns,
-        employeesTotalCollectionLength: employeesTotalCollectionLength,
+        //employeesTotalCollectionLength: employeesTotalCollectionLength,
         //getEmployeesFilter            : getEmployeesFilter,
         uploadEmployeesFile           : uploadEmployeesFile,
         //getApplicationById            : getApplicationById,
