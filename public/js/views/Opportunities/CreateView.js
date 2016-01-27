@@ -323,12 +323,12 @@ define([
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 populate.getPriority("#priorityDd", this, true);
                 populate.get2name("#customerDd", "/Customer", {}, this, true, true, (this.model) ? this.model._id : null);
-                populate.get2name("#salesPersonDd", "/getForDdByRelatedUser", {}, this, true, true);
+                populate.get2name("#salesPersonDd", "/employee/getForDdByRelatedUser", {}, this, true, true);
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, true);
-                populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, true, true);
+                populate.get("#salesTeamDd", "/department/getForDD", {}, "departmentName", this, true, true);
 
                 /*                common.populateCustomers("#customerDd", "/Customer",this.model);
-                 //common.populateEmployeesDd("#salesPerson"Dd, "/getSalesPerson");
+                 //common.populateEmployeesDd("#salesPerson"Dd, "/employee/getSalesPerson");
                  common.populateEmployeesDd("#salesPersonDd", "/getForDdByRelatedUser", this.model);
                  common.populateDepartments("#salesTeamDd", "/DepartmentsForDd");
                  common.populatePriority("#priorityDd", "/Priority");

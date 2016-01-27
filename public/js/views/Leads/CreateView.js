@@ -300,7 +300,7 @@ define([
                 populate.get2name("#customerDd", "/Customer", {}, this, true, true);
                 populate.get("#sourceDd", "/sources", {}, "name", this, true, true);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this, true, true);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
+                populate.get2name("#salesPerson", "/employee/getForDdByRelatedUser", {}, this, true, true);
                 this.delegateEvents(this.events);
 
                 return this;

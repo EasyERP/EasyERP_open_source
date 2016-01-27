@@ -8,6 +8,6 @@ module.exports = function (models) {
 
     router.get('/getForDD', handler.getForDD);
     router.get('/exportToXlsx', handler.exportToXlsx);
-    router.get('/exportToCsv',handler.exportToCsv)
+    router.get('/exportToCsv',handler.exportToCsv);
     return router;
 };

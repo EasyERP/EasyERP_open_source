@@ -19,6 +19,10 @@ module.exports = function (event, models) {
 
 
     router.get('/getForDdByRelatedUser', handler.getForDdByRelatedUser);
+    router.get('/getSalesPerson', handler.getSalesPerson);
+    router.get('/getPersonsForDd', handler.getSalesPerson);
+    router.get('/getEmployeesAlphabet', handler.getEmployeesAlphabet);
+    router.get('/getEmployeesImages', handler.getEmployeesImages);
 
 
     router.post('/',handler.create);

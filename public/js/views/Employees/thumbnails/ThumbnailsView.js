@@ -80,7 +80,7 @@
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/getEmployeesImages");
+                common.getImages(ids, "/employee/getEmployeesImages");
             },
 
             alpabeticalRender: function (e) {

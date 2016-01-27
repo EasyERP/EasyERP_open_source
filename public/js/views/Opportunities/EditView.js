@@ -455,9 +455,9 @@
                 var model = this.currentModel.toJSON();
                 populate.getPriority("#priorityDd", this);
                 populate.get2name("#customerDd", "/Customer", {}, this, false, true);
-                populate.get2name("#salesPersonDd", "/getForDdByRelatedUser", {}, this, false, true);
+                populate.get2name("#salesPersonDd", "/employee/getForDdByRelatedUser", {}, this, false, true);
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
-                populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
+                populate.get("#salesTeamDd", "/department/getForDD", {}, "departmentName", this, false, true);
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();

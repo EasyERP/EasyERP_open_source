@@ -615,20 +615,20 @@ var Employee = function (event, models) {
 			});
 	}
 
-	function getEmployeesAlphabet(req, response) {
-		var query = models.get(req.session.lastDb, "Employees", employeeSchema).aggregate([{$match: {isEmployee: true}}, {$project: {later: {$substr: ["$name.last", 0, 1]}}}, {$group: {_id: "$later"}}]);
-		query.exec(function (err, result) {
-			if (err) {
-				console.log(err);
-				logWriter.log("employees.js get employees alphabet " + err);
-				response.send(500, {error: "Can't find employees"});
-			} else {
-				var res = {};
-				res['data'] = result;
-				response.send(res);
-			}
-		});
-	};
+	//function getEmployeesAlphabet(req, response) {
+	//	var query = models.get(req.session.lastDb, "Employees", employeeSchema).aggregate([{$match: {isEmployee: true}}, {$project: {later: {$substr: ["$name.last", 0, 1]}}}, {$group: {_id: "$later"}}]);
+	//	query.exec(function (err, result) {
+	//		if (err) {
+	//			console.log(err);
+	//			logWriter.log("employees.js get employees alphabet " + err);
+	//			response.send(500, {error: "Can't find employees"});
+	//		} else {
+	//			var res = {};
+	//			res['data'] = result;
+	//			response.send(res);
+	//		}
+	//	});
+	//};
 
 	//function getFilter(req, response) {
 	//	var data = {};
@@ -1046,24 +1046,24 @@ var Employee = function (event, models) {
     //
 	//};
 
-	function getForDd(req, response) {
-		var res = {};
-		res['data'] = [];
-		var query = models.get(req.session.lastDb, 'Employees', employeeSchema).find();
-		query.where('isEmployee', true);
-		query.select('_id name ');
-		query.sort({'name.first': 1});
-		query.exec(function (err, result) {
-			if (err) {
-				console.log(err);
-				logWriter.log('Employees.js get Employee.find' + err);
-				response.send(500, {error: "Can't find Employee"});
-			} else {
-				res['data'] = result;
-				response.send(res);
-			}
-		});
-	};
+	//function getForDd(req, response) {
+	//	var res = {};
+	//	res['data'] = [];
+	//	var query = models.get(req.session.lastDb, 'Employees', employeeSchema).find();
+	//	query.where('isEmployee', true);
+	//	query.select('_id name ');
+	//	query.sort({'name.first': 1});
+	//	query.exec(function (err, result) {
+	//		if (err) {
+	//			console.log(err);
+	//			logWriter.log('Employees.js get Employee.find' + err);
+	//			response.send(500, {error: "Can't find Employee"});
+	//		} else {
+	//			res['data'] = result;
+	//			response.send(res);
+	//		}
+	//	});
+	//};
 
 	//function getForDdByRelatedUser(req, uId, response) {
 	//	var res = {};
@@ -1535,37 +1535,37 @@ var Employee = function (event, models) {
 		});
 	}// end remove
 
-	function getEmployeesImages(req, data, res) {
-		var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({isEmployee: true});
-		query.where('_id').in(data.ids).
-		select('_id imageSrc name').
-		exec(function (error, response) {
-			if (error) {
-				console.log(error);
-				logWriter.log("Employees.js remove employee.remove " + error);
-				res.send(500, {error: "Can't find Employees Imgs"});
-			} else {
-				res.send(200, {data: response});
-			}
-		});
-
-	};
+	//function getEmployeesImages(req, data, res) {
+	//	var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({isEmployee: true});
+	//	query.where('_id').in(data.ids).
+	//	select('_id imageSrc name').
+	//	exec(function (error, response) {
+	//		if (error) {
+	//			console.log(error);
+	//			logWriter.log("Employees.js remove employee.remove " + error);
+	//			res.send(500, {error: "Can't find Employees Imgs"});
+	//		} else {
+	//			res.send(200, {data: response});
+	//		}
+	//	});
+    //
+	//};
 
 	return {
 		getTotalCount                 : getTotalCount,
 		//create                        : create,
 		get                           : get,
-		getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
+		//getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
 		//getFilter                     : getFilter,
-		getEmployeesAlphabet          : getEmployeesAlphabet,
-		getForDd                      : getForDd,
+		//getEmployeesAlphabet          : getEmployeesAlphabet,
+		//getForDd                      : getForDd,
 		//getForDdByRelatedUser         : getForDdByRelatedUser,
 		addAtach                      : addAtach,
 		//updateOnlySelectedFields      : updateOnlySelectedFields,
 		//remove                        : remove,
 		getApplications               : getApplications,
-		getApplicationsForKanban      : getApplicationsForKanban,
-		getEmployeesImages            : getEmployeesImages,
+		//getApplicationsForKanban      : getApplicationsForKanban,
+		//getEmployeesImages            : getEmployeesImages,
 		//getById                       : getById
 	};
 };

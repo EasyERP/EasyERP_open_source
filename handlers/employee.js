@@ -892,17 +892,15 @@ var Employee = function (event, models) {
             });
     };
 
-    this.getForDdByRelatedUser = function(req, res, next){
+    this.getForDdByRelatedUser = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var result = {};
         var uId = req.session.uId;
 
-        var query =Employee.find({relatedUser: uId});
-        query.where('isEmployee', true);
-        query.select('_id name ');
-        query.sort({'name.first': 1});
+        var query = Employee.find({relatedUser: uId, isEmployee: true}, {name: 1}).sort({'name.first': 1});
+
         query.exec(function (err, user) {
-            if (err){
+            if (err) {
                 return next(err);
             }
 
@@ -912,6 +910,127 @@ var Employee = function (event, models) {
         });
     };
 
+    this.getSalesPerson = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var result = {};
+        var query = Employee.find({'isEmployee': true}, {name: 1}).sort({'name.first': 1});
+
+        query.exec(function (err, employees) {
+            if (err) {
+                return next(err);
+            }
+
+            result.data = employees;
+            res.status(200).send(result);
+        });
+
+    };
+
+    this.getEmployeesAlphabet = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var response = {};
+        var query = Employee
+            .aggregate([{
+                $match: {
+                    isEmployee: true
+                }
+            }, {
+                $project: {
+                    later: {$substr: ["$name.last", 0, 1]}
+                }
+            }, {
+                $group: {
+                    _id: "$later"
+                }
+            }]);
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            response.data = result;
+            res.status(200).send(response);
+        });
+    };
+
+    this.getEmployeesImages = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var data = req.params;
+        var ids = data.ids || [];
+
+        if (!ids.length) {
+            ids = req.query.ids || [];
+        }
+
+        var query = Employee.find({isEmployee: true, _id: {$in: ids}}, {imageSrc: 1, name: 1});
+
+        query.exec(function (err, response) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: response});
+
+        });
+    };
+
+    this.getCollectionLengthByWorkflows = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var accessRollSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+        var data = {};
+        data.showMore = false;
+
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Employee, cb);
+        };
+
+        contentSearcher = function (deps, cb) {
+            Employee
+                .aggregate([{
+                    $match: {
+                        _id: {$in: deps}
+                    }
+                }, {
+                    $project: {
+                        _id     : 1,
+                        workflow: 1
+                    }
+                },
+                    {
+                        $group: {
+                            _id  : "$workflow",
+                            count: {$sum: 1}
+                        }
+                    }
+                ], function (err, result) {
+                    if (err) {
+                        cb(err);
+                    }
+
+                    cb(null, result);
+                });
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result.forEach(function (object) {
+                if (object.count > req.session.kanbanSettings.applications.countPerPage) {
+                    data.showMore = true;
+                }
+            });
+            data.arrayOfObjects = result;
+            res.send(data);
+        });
+
+    };
 };
 /**
  * __Type__ `GET`

@@ -1381,18 +1381,18 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function getPersonsForDd(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                employee.getForDd(req, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-        }
-    };
+    //function getPersonsForDd(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            employee.getForDd(req, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //    }
+    //};
 
     function getFilterPersonsForMiniView(req, res, data) {
         try {
@@ -2309,23 +2309,23 @@ var requestHandler = function (app, event, mainDb) {
     //        res.send(401);
     //    }
     //};
-    function getEmployeesAlphabet(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                employee.getEmployeesAlphabet(req, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            console.log("requestHandler.js  " + Exception);
-        }
-    };
+    //function getEmployeesAlphabet(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            employee.getEmployeesAlphabet(req, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        console.log("requestHandler.js  " + Exception);
+    //    }
+    //};
 
     //---------------------Application--------------------------------
-    function getApplicationsLengthByWorkflows(req, res) {
-        employee.getCollectionLengthByWorkflows(req, res);
-    }
+    //function getApplicationsLengthByWorkflows(req, res) {
+    //    employee.getCollectionLengthByWorkflows(req, res);
+    //}
 
     //function createApplication(req, res, data) {
     //    if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2373,20 +2373,20 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //};
 
-    function getEmployeesImages(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.getEmployeesImages(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function getEmployeesImages(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.getEmployeesImages(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //function updateApplication(req, res, id, data) {
     //    if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2516,13 +2516,13 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function getDepartmentForDd(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            department.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getDepartmentForDd(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        department.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     function getDepartmentForEditDd(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2956,15 +2956,15 @@ var requestHandler = function (app, event, mainDb) {
         //getEmployeesById     : getEmployeesById,
         //removeEmployees      : removeEmployees,
         //updateEmployees      : updateEmployees,
-        getEmployeesAlphabet : getEmployeesAlphabet,
-        getEmployeesImages   : getEmployeesImages,
+        //getEmployeesAlphabet : getEmployeesAlphabet,
+        //getEmployeesImages   : getEmployeesImages,
 
         Birthdays: Birthdays,
 
-        getPersonsForDd   : getPersonsForDd,
-        getDepartmentForDd: getDepartmentForDd,
+        //getPersonsForDd   : getPersonsForDd,
+        //getDepartmentForDd: getDepartmentForDd,
 
-        getApplicationsLengthByWorkflows  : getApplicationsLengthByWorkflows,
+       // getApplicationsLengthByWorkflows  : getApplicationsLengthByWorkflows,
        // createApplication                 : createApplication,
        // removeApplication                 : removeApplication,
        // updateApplication                 : updateApplication,

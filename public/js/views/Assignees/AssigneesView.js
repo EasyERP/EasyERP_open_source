@@ -278,9 +278,9 @@ define([
             });
 
             if (this.model) {
-                common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/DepartmentsForDd", this.model.toJSON(), 1);
+                common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/department/getForDD", this.model.toJSON(), 1);
             } else {
-                common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/DepartmentsForDd", null, 1);
+                common.populateDepartmentsList(dialog.find("#sourceGroups"), dialog.find("#targetGroups"), "/department/getForDD", null, 1);
             }
 
             this.updateAssigneesPagination(dialog.find("#sourceGroups").closest(".left"));

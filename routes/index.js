@@ -795,9 +795,9 @@ module.exports = function (app, mainDb) {
 
 //----------------------Accounts----------------------------------------------------------------
 
-    app.get('/getPersonsForDd', function (req, res) {
-        requestHandler.getPersonsForDd(req, res);
-    });
+    //app.get('/getPersonsForDd', function (req, res) {
+    //    requestHandler.getPersonsForDd(req, res);
+    //});
 
     app.get('/getPersonAlphabet', function (req, res) {
         requestHandler.getCustomersAlphabet(req, res);
@@ -1193,9 +1193,9 @@ module.exports = function (app, mainDb) {
         requestHandler.getDepartment(req, res);
     });
 
-    app.get('/DepartmentsForDd', function (req, res) {
-        requestHandler.getDepartmentForDd(req, res);
-    });
+    //app.get('/DepartmentsForDd', function (req, res) {
+    //    requestHandler.getDepartmentForDd(req, res);
+    //});
 
     app.post('/Departments', function (req, res) {
         var data = {};
@@ -1288,30 +1288,30 @@ module.exports = function (app, mainDb) {
     //    requestHandler.removeEmployees(req, res, id);
     //});
 
-    app.get('/getSalesPerson', function (req, res) {
-        var data = {};
-        requestHandler.getPersonsForDd(req, res, data);
-    });
+    //app.get('/getSalesPerson', function (req, res) {
+    //    var data = {};
+    //    requestHandler.getPersonsForDd(req, res, data);
+    //});
 
-    app.get('/getSalesTeam', function (req, res) {
-        requestHandler.getDepartmentForDd(req, res);
-    });
+    //app.get('/getSalesTeam', function (req, res) {
+    //    requestHandler.getDepartmentForDd(req, res);
+    //});
 
-    app.get('/getEmployeesAlphabet', function (req, res) {
-        requestHandler.getEmployeesAlphabet(req, res);
-    });
+    //app.get('/getEmployeesAlphabet', function (req, res) {
+    //    requestHandler.getEmployeesAlphabet(req, res);
+    //});
 
-    app.get('/getEmployeesImages', function (req, res) {
-        var data = {};
-        data.ids = req.param('ids') || [];
-        requestHandler.getEmployeesImages(req, res, data);
-    });
+    //app.get('/getEmployeesImages', function (req, res) {
+    //    var data = {};
+    //    data.ids = req.param('ids') || [];
+    //    requestHandler.getEmployeesImages(req, res, data);
+    //});
 
 //------------------Applications---------------------------------------------------
 
-    app.get('/getApplicationsLengthByWorkflows', function (req, res) {
-        requestHandler.getApplicationsLengthByWorkflows(req, res);
-    });
+    //app.get('/getApplicationsLengthByWorkflows', function (req, res) {
+    //    requestHandler.getApplicationsLengthByWorkflows(req, res);
+    //});
 
     //app.get('/Applications/:viewType', function (req, res) {
     //    var data = {};

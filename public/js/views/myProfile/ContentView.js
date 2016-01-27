@@ -167,7 +167,7 @@ define([
                         wait    : true,
                         success : function (model) {
                             if (relatedEmployee) {
-                                common.getImages(ids, '/getEmployeesImages', function (response) {
+                                common.getImages(ids, '/employee/getEmployeesImages', function (response) {
                                     // App.currentUser.imageSrc = response.data[0].imageSrc;
                                     $("#loginPanel .iconEmployee").attr("src", response.data[0].imageSrc);
                                     $("#loginPanel #userName").text(response.data[0].fullName);
@@ -222,7 +222,7 @@ define([
 
             render: function () {
                 dataService.getData('/currentUser', null, function (response, context) {
-                    dataService.getData('/getForDdByRelatedUser', null, function (relatedEmployee) {
+                    dataService.getData('/employee/getForDdByRelatedUser', null, function (relatedEmployee) {
                         var date = new Date();
                         var minutes = date.getTimezoneOffset();
                         var timezone;

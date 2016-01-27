@@ -605,11 +605,11 @@
                 }
             });
 
-            populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this);
+            populate.get("#departmentsDd", "/department/getForDD", {}, "departmentName", this);
             populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
             populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
             populate.get("#nationality", "/nationality", {}, "_id", this);
-            populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
+            populate.get2name("#projectManagerDD", "/employee/getPersonsForDd", {}, this);
             populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);

@@ -6,7 +6,7 @@ define(function () {
     var AccountsDdCollection = Backbone.Collection.extend({
         model: AccountModel,
         url  : function () {
-            var url = "/getPersonsForDd";
+            var url = "/employee/getPersonsForDd";
             return url;
         },
 

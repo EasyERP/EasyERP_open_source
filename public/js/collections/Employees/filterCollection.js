@@ -87,7 +87,7 @@
             },
 
             getAlphabet: function (callback) {
-                dataService.getData("/getEmployeesAlphabet", {mid: 39}, function (response) {
+                dataService.getData("/employee/getEmployeesAlphabet", {mid: 39}, function (response) {
                     if (callback) {
                         callback(response.data);
                     }
