@@ -134,6 +134,19 @@ define([
                 $currentEl.append(itemView.render());
             },
 
+            showFilteredPage: function (filter, context) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
+
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({count: itemsNumber, page: 1, filter: filter, starDate:this.startDate, endDate: this.endDate});
+            },
+
+
             getMinDate: function (context) {
                 dataService.getData('/employee/getYears', {}, function (response) {
                     var minDate = new Date(response.min);
