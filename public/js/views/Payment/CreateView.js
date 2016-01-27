@@ -23,9 +23,11 @@ define([
 
         initialize: function (options) {
             if (options) {
-                this.forSales = options.forSales;
                 this.invoiceModel = options.model;
                 this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
+                this.forSales = this.invoiceModel.get('forSales');
+            } else {
+                this.forSales = App.weTrack;
             }
             this.responseObj = {};
             this.model = new PaymentModel();
@@ -34,9 +36,6 @@ define([
             this.redirect = options.redirect;
             this.collection = options.collection;
 
-            if (!this.forSales) {
-                this.forSales = App.weTrack;
-            }
 
             this.render();
         },

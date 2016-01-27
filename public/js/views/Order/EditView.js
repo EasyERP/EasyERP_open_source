@@ -113,8 +113,8 @@ define([
                     var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return  App.render({
-                            type: 'error',
+                        return App.render({
+                            type   : 'error',
                             message: workflow.error.statusText
                         });
                     }
@@ -151,7 +151,7 @@ define([
 
                             if (err) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: 'Can\'t receive invoice'
                                 });
                             } else {
@@ -174,7 +174,7 @@ define([
 
                     if (workflow && workflow.error) {
                         return App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: workflow.error.statusText
                         });
                     }
@@ -205,6 +205,11 @@ define([
                 var productId;
                 var quantity;
                 var price;
+                var description;
+                var subTotal;
+                var jobs;
+                var scheduledDate;
+                var taxes;
                 var supplier = thisEl.find('#supplierDd').data('id');
 
                 var destination = $.trim(thisEl.find('#destination').data('id'));
@@ -252,14 +257,26 @@ define([
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
+                        if (productId) {  // added more info for save
+                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            price = targetEl.find('[data-name="price"]').text();
+                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
+                            taxes = targetEl.find('.taxes').text();
+                            description = targetEl.find('[data-name="productDescr"]').text();
+                            jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
+                            subTotal = targetEl.find('.subtotal').text();
 
-                        products.push({
-                            product  : productId,
-                            unitPrice: price,
-                            quantity : quantity
-                        });
+                            products.push({
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                                scheduledDate: scheduledDate,
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal,
+                                jobs         : jobs
+                            });
+                        }
                     }
                 }
 
@@ -313,7 +330,7 @@ define([
 
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.RESPONSES.CREATE_QUOTATION
                     });
                 }
@@ -344,7 +361,7 @@ define([
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
