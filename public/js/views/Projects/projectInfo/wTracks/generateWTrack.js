@@ -16,18 +16,18 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 responseObj              : {},
 
                 events: {
-                    "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                    "click .current-selected"                          : "showNewSelect",
-                    "click #addNewEmployeeRow"                         : "addNewEmployeeRow",
-                    "click a.generateType"                             : "generateType",
-                    "click td.editable"                                : "editRow",
-                    "change .editable "                                : "setEditable",
-                    'mouseover tbody tr:not("#addNewItem")'            : 'showRemove',
-                    'mouseleave tbody tr:not("#addNewItem")'           : 'hideRemove',
-                    'click .remove'                                    : 'deleteRow',
-                    "keydown input:not(#jobName, #selectInput)"        : "onKeyDownInput",
-                    "keyup input:not(#jobName, #selectInput)"          : "onKeyUpInput",
-                    "click div:not(input.endDateInput)"                : "hideSelects"
+                    "click .newSelectList li:not(.miniStylePagination)"       : "chooseOption",
+                    "click .current-selected"                                 : "showNewSelect",
+                    "click #addNewEmployeeRow"                                : "addNewEmployeeRow",
+                    "click a.generateType"                                    : "generateType",
+                    "click td.editable"                                       : "editRow",
+                    "change .editable "                                       : "setEditable",
+                    'mouseover tbody tr:not("#addNewItem")'                   : 'showRemove',
+                    'mouseleave tbody tr:not("#addNewItem")'                  : 'hideRemove',
+                    'click .remove'                                           : 'deleteRow',
+                    "keydown input:not(#jobName, #selectInput)"               : "onKeyDownInput",
+                    "keyup input:not(#jobName, #selectInput, .hasDatepicker)" : "onKeyUpInput",
+                    "click div:not(input.endDateInput)"                       : "hideSelects"
                 },
 
                 hideSelects: function (e) {
@@ -60,8 +60,13 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (element.maxLength && element.value.length > element.maxLength) {
                         element.value = element.value.slice(0, element.maxLength);
+                    } else if ($(element).hasClass('editing') && ($(element).attr('id') !== 'inputHours') ){  // added validation for hours fields
+                        if ($(element).val() > 24) {
+                            $(element).val(24);
+                        }
                     } else {
                         if ($(element).attr('id') === 'inputHours') {
+
                             this.setChangedValueToModel();
                         }
                     }
@@ -203,9 +208,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     });
                     var errors = this.$el.find('.errorContent');
 
-                    this.resultArray.push(defaultObject);
-
                     if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
+
+                        this.resultArray.push(defaultObject);
 
                         if (!trEll.length) {
                             parrent.prepend(elem);
@@ -240,7 +245,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             var endDate = moment(targetInput.datepicker('getDate'));
                             var endContainer = $(endDatePicker);
 
-                            endDate.add(7, 'days');
+                            endDate.add(6, 'days');
                             endDate = endDate.toDate();
 
                             endContainer.datepicker('option', 'minDate', endDate);
@@ -389,7 +394,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             });
                         } else {
                             input.attr({
-                                "maxLength": 1
+                                "maxLength": 2
                             });
                         }
 

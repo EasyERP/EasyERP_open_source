@@ -133,6 +133,7 @@ define([
 
             save: function (e) {
                 e.preventDefault();
+                var self = this;
                 var ids = [];
                 var email = $.trim($("#email").val());
                 var login = $.trim($("#login").val());
@@ -145,7 +146,6 @@ define([
                 }
 
                 dataService.getData('/currentUser', null, function (response, context) {
-                    var self = this;
                     var mid = 39;
                     var user = response.user;
                     var _login = user.login;
@@ -156,7 +156,8 @@ define([
                     context.UsersModel.set({
                         email          : email,
                         login          : login,
-                        relatedEmployee: relatedEmployee
+                        relatedEmployee: relatedEmployee,
+                        imageSrc      : self.imageSrc
                     });
 
                     context.UsersModel.save(context.UsersModel.changedAttributes(), {
@@ -221,6 +222,7 @@ define([
             },
 
             render: function () {
+                var self = this;
                 dataService.getData('/currentUser', null, function (response, context) {
                     dataService.getData('/getForDdByRelatedUser', null, function (relatedEmployee) {
                         var date = new Date();
@@ -241,7 +243,7 @@ define([
                                 relatedEmployee: relatedEmployee.data,
                                 timezone       : timezone
                             }));
-                        common.canvasDraw({model: model}, this);
+                        common.canvasDraw({model: model}, self);
 
                         if (response.user.relatedEmployee) {
                             $("input[type='radio'][value=" + response.user.relatedEmployee._id + "]").attr("checked", true);
@@ -250,7 +252,7 @@ define([
                             $("input[type='radio']:first").attr("checked", true);
                         }
                         context.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - context.startTime) + " ms</div>");
-                    }, this);
+                    }, self);
                 }, this);
 
                 return this;

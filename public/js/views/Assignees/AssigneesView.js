@@ -196,6 +196,8 @@ define([
                         click: function (e) {
                             $(this).dialog("close");
                             self.closeDialog(e);
+                            //$("#targetUsers").unbind("click");
+                            //$("#sourceUsers").unbind("click");
                         }
                     }
                 }

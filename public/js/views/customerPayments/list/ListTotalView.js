@@ -50,7 +50,12 @@ define([
                     this.$el.find("#total").text(helpers.currencySplitter(totalObject.total));
                     this.$el.find("#totalPaidAmount").text(helpers.currencySplitter(totalObject.totalPaidAmount));
                 } else {
-                    this.$el.append(_.template(listTemplate, this.getTotal()));
+                    this.$el.append(_.template(listTemplate, /*this.getTotal()*/ {   // changed on  object cause  auto-calculation in this view is not needed
+                        total           : "0.00",
+                        totalPaidAmount : "0.00",
+                        cellSpan        : this.cellSpan,
+                        currencySplitter: helpers.currencySplitter
+                    }));
                 }
 
                 return this;

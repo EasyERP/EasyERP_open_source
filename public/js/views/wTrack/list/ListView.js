@@ -39,7 +39,6 @@ define([
             editCollection          : null,
             selectedProjectId       : [],
             genInvoiceEl            : null,
-            copyEl                  : null,
             changedModels           : {},
             exportToCsvUrl          : '/wTrack/exportToCsv',
             exportToXlsxUrl         : '/wTrack/exportToXlsx',
@@ -281,6 +280,7 @@ define([
                 }
 
                 this.changedModels[wTrackId].worked = worked;
+
             },
 
             setEditable: function (td) {
@@ -399,7 +399,7 @@ define([
                 }
 
                 if (el.hasClass('editing')) {  // added in case of double click on el
-                    el = el.parent('td');
+                    return false;
                 }
 
                 if (isSelect) {

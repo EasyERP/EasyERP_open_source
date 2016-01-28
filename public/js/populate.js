@@ -10,9 +10,9 @@ define([
                 var curEl = $(id);
 
                 content.responseObj[id] = [];
-                if (canBeEmpty) {
-                    content.responseObj[id].push({_id: "", name: "Select"});
-                }
+                /*if (canBeEmpty) {
+                 content.responseObj[id].push({_id: "", name: "Select"});
+                 }*/
                 content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                     return {_id: item._id, name: item[field], level: item.projectShortDesc || ""};
                 }));
@@ -21,7 +21,11 @@ define([
                     //add check on data-id exist. if not set first one in responseObj
                     //if element was sat from model data-id exist.
                     if (!curEl.attr('data-id')) {
-                        curEl.text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
+                        if (canBeEmpty) {   // took off element Select from responseObj, changed on default select at start
+                            curEl.text("Select");
+                        } else {
+                            curEl.text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
+                        }
                     }
                 }
                 if (parrrentContentId && parrrentContentId.split("=").length === 2) {
