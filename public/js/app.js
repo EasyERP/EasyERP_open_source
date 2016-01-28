@@ -7,6 +7,7 @@ define([
     'spinJs'
 ], function (Router, Communication, Custom, io, Spinner) {
     var initialize = function () {
+        'use strict';
         var appRouter = new Router();
 
         var opts = {

@@ -14,25 +14,15 @@ module.exports = function (grunt) {
                 }
             }
         },
-        modernizr: {
-            dist: {
-
-                // Path to save out the built file
-                "dest": "build/modernizr-custom.js",
-                "uglify" : false,
-                "files" : {
-                    "src": [
-                        "*[^(g|G)runt(file)?].{js,css,scss}",
-                        "**[^node_modules]/**/*.{js,css,scss}",
-                        "!lib/**/*"
-                    ]
-                }
+        karma: {
+            all: {
+                configFile: 'karma.conf.js'
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-jsdoc');
-    grunt.loadNpmTasks("grunt-modernizr");
+    grunt.loadNpmTasks('grunt-karma');
 
     grunt.registerTask('default', ['jsdoc']);
 };

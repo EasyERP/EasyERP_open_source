@@ -35,12 +35,20 @@ require.config({
         constants: './public/js/constants',
         dataService: './public/js/dataService',
         moment: './public/js/libs/moment/moment',
-        libs: './public/js/libs'
+        libs: './public/js/libs',
+        chai: './node_modules/chai/chai',
+        'chai-jquery': './node_modules/chai-jquery/chai-jquery',
+        'sinon-chai': './node_modules/sinon-chai/lib/sinon-chai',
+        fixtures: './test/uiSpecs/fixtures'
     },
     shim   : {
         'Underscore': {
             exports: '_'
         },
+        'jQuery': {
+            exports: '$'
+        },
+        'chai-jquery': ['jQuery', 'chai'],
         'Backbone'  : ['Underscore', 'jQuery']
     },
     // dynamically load all test files

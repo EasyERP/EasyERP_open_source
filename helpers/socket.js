@@ -12,7 +12,7 @@ function onError(err) {
 module.exports = function (server) {
     var adapter = require('socket.io-redis');
     var pub = redis.createClient(
-        parseInt(process.env.SOCKET_DB_PORT),
+        parseInt(process.env.SOCKET_DB_PORT, 10),
         process.env.SOCKET_DB_HOST,
         {
             return_buffers: true

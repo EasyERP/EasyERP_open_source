@@ -763,8 +763,8 @@ define([
                         Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
                     } else if (contentType === 'salaryReport') {
                         startDate = new Date();
-                       startDate.setMonth(0);
-                       startDate.setDate(1);
+                        startDate.setMonth(0);
+                        startDate.setDate(1);
                         endDate = new Date();
                         endDate.setMonth(11);
                         endDate.setDate(31);
@@ -820,8 +820,8 @@ define([
                             startTime    : startTime,
                             filter       : savedFilter,
                             newCollection: newCollection,
-                            startDate : startDate,
-                            endDate   : endDate
+                            startDate    : startDate,
+                            endDate      : endDate
                         });
 
                         topbarView.bind('copyEvent', contentview.copy, contentview);
