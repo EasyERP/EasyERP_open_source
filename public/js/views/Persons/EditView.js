@@ -310,7 +310,7 @@ define([
                     }).render().el
                 );
 
-                populate.getCompanies("#companiesDd", "/CompaniesForDd", {}, this, false, true);
+                populate.getCompanies("#companiesDd", "/customers/getCompaniesForDd", {}, this, false, true);
 
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
                 thisEl.find('.dateBirth').datepicker({

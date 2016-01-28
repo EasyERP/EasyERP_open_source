@@ -87,7 +87,7 @@
                 });
             },
             getAlphabet     : function (callback) {
-                dataService.getData("/getPersonAlphabet", {
+                dataService.getData("/persons/getPersonAlphabet", {
                     mid        : 39,
                     contentType: this.contentType
                 }, function (response) {

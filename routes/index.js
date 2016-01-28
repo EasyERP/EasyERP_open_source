@@ -48,6 +48,7 @@ module.exports = function (app, mainDb) {
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
+    var personsRouter = require('./person')(models, event);
     var capacityRouter = require('./capacity')(models);
     var payRollRouter = require('./payroll')(models);
     var importFileRouter = require('./importFile')(models);
@@ -189,6 +190,7 @@ module.exports = function (app, mainDb) {
     app.use('/dashboard', dashboardRouter);
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
+    app.use('/persons', personsRouter);
     app.use('/capacity', capacityRouter);
     app.use('/payroll', payRollRouter);
     app.use('/jobs', jobsRouter);
@@ -799,77 +801,77 @@ module.exports = function (app, mainDb) {
     //    requestHandler.getPersonsForDd(req, res);
     //});
 
-    app.get('/getPersonAlphabet', function (req, res) {
-        requestHandler.getCustomersAlphabet(req, res);
-    });
+    //app.get('/getPersonAlphabet', function (req, res) {
+    //    requestHandler.getCustomersAlphabet(req, res);
+    //});
 
-    app.get('/getPersonsForMiniView', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        requestHandler.getFilterPersonsForMiniView(req, res, data);
-
-    });
+    //app.get('/getPersonsForMiniView', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    requestHandler.getFilterPersonsForMiniView(req, res, data);
+    //
+    //});
 
 //--------------------------Customers----------------------------------------------------------
 
-    app.get('/Customer', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        requestHandler.getCustomer(req, res, data);
-    });
+    //app.get('/Customer', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    requestHandler.getCustomer(req, res, data);
+    //});
 
 //Get images for persons or companies or owncompanies
-    app.get('/getCustomersImages', function (req, res) {
-        requestHandler.getCustomersImages(req, res);
-    });
+//    app.get('/getCustomersImages', function (req, res) {
+//        requestHandler.getCustomersImages(req, res);
+//    });
 
 //----------------------------Persons---------------------------------------------------------
 
-    app.post('/Persons', function (req, res) {
-        var data = {};
-        data.person = req.body;
-        requestHandler.createPerson(req, res, data);
-    });
+    //app.post('/Persons', function (req, res) {
+    //    var data = {};
+    //    data.person = req.body;
+    //    requestHandler.createPerson(req, res, data);
+    //});
 
-    app.get('/Persons/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getPersonById(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterCustomers(req, res);
-                break;
-        }
-    });
+    //app.get('/Persons/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getPersonById(req, res, data);
+    //            break;
+    //        default:
+    //            requestHandler.getFilterCustomers(req, res);
+    //            break;
+    //    }
+    //});
 
-    app.put('/Persons/:_id', function (req, res) {
-        var data = {};
-        var id = req.params._id;
-        var remove = req.headers.remove;
+    //app.put('/Persons/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.params._id;
+    //    var remove = req.headers.remove;
+    //
+    //    data.person = req.body;
+    //    requestHandler.updatePerson(req, res, id, data, remove);
+    //});
 
-        data.person = req.body;
-        requestHandler.updatePerson(req, res, id, data, remove);
-    });
+    //app.patch('/Persons/:_id', function (req, res) {
+    //    var id = req.params._id;
+    //
+    //    requestHandler.personUpdateOnlySelectedFields(req, res, id, req.body);
+    //});
 
-    app.patch('/Persons/:_id', function (req, res) {
-        var id = req.params._id;
-
-        requestHandler.personUpdateOnlySelectedFields(req, res, id, req.body);
-    });
-
-    app.delete('/Persons/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removePerson(req, res, id);
-    });
+    //app.delete('/Persons/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removePerson(req, res, id);
+    //});
 
 //---------------------------Projects--------------------------------------------------------
 
@@ -1072,66 +1074,66 @@ module.exports = function (app, mainDb) {
     });
 //-------------------Companies--------------------------------------------------
 
-    app.post('/Companies', function (req, res) {
-        var data = {};
+    //app.post('/Companies', function (req, res) {
+    //    var data = {};
+    //
+    //    data.company = req.body;
+    //    requestHandler.createCompany(req, res, data);
+    //});
+    //app.get('/CompaniesForDd', function (req, res) {
+    //    requestHandler.getCompaniesForDd(req, res);
+    //});
 
-        data.company = req.body;
-        requestHandler.createCompany(req, res, data);
-    });
-    app.get('/CompaniesForDd', function (req, res) {
-        requestHandler.getCompaniesForDd(req, res);
-    });
+    //app.get('/Companies/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getCompanyById(req, res, data);
+    //            break;
+    //        default:
+    //            requestHandler.getFilterCustomers(req, res);
+    //            break;
+    //    }
+    //});
 
-    app.get('/Companies/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getCompanyById(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterCustomers(req, res);
-                break;
-        }
-    });
+    //app.put('/Companies/:_id', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var id = req.param('_id');
+    //    var remove = req.headers.remove;
+    //
+    //    data.mid = req.headers.mid;
+    //    data.company = req.body;
+    //
+    //    if (data.company.salesPurchases.salesPerson && (typeof (data.company.salesPurchases.salesPerson) == 'object')) {
+    //        data.company.salesPurchases.salesPerson = data.company.salesPurchases.salesPerson._id;
+    //    }
+    //    if (data.company.salesPurchases.salesTeam && (typeof (data.company.salesPurchases.salesTeam) == 'object')) {
+    //        data.company.salesPurchases.salesTeam = data.company.salesPurchases.salesTeam._id;
+    //    }
+    //
+    //    requestHandler.updateCompany(req, res, id, data, remove);
+    //});
 
-    app.put('/Companies/:_id', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var id = req.param('_id');
-        var remove = req.headers.remove;
+    //app.patch('/Companies/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.companyUpdateOnlySelectedFields(req, res, id, req.body);
+    //});
 
-        data.mid = req.headers.mid;
-        data.company = req.body;
+    //app.delete('/Companies/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeCompany(req, res, id);
+    //});
 
-        if (data.company.salesPurchases.salesPerson && (typeof (data.company.salesPurchases.salesPerson) == 'object')) {
-            data.company.salesPurchases.salesPerson = data.company.salesPurchases.salesPerson._id;
-        }
-        if (data.company.salesPurchases.salesTeam && (typeof (data.company.salesPurchases.salesTeam) == 'object')) {
-            data.company.salesPurchases.salesTeam = data.company.salesPurchases.salesTeam._id;
-        }
-
-        requestHandler.updateCompany(req, res, id, data, remove);
-    });
-
-    app.patch('/Companies/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.companyUpdateOnlySelectedFields(req, res, id, req.body);
-    });
-
-    app.delete('/Companies/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeCompany(req, res, id);
-    });
-
-    app.get('/getCompaniesAlphabet', function (req, res) {
-        requestHandler.getCustomersAlphabet(req, res);
-    });
+    //app.get('/getCompaniesAlphabet', function (req, res) {
+    //    requestHandler.getCustomersAlphabet(req, res);
+    //});
 
 //------------------JobPositions---------------------------------------------------
     app.get('/nationality', function (req, res) {

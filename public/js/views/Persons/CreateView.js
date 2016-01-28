@@ -249,7 +249,7 @@ define([
                     }).render().el
                 );
 
-                populate.getCompanies("#companiesDd", "/CompaniesForDd", {}, this, false, true, (this.models) ? this.models._id : null);
+                populate.getCompanies("#companiesDd", "/customers/getCompaniesForDd", {}, this, false, true, (this.models) ? this.models._id : null);
                 common.canvasDraw({model: personModel.toJSON()}, this);
                 this.$el.find('.dateBirth').datepicker({
                     dateFormat : "d M, yy",

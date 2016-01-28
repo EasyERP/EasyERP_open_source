@@ -63,7 +63,7 @@
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/getCustomersImages");
+                common.getImages(ids, "/customers/getCustomersImages");
             },
 
             getTotalLength: function (currentNumber, filter, newCollection) {

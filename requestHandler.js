@@ -1394,99 +1394,99 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //};
 
-    function getFilterPersonsForMiniView(req, res, data) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                customer.getFilterPersonsForMiniView(req, res, data);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-        }
-    };
+    //function getFilterPersonsForMiniView(req, res, data) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            customer.getFilterPersonsForMiniView(req, res, data);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //    }
+    //};
 
-    function getCustomer(req, res, data) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                customer.getCustomers(req, res, data);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-            res.send(500, {error: Exception});
-        }
-    };
+    //function getCustomer(req, res, data) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            customer.getCustomers(req, res, data);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //        res.send(500, {error: Exception});
+    //    }
+    //};
 
-    function getPersonById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    customer.getPersonById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getPersonById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                customer.getPersonById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function createPerson(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    data.person.uId = req.session.uId;
-                    customer.create(req, data.person, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createPerson(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                data.person.uId = req.session.uId;
+    //                customer.create(req, data.person, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function updatePerson(req, res, id, data, remove) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                data.person.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //
+    //                customer.update(req, id, remove, data.person, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function updatePerson(req, res, id, data, remove) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    data.person.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    }
-
-                    customer.update(req, id, remove, data.person, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
-
-    function personUpdateOnlySelectedFields(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    customer.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function personUpdateOnlySelectedFields(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                customer.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     function uploadFile(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1508,19 +1508,19 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function removePerson(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    customer.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function removePerson(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                customer.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //---------------------Project--------------------------------
     function createProject(req, res, data) {
@@ -1940,143 +1940,143 @@ var requestHandler = function (app, event, mainDb) {
 
     //---------------------Companies-------------------------------
 
-    function getCompaniesForDd(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            customer.getCompaniesForDd(req, res);
+    //function getCompaniesForDd(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        customer.getCompaniesForDd(req, res);
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function getCompanyById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.getCompanyById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getCompanyById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.getCompanyById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function removeCompany(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function createCompany(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.company.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.create(req, data.company, res);
+    //
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function removeCompany(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function createCompany(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.company.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.create(req, data.company, res);
-
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
-
-    function updateCompany(req, res, id, data, remove) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            var date = mongoose.Schema.Types.Date;
-            data.company.editedBy = {
-                user: req.session.uId,
-                date: new Date().toISOString()
-            }
-            access.getEditWritAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.update(req, id, remove, data.company, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-    function companyUpdateOnlySelectedFields(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    customer.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateCompany(req, res, id, data, remove) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        var date = mongoose.Schema.Types.Date;
+    //        data.company.editedBy = {
+    //            user: req.session.uId,
+    //            date: new Date().toISOString()
+    //        }
+    //        access.getEditWritAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.update(req, id, remove, data.company, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
+    //function companyUpdateOnlySelectedFields(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                customer.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     // Get  Persons or Companies or ownCompanies for list and thumbnail
-    function getFilterCustomers(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.getFilterCustomers(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function getFilterCustomers(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.getFilterCustomers(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     // Get  Persons or Companies or ownCompanies images for thumbnails
-    function getCustomersImages(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            /*access.getReadAccess(req, req.session.uId, 43, function (access) {
-             if (access) {
-             customer.getCustomersImages(req, res);
-             } else {
-             res.send(403);
-             }
-             });*/
-            customer.getCustomersImages(req, res);
-        } else {
-            res.send(401);
-        }
-    };
+    //function getCustomersImages(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        /*access.getReadAccess(req, req.session.uId, 43, function (access) {
+    //         if (access) {
+    //         customer.getCustomersImages(req, res);
+    //         } else {
+    //         res.send(403);
+    //         }
+    //         });*/
+    //        customer.getCustomersImages(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     // Get Alphabet for Companies or ownCompanies or Persons
-    function getCustomersAlphabet(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                customer.getCustomersAlphabet(req, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            console.log("requestHandler.js  " + Exception);
-        }
-    };
+    //function getCustomersAlphabet(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            customer.getCustomersAlphabet(req, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        console.log("requestHandler.js  " + Exception);
+    //    }
+    //};
 
     //---------------------JobPosition--------------------------------
 
@@ -2890,14 +2890,14 @@ var requestHandler = function (app, event, mainDb) {
         updateProfile  : updateProfile,
         removeProfile  : removeProfile,
 
-        createPerson                  : createPerson,
-        getPersonById                 : getPersonById,
-        updatePerson                  : updatePerson,
-        removePerson                  : removePerson,
+        //createPerson                  : createPerson,
+       // getPersonById                 : getPersonById,
+        //updatePerson                  : updatePerson,
+        //removePerson                  : removePerson,
         uploadFile                    : uploadFile,
-        getCustomer                   : getCustomer,
-        getFilterPersonsForMiniView   : getFilterPersonsForMiniView,
-        personUpdateOnlySelectedFields: personUpdateOnlySelectedFields,
+        //getCustomer                   : getCustomer,
+        //getFilterPersonsForMiniView   : getFilterPersonsForMiniView,
+        //personUpdateOnlySelectedFields: personUpdateOnlySelectedFields,
 
         projectsTotalCollectionLength    : projectsTotalCollectionLength,//for Showmore and Lists
         getProjects                      : getProjects,//for Thumbnails
@@ -2925,15 +2925,15 @@ var requestHandler = function (app, event, mainDb) {
         removeTask               : removeTask,
         getTasksPriority         : getTasksPriority,
 
-        getCompaniesForDd              : getCompaniesForDd,
-        getCompanyById                 : getCompanyById,
-        removeCompany                  : removeCompany,
-        createCompany                  : createCompany,
-        updateCompany                  : updateCompany,
-        companyUpdateOnlySelectedFields: companyUpdateOnlySelectedFields,
-        getFilterCustomers             : getFilterCustomers,
-        getCustomersImages             : getCustomersImages,
-        getCustomersAlphabet           : getCustomersAlphabet,
+        //getCompaniesForDd              : getCompaniesForDd,
+        //getCompanyById                 : getCompanyById,
+        //removeCompany                  : removeCompany,
+        //createCompany                  : createCompany,
+        //updateCompany                  : updateCompany,
+        //companyUpdateOnlySelectedFields: companyUpdateOnlySelectedFields,
+        //getFilterCustomers             : getFilterCustomers,
+        //getCustomersImages             : getCustomersImages,
+        //getCustomersAlphabet           : getCustomersAlphabet,
 
         getRelatedStatus               : getRelatedStatus,
         getWorkflow                    : getWorkflow,

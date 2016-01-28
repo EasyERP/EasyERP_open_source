@@ -138,7 +138,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     if (customer) {
-                        common.getImagesPM([customer], "/getCustomersImages", "#" + id, function (result) {
+                        common.getImagesPM([customer], "/customers/getCustomersImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);

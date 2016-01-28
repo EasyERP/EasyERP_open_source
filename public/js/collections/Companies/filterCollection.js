@@ -102,7 +102,7 @@
             },
 
             getAlphabet: function (callback) {
-                dataService.getData("/getCompaniesAlphabet", {
+                dataService.getData("/customers/getCompaniesAlphabet", {
                     mid        : 39,
                     contentType: this.contentType
                 }, function (response) {
