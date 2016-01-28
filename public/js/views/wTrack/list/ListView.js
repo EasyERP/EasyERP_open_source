@@ -127,6 +127,7 @@ define([
                     e.stopPropagation();
                 } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
                     e.preventDefault();
+                    e.stopPropagation();
                 }
             },
 
@@ -755,7 +756,9 @@ define([
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                    model.changed = this.changedModels[id];
+                    if (model){
+                        model.changed = this.changedModels[id];
+                    }
                 }
 
                 if (errors.length) {
