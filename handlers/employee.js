@@ -1040,7 +1040,14 @@ var Employee = function (event, models) {
                     }, cb);
                 }
 
-                async.parallel([populateGroupsUsers, populateGroupsOwner, populateGroups, populateEmployee, populateEmployeeFire, populateDepartment, populateJobPosition, populateEmployeeHire, populateDepartmentHire,populateJobPositionHire, populateDepartmentFire, populateJobPositionFire], function (){
+                function populateRelatedUser(cb){
+                    UsersModel.populate(result, {
+                        'path': 'relatedUser',
+                        'select': 'login _id'
+                    }, cb);
+                }
+
+                async.parallel([populateRelatedUser, populateGroupsUsers, populateGroupsOwner, populateGroups, populateEmployee, populateEmployeeFire, populateDepartment, populateJobPosition, populateEmployeeHire, populateDepartmentHire,populateJobPositionHire, populateDepartmentFire, populateJobPositionFire], function (){
                     res.status(200).send(result);
                 });
 
