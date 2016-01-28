@@ -26,6 +26,7 @@ require.config({
         views       : './public/js/views',
         templates    : './public/templates',
         jQuery       : './public/js/libs/jquery-2.1.0.min.map',
+        //jqueryPrivate       : './test/uiSpecs/jqueryPrivate',
         Underscore   : './public/js/libs/underscore-min.map.1.6.0',
         Backbone     : './public/js/libs/backbone-min.map.1.1.2',
         text         : './public/js/libs/text',
@@ -51,6 +52,10 @@ require.config({
         'chai-jquery': ['jQuery', 'chai'],
         'Backbone'  : ['Underscore', 'jQuery']
     },
+    /*map: {
+        '*': { 'jQuery': 'jqueryPrivate' },
+        'jqueryPrivate': { 'jQuery': 'jQuery' }
+    },*/
     // dynamically load all test files
     deps   : allTestFiles,
 

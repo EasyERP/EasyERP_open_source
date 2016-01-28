@@ -17,16 +17,6 @@ define([
         var $fixture;
         var $elFixture;
 
-        /*beforeEach(function () {
-            $fixture = $(fixtures);
-            $fixture.appendTo(document.body);
-            $elFixture = $fixture.find('#wrapper');
-        });
-
-        afterEach(function () {
-            $fixture.remove();
-        });*/
-
         describe('#initialize()', function () {
             var view;
 
@@ -34,6 +24,7 @@ define([
                 $fixture = $(fixtures);
                 $fixture.appendTo(document.body);
                 $elFixture = $fixture.find('#wrapper');
+
                 view = new LoginView({el: $elFixture});
             });
 
@@ -45,24 +36,31 @@ define([
             it('should have div tagName', function () {
                 expect(view.tagName).to.be.equal('div');
             });
-            it('view should have checkClick method', function () {
-                expect(view).to.have.property('checkClick');
+            it('view should have usernameFocus method', function () {
+                expect(view).to.have.property('usernameFocus');
+            });
+            it('view should have passwordFocus method', function () {
+                expect(view).to.have.property('passwordFocus');
             });
             it('this.$el id should be #wrapper', function () {
                 expect(view.$el).to.have.attr('id');
                 expect(view.$el).to.have.id('wrapper');
             });
-
         });
 
-       /* describe('#initialize(options) options = {dbs: [db1, db2, ..]}', function () {
+        describe('#initialize(options) options = {dbs: [db1, db2, ..]}', function () {
             var view;
 
             before(function () {
+                $fixture = $(fixtures);
+                $fixture.appendTo(document.body);
+                $elFixture = $fixture.find('#wrapper');
+
                 view = new LoginView({el: $elFixture, dbs: ['production', 'development']});
             });
 
             after(function () {
+                $fixture.remove();
                 view.remove();
             });
 
@@ -73,23 +71,24 @@ define([
 
         describe('Test events', function () {
             var loginSpy;
-            var usernameFocusSpy;
-            var passwordFocusSpy;
             var view;
             var server;
 
             before(function () {
+                $fixture = $(fixtures);
+                $fixture.appendTo(document.body);
+                $elFixture = $fixture.find('#wrapper');
+
                 server = sinon.fakeServer.create();
                 server.autoRespond = true;
                 server.respondWith("GET", "/filter/getFiltersValues", [200, {"Content-Type": "application/json"}, JSON.stringify([{filter1: 'fakeFilter'}])]);
 
                 loginSpy = sinon.spy(LoginView.prototype, "login");
-                usernameFocusSpy = sinon.spy(LoginView.prototype, "usernameFocus");
-                passwordFocusSpy = sinon.spy(LoginView.prototype, "passwordFocus");
                 view = new LoginView({el: $elFixture, dbs: ['production', 'development']});
             });
 
             after(function () {
+                $fixture.remove();
                 view.remove();
                 loginSpy.restore();
                 server.restore();
@@ -153,33 +152,35 @@ define([
                 expect(loginSpy.called).to.be.true;
             });
 
-            /!*it('should focused in login input', function () {
+
+            it('should focused in login input', function () {
                 var $thisEl = view.$el;
                 var $login = $thisEl.find('#ulogin');
-                var $password = $thisEl.find('#upass');
                 var $loginIcon = $thisEl.find(".icon-login");
-                var $passwordIcon = $thisEl.find(".icon-pass");
-
                 var loginHasActiveClass = $loginIcon.hasClass('active');
-                var passwordHasActiveClass = $passwordIcon.hasClass('active');
 
+                $login.focusin();
 
-                $login.focus();
-                //$password.focus();
-                expect(loginSpy.called).to.be.true;
-
-               /!* if (!loginHasActiveClass) {
+                if (!loginHasActiveClass) {
                     expect($loginIcon).to.have.class('active');
                 } else {
                     expect($loginIcon).to.not.have.class('active');
                 }
+            });
+            it('should focused in password input', function () {
+                var $thisEl = view.$el;
+                var $password = $thisEl.find('#upass');
+                var $passwordIcon = $thisEl.find(".icon-pass");
+                var passwordHasActiveClass = $passwordIcon.hasClass('active');
+
+                $password.focusin();
 
                 if (!passwordHasActiveClass) {
                     expect($passwordIcon).to.have.class('active');
                 } else {
                     expect($passwordIcon).to.not.have.class('active');
-                }*!/
-            });*!/
-        });*/
+                }
+            });
+        });
     });
 });

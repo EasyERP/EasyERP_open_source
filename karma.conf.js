@@ -13,6 +13,7 @@ module.exports = function (config) {
             {pattern: 'public/js/libs/jquery-2.1.0.min.map.js', included: false, watching: false},
             {pattern: 'public/js/libs/underscore-min.map.1.6.0.js', included: false, watching: false},
             {pattern: 'public/js/libs/backbone-min.map.1.1.2.js', included: false, watching: false},
+            {pattern: 'test/uiSpecs/jqueryPrivate.js', included: false, watching: false},
             {pattern: 'public/js/libs/text.js', included: false, watching: false},
             {pattern: 'public/js/libs/moment/moment.js', included: false, watching: false},
             {pattern: 'public/js/libs/date.format.js', included: false, watching: false},
@@ -52,7 +53,7 @@ module.exports = function (config) {
 
         autoWatch: true,
 
-        browsers: ['Chrome', 'Firefox', 'Safari', 'IE', 'PhantomJS'],
+        browsers: ['Chrome', 'Firefox', 'Safari', 'IE'/*, 'PhantomJS'*/],
 
         singleRun: false,
 

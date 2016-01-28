@@ -20,31 +20,17 @@ define([
         events    : {
             "submit #loginForm"  : "login",
             "click .login-button": "login",
-            "focus #ulogin"      : "usernameFocus",
-            "focus #upass"       : "passwordFocus",
+            "focusin #ulogin"      : "usernameFocus",
+            "focusin #upass"       : "passwordFocus",
             "focusout #ulogin"   : "usernameFocus",
-            "focusout #upass"    : "passwordFocus",
-            "click .remember-me" : "checkClick"
+            "focusout #upass"    : "passwordFocus"
         },
 
         usernameFocus: function () {
-            console.log(this);
             this.$el.find(".icon-login").toggleClass("active");
         },
         passwordFocus: function () {
             this.$el.find(".icon-pass").toggleClass("active");
-        },
-
-        checkClick: function () {
-            var $remember = this.$el.find("#urem");
-
-            this.$el.find(".remember-me").toggleClass("active");
-
-            if ($remember.attr("checked")) {
-                $remember.removeAttr("checked");
-            } else {
-                $remember.attr("checked", "checked");
-            }
         },
 
         login: function (event) {
