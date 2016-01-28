@@ -62,8 +62,6 @@ module.exports = function (config) {
             }
         },
 
-        captureTimeout: 60000,
-
         concurrency: Infinity
     });
 };
