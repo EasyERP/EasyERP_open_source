@@ -42,7 +42,7 @@ define([
                         $(".miniPagination").hide();
                     }
                 });
-                this.populatePersonsForMiniView("/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, true, function (count) {
+                this.populatePersonsForMiniView("/persons/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, true, function (count) {
                     self.allMiniPersons = count.listLength;
                     self.allPagesPersons = Math.ceil(self.allMiniPersons / self.pageCountPersons);
                     if (self.allPagesPersons == self.pageMiniPersons) {
@@ -126,7 +126,7 @@ define([
             renderMiniPersons         : function () {
                 var self = this;
                 var formModel = this.formModel.toJSON();
-                this.populatePersonsForMiniView("/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, false, function (collection) {
+                this.populatePersonsForMiniView("/persons/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, false, function (collection) {
                     var isLast = self.pageMiniPersons == self.allPagesPersons ? true : false;
                     var perElem = self.$el.find('#persons');
                     perElem.empty();

@@ -163,9 +163,9 @@ define([
                         isCustomer   : thisEl.find("#isCustomer").is(":checked"),
                         isSupplier   : thisEl.find("#isSupplier").is(":checked"),
                         active       : thisEl.find("#active").is(":checked"),
-                        implementedBy: thisEl.find("#implementedBy").data("id"),
-                        salesPerson  : thisEl.find('#employeesDd').data("id"),
-                        salesTeam    : thisEl.find("#departmentDd").data("id"),
+                        implementedBy: thisEl.find("#implementedBy").data("id") || null,
+                        salesPerson  : thisEl.find('#employeesDd').data("id") || null,
+                        salesTeam    : thisEl.find("#departmentDd").data("id") || null,
                         reference    : thisEl.find("#reference").val(),
                         language     : thisEl.find("#language").text()
                     },

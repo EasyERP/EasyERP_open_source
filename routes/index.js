@@ -190,6 +190,7 @@ module.exports = function (app, mainDb) {
     app.use('/dashboard', dashboardRouter);
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
+    app.use('/companies', customersRouter);
     app.use('/persons', personsRouter);
     app.use('/capacity', capacityRouter);
     app.use('/payroll', payRollRouter);
@@ -756,15 +757,15 @@ module.exports = function (app, mainDb) {
 //-----------------------------getTotalLength---------------------------------------------
     app.get('/totalCollectionLength/:contentType', function (req, res, next) {
         switch (req.params.contentType) {
-            case ('Persons'):
-                requestHandler.customerTotalCollectionLength(req, res);
-                break;
-            case ('Companies'):
-                requestHandler.customerTotalCollectionLength(req, res);
-                break;
-            case ('ownCompanies'):
-                requestHandler.customerTotalCollectionLength(req, res);
-                break;
+            //case ('Persons'):
+            //    requestHandler.customerTotalCollectionLength(req, res);
+            //    break;
+            //case ('Companies'):
+            //    requestHandler.customerTotalCollectionLength(req, res);
+            //    break;
+            //case ('ownCompanies'):
+            //    requestHandler.customerTotalCollectionLength(req, res);
+            //    break;
             case ('Projects'):
                 requestHandler.projectsTotalCollectionLength(req, res);
                 break;

@@ -6,7 +6,7 @@
     function (PersonModel, common, dataService) {
         var PersonsCollection = Backbone.Collection.extend({
             model       : PersonModel,
-            url         : "/Persons/",
+            url         : "/persons/",
             page        : null,
             namberToShow: null,
             viewType    : null,

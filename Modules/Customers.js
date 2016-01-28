@@ -12,93 +12,93 @@ var Customers = function (event, models) {
 
     return {
 
-        getTotalCount: function (req, response) {
-            var res = {};
-            var data = {};
-            for (var i in req.query) {
-                data[i] = req.query[i];
-            }
-            res['showMore'] = false;
-
-            var contentType = req.params.contentType;
-            var optionsObject = {};
-
-            this.caseFilter(contentType, optionsObject, data);
-
-            models.get(req.session.lastDb, "Department", department).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                function (err, deps) {
-                    if (!err) {
-                        var arrOfObjectId = deps.objectID();
-
-                        models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
-                            {
-                                $match: {
-                                    $and: [
-                                        optionsObject,
-                                        {
-                                            $or: [
-                                                {
-                                                    $or: [
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.users': objectId(req.session.uId)}
-                                                            ]
-                                                        },
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.group': {$in: arrOfObjectId}}
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'owner'},
-                                                        {'groups.owner': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {whoCanRW: "everyOne"}
-                                            ]
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            function (err, result) {
-                                if (!err) {
-                                    if (data.currentNumber && data.currentNumber < result.length) {
-                                        res['showMore'] = true;
-                                    }
-                                    res['count'] = result.length;
-                                    response.send(res);
-                                } else {
-                                    logWriter.log("Customers.js getTotalCount " + err);
-                                    response.send(500, {error: 'Server Eroor'});
-                                }
-                            }
-                        );
-
-                    } else {
-                        logWriter.log("Customers.js getTotalCount " + err);
-                        response.send(500, {error: 'Server Eroor'});
-                    }
-                });
-        },
+        //getTotalCount: function (req, response) {
+        //    var res = {};
+        //    var data = {};
+        //    for (var i in req.query) {
+        //        data[i] = req.query[i];
+        //    }
+        //    res['showMore'] = false;
+        //
+        //    var contentType = req.params.contentType;
+        //    var optionsObject = {};
+        //
+        //    this.caseFilter(contentType, optionsObject, data);
+        //
+        //    models.get(req.session.lastDb, "Department", department).aggregate(
+        //        {
+        //            $match: {
+        //                users: objectId(req.session.uId)
+        //            }
+        //        }, {
+        //            $project: {
+        //                _id: 1
+        //            }
+        //        },
+        //        function (err, deps) {
+        //            if (!err) {
+        //                var arrOfObjectId = deps.objectID();
+        //
+        //                models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
+        //                    {
+        //                        $match: {
+        //                            $and: [
+        //                                optionsObject,
+        //                                {
+        //                                    $or: [
+        //                                        {
+        //                                            $or: [
+        //                                                {
+        //                                                    $and: [
+        //                                                        {whoCanRW: 'group'},
+        //                                                        {'groups.users': objectId(req.session.uId)}
+        //                                                    ]
+        //                                                },
+        //                                                {
+        //                                                    $and: [
+        //                                                        {whoCanRW: 'group'},
+        //                                                        {'groups.group': {$in: arrOfObjectId}}
+        //                                                    ]
+        //                                                }
+        //                                            ]
+        //                                        },
+        //                                        {
+        //                                            $and: [
+        //                                                {whoCanRW: 'owner'},
+        //                                                {'groups.owner': objectId(req.session.uId)}
+        //                                            ]
+        //                                        },
+        //                                        {whoCanRW: "everyOne"}
+        //                                    ]
+        //                                }
+        //                            ]
+        //                        }
+        //                    },
+        //                    {
+        //                        $project: {
+        //                            _id: 1
+        //                        }
+        //                    },
+        //                    function (err, result) {
+        //                        if (!err) {
+        //                            if (data.currentNumber && data.currentNumber < result.length) {
+        //                                res['showMore'] = true;
+        //                            }
+        //                            res['count'] = result.length;
+        //                            response.send(res);
+        //                        } else {
+        //                            logWriter.log("Customers.js getTotalCount " + err);
+        //                            response.send(500, {error: 'Server Eroor'});
+        //                        }
+        //                    }
+        //                );
+        //
+        //            } else {
+        //                logWriter.log("Customers.js getTotalCount " + err);
+        //                response.send(500, {error: 'Server Eroor'});
+        //            }
+        //        });
+        //},
 
         //create: function (req, data, res) {
         //    try {
@@ -295,114 +295,114 @@ var Customers = function (event, models) {
         //    });
         //},
 
-        getFilterPersonsForMiniView: function (req, response, data) {
-            var res = {};
-            var optionsObject = {};
-            res['data'] = [];
-            if (data.letter) {
-                optionsObject['type'] = 'Person';
-                optionsObject['name.last'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
-            } else {
-                optionsObject['type'] = 'Person';
-            }
-            models.get(req.session.lastDb, "Department", department).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                function (err, deps) {
-                    if (!err) {
-                        var arrOfObjectId = deps.objectID();
-                        models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
-                            {
-                                $match: {
-                                    $and: [
-                                        optionsObject,
-                                        {
-                                            company: objectId(data.companyId)
-                                        },
-                                        {
-                                            $or: [
-                                                {
-                                                    $or: [
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.users': objectId(req.session.uId)}
-                                                            ]
-                                                        },
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.group': {$in: arrOfObjectId}}
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'owner'},
-                                                        {'groups.owner': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {whoCanRW: "everyOne"}
-                                            ]
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            function (err, result) {
-                                if (!err) {
-                                    var query = models.get(req.session.lastDb, "Customers", customerSchema).find().where('_id').in(result);
-
-                                    if (data.onlyCount.toString().toLowerCase() == "true") {
-
-                                        query.count(function (error, _res) {
-                                            if (!error) {
-                                                res['listLength'] = _res;
-                                                response.send(res);
-                                            } else {
-                                                logWriter.log("Customers.js getFilterPersonsForMiniView " + error);
-                                            }
-                                        })
-                                    } else {
-
-                                        if (data && data.status && data.status.length > 0)
-                                            query.where('workflow').in(data.status);
-                                        query.select("_id name email phones.mobile").
-                                            skip((data.page - 1) * data.count).
-                                            limit(data.count).
-                                            sort({"name.first": 1}).
-                                            exec(function (error, _res) {
-                                                if (!error) {
-                                                    res['data'] = _res;
-                                                    response.send(res);
-                                                } else {
-                                                    logWriter.log("Customers.js getFilterPersonsForMiniView " + error);
-                                                }
-                                            });
-                                    }
-                                } else {
-                                    logWriter.log("Customers.js getFilterPersonsForMiniView " + err);
-                                }
-                            }
-                        );
-
-                    } else {
-                        logWriter.log("Customers.js getFilterPersonsForMiniView " + err);
-                    }
-                });
-        },
+        //getFilterPersonsForMiniView: function (req, response, data) {
+        //    var res = {};
+        //    var optionsObject = {};
+        //    res['data'] = [];
+        //    if (data.letter) {
+        //        optionsObject['type'] = 'Person';
+        //        optionsObject['name.last'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
+        //    } else {
+        //        optionsObject['type'] = 'Person';
+        //    }
+        //    models.get(req.session.lastDb, "Department", department).aggregate(
+        //        {
+        //            $match: {
+        //                users: objectId(req.session.uId)
+        //            }
+        //        }, {
+        //            $project: {
+        //                _id: 1
+        //            }
+        //        },
+        //        function (err, deps) {
+        //            if (!err) {
+        //                var arrOfObjectId = deps.objectID();
+        //                models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
+        //                    {
+        //                        $match: {
+        //                            $and: [
+        //                                optionsObject,
+        //                                {
+        //                                    company: objectId(data.companyId)
+        //                                },
+        //                                {
+        //                                    $or: [
+        //                                        {
+        //                                            $or: [
+        //                                                {
+        //                                                    $and: [
+        //                                                        {whoCanRW: 'group'},
+        //                                                        {'groups.users': objectId(req.session.uId)}
+        //                                                    ]
+        //                                                },
+        //                                                {
+        //                                                    $and: [
+        //                                                        {whoCanRW: 'group'},
+        //                                                        {'groups.group': {$in: arrOfObjectId}}
+        //                                                    ]
+        //                                                }
+        //                                            ]
+        //                                        },
+        //                                        {
+        //                                            $and: [
+        //                                                {whoCanRW: 'owner'},
+        //                                                {'groups.owner': objectId(req.session.uId)}
+        //                                            ]
+        //                                        },
+        //                                        {whoCanRW: "everyOne"}
+        //                                    ]
+        //                                }
+        //                            ]
+        //                        }
+        //                    },
+        //                    {
+        //                        $project: {
+        //                            _id: 1
+        //                        }
+        //                    },
+        //                    function (err, result) {
+        //                        if (!err) {
+        //                            var query = models.get(req.session.lastDb, "Customers", customerSchema).find().where('_id').in(result);
+        //
+        //                            if (data.onlyCount.toString().toLowerCase() == "true") {
+        //
+        //                                query.count(function (error, _res) {
+        //                                    if (!error) {
+        //                                        res['listLength'] = _res;
+        //                                        response.send(res);
+        //                                    } else {
+        //                                        logWriter.log("Customers.js getFilterPersonsForMiniView " + error);
+        //                                    }
+        //                                })
+        //                            } else {
+        //
+        //                                if (data && data.status && data.status.length > 0)
+        //                                    query.where('workflow').in(data.status);
+        //                                query.select("_id name email phones.mobile").
+        //                                    skip((data.page - 1) * data.count).
+        //                                    limit(data.count).
+        //                                    sort({"name.first": 1}).
+        //                                    exec(function (error, _res) {
+        //                                        if (!error) {
+        //                                            res['data'] = _res;
+        //                                            response.send(res);
+        //                                        } else {
+        //                                            logWriter.log("Customers.js getFilterPersonsForMiniView " + error);
+        //                                        }
+        //                                    });
+        //                            }
+        //                        } else {
+        //                            logWriter.log("Customers.js getFilterPersonsForMiniView " + err);
+        //                        }
+        //                    }
+        //                );
+        //
+        //            } else {
+        //                logWriter.log("Customers.js getFilterPersonsForMiniView " + err);
+        //            }
+        //        });
+        //},
 
         //getPersonById: function (req, id, response) {
         //    var query = models.get(req.session.lastDb, "Customers", customerSchema).findById(id);

@@ -12,6 +12,8 @@ module.exports = function (models, event) {
     router.get('/list', handler.getFilterCustomers);
     router.get('/thumbnails', handler.getFilterCustomers);
     router.get('/getPersonAlphabet', handler.getCompaniesAlphabet);
+    router.get('/getPersonsForMiniView', handler.getFilterPersonsForMiniView);
+    router.get('/totalCollectionLength', handler.getTotalCount);
 
     router.post('/', handler.create);
     router.put('/:id', handler.update);

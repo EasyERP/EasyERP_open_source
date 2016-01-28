@@ -26,15 +26,12 @@ module.exports = function (models, event) {
     router.get('/form', checkAuth, handler.getById);
     router.get('/list', handler.getFilterCustomers);
     router.get('/thumbnails', handler.getFilterCustomers);
-
+    router.get('/totalCollectionLength', handler.getTotalCount);
     router.get('/:id', checkAuth, handler.getById);
-
     router.post('/', handler.create);
     router.put('/:id', handler.update);
     router.patch('/:id', handler.udateOnlySelectedFields);
     router.delete('/:id', handler.remove);
-
-
 
     return router;
 };

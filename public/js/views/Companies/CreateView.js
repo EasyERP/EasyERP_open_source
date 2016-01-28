@@ -192,9 +192,9 @@ define([
                             isCustomer   : isCustomer,
                             isSupplier   : isSupplier,
                             active       : active,
-                            salesPerson  : salesPerson,
-                            salesTeam    : salesTeam,
-                            implementedBy: implementedBy,
+                            salesPerson  : salesPerson || null,
+                            salesTeam    : salesTeam || null,
+                            implementedBy: implementedBy || null,
                             reference    : reference,
                             language     : language
                         },

@@ -102,7 +102,7 @@
                 notes         : []
             },
             urlRoot    : function () {
-                return "/Companies";
+                return "/companies";
             }
         });
         return CompanyModel;

@@ -101,7 +101,7 @@ define([
                 notes         : []
             },
             urlRoot    : function () {
-                return "/Persons";
+                return "/persons";
             }
         });
         return PersonModel;

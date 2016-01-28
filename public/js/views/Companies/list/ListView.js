@@ -22,12 +22,12 @@ define([
             filterView       : filterView,
             contentType      : "Companies",
 
-            totalCollectionLengthUrl: '/totalCollectionLength/Companies',
+            totalCollectionLengthUrl: '/customers/totalCollectionLength',
             formUrl                 : "#easyErp/Companies/form/",
             exportToXlsxUrl         : '/Customers/exportToXlsx?type=Company',
             exportToCsvUrl          : '/Customers/exportToCsv?type=Company',
             events                  : {
-                "click .letter:not(.empty)": "alpabeticalRender",
+                "click .letter:not(.empty)": "alpabeticalRender"
             },
 
             initialize: function (options) {
@@ -76,7 +76,7 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 this.renderFilter(self);
-            },
+            }
         });
         return CompaniesListView;
     });

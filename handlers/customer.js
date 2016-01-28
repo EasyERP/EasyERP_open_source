@@ -46,10 +46,81 @@ var Customers = function (models, event) {
         });
     };
 
-    this.getFilterValues = function (req, res, next) {
-        var opportunity = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+    this.getTotalCount = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var data = req.query;
+        var optionsObject = {};
+        var filter = data.filter || {};
+        var waterfallTasks;
+        var mid = req.header.mid || 50;
+        var accessRollSearcher;
+        var contentSearcher;
+        var query = {};
+        var response = {};
 
-        opportunity.aggregate([
+        response.showMore = false;
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject.$or = caseFilter(filter);
+            } else {
+                optionsObject.$and = caseFilter(filter);
+            }
+        }
+
+        access.getEditWritAccess(req, req.session.uId, mid, function (access) {
+            if (access) {
+
+                accessRollSearcher = function (cb) {
+                    accessRoll(req, Model, cb);
+                };
+
+                contentSearcher = function (ids, cb) {
+                    var queryObject = {};
+
+                    queryObject.$and = [];
+
+                    if (optionsObject.$and.length) {
+                        queryObject.$and.push(optionsObject);
+                    }
+
+                    queryObject.$and.push({_id: {$in: ids}});
+
+                    query = Model.find(queryObject);
+
+                    query.count(function (err, _res) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, _res);
+                    });
+
+                };
+                waterfallTasks = [accessRollSearcher, contentSearcher];
+
+                async.waterfall(waterfallTasks, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+                    if (data.currentNumber && data.currentNumber < result) {
+                        response.showMore = true;
+                    }
+
+                    response.count = result;
+
+                    res.status(200).send(response);
+                });
+            } else {
+                res.status(403).send();
+            }
+        });
+    };
+
+    this.getFilterValues = function (req, res, next) {
+        var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+
+        Customers.aggregate([
             {
                 $group: {
                     _id    : null,
@@ -271,12 +342,17 @@ var Customers = function (models, event) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var optionsObject = {};
         var data = req.query;
+        var accessRollSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+
+        optionsObject.$and = [];
 
         if (data.letter) {
-            optionsObject.type = 'Person';
-            optionsObject['name.last'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
+            optionsObject.$and.push({type: 'Person'});
+            optionsObject.$and.push({'name.last': new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*')});
         } else {
-            optionsObject.type = 'Person';
+            optionsObject.$and.push({type: 'Person'});
         }
 
         access.getEditWritAccess(req, req.session.uId, mid, function (access) {
@@ -295,28 +371,54 @@ var Customers = function (models, event) {
                         queryObject.$and.push(optionsObject);
                     }
 
-                    if (contentType === 'Persons') {
-                        queryObject.$and.push({type: 'Person'});
-                    } else if (contentType === 'Companies') {
-                        queryObject.$and.push({type: 'Company'});
+                    queryObject.$and.push({_id: {$in: ids}});
+
+                    var query = Customers.find(queryObject);
+
+                    if (data.onlyCount.toString().toLowerCase() === "true") {
+
+                        query.count(function(err, res){
+                            if (err){
+                                cb(err);
+                            }
+
+                            cb(null, {listLength: res});
+                        });
+                    } else {
+
+                        if (data && data.status && data.status.length > 0) {
+                            query.where('workflow').in(data.status);
+
+                        }
+                        query
+                            .select("_id name email phones.mobile")
+                            .skip((data.page - 1) * data.count)
+                            .limit(data.count)
+                            .sort({"name.first": 1})
+                            .exec(function (err, _res) {
+                            if (err){
+                                cb(err);
+                            }
+                                cb(null, {data: _res});
+                        });
+                    }
+                };
+
+                waterfallTasks = [accessRollSearcher, contentSearcher];
+                async.waterfall(waterfallTasks, function (err, result) {
+                    if (err) {
+                        return next(err);
                     }
 
-                    queryObject.$and.push({_id: {$in: ids}});
-                    waterfallTasks = [accessRollSearcher, contentSearcher];
 
-                    async.waterfall(waterfallTasks, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
+                    res.status(200).send(result);
+                });
+            } else {
+                res.status(403).send();
+            }
+        });
 
-                        res.status(200).send({data: result});
-                    });
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-                };
+    };
 
     this.getCustomersImages = function (req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
@@ -397,7 +499,7 @@ var Customers = function (models, event) {
          * @instance
          */
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var id = req.params.id;
+        var id = req.query._id;
         var mid = req.headers.mid || 50;
 
         access.getReadAccess(req, req.session.uId, mid, function (access) {
@@ -523,6 +625,8 @@ var Customers = function (models, event) {
                     }
 
                     queryObject.$and.push({_id: {$in: ids}});
+
+                    query = Model.find(queryObject);
 
                     switch (contentType) {
                         case ('Persons'):
@@ -743,23 +847,25 @@ var Customers = function (models, event) {
         var contentSearcher;
         var accessRollSearcher;
 
+        optionsObject.$and = [];
+
         switch (contentType) {
             case ('Persons'):
             {
-                optionsObject.type = 'Person';
+                optionsObject.$and.push({type: 'Person'});
                 searchName = "$name.last";
             }
                 break;
             case ('Companies'):
             {
-                optionsObject.type = 'Company';
+                optionsObject.$and.push({type: 'Company'});
                 searchName = "$name.first";
             }
                 break;
             case ('ownCompanies'):
             {
-                optionsObject.type = 'Company';
-                optionsObject.isOwn = true;
+                optionsObject.$and.push({type: 'Company'});
+                optionsObject.$and.push({isOwn: true});
                 searchName = "$name.first";
             }
                 break;

@@ -66,8 +66,8 @@
                 common.getImages(ids, "/customers/getCustomersImages");
             },
 
-            getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Companies', {
+            getTotalLength: function (currentNumber) {
+                dataService.getData('/customers/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
                     newCollection: this.newCollection

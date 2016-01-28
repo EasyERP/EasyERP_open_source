@@ -2853,9 +2853,9 @@ var requestHandler = function (app, event, mainDb) {
     }
 
     // Get  Persons or Companies or ownCompanies total count
-    function customerTotalCollectionLength(req, res) {
-        customer.getTotalCount(req, res);
-    }
+    //function customerTotalCollectionLength(req, res) {
+    //    customer.getTotalCount(req, res);
+    //}
 
     function projectsTotalCollectionLength(req, res) {
         project.getTotalCount(req, res);
@@ -3013,7 +3013,7 @@ var requestHandler = function (app, event, mainDb) {
         getLanguages                 : getLanguages,
         getJobType                   : getJobType,
         getNationality               : getNationality,
-        customerTotalCollectionLength: customerTotalCollectionLength,
+        //customerTotalCollectionLength: customerTotalCollectionLength,
 
         initScheduler: initScheduler
     }

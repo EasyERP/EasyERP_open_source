@@ -7,7 +7,7 @@ define([
             model      : PersonModel,
             idAttribute: "_id",
             url        : function () {
-                return "/Persons";
+                return "/persons";
             },
             initialize : function () {
                 var mid = 39;
