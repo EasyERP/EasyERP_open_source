@@ -22,7 +22,7 @@ define([
             responseObj: {},
 
             initialize: function (options) {
-                this.mId =  CONSTANTS.MID[this.contentType];
+                this.mId = CONSTANTS.MID[this.contentType];
 
                 _.bindAll(this, "saveItem");
                 _.bindAll(this, "render", "deleteItem");
@@ -33,7 +33,7 @@ define([
                 } else {
                     this.currentModel = options.model;
                 }
-                this.currentModel.urlRoot = '/employee';
+                this.currentModel.urlRoot = '/employees';
 
                 this.responseObj['#sourceDd'] = [
                     {
@@ -518,6 +518,7 @@ define([
                     headers: {
                         mid: self.mId
                     },
+                    wait   : true,
                     patch  : true,
                     success: function (model) {
                         if (redirect) {
@@ -540,7 +541,7 @@ define([
                             model = model.toJSON();
                             empThumb = $('#' + model._id);
 
-                            empThumb.find('.age').html(model.result.age);
+                            empThumb.find('.age').html(model.age);
                             empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
                             empThumb.find('.telephone a').html(model.workPhones.mobile);
                             empThumb.find('.telephone a').attr('href', "skype:" + model.workPhones.mobile + "?call");
@@ -569,7 +570,7 @@ define([
                 var answer = confirm("Really DELETE items ?!");
 
                 if (answer === true) {
-                    this.currentModel.urlRoot = "/employee";
+                    this.currentModel.urlRoot = "/employees";
                     this.currentModel.destroy({
                         headers: {
                             mid: mid
@@ -644,7 +645,7 @@ define([
                 });
                 populate.get("#jobTypeDd", "/jobType", {}, "name", this);
                 populate.get("#nationality", "/nationality", {}, "_id", this);
-                populate.get2name("#projectManagerDD", "/employee/getPersonsForDd", {}, this);
+                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, false, false);
                 populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
                 populate.get("#departmentsDd", "/department/getForDD", {}, "departmentName", this);

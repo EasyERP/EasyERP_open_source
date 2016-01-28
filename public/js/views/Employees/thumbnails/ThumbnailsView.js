@@ -57,7 +57,7 @@
 
             //modified for filter Vasya
             getTotalLength: function (currentNumber) {
-                dataService.getData('/employee/totalCollectionLength', {
+                dataService.getData('/employees/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
                     newCollection: this.newCollection,
@@ -82,7 +82,7 @@
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/employee/getEmployeesImages");
+                common.getImages(ids, "/employees/getEmployeesImages");
             },
 
             alpabeticalRender: function (e) {
@@ -200,7 +200,7 @@
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
                     var model = new CurrentModel({validate: false});
-                    model.urlRoot = '/employee/form';
+                    model.urlRoot = '/employees/form';
                     model.fetch({
                         data   : {id: id},
                         success: function (model) {
@@ -307,12 +307,12 @@
 
             exportToCsv: function () {
                 //todo change after routes refactoring
-                window.location = '/employee/exportToCsv';
+                window.location = '/employees/exportToCsv';
             },
 
             exportToXlsx: function () {
                 //todo change after routes refactoring
-                window.location = '/employee/exportToXlsx';
+                window.location = '/employees/exportToXlsx';
             }
         });
 

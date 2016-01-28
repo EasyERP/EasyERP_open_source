@@ -240,7 +240,7 @@ define([
                             click: self.deleteItem
                         }]
                 });
-                populate.get2name("#departmentManager", "/employee/getPersonsForDd", {}, this, false, true);
+                populate.get2name("#departmentManager", "/employees/getPersonsForDd", {}, this, false, true);
                 populate.getParrentDepartment("#parentDepartment", "/getDepartmentsForEditDd", {id: this.currentModel.toJSON()._id}, this, false, true);
                 var k = this.currentModel.toJSON().users;
                 var b = $.map(this.currentModel.toJSON().users, function (item) {

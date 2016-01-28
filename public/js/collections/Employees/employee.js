@@ -7,7 +7,7 @@ define([
     function (EmployeeModel) {
         var EmployeeCollection = Backbone.Collection.extend({
             model: EmployeeModel,
-            url  : "/employee/getForDD",
+            url  : "/employees/getForDD",
 
             initialize: function (options) {
 

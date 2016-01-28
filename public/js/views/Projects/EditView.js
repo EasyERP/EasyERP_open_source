@@ -230,7 +230,7 @@ define([
                                 }
                                 currentModel_holder.find(".bottom .stageSelect").text(self.$el.find("#workflowsDd").text()).attr("class", "stageSelect " + self.$el.find("#workflowsDd").text().toLowerCase().replace(" ", ''));
                                 if (projectmanager) {
-                                    common.getImagesPM([projectmanager._id], "/employee/getEmployeesImages", "#" + self.currentModel.toJSON()._id);
+                                    common.getImagesPM([projectmanager._id], "/employees/getEmployeesImages", "#" + self.currentModel.toJSON()._id);
                                 }
                             }
                             if (data.workflow._id != workflowStart._id) {
@@ -339,7 +339,7 @@ define([
                     model: this.currentModel
                 });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
-                populate.get2name("#projectManagerDD", "/employee/getPersonsForDd", {}, this);
+                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
                 populate.get2name("#customerDd", "/Customer", {}, this, false, false);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this);
                 var model = this.currentModel.toJSON();

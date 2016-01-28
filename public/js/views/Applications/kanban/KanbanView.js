@@ -140,7 +140,7 @@
             },
 
             getCollectionLengthByWorkflows: function (context) {
-                dataService.getData('/application/getApplicationsLengthByWorkflows', {}, function (data) {
+                dataService.getData('/applications/getApplicationsLengthByWorkflows', {}, function (data) {
                     data.arrayOfObjects.forEach(function (object) {
                         var column = context.$("[data-id='" + object._id + "']");
                         column.find('.totalCount').text(object.count);
@@ -160,7 +160,7 @@
                 e.preventDefault();
                 var id = $(e.target).closest(".inner").data("id");
                 var model = new CurrentModel();
-                model.urlRoot = '/application/form';
+                model.urlRoot = '/applications/form';
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {
@@ -177,7 +177,7 @@
 
             asyncFetc: function (workflows) {
                 _.each(workflows.toJSON(), function (wfModel) {
-                    dataService.getData('/application/kanban', {workflowId: wfModel._id}, this.asyncRender, this);
+                    dataService.getData('/applications/kanban', {workflowId: wfModel._id}, this.asyncRender, this);
                 }, this);
             },
 
@@ -302,7 +302,7 @@
 
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
-                        dataService.getData('/application/kanban', {
+                        dataService.getData('/applications/kanban', {
                             workflowId: wfModel._id,
                             filter    : this.filter
                         }, this.asyncRender, this);
@@ -327,7 +327,7 @@
 
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
-                        dataService.getData('/application/kanban', {
+                        dataService.getData('/applications/kanban', {
                             workflowId: wfModel._id,
                             filter    : this.filter
                         }, this.asyncRender, this);

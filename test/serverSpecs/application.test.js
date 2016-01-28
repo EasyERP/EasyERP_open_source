@@ -45,7 +45,7 @@ describe("Application Specs", function () {
         };
 
         aggent
-            .post('application')
+            .post('applications')
             .send(body)
             .expect(201)
             .end(function (err, res) {
@@ -77,7 +77,7 @@ describe("Application Specs", function () {
             id: "55b92ad221e4b7c40f000032"
         };
         aggent
-            .get('application/form')
+            .get('applications/form')
             .query(query)
             .expect(200)
             .end(function (err, res) {
@@ -104,7 +104,7 @@ describe("Application Specs", function () {
             count      : 100
         };
         aggent
-            .get('application/list')
+            .get('applications/list')
             .query(query)
             .expect(200)
             .end(function (err, res) {
@@ -128,7 +128,7 @@ describe("Application Specs", function () {
             workflowId: '528ce5e3f3f67bc40b000018'
         };
         aggent
-            .get('application/kanban')
+            .get('applications/kanban')
             .query(query)
             .expect(200)
             .end(function (err, res) {
@@ -160,7 +160,7 @@ describe("Application Specs", function () {
             }
         };
         aggent
-            .patch('application/56938d2cd87c9004552b639e')
+            .patch('applications/56938d2cd87c9004552b639e')
             .send(body)
             .expect(200)
             .end(function (err, res) {
@@ -173,7 +173,7 @@ describe("Application Specs", function () {
                 expect(body)
                     .to.be.instanceOf(Object);
                 expect(body)
-                    .to.have.property('success');
+                    .to.have.property('_id');
 
                 done();
             });
@@ -181,7 +181,7 @@ describe("Application Specs", function () {
 
     //it("should delete application", function (done) {
     //    aggent
-    //        .delete('application/' + id)
+    //        .delete('applications/' + id)
     //        .expect(200, done);
     //});
 });

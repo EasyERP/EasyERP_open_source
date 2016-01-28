@@ -45,7 +45,7 @@ describe("Employee Specs", function () {
         };
 
         aggent
-            .post('employee')
+            .post('employees')
             .send(body)
             .expect(201)
             .end(function (err, res) {
@@ -79,7 +79,7 @@ describe("Employee Specs", function () {
         };
 
         aggent
-            .post('employee')
+            .post('employees')
             .send(bodyError)
             .expect(500)
             .end(function (err, res) {
@@ -103,7 +103,7 @@ describe("Employee Specs", function () {
             id: "55b92ad221e4b7c40f000032"
         };
         aggent
-            .get('employee/form')
+            .get('employees/form')
             .query(query)
             .expect(200)
             .end(function (err, res) {
@@ -130,7 +130,7 @@ describe("Employee Specs", function () {
             count      : 100
         };
         aggent
-            .get('employee/thumbnails')
+            .get('employees/thumbnails')
             .query(query)
             .expect(200)
             .end(function (err, res) {
@@ -155,7 +155,7 @@ describe("Employee Specs", function () {
             "55b92ad221e4b7c40f000033"
         ];
         aggent
-            .get('employee/getForProjectDetails')
+            .get('employees/getForProjectDetails')
             .query({data: ids})
             .expect(200)
             .end(function (err, res) {
@@ -175,7 +175,7 @@ describe("Employee Specs", function () {
     it("should not get employee for project details", function (done) {
         var ids = 'dddd';
         aggent
-            .get('employee/getForProjectDetails')
+            .get('employees/getForProjectDetails')
             .query({data: ids})
             .expect(500)
             .end(function (err, res) {
@@ -196,7 +196,7 @@ describe("Employee Specs", function () {
 
     it("should get employees forDD", function (done) {
         aggent
-            .get('employee/getForDD')
+            .get('employees/getForDD')
             .expect(200)
             .end(function (err, res) {
                 var body = res.body;
@@ -216,7 +216,7 @@ describe("Employee Specs", function () {
 
     it("should get only employees forDD", function (done) {
         aggent
-            .get('employee/getForDD')
+            .get('employees/getForDD')
             .query({isEmployee: true})
             .expect(200)
             .end(function (err, res) {
@@ -237,7 +237,7 @@ describe("Employee Specs", function () {
 
     it("should get employees for salesManager", function (done) {
         aggent
-            .get('employee/bySales')
+            .get('employees/bySales')
             .expect(200)
             .end(function (err, res) {
                 var body = res.body;
@@ -255,26 +255,7 @@ describe("Employee Specs", function () {
 
     it("should get employees grouped by department", function (done) {
         aggent
-            .get('employee/byDepartment')
-            .expect(200)
-            .end(function (err, res) {
-                var body = res.body;
-
-                if (err) {
-                    return done(err);
-                }
-
-                expect(body)
-                    .to.be.instanceOf(Array)
-                    .and.to.be.not.empty;
-
-                done();
-            });
-    });
-
-    it("should get employees grouped by department", function (done) {
-        aggent
-            .get('employee/byDepartment')
+            .get('employees/byDepartment')
             .expect(200)
             .end(function (err, res) {
                 var body = res.body;
@@ -293,7 +274,7 @@ describe("Employee Specs", function () {
 
     it("should get employees min hire date of employees", function (done) {
         aggent
-            .get('employee/getMinHireDate')
+            .get('employees/getMinHireDate')
             .expect(200)
             .end(function (err, res) {
                 var body = res.body;
@@ -313,7 +294,7 @@ describe("Employee Specs", function () {
 
     it("should get employee for related user", function (done) {
         aggent
-            .get('employee/getForDdByRelatedUser')
+            .get('employees/getForDdByRelatedUser')
             .expect(200)
             .end(function (err, res) {
                 var body = res.body;
@@ -335,7 +316,7 @@ describe("Employee Specs", function () {
 
     it("should get employee as salesPerson for dropDown", function (done) {
         aggent
-            .get('employee/getSalesPerson')
+            .get('employees/getPersonsForDd')
             .expect(200)
             .end(function (err, res) {
                 var body = res.body;
@@ -357,7 +338,7 @@ describe("Employee Specs", function () {
 
     it("should get first letters of last name of employee", function (done) {
         aggent
-            .get('employee/getEmployeesAlphabet')
+            .get('employees/getEmployeesAlphabet')
             .expect(200)
             .end(function (err, res) {
                 var body = res.body;
@@ -382,7 +363,7 @@ describe("Employee Specs", function () {
             source: 'testSource'
         };
         aggent
-            .patch('employee/56938d2cd87c9004552b639e')
+            .patch('employees/56938d2cd87c9004552b639e')
             .send(body)
             .expect(200)
             .end(function (err, res) {
@@ -395,7 +376,7 @@ describe("Employee Specs", function () {
                 expect(body)
                     .to.be.instanceOf(Object);
                 expect(body)
-                    .to.have.property('success');
+                    .to.have.property('_id');
 
                 done();
             });
@@ -403,13 +384,13 @@ describe("Employee Specs", function () {
 
     //it("should delete employee", function (done) {
     //    aggent
-    //        .delete('employee/' + id)
+    //        .delete('employees/' + id)
     //        .expect(200, done);
     //});
     //
     //it("should not delete employee", function (done) {
     //    aggent
-    //        .delete('employee/' + 'kkk')
+    //        .delete('employees/' + 'kkk')
     //        .expect(500, done);
     //});
 

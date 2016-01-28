@@ -256,7 +256,7 @@
                 });
                 //added condition(ids.length>0)  if no ids don't run common code)
                 if (ids.length > 0) {
-                    common.getImages(ids, "/employee/getEmployeesImages");
+                    common.getImages(ids, "/employees/getEmployeesImages");
                 }
             },
 

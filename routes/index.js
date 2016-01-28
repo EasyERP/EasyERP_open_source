@@ -174,8 +174,8 @@ module.exports = function (app, mainDb) {
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);
-    app.use('/employee', employeeRouter);
-    app.use('/application', applicationRouter);
+    app.use('/employees', employeeRouter);
+    app.use('/applications', applicationRouter);
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);

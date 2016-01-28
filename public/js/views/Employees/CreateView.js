@@ -384,7 +384,7 @@ define([
 
                 populate.get("#jobTypeDd", "/jobType", {}, "name", this, true);
                 populate.get("#nationality", "/nationality", {}, "_id", this, true);
-                populate.get2name("#projectManagerDD", "/employee/getPersonsForDd", {}, this, true);
+                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this, true);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, true, true);
                 populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, true, true);
                 populate.get("#departmentsDd", "/department/getForDD", {}, "departmentName", this, true);

@@ -163,7 +163,7 @@ define([
                 var year = new Date().getFullYear();
                 var i;
 
-                dataService.getData('/employee/getMinHireDate', {}, function (response, context) {
+                dataService.getData('/employees/getMinHireDate', {}, function (response, context) {
                     var startYear = parseInt(response.min, 0) || year;
 
                     context.ul = '<ul class="newSelectList">';

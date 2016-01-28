@@ -16,9 +16,9 @@ define([
             contentType: 'Employees',
 
             initialize          : function (options) {
-                this.mId =  CONSTANTS.MID[this.contentType];
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.formModel = options.model;
-                this.formModel.urlRoot = "/employee";
+                this.formModel.urlRoot = "/employees";
             },
             events              : {
                 'click .chart-tabs a'                                  : 'changeTab',
@@ -26,9 +26,9 @@ define([
                 'click .withEndContract .newSelectList li'             : 'endContract',
                 "click .deleteAttach"                                  : "deleteAttach",
                 "change .inputAttach"                                  : "addAttach",
-
-                'click': 'hideSelect'
+                'click'                                                : 'hideSelect'
             },
+
             fileSizeIsAcceptable: function (file) {
                 if (!file) {
                     return false;
@@ -96,6 +96,7 @@ define([
                 addFrmAttach.submit();
                 addFrmAttach.off('submit');
             },
+
             deleteAttach: function (e) {
                 var mid = this.mId;
                 var target = $(e.target);
@@ -104,7 +105,7 @@ define([
                 } else {
                     var id = e.target.id;
                     var currentModel = this.formModel;
-                    currentModel.urlRoot = "/employee/";
+                    currentModel.urlRoot = "/employees/";
                     var attachments = currentModel.get('attachments');
                     var new_attachments = _.filter(attachments, function (attach) {
                         if (attach._id !== id) {
@@ -127,11 +128,13 @@ define([
             hideSelect           : function () {
                 $(".newSelectList").hide();
             },
+
             showEndContractSelect: function (e) {
                 e.preventDefault();
                 $(e.target).parent().find(".newSelectList").toggle();
                 return false;
             },
+
             endContract          : function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
@@ -146,6 +149,7 @@ define([
                     }
                 });
             },
+
             changeTab            : function (e) {
                 $(e.target).closest(".chart-tabs").find("a.active").removeClass("active");
                 $(e.target).addClass("active");
@@ -170,7 +174,7 @@ define([
 
             deleteItems: function () {
                 var mid = this.mId;
-                this.formModel.urlRoot = "/employee";
+                this.formModel.urlRoot = "/employees";
                 this.formModel.destroy({
                     headers: {
                         mid: mid

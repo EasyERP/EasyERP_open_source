@@ -11,6 +11,7 @@ var Employee = function (event, models) {
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var DepartmentSchema = mongoose.Schemas.Department;
+    var jobPositionSchema = mongoose.Schemas.JobPosition;
     var _ = require('underscore');
     var fs = require('fs');
     var objectId = mongoose.Types.ObjectId;
@@ -809,6 +810,8 @@ var Employee = function (event, models) {
         var dbName = req.session.lastDb;
         var UsersSchema = mongoose.Schemas.User;
         var UsersModel = models.get(dbName, 'Users', UsersSchema);
+        var Department = models.get(dbName, 'Department', DepartmentSchema);
+        var JobPosition = models.get(dbName, 'jobPosition', jobPositionSchema);
 
         var data = req.body;
         var fileName = data.fileName;
@@ -951,7 +954,95 @@ var Employee = function (event, models) {
                 event.emit('dropHoursCashes', req);
                 event.emit('recollectVacationDash');
 
-                res.status(200).send({success: 'Employees updated', result: result});
+                function populateEmployee(cb){
+                    Employee.populate(result, {
+                        'path': 'manager',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateGroupsUsers(cb){
+                    UsersModel.populate(result, {
+                        'path': 'groups.users',
+                        'select': 'login _id'
+                    }, cb);
+                }
+
+                function populateGroupsOwner(cb){
+                    UsersModel.populate(result, {
+                        'path': 'groups.owner',
+                        'select': 'login _id'
+                    }, cb);
+                }
+
+
+                function populateGroups(cb){
+                    Department.populate(result, {
+                        'path': 'groups.group',
+                        'select': 'departmentName _id'
+                    }, cb);
+                }
+
+                function populateEmployeeHire(cb){
+                    Employee.populate(result, {
+                        'path': 'hire.manager',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateEmployeeFire(cb){
+                    Employee.populate(result, {
+                        'path': 'fire.manager',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateDepartment(cb){
+                    Department.populate(result, {
+                        'path': 'department',
+                        'select': 'departmentName _id'
+                    }, cb);
+                }
+
+                function populateDepartmentFire(cb){
+                    Department.populate(result, {
+                        'path': 'fire.department',
+                        'select': 'departmentName _id'
+                    }, cb);
+                }
+
+
+                function populateDepartmentHire(cb){
+                    Department.populate(result, {
+                        'path': 'hire.department',
+                        'select': 'departmentName _id'
+                    }, cb);
+                }
+
+                function populateJobPosition(cb){
+                    JobPosition.populate(result, {
+                        'path': 'jobPosition',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateJobPositionFire(cb){
+                    JobPosition.populate(result, {
+                        'path': 'fire.jobPosition',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateJobPositionHire(cb){
+                    JobPosition.populate(result, {
+                        'path': 'hire.jobPosition',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                async.parallel([populateGroupsUsers, populateGroupsOwner, populateGroups, populateEmployee, populateEmployeeFire, populateDepartment, populateJobPosition, populateEmployeeHire, populateDepartmentHire,populateJobPositionHire, populateDepartmentFire, populateJobPositionFire], function (){
+                    res.status(200).send(result);
+                });
 
                 payrollHandler.composeSalaryReport(req);
 
@@ -961,7 +1052,7 @@ var Employee = function (event, models) {
 
     this.remove = function (req, res, next) {
         var _id = req.params.id;
-        var mId = req.headers.mid;
+        var mId = parseInt(req.headers.mid, 10);
 
         access.getEditWritAccess(req, req.session.uId, mId, function (access) {
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);

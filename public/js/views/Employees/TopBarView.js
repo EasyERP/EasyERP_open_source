@@ -74,10 +74,12 @@ define([
                 event.preventDefault();
                 this.trigger('editEvent');
             },
+
             createEvent: function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
             },
+
             importEvent: function (event) {
                 var template = _.template(importTemplate);
                 this.$el.find('#forImport').html(template);

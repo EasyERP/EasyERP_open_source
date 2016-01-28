@@ -284,7 +284,7 @@ define([
                     model: new ProjectModel()
                 });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);
-                populate.get2name("#projectManagerDD", "/employee/getPersonsForDd", {}, this, true);
+                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this, true);
                 populate.get2name("#customerDd", "/Customer", {}, this, true, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this, true);
 

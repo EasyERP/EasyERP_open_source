@@ -130,7 +130,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
                     if (pm) {
-                        common.getImagesPM([pm], "/employee/getEmployeesImages", "#" + id, function (result) {
+                        common.getImagesPM([pm], "/employees/getEmployeesImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -637,7 +637,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         }
                     });
 
-                    dataService.getData("/employee/getForDD", {isEmployee: true}, function (employees) {
+                    dataService.getData("/employees/getForDD", {isEmployee: true}, function (employees) {
                         employees = _.map(employees.data, function (employee) {
                             employee.name = employee.name.first + ' ' + employee.name.last;
 

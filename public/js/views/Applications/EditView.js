@@ -24,7 +24,7 @@
             _.bindAll(this, "render", "deleteItem");
             this.employeesCollection = options.collection;
             this.currentModel = options.model || options.collection.getElement();
-            this.currentModel.urlRoot = "/application";
+            this.currentModel.urlRoot = "/applications";
             this.responseObj = {};
             this.refuseId = 0;
 
@@ -609,7 +609,7 @@
             populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
             populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
             populate.get("#nationality", "/nationality", {}, "_id", this);
-            populate.get2name("#projectManagerDD", "/employee/getPersonsForDd", {}, this);
+            populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
             populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);

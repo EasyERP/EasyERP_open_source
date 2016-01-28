@@ -23,7 +23,7 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Applications",
-            totalCollectionLengthUrl: '/application/totalCollectionLength',
+            totalCollectionLengthUrl: '/applications/totalCollectionLength',
             formUrl                 : "#easyErp/Applications/form/",
 
             events: {
@@ -135,7 +135,7 @@ define([
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
                 var model = new CurrentModel({validate: false});
-                model.urlRoot = '/application/form';
+                model.urlRoot = '/applications/form';
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {

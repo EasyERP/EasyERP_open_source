@@ -18,7 +18,6 @@ module.exports = function (event, models) {
     router.get('/exportToCsv', handler.exportToCsv);
     router.get('/getMinHireDate', handler.getMinHireDate);
     router.get('/getForDdByRelatedUser', handler.getForDdByRelatedUser);
-    router.get('/getSalesPerson', handler.getSalesPerson);
     router.get('/getPersonsForDd', handler.getSalesPerson);
     router.get('/getEmployeesAlphabet', handler.getEmployeesAlphabet);
     router.get('/getEmployeesImages', handler.getEmployeesImages);
