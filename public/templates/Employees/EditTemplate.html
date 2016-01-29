@@ -410,6 +410,7 @@
                         <table class="list" id="hireFireTable">
                             <thead>
                             <tr>
+                                <th>X</th>
                                 <th>Status</th>
                                 <th>Date</th>
                                 <th>Job position</th>
@@ -423,6 +424,11 @@
                             <tbody>
                             <%_.each(model.hire, function(hire, key){ %>
                             <tr id="hire<%=key%>" data-id="<%=key%>" data-content="hire">
+                                <td class="remove">
+                                    <%if (key === model.hire.length - 1 && key) {%>
+                                      <a class="fa fa-trash" id="<%=key%>"></a>
+                                    <% } %>
+                                </td>
                                 <td>Hired</td>
                                 <td class="editable hireDate" data-id="hireDate"><%=model.hire[key].date%></td>
                                 <td>
@@ -457,6 +463,7 @@
 
                   <%if (model.fire && model.fire[key] && model.fire[key].date !==  model.hire[key].date) {%>
                   <tr id="fire<%=key%>" data-id="<%=key%>" data-content="fire">
+                      <td class="remove"></td>
                       <td>Fired</td>
                       <td class="editable fireDate" data-id="fireDate"><%=model.fire[key].date%></td>
                       <td><%=model.fire[key].jobPosition.name !== model.hire[key].jobPosition.name ? model.fire[key].jobPosition.name : ""%></td>

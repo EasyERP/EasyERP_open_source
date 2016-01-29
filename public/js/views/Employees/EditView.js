@@ -87,7 +87,18 @@ define([
                 "click"                                                          : "hideNewSelect",
                 "click td.editable"                                              : "editJob",
                 "click #update"                                                  : "addNewRow",
-                "keyup .editing"                                                 : "validateNumbers"
+                "keyup .editing"                                                 : "validateNumbers",
+                "click .fa-trash"                                                : "deleteRow"
+            },
+
+            deleteRow: function (e) {
+                var target = $(e.target);
+                var tr = target.closest('tr');
+
+                tr.remove();
+
+                this.$el.find('#update').show();
+                this.$el.find('.withEndContract').show();
             },
 
             validateNumbers: function (e) {
@@ -133,20 +144,22 @@ define([
                 tds = row.find('td');
 
                 if (targetId === 'update') {
-                    $(tds[0]).text('Hired');
-                    $(tds[1]).addClass('changeContent');
-                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
-                    $(tds[7]).find('input').val('Update');
+                    $(tds[0]).html('<a class="fa fa-trash" id="' + (dataId + 1) + '"></a>');
+                    $(tds[1]).text('Hired');
+                    $(tds[2]).addClass('changeContent');
+                    $(tds[2]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[8]).find('input').val('Update');
                 } else if (contractEndReason) {
                     row.addClass('fired');
-                    $(tds[0]).text('Fired');
-                    $(tds[1]).addClass('changeContent');
-                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
-                    $(tds[1]).removeClass('hireDate');
-                    $(tds[1]).addClass('fireDate');
-                    $(tds[1]).attr('data-id', 'fireDate');
-                    $(tds[6]).removeClass('editable');
-                    $(tds[7]).find('input').val(contractEndReason);
+                    $(tds[0]).html('<a class="fa fa-trash" id="' + (dataId + 1) + '"></a>');
+                    $(tds[1]).text('Fired');
+                    $(tds[2]).addClass('changeContent');
+                    $(tds[2]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[2]).removeClass('hireDate');
+                    $(tds[2]).addClass('fireDate');
+                    $(tds[2]).attr('data-id', 'fireDate');
+                    $(tds[7]).removeClass('editable');
+                    $(tds[8]).find('input').val(contractEndReason);
 
                     selects = row.find('.current-selected');
                     selects.removeClass('current-selected');
@@ -254,7 +267,7 @@ define([
                 return false;
             },
 
-            activeTab: function(){
+            activeTab: function () {
                 var tabs;
                 var activeTab;
                 var activeTab;
@@ -387,7 +400,7 @@ define([
                     var manager = tr.find('#projectManagerDD').attr('data-id');
                     var salary = parseInt(tr.find('[data-id="salary"]').text());
                     var info = tr.find('#statusInfoDd').val();
-                    var jobType = tr.find('#jobTypeDd').attr('data-id');
+                    var jobType = tr.find('#jobTypeDd').text();
 
                     var trFire = $(self.$el.find("#fire" + key));
 
@@ -445,10 +458,10 @@ define([
                 var groupsId = [];
 
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
