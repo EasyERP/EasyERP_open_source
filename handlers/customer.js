@@ -52,11 +52,12 @@ var Customers = function (models, event) {
         var optionsObject = {};
         var filter = data.filter || {};
         var waterfallTasks;
-        var mid = req.header.mid || 50;
+        var mid = parseInt(req.header.mid, 10) || 50;
         var accessRollSearcher;
         var contentSearcher;
         var query = {};
         var response = {};
+        var contentType = data.contentType;
 
         response.showMore = false;
 
@@ -85,6 +86,12 @@ var Customers = function (models, event) {
                     }
 
                     queryObject.$and.push({_id: {$in: ids}});
+
+                    if (contentType === 'Persons') {
+                        queryObject.$and.push({type: 'Person'});
+                    } else if (contentType === 'Companies') {
+                        queryObject.$and.push({type: 'Company'});
+                    }
 
                     query = Model.find(queryObject);
 
@@ -345,6 +352,7 @@ var Customers = function (models, event) {
         var accessRollSearcher;
         var contentSearcher;
         var waterfallTasks;
+        var mid = parseInt(req.headers.mid, 10) || 49;
 
         optionsObject.$and = [];
 
@@ -359,7 +367,7 @@ var Customers = function (models, event) {
             if (access) {
 
                 accessRollSearcher = function (cb) {
-                    accessRoll(req, Model, cb);
+                    accessRoll(req, Customers, cb);
                 };
 
                 contentSearcher = function (ids, cb) {
@@ -377,8 +385,8 @@ var Customers = function (models, event) {
 
                     if (data.onlyCount.toString().toLowerCase() === "true") {
 
-                        query.count(function(err, res){
-                            if (err){
+                        query.count(function (err, res) {
+                            if (err) {
                                 cb(err);
                             }
 
@@ -396,11 +404,11 @@ var Customers = function (models, event) {
                             .limit(data.count)
                             .sort({"name.first": 1})
                             .exec(function (err, _res) {
-                            if (err){
-                                cb(err);
-                            }
+                                if (err) {
+                                    cb(err);
+                                }
                                 cb(null, {data: _res});
-                        });
+                            });
                     }
                 };
 
@@ -409,7 +417,6 @@ var Customers = function (models, event) {
                     if (err) {
                         return next(err);
                     }
-
 
                     res.status(200).send(result);
                 });
@@ -500,33 +507,27 @@ var Customers = function (models, event) {
          */
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var id = req.query.id;
-        var mid = req.headers.mid || 50;
 
-        access.getReadAccess(req, req.session.uId, mid, function (access) {
-            if (access) {
-                Model
-                    .findById(id)
-                    .populate('company', '_id name')
-                    .populate('department')
-                    .populate('salesPurchases.salesPerson', '_id name fullName')
-                    .populate('salesPurchases.salesTeam', '_id departmentName')
-                    .populate('salesPurchases.implementedBy', '_id name fullName')
-                    .populate('createdBy.user', 'login')
-                    .populate('editedBy.user', 'login')
-                    .populate('groups.users', '_id login')
-                    .populate('groups.group', '_id departmentName')
-                    .populate('groups.owner', '_id login')
-                    .exec(function (err, customer) {
-                        if (err) {
-                            return next(err);
-                        }
+        Model
+            .findById(id)
+            .populate('company', '_id name')
+            .populate('department')
+            .populate('salesPurchases.salesPerson', '_id name fullName')
+            .populate('salesPurchases.salesTeam', '_id departmentName')
+            .populate('salesPurchases.implementedBy', '_id name fullName')
+            .populate('createdBy.user', 'login')
+            .populate('editedBy.user', 'login')
+            .populate('groups.users', '_id login')
+            .populate('groups.group', '_id departmentName')
+            .populate('groups.owner', '_id login')
+            .exec(function (err, customer) {
+                if (err) {
+                    return next(err);
+                }
 
-                        res.status(200).send(customer);
-                    });
-            } else {
-                res.send(403);
-            }
-        });
+                res.status(200).send(customer);
+            });
+
     };
 
     function caseFilter(filter) {
@@ -581,7 +582,7 @@ var Customers = function (models, event) {
         var waterfallTasks;
         var keySort;
         var sort;
-        var mid = req.header.mid || 50;
+        var mid = parseInt(req.header.mid, 10) || 50;
         var accessRollSearcher;
         var contentSearcher;
         var query = {};
@@ -732,7 +733,7 @@ var Customers = function (models, event) {
         var _id = req.params.id;
         var remove = req.headers.remove;
         var data = req.body;
-        var mid = req.headers.mid;
+        var mid = parseInt(req.headers.mid, 10);
         var obj;
 
         if (data.notes && data.notes.length !== 0 && !remove) {
@@ -741,6 +742,14 @@ var Customers = function (models, event) {
             obj.date = new Date();
             data.notes[data.notes.length - 1] = obj;
         }
+
+        data.editedBy = {
+            user: req.session.uId
+        };
+        data.createdBy = {
+            date: new Date(req.body.createdBy.date)
+        };
+
         access.getEditWritAccess(req, req.session.uId, mid, function (access) {
             if (access) {
 
@@ -763,7 +772,7 @@ var Customers = function (models, event) {
         var _id = req.params.id;
         var fileName = data.fileName;
         var updateObject;
-        var mid = req.headers.mid;
+        var mid = parseInt(req.headers.mid, 10);
 
         if (data.notes && data.notes.length !== 0) {
             var obj = data.notes[data.notes.length - 1];
@@ -914,7 +923,7 @@ var Customers = function (models, event) {
 
     this.remove = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var mid = req.headers.mid || 50;
+        var mid = parseInt(req.headers.mid, 10) || 50;
         var _id = req.params.id;
 
         access.getEditWritAccess(req, req.session.uId, mid, function (access) {

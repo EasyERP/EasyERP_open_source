@@ -2,7 +2,6 @@ define([
         'Backbone',
         'jQuery',
         'Underscore',
-        'common',
         'text!templates/Persons/TopBarTemplate.html',
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',

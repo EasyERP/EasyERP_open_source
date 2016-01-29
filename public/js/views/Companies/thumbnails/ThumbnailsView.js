@@ -70,7 +70,8 @@
                 dataService.getData('/customers/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    contentType  : this.contentType
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {

@@ -29,7 +29,7 @@ define([
                 populate.get2name("#employeesDd", "/employees/getForDdByRelatedUser", {}, this.parrent, isForCreate, true);
                 populate.get("#language", "/Languages", {}, "name", this.parrent, isForCreate, false);
                 //populate.get2name("#employeesDd", "/employee/getPersonsForDd", {}, this.parrent, true, true);
-                populate.get2name("#implementedBy", "/Customer", {}, this.parrent, isForCreate, true);
+                populate.get2name("#implementedBy", "/Customers", {}, this.parrent, isForCreate, true);
 
                 return this;
             }
