@@ -97,6 +97,8 @@ define([
 
                 tr.remove();
 
+                this.removeIcon.show();
+
                 this.$el.find('#update').show();
                 this.$el.find('.withEndContract').show();
             },
@@ -130,6 +132,8 @@ define([
                 if (enable){
                     number = 8;
                 }
+
+                this.removeIcon.hide();
 
                 this.$el.find('#update').hide();
                 this.$el.find('.withEndContract').hide();
@@ -689,6 +693,8 @@ define([
                     changeMonth: true,
                     changeYear : true
                 });
+
+                this.removeIcon = this.$el.find('.fa-trash');
 
                 var model = this.currentModel.toJSON();
                 if (model.groups) {
