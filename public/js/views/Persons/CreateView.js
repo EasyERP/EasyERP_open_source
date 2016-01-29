@@ -1,15 +1,20 @@
 define([
-        "text!templates/Persons/CreateTemplate.html",
-        "collections/Persons/PersonsCollection",
-        "collections/Departments/DepartmentsCollection",
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Persons/CreateTemplate.html',
+        'collections/Persons/PersonsCollection',
+        'collections/Departments/DepartmentsCollection',
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
-        "models/PersonsModel",
-        "common",
-        "populate"
+        'models/PersonsModel',
+        'common',
+        'populate',
+        'constants'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, PersonModel, common, populate) {
+    function (Backbone, $, _, CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, PersonModel, common, populate, CONSTANTS) {
+        'use strict';
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -18,10 +23,13 @@ define([
             imageSrc   : '',
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
+
                 _.bindAll(this, "saveItem", "render");
                 this.model = new PersonModel();
                 this.models = (options && options.model) ? options.model : null;
                 this.responseObj = {};
+
                 this.render();
             },
 

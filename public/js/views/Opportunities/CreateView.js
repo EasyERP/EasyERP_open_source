@@ -105,7 +105,7 @@ define([
             },
 
             selectCustomer: function (id) {
-                dataService.getData('/Customer', {
+                dataService.getData('/Customers', {
                     id: id
                 }, function (response, context) {
                     var customer = response.data[0];
@@ -322,12 +322,12 @@ define([
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 populate.getPriority("#priorityDd", this, true);
-                populate.get2name("#customerDd", "/Customer", {}, this, true, true, (this.model) ? this.model._id : null);
+                populate.get2name("#customerDd", "/Customers", {}, this, true, true, (this.model) ? this.model._id : null);
                 populate.get2name("#salesPersonDd", "/employees/getForDdByRelatedUser", {}, this, true, true);
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, true);
                 populate.get("#salesTeamDd", "/department/getForDD", {}, "departmentName", this, true, true);
 
-                /*                common.populateCustomers("#customerDd", "/Customer",this.model);
+                /*                common.populateCustomers("#customerDd", "/Customers",this.model);
                  //common.populateEmployeesDd("#salesPerson"Dd, "/employee/getPersonsForDd");
                  common.populateEmployeesDd("#salesPersonDd", "/getForDdByRelatedUser", this.model);
                  common.populateDepartments("#salesTeamDd", "/DepartmentsForDd");

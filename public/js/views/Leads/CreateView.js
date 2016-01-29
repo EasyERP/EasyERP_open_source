@@ -34,7 +34,7 @@ define([
 
             selectCustomer: function (id) {
                 if (id != "") {
-                    dataService.getData('/Customer', {
+                    dataService.getData('/Customers', {
                         id: id
                     }, function (response, context) {
                         var customer = response.data[0];
@@ -297,7 +297,7 @@ define([
 
                 populate.getPriority("#priorityDd", this, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Leads"}, "name", this, true);
-                populate.get2name("#customerDd", "/Customer", {}, this, true, true);
+                populate.get2name("#customerDd", "/Customers", {}, this, true, true);
                 populate.get("#sourceDd", "/sources", {}, "name", this, true, true);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this, true, true);
                 populate.get2name("#salesPerson", "/employees/getForDdByRelatedUser", {}, this, true, true);

@@ -478,7 +478,9 @@ define([], function () {
 
         MID: {
             'Employees'   : 42,
-            'Applications': 43
+            'Applications': 43,
+            'Persons'     : 49,
+            'Companies'   : 50
         }
     };
 });

@@ -109,7 +109,7 @@
             },
 
             selectCustomer: function (id) {
-                dataService.getData('/Customer', {
+                dataService.getData('/Customers', {
                     id: id
                 }, function (response, context) {
                     var customer = response.data[0];
@@ -454,7 +454,7 @@
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 var model = this.currentModel.toJSON();
                 populate.getPriority("#priorityDd", this);
-                populate.get2name("#customerDd", "/Customer", {}, this, false, true);
+                populate.get2name("#customerDd", "/Customers", {}, this, false, true);
                 populate.get2name("#salesPersonDd", "/employees/getForDdByRelatedUser", {}, this, false, true);
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
                 populate.get("#salesTeamDd", "/department/getForDD", {}, "departmentName", this, false, true);

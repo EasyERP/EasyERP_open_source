@@ -499,7 +499,7 @@ var Customers = function (models, event) {
          * @instance
          */
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var id = req.query._id;
+        var id = req.query.id;
         var mid = req.headers.mid || 50;
 
         access.getReadAccess(req, req.session.uId, mid, function (access) {
