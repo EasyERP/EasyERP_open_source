@@ -15,12 +15,13 @@ define([
             el         : '#content-holder',
             contentType: 'Employees',
 
-            initialize          : function (options) {
+            initialize: function (options) {
                 this.mId = CONSTANTS.MID[this.contentType];
                 this.formModel = options.model;
                 this.formModel.urlRoot = "/employees";
             },
-            events              : {
+
+            events: {
                 'click .chart-tabs a'                                  : 'changeTab',
                 'click .endContractReasonList, .withEndContract .arrow': 'showEndContractSelect',
                 'click .withEndContract .newSelectList li'             : 'endContract',
@@ -36,7 +37,7 @@ define([
                 return file.size < App.File.MAXSIZE;
             },
 
-            addAttach   : function (event) {
+            addAttach: function (event) {
                 event.preventDefault();
                 var currentModel = this.formModel;
                 var currentModelID = currentModel.id;
@@ -125,7 +126,7 @@ define([
                 }
             },
 
-            hideSelect           : function () {
+            hideSelect: function () {
                 $(".newSelectList").hide();
             },
 
@@ -135,7 +136,7 @@ define([
                 return false;
             },
 
-            endContract          : function (e) {
+            endContract: function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
                 this.formModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: true});
@@ -150,7 +151,7 @@ define([
                 });
             },
 
-            changeTab            : function (e) {
+            changeTab: function (e) {
                 $(e.target).closest(".chart-tabs").find("a.active").removeClass("active");
                 $(e.target).addClass("active");
                 var n = $(e.target).parents(".chart-tabs").find("li").index($(e.target).parent());

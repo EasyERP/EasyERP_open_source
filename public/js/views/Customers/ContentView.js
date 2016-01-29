@@ -8,17 +8,21 @@ define([
         'views/Persons/list/ListItemView',
         'views/Companies/list/ListItemView',
         'custom',
-        'common'
-
+        'constants'
     ],
-    function ($, _, Backbone, PersonsCollection, CompaniesCollection, ListTemplate, PersonsItemView, CompaniesItemView, Custom, common) {
+    function ($, _, Backbone, PersonsCollection, CompaniesCollection, ListTemplate, PersonsItemView, CompaniesItemView, Custom, CONSTANTS) {
+        'use strict';
         var ContentView = Backbone.View.extend({
             el        : '#content-holder',
-            initialize: function (options) {
+            contentType: 'Companies',
+
+            initialize: function () {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.personCollection = new PersonsCollection();
                 this.personCollection.bind('reset', _.bind(this.render, this));
                 this.companiesCollection = new CompaniesCollection();
                 this.companiesCollection.bind('reset', _.bind(this.render, this));
+
                 this.render();
             },
 
@@ -57,7 +61,7 @@ define([
 
             },
 
-            checked: function (event) {
+            checked: function () {
                 if ($("input:checked").length > 0) {
                     $("#top-bar-deleteBtn").show();
                 } else {
@@ -66,8 +70,8 @@ define([
             },
 
             deleteItems: function () {
-                var self = this,
-                    mid = 39;
+                var self = this;
+                var mid = this.mId;
                 $.each($("input:checked"), function (index, checkbox) {
                     var project = self.collection.where({id: checkbox.value})[0];
                     project.destroy({

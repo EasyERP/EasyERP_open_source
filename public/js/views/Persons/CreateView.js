@@ -3,8 +3,7 @@ define([
         'jQuery',
         'Underscore',
         'text!templates/Persons/CreateTemplate.html',
-        'collections/Persons/PersonsCollection',
-        'collections/Departments/DepartmentsCollection',
+
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
@@ -13,9 +12,8 @@ define([
         'populate',
         'constants'
     ],
-    function (Backbone, $, _, CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, PersonModel, common, populate, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, SelectView, AssigneesView, SalesPurchasesView, PersonModel, common, populate, CONSTANTS) {
         'use strict';
-
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Persons",
@@ -55,7 +53,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -119,7 +117,7 @@ define([
 
             saveItem: function () {
                 var self = this;
-                var mid = 39;
+                var mid = this.mId;
                 var thisEl = this.$el;
 
                 var company = $('#companiesDd').data("id");
@@ -129,10 +127,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 

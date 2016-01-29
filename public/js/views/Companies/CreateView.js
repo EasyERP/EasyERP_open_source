@@ -1,43 +1,46 @@
 define([
-        "text!templates/Companies/CreateTemplate.html",
-        "collections/Companies/CompaniesCollection",
-        "collections/Employees/EmployeesCollection",
-        "collections/Departments/DepartmentsCollection",
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Companies/CreateTemplate.html',
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
-        "models/CompaniesModel",
-        "common",
-        "populate",
-        "custom"
+        'models/CompaniesModel',
+        'common',
+        'custom',
+        'constants'
     ],
-    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, CompanyModel, common, populate, custom) {
-
+    function (Backbone, $, _, CreateTemplate, SelectView, AssigneesView, SalesPurchasesView, CompanyModel, common, custom, CONSTANTS) {
+        'use strict';
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Companies",
             template   : _.template(CreateTemplate),
             imageSrc   : '',
-            initialize : function () {
+
+            initialize: function () {
+                this.mId = CONSTANTS.MID[this.contentType];
                 _.bindAll(this, "saveItem", "render");
                 this.model = new CompanyModel();
                 this.responseObj = {};
+
                 this.render();
             },
 
-            events        : {
-                "click #tabList a"                                                : "switchTab",
-                "mouseenter .avatar"                                              : "showEdit",
-                "mouseleave .avatar"                                              : "hideEdit",
-                "click .details"                                                  : "toggleDetails",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect"
+            events: {
+                "click #tabList a"                                 : "switchTab",
+                "mouseenter .avatar"                               : "showEdit",
+                "mouseleave .avatar"                               : "hideEdit",
+                "click .details"                                   : "toggleDetails",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect"
             },
 
-            hideNewSelect : function () {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
 
                 if (this.selectView) {
@@ -45,7 +48,7 @@ define([
                 }
             },
 
-            showNewSelect : function (e, prev, next) {
+            showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
@@ -57,7 +60,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -67,7 +70,7 @@ define([
                 return false;
             },
 
-            chooseOption  : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
@@ -95,7 +98,7 @@ define([
                 $("#details-dialog").toggle();
             },
 
-            switchTab    : function (e) {
+            switchTab: function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -105,7 +108,7 @@ define([
                 this.$(".tab").hide().eq(index).show();
             },
 
-            showEdit     : function () {
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
@@ -113,14 +116,14 @@ define([
 
             },
 
-            hideEdit     : function () {
+            hideEdit  : function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"
                 }, 250);
 
             },
-            hideDialog   : function () {
+            hideDialog: function () {
                 $(".create-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
@@ -129,7 +132,7 @@ define([
 
             saveItem: function () {
                 var self = this;
-                var mid = 39;
+                var mid = this.mId;
                 var companyModel = new CompanyModel();
                 var name = {
                     first: $.trim(this.$el.find("#name").val()),
@@ -212,10 +215,9 @@ define([
                         wait   : true,
                         success: function () {
 
-
                             self.hideDialog();
 
-                           custom.getFiltersValues(true); // added for refreshing filters after creating
+                            custom.getFiltersValues(true); // added for refreshing filters after creating
 
                             Backbone.history.navigate("easyErp/Companies", {trigger: true});
                         },

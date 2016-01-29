@@ -382,16 +382,18 @@ describe("Employee Specs", function () {
             });
     });
 
-    //it("should delete employee", function (done) {
-    //    aggent
-    //        .delete('employees/' + id)
-    //        .expect(200, done);
-    //});
-    //
-    //it("should not delete employee", function (done) {
-    //    aggent
-    //        .delete('employees/' + 'kkk')
-    //        .expect(500, done);
-    //});
+    it("should delete employee", function (done) {
+        aggent
+            .delete('employees/' + id)
+            .set("mid", 42)
+            .expect(200, done);
+    });
+
+    it("should not delete employee", function (done) {
+        aggent
+            .delete('employees/' + 'kkk')
+            .set("mid", 42)
+            .expect(500, done);
+    });
 
 });

@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'common',
         'views/Companies/EditView',
         'views/Companies/CreateView',
@@ -7,10 +10,11 @@
         "text!templates/Companies/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
         'views/Filter/FilterView',
-        'custom'
+        'constants'
     ],
 
-    function (common, editView, createView, attachView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
+    function (Backbone, $, _, common, EditView, CreateView, AttachView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
+        'use strict';
         var CompaniesThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -24,6 +28,7 @@
             viewType          : 'thumbnails',
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.asyncLoadImgs(this.collection);
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -40,8 +45,6 @@
 
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
-
-                this.filterView;
             },
 
             events: {
@@ -53,7 +56,7 @@
             },
 
             importFiles: function () {
-                new attachView({
+                new AttachView({
                     modelName: this.contentType,
                     import   : true
                 });
@@ -101,14 +104,14 @@
                     target = $(e.target);
                     selectedLetter = $(e.target).text();
 
-                    this.filter['letter'] = selectedLetter;
-
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
-                    if ($(e.target).text() == "All") {
+                    if ($(e.target).text() === "All") {
                         selectedLetter = "";
                         this.filter = {};
                     }
+
+                    this.filter.letter = selectedLetter;
                 }
 
                 this.defaultItemsNumber = 0;
@@ -129,9 +132,6 @@
                 var self = this;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var $currentEl = this.$el;
-                var filterObject;
-                var FilterView;
-                var showList;
 
                 $currentEl.html('');
 
@@ -151,28 +151,18 @@
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
                     }
                 });
                 $currentEl.append(createdInTag);
-                filterObject = [
-                    {
-                        name: 'isCustomer',
-                        _id : 'isCustomer'
-                    },
-                    {
-                        name: 'isSupplier',
-                        _id : 'isSupplier'
-                    }
-                ];
 
-                self.filterView = new filterView({contentType: self.contentType});
+                self.filterView = new FilterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self);
                 });
                 self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
@@ -187,22 +177,11 @@
             },
 
             showFilteredPage: function (filter, context) {
-                var itemsNumber = $("#itemsNumber").text();
-
-                //var alphaBet = this.$el.find('#startLetter');
-                //var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 context.startTime = new Date();
                 context.newCollection = false;
-
-                //if (!filter.name) {
-                //    if (selectedLetter !== '') {
-                //        filter['letter'] = selectedLetter;
-                //    }
-                //}
 
                 if (Object.keys(filter).length === 0) {
                     this.filter = {};
@@ -214,7 +193,8 @@
                 context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
                 context.getTotalLength(this.defaultItemsNumber, filter);
             },
-            hideItemsNumber : function (e) {
+
+            hideItemsNumber: function (e) {
                 var el = e.target;
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
@@ -222,12 +202,6 @@
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
-                ;
-
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //};
             },
 
             showMore: function (event) {
@@ -243,7 +217,7 @@
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-                if (showMore.length != 0) {
+                if (showMore.length !== 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
                     showMore.after(created);
@@ -255,31 +229,30 @@
 
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
-                var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
                 var showMore = holder.find('#showMoreDiv');
-                var content = holder.find(".thumbnailwithavatar");
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 holder.append(this.template({collection: newModels.toJSON()}));
-                // holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
                 this.asyncLoadImgs(newModels);
             },
 
             createItem: function () {
-                new createView();
+                new CreateView();
             },
 
             editItem: function () {
-                new editView({collection: this.collection});
+                new EditView({collection: this.collection});
             },
 
             deleteItems: function () {
-                var mid = 39;
+                var mid = this.mId;
                 var model;
+                var self = this;
+
                 model = this.collection.get(this.$el.attr("id"));
                 this.$el.fadeToggle(200, function () {
                     model.destroy({
@@ -294,14 +267,14 @@
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        selectedLetter    : (self.selectedLetter === "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
@@ -311,12 +284,12 @@
 
             exportToCsv: function () {
                 //todo change after routes refactoring
-                window.location = '/Customers/exportToCsv?type=Company'
+                window.location = '/Customers/exportToCsv?type=Company';
             },
 
             exportToXlsx: function () {
                 //todo change after routes refactoring
-                window.location = '/Customers/exportToXlsx?type=Company'
+                window.location = '/Customers/exportToXlsx?type=Company';
             }
         });
         return CompaniesThumbnalView;

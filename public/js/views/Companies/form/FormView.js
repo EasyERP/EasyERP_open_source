@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Companies/form/FormTemplate.html',
         'views/Companies/EditView',
         'views/Opportunities/compactContent',
@@ -9,13 +12,19 @@ define([
         'views/Notes/NoteView',
         'views/Notes/AttachView',
         'views/Opportunities/CreateView',
-        'views/Persons/CreateView'
+        'views/Persons/CreateView',
+        'constants'
     ],
 
-    function (CompaniesFormTemplate, EditView, opportunitiesCompactContentView, personsCompactContentView, Custom, common, dataService, noteView, attachView, CreateViewOpportunities, CreateViewPersons) {
+    function (Backbone, $, _, CompaniesFormTemplate, EditView, OpportunitiesCompactContentView, PersonsCompactContentView, Custom, common, dataService, NoteView, AttachView, CreateViewOpportunities, CreateViewPersons, CONSTANTS) {
+        'use strict';
         var FormCompaniesView = Backbone.View.extend({
-            el                  : '#content-holder',
-            initialize          : function (options) {
+            el         : '#content-holder',
+            contentType: 'Companies',
+            flag       : true,
+
+            initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 _.bindAll(this, 'render');
                 this.formModel = options.model;
                 this.formModel.urlRoot = "/Companies";
@@ -34,7 +43,7 @@ define([
                 common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", null, formModel._id, this.pageMini, this.pageCount, true, function (count) {
                     self.allMiniOpp = count.listLength;
                     self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
-                    if (self.allPages == self.pageMini) {
+                    if (self.allPages === self.pageMini) {
                         $(".miniPagination .next").addClass("not-active");
                         $(".miniPagination .last").addClass("not-active");
                     }
@@ -45,7 +54,7 @@ define([
                 this.populatePersonsForMiniView("/persons/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, true, function (count) {
                     self.allMiniPersons = count.listLength;
                     self.allPagesPersons = Math.ceil(self.allMiniPersons / self.pageCountPersons);
-                    if (self.allPagesPersons == self.pageMiniPersons) {
+                    if (self.allPagesPersons === self.pageMiniPersons) {
                         $(".miniPaginationPersons .next").addClass("not-active");
                         $(".miniPaginationPersons .last").addClass("not-active");
                     }
@@ -54,7 +63,7 @@ define([
                     }
                 });
             },
-            flag                : true,
+
             events              : {
                 "click #tabList a"                                           : "switchTab",
                 "click .details"                                             : "toggle",
@@ -77,18 +86,22 @@ define([
                 "click .miniPaginationPersons .lastPersons:not(.not-active)" : "lastMiniPagePersons"
 
             },
+
             nextMiniPagePersons : function () {
                 this.pageMiniPersons += 1;
                 this.renderMiniPersons();
             },
+
             prevMiniPagePersons : function () {
                 this.pageMiniPersons -= 1;
                 this.renderMiniPersons();
             },
+
             firstMiniPagePersons: function () {
                 this.pageMiniPersons = 1;
                 this.renderMiniPersons();
             },
+
             lastMiniPagePersons : function () {
                 this.pageMiniPersons = this.allPagesPersons;
                 this.renderMiniPersons();
@@ -98,20 +111,23 @@ define([
                 this.pageMini += 1;
                 this.renderMiniOpp();
             },
+
             prevMiniPage              : function () {
                 this.pageMini -= 1;
                 this.renderMiniOpp();
             },
+
             firstMiniPage             : function () {
                 this.pageMini = 1;
                 this.renderMiniOpp();
             },
+
             lastMiniPage              : function () {
                 this.pageMini = this.allPages;
                 this.renderMiniOpp();
             },
+
             populatePersonsForMiniView: function (url, companyId, page, count, onlyCount, callback) {
-                var self = this;
                 dataService.getData(url, {
                     companyId: companyId,
                     page     : page,
@@ -123,21 +139,22 @@ define([
                     }
                 });
             },
+
             renderMiniPersons         : function () {
                 var self = this;
                 var formModel = this.formModel.toJSON();
                 this.populatePersonsForMiniView("/persons/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, false, function (collection) {
-                    var isLast = self.pageMiniPersons == self.allPagesPersons ? true : false;
+                    var isLast = self.pageMiniPersons === self.allPagesPersons ? true : false;
                     var perElem = self.$el.find('#persons');
                     perElem.empty();
                     perElem.append(
-                        new personsCompactContentView({
+                        new PersonsCompactContentView({
                             collection: collection.data
                         }).render({
-                                first: self.pageMiniPersons == 1 ? true : false,
-                                last : isLast,
-                                all  : self.allPagesPersons
-                            }).el
+                            first: self.pageMiniPersons === 1 ? true : false,
+                            last : isLast,
+                            all  : self.allPagesPersons
+                        }).el
                     );
                 });
             },
@@ -145,28 +162,29 @@ define([
                 var self = this;
                 var formModel = this.formModel.toJSON();
                 common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", null, formModel._id, this.pageMini, this.pageCount, false, function (collection) {
-                    var isLast = self.pageMini == self.allPages ? true : false;
+                    var isLast = self.pageMini === self.allPages ? true : false;
                     var oppElem = self.$el.find('#opportunities');
                     oppElem.empty();
                     oppElem.prepend(
-                        new opportunitiesCompactContentView({
+                        new OpportunitiesCompactContentView({
                             collection: collection.data
-                        }).render({first: self.pageMini == 1 ? true : false, last: isLast, all: self.allPages}).el
+                        }).render({first: self.pageMini === 1 ? true : false, last: isLast, all: self.allPages}).el
                     );
                 });
             },
+
             render                    : function () {
                 var formModel = this.formModel.toJSON();
                 this.$el.html(_.template(CompaniesFormTemplate, formModel));
                 this.renderMiniOpp();
                 this.renderMiniPersons();
                 this.$el.find('.formLeftColumn').append(
-                    new noteView({
+                    new NoteView({
                         model: this.formModel
                     }).render().el
                 );
                 this.$el.find('.formLeftColumn').append(
-                    new attachView({
+                    new AttachView({
                         model: this.formModel
                     }).render().el
                 );
@@ -211,7 +229,7 @@ define([
                 new CreateViewPersons({model: model});
             },
 
-            removeEdit: function (e) {
+            removeEdit: function () {
                 $('#editSpan').remove();
                 $("dd .no-long").css({width: "auto"});
             },
@@ -271,7 +289,7 @@ define([
                     error  : function (model, response) {
                         if (response) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: response.error
                             });
                         }
@@ -326,7 +344,7 @@ define([
                     error  : function (model, err) {
                         if (err.status === 403) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }

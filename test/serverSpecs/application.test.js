@@ -179,9 +179,10 @@ describe("Application Specs", function () {
             });
     });
 
-    //it("should delete application", function (done) {
-    //    aggent
-    //        .delete('applications/' + id)
-    //        .expect(200, done);
-    //});
+    it("should delete application", function (done) {
+        aggent
+            .delete('applications/' + id)
+            .set("mid", 42)
+            .expect(200, done);
+    });
 });

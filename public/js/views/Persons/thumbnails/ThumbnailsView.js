@@ -12,7 +12,7 @@
         'constants'
     ],
 
-    function (Backbone, $, _, common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
+    function (Backbone, $, _, common, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
         'use strict';
         var PersonsThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
@@ -237,11 +237,11 @@
             },
 
             createItem: function () {
-                new createView();
+                new CreateView();
             },
 
             editItem: function () {
-                new editView({collection: this.collection});
+                new EditView({collection: this.collection});
             },
 
             deleteItems: function () {

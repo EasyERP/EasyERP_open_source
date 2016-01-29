@@ -12,7 +12,6 @@ define([
     ],
     function (Backbone, $, _, EditTemplate, SelectView, AssigneesView, SalesPurchasesView, common, populate, CONSTANTS) {
         'use strict';
-
         var EditView = Backbone.View.extend({
             contentType: "Persons",
             imageSrc   : '',

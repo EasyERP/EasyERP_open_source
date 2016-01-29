@@ -1,8 +1,11 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/Persons/list/ListTemplate.html'
     ],
 
-    function (listTemplate) {
+    function (Backbone, _, listTemplate) {
+        'use strict';
         var PersonsListItemView = Backbone.View.extend({
             el: '#listTable',
 
