@@ -20,10 +20,10 @@ define([
         events    : {
             "submit #loginForm"  : "login",
             "click .login-button": "login",
-            "focusin #ulogin"      : "usernameFocus",
-            "focusin #upass"       : "passwordFocus",
-            "focusout #ulogin"   : "usernameFocus",
-            "focusout #upass"    : "passwordFocus"
+            "focus #ulogin"      : "usernameFocus",
+            "focus #upass"       : "passwordFocus",
+            "blur #ulogin"   : "usernameFocus",
+            "blur #upass"    : "passwordFocus"
         },
 
         usernameFocus: function () {
