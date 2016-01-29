@@ -124,6 +124,12 @@ define([
                 var tds;
                 var newDate = new Date();
                 var selects;
+                var enable = this.currentModel.get('enableView');
+                var number = 7;
+
+                if (enable){
+                    number = 8;
+                }
 
                 this.$el.find('#update').hide();
                 this.$el.find('.withEndContract').hide();
@@ -148,7 +154,7 @@ define([
                     $(tds[1]).text('Hired');
                     $(tds[2]).addClass('changeContent');
                     $(tds[2]).text(common.utcDateToLocaleDate(newDate));
-                    $(tds[8]).find('input').val('Update');
+                    $(tds[number]).find('input').val('Update');
                 } else if (contractEndReason) {
                     row.addClass('fired');
                     $(tds[0]).html('<a class="fa fa-trash" id="' + (dataId + 1) + '"></a>');
@@ -158,8 +164,10 @@ define([
                     $(tds[2]).removeClass('hireDate');
                     $(tds[2]).addClass('fireDate');
                     $(tds[2]).attr('data-id', 'fireDate');
-                    $(tds[7]).removeClass('editable');
-                    $(tds[8]).find('input').val(contractEndReason);
+                    if (enable){
+                        $(tds[7]).removeClass('editable');
+                    }
+                    $(tds[number]).find('input').val(contractEndReason);
 
                     selects = row.find('.current-selected');
                     selects.removeClass('current-selected');
@@ -389,6 +397,7 @@ define([
                 var newHireArray = [];
                 var lengthHire = hireArray.length - 1;
                 var fireArray = this.currentModel.get('fire');
+                var hireModelArray = this.currentModel.get('hire');
                 var newFire = _.clone(fireArray);
                 var newFireArray = [];
 
@@ -398,7 +407,7 @@ define([
                     var jobPosition = tr.find('#jobPositionDd').attr('data-id');
                     var department = tr.find('#departmentsDd').attr('data-id');
                     var manager = tr.find('#projectManagerDD').attr('data-id');
-                    var salary = parseInt(tr.find('[data-id="salary"]').text());
+                    var salary = parseInt(tr.find('[data-id="salary"]').text()) ||  hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary;
                     var info = tr.find('#statusInfoDd').val();
                     var jobType = tr.find('#jobTypeDd').text();
 
