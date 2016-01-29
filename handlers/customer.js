@@ -316,14 +316,16 @@ var Customers = function (models, event) {
     this.getCustomers = function (req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
-        var type = query.type || 'Person';
+        var type = query.type;
         var count = query.count || 100;
         var page = query.page || 1;
         var queryObject = {};
 
         var skip = (page - 1) * count;
 
-        queryObject.type = type;
+        if (type){
+            queryObject.type = type;
+        }
 
         access.getReadAccess(req, req.session.uId, 50, function (access) {
             if (access) {
