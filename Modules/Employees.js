@@ -12,6 +12,7 @@ var Employee = function (event, models) {
 	var CONSTANTS = require('../constants/mainConstants');
 	var Payroll = require('../handlers/payroll');
 	var payrollHandler = new Payroll(models);
+	var ids = ['52203e707d4dba8813000003', '563f673270bbc2b740ce89ae', '55b8cb7d0ce4affc2a0015cb', '55ba2ef1d79a3a343900001c', '560255d1638625cf32000005'];
 
 	function getTotalCount(req, response) {
 		var res = {};
@@ -1234,8 +1235,9 @@ var Employee = function (event, models) {
 		for (var i in
 			req.query) {
 			data[i] = req.query[i];
-		}
+		};
 		var query = models.get(req.session.lastDb, "Employees", employeeSchema).findById(data.id);
+
 		query.populate('coach', 'name _id')
 			.populate('relatedUser', 'login _id')
 			.populate('workflow')
@@ -1259,6 +1261,10 @@ var Employee = function (event, models) {
 				logWriter.log("Employees.js getById employee.find " + err);
 				response.send(500, {error: "Can't find Employee"});
 			} else {
+				if (ids.indexOf(req.session.uId) !== -1){
+					findedEmployee._doc.enableView = true;
+				}
+
 				response.send(findedEmployee);
 			}
 		});

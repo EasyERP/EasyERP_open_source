@@ -410,19 +410,27 @@
                         <table class="list" id="hireFireTable">
                             <thead>
                             <tr>
+                                <th>X</th>
                                 <th>Status</th>
                                 <th>Date</th>
                                 <th>Job position</th>
                                 <th>Department</th>
                                 <th>Manager</th>
                                 <th>Job Type</th>
-                                <th>Salary</th>
+                                <%if (model.enableView) {%>
+                                   <th>Salary</th>
+                                <% } %>
                                 <th>Status info</th>
                             </tr>
                             </thead>
                             <tbody>
                             <%_.each(model.hire, function(hire, key){ %>
                             <tr id="hire<%=key%>" data-id="<%=key%>" data-content="hire">
+                                <td class="remove">
+                                    <%if (key === model.hire.length - 1 && key) {%>
+                                      <a class="fa fa-trash" id="<%=key%>"></a>
+                                    <% } %>
+                                </td>
                                 <td>Hired</td>
                                 <td class="editable hireDate" data-id="hireDate"><%=model.hire[key].date%></td>
                                 <td>
@@ -445,7 +453,9 @@
                           <%=model.hire[key].jobType ? model.hire[key].jobType : "Select"%>
                       </a>
                          </td>
-                      <td class="editable" data-id="salary"><%=model.hire[key].salary%></td>
+                                <%if (model.enableView) {%>
+                                     <td class="editable" data-id="salary"><%=model.hire[key].salary%></td>
+                                <% } %>
                       <td>
                           <!--<a id="statusInfoDd" data-id="<%=model.hire[key].info ? model.hire[key].info : ''%> " class="current-selected" href="javascript:;">-->
                               <!--<%=model.hire[key].info && model.hire[key].info.length > 1 ? model.hire[key].info : "Select"%>-->
@@ -455,15 +465,18 @@
                       </td>
                   </tr>
 
-                  <%if (model.fire && model.fire[key] && model.fire[key].date !==  model.hire[key].date) {%>
+                  <%if (model.fire && model.fire[key] && (model.fire[key].date !==  model.hire[key].date || model.fire[key].info !== 'Update')) {%>
                   <tr id="fire<%=key%>" data-id="<%=key%>" data-content="fire">
+                      <td class="remove"></td>
                       <td>Fired</td>
                       <td class="editable fireDate" data-id="fireDate"><%=model.fire[key].date%></td>
                       <td><%=model.fire[key].jobPosition.name !== model.hire[key].jobPosition.name ? model.fire[key].jobPosition.name : ""%></td>
                       <td><%=model.fire[key].department.departmentName !== model.hire[key].department.departmentName ? model.fire[key].department.departmentName : ''%></td>
                       <td><%=model.fire[key].manager && model.hire[key].manager.name.last !== model.fire[key].manager.name.last ? model.fire[key].manager.name.first + ' ' + model.fire[key].manager.name.last : ""%></td>
                       <td><%=model.fire[key].jobType !== model.hire[key].jobType ? model.fire[key].jobType : ''%></td>
+                      <%if (model.enableView) {%>
                       <td><%=model.fire[key].salary%></td>
+                      <% } %>
                      <td>
                          <!--<a id="statusInfoDd" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " class="current-selected" href="javascript:;">-->
                           <!--<%=model.fire[key].info ? model.fire[key].info : "Select"%>-->
