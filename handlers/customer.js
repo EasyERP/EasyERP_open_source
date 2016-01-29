@@ -352,6 +352,8 @@ var Customers = function (models, event) {
         var accessRollSearcher;
         var contentSearcher;
         var waterfallTasks;
+        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count || 100, 10));
+        var limit = parseInt(data.count, 10) || 100;
         var mid = parseInt(req.headers.mid, 10) || 49;
 
         optionsObject.$and = [];
@@ -383,7 +385,7 @@ var Customers = function (models, event) {
 
                     var query = Customers.find(queryObject);
 
-                    if (data.onlyCount.toString().toLowerCase() === "true") {
+                    if (data.onlyCount && data.onlyCount.toString().toLowerCase() === "true") {
 
                         query.count(function (err, res) {
                             if (err) {
@@ -400,8 +402,8 @@ var Customers = function (models, event) {
                         }
                         query
                             .select("_id name email phones.mobile")
-                            .skip((data.page - 1) * data.count)
-                            .limit(data.count)
+                            .skip(skip)
+                            .limit(limit)
                             .sort({"name.first": 1})
                             .exec(function (err, _res) {
                                 if (err) {
@@ -577,8 +579,8 @@ var Customers = function (models, event) {
         var viewType = data.viewType;
         var optionsObject = {};
         var filter = data.filter || {};
-        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count, 10));
-        var limit = parseInt(data.count, 10);
+        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count || 100, 10));
+        var limit = parseInt(data.count, 10) || 100;
         var waterfallTasks;
         var keySort;
         var sort;
