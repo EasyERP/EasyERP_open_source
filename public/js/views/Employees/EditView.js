@@ -410,8 +410,8 @@ define([
                     var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
                     var jobPosition = tr.find('#jobPositionDd').attr('data-id');
                     var department = tr.find('#departmentsDd').attr('data-id');
-                    var manager = tr.find('#projectManagerDD').attr('data-id');
-                    var salary = parseInt(tr.find('[data-id="salary"]').text()) ||  hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary;
+                    var manager = tr.find('#projectManagerDD').attr('data-id') || null;
+                    var salary = parseInt(tr.find('[data-id="salary"]').text()) ||  (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
                     var info = tr.find('#statusInfoDd').val();
                     var jobType = tr.find('#jobTypeDd').text();
 
