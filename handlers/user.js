@@ -8,6 +8,8 @@ var User = function (event, models) {
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
     var constants = require('../constants/responses');
 
+    var logger = require('../helpers/logger');
+
     function checkIfUserLoginUnique(req, login, cb) {
         models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
             if (error) {
@@ -186,7 +188,7 @@ var User = function (event, models) {
         var err;
         var queryObject;
 
-        if (data.login || data.email) {
+        if ((data.login || data.email) && data.pass) {
             queryObject = {
                 $or: [
                     {
@@ -196,7 +198,7 @@ var User = function (event, models) {
                     }
                 ]
             };
-            UserModel.findOne(queryObject, function (err, _user) {
+            UserModel.findOne(queryObject, {login: 1, pass: 1}, function (err, _user) {
                 var shaSum = crypto.createHash('sha256');
                 var lastAccess;
 
@@ -206,9 +208,9 @@ var User = function (event, models) {
                     return next(err);
                 }
 
-                if (!_user || _user._id || _user.pass !== shaSum.digest('hex')) {
+                if (!_user || !_user._id || _user.pass !== shaSum.digest('hex')) {
                     err = new Error(constants.BAD_REQUEST);
-                    err.status(400);
+                    err.status = 400;
 
                     return next(err);
                 }
@@ -224,7 +226,7 @@ var User = function (event, models) {
 
                 UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err) {
                     if (err) {
-                        console.log(err);
+                        logger.error(err);
                     }
                 });
 

@@ -59,11 +59,13 @@ module.exports = function (app, mainDb) {
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
 
+    var logger = require('../helpers/logger');
+
     var async = require('async');
 
     var requestHandler;
 
-    var winston = require('winston');
+    /*var winston = require('winston');
     var logger = new (winston.Logger)({
         transports       : [
             new (winston.transports.Console)({
@@ -96,59 +98,11 @@ module.exports = function (app, mainDb) {
             })
         ],
         exitOnError      : false
-    });
+    });*/
 
     app.set('logger', logger);
 
     requestHandler = require("../requestHandler.js")(app, event, mainDb);
-
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        for (var filterName in filter) {
-            condition = filter[filterName]['value'];
-            key = filter[filterName]['key'];
-
-            switch (filterName) {
-                case 'project':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'salesPerson':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'supplier':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'workflow':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'forSales':
-                    if (condition) {
-                        condition = ConvertType(condition[0], 'boolean');
-                        filtrElement[key] = condition;
-                        resArray.push(filtrElement);
-                    }
-                    break;
-            }
-        }
-
-        return resArray;
-    };
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
