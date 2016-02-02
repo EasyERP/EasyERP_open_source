@@ -636,9 +636,9 @@ module.exports = function (app, mainDb) {
         res.redirect('/#login');
     });
 
-    app.post('/login', function (req, res, next) {
+    /*app.post('/login', function (req, res, next) {
         requestHandler.login(req, res, next);
-    });
+    });*/
 
     app.post('/Users', function (req, res) {
         var data = {};
@@ -679,6 +679,7 @@ module.exports = function (app, mainDb) {
         requestHandler.updateCurrentUser(req, res, data);
     });
 
+    app.use('/users', userRouter);
     app.use('/currentUser', userRouter);
 
    /* app.patch('/currentUser/:_id', function (req, res) {

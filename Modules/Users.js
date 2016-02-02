@@ -145,16 +145,6 @@ var Users = function (mainDb, models) {
         }
     }
 
-    /**
-     * __Type__ `GET`
-     *
-     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/logout`
-     *
-     * This __method__ allows to logout.
-     *
-     * @method logout
-     * @instance
-     */
     function login(req, res, next) {
         /**
          * __Type__ `POST`
@@ -171,7 +161,7 @@ var Users = function (mainDb, models) {
          * @property {JSON} Object - Object with data for logining (like in example)
          * @instance
          */
-        var data = req.body;
+
         try {
             if (data) {
                 if (data.login || data.email) {

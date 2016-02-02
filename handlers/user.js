@@ -1,11 +1,12 @@
 var mongoose = require('mongoose');
 
-var PayRoll = function (event, models) {
+var User = function (event, models) {
     "use strict";
     var access = require("../Modules/additions/access.js")(models);
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
+    var constants = require('../constants/responses');
 
     function checkIfUserLoginUnique(req, login, cb) {
         models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
@@ -164,6 +165,79 @@ var PayRoll = function (event, models) {
         updateThisUser(_id, query);
     }
 
+    this.login = function (req, res, next) {
+        /**
+         * __Type__ `POST`
+         *
+         * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/login`
+         *
+         * This __method__ allows to login.
+         * @example {
+         *     dbId: "CRM",
+         *     login: "Alex"
+         *     pass: "777777"
+         * }
+         * @method login
+         * @property {JSON} Object - Object with data for login (like in example)
+         * @instance
+         */
+        var data = req.body;
+        var UserModel = models.get(data.dbId, 'Users', userSchema);
+        var err;
+        var queryObject;
+
+        if (data.login || data.email) {
+            queryObject = {
+                $or: [
+                    {
+                        login: {$regex: data.login, $options: 'i'}
+                    }, {
+                        email: {$regex: data.login, $options: 'i'}
+                    }
+                ]
+            };
+            UserModel.findOne(queryObject, function (err, _user) {
+                var shaSum = crypto.createHash('sha256');
+                var lastAccess;
+
+                shaSum.update(data.pass);
+
+                if (err) {
+                    return next(err);
+                }
+
+                if (!_user || _user._id || _user.pass !== shaSum.digest('hex')) {
+                    err = new Error(constants.BAD_REQUEST);
+                    err.status(400);
+
+                    return next(err);
+                }
+
+                req.session.loggedIn = true;
+                req.session.uId = _user._id;
+                req.session.uName = _user.login;
+                req.session.lastDb = data.dbId;
+                req.session.kanbanSettings = _user.kanbanSettings;
+
+                lastAccess = new Date();
+                req.session.lastAccess = lastAccess;
+
+                UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+
+                res.send(200);
+            });
+        } else {
+            err = new Error(constants.BAD_REQUEST);
+            err.status(400);
+
+            return next(err);
+        }
+    };
+
     this.putchModel = function (req, res, next) {
         var options = {};
         var data = req.body;
@@ -205,4 +279,4 @@ var PayRoll = function (event, models) {
     };
 };
 
-module.exports = PayRoll;
+module.exports = User;
