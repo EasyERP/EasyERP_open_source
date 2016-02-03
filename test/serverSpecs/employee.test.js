@@ -100,7 +100,7 @@ describe("Employee Specs", function () {
 
     it("should getById employee", function (done) {
         var query = {
-            id: "55b92ad221e4b7c40f000032"
+            id:  id
         };
         aggent
             .get('employees/form')
@@ -363,7 +363,7 @@ describe("Employee Specs", function () {
             source: 'testSource'
         };
         aggent
-            .patch('employees/56938d2cd87c9004552b639e')
+            .patch('employees/' + id)
             .send(body)
             .expect(200)
             .end(function (err, res) {

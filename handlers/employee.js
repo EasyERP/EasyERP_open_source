@@ -331,7 +331,7 @@ var Employee = function (event, models) {
         var mid = parseInt(data.mid, 10) || 42;
         var project;
         var projectSecond;
-        var  response = {};
+        var response = {};
 
         response.showMore = false;
 
@@ -370,93 +370,93 @@ var Employee = function (event, models) {
                     switch (contentType) {
                         case ('Employees'):
 
-                                    project = {
-                                        manager         : {$arrayElemAt: ["$manager", 0]},
-                                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                        department      : {$arrayElemAt: ["$department", 0]},
-                                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                                        name            : 1,
-                                        'editedBy.date' : 1,
-                                        'createdBy.date': 1,
-                                        dateBirth       : 1,
-                                        skype           : 1,
-                                        workEmail       : 1,
-                                        workPhones      : 1,
-                                        jobType         : 1,
-                                        isEmployee      : 1
-                                    };
+                            project = {
+                                manager         : {$arrayElemAt: ["$manager", 0]},
+                                jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                                department      : {$arrayElemAt: ["$department", 0]},
+                                'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                name            : 1,
+                                'editedBy.date' : 1,
+                                'createdBy.date': 1,
+                                dateBirth       : 1,
+                                skype           : 1,
+                                workEmail       : 1,
+                                workPhones      : 1,
+                                jobType         : 1,
+                                isEmployee      : 1
+                            };
 
-                                    projectSecond = {
-                                        manager         : 1,
-                                        jobPosition     : 1,
-                                        department      : 1,
-                                        'createdBy.user': 1,
-                                        'editedBy.user' : 1,
-                                        'editedBy.date' : 1,
-                                        'createdBy.date': 1,
-                                        name            : 1,
-                                        dateBirth       : 1,
-                                        skype           : 1,
-                                        workEmail       : 1,
-                                        workPhones      : 1,
-                                        jobType         : 1,
-                                        isEmployee      : 1
-                                    };
+                            projectSecond = {
+                                manager         : 1,
+                                jobPosition     : 1,
+                                department      : 1,
+                                'createdBy.user': 1,
+                                'editedBy.user' : 1,
+                                'editedBy.date' : 1,
+                                'createdBy.date': 1,
+                                name            : 1,
+                                dateBirth       : 1,
+                                skype           : 1,
+                                workEmail       : 1,
+                                workPhones      : 1,
+                                jobType         : 1,
+                                isEmployee      : 1
+                            };
                             break;
                         case ('Applications'):
 
-                                    if (data && data.filter && data.filter.workflow) {
-                                        data.filter.workflow = data.filter.workflow.map(function (item) {
-                                            return item === "null" ? null : item;
-                                        });
-                                    }
+                            if (data && data.filter && data.filter.workflow) {
+                                data.filter.workflow = data.filter.workflow.map(function (item) {
+                                    return item === "null" ? null : item;
+                                });
+                            }
 
-                                    project = {
-                                        manager         : {$arrayElemAt: ["$manager", 0]},
-                                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                        department      : {$arrayElemAt: ["$department", 0]},
-                                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                                        name            : 1,
-                                        'editedBy.date' : 1,
-                                        'createdBy.date': 1,
-                                        dateBirth       : 1,
-                                        skype           : 1,
-                                        workEmail       : 1,
-                                        workPhones      : 1,
-                                        jobType         : 1,
-                                        isEmployee      : 1,
-                                        creationDate    : 1,
-                                        workflow        : {$arrayElemAt: ["$workflow", 0]},
-                                        personalEmail   : 1,
-                                        sequence        : 1,
-                                        hire            : 1,
-                                        fire            : 1
-                                    };
+                            project = {
+                                manager         : {$arrayElemAt: ["$manager", 0]},
+                                jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                                department      : {$arrayElemAt: ["$department", 0]},
+                                'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                name            : 1,
+                                'editedBy.date' : 1,
+                                'createdBy.date': 1,
+                                dateBirth       : 1,
+                                skype           : 1,
+                                workEmail       : 1,
+                                workPhones      : 1,
+                                jobType         : 1,
+                                isEmployee      : 1,
+                                creationDate    : 1,
+                                workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                personalEmail   : 1,
+                                sequence        : 1,
+                                hire            : 1,
+                                fire            : 1
+                            };
 
-                                    projectSecond = {
-                                        manager         : 1,
-                                        jobPosition     : 1,
-                                        department      : 1,
-                                        'createdBy.user': 1,
-                                        'editedBy.user' : 1,
-                                        'editedBy.date' : 1,
-                                        'createdBy.date': 1,
-                                        name            : 1,
-                                        dateBirth       : 1,
-                                        skype           : 1,
-                                        workEmail       : 1,
-                                        workPhones      : 1,
-                                        jobType         : 1,
-                                        isEmployee      : 1,
-                                        creationDate    : 1,
-                                        workflow        : 1,
-                                        personalEmail   : 1,
-                                        sequence        : 1,
-                                        hire            : 1,
-                                        fire            : 1
-                                    };
+                            projectSecond = {
+                                manager         : 1,
+                                jobPosition     : 1,
+                                department      : 1,
+                                'createdBy.user': 1,
+                                'editedBy.user' : 1,
+                                'editedBy.date' : 1,
+                                'createdBy.date': 1,
+                                name            : 1,
+                                dateBirth       : 1,
+                                skype           : 1,
+                                workEmail       : 1,
+                                workPhones      : 1,
+                                jobType         : 1,
+                                isEmployee      : 1,
+                                creationDate    : 1,
+                                workflow        : 1,
+                                personalEmail   : 1,
+                                sequence        : 1,
+                                hire            : 1,
+                                fire            : 1
+                            };
                             break;
                     }
 
@@ -954,100 +954,98 @@ var Employee = function (event, models) {
                 event.emit('dropHoursCashes', req);
                 event.emit('recollectVacationDash');
 
-                function populateEmployee(cb){
+                function populateEmployee(cb) {
                     Employee.populate(result, {
-                        'path': 'manager',
+                        'path'  : 'manager',
                         'select': 'name _id'
                     }, cb);
                 }
 
-                function populateGroupsUsers(cb){
+                function populateGroupsUsers(cb) {
                     UsersModel.populate(result, {
-                        'path': 'groups.users',
+                        'path'  : 'groups.users',
                         'select': 'login _id'
                     }, cb);
                 }
 
-                function populateGroupsOwner(cb){
+                function populateGroupsOwner(cb) {
                     UsersModel.populate(result, {
-                        'path': 'groups.owner',
+                        'path'  : 'groups.owner',
                         'select': 'login _id'
                     }, cb);
                 }
 
-
-                function populateGroups(cb){
+                function populateGroups(cb) {
                     Department.populate(result, {
-                        'path': 'groups.group',
+                        'path'  : 'groups.group',
                         'select': 'departmentName _id'
                     }, cb);
                 }
 
-                function populateEmployeeHire(cb){
+                function populateEmployeeHire(cb) {
                     Employee.populate(result, {
-                        'path': 'hire.manager',
+                        'path'  : 'hire.manager',
                         'select': 'name _id'
                     }, cb);
                 }
 
-                function populateEmployeeFire(cb){
+                function populateEmployeeFire(cb) {
                     Employee.populate(result, {
-                        'path': 'fire.manager',
+                        'path'  : 'fire.manager',
                         'select': 'name _id'
                     }, cb);
                 }
 
-                function populateDepartment(cb){
+                function populateDepartment(cb) {
                     Department.populate(result, {
-                        'path': 'department',
+                        'path'  : 'department',
                         'select': 'departmentName _id'
                     }, cb);
                 }
 
-                function populateDepartmentFire(cb){
+                function populateDepartmentFire(cb) {
                     Department.populate(result, {
-                        'path': 'fire.department',
+                        'path'  : 'fire.department',
                         'select': 'departmentName _id'
                     }, cb);
                 }
 
-
-                function populateDepartmentHire(cb){
+                function populateDepartmentHire(cb) {
                     Department.populate(result, {
-                        'path': 'hire.department',
+                        'path'  : 'hire.department',
                         'select': 'departmentName _id'
                     }, cb);
                 }
 
-                function populateJobPosition(cb){
+                function populateJobPosition(cb) {
                     JobPosition.populate(result, {
-                        'path': 'jobPosition',
+                        'path'  : 'jobPosition',
                         'select': 'name _id'
                     }, cb);
                 }
 
-                function populateJobPositionFire(cb){
+                function populateJobPositionFire(cb) {
                     JobPosition.populate(result, {
-                        'path': 'fire.jobPosition',
+                        'path'  : 'fire.jobPosition',
                         'select': 'name _id'
                     }, cb);
                 }
 
-                function populateJobPositionHire(cb){
+                function populateJobPositionHire(cb) {
                     JobPosition.populate(result, {
-                        'path': 'hire.jobPosition',
+                        'path'  : 'hire.jobPosition',
                         'select': 'name _id'
                     }, cb);
                 }
 
-                function populateRelatedUser(cb){
+                function populateRelatedUser(cb) {
                     UsersModel.populate(result, {
-                        'path': 'relatedUser',
+                        'path'  : 'relatedUser',
                         'select': 'login _id'
                     }, cb);
                 }
 
-                async.parallel([populateRelatedUser, populateGroupsUsers, populateGroupsOwner, populateGroups, populateEmployee, populateEmployeeFire, populateDepartment, populateJobPosition, populateEmployeeHire, populateDepartmentHire,populateJobPositionHire, populateDepartmentFire, populateJobPositionFire], function (){
+                async.parallel([populateRelatedUser, populateGroupsUsers, populateGroupsOwner, populateGroups, populateEmployee, populateEmployeeFire, populateDepartment, populateJobPosition, populateEmployeeHire, populateDepartmentHire, populateJobPositionHire, populateDepartmentFire, populateJobPositionFire], function () {
                     res.status(200).send(result);
                 });
 
@@ -1122,10 +1120,10 @@ var Employee = function (event, models) {
                 if (data && data.filter) {
                     if (data.filter.condition === 'or') {
                         filterObj.$and.push({$or: []});
-                        condition = filterObj.$and[2]['$or'];
+                        condition = filterObj.$and[2].$or;
                     } else {
                         filterObj.$and.push({$and: []});
-                        condition = filterObj.$and[2]['$and'];
+                        condition = filterObj.$and[2].$and;
                     }
 
                     if (data.filter && data.filter.Name) {
@@ -1227,7 +1225,7 @@ var Employee = function (event, models) {
     this.getSalesPerson = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var result = {};
-        var query = Employee.find({'isEmployee': true}, {name: 1}).sort({'name.first': 1});
+        var query = Employee.find(/*{'isEmployee': true}*/{}, {name: 1}).sort({'name.first': 1});
 
         query.exec(function (err, employees) {
             if (err) {

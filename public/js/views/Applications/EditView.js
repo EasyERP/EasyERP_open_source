@@ -101,7 +101,7 @@
             var table = this.$el.find('#hireFireTable');
             var tr = table.find('tr').last().prev();
             var dataContent = tr.attr('data-content');
-            var dataId = parseInt(tr.attr('data-id'));
+            var dataId = parseInt(tr.attr('data-id'), 10);
             var newId;
             var row;
             var tds;
@@ -317,7 +317,6 @@
 
             var self = this;
             var mid = this.mId;
-            var lengthHire;
             var $tableFire = this.$el.find('#hireFireTable');
             var jobType;
             var department;
@@ -395,21 +394,21 @@
             _.each(hireArray, function (hire, key) {
                 var tr = self.$el.find("#hire" + key);
                 var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
-                var jobPosition = tr.find('#jobPositionDd').attr('data-id');
-                var department = tr.find('#departmentsDd').attr('data-id');
-                var manager = tr.find('#projectManagerDD').attr('data-id') || null;
+                var jobPos = tr.find('#jobPositionDd').attr('data-id');
+                var depart = tr.find('#departmentsDd').attr('data-id');
+                var manag = tr.find('#projectManagerDD').attr('data-id') || null;
                 var salary = parseInt(tr.find('[data-id="salary"]').text()) || (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
                 var info = tr.find('#statusInfoDd').val();
-                var jobType = $.trim(tr.find('#jobTypeDd').text());
+                var jobT = $.trim(tr.find('#jobTypeDd').text());
 
                 var trFire = $(self.$el.find("[data-content='fire']")).last();
 
                 newHireArray.push({
                     date       : date,
-                    department : department,
-                    jobPosition: jobPosition,
-                    manager    : manager,
-                    jobType    : jobType,
+                    department : depart,
+                    jobPosition: jobPos,
+                    manager    : manag,
+                    jobType    : jobT,
                     salary     : salary,
                     info       : info
                 });
@@ -460,7 +459,6 @@
             newFireArray[newFireArray.length - 1].jobType = newHireArray[newHireArray.length - 1].jobType;
 
             var data = {
-
                 name          : name,
                 gender        : gender,
                 jobType       : jobType,
@@ -483,7 +481,7 @@
                 homeAddress   : homeAddress,
                 dateBirth     : dateBirthSt,
                 source        : sourceId,
-                imageSrc      : this.imageSrc,
+                imageSrc      : $.trim(this.imageSrc) || null,
                 nationality   : nationality,
                 groups        : groups,
                 whoCanRW      : whoCanRW,
@@ -498,6 +496,7 @@
             var workflowId = el.find("#workflowsDd").data("id");
             var workflow = workflowId || null;
             var currentWorkflow = this.currentModel.get('workflow');
+
             if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow)) {
                 data.workflow = workflow;
                 data.sequence = -1;

@@ -36,7 +36,7 @@ define([
             },
 
             changeWorkflow: function (e) {
-                var mid = 39;
+                var mid = this.mId;
                 var name = '';
                 var status = '';
                 var id;

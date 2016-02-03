@@ -405,21 +405,21 @@ define([
                 _.each(hireArray, function (hire, key) {
                     var tr = self.$el.find("#hire" + key);
                     var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
-                    var jobPosition = tr.find('#jobPositionDd').attr('data-id');
-                    var department = tr.find('#departmentsDd').attr('data-id');
-                    var manager = tr.find('#projectManagerDD').attr('data-id') || null;
+                    var jobPos = tr.find('#jobPositionDd').attr('data-id');
+                    var depart = tr.find('#departmentsDd').attr('data-id');
+                    var manag = tr.find('#projectManagerDD').attr('data-id') || null;
                     var salary = parseInt(tr.find('[data-id="salary"]').text()) || (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
                     var info = tr.find('#statusInfoDd').val();
-                    var jobType = $.trim(tr.find('#jobTypeDd').text());
+                    var jobT = $.trim(tr.find('#jobTypeDd').text());
 
                     var trFire = $(self.$el.find("#fire" + key));
 
                     newHireArray.push({
                         date       : date,
-                        department : department,
-                        jobPosition: jobPosition,
-                        manager    : manager,
-                        jobType    : jobType,
+                        department : depart,
+                        jobPosition: jobPos,
+                        manager    : manag,
+                        jobType    : jobT,
                         salary     : salary,
                         info       : info
                     });

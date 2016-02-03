@@ -21,7 +21,7 @@ define([
             responseObj: {},
 
             initialize: function () {
-                this.mId =  CONSTANTS.MID[this.contentType];
+                this.mId = CONSTANTS.MID[this.contentType];
                 _.bindAll(this, "saveItem");
                 this.model = new EmployeeModel();
                 this.responseObj['#sourceDd'] = [
@@ -274,7 +274,15 @@ define([
                 });
                 // date parse 
                 var dateBirthSt = $.trim(thisEl.find("#dateBirth").val());
-                var hire = $.trim(thisEl.find("#hire").val());
+                var hire = [{
+                    date       : $.trim(thisEl.find("#hire").val()),
+                    department : department,
+                    manager    : manager || null,
+                    jobPosition: jobPosition,
+                    jobType    : jobType,
+                    salary     : 0,
+                    info       : 'Hired'
+                }];
 
                 var active = (thisEl.find("#active").is(":checked")) ? true : false;
                 var sourceId = thisEl.find("#sourceDd").attr("data-id");
@@ -295,19 +303,19 @@ define([
                         gender        : gender || "",
                         jobType       : jobType || "",
                         marital       : marital || "",
-                        imageSrc      : this.imageSrc,
+                        imageSrc      : $.trim(this.imageSrc) || null,
                         workAddress   : workAddress,
                         workEmail     : workEmail,
                         personalEmail : personalEmail,
                         skype         : skype,
                         workPhones    : workPhones,
                         officeLocation: officeLocation,
-                        relatedUser   : relatedUser || "",
+                        relatedUser   : relatedUser || null,
                         department    : department,
-                        jobPosition   : jobPosition || "",
+                        jobPosition   : jobPosition || null,
                         bankAccountNo : bankAccountNo,
-                        manager       : manager || "",
-                        coach         : coach || "",
+                        manager       : manager || null,
+                        coach         : coach || null,
                         identNo       : identNo,
                         passportNo    : passportNo,
                         otherId       : otherId,

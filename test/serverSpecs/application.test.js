@@ -74,7 +74,7 @@ describe("Application Specs", function () {
 
     it("should getById application", function (done) {
         var query = {
-            id: "55b92ad221e4b7c40f000032"
+            id:  id
         };
         aggent
             .get('applications/form')
@@ -160,7 +160,7 @@ describe("Application Specs", function () {
             }
         };
         aggent
-            .patch('applications/56938d2cd87c9004552b639e')
+            .patch('applications/' + id)
             .send(body)
             .expect(200)
             .end(function (err, res) {
