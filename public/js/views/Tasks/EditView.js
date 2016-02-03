@@ -197,7 +197,7 @@
                                 tr_holder.eq(8).text(logged);
                                 tr_holder.eq(9).find('a').text(editHolder.find("#type").text());
                                 tr_holder.eq(10).find('progress').val(progress);
-                                if (data.workflow) {
+                                if (data.workflow || currentProject._id !== project ) { // added condition if changed project, taskId need refresh
                                     Backbone.history.fragment = "";
                                     Backbone.history.navigate(window.location.hash.replace("#", ""), {trigger: true});
                                 }

@@ -193,7 +193,7 @@ var Payment = function (models, event) {
                     }
 
                     if (bonus) {
-                        optionsObject.$and.push({bonus: bonus});
+                      //  optionsObject.$and.push({bonus: bonus}); //todo   this is case of no view purchase payments in supplier payments
                         supplier = "Employees"
                     }
 
@@ -557,6 +557,7 @@ var Payment = function (models, event) {
         var DbName = req.session.lastDb;
         var mid = body.mid;
         var data = body;
+        var isForSale = data.forSale;
         var project;
         //var type = "Paid";
 
@@ -667,8 +668,13 @@ var Payment = function (models, event) {
                     if (project) {
                         event.emit('fetchInvoiceCollection', {project: project});
                     }
+                    if(isForSale){ //todo added in case of no last task
+                        waterfallCallback(null, invoice, payment);
+                    } else {
+                        waterfallCallback(null, payment);
+                    }
 
-                    waterfallCallback(null, invoice, payment);
+
                 });
             });
         }
@@ -746,7 +752,7 @@ var Payment = function (models, event) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) {
+        if ( isForSale && ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ) { // todo added condition for purchase payment
             waterfallTasks.push(updateWtrack);
         }
 
@@ -796,7 +802,7 @@ var Payment = function (models, event) {
         queryObject.$and = [];
 
         if (bonus) {
-            queryObject.bonus = bonus;
+           // queryObject.bonus = bonus; //todo this is case of no view purchase payments in supplier payments list length
             supplier = 'Employees';
         }
 

@@ -313,7 +313,7 @@ var Invoice = function (models, event) {
                             return next(err);
                         }
 
-                        if (!invoice.journal) {
+                        if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
                             Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
                                 if (err) {
                                     return next(err);

@@ -16,65 +16,65 @@ var PayRoll = function (models) {
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
     /*function convertType(array, type) {
-        var i;
+     var i;
 
-        if (type === 'integer') {
-            for (i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i], 0);
-            }
-        } else if (type === 'boolean') {
-            for (i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    }*/
+     if (type === 'integer') {
+     for (i = array.length - 1; i >= 0; i--) {
+     array[i] = parseInt(array[i], 10);
+     }
+     } else if (type === 'boolean') {
+     for (i = array.length - 1; i >= 0; i--) {
+     if (array[i] === 'true') {
+     array[i] = true;
+     } else if (array[i] === 'false') {
+     array[i] = false;
+     } else {
+     array[i] = null;
+     }
+     }
+     }
+     }*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
 
-        for (filterName in filter) {
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+     for (filterName in filter) {
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'employee':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'type':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'year':
-                    convertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'month':
-                    convertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'dataKey':
-                    convertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        }
+     switch (filterName) {
+     case 'employee':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'type':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'year':
+     convertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'month':
+     convertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'dataKey':
+     convertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     this.create = function (req, res, next) {
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
@@ -162,7 +162,7 @@ var PayRoll = function (models) {
 
                 if (dataKeys && dataKeys.length) {
                     async.each(dataKeys, function (dataKey, cb) {
-                        PayRoll.remove({'dataKey': parseInt(dataKey, 0)}, cb);
+                        PayRoll.remove({'dataKey': parseInt(dataKey, 10)}, cb);
                     }, function (err) {
                         if (err) {
                             return next(err);
@@ -331,7 +331,7 @@ var PayRoll = function (models) {
         var sort = data.sort || {"employee.name": 1};
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
-        var queryObject = {dataKey: parseInt(id, 0)};
+        var queryObject = {dataKey: parseInt(id, 10)};
         var query;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -364,7 +364,7 @@ var PayRoll = function (models) {
         var data = req.query;
         var db = req.session.lastDb;
         var dataKey = data.dataKey;
-        var queryObject = {dataKey: parseInt(dataKey, 0)};
+        var queryObject = {dataKey: parseInt(dataKey, 10)};
         var sort = data.sort || {"employee": 1};
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
 
@@ -422,11 +422,16 @@ var PayRoll = function (models) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var query = req.query;
-        var year = parseInt(query.year, 0) || date.getFullYear();
-        var filter = query.filter || '';
-        var key = 'salaryReport' + filter + year.toString();
+        //var year = parseInt(query.year, 10) || date.getFullYear();
+        var filter = query.filter || {};
+        var startDate = new Date (query.startDate);
+        var endDate = new Date (query.endDate);
+        var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
+        var startDateKey = moment(startDate).year() * 100 +  moment(startDate).isoWeek();
+        var endDateKey = moment(endDate).year() * 100 +  moment(endDate).isoWeek();
+        var filterValue;
 
         function caseFilterEmployee(filter) {
             var condition;
@@ -459,13 +464,46 @@ var PayRoll = function (models) {
         }
 
         function getResult(filter, callback) {
-            var matchObj = {isEmployee: true};
+            var matchObj; // = {isEmployee: true};
+
+            matchObj = {
+                $and: [{
+                    $or: [{
+                        $and: [{
+                            isEmployee: true
+                        }, {
+                            $or: [{
+                                lastFire: null
+                            }, {
+                                lastFire: {
+                                    $ne : null,
+                                    $gte: startDateKey
+                                }
+                            }, {
+                                lastHire: {
+                                    $ne : null,
+                                    $lte: endDateKey
+                                }
+                            }]
+                        }]
+                    }, {
+                        $and: [{
+                            isEmployee: false
+                        }, {
+                            lastFire: {
+                                $ne : null,
+                                $gte: startDateKey
+                            }
+                        }]
+                    }
+                    ]
+                }]
+            };
 
             if (filter && typeof filter === 'object') {
-                if (filter.condition && filter.condition === 'or') {
-                    matchObj.$or = caseFilterEmployee(filter);
-                } else {
-                    matchObj.$and = caseFilterEmployee(filter);
+                filterValue = caseFilterEmployee(filter);
+                if (filterValue.length){
+                    matchObj.$and.push({$and: caseFilterEmployee(filter)});
                 }
             }
 
@@ -482,9 +520,18 @@ var PayRoll = function (models) {
                         department: {$arrayElemAt: ["$department", 0]},
                         isEmployee: 1,
                         hire      : 1,
-                        name      : 1
+                        name      : 1,
+                        lastFire  : 1,
+                        lastHire  : {
+                            $let: {
+                                vars: {
+                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                },
+                                in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                            }
+                        }
                     }
-                },  {
+                }, {
                     $match: matchObj
                 }, {
                     $unwind: '$hire'
@@ -494,21 +541,22 @@ var PayRoll = function (models) {
                         department: 1,
                         hire      : 1,
                         name      : 1,
+                        lastFire  : 1,
                         year      : {$year: '$hire.date'}
                     }
-                }, {
-                    $match: {
-                        'year': {$lt: year + 1}
-                    }
+                //}, {
+                //    $match: {
+                //        'year': {$lt: year + 1}
+                //    }
                 }, {
                     $project: {
                         isEmployee: 1,
                         department: 1,
                         hire      : 1,
-                        fire      : 1,
                         name      : 1,
                         month     : {$month: '$hire.date'},
                         year      : 1,
+                        lastFire  : 1,
                         hireDate  : {$add: [{$multiply: [{$year: '$hire.date'}, 100]}, {$month: '$hire.date'}]}
                     }
                 }, {
@@ -516,21 +564,24 @@ var PayRoll = function (models) {
                         _id       : '$_id',
                         department: {$addToSet: '$department'},
                         name      : {$addToSet: '$name'},
-                        hire      : {$push: '$$ROOT'}
+                        hire      : {$push: '$$ROOT'},
+                        lastFire  : {$addToSet: '$lastFire'}
                     }
                 }, {
                     $project: {
                         _id       : 1,
                         department: {$arrayElemAt: ["$department", 0]},
                         name      : {$arrayElemAt: ["$name", 0]},
-                        hire      : 1
+                        hire      : 1,
+                        lastFire  : {$arrayElemAt: ["$lastFire", 0]}
                     }
                 }, {
                     $project: {
                         _id       : 1,
                         department: '$department.departmentName',
                         name      : {$concat: ['$name.first', ' ', '$name.last']},
-                        hire      : 1
+                        hire      : 1,
+                        lastFire  : 1
                     }
                 }, {
                     $sort: {
@@ -598,8 +649,8 @@ var PayRoll = function (models) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
         var data = req.body;
-        var month = parseInt(data.month, 0);
-        var year = parseInt(data.year, 0);
+        var month = parseInt(data.month, 10);
+        var year = parseInt(data.year, 10);
         var dateKey = year * 100 + month;
         var waterfallTasks;
         var maxKey = 0;
@@ -646,12 +697,12 @@ var PayRoll = function (models) {
                 keys = Object.keys(newResult);
 
                 keys.forEach(function (key) {
-                    if (parseInt(key, 0) >= maxKey) {
+                    if (parseInt(key, 10) >= maxKey) {
                         maxKey = key;
                     }
                 });
 
-                var parseKey = parseInt(maxKey, 0);
+                var parseKey = parseInt(maxKey, 10);
 
                 var neqQuery = Payroll.find({dataKey: parseKey}).lean();
 
@@ -677,7 +728,7 @@ var PayRoll = function (models) {
                         var PRoll = new Payroll(dataToSave);
 
                         PRoll.save(function (err, result) {
-                            if (err){
+                            if (err) {
                                 cb(err);
                             }
 
@@ -707,7 +758,7 @@ var PayRoll = function (models) {
                             PRoll = new Payroll(defObj);
 
                             PRoll.save(function (err, result) {
-                                if (err){
+                                if (err) {
                                     callB(err);
                                 }
 
@@ -736,7 +787,6 @@ var PayRoll = function (models) {
                 res.status(200).send("ok");
             });
         });
-
 
     };
 };

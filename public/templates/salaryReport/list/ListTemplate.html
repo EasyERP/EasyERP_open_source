@@ -1,4 +1,9 @@
 <% collection.forEach(function(emp, index){ %>
+<%var fireMonth = emp.lastFire ? moment().isoWeek(parseInt(emp.lastFire.toString().slice(4, 6))).month() : null;%>
+<%var checkYear = fireMonth ? parseInt(emp.lastFire.toString().slice(0, 4)) : 0 ;%>
+<%if (fireMonth) {%>
+ <%var fireKey = fireMonth ? checkYear * 100 + fireMonth : 0; %>
+<%}%>
 <tr data-id="<%=emp._id%>">
     <td><%= index + 1 %></td>
     <td>
@@ -7,26 +12,28 @@
     <td>
         <%=emp ? emp.name: ''%>
     </td>
-    <% for (var i = 1; i <= month; i++) {%>
-    <%var salary = '&nbsp;'%>
-    <%var key = year * 100 + i;%>
+    <% for (var i = startKey + 1; i <= endKey + 1; i++) {%>
+    <%var salary = '&nbsp;';%>
     <%var length =  emp.hire.length; %>
+    <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 12) {%>
+       <% for (var j = 0; j <= length - 1; j++) {%>
+         <%if (i >= emp.hire[j].hireDate) {%>
+           <% salary = emp.hire[j].hire.salary; %>;
 
-    <% for (var j = 0; j <= length - 1; j++) {%>
+           <%if (fireKey && fireKey < i && fireKey > emp.hire[j].hireDate) {%>
+               <% salary ='&nbsp;' %>;
+           <%}%>
 
-      <%if (key >= emp.hire[j].hireDate) {%>
+          <%}%>
+       <%}%>
 
-       <% salary = emp.hire[j].hire.salary; %>;
-
-      <%}%>
+    <%} else {%>
+     <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
+    <%continue;%>
     <%}%>
 
-    <td><%=salary%></td>
-    <%}%>
+    <td data-id="<%=i%>"><%=salary%></td>
 
-    <%for (var i = 12 - month; i > 0; i--) {%>
-    <td>&nbsp;</td>
     <%}%>
-
 </tr>
 <% }) %>

@@ -35,13 +35,18 @@ define([
                 "click #saveFilterButton"              : "saveFilter",
                 "click .removeSavedFilter"             : "removeFilterFromDB",
                 "click .removeValues"                  : "removeFilter",
-                "keydown #forFilterName"               : "keyDown"
+                "keydown #forFilterName"               : "keyDown",
+                "click .showLast"                      : "showManyFilters"   // toDO overflow for many filters
             },
 
             keyDown: function (e) {
                 if (e.which === 13) {
                     this.saveFilter();
                 }
+            },
+
+            showManyFilters : function (){
+                this.$el.find('.forFilterIcons').slice(0,3).toggle();
             },
 
             initialize: function (options) {
@@ -344,8 +349,13 @@ define([
                 var self = this;
                 var groupName;
 
+
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
+                    if ( filterValues.find('.forFilterIcons').length > 2 && !self.$el.find(".showLast").length) {  // toDO  overflow for many filters
+                        filterValues.append('<span class="showLast"> ...&nbsp </span>');
+                    }
+
                     groupName = $('#' + key).text();
 
                     if (groupName.length > 0) {
@@ -600,7 +610,7 @@ define([
                 var filterName = this.parentContentType + '.filter';
                 var filters = custom.retriveFromCash(filterName) || App.filter;
                 var allResults;
-
+                App.filter = filters;
                 $currentEl.html(this.template({filterCollection: this.constantsObject}));
 
                 this.renderFilterContent(options);

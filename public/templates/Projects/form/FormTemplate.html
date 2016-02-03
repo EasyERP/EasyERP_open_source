@@ -7,9 +7,9 @@
             <li><a href="javascript:;" class="" id="ordersTab">Orders</a></li>
             <li><a href="javascript:;" class="" id="invoicesTab">Invoices</a></li>
             <li><a href="javascript:;" class="" id="paymentsTab">Payments</a></li>
-            <li><a href="javascript:;" class="">Comments</a></li>
-            <li><a href="javascript:;" class="">Bonus</a></li>
-            <li><a href="javascript:;">Assignees</a></li>
+            <li><a href="javascript:;" class="" id="commentsTab">Comments</a></li>
+            <li><a href="javascript:;" class="" id="bonusTab">Bonus</a></li>
+            <li><a href="javascript:;" class="" id="assigneesTab">Assignees</a></li>
         </ul>
         <div class="clearfix"></div>
         <div class="dialog-tabs-items">
@@ -116,23 +116,29 @@
 
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div class="textarea-wrapper">
-                    <textarea type="text" class="projectDescriptionEdit" name="description"
-                              placeholder="Add a Description..." id="description"
-                              maxlength="500"><%=model.description%></textarea>
+                <div id="comments">
+                    <div class="textarea-wrapper">
+                        <textarea type="text" class="projectDescriptionEdit" name="description"
+                                  placeholder="Add a Description..." id="description"
+                                  maxlength="500"><%=model.description%></textarea>
+                    </div>
+
+                    <div id="divForNote"></div>
                 </div>
-                <div id="divForNote"></div>
-
             </div>
             <div class="clearfix"></div>
 
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div id="bonus-container"></div>
+                <div id="bonus">
+                    <div id="bonus-container"></div>
+                </div>
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div id="assignees-container"></div>
+                <div id="assignees">
+                    <div id="assignees-container"></div>
+                </div>
             </div>
         </div>
     </form>

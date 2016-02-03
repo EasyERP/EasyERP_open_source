@@ -19,8 +19,9 @@ define([
         'async',
         'helpers/keyCodeHelper',
         'views/listViewBase',
+        'helpers'
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase,helpers) {
         var PaymentListView = ListViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -351,16 +352,15 @@ define([
                     editedElementContent = editedCol.attr('data-content');
                     editedElementValue = editedElement.val();
 
-                    editPaymentModel = this.collection.get(editedElementRowId);
+                 //   editPaymentModel = this.collection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
-                        if (editPaymentModel && editPaymentModel.id) {
+                        /*if (editPaymentModel && editPaymentModel.id) {  // took off for correct work of this.collection
                             this.changedModels[editedElementRowId] = editPaymentModel.attributes;
-                        } else {
+                        } else {*/
                             this.changedModels[editedElementRowId] = {};
-                        }
+                        /*}*/
                     }
-
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                     editedCol.text(editedElementValue);
@@ -455,9 +455,9 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
-                $(document).on("click", function (e) {
+                /*$(document).on("click", function (e) {  // on lisViewBase exist
                     self.hidePagesPopup(e);
-                });
+                });*/
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
@@ -480,7 +480,7 @@ define([
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
-                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var rowNumber = tr.find('.centerCell').text();
                     var id = tr.data('id');
                     var template = _.template(cancelEdit);
                     var model;
@@ -501,7 +501,7 @@ define([
                     model = collection.get(id);
                     model = model.toJSON();
                     model.startNumber = rowNumber;
-                    tr.replaceWith(template({model: model}));
+                    tr.replaceWith(template({model: model, currencySplitter : helpers.currencySplitter})); // added for work properly
                     cb();
                 }, function (err) {
                     if (!err) {
@@ -520,6 +520,77 @@ define([
 
                     this.createdItem = false;
                 }
+            },
+            deleteItems: function () {  // method from listViewBase,  cancelChanges added
+                var that = this;
+                var mid = 39;
+                var model;
+                var localCounter = 0;
+                var listTableCheckedInput;
+                var count;
+                listTableCheckedInput = $("#listTable").find("input:checked");
+
+                count = listTableCheckedInput.length;
+                this.collectionLength = this.collection.length;
+                if(!this.createdItem){
+                $.each(listTableCheckedInput, function (index, checkbox) {
+                    model = that.collection.get(checkbox.value);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function () {
+                            that.listLength--;
+                            localCounter++;
+                            count--;
+                            if (count === 0) {
+                                if (this.hasAlphabet) {
+                                    common.buildAphabeticArray(that.collection, function (arr) {
+                                        $("#startLetter").remove();
+                                        that.alphabeticArray = arr;
+                                        $('#searchContainer').after(_.template(aphabeticTemplate, {
+                                            alphabeticArray   : that.alphabeticArray,
+                                            selectedLetter    : (that.selectedLetter == "" ? "All" : that.selectedLetter),
+                                            allAlphabeticArray: that.allAlphabeticArray
+                                        }));
+                                        var currentLetter = (that.filter) ? that.filter.letter : null;
+                                        if (currentLetter) {
+                                            $('#startLetter').find('a').each(function () {
+                                                var target = $(this);
+                                                if (target.text() == currentLetter) {
+                                                    target.addClass("current");
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+
+                                that.deleteCounter = localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+                            }
+                        },
+                        error  : function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                App.render({
+                                    type: 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
+                            }
+                            that.listLength--;
+                            count--;
+                            if (count === 0) {
+                                that.deleteCounter = localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+
+                            }
+                        }
+                    });
+                });
+                }
+                this.cancelChanges();
             },
 
             savedNewModel: function (modelObject) {

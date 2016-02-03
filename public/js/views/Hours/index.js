@@ -352,7 +352,7 @@ define([
 
         showBonus: function (e) {
             var target = $(e.target);
-            var tergetText = target.prev().text();
+            var targetText;
             var id = target.closest('div').attr('data-value');
             var dataVal = target.closest('div').attr('data-cont');
             var table = this.$el.find('#' + dataVal);
@@ -360,14 +360,22 @@ define([
 
             var bonusCells = table.find("#" + id + " .divRow");
 
+            if (!target.hasClass('rowChecked')){
+                target = target.prev();
+            }
+            targetText = target.text();
+
+
+
+
             bonusCells.toggle();
             bonusRows.toggle();
             bonusRows.children().toggle();
 
-            if (tergetText === '+') {
-                target.prev().text('-');
+            if (targetText === '+') {
+                target.text('-');
             } else {
-                target.prev().text('+');
+                target.text('+');
             }
 
         },

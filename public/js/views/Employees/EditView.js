@@ -85,7 +85,20 @@ define([
                 "click"                                                          : "hideNewSelect",
                 "click td.editable"                                              : "editJob",
                 "click #update"                                                  : "addNewRow",
-                "keyup .editing"                                                 : "validateNumbers"
+                "keyup .editing"                                                 : "validateNumbers",
+                "click .fa-trash"                                                : "deleteRow"
+            },
+
+            deleteRow: function (e) {
+                var target = $(e.target);
+                var tr = target.closest('tr');
+
+                tr.remove();
+
+                this.removeIcon.show();
+
+                this.$el.find('#update').show();
+                this.$el.find('.withEndContract').show();
             },
 
             validateNumbers: function (e) {
@@ -111,6 +124,14 @@ define([
                 var tds;
                 var newDate = new Date();
                 var selects;
+                var enable = this.currentModel.get('enableView');
+                var number = 7;
+
+                if (enable) {
+                    number = 8;
+                }
+
+                this.removeIcon.hide();
 
                 this.$el.find('#update').hide();
                 this.$el.find('.withEndContract').hide();
@@ -131,20 +152,24 @@ define([
                 tds = row.find('td');
 
                 if (targetId === 'update') {
-                    $(tds[0]).text('Hired');
-                    $(tds[1]).addClass('changeContent');
-                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
-                    $(tds[7]).find('input').val('Update');
+                    $(tds[0]).html('<a class="fa fa-trash" id="' + (dataId + 1) + '"></a>');
+                    $(tds[1]).text('Hired');
+                    $(tds[2]).addClass('changeContent');
+                    $(tds[2]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[number]).find('input').val('Update');
                 } else if (contractEndReason) {
                     row.addClass('fired');
-                    $(tds[0]).text('Fired');
-                    $(tds[1]).addClass('changeContent');
-                    $(tds[1]).text(common.utcDateToLocaleDate(newDate));
-                    $(tds[1]).removeClass('hireDate');
-                    $(tds[1]).addClass('fireDate');
-                    $(tds[1]).attr('data-id', 'fireDate');
-                    $(tds[6]).removeClass('editable');
-                    $(tds[7]).find('input').val(contractEndReason);
+                    $(tds[0]).html('<a class="fa fa-trash" id="' + (dataId + 1) + '"></a>');
+                    $(tds[1]).text('Fired');
+                    $(tds[2]).addClass('changeContent');
+                    $(tds[2]).text(common.utcDateToLocaleDate(newDate));
+                    $(tds[2]).removeClass('hireDate');
+                    $(tds[2]).addClass('fireDate');
+                    $(tds[2]).attr('data-id', 'fireDate');
+                    if (enable) {
+                        $(tds[7]).removeClass('editable');
+                    }
+                    $(tds[number]).find('input').val(contractEndReason);
 
                     selects = row.find('.current-selected');
                     selects.removeClass('current-selected');
@@ -180,6 +205,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
+                    minDate    : self.hireDate,
                     onSelect   : function () {
                         var editingDates = self.$el.find('.editing');
 
@@ -372,27 +398,28 @@ define([
                 var newHireArray = [];
                 var lengthHire = hireArray.length - 1;
                 var fireArray = this.currentModel.get('fire');
+                var hireModelArray = this.currentModel.get('hire');
                 var newFire = _.clone(fireArray);
                 var newFireArray = [];
 
                 _.each(hireArray, function (hire, key) {
                     var tr = self.$el.find("#hire" + key);
                     var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
-                    var jobPos = tr.find('#jobPositionDd').attr('data-id');
-                    var depart = tr.find('#departmentsDd').attr('data-id');
-                    var manag = tr.find('#projectManagerDD').attr('data-id');
-                    var salary = parseInt(tr.find('[data-id="salary"]').text());
+                    var jobPosition = tr.find('#jobPositionDd').attr('data-id');
+                    var department = tr.find('#departmentsDd').attr('data-id');
+                    var manager = tr.find('#projectManagerDD').attr('data-id') || null;
+                    var salary = parseInt(tr.find('[data-id="salary"]').text()) || (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
                     var info = tr.find('#statusInfoDd').val();
-                    var jobT = tr.find('#jobTypeDd').text();
+                    var jobType = $.trim(tr.find('#jobTypeDd').text());
 
                     var trFire = $(self.$el.find("#fire" + key));
 
                     newHireArray.push({
                         date       : date,
-                        department : depart,
-                        jobPosition: jobPos,
-                        manager    : manag,
-                        jobType    : jobT,
+                        department : department,
+                        jobPosition: jobPosition,
+                        manager    : manager,
+                        jobType    : jobType,
                         salary     : salary,
                         info       : info
                     });
@@ -408,17 +435,14 @@ define([
                         newFire[key].info = trFire.find('#statusInfoDd').val();
 
                         newFireArray.push(newFire[key]);
-                    } else if (!newFire[key]) {
+                    } else {
                         newFire[key] = _.clone(newHireArray[key]);
 
                         newFire[key].date = date;
                         newFire[key].info = 'Update';
 
                         newFireArray.push(newFire[key]);
-                    } else {
-                        newFireArray.push(newFire[key]);
                     }
-
                     return newHireArray;
                 });
 
@@ -664,6 +688,9 @@ define([
                     changeMonth: true,
                     changeYear : true
                 });
+
+                this.removeIcon = this.$el.find('.fa-trash');
+                this.hireDate = this.currentModel.get('hire')[0].date;
 
                 var model = this.currentModel.toJSON();
                 if (model.groups) {

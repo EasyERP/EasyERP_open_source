@@ -1,8 +1,8 @@
 <% orderCollection.forEach(function(quotation, index){ %>
 <tr data-id="<%=quotation._id%>"
 <%if (quotation.workflow && quotation.workflow.status !== 'New') { %>
-class="notEditable">
-<% } %>
+class="notEditable"
+<% } %>>
 <td class="notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox"/></td>
 <td class="centerCell"><%=startNumber + index + 1%></td>
 <td><%=quotation.name%></td>

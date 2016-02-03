@@ -167,7 +167,12 @@ define([
             var userDialog = $('#addUseDialog');
 
             if (userDialog.length) {
-                return userDialog.dialog("open");
+                userDialog.dialog("open");
+
+                this.updateAssigneesPagination(userDialog.find("#sourceUsers").closest(".left"));
+                this.updateAssigneesPagination(userDialog.find("#targetUsers").closest(".left"));
+
+                return false;
             }
 
             dialog = $(addUser).dialog({
@@ -247,7 +252,12 @@ define([
             var dialog;
 
             if (userDialog.length) {
-                return userDialog.dialog("open");
+                userDialog.dialog("open");
+
+                this.updateAssigneesPagination(userDialog.find("#sourceGroups").closest(".left"));
+                this.updateAssigneesPagination(userDialog.find("#targetGroups").closest(".left"));
+
+                return false;
             }
 
             dialog = $(addGroup).dialog({
@@ -269,8 +279,6 @@ define([
                         click: function (e) {
                             $(this).dialog("close");
                             self.closeDialog(e);
-                            //$("#targetGroups").unbind("click");
-                            //$("#sourceGroups").unbind("click");
                         }
                     }
                 }

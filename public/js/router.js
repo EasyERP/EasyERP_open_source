@@ -728,7 +728,8 @@ define([
                 var newCollection = true;
                 var self = context;
                 var savedFilter;
-                var year;
+                var startDate;
+                var endDate;
                 var startTime = new Date();
                 var contentViewUrl = "views/" + contentType + "/list/ListView";
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
@@ -760,8 +761,6 @@ define([
                         };
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
-                    } else if (contentType === 'salaryReport') {
-                        year = (new Date()).getFullYear();
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -783,8 +782,7 @@ define([
                         filter          : savedFilter,
                         parrentContentId: parrentContentId,
                         contentType     : contentType,
-                        newCollection   : newCollection,
-                        year            : year
+                        newCollection   : newCollection
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
@@ -793,7 +791,10 @@ define([
                     function createViews() {
                         collection.unbind('reset');
 
-                        var topbarView = new topBarView({actionType: "Content", collection: collection});
+                        var topbarView = new topBarView({
+                            actionType: "Content",
+                            collection: collection
+                        });
                         var contentview = new contentView({
                             collection   : collection,
                             startTime    : startTime,
@@ -813,6 +814,7 @@ define([
                         topbarView.bind('exportToXlsx', contentview.exportToXlsx, contentview);
                         topbarView.bind('importEvent', contentview.importFiles, contentview);
                         topbarView.bind('pay', contentview.newPayment, contentview);
+                        topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);

@@ -51,27 +51,27 @@ define([
             invoiceStatsTmpl: _.template(invoiceStats),
 
             events: {
-                'click .chart-tabs'                                                                       : 'changeTab',
-                'click .deleteAttach'                                                                     : 'deleteAttach',
-                "click #health a:not(.disabled)"                                                          : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                                                  : "chooseHealthDd",
-                "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                        : "chooseOption",
-                "click .current-selected:not(.disabled)"                                                  : "showNewSelect",
-                "click #createItem"                                                                       : "createDialog",
-                "click #createJob"                                                                        : "createJob",
-                "change input:not(.checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach)": "showSaveButton",
-                "change #description"                                                                     : "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)"                       : "renderJobWTracks",
-                "mouseover #jobsItem"                                                                     : "showRemoveButton",
-                "mouseleave #jobsItem"                                                                    : "hideRemoveButton",
-                "click .fa.fa-trash"                                                                      : "removeJobAndWTracks",
-                "dblclick td.editableJobs"                                                                : "editRow",
-                "click #saveName"                                                                         : "saveNewJobName",
-                "keydown input.editing "                                                                  : "keyDown",
-                'click'                                                                                   : 'hideSelect',
-                'keydown'                                                                                 : 'keydownHandler',
-                "click a.quotation"                                                                       : "viewQuotation",
-                "click a.invoice"                                                                         : "viewInvoice"
+                'click .chart-tabs'                                                                                       : 'changeTab',
+                'click .deleteAttach'                                                                                     : 'deleteAttach',
+                "click #health a:not(.disabled)"                                                                          : "showHealthDd",
+                "click #health ul li div:not(.disabled)"                                                                  : "chooseHealthDd",
+                "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                                        : "chooseOption",
+                "click .current-selected:not(.disabled)"                                                                  : "showNewSelect",
+                "click #createItem"                                                                                       : "createDialog",
+                "click #createJob"                                                                                        : "createJob",
+                "change input:not(.checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)": "showSaveButton",  // added id for noteView
+                "change #description"                                                                                     : "showSaveButton",
+                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)"                                       : "renderJobWTracks",
+                "mouseover #jobsItem"                                                                                     : "showRemoveButton",
+                "mouseleave #jobsItem"                                                                                    : "hideRemoveButton",
+                "click .fa.fa-trash"                                                                                      : "removeJobAndWTracks",
+                "dblclick td.editableJobs"                                                                                : "editRow",
+                "click #saveName"                                                                                         : "saveNewJobName",
+                "keydown input.editing "                                                                                  : "keyDown",
+                'click'                                                                                                   : 'hideSelect',
+                'keydown'                                                                                                 : 'keydownHandler',
+                "click a.quotation"                                                                                       : "viewQuotation",
+                "click a.invoice"                                                                                         : "viewInvoice"
             },
 
             initialize: function (options) {
@@ -637,7 +637,7 @@ define([
 
                 App.projectInfo = App.projectInfo || {};
 
-                App.projectInfo.currentTab = $aEllement.text().toLocaleLowerCase();
+                App.projectInfo.currentTab = $aEllement.attr("id").slice(0, -3);  // todo id
 
                 target.closest(".chart-tabs").find("a.active").removeClass("active");
                 target.addClass("active");
@@ -781,7 +781,7 @@ define([
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
                     filter  : filter,
-                    count   : 50
+                    count   : 100
                 });
 
                 var callback = _.once(cb);
@@ -790,13 +790,15 @@ define([
                     callback();
 
                     var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
-
+                    var itemsNumber = parseInt($('.selectedItemsNumber').text()) || 'all';
+                    var defaultItemsNumber = itemsNumber  || self.wCollection.namberToShow;
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
 
                     this.wTrackView = new wTrackView({
                         model      : self.wCollection,
+                        defaultItemsNumber : defaultItemsNumber,
                         filter     : filter,
                         startNumber: startNumber,
                         project    : self.formModel
@@ -1164,7 +1166,7 @@ define([
 
                     dialogHolder = $(".dialog-tabs-items");
                     dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                    dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
+                    dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass("active"); // added selector div in case finding bad element
                 }
             },
 

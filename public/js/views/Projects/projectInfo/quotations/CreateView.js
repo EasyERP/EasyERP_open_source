@@ -105,7 +105,8 @@ define([
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
-                $(".groupsAndUser tr").each(function () {
+
+                thisEl.find(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
                     }

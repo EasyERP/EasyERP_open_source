@@ -141,20 +141,23 @@ define([
             var self = this;
             var wId;
             var mid;
+            var status;
             var id = self.currentModel.get('_id');
 
             if (this.forSales) {
                 wId = 'Sales Order';
                 mid = 63;
+                status = "New";
             } else {
                 wId = 'Purchase Order';
                 mid = 57;
+                status = 'In Progress'; // todo workflow for purchase
             }
 
             populate.fetchWorkflow({
                 wId   : wId,
                 source: 'purchase',
-                status: 'New'
+                status: status
                 //targetSource: 'order'
             }, function (workflow) {
                 var products;
@@ -350,7 +353,7 @@ define([
             var i;
             var whoCanRW;
 
-            $(".groupsAndUser tr").each(function () {
+            thisEl.find(".groupsAndUser tr").each(function () {
                 if ($(this).data("type") === "targetUsers") {
                     usersId.push($(this).data("id"));
                 }

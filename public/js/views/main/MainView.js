@@ -28,6 +28,7 @@ define([
         createMenuViews: function () {
             var currentRoot = null;
             var currentChildren = null;
+
             if (this.contentType) {
                 currentChildren = this.collection.where({href: this.contentType});
                 var currentRootId = currentChildren[0] ? currentChildren[0].get("parrent") : null;
