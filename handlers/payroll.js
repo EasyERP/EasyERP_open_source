@@ -111,7 +111,7 @@ var PayRoll = function (models) {
             error = new Error();
             error.status = 401;
 
-            next(error);
+            return next(error);
         }
     };
 
@@ -141,7 +141,7 @@ var PayRoll = function (models) {
             error = new Error();
             error.status = 401;
 
-            next(error);
+            return next(error);
         }
     };
 
@@ -183,7 +183,7 @@ var PayRoll = function (models) {
             error = new Error();
             error.status = 401;
 
-            next(error);
+            return next(error);
         }
     };
 
@@ -226,7 +226,7 @@ var PayRoll = function (models) {
             error = new Error();
             error.status = 401;
 
-            next(error);
+            return next(error);
         }
     };
 
@@ -245,7 +245,7 @@ var PayRoll = function (models) {
                     error = new Error();
                     error.status = 403;
 
-                    next(error);
+                    return next(error);
                 }
 
                 if (keys.length) {
@@ -292,7 +292,7 @@ var PayRoll = function (models) {
                     error = new Error();
                     error.status = 403;
 
-                    next(error);
+                    return next(error);
                 }
 
                 async.each(body, function (data, cb) {
@@ -340,7 +340,7 @@ var PayRoll = function (models) {
                     error = new Error();
                     error.status = 403;
 
-                    next(error);
+                    return next(error);
                 }
 
                 query = PayRoll.find(queryObject).sort(sort).populate('employee').populate('type');
@@ -356,7 +356,7 @@ var PayRoll = function (models) {
             error = new Error();
             error.status = 401;
 
-            next(error);
+            return next(error);
         }
     }
 
@@ -388,7 +388,7 @@ var PayRoll = function (models) {
                     error = new Error();
                     error.status = 403;
 
-                    next(error);
+                   return next(error);
                 }
 
                 composeExpensesAndCache(req, function (err, result) {
@@ -403,7 +403,7 @@ var PayRoll = function (models) {
             error = new Error();
             error.status = 401;
 
-            next(error);
+            return next(error);
         }
     }
 
@@ -621,7 +621,7 @@ var PayRoll = function (models) {
                     error = new Error();
                     error.status = 403;
 
-                    next(error);
+                  return next(error);
                 }
 
                 salaryReport(req, function (err, result) {
@@ -636,7 +636,7 @@ var PayRoll = function (models) {
             error = new Error();
             error.status = 401;
 
-            next(error);
+            return next(error);
         }
     };
 
