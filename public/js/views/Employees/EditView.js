@@ -129,7 +129,7 @@ define([
                 var enable = this.currentModel.get('enableView');
                 var number = 7;
 
-                if (enable){
+                if (enable) {
                     number = 8;
                 }
 
@@ -168,7 +168,7 @@ define([
                     $(tds[2]).removeClass('hireDate');
                     $(tds[2]).addClass('fireDate');
                     $(tds[2]).attr('data-id', 'fireDate');
-                    if (enable){
+                    if (enable) {
                         $(tds[7]).removeClass('editable');
                     }
                     $(tds[number]).find('input').val(contractEndReason);
@@ -201,21 +201,21 @@ define([
 
                 if (dataId === 'salary') {
                     return false;
-                } else {
-                    $target.find('.editing').datepicker({
-                        dateFormat : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        onSelect   : function () {
-                            var editingDates = self.$el.find('.editing');
-
-                            editingDates.each(function () {
-                                $(this).parent().text($(this).val()).removeClass('changeContent');
-                                $(this).remove();
-                            });
-                        }
-                    }).addClass('datepicker');
                 }
+
+                $target.find('.editing').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true,
+                    onSelect   : function () {
+                        var editingDates = self.$el.find('.editing');
+
+                        editingDates.each(function () {
+                            $(this).parent().text($(this).val()).removeClass('changeContent');
+                            $(this).remove();
+                        });
+                    }
+                }).addClass('datepicker');
 
                 return false;
             },
@@ -411,9 +411,9 @@ define([
                     var jobPosition = tr.find('#jobPositionDd').attr('data-id');
                     var department = tr.find('#departmentsDd').attr('data-id');
                     var manager = tr.find('#projectManagerDD').attr('data-id') || null;
-                    var salary = parseInt(tr.find('[data-id="salary"]').text()) ||  (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
+                    var salary = parseInt(tr.find('[data-id="salary"]').text()) || (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
                     var info = tr.find('#statusInfoDd').val();
-                    var jobType = tr.find('#jobTypeDd').text();
+                    var jobType = $.trim(tr.find('#jobTypeDd').text());
 
                     var trFire = $(self.$el.find("#fire" + key));
 
@@ -438,17 +438,14 @@ define([
                         newFire[key].info = trFire.find('#statusInfoDd').val();
 
                         newFireArray.push(newFire[key]);
-                    } else if (!newFire[key]) {
+                    } else {
                         newFire[key] = _.clone(newHireArray[key]);
 
                         newFire[key].date = date;
                         newFire[key].info = 'Update';
 
                         newFireArray.push(newFire[key]);
-                    } else {
-                        newFireArray.push(newFire[key]);
                     }
-
                     return newHireArray;
                 });
 

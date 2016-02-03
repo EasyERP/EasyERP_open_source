@@ -1056,7 +1056,7 @@ var Employee = function (event, models) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Employees', employeeSchema).find();
-        query.where('isEmployee', true);
+        //query.where('isEmployee', true);
         query.select('_id name ');
         query.sort({'name.first': 1});
         query.exec(function (err, result) {

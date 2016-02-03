@@ -69,42 +69,106 @@
             "change #workflowNames"                            : "changeWorkflows",
             'keydown'                                          : 'keydownHandler',
             "mouseenter .avatar"                               : "showEdit",
-            "mouseleave .avatar"                                              : "hideEdit",
+            "mouseleave .avatar"                               : "hideEdit",
             "click .current-selected"                          : "showNewSelect",
             "click"                                            : "hideNewSelect",
             'click .dialog-tabs a'                             : 'changeTab',
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .hireEmployee"                              : "isEmployee",
             "click .refuseEmployee"                            : "refuseEmployee",
-            "click td.editable"                                : "editJob"
+            "click td.editable"                                : "editJob",
+            "click #update"                                    : "addNewRow",
+            "click .fa-trash"                                  : "deleteRow"
+        },
+
+        deleteRow: function (e) {
+            var target = $(e.target);
+            var tr = target.closest('tr');
+
+            tr.remove();
+
+            this.removeIcon.show();
+
+            this.$el.find('#update').show();
+        },
+
+        addNewRow: function (e) {
+            var $target = e ? $(e.target) : null;
+            var targetId = $target ? $target.attr('id') : null;
+            var table = this.$el.find('#hireFireTable');
+            var tr = table.find('tr').last().prev();
+            var dataContent = tr.attr('data-content');
+            var dataId = parseInt(tr.attr('data-id'));
+            var newId;
+            var row;
+            var tds;
+            var hire = this.currentModel.get('hire');
+            var newDate = hire[0].date;
+            var enable = this.currentModel.get('enableView');
+            var number = 7;
+
+            if (enable) {
+                number = 8;
+            }
+
+            this.removeIcon.hide();
+
+            this.$el.find('#update').hide();
+
+            newId = dataContent + (dataId + 1).toString();
+
+            table.append('<tr id="' + newId + '">' + tr.html() + '</tr>');
+
+            row = table.find('tr').last();
+            row.attr('data-id', dataId + 1);
+            row.attr('data-content', dataContent);
+
+            tds = row.find('td');
+
+            if (targetId === 'update') {
+                $(tds[0]).html('<a class="fa fa-trash" id="' + (dataId + 1) + '"></a>');
+                $(tds[1]).text('Hired');
+                $(tds[2]).addClass('changeContent');
+                $(tds[2]).addClass('editable hireDate');
+                $(tds[2]).text(common.utcDateToLocaleDate(newDate));
+                $(tds[number]).find('input').val('Update');
+            }
         },
 
         editJob: function (e) {
             var self = this;
             var $target = $(e.target);
             var dataId = $target.attr('data-id');
+            var tr = $target.closest('tr');
             var tempContainer;
+            var maxDate = null;
 
             tempContainer = ($target.text()).trim();
-            $target.html('<input class="editing" type="text" value="' + tempContainer + '">');
+            $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
 
             if (dataId === 'salary') {
                 return false;
-            } else {
-                $target.find('.editing').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
-                        var editingDates = self.$el.find('.editing');
-
-                        editingDates.each(function () {
-                            $(this).parent().text($(this).val());
-                            $(this).remove();
-                        });
-                    }
-                }).addClass('datepicker');
             }
+
+            if (tr.attr('data-content') !== 'fire') {
+                maxDate = this.fireDate;
+            }
+
+            $target.find('.editing').datepicker({
+                dateFormat : "d M, yy",
+                changeMonth: true,
+                changeYear : true,
+                minDate    : self.hireDate,
+                maxDate    : maxDate,
+                onSelect   : function () {
+                    var editingDates = self.$el.find('.editing');
+
+                    editingDates.each(function () {
+                        $(this).parent().text($(this).val());
+                        $(this).remove();
+                    });
+                }
+            }).removeClass('datepicker');
 
             return false;
         },
@@ -151,7 +215,7 @@
 
         },
 
-        isEmployee    : function (e) {
+        isEmployee: function (e) {
             e.preventDefault();
             var hired = {};
 
@@ -175,7 +239,7 @@
             });
         },
 
-        changeTab     : function (e) {
+        changeTab: function (e) {
             var holder = $(e.target);
             var n;
             var dialog_holder;
@@ -227,14 +291,14 @@
             $(".crop-images-dialog").remove();
         },
 
-        showEdit  : function () {
+        showEdit: function () {
             $(".upload").animate({
                 height : "20px",
                 display: "block"
             }, 250);
         },
 
-        hideEdit  : function () {
+        hideEdit: function () {
             $(".upload").animate({
                 height : "0px",
                 display: "block"
@@ -242,10 +306,12 @@
 
         },
 
-        saveItem     : function () {
+        saveItem  : function () {
+            this.hideNewSelect();
+
             var self = this;
             var mid = 39;
-            var lengthHire;
+            var $tableFire = this.$el.find('#hireFireTable');
             var jobType;
             var department;
             var jobPosition;
@@ -310,28 +376,54 @@
                 group: groupsId
             };
             var whoCanRW = el.find("[name='whoCanRW']:checked").val();
-            var hireArray = this.currentModel.get('hire');
+            var hireArray = $tableFire.find('[data-content="hire"]');
+
+            var newHireArray = [];
+            var lengthHire = hireArray.length - 1;
             var fireArray = this.currentModel.get('fire');
+            var hireModelArray = this.currentModel.get('hire');
             var newFire = _.clone(fireArray);
             var newFireArray = [];
 
-            _.each(fireArray, function (fire, key) {
-                var tr = self.$el.find("#fire" + key);
-                var date = new Date($.trim(tr.find("[data-id='fireDate']").text()));
+            _.each(hireArray, function (hire, key) {
+                var tr = self.$el.find("#hire" + key);
+                var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
+                var jobPosition = tr.find('#jobPositionDd').attr('data-id');
+                var department = tr.find('#departmentsDd').attr('data-id');
+                var manager = tr.find('#projectManagerDD').attr('data-id') || null;
+                var salary = parseInt(tr.find('[data-id="salary"]').text()) || (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
                 var info = tr.find('#statusInfoDd').val();
+                var jobType = $.trim(tr.find('#jobTypeDd').text());
 
-                if (key === fireArray.length - 1) {
-                    newFire[key] = _.clone(fireArray[key]);
+                var trFire = $(self.$el.find("[data-content='fire']")).last();
 
-                    newFire[key].date = date;
-                    newFire[key].info = info;
+                newHireArray.push({
+                    date       : date,
+                    department : department,
+                    jobPosition: jobPosition,
+                    manager    : manager,
+                    jobType    : jobType,
+                    salary     : salary,
+                    info       : info
+                });
 
-                    newFireArray.push(newFire[key]);
-                } else {
-                    newFireArray.push(newFire[key]);
+                if (lengthHire === key) {
+                    newFireArray.push(fireArray[fireArray.length - 1]);
+
+                    newFireArray[newFireArray.length - 1].date = new Date($.trim(trFire.find("[data-id='fireDate']").text()));
+                    newFireArray[newFireArray.length - 1].info = trFire.find('#statusInfoDd').val();
+
+                    return newHireArray;
                 }
 
-                return newFireArray;
+                newFire[key] = _.clone(newHireArray[key]);
+
+                newFire[key].date = date;
+                newFire[key].info = 'Update';
+
+                newFireArray.push(newFire[key]);
+
+                return newHireArray;
             });
 
             lengthHire = hireArray.length;
@@ -346,37 +438,51 @@
             var viewType = custom.getCurrentVT();
             var nextAction = $.trim(this.$el.find("#nextAction").val());
 
+            newHireArray.sort(function (a, b) {
+                return new Date(a.date) - new Date(b.date);
+            });
+
+            newFireArray.sort(function (a, b) {
+                return new Date(a.date) - new Date(b.date);
+            });
+
+            newFireArray[newFireArray.length - 1].salary = newHireArray[newHireArray.length - 1].salary;
+            newFireArray[newFireArray.length - 1].department = newHireArray[newHireArray.length - 1].department;
+            newFireArray[newFireArray.length - 1].jobPosition = newHireArray[newHireArray.length - 1].jobPosition;
+            newFireArray[newFireArray.length - 1].manager = newHireArray[newHireArray.length - 1].manager;
+            newFireArray[newFireArray.length - 1].jobType = newHireArray[newHireArray.length - 1].jobType;
+
             var data = {
 
-                name       : name,
-                gender     : gender,
-                jobType    : jobType,
-                marital    : marital,
-                workAddress: workAddress,
-                social     : social,
-                tags         : tags,
-                workEmail    : workEmail,
-                personalEmail: personalEmail,
-                skype        : skype,
-                workPhones   : workPhones,
-                bankAccountNo: bankAccountNo,
-                relatedUser: relatedUser,
-                department : department,
-                jobPosition: jobPosition,
-                manager    : manager,
-                identNo    : identNo,
-                passportNo : passportNo,
-                otherId    : otherId,
-                homeAddress: homeAddress,
-                dateBirth  : dateBirthSt,
-                source     : sourceId,
-                imageSrc   : this.imageSrc,
-                nationality: nationality,
-                groups     : groups,
-                whoCanRW  : whoCanRW,
-                hire      : hireArray,
-                fire      : newFireArray,
-                nextAction: nextAction,
+                name          : name,
+                gender        : gender,
+                jobType       : jobType,
+                marital       : marital,
+                workAddress   : workAddress,
+                social        : social,
+                tags          : tags,
+                workEmail     : workEmail,
+                personalEmail : personalEmail,
+                skype         : skype,
+                workPhones    : workPhones,
+                bankAccountNo : bankAccountNo,
+                relatedUser   : relatedUser,
+                department    : department,
+                jobPosition   : jobPosition,
+                manager       : manager,
+                identNo       : identNo,
+                passportNo    : passportNo,
+                otherId       : otherId,
+                homeAddress   : homeAddress,
+                dateBirth     : dateBirthSt,
+                source        : sourceId,
+                imageSrc      : this.imageSrc,
+                nationality   : nationality,
+                groups        : groups,
+                whoCanRW      : whoCanRW,
+                hire          : newHireArray,
+                fire          : newFireArray,
+                nextAction    : nextAction,
                 referredBy    : referredBy,
                 expectedSalary: expectedSalary,
                 proposedSalary: proposedSalary
@@ -461,7 +567,7 @@
                 }
             });
         },
-        deleteItem   : function (event) {
+        deleteItem: function (event) {
             event.preventDefault();
 
             var mid = 39;
@@ -542,9 +648,14 @@
             var parentUl = $target.parent();
             var element = $target.closest('a') || parentUl.closest('a');
             var id = element.attr('id') || parentUl.attr('id');
+            var valueId = $target.attr('id');
 
-            $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-
+            if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
+                element.text($target.text());
+                element.attr('data-id', valueId);
+            } else {
+                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+            }
         },
 
         render: function () {
@@ -634,6 +745,10 @@
                 changeMonth: true,
                 changeYear : true
             });
+
+            this.removeIcon = this.$el.find('.fa-trash');
+            this.hireDate = this.currentModel.get('hire')[0].date;
+            this.fireDate = this.$el.find("[data-content='fire']").last().find('.fireDate').text();
 
             var model = this.currentModel.toJSON();
             if (model.groups) {
