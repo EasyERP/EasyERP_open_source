@@ -9,8 +9,8 @@ define([
         'text!templates/salaryReport/TopBarTemplate.html',
         'custom',
         'constants',
-    'common',
-    'moment'
+        'common',
+        'moment'
     ],
     function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS, common, moment) {
         var TopBarView = Backbone.View.extend({
@@ -21,16 +21,15 @@ define([
             initialize: function (options) {
                 if (options.collection) {
                     this.collection = options.collection;
-                    this.startDate = common.utcDateToLocaleDate(options.startDate);
-                    this.endDate = common.utcDateToLocaleDate(options.endDate);
                 }
+
                 this.render();
             },
 
             events: {
-                "click #updateDate"     : "changeDateRange",
-                "click .dateRange"      : "toggleDateRange",
-                "click #cancelBtn"      : "cancel"
+                "click #updateDate": "changeDateRange",
+                "click .dateRange" : "toggleDateRange",
+                "click #cancelBtn" : "cancel"
             },
 
             cancel: function (e) {
@@ -53,6 +52,11 @@ define([
 
                 startTime.text(startDate);
                 endTime.text(endDate);
+
+                Custom.cacheToApp('salaryReportDateRange', {
+                    startDate: startDate,
+                    endDate  : endDate
+                });
 
                 this.trigger('changeDateRange');
                 this.toggleDateRange(e);
@@ -108,11 +112,20 @@ define([
                     .datepicker('setDate', endDate);
             },
 
-
             render: function () {
                 $('title').text(this.contentType);
+                var dateRange = Custom.retriveFromCash('salaryReportDateRange');
                 var viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType, startDate: this.startDate, endDate: this.endDate}));
+
+                this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
+                this.endDate = common.utcDateToLocaleDate(dateRange.endDate);
+
+                this.$el.html(this.template({
+                    viewType: viewType,
+                    contentType: this.contentType,
+                    startDate: this.startDate,
+                    endDate: this.endDate
+                }));
 
                 this.bindDataPickers(this.startDate, this.endDate);
 

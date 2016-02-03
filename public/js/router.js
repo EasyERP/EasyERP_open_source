@@ -761,25 +761,9 @@ define([
                         };
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
-                    } else if (contentType === 'salaryReport') {
-                        startDate = new Date();
-                        startDate.setMonth(0);
-                        startDate.setDate(1);
-                        endDate = new Date();
-                        endDate.setMonth(11);
-                        endDate.setDate(31);
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
-
-                    if (contentType === 'salaryReport') {
-                        startDate = new Date();
-                        startDate.setMonth(0);
-                        startDate.setDate(1);
-                        endDate = new Date();
-                        endDate.setMonth(11);
-                        endDate.setDate(31);
-                    }
                 }
 
                 //savedFilter = custom.savedFilters(contentType, filter);
@@ -798,9 +782,7 @@ define([
                         filter          : savedFilter,
                         parrentContentId: parrentContentId,
                         contentType     : contentType,
-                        newCollection   : newCollection,
-                        startDate       : startDate,
-                        endDate         : endDate
+                        newCollection   : newCollection
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
@@ -811,17 +793,13 @@ define([
 
                         var topbarView = new topBarView({
                             actionType: "Content",
-                            collection: collection,
-                            startDate : startDate,
-                            endDate   : endDate
+                            collection: collection
                         });
                         var contentview = new contentView({
                             collection   : collection,
                             startTime    : startTime,
                             filter       : savedFilter,
-                            newCollection: newCollection,
-                            startDate    : startDate,
-                            endDate      : endDate
+                            newCollection: newCollection
                         });
 
                         topbarView.bind('copyEvent', contentview.copy, contentview);

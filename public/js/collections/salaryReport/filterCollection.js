@@ -4,8 +4,9 @@
 'use strict';
 define([
     'Backbone',
-    'models/EmployeeDashboardItem'
-], function (Backbone, EmpModel) {
+    'models/EmployeeDashboardItem',
+    'custom'
+], function (Backbone, EmpModel, Custom) {
     var salatyCollection = Backbone.Collection.extend({
 
         model       : EmpModel,
@@ -18,9 +19,28 @@ define([
         initialize: function (options) {
             options = options || {};
             this.startTime = new Date();
-            this.filter = options ? options.filter : {};
-            this.startDate = options.startDate;
-            this.endDate = options.endDate;
+            this.filter = options.filter || Custom.retriveFromCash('salaryReport.filter');
+            var startDate = new Date();
+            var endDate = new Date();
+            startDate.setMonth(0);
+            startDate.setDate(1);
+            endDate.setMonth(11);
+            endDate.setDate(31);
+            var dateRange = Custom.retriveFromCash('salaryReportDateRange') || {};
+            this.startDate = dateRange.startDate;
+            this.endDate = dateRange.endDate;
+
+            this.startDate = dateRange.startDate ||  startDate;
+            this.endDate = dateRange.endDate || endDate;
+
+            options.startDate = this.startDate;
+            options.endDate = this.endDate;
+            options.filter = this.filter;
+
+            Custom.cacheToApp('salaryReportDateRange', {
+                startDate: this.startDate,
+                endDate  : this.endDate
+            });
 
             this.fetch({
                 data   : options,
@@ -67,7 +87,7 @@ define([
             var that = this;
             var filterObject = options || {};
 
-            filterObject.filter = (options) ? options.filter : {};
+            filterObject.filter = options ? options.filter : {};
 
             this.fetch({
                 data   : filterObject,

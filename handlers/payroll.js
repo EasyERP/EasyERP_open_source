@@ -423,14 +423,15 @@ var PayRoll = function (models) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var query = req.query;
         //var year = parseInt(query.year, 10) || date.getFullYear();
+        var filter = query.filter || {};
         var startDate = new Date (query.startDate);
         var endDate = new Date (query.endDate);
-        var filter = query.filter || '';
         var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
         var startDateKey = moment(startDate).year() * 100 +  moment(startDate).isoWeek();
         var endDateKey = moment(endDate).year() * 100 +  moment(endDate).isoWeek();
+        var filterValue;
 
         function caseFilterEmployee(filter) {
             var condition;
@@ -500,9 +501,8 @@ var PayRoll = function (models) {
             };
 
             if (filter && typeof filter === 'object') {
-                if (filter.condition && filter.condition === 'or') {
-                    matchObj.$or = caseFilterEmployee(filter);
-                } else {
+                filterValue = caseFilterEmployee(filter);
+                if (filterValue.length){
                     matchObj.$and.push({$and: caseFilterEmployee(filter)});
                 }
             }

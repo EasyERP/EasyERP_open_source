@@ -610,7 +610,7 @@ define([
                 var filterName = this.parentContentType + '.filter';
                 var filters = custom.retriveFromCash(filterName) || App.filter;
                 var allResults;
-
+                App.filter = filters;
                 $currentEl.html(this.template({filterCollection: this.constantsObject}));
 
                 this.renderFilterContent(options);

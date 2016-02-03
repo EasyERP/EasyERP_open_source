@@ -13,10 +13,11 @@ define([
         'constants',
         'moment',
         'dataService',
-    'helpers'
+        'helpers',
+        'custom'
     ],
 
-    function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, moment, dataService, helpers) {
+    function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, moment, dataService, helpers, custom) {
         var ListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -34,17 +35,35 @@ define([
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
-                this.filter = options.filter || {};
                 this.sort = options.sort || {};
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.page = options.collection.page;
+                var dateRange = custom.retriveFromCash('salaryReportDateRange');
 
-                this.startDate = options.startDate;
-                this.endDate = options.endDate;
+                this.filter = options.filter || custom.retriveFromCash('salaryReport.filter');
+
+                if (!this.filter) {
+                    this.filter = {};
+                }
+
+                if (!this.filter.startDate) {
+                    this.filter.startDate = {
+                        key  : 'startDate',
+                        value: new Date(dateRange.startDate)
+                    };
+                    this.filter.endDate = {
+                        key  : 'endDate',
+                        value: new Date(dateRange.endDate)
+                    };
+                }
+
+                this.startDate = new Date(this.filter.startDate.value);
+                this.endDate = new Date(this.filter.endDate.value);
 
                 this.render();
 
                 this.contentCollection = reportCollection;
+                custom.cacheToApp('salaryReport.filter', this.filter);
             },
 
             goSort: function (e) {
@@ -93,23 +112,40 @@ define([
             },
 
             changeDateRange: function () {
-
                 var stDate = $('#startDate').val();
                 var enDate = $('#endDate').val();
 
                 this.startDate = new Date(stDate);
                 this.endDate = new Date(enDate);
 
+                if (!this.filter) {
+                    this.filter = {};
+                }
+
+                this.filter.startDate = {
+                    key  : 'startDate',
+                    value: stDate
+                };
+
+                this.filter.endDate = {
+                    key  : 'endDate',
+                    value: enDate
+                };
+
                 this.startKey = moment(this.startDate).year() * 100 + moment(this.startDate).month();
                 this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
 
                 var searchObject = {
-                    startDate  : this.startDate,
-                    endDate: this.endDate,
-                    filter: this.filter
+                    startDate: this.startDate,
+                    endDate  : this.endDate,
+                    filter   : this.filter
                 };
 
                 this.collection.showMore(searchObject);
+
+                App.filter = this.filter;
+
+                custom.cacheToApp('salaryReport.filter', this.filter);
             },
 
             showMoreContent: function (newModels) {
@@ -118,8 +154,11 @@ define([
                 var itemView;
 
                 $currentEl.find('#salaryReport').html('');
-                $currentEl.find('#salaryReport').html(_.template(listTemplate, {weekSplitter: helpers.weekSplitter, startKey: this.startKey, endKey: this.endKey}));
-
+                $currentEl.find('#salaryReport').html(_.template(listTemplate, {
+                    weekSplitter: helpers.weekSplitter,
+                    startKey: this.startKey,
+                    endKey: this.endKey
+                }));
 
                 this.$el.find("#listTable").html('');
 
@@ -143,9 +182,14 @@ define([
                 this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
                 context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({count: itemsNumber, page: 1, filter: filter, starDate:this.startDate, endDate: this.endDate});
+                context.collection.showMore({
+                    count: itemsNumber,
+                    page: 1,
+                    filter: filter,
+                    starDate: this.startDate,
+                    endDate: this.endDate
+                });
             },
-
 
             getMinDate: function (context) {
                 dataService.getData('/employee/getYears', {}, function (response) {
@@ -165,7 +209,11 @@ define([
                 this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
 
                 $currentEl.html('');
-                $currentEl.append(_.template(listTemplate, {weekSplitter: helpers.weekSplitter, startKey: this.startKey, endKey: this.endKey}));
+                $currentEl.append(_.template(listTemplate, {
+                    weekSplitter: helpers.weekSplitter,
+                    startKey: this.startKey,
+                    endKey: this.endKey
+                }));
 
                 this.yearElement = $currentEl.find('#yearSelect');
 
@@ -180,6 +228,8 @@ define([
                 });
 
                 $currentEl.append(itemView.render());
+
+                App.filter = this.filter;
 
                 this.renderFilter(self);
 
