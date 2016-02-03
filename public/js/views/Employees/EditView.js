@@ -207,6 +207,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
+                    minDate    : self.hireDate,
                     onSelect   : function () {
                         var editingDates = self.$el.find('.editing');
 
@@ -692,6 +693,7 @@ define([
                 });
 
                 this.removeIcon = this.$el.find('.fa-trash');
+                this.hireDate = this.currentModel.get('hire')[0].date;
 
                 var model = this.currentModel.toJSON();
                 if (model.groups) {
