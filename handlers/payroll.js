@@ -388,7 +388,7 @@ var PayRoll = function (models) {
                     error = new Error();
                     error.status = 403;
 
-                   return next(error);
+                    return next(error);
                 }
 
                 composeExpensesAndCache(req, function (err, result) {
@@ -621,7 +621,7 @@ var PayRoll = function (models) {
                     error = new Error();
                     error.status = 403;
 
-                  return next(error);
+                    return next(error);
                 }
 
                 salaryReport(req, function (err, result) {
