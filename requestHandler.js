@@ -2871,7 +2871,7 @@ var requestHandler = function (app, event, mainDb) {
         getModules          : getModules,
         redirectFromModuleId: redirectFromModuleId,
 
-        login                     : login,
+        /*login                     : login,*/
         /*createUser                : createUser,*/
         usersTotalCollectionLength: usersTotalCollectionLength,
         getUsers                  : getUsers,

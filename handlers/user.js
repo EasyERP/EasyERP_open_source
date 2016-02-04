@@ -349,6 +349,26 @@ var User = function (event, models) {
             res.status(200).send({success: 'User remove success'});
         });
     };
+
+    this.getByProfile = function(req, res, next){
+        var profileId = req.params.id;
+        var response = {};
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+
+        UserModel.find({profile: profileId}, {_id: 0, login: 1}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            response.count = result.length;
+            response.data = result.map(function (item) {
+                return item.login;
+            });
+            response.isOwnProfile = response.data.indexOf(req.session.uName) !== -1;
+
+            res.status(200).send(response);
+        });
+    };
 };
 
 module.exports = User;

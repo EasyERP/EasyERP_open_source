@@ -1,4 +1,5 @@
 define([
+        'jQuery',
         'views/listViewBase',
         'text!templates/Users/list/ListHeader.html',
         'views/Users/CreateView',
@@ -7,11 +8,11 @@ define([
         'dataService'
     ],
 
-    function (listViewBase, listTemplate, createView, listItemView, contentCollection, dataService) {
+    function ($, listViewBase, listTemplate, createView, ListItemView, contentCollection) {
+        'use strict';
         var UsersListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
             contentCollection       : contentCollection,
             contentType             : 'Users',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/totalCollectionLength/Users',
@@ -26,23 +27,23 @@ define([
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
                 this.sort = options.sort;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber);
                 this.contentCollection = contentCollection;
             },
 
             render: function () {
-                var self;
                 var $currentEl;
 
                 $('.ui-dialog ').remove();
 
-                self = this;
                 $currentEl = this.$el;
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                $currentEl.append(new listItemView({
+                $currentEl.append(new ListItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
@@ -54,7 +55,7 @@ define([
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-            },
+            }
 
         });
 

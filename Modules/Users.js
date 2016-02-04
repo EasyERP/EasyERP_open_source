@@ -125,8 +125,8 @@ var Users = function (mainDb, models) {
         }
     }
 
-    function login(req, res, next) {
-        /**
+    /*function login(req, res, next) {
+        /!**
          * __Type__ `POST`
          *
          * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/login`
@@ -140,12 +140,12 @@ var Users = function (mainDb, models) {
          * @method login
          * @property {JSON} Object - Object with data for logining (like in example)
          * @instance
-         */
+         *!/
 
         try {
             if (data) {
                 if (data.login || data.email) {
-                    models.get(data.dbId, 'Users', userSchema).findOne({$or: [{login: { $regex: data.login , $options: 'i' }/*.toLowerCase()*/}, {email: { $regex: data.login , $options: 'i' }}]}, function (err, _user) {
+                    models.get(data.dbId, 'Users', userSchema).findOne({$or: [{login: { $regex: data.login , $options: 'i' }/!*.toLowerCase()*!/}, {email: { $regex: data.login , $options: 'i' }}]}, function (err, _user) {
 
                         var shaSum;
                         var lastAccess;
@@ -154,7 +154,7 @@ var Users = function (mainDb, models) {
                             if (_user && _user._id) {
                                 shaSum = crypto.createHash('sha256');
                                 shaSum.update(data.pass);
-                                if (/*((_user.login == data.login) || (_user.email == data.login)) && */_user.pass === shaSum.digest('hex')) {
+                                if (/!*((_user.login == data.login) || (_user.email == data.login)) && *!/_user.pass === shaSum.digest('hex')) {
                                     req.session.loggedIn = true;
                                     req.session.uId = _user._id;
                                     req.session.uName = _user.login;
@@ -196,7 +196,7 @@ var Users = function (mainDb, models) {
             logWriter.log("Users.js  login" + exception);
             res.send(500);
         }
-    }
+    }*/
 
     function getUsers(req, response, data) {
         /**
@@ -495,7 +495,7 @@ var Users = function (mainDb, models) {
 
         createUser: createUser,
 
-        login: login,
+        /*login: login,*/
 
         getUsers: getUsers,
 

@@ -1,4 +1,6 @@
 define([
+        'Backbone',
+        'jQuery',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'text!templates/Notes/importTemplate.html',
@@ -7,7 +9,9 @@ define([
         'dataService'
     ],
 
-    function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
+    function (Backbone, $, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService) {
+        "use strict";
+
         var ListViewBase = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -19,18 +23,18 @@ define([
 
             events: {
                 "click #previousPage, #nextPage, #firstShowPage, #lastShowPage": "checkPage",
-                "click .itemsNumber"          : "switchPageCounter",
-                "click .showPage"             : "showPage",
-                "change #currentShowPage"     : "showPage",
-                "click .checkbox"             : "checked",
-                "click .list td:not(.notForm)": "gotoForm",
-                "mouseover .currentPageList"  : "showPagesPopup",
-                "click"                       : "hidePagesPopup",
-                "click .oe_sortable"          : "goSort"
+                "click .itemsNumber"                                           : "switchPageCounter",
+                "click .showPage"                                              : "showPage",
+                "change #currentShowPage"                                      : "showPage",
+                "click .checkbox"                                              : "checked",
+                "click .list td:not(.notForm)"                                 : "gotoForm",
+                "mouseover .currentPageList"                                   : "showPagesPopup",
+                "click"                                                        : "hidePagesPopup",
+                "click .oe_sortable"                                           : "goSort"
             },
 
             //to remove zombies was needed for event after recieveInvoice on projectInfo
-            remove: function() {
+            remove: function () {
                 this.$el.empty().off();
                 this.stopListening();
 
@@ -64,7 +68,7 @@ define([
                 var sortObject;
                 var newRows = this.$el.find('#false');
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -115,7 +119,6 @@ define([
                     contentType  : this.contentType,
                     newCollection: this.newCollection
                 }, function (response, context) {
-
                     var page = context.page || 1;
                     var length = context.listLength = response.count || 0;
 
@@ -134,16 +137,18 @@ define([
             },
 
             gotoForm: function (e) {
+                var id = $(e.target).closest("tr").data("id");
+
                 if (!this.formUrl) {
                     return;
                 }
+
                 App.ownContentType = true;
-                var id = $(e.target).closest("tr").data("id");
                 window.location.hash = this.formUrl + id;
             },
 
             createItem: function () {
-                new this.createView();
+                return new this.createView();
             },
 
             checked: function (e) {
@@ -155,22 +160,23 @@ define([
                 if (this.collection.length > 0) {
 
                     checkLength = $("input.checkbox:checked").length;
+
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
                         checkAll$ = $('#check_all');
                         checkAll$.prop('checked', false);
 
-                        if (checkLength == this.collection.length) {
+                        if (checkLength === this.collection.length) {
                             checkAll$.prop('checked', true);
                         }
-                    }
-                    else {
+                    } else {
                         $("#top-bar-deleteBtn").hide();
                         checkAll$ = $('#check_all');
                         checkAll$.prop('checked', false);
                     }
                 }
-                if (typeof(this.setAllTotalVals) === "function"){   // added in case of existing setAllTotalVals in View
+
+                if (typeof(this.setAllTotalVals) === "function") {   // added in case of existing setAllTotalVals in View
                     this.setAllTotalVals();
                 }
             },
@@ -182,6 +188,7 @@ define([
                 var localCounter = 0;
                 var listTableCheckedInput;
                 var count;
+
                 listTableCheckedInput = $("#listTable").find("input:checked");
 
                 count = listTableCheckedInput.length;
@@ -227,7 +234,7 @@ define([
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -260,7 +267,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) ||(this.isNewRow ? this.isNewRow() : newRows.length)){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -270,7 +277,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                switch(elementId) {
+                switch (elementId) {
                     case 'previousPage':
                         this.prevP(data);
                         break;
@@ -301,7 +308,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -361,7 +368,7 @@ define([
                     this.$el.find('.search-options').addClass('hidden');
                 }
 
-                if (typeof(this.setChangedValueToModel) === "function" && el.tagName !== 'SELECT'){ //added for SetChangesToModel in ListView
+                if (typeof(this.setChangedValueToModel) === "function" && el.tagName !== 'SELECT') { //added for SetChangesToModel in ListView
                     this.setChangedValueToModel();
                 }
             },
@@ -398,7 +405,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -411,6 +418,7 @@ define([
                 var holder = this.$el;
                 var itemView;
                 var page = holder.find("#currentShowPage").val();
+                var pagenation;
 
                 holder.find("#listTable").empty();
 
@@ -424,27 +432,26 @@ define([
 
                 itemView.undelegateEvents();
 
-                var pagenation = holder.find('.pagination');
+                pagenation = holder.find('.pagination');
+
                 if (newModels.length !== 0) {
                     pagenation.show();
                 } else {
                     pagenation.hide();
                 }
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-
-                /*if (this.filterView) {
-                    this.filterView.renderFilterContent();
-                }*/
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            showMoreAlphabet: function (newModels) {
+           /* showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
                 var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
+
                 this.countPerPage = newModels.length;
                 content.remove();
                 holder.append(this.template({collection: newModels.toJSON()}));
@@ -454,7 +461,7 @@ define([
                 created.text("Created in " + (new Date() - this.startTime) + " ms");
                 holder.prepend(alphaBet);
                 holder.append(created);
-            },
+            },*/
 
             //</editor-fold>
 
@@ -487,7 +494,7 @@ define([
                     pagenation.show();
                 }
 
-                if (this.editCollection){ // add for reset editCollection after sort
+                if (this.editCollection) { // add for reset editCollection after sort
                     this.editCollection.reset(this.collection.models);
                 }
             },
@@ -499,10 +506,10 @@ define([
 
                 this.startTime = new Date();
 
-                this.filter = (this.filter) ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
+                this.filter = this.filter || {};
+                this.filter.letter = selectedLetter;
 
-                if ($(e.target).text() == "All") {
+                if ($(e.target).text() === "All") {
                     selectedLetter = "";
                     this.filter = {};
                 }
@@ -520,6 +527,7 @@ define([
 
             renderCheckboxes: function () {
                 var self = this;
+
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0) {
@@ -527,15 +535,17 @@ define([
                     } else {
                         $("#top-bar-deleteBtn").hide();
                     }
-                    if (typeof(self.setAllTotalVals) === "function"){   // added in case of existing setAllTotalVals method in View
+                    if (typeof(self.setAllTotalVals) === "function") {   // added in case of existing setAllTotalVals method in View
                         self.setAllTotalVals();
                     }
                 });
             },
 
             renderAlphabeticalFilter: function () {
-                this.hasAlphabet = true;
                 var self = this;
+                var currentLetter;
+
+                this.hasAlphabet = true;
 
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
@@ -545,7 +555,8 @@ define([
                         alphabeticArray   : self.alphabeticArray,
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
+
+                    currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
                     if (currentLetter) {
                         $('#startLetter').find('a').each(function () {
                             var target = $(this);
@@ -565,15 +576,14 @@ define([
 
                 pagenation = self.$el.find('.pagination');
 
-
                 if (self.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
                     // This is for counterPages at start
-                    countNumber = ([100, 200, 500].indexOf(this.defaultItemsNumber)!== -1) ? this.defaultItemsNumber : "all"; // changed in case of bad view after refreshing with not default counter
+                    countNumber = ([100, 200, 500].indexOf(this.defaultItemsNumber) !== -1) ? this.defaultItemsNumber : "all"; // changed in case of bad view after refreshing with not default counter
 
-                    this.previouslySelected = $('.itemsNumber:contains('+ countNumber +')');
+                    this.previouslySelected = $('.itemsNumber:contains(' + countNumber + ')');
                     this.previouslySelected.addClass('selectedItemsNumber');
                     // end
                 }
@@ -581,7 +591,6 @@ define([
                 $(document).on("click", function (e) {
                     self.hidePagesPopup(e);
                 });
-
 
             },
 
@@ -594,9 +603,9 @@ define([
                     if (baseFilter) {
                         filter[baseFilter.name] = baseFilter.value;
                     }
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self);
                 });
-                self.filterView.bind('defaultFilter', function () {
+                self.filterView.bind('defaultFilter', function (filter) {
                     if (baseFilter) {
                         filter[baseFilter.name] = baseFilter.value;
                     }
@@ -618,7 +627,7 @@ define([
 
                 this.deleteRender(deleteCounter, deletePage, {
                     filter       : this.filter,
-                    newCollection: this.newCollection,
+                    newCollection: this.newCollection
                 });
 
                 var pagenation = this.$el.find('.pagination');
@@ -658,7 +667,7 @@ define([
             },
 
             importFiles: function (context) {
-                new attachView({
+                new AttachView({
                     modelName: context.contentType,
                     import   : true
                 });
@@ -666,15 +675,18 @@ define([
 
         });
 
-        ListViewBase.extend = function (child) {
+        ListViewBase.extend = function () {
             var view = Backbone.View.extend.apply(this, arguments);
             var key;
             var protoEvents = this.prototype.events;
             var protoKeys = Object.keys(protoEvents);
             var viewEvents = view.prototype.events;
+            var length = protoKeys.length;
+            var i;
 
-            for (var i = 0, length = protoKeys.length; i < length; i++) {
+            for (i = 0; i < length; i++) {
                 key = protoKeys[i];
+
                 if (viewEvents.hasOwnProperty(key)) {
                     continue;
                 }
