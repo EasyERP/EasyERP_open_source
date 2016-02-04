@@ -2211,19 +2211,19 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //};
 
-    function uploadEmployeesFile(req, res, id, files) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.addAtach(req, id, files, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function uploadEmployeesFile(req, res, id, files) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.addAtach(req, id, files, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     // get employee or Applications for list or thumbnails
     //function getEmployeesFilter(req, res) {
@@ -2987,7 +2987,7 @@ var requestHandler = function (app, event, mainDb) {
         //getCampaigns                  : getCampaigns,
         //employeesTotalCollectionLength: employeesTotalCollectionLength,
         //getEmployeesFilter            : getEmployeesFilter,
-        uploadEmployeesFile           : uploadEmployeesFile,
+        //uploadEmployeesFile           : uploadEmployeesFile,
         //getApplicationById            : getApplicationById,
         //getApplicationsForKanban      : getApplicationsForKanban,
 

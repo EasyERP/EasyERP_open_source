@@ -1567,7 +1567,7 @@ var Employee = function (event, models) {
 		//getEmployeesAlphabet          : getEmployeesAlphabet,
 		//getForDd                      : getForDd,
 		//getForDdByRelatedUser         : getForDdByRelatedUser,
-		addAtach                      : addAtach,
+		//addAtach                      : addAtach,
 		//updateOnlySelectedFields      : updateOnlySelectedFields,
 		//remove                        : remove,
 		//getApplications               : getApplications, //usage was not found

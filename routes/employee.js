@@ -9,6 +9,8 @@ module.exports = function (event, models) {
     var moduleId = MODULES.EMPLOYEES;
     var handler = new EmployeeHandler(event, models);
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var multipart = require('connect-multiparty');
+    var multipartMiddleware = multipart();
 
     router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilter);
     router.get('/thumbnails', authStackMiddleware, accessStackMiddlware, handler.getFilter);
@@ -29,6 +31,7 @@ module.exports = function (event, models) {
     router.get('/languages', authStackMiddleware, handler.getLanguages);
     router.get('/sources', authStackMiddleware, handler.getSources);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
+    router.post('/uploadEmployeesFiles', authStackMiddleware, accessStackMiddlware, multipartMiddleware, handler.uploadEmployeesFiles);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);
     router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
 

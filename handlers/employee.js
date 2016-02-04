@@ -7,11 +7,12 @@ var Employee = function (event, models) {
      * @module Employee
      */
     var accessRoll = require("../helpers/accessRollHelper.js")(models);
+    var uploadFileArray = require("../helpers/uploadFileArray.js")();
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var DepartmentSchema = mongoose.Schemas.Department;
     var jobPositionSchema = mongoose.Schemas.JobPosition;
-    var nationalitySchema =  mongoose.Schemas.nationality;
+    var nationalitySchema = mongoose.Schemas.nationality;
     var LanguageSchema = mongoose.Schemas.language;
     var SourceSchema = mongoose.Schemas.source;
     var _ = require('underscore');
@@ -1313,7 +1314,7 @@ var Employee = function (event, models) {
         });
 
     };
-    
+
     this.getNationality = function (req, res, next) {
         var Nationality = models.get(req.session.lastDb, 'nationality', nationalitySchema);
 
@@ -1327,7 +1328,7 @@ var Employee = function (event, models) {
     };
 
     this.getLanguages = function (req, res, next) {
-       var Languages = models.get(req.session.lastDb, 'languages', LanguageSchema);
+        var Languages = models.get(req.session.lastDb, 'languages', LanguageSchema);
 
         Languages.find({}).exec(function (err, result) {
             if (err) {
@@ -1348,6 +1349,12 @@ var Employee = function (event, models) {
 
             res.status(200).send({data: result});
         });
+    };
+
+    this.uploadEmployeesFiles = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        uploadFileArray(req, res, next, Employee);
     };
 };
 /**

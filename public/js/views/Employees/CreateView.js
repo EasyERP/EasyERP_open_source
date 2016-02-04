@@ -379,7 +379,7 @@ define([
                 var notDiv = this.$el.find('.attach-container');
                 this.attachView = new AttachView({
                     model   : new EmployeeModel(),
-                    url     : "/uploadEmployeesFiles",
+                    url     : "/employees/uploadEmployeesFiles",
                     isCreate: true
                 });
                 notDiv.append(this.attachView.render().el);

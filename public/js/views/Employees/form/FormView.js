@@ -54,7 +54,7 @@ define([
                 addFrmAttach.submit(function (e) {
                     var bar = $('.bar');
                     var status = $('.status');
-                    var formURL = "http://" + window.location.host + "/uploadEmployeesFiles";
+                    var formURL = "http://" + window.location.host + "/employees/uploadEmployeesFiles";
                     e.preventDefault();
                     addFrmAttach.ajaxSubmit({
                         url        : formURL,
