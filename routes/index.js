@@ -61,6 +61,7 @@ module.exports = function (app, mainDb) {
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
     var campaignRouter = require('./campaign')(models);
+    var degreesRouter = require('./degrees')(models);
 
     var async = require('async');
 
@@ -202,6 +203,7 @@ module.exports = function (app, mainDb) {
     app.use('/currency', currencyRouter);
     app.use('/journal', journalRouter);
     app.use('/campaigns', campaignRouter);
+    app.use('/degrees', degreesRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -1361,27 +1363,27 @@ module.exports = function (app, mainDb) {
     //    requestHandler.removeApplication(req, res, id);
     //});
 
-    app.get('/Degrees', function (req, res) {
-        requestHandler.getDegrees(req, res);
-    });
+    //app.get('/Degrees', function (req, res) {
+    //    requestHandler.getDegrees(req, res);
+    //});
 
-    app.post('/Degrees', function (req, res) {
-        var data = {};
-        data.degree = req.body;
-        requestHandler.createDegree(req, res, data);
-    });
+    //app.post('/Degrees', function (req, res) {
+    //    var data = {};
+    //    data.degree = req.body;
+    //    requestHandler.createDegree(req, res, data);
+    //});
 
-    app.put('/Degrees/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.degree = req.body;
-        requestHandler.updateDegree(req, res, id, data);
-    });
+    //app.put('/Degrees/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.degree = req.body;
+    //    requestHandler.updateDegree(req, res, id, data);
+    //});
 
-    app.delete('/Degrees/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeDegree(req, res, id);
-    });
+    //app.delete('/Degrees/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeDegree(req, res, id);
+    //});
 
 //----------------------campaign----------------------------------------------------------------
 //    app.get('/Campaigns', function (req, res) {

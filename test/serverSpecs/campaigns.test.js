@@ -9,7 +9,7 @@ var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-describe("Person Specs", function () {
+describe("Campaigns Specs", function () {
     'use strict';
     before(function (done) {
         aggent = request.agent(url);

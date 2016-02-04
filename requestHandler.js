@@ -18,8 +18,8 @@ var requestHandler = function (app, event, mainDb) {
     var workflow = require("./Modules/Workflow.js")(models, event);
     var project = require("./Modules/Projects.js")(models, event);
     var jobPosition = require("./Modules/JobPosition.js")(event, models);
-    var degrees = require("./Modules/Degrees.js")(models);
-    var campaigns = require("./Modules/Campaigns.js")(models);
+    //var degrees = require("./Modules/Degrees.js")(models);
+    //var campaigns = require("./Modules/Campaigns.js")(models);
     var opportunities = require("./Modules/Opportunities.js")(models, event);
     var modules = require("./Modules/Module.js")(models);
     var sources = require("./Modules/Sources.js")(models);
@@ -2564,37 +2564,37 @@ var requestHandler = function (app, event, mainDb) {
     };
 
     //---------------------Deegree--------------------------------
-    function createDegree(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            degrees.create(req, data.degree, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function createDegree(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        degrees.create(req, data.degree, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getDegrees(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            degrees.get(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getDegrees(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        degrees.get(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function updateDegree(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            degrees.update(req, id, data.degree, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateDegree(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        degrees.update(req, id, data.degree, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function removeDegree(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            degrees.remove(req, id, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function removeDegree(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        degrees.remove(req, id, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //-----------------Campaigns--------------------------------------
     //function getCampaigns(req, res) {
@@ -2979,10 +2979,10 @@ var requestHandler = function (app, event, mainDb) {
         getDepartmentById     : getDepartmentById,
         getCustomDepartment   : getCustomDepartment,
         getDepartmentForEditDd: getDepartmentForEditDd,
-        createDegree          : createDegree,
-        getDegrees            : getDegrees,
-        updateDegree          : updateDegree,
-        removeDegree          : removeDegree,
+        //createDegree          : createDegree,
+        //getDegrees            : getDegrees,
+        //updateDegree          : updateDegree,
+        //removeDegree          : removeDegree,
 
         //getCampaigns                  : getCampaigns,
         //employeesTotalCollectionLength: employeesTotalCollectionLength,
