@@ -61,27 +61,7 @@ var Users = function (mainDb, models) {
     }
 
     function createUser(req, data, result) {
-        /**
-         * __Type__ `POST`
-         *
-         * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
-         *
-         * This __method__ allows to create __User__
-         * @example  Object for request: {
-	     *    "pass" : "777777",
-	     *    "email" : "Alex@mail.com",
-		 *    "login" : "Alex",
-         *    "imageSrc" : ""
-         *   }
-         *
-         * @example Response example: {
-         *      "success":"A new User crate success",
-         *      "id":"55df03676774745332000005"
-         *     }
-         * @method Users
-         * @property {JSON} Object - Object with data to create User (like in example)
-         * @instance
-         */
+
         try {
             var shaSum = crypto.createHash('sha256');
 
@@ -145,16 +125,6 @@ var Users = function (mainDb, models) {
         }
     }
 
-    /**
-     * __Type__ `GET`
-     *
-     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/logout`
-     *
-     * This __method__ allows to logout.
-     *
-     * @method logout
-     * @instance
-     */
     function login(req, res, next) {
         /**
          * __Type__ `POST`
@@ -171,7 +141,7 @@ var Users = function (mainDb, models) {
          * @property {JSON} Object - Object with data for logining (like in example)
          * @instance
          */
-        var data = req.body;
+
         try {
             if (data) {
                 if (data.login || data.email) {
@@ -501,7 +471,7 @@ var Users = function (mainDb, models) {
         }
     }
 
-    function removeUser(req, _id, res) {
+    /*function removeUser(req, _id, res) {
         if (req.session.uId == _id) {
             res.send(400, {error: 'You cannot delete current user'});
         }
@@ -516,7 +486,7 @@ var Users = function (mainDb, models) {
                 }
             });
         }
-    }
+    }*/
 
     return {
         getAllUserWithProfile: getAllUserWithProfile,
@@ -537,7 +507,7 @@ var Users = function (mainDb, models) {
 
         updateUser: updateUser,
 
-        removeUser: removeUser
+        /*removeUser: removeUser*/
     };
 };
 

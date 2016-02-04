@@ -4,8 +4,9 @@ define([
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
-], function (fixtures, LoginView, $, chai, chaiJquery, sinonChai) {
+    'sinon-chai',
+    'custom'
+], function (fixtures, LoginView, $, chai, chaiJquery, sinonChai, Custom) {
     'use strict';
     var expect;
 
@@ -71,6 +72,7 @@ define([
 
         describe('Test events', function () {
             var loginSpy;
+            var customSpy;
             var view;
             var server;
 
@@ -84,6 +86,7 @@ define([
                 server.respondWith("GET", "/filter/getFiltersValues", [200, {"Content-Type": "application/json"}, JSON.stringify([{filter1: 'fakeFilter'}])]);
 
                 loginSpy = sinon.spy(LoginView.prototype, "login");
+                customSpy = sinon.spy(Custom, "runApplication");
                 view = new LoginView({el: $elFixture, dbs: ['production', 'development']});
             });
 
@@ -105,7 +108,7 @@ define([
                 $login.val('pupkin');
                 $password.val('pupkin');
 
-                server.respondWith("POST", "/login", [400, {"Content-Type": "application/json"}, JSON.stringify({error: 'Fail'})]);
+                server.respondWith("POST", "/users/login", [400, {"Content-Type": "application/json"}, JSON.stringify({error: 'Fail'})]);
 
                 $loginButton.click();
                 server.respond();
@@ -113,6 +116,7 @@ define([
                 expect($loginForm).to.have.class('notRegister');
                 expect($errorContainer).to.contain('Wrong Password or such user');
                 expect($loginButton).to.exist;
+                expect(customSpy.called).to.be.false;
             });
 
             it('should return err & not send ajax call', function () {
@@ -143,13 +147,14 @@ define([
                 $login.val('pupkin');
                 $password.val('pupkin');
 
-                server.respondWith("POST", "/login", [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'loggedIn'})]);
+                server.respondWith("POST", "/users/login", [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'loggedIn'})]);
 
                 $loginButton.click();
                 server.respond();
 
                 expect($loginButton).to.exist;
                 expect(loginSpy.called).to.be.true;
+                expect(customSpy.called).to.be.true;
             });
 
 
