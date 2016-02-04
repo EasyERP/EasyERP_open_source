@@ -1,37 +1,38 @@
 ﻿var access = function (models) {
+    'use strict';
     var mongoose = require('mongoose');
-    var profile = mongoose.Schemas['Profile'];
-    var user = mongoose.Schemas['Users'];
+    var profile = mongoose.Schemas.Profile;
+    var user = mongoose.Schemas.Users;
 
-    var getAccess = function (req, uId, mid, callback) { 
+    var getAccess = function (req, uId, mid, callback) {
         models.get(req.session.lastDb, 'Users', user).findById(uId, function (err, user) {
             if (user) {
                 models.get(req.session.lastDb, 'Profile', profile).aggregate(
-                {
-                    $project: {
-                        profileAccess: 1
-                    }
-                },
-                {
-                    $match: {
-                        _id: user.profile
-                    }
-                },
-                {
-                    $unwind: "$profileAccess"
-                },
+                    {
+                        $project: {
+                            profileAccess: 1
+                        }
+                    },
+                    {
+                        $match: {
+                            _id: user.profile
+                        }
+                    },
+                    {
+                        $unwind: "$profileAccess"
+                    },
 
-                {
-                    $match: {
-                        'profileAccess.module': mid
+                    {
+                        $match: {
+                            'profileAccess.module': mid
+                        }
+                    }, function (err, result) {
+                        return callback({error: err, result: result});
                     }
-                }, function (err, result) {
-                    return callback({ error: err, result: result });
-                }
-            );
+                );
             } else {
                 //logWriter.log('access.js users.findById error' + err);
-                callback({ error: 'access.js users.findById error' });
+                callback({error: 'access.js users.findById error'});
             }
         });
     };
@@ -66,9 +67,9 @@
     };
 
     return {
-        getReadAccess: getReadAccess,
+        getReadAccess    : getReadAccess,
         getEditWritAccess: getEditWritAccess,
-        getDeleteAccess: getDeleteAccess
-    }
+        getDeleteAccess  : getDeleteAccess
+    };
 };
 module.exports = access;

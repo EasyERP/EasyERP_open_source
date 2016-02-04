@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "mocha test/serverSpecs"
+    "test": "mocha test/serverSpecs/**/*.js"
   },
   "dependencies": {
     "async": "0.9.0",
@@ -44,10 +44,12 @@
     "socket.io-redis": "^0.1.4",
     "swig": "1.4.2",
     "underscore": "1.8.3",
-    "validator": "^4.2.1",
+    "validate.js": "^0.9.0",
+    "validator": "^4.6.1",
     "winston": "^2.1.1",
     "xlsx": "^0.8.0",
-    "xml2js": "0.4.0"
+    "xml2js": "0.4.0",
+    "xss-filters": "^1.2.6"
   },
   "apidoc": {
     "title": "Custom apiDoc browser title",
@@ -64,6 +66,7 @@
     "grunt-jsdoc": "^0.6.8",
     "grunt-karma": "^0.12.1",
     "grunt-modernizr": "^1.0.1",
+    "istanbul": "^0.4.2",
     "jasmine-core": "^2.4.1",
     "jsdoc": "^3.3.2",
     "karma": "^0.13.19",
@@ -81,6 +84,7 @@
     "karma-sinon": "^1.0.4",
     "karma-sinon-chai": "^1.1.0",
     "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
     "open": "0.0.5",
     "requirejs": "^2.1.22",
     "sinon": "^1.17.2",

@@ -1159,7 +1159,7 @@ var requestHandler = function (app, event, mainDb) {
         users.getTotalCount(req, res);
     }
 
-    function createUser(req, res, data) {
+    /*function createUser(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 7, function (access) {
                 if (access) {
@@ -1171,7 +1171,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     function getUsers(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1262,7 +1262,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function removeUser(req, res, id) {
+    /*function removeUser(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 7, function (access) {
                 if (access) {
@@ -1274,7 +1274,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     //---------------------Profile--------------------------------
     function createProfile(req, res, data) {
@@ -2872,7 +2872,7 @@ var requestHandler = function (app, event, mainDb) {
         redirectFromModuleId: redirectFromModuleId,
 
         login                     : login,
-        createUser                : createUser,
+        /*createUser                : createUser,*/
         usersTotalCollectionLength: usersTotalCollectionLength,
         getUsers                  : getUsers,
         getUsersForDd             : getUsersForDd,
@@ -2880,7 +2880,7 @@ var requestHandler = function (app, event, mainDb) {
         getFilterUsers            : getFilterUsers,
         getAllUserWithProfile     : getAllUserWithProfile,
         updateUser                : updateUser,
-        removeUser                : removeUser,
+        /*removeUser                : removeUser,*/
         currentUser               : currentUser,
         updateCurrentUser         : updateCurrentUser,
 

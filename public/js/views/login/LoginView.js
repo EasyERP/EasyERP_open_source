@@ -73,7 +73,7 @@ define([
             }
 
             $.ajax({
-                url : "/login",
+                url : "/users/login",
                 type: "POST",
                 data: data,
 

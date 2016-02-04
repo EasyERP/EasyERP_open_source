@@ -1,12 +1,9 @@
 /**
  * Created by Roman on 24.08.2015.
  */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
 describe("Quotation Specs", function () {
@@ -16,7 +13,7 @@ describe("Quotation Specs", function () {
         aggent = request.agent(url);
 
         aggent
-            .post('login')
+            .post('users/login')
             .send({
                 login: 'admin',
                 pass : '1q2w3eQWE',

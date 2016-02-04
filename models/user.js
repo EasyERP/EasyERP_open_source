@@ -46,7 +46,7 @@ module.exports = (function () {
             refresh_token: {type: String, default: ''},
             access_token : {type: String, default: ''}
         },
-        profile        : {type: Number, ref: "Profile"},
+        profile        : {type: Number, ref: "Profile", required: true},
         lastAccess     : {type: Date},
         kanbanSettings : {
             opportunities: {
@@ -79,5 +79,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['User'] = userSchema;
+    mongoose.Schemas.User = userSchema;
 })();
