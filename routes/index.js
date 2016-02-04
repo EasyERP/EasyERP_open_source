@@ -59,11 +59,13 @@ module.exports = function (app, mainDb) {
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
 
+    var logger = require('../helpers/logger');
+
     var async = require('async');
 
     var requestHandler;
 
-    var winston = require('winston');
+    /*var winston = require('winston');
     var logger = new (winston.Logger)({
         transports       : [
             new (winston.transports.Console)({
@@ -96,59 +98,11 @@ module.exports = function (app, mainDb) {
             })
         ],
         exitOnError      : false
-    });
+    });*/
 
     app.set('logger', logger);
 
     requestHandler = require("../requestHandler.js")(app, event, mainDb);
-
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        for (var filterName in filter) {
-            condition = filter[filterName]['value'];
-            key = filter[filterName]['key'];
-
-            switch (filterName) {
-                case 'project':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'salesPerson':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'supplier':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'workflow':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'forSales':
-                    if (condition) {
-                        condition = ConvertType(condition[0], 'boolean');
-                        filtrElement[key] = condition;
-                        resArray.push(filtrElement);
-                    }
-                    break;
-            }
-        }
-
-        return resArray;
-    };
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -626,7 +580,6 @@ module.exports = function (app, mainDb) {
     });
 
     app.get('/logout', function (req, res, next) {
-        var ip = req.ip;
         if (req.session) {
             req.session.destroy(function () {
             });
@@ -636,15 +589,15 @@ module.exports = function (app, mainDb) {
         res.redirect('/#login');
     });
 
-    app.post('/login', function (req, res, next) {
+    /*app.post('/login', function (req, res, next) {
         requestHandler.login(req, res, next);
-    });
+    });*/
 
-    app.post('/Users', function (req, res) {
+    /*app.post('/Users', function (req, res) {
         var data = {};
         data.user = req.body;
         requestHandler.createUser(req, res, data);
-    });
+    });*/
 
     app.get('/UserWithProfile', function (req, res) {
         var id = req.param('_id');
@@ -679,6 +632,7 @@ module.exports = function (app, mainDb) {
         requestHandler.updateCurrentUser(req, res, data);
     });
 
+    app.use('/users', userRouter);
     app.use('/currentUser', userRouter);
 
    /* app.patch('/currentUser/:_id', function (req, res) {
@@ -716,10 +670,10 @@ module.exports = function (app, mainDb) {
         requestHandler.updateUser(req, res, id, data);
     });
 
-    app.delete('/Users/:_id', function (req, res) {
+    /*app.delete('/Users/:_id', function (req, res) {
         var id = req.param('_id');
         requestHandler.removeUser(req, res, id);
-    });
+    });*/
 
     app.post('/Profiles', function (req, res) {
         var data = {};

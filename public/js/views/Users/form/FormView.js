@@ -9,7 +9,7 @@ define([
             el        : '#content-holder',
             initialize: function (options) {
                 this.formModel = new userModel(options.model.get('user'));
-                this.formModel.urlRoot = "/Users";
+                this.formModel.urlRoot = "/users";
             },
 
             render: function () {

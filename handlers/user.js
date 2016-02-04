@@ -1,11 +1,14 @@
 var mongoose = require('mongoose');
 
-var PayRoll = function (event, models) {
+var User = function (event, models) {
     "use strict";
-    var access = require("../Modules/additions/access.js")(models);
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
+    var constants = require('../constants/responses');
+
+    var validator = require('../helpers/validator');
+    var logger = require('../helpers/logger');
 
     function checkIfUserLoginUnique(req, login, cb) {
         models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
@@ -164,6 +167,128 @@ var PayRoll = function (event, models) {
         updateThisUser(_id, query);
     }
 
+    /**
+     * __Type__ `POST`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/login`
+     *
+     * This __method__ allows to login.
+     * @example {
+         *     dbId: "CRM",
+         *     login: "Alex"
+         *     pass: "777777"
+         * }
+     * @method login
+     * @property {JSON} Object - Object with data for login (like in example)
+     * @instance
+     */
+    this.login = function (req, res, next) {
+        var data = req.body;
+        var UserModel = models.get(data.dbId, 'Users', userSchema);
+        var err;
+        var queryObject;
+
+        if ((data.login || data.email) && data.pass) {
+            queryObject = {
+                $or: [
+                    {
+                        login: {$regex: data.login, $options: 'i'}
+                    }, {
+                        email: {$regex: data.login, $options: 'i'}
+                    }
+                ]
+            };
+            UserModel.findOne(queryObject, {login: 1, pass: 1}, function (err, _user) {
+                var shaSum = crypto.createHash('sha256');
+                var lastAccess;
+
+                shaSum.update(data.pass);
+
+                if (err) {
+                    return next(err);
+                }
+
+                if (!_user || !_user._id || _user.pass !== shaSum.digest('hex')) {
+                    err = new Error(constants.BAD_REQUEST);
+                    err.status = 400;
+
+                    return next(err);
+                }
+
+                req.session.loggedIn = true;
+                req.session.uId = _user._id;
+                req.session.uName = _user.login;
+                req.session.lastDb = data.dbId;
+                req.session.kanbanSettings = _user.kanbanSettings;
+
+                lastAccess = new Date();
+                req.session.lastAccess = lastAccess;
+
+                UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err) {
+                    if (err) {
+                        logger.error(err);
+                    }
+                });
+
+                res.send(200);
+            });
+        } else {
+            err = new Error(constants.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+    };
+
+    /**
+     * __Type__ `POST`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
+     *
+     * This __method__ allows to create __User__
+     * @example  Object for request: {
+	     *    "pass" : "777777",
+	     *    "email" : "Alex@mail.com",
+		 *    "login" : "Alex",
+         *    "imageSrc" : ""
+         *   }
+     *
+     * @example Response example: {
+         *      "success":"A new User crate success",
+         *      "id":"55df03676774745332000005"
+         *     }
+     * @method Users
+     * @property {JSON} Object - Object with data to create User (like in example)
+     * @instance
+     */
+    this.create = function(req, res, next){
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+        var body = req.body;
+        var shaSum = crypto.createHash('sha256');
+        var err;
+        var user;
+
+        if(!validator.validUserBody(body)){
+            err = new Error();
+            err.status = 404;
+
+            return next(err);
+        }
+
+        body = validator.parseUserBody(body);
+        shaSum.update(body.pass);
+        body.pass = shaSum.digest('hex');
+
+        user = new UserModel(body);
+        user.save(function (err, user) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(201).send({success: 'A new User crate success', id: user._id});
+        });
+    };
+
     this.putchModel = function (req, res, next) {
         var options = {};
         var data = req.body;
@@ -203,6 +328,27 @@ var PayRoll = function (event, models) {
             updateUser(req, res, next);
         }
     };
+
+    this.remove = function(req, res, next){
+        var id = req.params.id;
+        var err;
+
+        if (req.session.uId === id) {
+            err = new Error('You cannot delete current user');
+            err.status = 403;
+
+            return next(err);
+        }
+
+        models.get(req.session.lastDb, 'Users', userSchema).remove({_id: id}, function (err) {
+            if (err) {
+                return next(err);
+
+            }
+
+            res.status(200).send({success: 'User remove success'});
+        });
+    };
 };
 
-module.exports = PayRoll;
+module.exports = User;
