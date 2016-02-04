@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "istanbul cover node_modules/mocha/bin/_mocha -- test/serverSpecs"
+    "test": "mocha test/serverSpecs/**/*.js"
   },
   "dependencies": {
     "async": "0.9.0",
@@ -44,10 +44,12 @@
     "socket.io-redis": "^0.1.4",
     "swig": "1.4.2",
     "underscore": "1.8.3",
-    "validator": "^4.2.1",
+    "validate.js": "^0.9.0",
+    "validator": "^4.6.1",
     "winston": "^2.1.1",
     "xlsx": "^0.8.0",
-    "xml2js": "0.4.0"
+    "xml2js": "0.4.0",
+    "xss-filters": "^1.2.6"
   },
   "apidoc": {
     "title": "Custom apiDoc browser title",
@@ -82,6 +84,7 @@
     "karma-sinon": "^1.0.4",
     "karma-sinon-chai": "^1.1.0",
     "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
     "open": "0.0.5",
     "requirejs": "^2.1.22",
     "sinon": "^1.17.2",

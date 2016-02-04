@@ -580,7 +580,6 @@ module.exports = function (app, mainDb) {
     });
 
     app.get('/logout', function (req, res, next) {
-        var ip = req.ip;
         if (req.session) {
             req.session.destroy(function () {
             });
@@ -594,11 +593,11 @@ module.exports = function (app, mainDb) {
         requestHandler.login(req, res, next);
     });*/
 
-    app.post('/Users', function (req, res) {
+    /*app.post('/Users', function (req, res) {
         var data = {};
         data.user = req.body;
         requestHandler.createUser(req, res, data);
-    });
+    });*/
 
     app.get('/UserWithProfile', function (req, res) {
         var id = req.param('_id');

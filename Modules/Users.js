@@ -61,27 +61,7 @@ var Users = function (mainDb, models) {
     }
 
     function createUser(req, data, result) {
-        /**
-         * __Type__ `POST`
-         *
-         * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
-         *
-         * This __method__ allows to create __User__
-         * @example  Object for request: {
-	     *    "pass" : "777777",
-	     *    "email" : "Alex@mail.com",
-		 *    "login" : "Alex",
-         *    "imageSrc" : ""
-         *   }
-         *
-         * @example Response example: {
-         *      "success":"A new User crate success",
-         *      "id":"55df03676774745332000005"
-         *     }
-         * @method Users
-         * @property {JSON} Object - Object with data to create User (like in example)
-         * @instance
-         */
+
         try {
             var shaSum = crypto.createHash('sha256');
 

@@ -8,6 +8,7 @@ var User = function (event, models) {
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
     var constants = require('../constants/responses');
 
+    var validator = require('../helpers/validator');
     var logger = require('../helpers/logger');
 
     function checkIfUserLoginUnique(req, login, cb) {
@@ -167,22 +168,22 @@ var User = function (event, models) {
         updateThisUser(_id, query);
     }
 
-    this.login = function (req, res, next) {
-        /**
-         * __Type__ `POST`
-         *
-         * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/login`
-         *
-         * This __method__ allows to login.
-         * @example {
+    /**
+     * __Type__ `POST`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/login`
+     *
+     * This __method__ allows to login.
+     * @example {
          *     dbId: "CRM",
          *     login: "Alex"
          *     pass: "777777"
          * }
-         * @method login
-         * @property {JSON} Object - Object with data for login (like in example)
-         * @instance
-         */
+     * @method login
+     * @property {JSON} Object - Object with data for login (like in example)
+     * @instance
+     */
+    this.login = function (req, res, next) {
         var data = req.body;
         var UserModel = models.get(data.dbId, 'Users', userSchema);
         var err;
@@ -234,10 +235,59 @@ var User = function (event, models) {
             });
         } else {
             err = new Error(constants.BAD_REQUEST);
-            err.status(400);
+            err.status = 400;
 
             return next(err);
         }
+    };
+
+    /**
+     * __Type__ `POST`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
+     *
+     * This __method__ allows to create __User__
+     * @example  Object for request: {
+	     *    "pass" : "777777",
+	     *    "email" : "Alex@mail.com",
+		 *    "login" : "Alex",
+         *    "imageSrc" : ""
+         *   }
+     *
+     * @example Response example: {
+         *      "success":"A new User crate success",
+         *      "id":"55df03676774745332000005"
+         *     }
+     * @method Users
+     * @property {JSON} Object - Object with data to create User (like in example)
+     * @instance
+     */
+    this.create = function(req, res, next){
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+        var body = req.body;
+        var shaSum = crypto.createHash('sha256');
+        var err;
+        var user;
+
+        if(!validator.validUserBody(body)){
+            err = new Error();
+            err.status = 404;
+
+            return next(err);
+        }
+
+        body = validator.parseUserBody(body);
+        shaSum.update(body.pass);
+        body.pass = shaSum.digest('hex');
+
+        user = new UserModel(body);
+        user.save(function (err, user) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(201).send({success: 'A new User crate success', id: user._id});
+        });
     };
 
     this.putchModel = function (req, res, next) {

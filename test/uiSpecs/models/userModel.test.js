@@ -38,7 +38,7 @@ define([
         });
 
         it('should change password', function (done) {
-            server.respondWith('POST', '/Users', [200, {"Content-Type": "application/json"}, JSON.stringify([{
+            server.respondWith('POST', '/users', [200, {"Content-Type": "application/json"}, JSON.stringify([{
                 _id  : 123456,
                 login: 'pupkin'
             }])]);
@@ -61,7 +61,7 @@ define([
         });
 
         it('Quick edit, should be valid email & login', function (done) {
-            server.respondWith('PUT', '/Users/123456', [200, {"Content-Type": "application/json"}, JSON.stringify([{
+            server.respondWith('PUT', '/users/123456', [200, {"Content-Type": "application/json"}, JSON.stringify([{
                 _id  : 123456,
                 login: 'pupkin'
             }])]);

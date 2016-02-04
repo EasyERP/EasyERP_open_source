@@ -5,7 +5,7 @@
     function (UserModel, common) {
         var UsersCollection = Backbone.Collection.extend({
             model       : UserModel,
-            url         : "/Users/",
+            url         : "/users/",
             page        : null,
             namberToShow: null,
             viewType    : null,

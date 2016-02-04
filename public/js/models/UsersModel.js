@@ -52,7 +52,7 @@ define([
             }
         },
         urlRoot    : function () {
-            return "/Users";
+            return "/users";
         }
     });
     return UserModel;
