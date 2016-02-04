@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 
 var User = function (event, models) {
     "use strict";
-    var access = require("../Modules/additions/access.js")(models);
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
@@ -328,6 +327,27 @@ var User = function (event, models) {
         } else {
             updateUser(req, res, next);
         }
+    };
+
+    this.remove = function(req, res, next){
+        var id = req.params.id;
+        var err;
+
+        if (req.session.uId === id) {
+            err = new Error('You cannot delete current user');
+            err.status = 403;
+
+            return next(err);
+        }
+
+        models.get(req.session.lastDb, 'Users', userSchema).remove({_id: id}, function (err) {
+            if (err) {
+                return next(err);
+
+            }
+
+            res.status(200).send({success: 'User remove success'});
+        });
     };
 };
 

@@ -20,7 +20,7 @@ describe("User Specs", function () {
                 .expect(200, done);
         });
 
-        /*it("should create user", function (done) {
+        it("should create user", function (done) {
             var body = {
                 "login": "super.duper",
                 "pass" : "superpass",
@@ -42,13 +42,14 @@ describe("User Specs", function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('_id');
+                        .to.have.property('id');
 
                     id = body.id;
 
                     done();
                 });
-        });*/
+        });
+
         it("should fail create user", function (done) {
             var body = {
                 "login": "super.duper",

@@ -670,10 +670,10 @@ module.exports = function (app, mainDb) {
         requestHandler.updateUser(req, res, id, data);
     });
 
-    app.delete('/Users/:_id', function (req, res) {
+    /*app.delete('/Users/:_id', function (req, res) {
         var id = req.param('_id');
         requestHandler.removeUser(req, res, id);
-    });
+    });*/
 
     app.post('/Profiles', function (req, res) {
         var data = {};

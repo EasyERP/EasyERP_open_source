@@ -471,7 +471,7 @@ var Users = function (mainDb, models) {
         }
     }
 
-    function removeUser(req, _id, res) {
+    /*function removeUser(req, _id, res) {
         if (req.session.uId == _id) {
             res.send(400, {error: 'You cannot delete current user'});
         }
@@ -486,7 +486,7 @@ var Users = function (mainDb, models) {
                 }
             });
         }
-    }
+    }*/
 
     return {
         getAllUserWithProfile: getAllUserWithProfile,
@@ -507,7 +507,7 @@ var Users = function (mainDb, models) {
 
         updateUser: updateUser,
 
-        removeUser: removeUser
+        /*removeUser: removeUser*/
     };
 };
 

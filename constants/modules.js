@@ -1,8 +1,5 @@
-/**
- * Created by Roman on 02.04.2015.
- */
-
 module.exports = {
+    USERS: 7,
     CUSTOMER_PAYMENTS: 61,
     SUPPLIER_PAYMENTS: 60
 };
