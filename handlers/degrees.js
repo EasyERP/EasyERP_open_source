@@ -41,8 +41,8 @@ var Degrees = function (models) {
     this.getDegrees = function (req, res, next) {
         var Degree = models.get(req.session.lastDb, "Degrees", degreesSchema);
 
-        Degree.find({}).sort({name: 1}).exec(function(err, result){
-            if (err){
+        Degree.find({}).sort({name: 1}).exec(function (err, result) {
+            if (err) {
                 return next(err);
             }
 
@@ -57,7 +57,7 @@ var Degrees = function (models) {
 
         delete data._id;
 
-        Degree.update({_id: id}, data, function (err){
+        Degree.update({_id: id}, data, function (err) {
             if (err) {
                 return next(err);
             }

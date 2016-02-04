@@ -11,13 +11,12 @@ var aggent;
 
 describe("Person Specs", function () {
     var id;
-    var mid = 39;
 
     before(function (done) {
         aggent = request.agent(url);
 
         aggent
-            .post('login')
+            .post('users/login')
             .send({
                 login: 'admin',
                 pass : '1q2w3eQWE',
@@ -36,7 +35,6 @@ describe("Person Specs", function () {
 
         aggent
             .post('persons')
-            .set('mid', mid)
             .send(body)
             .expect(201)
             .end(function (err, res) {
@@ -127,7 +125,6 @@ describe("Person Specs", function () {
     it("should get persons for miniView", function (done) {
         aggent
             .get('persons/getPersonsForMiniView')
-            .set('mid', mid)
             .expect(200)
             .end(function(err, res){
                 var body = res.body;
@@ -150,7 +147,6 @@ describe("Person Specs", function () {
     it("should get count of persons for miniView", function (done) {
         aggent
             .get('persons/getPersonsForMiniView')
-            .set('mid', mid)
             .query({'onlyCount': true})
             .expect(200)
             .end(function(err, res){
@@ -172,7 +168,6 @@ describe("Person Specs", function () {
     it("should get totalCollectionLength of persons", function (done) {
         aggent
             .get('persons/totalCollectionLength')
-            .set('mid', mid)
             .query({contentType: 'Persons'})
             .expect(200)
             .end(function(err, res){
@@ -196,7 +191,6 @@ describe("Person Specs", function () {
     it("should updateOnlySelectedFields of persons", function (done) {
         aggent
             .patch('persons/55b92ad521e4b7c40f00060f')
-            .set('mid', mid)
             .send({'name.last': 'Persons'})
             .expect(200)
             .end(function(err, res){
@@ -253,7 +247,6 @@ describe("Person Specs", function () {
         };
         aggent
             .put('persons/55b92ad521e4b7c40f00060f')
-            .set('mid', mid)
             .send(body)
             .expect(200)
             .end(function(err, res){
@@ -276,14 +269,12 @@ describe("Person Specs", function () {
     it("should delete person", function (done) {
         aggent
             .delete('persons/' + id)
-            .set("mid", mid)
             .expect(200, done);
     });
 
     it("should not delete person", function (done) {
         aggent
             .delete('persons/' + 'kkk')
-            .set("mid", mid)
             .expect(500, done);
     });
 

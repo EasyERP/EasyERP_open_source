@@ -16,7 +16,7 @@ describe("Application Specs", function () {
         aggent = request.agent(url);
 
         aggent
-            .post('login')
+            .post('users/login')
             .send({
                 login: 'admin',
                 pass : '1q2w3eQWE',
@@ -146,8 +146,6 @@ describe("Application Specs", function () {
                     .to.have.property('time');
                 expect(body)
                     .to.have.property('workflowId');
-                expect(body)
-                    .to.have.property('fold');
 
                 done();
             });
@@ -182,7 +180,6 @@ describe("Application Specs", function () {
     it("should delete application", function (done) {
         aggent
             .delete('applications/' + id)
-            .set("mid", 42)
             .expect(200, done);
     });
 });

@@ -16,7 +16,7 @@ describe("Department Specs", function () {
         aggent = request.agent(url);
 
         aggent
-            .post('login')
+            .post('users/login')
             .send({
                 login: 'admin',
                 pass : '1q2w3eQWE',

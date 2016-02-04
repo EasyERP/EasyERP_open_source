@@ -11,13 +11,12 @@ var aggent;
 
 describe("Company Specs", function () {
     var id;
-    var mid = 40;
 
     before(function (done) {
         aggent = request.agent(url);
 
         aggent
-            .post('login')
+            .post('users/login')
             .send({
                 login: 'admin',
                 pass : '1q2w3eQWE',
@@ -36,7 +35,6 @@ describe("Company Specs", function () {
 
         aggent
             .post('customers')
-            .set('mid', mid)
             .send(body)
             .expect(201)
             .end(function (err, res) {
@@ -193,7 +191,6 @@ describe("Company Specs", function () {
     it("should get totalCollectionLength of companies", function (done) {
         aggent
             .get('customers/totalCollectionLength')
-            .set('mid', mid)
             .query({contentType: 'Companies'})
             .expect(200)
             .end(function(err, res){
@@ -217,7 +214,6 @@ describe("Company Specs", function () {
     it("should updateOnlySelectedFields of companies", function (done) {
         aggent
             .patch('customers/55b92ad521e4b7c40f00061d')
-            .set('mid', mid)
             .send({'name.last': 'Companies'})
             .expect(200)
             .end(function(err, res){
@@ -274,7 +270,6 @@ describe("Company Specs", function () {
         };
         aggent
             .put('customers/55b92ad521e4b7c40f00060f')
-            .set('mid', mid)
             .send(body)
             .expect(200)
             .end(function(err, res){
@@ -297,14 +292,12 @@ describe("Company Specs", function () {
     it("should delete company", function (done) {
         aggent
             .delete('customers/' + id)
-            .set("mid", mid)
             .expect(200, done);
     });
 
     it("should not delete company", function (done) {
         aggent
             .delete('customers/' + 'kkk')
-            .set("mid", mid)
             .expect(500, done);
     });
 

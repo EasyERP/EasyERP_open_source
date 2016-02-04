@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var Customers = function (models, event) {
+var Customers = function (models) {
     /**
      * @module Customer
      */
@@ -19,6 +19,46 @@ var Customers = function (models, event) {
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'Customer', CustomerSchema);
     }, exportMap);
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+        var filterName;
+
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
+
+            switch (filterName) {
+                case 'country':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'name':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'letter':
+                    filtrElement['name.first'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                    resArray.push(filtrElement);
+                    break;
+                case 'services':
+                    if (condition.indexOf('isCustomer') !== -1) {
+                        filtrElement['salesPurchases.isCustomer'] = true;
+                        resArray.push(filtrElement);
+                    }
+                    if (condition.indexOf('isSupplier') !== -1) {
+                        filtrElement['salesPurchases.isSupplier'] = true;
+                        resArray.push(filtrElement);
+                    }
+                    break;
+            }
+        }
+
+        return resArray;
+    }
 
     this.getSuppliersForDD = function (req, res, next) {
         /**
@@ -52,7 +92,6 @@ var Customers = function (models, event) {
         var optionsObject = {};
         var filter = data.filter || {};
         var waterfallTasks;
-        var mid = parseInt(req.header.mid, 10) || 50;
         var accessRollSearcher;
         var contentSearcher;
         var query = {};
@@ -69,58 +108,51 @@ var Customers = function (models, event) {
             }
         }
 
-        access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-            if (access) {
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Model, cb);
+        };
 
-                accessRollSearcher = function (cb) {
-                    accessRoll(req, Model, cb);
-                };
+        contentSearcher = function (ids, cb) {
+            var queryObject = {};
 
-                contentSearcher = function (ids, cb) {
-                    var queryObject = {};
+            queryObject.$and = [];
 
-                    queryObject.$and = [];
-
-                    if (optionsObject.$and.length) {
-                        queryObject.$and.push(optionsObject);
-                    }
-
-                    queryObject.$and.push({_id: {$in: ids}});
-
-                    if (contentType === 'Persons') {
-                        queryObject.$and.push({type: 'Person'});
-                    } else if (contentType === 'Companies') {
-                        queryObject.$and.push({type: 'Company'});
-                    }
-
-                    query = Model.find(queryObject);
-
-                    query.count(function (err, _res) {
-                        if (err) {
-                            return cb(err);
-                        }
-
-                        cb(null, _res);
-                    });
-
-                };
-                waterfallTasks = [accessRollSearcher, contentSearcher];
-
-                async.waterfall(waterfallTasks, function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-                    if (data.currentNumber && data.currentNumber < result) {
-                        response.showMore = true;
-                    }
-
-                    response.count = result;
-
-                    res.status(200).send(response);
-                });
-            } else {
-                res.status(403).send();
+            if (optionsObject.$and.length) {
+                queryObject.$and.push(optionsObject);
             }
+
+            queryObject.$and.push({_id: {$in: ids}});
+
+            if (contentType === 'Persons') {
+                queryObject.$and.push({type: 'Person'});
+            } else if (contentType === 'Companies') {
+                queryObject.$and.push({type: 'Company'});
+            }
+
+            query = Model.find(queryObject);
+
+            query.count(function (err, _res) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, _res);
+            });
+
+        };
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            if (data.currentNumber && data.currentNumber < result) {
+                response.showMore = true;
+            }
+
+            response.count = result;
+
+            res.status(200).send(response);
         });
     };
 
@@ -323,28 +355,23 @@ var Customers = function (models, event) {
 
         var skip = (page - 1) * count;
 
-        if (type){
+        if (type) {
             queryObject.type = type;
         }
 
-        access.getReadAccess(req, req.session.uId, 50, function (access) {
-            if (access) {
-                Customers
-                    .find(queryObject)
-                    .skip(skip)
-                    .limit(count)
-                    .sort({"editedBy.date": 1})
-                    .exec(function (err, customers) {
-                        if (err) {
-                            return next(err);
-                        }
+        Customers
+            .find(queryObject)
+            .skip(skip)
+            .limit(count)
+            .sort({"editedBy.date": 1})
+            .exec(function (err, customers) {
+                if (err) {
+                    return next(err);
+                }
 
-                        res.status(200).send({data: customers});
-                    });
-            } else {
-                res.send(403);
-            }
-        });
+                res.status(200).send({data: customers});
+            });
+
     };
 
     this.getFilterPersonsForMiniView = function (req, res, next) {
@@ -435,8 +462,8 @@ var Customers = function (models, event) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var data = req.query;
         var optionsObject = {_id: {$in: data.ids}};
-
         var contentType = data.contentType;
+
         switch (contentType) {
             case ('Persons'):
             {
@@ -534,46 +561,6 @@ var Customers = function (models, event) {
 
     };
 
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-
-        for (filterName in filter) {
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
-
-            switch (filterName) {
-                case 'country':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'name':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'letter':
-                    filtrElement['name.first'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
-                    resArray.push(filtrElement);
-                    break;
-                case 'services':
-                    if (condition.indexOf('isCustomer') !== -1) {
-                        filtrElement['salesPurchases.isCustomer'] = true;
-                        resArray.push(filtrElement);
-                    }
-                    if (condition.indexOf('isSupplier') !== -1) {
-                        filtrElement['salesPurchases.isSupplier'] = true;
-                        resArray.push(filtrElement);
-                    }
-                    break;
-            }
-        }
-
-        return resArray;
-    }
-
     this.getFilterCustomers = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var data = req.query;
@@ -586,7 +573,6 @@ var Customers = function (models, event) {
         var waterfallTasks;
         var keySort;
         var sort;
-        var mid = parseInt(req.header.mid, 10) || 50;
         var accessRollSearcher;
         var contentSearcher;
         var query = {};
@@ -607,127 +593,120 @@ var Customers = function (models, event) {
             sort = {"editedBy.date": -1};
         }
 
-        access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-            if (access) {
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Model, cb);
+        };
 
-                accessRollSearcher = function (cb) {
-                    accessRoll(req, Model, cb);
-                };
+        contentSearcher = function (ids, cb) {
+            var queryObject = {};
 
-                contentSearcher = function (ids, cb) {
-                    var queryObject = {};
+            queryObject.$and = [];
 
-                    queryObject.$and = [];
-
-                    if (optionsObject.$and.length) {
-                        queryObject.$and.push(optionsObject);
-                    }
-
-                    if (contentType === 'Persons') {
-                        queryObject.$and.push({type: 'Person'});
-                    } else if (contentType === 'Companies') {
-                        queryObject.$and.push({type: 'Company'});
-                    }
-
-                    queryObject.$and.push({_id: {$in: ids}});
-
-                    query = Model.find(queryObject);
-
-                    switch (contentType) {
-                        case ('Persons'):
-                            switch (viewType) {
-                                case ('list'):
-                                {
-                                    query.sort(sort);
-
-                                    query
-                                        .select("_id createdBy editedBy address.country email name phones.phone")
-                                        .populate('createdBy.user', 'login')
-                                        .populate('editedBy.user', 'login');
-                                }
-                                    break;
-                                case ('thumbnails'):
-                                {
-                                    query
-                                        .select("_id name email company")
-                                        .populate('company', '_id name')
-                                        .populate('department', '_id departmentName')
-                                        .populate('createdBy.user')
-                                        .populate('editedBy.user');
-                                }
-                                    break;
-                            }
-                            break;
-                        case ('Companies'):
-                            switch (viewType) {
-                                case ('list'):
-                                {
-                                    query.sort(sort);
-
-                                    query
-                                        .select("_id editedBy createdBy salesPurchases name email phones.phone address.country")
-                                        .populate('salesPurchases.salesPerson', '_id name')
-                                        .populate('salesPurchases.salesTeam', '_id departmentName')
-                                        .populate('createdBy.user', 'login')
-                                        .populate('editedBy.user', 'login');
-                                }
-                                    break;
-                                case ('thumbnails'):
-                                {
-                                    query
-                                        .select("_id name address")
-                                        .populate('createdBy.user')
-                                        .populate('editedBy.user');
-                                }
-                                    break;
-
-                            }
-                            break;
-                        case ('ownCompanies'):
-                            switch (viewType) {
-                                case ('list'):
-                                {
-                                    query
-                                        .populate('salesPurchases.salesPerson', '_id name')
-                                        .populate('salesPurchases.salesTeam', '_id departmentName')
-                                        .populate('createdBy.user')
-                                        .populate('editedBy.user');
-                                }
-                                    break;
-                                case ('thumbnails'):
-                                {
-                                    query
-                                        .select("_id name")
-                                        .populate('company', '_id name address')
-                                        .populate('createdBy.user')
-                                        .populate('editedBy.user');
-                                }
-                                    break;
-                            }
-                            break;
-                    }
-
-                    query.skip(skip).limit(limit).exec(function (err, _res) {
-                        if (err) {
-                            return cb(err);
-                        }
-
-                        cb(null, _res);
-                    });
-
-                };
-                waterfallTasks = [accessRollSearcher, contentSearcher];
-
-                async.waterfall(waterfallTasks, function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send({data: result});
-                });
-            } else {
-                res.status(403).send();
+            if (optionsObject.$and.length) {
+                queryObject.$and.push(optionsObject);
             }
+
+            if (contentType === 'Persons') {
+                queryObject.$and.push({type: 'Person'});
+            } else if (contentType === 'Companies') {
+                queryObject.$and.push({type: 'Company'});
+            }
+
+            queryObject.$and.push({_id: {$in: ids}});
+
+            query = Model.find(queryObject);
+
+            switch (contentType) {
+                case ('Persons'):
+                    switch (viewType) {
+                        case ('list'):
+                        {
+                            query.sort(sort);
+
+                            query
+                                .select("_id createdBy editedBy address.country email name phones.phone")
+                                .populate('createdBy.user', 'login')
+                                .populate('editedBy.user', 'login');
+                        }
+                            break;
+                        case ('thumbnails'):
+                        {
+                            query
+                                .select("_id name email company")
+                                .populate('company', '_id name')
+                                .populate('department', '_id departmentName')
+                                .populate('createdBy.user')
+                                .populate('editedBy.user');
+                        }
+                            break;
+                    }
+                    break;
+                case ('Companies'):
+                    switch (viewType) {
+                        case ('list'):
+                        {
+                            query.sort(sort);
+
+                            query
+                                .select("_id editedBy createdBy salesPurchases name email phones.phone address.country")
+                                .populate('salesPurchases.salesPerson', '_id name')
+                                .populate('salesPurchases.salesTeam', '_id departmentName')
+                                .populate('createdBy.user', 'login')
+                                .populate('editedBy.user', 'login');
+                        }
+                            break;
+                        case ('thumbnails'):
+                        {
+                            query
+                                .select("_id name address")
+                                .populate('createdBy.user')
+                                .populate('editedBy.user');
+                        }
+                            break;
+
+                    }
+                    break;
+                case ('ownCompanies'):
+                    switch (viewType) {
+                        case ('list'):
+                        {
+                            query
+                                .populate('salesPurchases.salesPerson', '_id name')
+                                .populate('salesPurchases.salesTeam', '_id departmentName')
+                                .populate('createdBy.user')
+                                .populate('editedBy.user');
+                        }
+                            break;
+                        case ('thumbnails'):
+                        {
+                            query
+                                .select("_id name")
+                                .populate('company', '_id name address')
+                                .populate('createdBy.user')
+                                .populate('editedBy.user');
+                        }
+                            break;
+                    }
+                    break;
+            }
+
+            query.skip(skip).limit(limit).exec(function (err, _res) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, _res);
+            });
+
+        };
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
         });
 
     };
@@ -737,7 +716,6 @@ var Customers = function (models, event) {
         var _id = req.params.id;
         var remove = req.headers.remove;
         var data = req.body;
-        var mid = parseInt(req.headers.mid, 10);
         var obj;
 
         if (data.notes && data.notes.length !== 0 && !remove) {
@@ -754,19 +732,12 @@ var Customers = function (models, event) {
             date: new Date(req.body.createdBy.date)
         };
 
-        access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-            if (access) {
-
-                Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send(result);
-                });
-            } else {
-                res.status(403).send();
+        Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+            if (err) {
+                return next(err);
             }
+
+            res.status(200).send(result);
         });
     };
 
@@ -776,7 +747,7 @@ var Customers = function (models, event) {
         var _id = req.params.id;
         var fileName = data.fileName;
         var updateObject;
-        var mid = parseInt(req.headers.mid, 10);
+        var newDirname;
 
         if (data.notes && data.notes.length !== 0) {
             var obj = data.notes[data.notes.length - 1];
@@ -798,56 +769,51 @@ var Customers = function (models, event) {
             user: req.session.uId,
             date: new Date().toISOString()
         };
-        access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-            if (access) {
 
-                Model.findByIdAndUpdate(_id, {$set: updateObject}, {new: true}, function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    if (fileName) {
-                        var os = require("os");
-                        var osType = (os.type().split('_')[0]);
-                        var path;
-                        var dir;
-                        switch (osType) {
-                            case "Windows":
-                            {
-                                var newDirname = __dirname.replace("\\Modules", "");
-                                while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\", "\/");
-                                }
-                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                dir = newDirname + "\/uploads\/" + _id;
-                            }
-                                break;
-                            case "Linux":
-                            {
-                                var newDirname = __dirname.replace("/Modules", "");
-                                while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\", "\/");
-                                }
-                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                dir = newDirname + "\/uploads\/" + _id;
-                            }
-                        }
-
-                        fs.unlink(path, function (err) {
-                            fs.readdir(dir, function (err, files) {
-                                if (files && files.length === 0) {
-                                    fs.rmdir(dir, function () {
-                                    });
-                                }
-                            });
-                        });
-
-                    }
-                    res.status(200).send({success: 'Customer updated', notes: result.notes});
-                });
-            } else {
-                res.status(403).send();
+        Model.findByIdAndUpdate(_id, {$set: updateObject}, {new: true}, function (err, result) {
+            if (err) {
+                return next(err);
             }
+
+            if (fileName) {
+                var os = require("os");
+                var osType = (os.type().split('_')[0]);
+                var path;
+                var dir;
+                switch (osType) {
+                    case "Windows":
+                    {
+                        newDirname = __dirname.replace("\\Modules", "");
+                        while (newDirname.indexOf("\\") !== -1) {
+                            newDirname = newDirname.replace("\\", "\/");
+                        }
+                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                        dir = newDirname + "\/uploads\/" + _id;
+                    }
+                        break;
+                    case "Linux":
+                    {
+                        newDirname = __dirname.replace("/Modules", "");
+                        while (newDirname.indexOf("\\") !== -1) {
+                            newDirname = newDirname.replace("\\", "\/");
+                        }
+                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                        dir = newDirname + "\/uploads\/" + _id;
+                    }
+                        break;
+                }
+
+                fs.unlink(path, function (err) {
+                    fs.readdir(dir, function (err, files) {
+                        if (files && files.length === 0) {
+                            fs.rmdir(dir, function () {
+                            });
+                        }
+                    });
+                });
+
+            }
+            res.status(200).send({success: 'Customer updated', notes: result.notes});
         });
     };
 
@@ -927,21 +893,14 @@ var Customers = function (models, event) {
 
     this.remove = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var mid = parseInt(req.headers.mid, 10) || 50;
         var _id = req.params.id;
 
-        access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-            if (access) {
-                Model.remove({_id: _id}, function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send({success: 'customer removed'});
-                });
-            } else {
-                res.status(403).send();
+        Model.remove({_id: _id}, function (err) {
+            if (err) {
+                return next(err);
             }
+
+            res.status(200).send({success: 'customer removed'});
         });
     };
 

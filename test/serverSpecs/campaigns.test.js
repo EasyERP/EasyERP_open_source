@@ -15,7 +15,7 @@ describe("Campaigns Specs", function () {
         aggent = request.agent(url);
 
         aggent
-            .post('login')
+            .post('users/login')
             .send({
                 login: 'admin',
                 pass : '1q2w3eQWE',
@@ -24,9 +24,9 @@ describe("Campaigns Specs", function () {
             .expect(200, done);
     });
 
-    it("should get campaigns fo dropDown", function (done) {
+    it("should get campaigns for dropDown", function (done) {
         aggent
-            .get('campaigns')
+            .get('campaigns/getForDD')
             .expect(200)
             .end(function(err, res){
                 var body = res.body;
