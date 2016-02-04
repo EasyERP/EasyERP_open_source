@@ -2597,13 +2597,13 @@ var requestHandler = function (app, event, mainDb) {
     }
 
     //-----------------Campaigns--------------------------------------
-    function getCampaigns(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            campaigns.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getCampaigns(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        campaigns.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     function getLeadsById(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2984,7 +2984,7 @@ var requestHandler = function (app, event, mainDb) {
         updateDegree          : updateDegree,
         removeDegree          : removeDegree,
 
-        getCampaigns                  : getCampaigns,
+        //getCampaigns                  : getCampaigns,
         //employeesTotalCollectionLength: employeesTotalCollectionLength,
         //getEmployeesFilter            : getEmployeesFilter,
         uploadEmployeesFile           : uploadEmployeesFile,

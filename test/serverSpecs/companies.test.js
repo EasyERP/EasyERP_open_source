@@ -1,9 +1,6 @@
 /**
  * Created by liliy on 29.01.2016.
  */
-/**
- * Created by liliy on 29.01.2016.
- */
 require('../../config/development');
 
 var request = require('supertest');

@@ -60,6 +60,7 @@ module.exports = function (app, mainDb) {
     var journalRouter = require('./journal')(models);
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
+    var campaignRouter = require('./campaign')(models);
 
     var async = require('async');
 
@@ -200,6 +201,7 @@ module.exports = function (app, mainDb) {
     app.use('/chartOfAccount', chartOfAccountRouter);
     app.use('/currency', currencyRouter);
     app.use('/journal', journalRouter);
+    app.use('/campaigns', campaignRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -1382,9 +1384,9 @@ module.exports = function (app, mainDb) {
     });
 
 //----------------------campaign----------------------------------------------------------------
-    app.get('/Campaigns', function (req, res) {
-        requestHandler.getCampaigns(req, res);
-    });
+//    app.get('/Campaigns', function (req, res) {
+//        requestHandler.getCampaigns(req, res);
+//    });
 
     app.get('/sources', function (req, res) {
         requestHandler.getSources(req, res);
