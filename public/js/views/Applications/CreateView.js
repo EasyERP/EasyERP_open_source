@@ -349,7 +349,7 @@ define([
                         }
                     }
                 });
-                populate.get("#departmentDd", "/department/getForDD", {}, "departmentName", this);
+                populate.get("#departmentDd", "/departments/getForDD", {}, "departmentName", this);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
                 populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
                 populate.get("#nationality", "/nationality", {}, "_id", this);

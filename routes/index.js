@@ -179,7 +179,7 @@ module.exports = function (app, mainDb) {
     app.use('/project', projectRouter);
     app.use('/employees', employeeRouter);
     app.use('/applications', applicationRouter);
-    app.use('/department', departmentRouter);
+    app.use('/departments', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);
     app.use('/opportunity', opportunityRouter);
@@ -1196,52 +1196,52 @@ module.exports = function (app, mainDb) {
     });
 
 //------------------Departments---------------------------------------------------
-    app.get('/Departments', function (req, res) {
-        requestHandler.getDepartment(req, res);
-    });
+//    app.get('/Departments', function (req, res) {
+//        requestHandler.getDepartment(req, res);
+//    });
 
     //app.get('/DepartmentsForDd', function (req, res) {
     //    requestHandler.getDepartmentForDd(req, res);
     //});
 
-    app.post('/Departments', function (req, res) {
-        var data = {};
-        data.department = req.body;
-        requestHandler.createDepartment(req, res, data);
-    });
+    //app.post('/Departments', function (req, res) {
+    //    var data = {};
+    //    data.department = req.body;
+    //    requestHandler.createDepartment(req, res, data);
+    //});
 
-    app.get('/Departments/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getDepartmentById(req, res, data);
-                break;
-            default:
-                requestHandler.getCustomDepartment(req, res, data);
-                break;
-        }
+    //app.get('/Departments/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getDepartmentById(req, res, data);
+    //            break;
+    //        default:
+    //            requestHandler.getCustomDepartment(req, res, data);
+    //            break;
+    //    }
+    //
+    //});
 
-    });
+    //app.put('/Departments/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.department = req.body;
+    //    requestHandler.updateDepartment(req, res, id, data);
+    //});
 
-    app.put('/Departments/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.department = req.body;
-        requestHandler.updateDepartment(req, res, id, data);
-    });
-
-    app.delete('/Departments/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeDepartment(req, res, id);
-    });
-    app.get('/getDepartmentsForEditDd', function (req, res) {
-        var id = req.param('id');
-        requestHandler.getDepartmentForEditDd(req, res, id);
-    });
+    //app.delete('/Departments/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeDepartment(req, res, id);
+    //});
+    //app.get('/getDepartmentsForEditDd', function (req, res) {
+    //    var id = req.param('id');
+    //    requestHandler.getDepartmentForEditDd(req, res, id);
+    //});
 
 //------------------Employee---------------------------------------------------
 

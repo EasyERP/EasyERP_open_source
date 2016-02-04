@@ -395,7 +395,7 @@ define([
                 populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this, true);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, true, true);
                 populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, true, true);
-                populate.get("#departmentsDd", "/department/getForDD", {}, "departmentName", this, true);
+                populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this, true);
 
                 common.canvasDraw({model: this.model.toJSON()}, this);
 

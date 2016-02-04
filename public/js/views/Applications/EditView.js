@@ -720,7 +720,7 @@
                 }
             });
 
-            populate.get("#departmentsDd", "/department/getForDD", {}, "departmentName", this);
+            populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this);
             populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
             populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
             populate.get("#nationality", "/nationality", {}, "_id", this);

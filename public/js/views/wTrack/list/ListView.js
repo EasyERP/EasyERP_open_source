@@ -1257,7 +1257,7 @@ define([
                     self.responseObj['#employee'] = employees;
                 });
 
-                dataService.getData("/department/getForDD", null, function (departments) {
+                dataService.getData("/departments/getForDD", null, function (departments) {
                     departments = _.map(departments.data, function (department) {
                         department.name = department.departmentName;
 

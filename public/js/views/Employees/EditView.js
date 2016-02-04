@@ -672,7 +672,7 @@ define([
                 populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, false, false);
                 populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
-                populate.get("#departmentsDd", "/department/getForDD", {}, "departmentName", this);
+                populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this);
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
                 $('#dateBirth').datepicker({

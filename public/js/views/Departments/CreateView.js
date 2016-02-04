@@ -213,7 +213,7 @@ define([
 
                 });
                 populate.get2name("#departmentManager", "/employees/getPersonsForDd", {}, this, true, true);
-                populate.getParrentDepartment("#parentDepartment", "/department/getSalesTeam", {}, this, true, true);
+                populate.getParrentDepartment("#parentDepartment", "/departments/getSalesTeam", {}, this, true, true);
                 common.populateUsersForGroups('#sourceUsers', '#targetUsers', null, 1);
                 this.delegateEvents(this.events);
                 return this;

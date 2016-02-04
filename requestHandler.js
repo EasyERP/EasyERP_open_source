@@ -2455,66 +2455,66 @@ var requestHandler = function (app, event, mainDb) {
     //};
 
     //---------------------Department--------------------------------
-    function createDepartment(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.department.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.create(req, data.department, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function createDepartment(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.department.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.create(req, data.department, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getDepartment(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.get(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getDepartment(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.get(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function updateDepartment(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.department.editedBy = {
-                user: req.session.uId,
-                date: new Date().toISOString()
-            }
-            access.getEditWritAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.update(req, id, data.department, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateDepartment(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.department.editedBy = {
+    //            user: req.session.uId,
+    //            date: new Date().toISOString()
+    //        }
+    //        access.getEditWritAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.update(req, id, data.department, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function removeDepartment(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function removeDepartment(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //function getDepartmentForDd(req, res) {
     //    if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2524,44 +2524,44 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //}
 
-    function getDepartmentForEditDd(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            department.getForEditDd(req, id, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getDepartmentForEditDd(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        department.getForEditDd(req, id, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getCustomDepartment(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.getCustomDepartment(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function getCustomDepartment(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.getCustomDepartment(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
-
-    function getDepartmentById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.getDepartmentById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-
-    };
+    //function getDepartmentById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.getDepartmentById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //
+    //};
 
     //---------------------Deegree--------------------------------
     //function createDegree(req, res, data) {
@@ -2972,13 +2972,13 @@ var requestHandler = function (app, event, mainDb) {
         //aplicationUpdateOnlySelectedFields: aplicationUpdateOnlySelectedFields,
         //employeesUpdateOnlySelectedFields : employeesUpdateOnlySelectedFields,
 
-        getDepartment         : getDepartment,
-        createDepartment      : createDepartment,
-        updateDepartment      : updateDepartment,
-        removeDepartment      : removeDepartment,
-        getDepartmentById     : getDepartmentById,
-        getCustomDepartment   : getCustomDepartment,
-        getDepartmentForEditDd: getDepartmentForEditDd,
+        //getDepartment         : getDepartment,
+        //createDepartment      : createDepartment,
+        //updateDepartment      : updateDepartment,
+        //removeDepartment      : removeDepartment,
+        //getDepartmentById     : getDepartmentById,
+        //getCustomDepartment   : getCustomDepartment,
+        //getDepartmentForEditDd: getDepartmentForEditDd,
         //createDegree          : createDegree,
         //getDegrees            : getDegrees,
         //updateDegree          : updateDegree,

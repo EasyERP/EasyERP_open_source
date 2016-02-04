@@ -325,7 +325,7 @@ define([
                 populate.get2name("#customerDd", "/Customers", {}, this, true, true, (this.model) ? this.model._id : null);
                 populate.get2name("#salesPersonDd", "/employees/getForDdByRelatedUser", {}, this, true, true);
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, true);
-                populate.get("#salesTeamDd", "/department/getForDD", {}, "departmentName", this, true, true);
+                populate.get("#salesTeamDd", "/departments/getForDD", {}, "departmentName", this, true, true);
 
                 /*                common.populateCustomers("#customerDd", "/Customers",this.model);
                  //common.populateEmployeesDd("#salesPerson"Dd, "/employee/getPersonsForDd");

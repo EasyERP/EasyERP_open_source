@@ -179,7 +179,7 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
-                populate.get("#departmentDd", "/department/getForDD", {}, "departmentName", this, true, true);
+                populate.get("#departmentDd", "/departments/getForDD", {}, "departmentName", this, true, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Job positions"}, "name", this, true);
                 this.delegateEvents(this.events);
                 return this;
