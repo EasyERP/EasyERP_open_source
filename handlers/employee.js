@@ -11,6 +11,9 @@ var Employee = function (event, models) {
     var ProjectSchema = mongoose.Schemas.Project;
     var DepartmentSchema = mongoose.Schemas.Department;
     var jobPositionSchema = mongoose.Schemas.JobPosition;
+    var nationalitySchema =  mongoose.Schemas.nationality;
+    var LanguageSchema = mongoose.Schemas.language;
+    var SourceSchema = mongoose.Schemas.source;
     var _ = require('underscore');
     var fs = require('fs');
     var objectId = mongoose.Types.ObjectId;
@@ -1309,6 +1312,42 @@ var Employee = function (event, models) {
             res.send(data);
         });
 
+    };
+    
+    this.getNationality = function (req, res, next) {
+        var Nationality = models.get(req.session.lastDb, 'nationality', nationalitySchema);
+
+        Nationality.find({}).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+    };
+
+    this.getLanguages = function (req, res, next) {
+       var Languages = models.get(req.session.lastDb, 'languages', LanguageSchema);
+
+        Languages.find({}).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+    };
+
+    this.getSources = function (req, res, next) {
+        var Sources = models.get(req.session.lastDb, 'sources', SourceSchema);
+
+        Sources.find({}).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
     };
 };
 /**

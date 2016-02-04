@@ -17,15 +17,15 @@ var requestHandler = function (app, event, mainDb) {
     var customer = require("./Modules/Customers.js")(event, models);
     var workflow = require("./Modules/Workflow.js")(models, event);
     var project = require("./Modules/Projects.js")(models, event);
-    var jobPosition = require("./Modules/JobPosition.js")(event, models);
+    //var jobPosition = require("./Modules/JobPosition.js")(event, models);
     //var degrees = require("./Modules/Degrees.js")(models);
     //var campaigns = require("./Modules/Campaigns.js")(models);
     var opportunities = require("./Modules/Opportunities.js")(models, event);
     var modules = require("./Modules/Module.js")(models);
-    var sources = require("./Modules/Sources.js")(models);
-    var languages = require("./Modules/Languages.js")(models);
-    var jobType = require("./Modules/JobType.js")(models);
-    var nationality = require("./Modules/Nationality.js")(models);
+    //var sources = require("./Modules/Sources.js")(models);
+    //var languages = require("./Modules/Languages.js")(models);
+    //var jobType = require("./Modules/JobType.js")(models);
+    //var nationality = require("./Modules/Nationality.js")(models);
     var birthdays = require("./Modules/Birthdays.js")(models, event);
     var Scheduler = require("./Modules/Scheduler.js")(dbsObject, models);
     var scheduler = new Scheduler();
@@ -2081,113 +2081,113 @@ var requestHandler = function (app, event, mainDb) {
     //---------------------JobPosition--------------------------------
 
     // get  jobPositions Total count
-    function jobPositionsTotalCollectionLength(req, res) {
-        jobPosition.getTotalCount(req, res);
-    }
+    //function jobPositionsTotalCollectionLength(req, res) {
+    //    jobPosition.getTotalCount(req, res);
+    //}
 
-    function createJobPosition(req, res, data) {
+    //function createJobPosition(req, res, data) {
+    //
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.jobPosition.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                jobPosition.create(req, data.jobPosition, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.jobPosition.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    jobPosition.create(req, data.jobPosition, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getJobType(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        jobType.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getJobType(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            jobType.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getNationality(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        nationality.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getNationality(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            nationality.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
-
-    function getJobPositionForDd(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            jobPosition.getJobPositionForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    };
+    //function getJobPositionForDd(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        jobPosition.getJobPositionForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     // Get JobPosition for list
-    function getFilterJobPosition(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    // jobPosition.getFilter(req, res);
-                    jobPosition.get(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getFilterJobPosition(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                // jobPosition.getFilter(req, res);
+    //                jobPosition.get(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getJobPositionById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    jobPosition.getJobPositionById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
+    //function getJobPositionById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                jobPosition.getJobPositionById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //
+    //};
 
-    };
+    //function updateJobPosition(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.jobPosition.editedBy = {
+    //            user: req.session.uId,
+    //            date: new Date().toISOString()
+    //        }
+    //        access.getEditWritAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                jobPosition.update(req, id, data.jobPosition, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function updateJobPosition(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.jobPosition.editedBy = {
-                user: req.session.uId,
-                date: new Date().toISOString()
-            }
-            access.getEditWritAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    jobPosition.update(req, id, data.jobPosition, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function removeJobPosition(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    jobPosition.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function removeJobPosition(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                jobPosition.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //---------------------Employee--------------------------------
 
@@ -2836,21 +2836,21 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function getSources(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            sources.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getSources(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        sources.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getLanguages(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            languages.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getLanguages(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        languages.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     // Get  Persons or Companies or ownCompanies total count
     //function customerTotalCollectionLength(req, res) {
@@ -2943,15 +2943,15 @@ var requestHandler = function (app, event, mainDb) {
         removeWorkflow                 : removeWorkflow,
         updateWorkflowOnlySelectedField: updateWorkflowOnlySelectedField,
 
-        jobPositionsTotalCollectionLength: jobPositionsTotalCollectionLength,
-        createJobPosition                : createJobPosition,
-        updateJobPosition                : updateJobPosition,
-        removeJobPosition                : removeJobPosition,
-        getJobPositionById               : getJobPositionById,
-        getJobPositionForDd              : getJobPositionForDd,
+        //jobPositionsTotalCollectionLength: jobPositionsTotalCollectionLength,
+       // createJobPosition                : createJobPosition,
+        //updateJobPosition                : updateJobPosition,
+        //removeJobPosition                : removeJobPosition,
+        //getJobPositionById               : getJobPositionById,
+        //getJobPositionForDd              : getJobPositionForDd,
 
         //createEmployee       : createEmployee,
-        getFilterJobPosition : getFilterJobPosition,
+        //getFilterJobPosition : getFilterJobPosition,
         //getForDdByRelatedUser: getForDdByRelatedUser,
         //getEmployeesById     : getEmployeesById,
         //removeEmployees      : removeEmployees,
@@ -3009,10 +3009,10 @@ var requestHandler = function (app, event, mainDb) {
         opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
         uploadOpportunitiesFiles            : uploadOpportunitiesFiles,
 
-        getSources                   : getSources,
-        getLanguages                 : getLanguages,
-        getJobType                   : getJobType,
-        getNationality               : getNationality,
+        //getSources                   : getSources,
+        //getLanguages                 : getLanguages,
+        //getJobType                   : getJobType,
+        //getNationality               : getNationality,
         //customerTotalCollectionLength: customerTotalCollectionLength,
 
         initScheduler: initScheduler

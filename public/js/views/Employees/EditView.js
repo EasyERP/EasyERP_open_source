@@ -667,10 +667,10 @@ define([
                 common.getWorkflowContractEnd("Applications", null, null, "/Workflows", null, "Contract End", function (workflow) {
                     $('.endContractReasonList').attr('data-id', workflow[0]._id);
                 });
-                populate.get("#jobTypeDd", "/jobType", {}, "name", this);
-                populate.get("#nationality", "/nationality", {}, "_id", this);
+                populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "name", this);
+                populate.get("#nationality", "/employees/nationality", {}, "_id", this);
                 populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
-                populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, false, false);
+                populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this, false, false);
                 populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
                 populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this);
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);

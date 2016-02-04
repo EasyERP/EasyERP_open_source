@@ -390,10 +390,10 @@ define([
                     }).render().el
                 );
 
-                populate.get("#jobTypeDd", "/jobType", {}, "name", this, true);
-                populate.get("#nationality", "/nationality", {}, "_id", this, true);
+                populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "name", this, true);
+                populate.get("#nationality", "/employees/nationality", {}, "_id", this, true);
                 populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this, true);
-                populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, true, true);
+                populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this, true, true);
                 populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, true, true);
                 populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this, true);
 

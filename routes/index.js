@@ -138,7 +138,7 @@ module.exports = function (app, mainDb) {
     app.use('/salaryReport', salaryReportRouter);
     app.use('/opportunity', opportunityRouter);
     app.use('/task', taskRouter);
-    app.use('/jobPosition', jobPositionRouter);
+    app.use('/jobPositions', jobPositionRouter);
     app.use('/holiday', holidayRouter);
     app.use('/vacation', vacationRouter);
     app.use('/monthHours', monthHoursRouter);
@@ -742,9 +742,9 @@ module.exports = function (app, mainDb) {
             //case ('Applications'):
             //    requestHandler.employeesTotalCollectionLength(req, res);
             //    break;
-            case ('JobPositions'):
-                requestHandler.jobPositionsTotalCollectionLength(req, res);
-                break;
+            //case ('JobPositions'):
+            //    requestHandler.jobPositionsTotalCollectionLength(req, res);
+            //    break;
             case ('Users'):
                 requestHandler.usersTotalCollectionLength(req, res);
                 break;
@@ -1095,59 +1095,59 @@ module.exports = function (app, mainDb) {
     //});
 
 //------------------JobPositions---------------------------------------------------
-    app.get('/nationality', function (req, res) {
-        requestHandler.getNationality(req, res);
-    });
+//    app.get('/nationality', function (req, res) {
+//        requestHandler.getNationality(req, res);
+//    });
 
-    app.get('/jobType', function (req, res) {
-        requestHandler.getJobType(req, res);
-    });
+    //app.get('/jobType', function (req, res) {
+    //    requestHandler.getJobType(req, res);
+    //});
 
-    app.post('/JobPositions', function (req, res) {
-        var data = {};
-        data.jobPosition = req.body;
-        requestHandler.createJobPosition(req, res, data);
-    });
+    //app.post('/JobPositions', function (req, res) {
+    //    var data = {};
+    //    data.jobPosition = req.body;
+    //    requestHandler.createJobPosition(req, res, data);
+    //});
 
-    app.get('/JobPositionForDd', function (req, res) {
-        requestHandler.getJobPositionForDd(req, res);
-    });
+    //app.get('/JobPositionForDd', function (req, res) {
+    //    requestHandler.getJobPositionForDd(req, res);
+    //});
 
-    app.get('/JobPositions/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getJobPositionById(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterJobPosition(req, res);
-                break;
-        }
+    //app.get('/JobPositions/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getJobPositionById(req, res, data);
+    //            break;
+    //        default:
+    //            requestHandler.getFilterJobPosition(req, res);
+    //            break;
+    //    }
+    //
+    //});
 
-    });
+    //app.patch('/JobPositions/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.jobPosition = req.body;
+    //    requestHandler.updateJobPosition(req, res, id, data);
+    //});
 
-    app.patch('/JobPositions/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.jobPosition = req.body;
-        requestHandler.updateJobPosition(req, res, id, data);
-    });
+    //app.put('/JobPositions/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.jobPosition = req.body;
+    //    requestHandler.updateJobPosition(req, res, id, data);
+    //});
 
-    app.put('/JobPositions/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.jobPosition = req.body;
-        requestHandler.updateJobPosition(req, res, id, data);
-    });
-
-    app.delete('/JobPositions/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeJobPosition(req, res, id);
-    });
+    //app.delete('/JobPositions/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeJobPosition(req, res, id);
+    //});
 
 //------------------Departments---------------------------------------------------
 //    app.get('/Departments', function (req, res) {
@@ -1344,12 +1344,12 @@ module.exports = function (app, mainDb) {
 //        requestHandler.getCampaigns(req, res);
 //    });
 
-    app.get('/sources', function (req, res) {
-        requestHandler.getSources(req, res);
-    });
-    app.get('/Languages', function (req, res) {
-        requestHandler.getLanguages(req, res);
-    });
+    //app.get('/sources', function (req, res) {
+    //    requestHandler.getSources(req, res);
+    //});
+    //app.get('/Languages', function (req, res) {
+    //    requestHandler.getLanguages(req, res);
+    //});
 
 //----------------------Leads----------------------------------------------------------------
     app.get('/LeadsForChart', function (req, res) {

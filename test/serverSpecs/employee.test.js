@@ -214,6 +214,66 @@ describe("Employee Specs", function () {
             });
     });
 
+    it("should get nationality forDD", function (done) {
+        aggent
+            .get('employees/nationality')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
+
+                done();
+            });
+    });
+
+    it("should get languages forDD", function (done) {
+        aggent
+            .get('employees/languages')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
+
+                done();
+            });
+    });
+
+    it("should get sources forDD", function (done) {
+        aggent
+            .get('employees/sources')
+            .expect(200)
+            .end(function (err, res) {
+                var body = res.body;
+
+                if (err) {
+                    return done(err);
+                }
+
+                expect(body)
+                    .to.be.instanceOf(Object);
+                expect(body)
+                    .to.have.property('data');
+
+                done();
+            });
+    });
+
     it("should get only employees forDD", function (done) {
         aggent
             .get('employees/getForDD')
