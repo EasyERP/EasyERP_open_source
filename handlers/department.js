@@ -27,6 +27,22 @@ var Department = function (models) {
             });
     };
 
+    this.get = function (req, res, next) {
+        var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+        var query = Department.find({});
+
+        query.select('_id departmentName');
+        query.sort({departmentName: 1});
+        query.exec(function (err, departments) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: departments});
+
+        });
+    };
+
     this.create = function (req, res, next) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var body = req.body;
@@ -113,24 +129,23 @@ var Department = function (models) {
 
     this.getDepartmentsForEditDd = function (req, res, next) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
-        var id = req.body.id;
-        var ids;
-        var i;
+        var id = req.query.id;
 
         Department
             .find({}, {departmentName: 1, nestingLevel: 1, parentDepartment: 1})
             .sort({departmentName: 1})
+            .lean()
             .exec(function (err, departments) {
                 if (err) {
                     return next(err);
                 }
 
-                ids = [id];
+                var ids = [id];
                 getAllChildIds(req, id, function (id) {
                     ids.push(id.toString());
                 }, function () {
                     var result = [];
-                    for (i = 0; i < departments.length; i++) {
+                    for (var i = 0; i < departments.length; i++) {
                         if (ids.indexOf(departments[i]._id.toString()) === -1) {
                             result.push(departments[i]);
                         }
@@ -170,7 +185,7 @@ var Department = function (models) {
             } else {
                 if (isCreate) {
                     query = model.count({"parentDepartment": parentDepartmentStart}).exec(function (err, res) {
-                        if (callback){
+                        if (callback) {
                             callback(res);
                         }
                     });

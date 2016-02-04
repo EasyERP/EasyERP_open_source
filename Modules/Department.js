@@ -411,9 +411,9 @@ var Department = function (event, models) {
         //getDepartmentById  : getDepartmentById,
         //getForDd           : getForDd,
         //getForEditDd       : getForEditDd,
-        //get                : get, //not used
+        //get                : get,
         //getCustomDepartment: getCustomDepartment,
-        update             : update,
+        //update             : update,
         //remove             : remove
     };
 };
