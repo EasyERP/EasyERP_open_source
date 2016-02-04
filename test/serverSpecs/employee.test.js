@@ -34,7 +34,7 @@ describe("Employee Specs", function () {
             "department" : "55b92ace21e4b7c40f00000f",
             "jobPosition": "55b92acf21e4b7c40f00001d",
             "dateBirth"  : "28 Dec, 1990",
-            hire         : [{
+            "hire"         : [{
                 department : "55b92ace21e4b7c40f00000f",
                 jobPosition: "55b92acf21e4b7c40f00001d",
                 manager    : "56938d2cd87c9004552b639e",
