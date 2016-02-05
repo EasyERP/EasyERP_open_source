@@ -10,6 +10,7 @@ var host = process.env.HOST;
 var aggent;
 
 describe("Company Specs", function () {
+    'use strict';
     var id;
 
     describe('Company with admin', function(){
