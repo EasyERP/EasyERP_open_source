@@ -11,13 +11,12 @@ module.exports = function (models, event) {
     var moduleId = MODULES.OPPORTUNITIES;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
+    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddlware, handler.getFilterValues);
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddlware, handler.opportunitiesForMiniView);
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddlware, handler.getLengthByWorkflows);
     router.get('/:viewType', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
-
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
-
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);
     router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);

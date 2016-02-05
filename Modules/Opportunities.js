@@ -1463,7 +1463,7 @@ var Opportunities = function (models, event) {
     }
 
     return {
-        getTotalCount                    : getTotalCount,
+        //getTotalCount                    : getTotalCount,
         //create                           : create,
         //get                              : get,
         //getCollectionLengthByWorkflows   : getCollectionLengthByWorkflows,

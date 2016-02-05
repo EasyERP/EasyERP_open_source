@@ -2702,9 +2702,9 @@ var requestHandler = function (app, event, mainDb) {
     //}
 
     // Get  Leads or Opportunities total count
-    function opportunitiesTotalCollectionLength(req, res) {
-        opportunities.getTotalCount(req, res);
-    }
+    //function opportunitiesTotalCollectionLength(req, res) {
+    //    opportunities.getTotalCount(req, res);
+    //}
 
     //function getOpportunitiesLengthByWorkflows(req, res) {
     //    opportunities.getCollectionLengthByWorkflows(req, res);
@@ -2997,7 +2997,7 @@ var requestHandler = function (app, event, mainDb) {
         //getLeadsById    : getLeadsById,
         //getLeadsForChart: getLeadsForChart,
 
-        opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
+        //opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
         //getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
         //createOpportunitie                  : createOpportunitie,
         //getFilterOpportunities              : getFilterOpportunities,

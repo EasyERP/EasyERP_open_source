@@ -14,9 +14,9 @@ module.exports = function (models, event) {
     var moduleId = MODULES.LEADS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
+    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
     router.get('/getLeadsForChart', authStackMiddleware, accessStackMiddlware, handler.getLeadsForChart);
     router.get('/:viewType', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
-
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateLead);
     router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.updateLead);
