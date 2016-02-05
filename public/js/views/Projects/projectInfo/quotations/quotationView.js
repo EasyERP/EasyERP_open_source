@@ -340,7 +340,7 @@ define([
                 }
             });
 
-            dataService.getData("/workflow/fetch", {
+            dataService.getData("/workflows/fetch", {
                 wId         : 'Sales Order',
                 source      : 'purchase',
                 targetSource: 'quotation'

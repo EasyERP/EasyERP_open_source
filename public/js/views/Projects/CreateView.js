@@ -286,7 +286,7 @@ define([
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);
                 populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this, true);
                 populate.get2name("#customerDd", "/Customers", {}, this, true, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Projects"}, "name", this, true);
 
                 $('#StartDate').datepicker({
                     dateFormat : "d M, yy",

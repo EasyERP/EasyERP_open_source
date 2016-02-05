@@ -115,7 +115,7 @@ define([
 
                 this.renderFilter(self);
 
-                dataService.getData("/workflow/fetch", {
+                dataService.getData("/workflows/fetch", {
                     wId         : 'Purchase Order',
                     source      : 'purchase',
                     targetSource: 'quotation'

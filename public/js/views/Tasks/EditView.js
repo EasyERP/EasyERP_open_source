@@ -338,7 +338,7 @@
                     }).render().el
                 );
                 populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Tasks"}, "name", this);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Tasks"}, "name", this);
                 populate.get2name("#assignedToDd", "/employees/getPersonsForDd", {}, this);
                 populate.getPriority("#priorityDd", this);
                 this.delegateEvents(this.events);

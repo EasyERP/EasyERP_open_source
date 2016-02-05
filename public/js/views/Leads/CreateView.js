@@ -296,7 +296,7 @@ define([
                 );
 
                 populate.getPriority("#priorityDd", this, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Leads"}, "name", this, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Leads"}, "name", this, true);
                 populate.get2name("#customerDd", "/Customers", {}, this, true, true);
                 populate.get("#sourceDd", "/employees/sources", {}, "name", this, true, true);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this, true, true);
