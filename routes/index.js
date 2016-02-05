@@ -1445,13 +1445,13 @@ module.exports = function (app, mainDb) {
         requestHandler.updateOpportunitie(req, res, id, data);
     });
 
-    app.patch('/Opportunities/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.toBeConvert = req.headers.toBeConvert;
-        data.opportunitie = req.body;
-        requestHandler.opportunitieUpdateOnlySelectedFields(req, res, id, data);
-    });
+    //app.patch('/Opportunities/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.toBeConvert = req.headers.toBeConvert;
+    //    data.opportunitie = req.body;
+    //    requestHandler.opportunitieUpdateOnlySelectedFields(req, res, id, data);
+    //});
     //app.delete('/Opportunities/:_id', function (req, res) {
     //    var id = req.param('_id');
     //    requestHandler.removeOpportunitie(req, res, id);

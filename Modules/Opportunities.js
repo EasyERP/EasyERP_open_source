@@ -1474,7 +1474,7 @@ var Opportunities = function (models, event) {
         getLeadsForChart                 : getLeadsForChart,
         update                           : update,
         updateLead                       : updateLead,
-        updateOnlySelectedFields         : updateOnlySelectedFields,
+        //updateOnlySelectedFields         : updateOnlySelectedFields,
         //remove                           : remove
     }
 };
