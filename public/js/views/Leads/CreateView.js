@@ -246,7 +246,7 @@ define([
                             self.hideDialog();
                             Backbone.history.fragment = "";                                  //Masalovych bag 803
                             Backbone.history.navigate(location, {trigger: true});          //Masalovych bag 803
-                            // Backbone.history.navigate("easyErp/Users", { trigger: true });
+                            // Backbone.history.navigate("easyErp/users", { trigger: true });
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);

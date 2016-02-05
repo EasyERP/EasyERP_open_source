@@ -13,7 +13,7 @@ var Users = function (mainDb, models) {
     var RESPONSES = require('../constants/responses');
     var _ = require('lodash');
 
-    function getAllUserWithProfile(req, id, response) {
+    /*function getAllUserWithProfile(req, id, response) {
         var res = {};
         var query = models.get(req.session.lastDb, 'Users', userSchema).find({profile: id}, {_id: 0, login: 1});
         query.exec(function (err, result) {
@@ -29,7 +29,7 @@ var Users = function (mainDb, models) {
                 response.send(500, {error: "Can't find JobPositions"});
             }
         });
-    };
+    };*/
 
     function getTotalCount(req, response) {
         var res = {};
@@ -489,7 +489,7 @@ var Users = function (mainDb, models) {
     }*/
 
     return {
-        getAllUserWithProfile: getAllUserWithProfile,
+       /* getAllUserWithProfile: getAllUserWithProfile,*/
 
         getTotalCount: getTotalCount,
 

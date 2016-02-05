@@ -599,10 +599,10 @@ module.exports = function (app, mainDb) {
         requestHandler.createUser(req, res, data);
     });*/
 
-    app.get('/UserWithProfile', function (req, res) {
+    /*app.get('/UserWithProfile', function (req, res) {
         var id = req.param('_id');
         requestHandler.getAllUserWithProfile(req, id, res);
-    });
+    });*/
 
     app.get('/Users', function (req, res) {
         var data = {};

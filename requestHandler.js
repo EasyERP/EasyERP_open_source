@@ -2878,7 +2878,7 @@ var requestHandler = function (app, event, mainDb) {
         getUsersForDd             : getUsersForDd,
         getUserById               : getUserById,
         getFilterUsers            : getFilterUsers,
-        getAllUserWithProfile     : getAllUserWithProfile,
+       /* getAllUserWithProfile     : getAllUserWithProfile,*/
         updateUser                : updateUser,
         /*removeUser                : removeUser,*/
         currentUser               : currentUser,
