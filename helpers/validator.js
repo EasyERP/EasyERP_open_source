@@ -37,6 +37,17 @@ function getValidUserBody(body) {
     return hasEmail && hasLogin && hasPass && hasProfile;
 }
 
+function getValidProfileBody(body) {
+    "use strict";
+    var hasName = body.hasOwnProperty('profileName');
+
+    //not sure about regexp
+    // why not && ?
+    hasName = hasName ? validator.isProfile(body.profileName) : false;
+
+    return hasName;
+}
+
 function parseUserBody(body) {
     "use strict";
     var email = body.email;
@@ -59,7 +70,33 @@ function parseUserBody(body) {
     return body;
 }
 
+function parseProfileBody(body) {
+    "use strict";
+
+    if (body.profileName) {
+        body.profileName = validator.escape(body.profileName);
+        body.profileName = xssFilters.inHTMLData(body.profileName);
+    }
+
+
+    if (body.profileDescription) {
+        body.profileDescription = validator.escape(body.profileDescription);
+        body.profileDescription = xssFilters.inHTMLData(body.profileDescription);
+    }
+
+    body._id = Date.parse(new Date());
+
+    body.profileAccess = body.profileAccess.map(function (item) {
+        item.module = item.module._id;
+        return item;
+    });
+
+    return body;
+}
+
 module.exports = {
     validUserBody: getValidUserBody,
-    parseUserBody: parseUserBody
+    parseUserBody: parseUserBody,
+    validProfileBody: getValidProfileBody,
+    parseProfileBody: parseProfileBody,
 };
