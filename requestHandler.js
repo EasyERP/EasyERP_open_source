@@ -2788,24 +2788,24 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function opportunitieUpdateOnlySelectedFields(req, res, id, data) {
-        data = data.opportunitie;
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    opportunities.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function opportunitieUpdateOnlySelectedFields(req, res, id, data) {
+    //    data = data.opportunitie;
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                opportunities.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //function removeOpportunitie(req, res, id) {
     //    if (req.session && req.session.loggedIn && req.session.lastDb) {

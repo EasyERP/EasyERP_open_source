@@ -19,6 +19,7 @@ module.exports = function (models, event) {
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
+    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);
     router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
 
     return router;

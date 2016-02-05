@@ -317,6 +317,19 @@ var Opportunity = function (models, event) {
             });
         };
 
+    this.updateOnlySelectedFields = function (req, res, next) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var data = req.body;
+
+        var fileName = data.fileName;
+        delete data.fileName;
+
+        data.editedBy = {
+            user: req.session.uId,
+            date: new Date().toISOString()
+        };
+    };
+
         this.create = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
             var body = req.body;
