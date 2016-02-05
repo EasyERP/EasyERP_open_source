@@ -2706,9 +2706,9 @@ var requestHandler = function (app, event, mainDb) {
         opportunities.getTotalCount(req, res);
     }
 
-    function getOpportunitiesLengthByWorkflows(req, res) {
-        opportunities.getCollectionLengthByWorkflows(req, res);
-    }
+    //function getOpportunitiesLengthByWorkflows(req, res) {
+    //    opportunities.getCollectionLengthByWorkflows(req, res);
+    //}
 
     //function createOpportunitie(req, res, data) {
     //    if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2807,20 +2807,20 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function removeOpportunitie(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    }
+    //function removeOpportunitie(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     function uploadOpportunitiesFiles(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2998,14 +2998,14 @@ var requestHandler = function (app, event, mainDb) {
         getLeadsForChart: getLeadsForChart,
 
         opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
-        getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
+        //getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
         //createOpportunitie                  : createOpportunitie,
         //getFilterOpportunities              : getFilterOpportunities,
         //getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
         //getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
         //getOpportunityById                  : getOpportunityById,
         updateOpportunitie                  : updateOpportunitie,
-        removeOpportunitie                  : removeOpportunitie,
+        //removeOpportunitie                  : removeOpportunitie,
         opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
         uploadOpportunitiesFiles            : uploadOpportunitiesFiles,
 

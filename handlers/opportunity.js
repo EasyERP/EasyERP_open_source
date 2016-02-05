@@ -166,6 +166,28 @@ var Opportunity = function (models, event) {
             }
         };
 
+    this.remove = function (req, res, next) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var id = req.params.id;
+
+        Opportunity.findByIdAndRemove(id, function (err, result) {
+            if (err){
+                return next(err);
+            }
+
+            if (result && result.isOpportunitie) {
+                event.emit('updateSequence', Opportunity, "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
+            }
+
+            res.status(200).send({success: 'Opportunities removed'});
+        });
+    };
+
+        this.getLengthByWorkflows = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+
+        };
+
         this.opportunitiesForMiniView = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
             var data = req.body;

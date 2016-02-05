@@ -1433,9 +1433,9 @@ module.exports = function (app, mainDb) {
     //
     //});
 
-    app.get('/getLengthByWorkflows', function (req, res) {
-        requestHandler.getOpportunitiesLengthByWorkflows(req, res);
-    });
+    //app.get('/getLengthByWorkflows', function (req, res) {
+    //    requestHandler.getOpportunitiesLengthByWorkflows(req, res);
+    //});
 
     app.put('/Opportunities/:_id', function (req, res) {
         var data = {};
@@ -1452,10 +1452,10 @@ module.exports = function (app, mainDb) {
         data.opportunitie = req.body;
         requestHandler.opportunitieUpdateOnlySelectedFields(req, res, id, data);
     });
-    app.delete('/Opportunities/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeOpportunitie(req, res, id);
-    });
+    //app.delete('/Opportunities/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeOpportunitie(req, res, id);
+    //});
     app.get('/:id', function (req, res, next) {
         var id = req.param('id');
         if (!isNaN(parseFloat(id))) {

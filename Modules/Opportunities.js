@@ -1466,7 +1466,7 @@ var Opportunities = function (models, event) {
         getTotalCount                    : getTotalCount,
         //create                           : create,
         get                              : get,
-        getCollectionLengthByWorkflows   : getCollectionLengthByWorkflows,
+        //getCollectionLengthByWorkflows   : getCollectionLengthByWorkflows,
         //getById                          : getById,
         //getFilterOpportunitiesForKanban  : getFilterOpportunitiesForKanban,
         //getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
@@ -1475,7 +1475,7 @@ var Opportunities = function (models, event) {
         update                           : update,
         updateLead                       : updateLead,
         updateOnlySelectedFields         : updateOnlySelectedFields,
-        remove                           : remove
+        //remove                           : remove
     }
 };
 module.exports = Opportunities;
