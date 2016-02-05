@@ -24,7 +24,7 @@ describe("Opportunity Specs", function () {
 
     it('should create Opportunity', function(done){
         var body = {
-            //name: "Subject",
+            name: "Subject"
             //customer : 1
         };
 

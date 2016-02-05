@@ -14,6 +14,14 @@ var Opportunity = function (models, event) {
 
         var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+        function validBody(body) {
+            if (body.name) {
+                return true;
+            }
+
+            return false;
+        }
+
         this.addNewLeadFromSite = function (req, res, next) {
             var db = 'production';
             var Opportunitie = models.get(db, 'Opportunitie', opportunitiesSchema);
@@ -317,26 +325,30 @@ var Opportunity = function (models, event) {
             });
         };
 
-    this.updateOnlySelectedFields = function (req, res, next) {
-        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
-        var data = req.body;
+        this.updateOnlySelectedFields = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var data = req.body;
 
-        var fileName = data.fileName;
-        delete data.fileName;
+            var fileName = data.fileName;
+            delete data.fileName;
 
-        data.editedBy = {
-            user: req.session.uId,
-            date: new Date().toISOString()
+            data.editedBy = {
+                user: req.session.uId,
+                date: new Date().toISOString()
+            };
         };
-    };
 
         this.create = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
             var body = req.body;
             var opportunity;
+            var err;
 
-            if (!body){
-               return res.status(404).send();
+            if (!validBody(body)) {
+                err = new Error();
+                err.status = 404;
+
+                return next(err);
             }
 
             opportunity = new Opportunity(body);

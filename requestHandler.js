@@ -3006,7 +3006,7 @@ var requestHandler = function (app, event, mainDb) {
         //getOpportunityById                  : getOpportunityById,
         updateOpportunitie                  : updateOpportunitie,
         //removeOpportunitie                  : removeOpportunitie,
-        opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
+        //opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
         uploadOpportunitiesFiles            : uploadOpportunitiesFiles,
 
         //getSources                   : getSources,
