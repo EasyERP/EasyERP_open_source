@@ -90,21 +90,7 @@ describe("Employee Specs", function () {
             aggent
                 .post('employees')
                 .send(bodyError)
-                .expect(500)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('error');
-
-                    done();
-                });
+                .expect(404, done);
         });
 
         it("should getById employee", function (done) {

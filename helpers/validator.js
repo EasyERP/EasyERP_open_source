@@ -77,18 +77,17 @@ function validEmployeeBody(body) {
     "use strict";
     var hasName = body.hasOwnProperty('name');
     var dateBirth = body.hasOwnProperty('dateBirth');
-    var hasPass = body.hasOwnProperty('pass');
-    var hasProfile = body.hasOwnProperty('profile');
 
     var hasNameFirst = hasName ? validator.isEmployeeName(body.name.first) : false;
     var hasNameLast = hasName ? validator.isEmployeeName(body.name.first) : false;
-    dateBirth = dateBirth ? validator.isEmployeeDate(body.dateBirth) : false;
+
+    dateBirth = dateBirth ? validator.isDate(body.dateBirth) : false;
 
     return hasNameFirst && hasNameLast && dateBirth;
 }
 
 module.exports = {
-    validUserBody       : getValidUserBody,
-    parseUserBody       : parseUserBody,
+    validUserBody    : getValidUserBody,
+    parseUserBody    : parseUserBody,
     validEmployeeBody: validEmployeeBody
 };

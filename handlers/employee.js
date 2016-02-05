@@ -18,7 +18,7 @@ var Employee = function (event, models) {
     var _ = require('underscore');
     var fs = require('fs');
     var objectId = mongoose.Types.ObjectId;
-    var validator = require('../helpers/validator');
+    var validatorEmployee = require('../helpers/validator');
     var Payroll = require('../handlers/payroll');
     var payrollHandler = new Payroll(models);
 
@@ -218,7 +218,7 @@ var Employee = function (event, models) {
             body.age = getAge(body.dateBirth);
         }
 
-        if(!validator.validEmployeeBody(body)){
+        if(!validatorEmployee.validEmployeeBody(body)){
             err = new Error();
             err.status = 404;
 
