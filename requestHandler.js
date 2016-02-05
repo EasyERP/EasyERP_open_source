@@ -3001,7 +3001,7 @@ var requestHandler = function (app, event, mainDb) {
         getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
         //createOpportunitie                  : createOpportunitie,
         //getFilterOpportunities              : getFilterOpportunities,
-        getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
+        //getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
         //getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
         //getOpportunityById                  : getOpportunityById,
         updateOpportunitie                  : updateOpportunitie,

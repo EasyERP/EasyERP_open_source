@@ -4,7 +4,7 @@ var opportunityHandler = require('../handlers/opportunity');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
-module.exports = function (models) {
+module.exports = function (models, event) {
     'use strict';
 
     var handler = new opportunityHandler(models, event);
