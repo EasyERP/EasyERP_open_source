@@ -166,26 +166,74 @@ var Opportunity = function (models, event) {
             }
         };
 
-    this.remove = function (req, res, next) {
-        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
-        var id = req.params.id;
+        this.remove = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var id = req.params.id;
 
-        Opportunity.findByIdAndRemove(id, function (err, result) {
-            if (err){
-                return next(err);
-            }
+            Opportunity.findByIdAndRemove(id, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-            if (result && result.isOpportunitie) {
-                event.emit('updateSequence', Opportunity, "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
-            }
+                if (result && result.isOpportunitie) {
+                    event.emit('updateSequence', Opportunity, "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
+                }
 
-            res.status(200).send({success: 'Opportunities removed'});
-        });
-    };
+                res.status(200).send({success: 'Opportunities removed'});
+            });
+        };
 
         this.getLengthByWorkflows = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var waterfallTasks;
+            var accessRollSearcher;
+            var contentSearcher;
+            var data = {};
 
+            data['showMore'] = false;
+
+            accessRollSearcher = function (cb) {
+                accessRoll(req, Opportunity, cb);
+            };
+
+            contentSearcher = function (opportunitiesIds, waterfallCallback) {
+                var queryObject = {};
+                queryObject.$and = [];
+                queryObject.$and.push({_id: {$in: opportunitiesIds}});
+                queryObject.$and.push({isOpportunitie: true});
+
+                Opportunity.aggregate([
+                    {
+                        $match: queryObject
+                    }, {
+                        $project: {
+                            _id     : 1,
+                            workflow: 1
+                        }
+                    },
+                    {
+                        $group: {
+                            _id  : "$workflow",
+                            count: {$sum: 1}
+                        }
+                    }], waterfallCallback);
+            };
+
+            waterfallTasks = [accessRollSearcher, contentSearcher];
+
+            async.waterfall(waterfallTasks, function (err, responseOpportunities) {
+                if (err) {
+                    return next(err);
+                }
+
+                responseOpportunities.forEach(function (object) {
+                    if (object.count > req.session.kanbanSettings.opportunities.countPerPage) {
+                        data.showMore = true;
+                    }
+                });
+                data.arrayOfObjects = responseOpportunities;
+                res.status(200).send(data);
+            });
         };
 
         this.opportunitiesForMiniView = function (req, res, next) {
