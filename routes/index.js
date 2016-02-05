@@ -58,6 +58,7 @@ module.exports = function (app, mainDb) {
     var journalRouter = require('./journal')(models);
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
+    var profilesRouter = require('./profiles')(models);
 
     var logger = require('../helpers/logger');
 
@@ -149,6 +150,7 @@ module.exports = function (app, mainDb) {
     app.use('/chartOfAccount', chartOfAccountRouter);
     app.use('/currency', currencyRouter);
     app.use('/journal', journalRouter);
+    app.use('/profiles', profilesRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -675,7 +677,7 @@ module.exports = function (app, mainDb) {
         requestHandler.removeUser(req, res, id);
     });*/
 
-    app.post('/Profiles', function (req, res) {
+    /*app.post('/Profiles', function (req, res) {
         var data = {};
         data.profile = req.body;
         requestHandler.createProfile(req, res, data);
@@ -699,7 +701,7 @@ module.exports = function (app, mainDb) {
     app.delete('/Profiles/:_id', function (req, res) {
         var id = req.param('_id');
         requestHandler.removeProfile(req, res, id);
-    });
+    });*/
 
 //-----------------END----Users--and Profiles-----------------------------------------------
 

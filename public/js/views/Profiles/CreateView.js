@@ -124,7 +124,7 @@ define([
 
                     }
                 });
-                populate.get("#profilesDd", "ProfilesForDd", {}, "profileName", this, true);
+                populate.get("#profilesDd", "profiles/forDd", {}, "profileName", this, true);
                 this.delegateEvents(this.events);
                 return this;
             }

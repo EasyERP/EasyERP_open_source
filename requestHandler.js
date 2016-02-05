@@ -1277,7 +1277,7 @@ var requestHandler = function (app, event, mainDb) {
     };*/
 
     //---------------------Profile--------------------------------
-    function createProfile(req, res, data) {
+/*    function createProfile(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 51, function (access) {
                 if (access) {
@@ -1352,7 +1352,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     //---------------Persons--------------------------------
     function getForDdByRelatedUser(req, res) {
@@ -2884,11 +2884,11 @@ var requestHandler = function (app, event, mainDb) {
         currentUser               : currentUser,
         updateCurrentUser         : updateCurrentUser,
 
-        getProfile     : getProfile,
+       /* getProfile     : getProfile,
         getProfileForDd: getProfileForDd,
         createProfile  : createProfile,
         updateProfile  : updateProfile,
-        removeProfile  : removeProfile,
+        removeProfile  : removeProfile,*/
 
         createPerson                  : createPerson,
         getPersonById                 : getPersonById,
