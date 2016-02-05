@@ -322,6 +322,10 @@ var Opportunity = function (models, event) {
             var body = req.body;
             var opportunity;
 
+            if (!body){
+               return res.status(404).send();
+            }
+
             opportunity = new Opportunity(body);
 
             event.emit('updateSequence', Opportunity, "sequence", 0, 0, opportunity.workflow, opportunity.workflow, true, false, function (sequence) {
