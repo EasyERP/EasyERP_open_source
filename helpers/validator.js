@@ -29,6 +29,13 @@ validator.extend('isEmployeeName', function (str) {
     return regExp.test(str);
 });
 
+validator.extend('isEmployeeDate', function (str) {
+    "use strict";
+    var regExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/;
+
+    return regExp.test(str);
+});
+
 function getValidUserBody(body) {
     "use strict";
     var hasLogin = body.hasOwnProperty('login');
@@ -69,14 +76,15 @@ function parseUserBody(body) {
 function validEmployeeBody(body) {
     "use strict";
     var hasName = body.hasOwnProperty('name');
-    var hasEmail = body.hasOwnProperty('email');
+    var dateBirth = body.hasOwnProperty('dateBirth');
     var hasPass = body.hasOwnProperty('pass');
     var hasProfile = body.hasOwnProperty('profile');
 
     var hasNameFirst = hasName ? validator.isEmployeeName(body.name.first) : false;
     var hasNameLast = hasName ? validator.isEmployeeName(body.name.first) : false;
+    dateBirth = dateBirth ? validator.isEmployeeDate(body.dateBirth) : false;
 
-    return hasNameFirst && hasNameLast;
+    return hasNameFirst && hasNameLast && dateBirth;
 }
 
 module.exports = {
