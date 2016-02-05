@@ -140,7 +140,23 @@ var Profiles = function (models) {
     };
 
     this.getProfileForDd = function (req, res, next) {
-        try {
+        var response = {};
+        response['data'] = [];
+        var ProfileModel = models.get(req.session.lastDb, 'Profile', ProfileSchema);
+
+        ProfileModel.find()
+            .sort({profileName: 1})
+            .select("_id profileName")
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                } else {
+                    response['data'] = result;
+                    res.send(response);
+                }
+            });
+
+        /*try {
             if (req.session && req.session.loggedIn && req.session.lastDb) {
                 var response = {};
                 response['data'] = [];
@@ -163,7 +179,7 @@ var Profiles = function (models) {
         }
         catch (Exception) {
             console.log("requestHandler.js  " + Exception);
-        }
+        }*/
     };
 
     this.updateProfile = function (req, res, next) {
