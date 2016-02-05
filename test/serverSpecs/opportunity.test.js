@@ -10,7 +10,7 @@ describe("Opportunity Specs", function () {
     'use strict';
     var id;
 
-    describe('Opportunity with correct user', function(){
+    describe('Opportunity with admin', function(){
         before(function (done) {
             aggent = request.agent(url);
 
@@ -75,8 +75,7 @@ describe("Opportunity Specs", function () {
         });
     });
 
-
-    describe('Opportunity with fail user', function(){
+    describe('Opportunity with user without a license', function(){
         before(function (done) {
             aggent = request.agent(url);
 
