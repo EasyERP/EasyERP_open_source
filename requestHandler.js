@@ -2769,24 +2769,24 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //};
 
-    function updateOpportunitie(req, res, id, data) {
-        var date = Date.now();
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.opportunitie['editedBy'] = {
-                user: req.session.uId,
-                date: date
-            };
-            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.update(req, id, data.opportunitie, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateOpportunitie(req, res, id, data) {
+    //    var date = Date.now();
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.opportunitie['editedBy'] = {
+    //            user: req.session.uId,
+    //            date: date
+    //        };
+    //        access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.update(req, id, data.opportunitie, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //function opportunitieUpdateOnlySelectedFields(req, res, id, data) {
     //    data = data.opportunitie;
@@ -3004,7 +3004,7 @@ var requestHandler = function (app, event, mainDb) {
         //getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
         //getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
         //getOpportunityById                  : getOpportunityById,
-        updateOpportunitie                  : updateOpportunitie,
+        //updateOpportunitie                  : updateOpportunitie,
         //removeOpportunitie                  : removeOpportunitie,
         //opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
         uploadOpportunitiesFiles            : uploadOpportunitiesFiles,

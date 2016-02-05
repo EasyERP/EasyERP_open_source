@@ -20,6 +20,7 @@ module.exports = function (models, event) {
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);
+    router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);
     router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
 
     return router;

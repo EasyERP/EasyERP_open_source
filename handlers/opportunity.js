@@ -11,6 +11,7 @@ var Opportunity = function (models, event) {
         var async = require('async');
         var validator = require('validator');
         var objectId = mongoose.Types.ObjectId;
+        var fs = require('fs');
 
         var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -325,10 +326,42 @@ var Opportunity = function (models, event) {
             });
         };
 
+        this.update = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var data = req.body;
+            var _id = req.params._id;
+
+            data.toBeConvert = req.headers.toBeConvert;
+
+            if (data.workflowForList || data.workflowForKanban) {
+                data = {
+                    $set: {
+                        workflow: data.workflow
+                    }
+                };
+            }
+
+            event.emit('updateSequence', Opportunity, "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
+                if (!data.info) {
+                    data.info = {};
+                }
+                data.sequence = sequence;
+                Opportunity.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({success: 'Opportunities updated success', result: result});
+
+                });
+            });
+        };
+
         this.updateOnlySelectedFields = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
             var data = req.body;
-
+            var _id = req.params.id;
+            var newDirname;
             var fileName = data.fileName;
             delete data.fileName;
 
@@ -336,6 +369,112 @@ var Opportunity = function (models, event) {
                 user: req.session.uId,
                 date: new Date().toISOString()
             };
+
+            if (data.workflow && data.sequenceStart && data.workflowStart) {
+                if (data.sequence === -1) {
+                    event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
+                        event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                            data.sequence = sequence;
+                            if (data.workflow === data.workflowStart) {
+                                data.sequence -= 1;
+                            }
+
+                            Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.status(200).send({success: 'Opportunities updated', sequence: result.sequence});
+                            });
+
+                        });
+                    });
+                } else {
+                    event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                        delete data.sequenceStart;
+                        delete data.workflowStart;
+                        data.info = {};
+                        data.sequence = sequence;
+
+                        Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            res.status(200).send({success: 'Opportunities updated'});
+                        });
+                    });
+                }
+            } else {
+                var query = (data.jobkey) ? {$and: [{name: data.name}, {jobkey: data.jobkey}]} : {name: data.name};
+                Opportunity.find(query, function (err, doc) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (data.notes && data.notes.length != 0) {
+                        var obj = data.notes[data.notes.length - 1];
+                        if (!obj._id) {
+                            obj._id = mongoose.Types.ObjectId();
+                        }
+                        obj.date = new Date();
+                        if (!obj.author) {
+                            obj.author = req.session.uName;
+                        }
+                        data.notes[data.notes.length - 1] = obj;
+                    }
+
+                    Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                        if (!err) {
+                            if (fileName) {
+                                var os = require("os");
+                                var osType = (os.type().split('_')[0]);
+                                var path;
+                                var dir;
+                                switch (osType) {
+                                    case "Windows":
+                                    {
+                                        newDirname = __dirname.replace("\\Modules", "");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                        dir = newDirname + "\/uploads\/" + _id;
+                                    }
+                                        break;
+                                    case "Linux":
+                                    {
+                                        newDirname = __dirname.replace("/Modules", "");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                        dir = newDirname + "\/uploads\/" + _id;
+                                    }
+                                }
+
+                                fs.unlink(path, function (err) {
+                                    console.log(err);
+                                    fs.readdir(dir, function (err, files) {
+                                        if (files && files.length === 0) {
+                                            fs.rmdir(dir, function () {
+                                            });
+                                        }
+                                    });
+                                });
+
+                            }
+                            res.status(200).send({
+                                success : 'Opportunities updated',
+                                notes   : result.notes,
+                                sequence: result.sequence
+                            });
+                        }
+                    });
+                });
+
+            }
+
         };
 
         this.create = function (req, res, next) {

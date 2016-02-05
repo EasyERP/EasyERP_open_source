@@ -1437,13 +1437,13 @@ module.exports = function (app, mainDb) {
     //    requestHandler.getOpportunitiesLengthByWorkflows(req, res);
     //});
 
-    app.put('/Opportunities/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.toBeConvert = req.headers.toBeConvert;
-        data.opportunitie = req.body;
-        requestHandler.updateOpportunitie(req, res, id, data);
-    });
+    //app.put('/Opportunities/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.toBeConvert = req.headers.toBeConvert;
+    //    data.opportunitie = req.body;
+    //    requestHandler.updateOpportunitie(req, res, id, data);
+    //});
 
     //app.patch('/Opportunities/:_id', function (req, res) {
     //    var data = {};
