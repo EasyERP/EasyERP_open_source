@@ -2687,19 +2687,19 @@ var requestHandler = function (app, event, mainDb) {
     //-------------------Opportunities---------------------------
 
     // Get  Leads or Opportunities for List
-    function getFilterOpportunities(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.getFilter(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getFilterOpportunities(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.getFilter(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     // Get  Leads or Opportunities total count
     function opportunitiesTotalCollectionLength(req, res) {
@@ -2710,64 +2710,64 @@ var requestHandler = function (app, event, mainDb) {
         opportunities.getCollectionLengthByWorkflows(req, res);
     }
 
-    function createOpportunitie(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.opportunitie.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.create(req, data.opportunitie, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createOpportunitie(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.opportunitie.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.create(req, data.opportunitie, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-        } else {
-            res.send(401);
-        }
-    }
+    //function getOpportunityById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.getById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getOpportunityById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.getById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function getFilterOpportunitiesForMiniView(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.getFilterOpportunitiesForMiniView(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    }
-
-    function getFilterOpportunitiesForMiniView(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.getFilterOpportunitiesForMiniView(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
-
-    function getFilterOpportunitiesForKanban(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.getFilterOpportunitiesForKanban(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getFilterOpportunitiesForKanban(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.getFilterOpportunitiesForKanban(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     function updateOpportunitie(req, res, id, data) {
         var date = Date.now();
@@ -2999,11 +2999,11 @@ var requestHandler = function (app, event, mainDb) {
 
         opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
         getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
-        createOpportunitie                  : createOpportunitie,
-        getFilterOpportunities              : getFilterOpportunities,
+        //createOpportunitie                  : createOpportunitie,
+        //getFilterOpportunities              : getFilterOpportunities,
         getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
-        getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
-        getOpportunityById                  : getOpportunityById,
+        //getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
+        //getOpportunityById                  : getOpportunityById,
         updateOpportunitie                  : updateOpportunitie,
         removeOpportunitie                  : removeOpportunitie,
         opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,

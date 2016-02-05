@@ -1464,13 +1464,13 @@ var Opportunities = function (models, event) {
 
     return {
         getTotalCount                    : getTotalCount,
-        create                           : create,
+        //create                           : create,
         get                              : get,
         getCollectionLengthByWorkflows   : getCollectionLengthByWorkflows,
-        getById                          : getById,
-        getFilterOpportunitiesForKanban  : getFilterOpportunitiesForKanban,
-        getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
-        getFilter                        : getFilter,
+        //getById                          : getById,
+        //getFilterOpportunitiesForKanban  : getFilterOpportunitiesForKanban,
+        //getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
+        //getFilter                        : getFilter,
         getLeadsForChart                 : getLeadsForChart,
         update                           : update,
         updateLead                       : updateLead,

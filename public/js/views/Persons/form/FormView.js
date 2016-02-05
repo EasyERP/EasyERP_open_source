@@ -47,7 +47,7 @@ define([
                 var self = this;
                 var formModel = this.formModel.toJSON();
 
-                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
+                common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
                     self.allMiniOpp = opps.listLength;
                     self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
                     if (self.allPages === self.pageMini) {
@@ -84,7 +84,7 @@ define([
                 var self = this;
                 var formModel = this.formModel.toJSON();
 
-                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
+                common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
                     var oppElem = self.$el.find('#opportunities');
                     var isLast = self.pageMini === self.allPages;
 

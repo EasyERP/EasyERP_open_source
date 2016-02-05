@@ -37,7 +37,7 @@ module.exports = function (app, mainDb) {
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
     var salaryRouter = require('./salary')(event, models);
-    var opportunityRouter = require('./opportunity')(models);
+    var opportunityRouter = require('./opportunity')(models, event);
     var taskRouter = require('./task')(models);
     var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(event, models);
@@ -136,7 +136,7 @@ module.exports = function (app, mainDb) {
     app.use('/departments', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);
-    app.use('/opportunity', opportunityRouter);
+    app.use('/opportunities', opportunityRouter);
     app.use('/task', taskRouter);
     app.use('/jobPositions', jobPositionRouter);
     app.use('/holiday', holidayRouter);
@@ -1401,37 +1401,37 @@ module.exports = function (app, mainDb) {
     });
 
 //---------------------Opportunities---------------------
-    app.post('/Opportunities', function (req, res) {
-        var data = {};
-        data.opportunitie = req.body;
-        requestHandler.createOpportunitie(req, res, data);
-    });
-    app.get('/Opportunities/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getOpportunityById(req, res, data);
-                break;
-            case "kanban":
-                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterOpportunities(req, res);
-        }
-    });
+//    app.post('/Opportunities', function (req, res) {
+//        var data = {};
+//        data.opportunitie = req.body;
+//        requestHandler.createOpportunitie(req, res, data);
+//    });
+//    app.get('/Opportunities/:viewType', function (req, res) {
+//        var data = {};
+//        for (var i in req.query) {
+//            data[i] = req.query[i];
+//        }
+//        var viewType = req.params.viewType;
+//        switch (viewType) {
+//            case "form":
+//                requestHandler.getOpportunityById(req, res, data);
+//                break;
+//            case "kanban":
+//                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
+//                break;
+//            default:
+//                requestHandler.getFilterOpportunities(req, res);
+//        }
+//    });
 
-    app.get('/OpportunitiesForMiniView', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        requestHandler.getFilterOpportunitiesForMiniView(req, res, data);
-
-    });
+    //app.get('/OpportunitiesForMiniView', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    requestHandler.getFilterOpportunitiesForMiniView(req, res, data);
+    //
+    //});
 
     app.get('/getLengthByWorkflows', function (req, res) {
         requestHandler.getOpportunitiesLengthByWorkflows(req, res);
