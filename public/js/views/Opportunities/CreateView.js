@@ -237,7 +237,7 @@ define([
                 opportunityModel.save({
                         name           : name,
                         expectedRevenue: expectedRevenue,
-                        customer       : customerId,
+                        customer       : customerId || null,
                         email          : email,
                         salesPerson    : salesPersonId || null,
                         salesTeam      : salesTeamId,
@@ -322,7 +322,7 @@ define([
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 populate.getPriority("#priorityDd", this, true);
-                populate.get2name("#customerDd", "/Customers", {}, this, true, false, (this.model) ? this.model._id : null);
+                populate.get2name("#customerDd", "/Customers", {}, this, true, true, (this.model) ? this.model._id : null);
                 populate.get2name("#salesPersonDd", "/employees/getForDdByRelatedUser", {}, this, true, true);
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, true);
                 populate.get("#salesTeamDd", "/departments/getForDD", {}, "departmentName", this, true, true);
