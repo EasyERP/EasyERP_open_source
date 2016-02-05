@@ -239,14 +239,14 @@ define([
                         expectedRevenue: expectedRevenue,
                         customer       : customerId,
                         email          : email,
-                        salesPerson    : salesPersonId,
+                        salesPerson    : salesPersonId || null,
                         salesTeam      : salesTeamId,
                         nextAction     : nextAction,
                         expectedClosing: expectedClosing,
                         priority       : priority,
                         workflow       : workflow,
                         internalNotes  : internalNotes,
-                        company        : company,
+                        company        : company || null,
                         address        : address,
                         contactName    : contactName,
                         func           : func,
@@ -322,7 +322,7 @@ define([
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 populate.getPriority("#priorityDd", this, true);
-                populate.get2name("#customerDd", "/Customers", {}, this, true, true, (this.model) ? this.model._id : null);
+                populate.get2name("#customerDd", "/Customers", {}, this, true, false, (this.model) ? this.model._id : null);
                 populate.get2name("#salesPersonDd", "/employees/getForDdByRelatedUser", {}, this, true, true);
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, true);
                 populate.get("#salesTeamDd", "/departments/getForDD", {}, "departmentName", this, true, true);
