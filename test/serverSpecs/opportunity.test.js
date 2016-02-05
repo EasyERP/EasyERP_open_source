@@ -24,8 +24,7 @@ describe("Opportunity Specs", function () {
 
     it('should create Opportunity', function(done){
         var body = {
-            name: "Subject"
-            //customer : 1
+            name: "Subject",
         };
 
         aggent
