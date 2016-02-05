@@ -12,174 +12,228 @@ var aggent;
 describe("Application Specs", function () {
     var id;
 
-    before(function (done) {
-        aggent = request.agent(url);
+    describe('Application with admin', function(){
+        before(function (done) {
+            aggent = request.agent(url);
 
-        aggent
-            .post('users/login')
-            .send({
-                login: 'admin',
-                pass : '1q2w3eQWE',
-                dbId : 'production'
-            })
-            .expect(200, done);
-    });
+            aggent
+                .post('users/login')
+                .send({
+                    login: 'admin',
+                    pass : '1q2w3eQWE',
+                    dbId : 'production'
+                })
+                .expect(200, done);
+        });
 
-    it("should create employee", function (done) {
-        var body = {
-            "name"       : {
-                "first": "test",
-                "last" : "test"
-            },
-            "department" : "55b92ace21e4b7c40f00000f",
-            "jobPosition": "55b92acf21e4b7c40f00001d",
-            "dateBirth"  : "28 Dec, 1990",
-            hire         : [{
-                department : "55b92ace21e4b7c40f00000f",
-                jobPosition: "55b92acf21e4b7c40f00001d",
-                manager    : "56938d2cd87c9004552b639e",
-                jobType    : 'Full-time',
-                info       : "Hired",
-                date       : new Date()
-            }]
-        };
+        after(function(done){
+            aggent
+                .get('logout')
+                .expect(302, done);
+        });
 
-        aggent
-            .post('applications')
-            .send(body)
-            .expect(201)
-            .end(function (err, res) {
-                var body = res.body;
+        it("should create application", function (done) {
+            var body = {
+                "name"       : {
+                    "first": "test",
+                    "last" : "test"
+                },
+                "department" : "55b92ace21e4b7c40f00000f",
+                "jobPosition": "55b92acf21e4b7c40f00001d",
+                "dateBirth"  : "28 Dec, 1990",
+                hire         : [{
+                    department : "55b92ace21e4b7c40f00000f",
+                    jobPosition: "55b92acf21e4b7c40f00001d",
+                    manager    : "56938d2cd87c9004552b639e",
+                    jobType    : 'Full-time',
+                    info       : "Hired",
+                    date       : new Date()
+                }]
+            };
 
-                if (err) {
-                    return done(err);
+            aggent
+                .post('applications')
+                .send(body)
+                .expect(201)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('success');
+                    expect(body)
+                        .to.have.property('result');
+                    expect(body)
+                        .to.have.property('id');
+                    expect(body.result)
+                        .to.have.property('_id');
+
+                    id = body.id;
+
+                    done();
+                });
+        });
+
+        it("should getById application", function (done) {
+            var query = {
+                id:  id
+            };
+            aggent
+                .get('applications/form')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('_id');
+
+                    done();
+                });
+        });
+
+        it("should get by viewType application", function (done) {
+            var query = {
+                viewType   : "list",
+                contentType: "Applications",
+                page       : 1,
+                count      : 100
+            };
+            aggent
+                .get('applications/list')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+
+                    done();
+                });
+        });
+
+        it("should get by viewType application", function (done) {
+            var query = {
+                workflowId: '528ce5e3f3f67bc40b000018'
+            };
+            aggent
+                .get('applications/kanban')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body)
+                        .to.have.property('time');
+                    expect(body)
+                        .to.have.property('workflowId');
+
+                    done();
+                });
+        });
+
+        it("should update application", function (done) {
+            var body = {
+                'social': {
+                    LI: 'test'
                 }
+            };
+            aggent
+                .patch('applications/' + id)
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
 
-                expect(body)
-                    .to.be.instanceOf(Object);
-                expect(body)
-                    .to.have.property('success');
-                expect(body)
-                    .to.have.property('result');
-                expect(body)
-                    .to.have.property('id');
-                expect(body.result)
-                    .to.have.property('_id');
+                    if (err) {
+                        return done(err);
+                    }
 
-                id = body.id;
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('_id');
 
-                done();
-            });
+                    done();
+                });
+        });
+
+        it("should delete application", function (done) {
+            aggent
+                .delete('applications/' + id)
+                .expect(200, done);
+        });
     });
 
-    it("should getById application", function (done) {
-        var query = {
-            id:  id
-        };
-        aggent
-            .get('applications/form')
-            .query(query)
-            .expect(200)
-            .end(function (err, res) {
-                var body = res.body;
+    describe('Application with user without a license', function(){
+        before(function (done) {
+            aggent = request.agent(url);
 
-                if (err) {
-                    return done(err);
-                }
+            aggent
+                .post('users/login')
+                .send({
+                    login: 'testUser',
+                    pass : 'qwerty',
+                    dbId : 'production'
+                })
+                .expect(200, done);
+        });
 
-                expect(body)
-                    .to.be.instanceOf(Object);
-                expect(body)
-                    .to.have.property('_id');
+        after(function(done){
+            aggent
+                .get('logout')
+                .expect(302, done);
+        });
 
-                done();
-            });
-    });
+        it("should fail create application", function (done) {
+            var body = {
+                "name"       : {
+                    "first": "test",
+                    "last" : "test"
+                },
+                "department" : "55b92ace21e4b7c40f00000f",
+                "jobPosition": "55b92acf21e4b7c40f00001d",
+                "dateBirth"  : "28 Dec, 1990",
+                hire         : [{
+                    department : "55b92ace21e4b7c40f00000f",
+                    jobPosition: "55b92acf21e4b7c40f00001d",
+                    manager    : "56938d2cd87c9004552b639e",
+                    jobType    : 'Full-time',
+                    info       : "Hired",
+                    date       : new Date()
+                }]
+            };
 
-    it("should get by viewType application", function (done) {
-        var query = {
-            viewType   : "list",
-            contentType: "Applications",
-            page       : 1,
-            count      : 100
-        };
-        aggent
-            .get('applications/list')
-            .query(query)
-            .expect(200)
-            .end(function (err, res) {
-                var body = res.body;
-
-                if (err) {
-                    return done(err);
-                }
-
-                expect(body)
-                    .to.be.instanceOf(Object);
-                expect(body)
-                    .to.have.property('data');
-
-                done();
-            });
-    });
-
-    it("should get by viewType application", function (done) {
-        var query = {
-            workflowId: '528ce5e3f3f67bc40b000018'
-        };
-        aggent
-            .get('applications/kanban')
-            .query(query)
-            .expect(200)
-            .end(function (err, res) {
-                var body = res.body;
-
-                if (err) {
-                    return done(err);
-                }
-
-                expect(body)
-                    .to.be.instanceOf(Object);
-                expect(body)
-                    .to.have.property('data');
-                expect(body)
-                    .to.have.property('time');
-                expect(body)
-                    .to.have.property('workflowId');
-
-                done();
-            });
-    });
-
-    it("should update application", function (done) {
-        var body = {
-            'social': {
-                LI: 'test'
-            }
-        };
-        aggent
-            .patch('applications/' + id)
-            .send(body)
-            .expect(200)
-            .end(function (err, res) {
-                var body = res.body;
-
-                if (err) {
-                    return done(err);
-                }
-
-                expect(body)
-                    .to.be.instanceOf(Object);
-                expect(body)
-                    .to.have.property('_id');
-
-                done();
-            });
-    });
-
-    it("should delete application", function (done) {
-        aggent
-            .delete('applications/' + id)
-            .expect(200, done);
+            aggent
+                .post('applications')
+                .send(body)
+                .expect(403,done);
+        });
     });
 });
