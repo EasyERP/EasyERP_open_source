@@ -4,22 +4,26 @@
 var express = require('express');
 var router = express.Router();
 var CustomerHandler = require('../handlers/customer');
+var authStackMiddleware = require('../helpers/checkAuth');
+var MODULES = require('../constants/modules');
 
 module.exports = function (models, event) {
+    'use strict';
     var handler = new CustomerHandler(models, event);
+    var moduleId = MODULES.PERSONS;
+    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    router.get('/form', handler.getById);
-    router.get('/list', handler.getFilterCustomers);
-    router.get('/thumbnails', handler.getFilterCustomers);
-    router.get('/getPersonAlphabet', handler.getCompaniesAlphabet);
-    router.get('/getPersonsForMiniView', handler.getFilterPersonsForMiniView);
-    router.get('/totalCollectionLength', handler.getTotalCount);
+    router.get('/form', authStackMiddleware, accessStackMiddlware, handler.getById);
+    router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
+    router.get('/thumbnails', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
+    router.get('/getPersonAlphabet', authStackMiddleware, accessStackMiddlware, handler.getCompaniesAlphabet);
+    router.get('/getPersonsForMiniView', authStackMiddleware, handler.getFilterPersonsForMiniView);
+    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.getTotalCount);
 
-    router.post('/', handler.create);
-    router.put('/:id', handler.update);
-    router.patch('/:id', handler.udateOnlySelectedFields);
-    router.delete('/:id', handler.remove);
-
+    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
+    router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);
+    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.udateOnlySelectedFields);
+    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
 
     return router;
 };
