@@ -264,7 +264,7 @@ var workflows = function (models, event) {
                         res.status(400).send({error: 'An Workflows with the same Name already exists'});
                     }
                 } else {
-                    Workflow.findOneAndUpdate({_id: _id}, data, function (err, res) {
+                    Workflow.findOneAndUpdate({_id: _id}, data, function (err) {
                         if (err) {
                             return next(err);
                         }
