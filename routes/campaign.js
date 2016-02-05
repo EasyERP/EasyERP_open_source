@@ -9,7 +9,7 @@ module.exports = function (models) {
     'use strict';
     var handler = new Handler(models);
 
-    router.get('/getForDD', handler.getForDd);
+    router.get('/', handler.getForDd);
 
     return router;
 };

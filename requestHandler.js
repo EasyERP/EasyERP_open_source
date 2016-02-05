@@ -15,7 +15,7 @@ var requestHandler = function (app, event, mainDb) {
     var access = require("./Modules/additions/access.js")(models);
     var employee = require("./Modules/Employees.js")(event, models);
     var customer = require("./Modules/Customers.js")(event, models);
-    var workflow = require("./Modules/Workflow.js")(models, event);
+    //var workflow = require("./Modules/Workflow.js")(models, event);
     var project = require("./Modules/Projects.js")(models, event);
     //var jobPosition = require("./Modules/JobPosition.js")(event, models);
     //var degrees = require("./Modules/Degrees.js")(models);
@@ -1848,95 +1848,95 @@ var requestHandler = function (app, event, mainDb) {
 
     //------------------Workflow---------------------------------
 
-    function getRelatedStatus(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            workflow.getRelatedStatus(req, res, data);
-        } else {
-            res.send(401);
-        }
-    };
+    //function getRelatedStatus(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        workflow.getRelatedStatus(req, res, data);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getWorkflow(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            /*access.getReadAccess(req, req.session.uId, 44, function (access) {
-             if (access) {*/
-            workflow.get(req, data, res);
-            /* } else {
-             res.send(403);
-             }
-             });*/
-        } else {
-            res.send(401);
-        }
-    };
+    //function getWorkflow(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        /*access.getReadAccess(req, req.session.uId, 44, function (access) {
+    //         if (access) {*/
+    //        workflow.get(req, data, res);
+    //        /* } else {
+    //         res.send(403);
+    //         }
+    //         });*/
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getWorkflowsForDd(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            workflow.getWorkflowsForDd(req, data, res);
-        } else {
-            res.send(401);
-        }
-    };
+    //function getWorkflowsForDd(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        workflow.getWorkflowsForDd(req, data, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function createWorkflow(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 44, function (access) {
-                if (access) {
-                    workflow.create(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createWorkflow(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 44, function (access) {
+    //            if (access) {
+    //                workflow.create(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function updateWorkflow(req, res, _id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 44, function (access) {
+    //            if (access) {
+    //                workflow.update(req, _id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function updateWorkflow(req, res, _id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 44, function (access) {
-                if (access) {
-                    workflow.update(req, _id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function updateWorkflowOnlySelectedField(req, res, _id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 44, function (access) {
+    //            if (access) {
+    //                workflow.updateOnlySelectedFields(req, _id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
-
-    function updateWorkflowOnlySelectedField(req, res, _id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 44, function (access) {
-                if (access) {
-                    workflow.updateOnlySelectedFields(req, _id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function removeWorkflow(req, res, _id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    workflow.remove(req, _id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function removeWorkflow(req, res, _id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                workflow.remove(req, _id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //---------------------Companies-------------------------------
 
@@ -2605,84 +2605,84 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //}
 
-    function getLeadsById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.getById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getLeadsById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.getById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function createLead(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.lead.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.create(req, data.lead, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createLead(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.lead.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.create(req, data.lead, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateLead(req, res, id, data) {
+    //    var date = Date.now();
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.lead['editedBy'] = {
+    //            user: req.session.uId,
+    //            date: date
+    //        };
+    //        access.getEditWritAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.updateLead(req, id, data.lead, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function updateLead(req, res, id, data) {
-        var date = Date.now();
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.lead['editedBy'] = {
-                user: req.session.uId,
-                date: date
-            };
-            access.getEditWritAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.updateLead(req, id, data.lead, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function removeLead(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-        } else {
-            res.send(401);
-        }
-    }
-
-    function removeLead(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    }
-
-    function getLeadsForChart(req, res, data) {
-        if (req.session && req.session.loggedIn) {
-            access.getReadAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.getLeadsForChart(req, res, data);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getLeadsForChart(req, res, data) {
+    //    if (req.session && req.session.loggedIn) {
+    //        access.getReadAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.getLeadsForChart(req, res, data);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //-------------------Opportunities---------------------------
 
@@ -2702,9 +2702,9 @@ var requestHandler = function (app, event, mainDb) {
     //}
 
     // Get  Leads or Opportunities total count
-    function opportunitiesTotalCollectionLength(req, res) {
-        opportunities.getTotalCount(req, res);
-    }
+    //function opportunitiesTotalCollectionLength(req, res) {
+    //    opportunities.getTotalCount(req, res);
+    //}
 
     //function getOpportunitiesLengthByWorkflows(req, res) {
     //    opportunities.getCollectionLengthByWorkflows(req, res);
@@ -2769,24 +2769,24 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //};
 
-    function updateOpportunitie(req, res, id, data) {
-        var date = Date.now();
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.opportunitie['editedBy'] = {
-                user: req.session.uId,
-                date: date
-            };
-            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.update(req, id, data.opportunitie, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateOpportunitie(req, res, id, data) {
+    //    var date = Date.now();
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.opportunitie['editedBy'] = {
+    //            user: req.session.uId,
+    //            date: date
+    //        };
+    //        access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.update(req, id, data.opportunitie, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //function opportunitieUpdateOnlySelectedFields(req, res, id, data) {
     //    data = data.opportunitie;
@@ -2935,13 +2935,13 @@ var requestHandler = function (app, event, mainDb) {
         //getCustomersImages             : getCustomersImages,
         //getCustomersAlphabet           : getCustomersAlphabet,
 
-        getRelatedStatus               : getRelatedStatus,
-        getWorkflow                    : getWorkflow,
-        createWorkflow                 : createWorkflow,
-        updateWorkflow                 : updateWorkflow,
-        getWorkflowsForDd              : getWorkflowsForDd,
-        removeWorkflow                 : removeWorkflow,
-        updateWorkflowOnlySelectedField: updateWorkflowOnlySelectedField,
+        //getRelatedStatus               : getRelatedStatus,
+        //getWorkflow                    : getWorkflow,
+        //createWorkflow                 : createWorkflow,
+        //updateWorkflow                 : updateWorkflow,
+        //getWorkflowsForDd              : getWorkflowsForDd,
+        //removeWorkflow                 : removeWorkflow,
+        //updateWorkflowOnlySelectedField: updateWorkflowOnlySelectedField,
 
         //jobPositionsTotalCollectionLength: jobPositionsTotalCollectionLength,
        // createJobPosition                : createJobPosition,
@@ -2991,20 +2991,20 @@ var requestHandler = function (app, event, mainDb) {
         //getApplicationById            : getApplicationById,
         //getApplicationsForKanban      : getApplicationsForKanban,
 
-        createLead      : createLead,
-        updateLead      : updateLead,
-        removeLead      : removeLead,
-        getLeadsById    : getLeadsById,
-        getLeadsForChart: getLeadsForChart,
+        //createLead      : createLead,
+        //updateLead      : updateLead,
+        //removeLead      : removeLead,
+        //getLeadsById    : getLeadsById,
+        //getLeadsForChart: getLeadsForChart,
 
-        opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
+        //opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
         //getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
         //createOpportunitie                  : createOpportunitie,
         //getFilterOpportunities              : getFilterOpportunities,
         //getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
         //getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
         //getOpportunityById                  : getOpportunityById,
-        updateOpportunitie                  : updateOpportunitie,
+        //updateOpportunitie                  : updateOpportunitie,
         //removeOpportunitie                  : removeOpportunitie,
         //opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
         uploadOpportunitiesFiles            : uploadOpportunitiesFiles,

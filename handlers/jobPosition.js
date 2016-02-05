@@ -206,7 +206,7 @@ var JobPosition = function (models) {
                     return next(err);
                 }
 
-                res.status(201).send({success: {massage: 'A new JobPosition create success', id: result._id}});
+                res.status(201).send({success: 'A new JobPosition create success', id: result._id});
             });
         });
     };
@@ -227,6 +227,10 @@ var JobPosition = function (models) {
         }
         data.numberOfEmployees = data.numberOfEmployees || 0;
         data.totalForecastedEmployees = data.expectedRecruitment + data.numberOfEmployees;
+
+        if (isNaN(data.totalForecastedEmployees)){
+            data.totalForecastedEmployees = 0;
+        }
 
         if (data.department && data.department._id) {
             data.department = data.department._id;

@@ -25,7 +25,7 @@ module.exports = function (app, mainDb) {
     var invoicingControlRouter = require('./invoicingControl')(models);
     var paymentTermRouter = require('./paymentTerm')(models);
     var deliverToTermRouter = require('./deliverTo')(models);
-    var workflowRouter = require('./workflow')(models);
+    var workflowRouter = require('./workflow')(models, event);
     var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
@@ -38,6 +38,7 @@ module.exports = function (app, mainDb) {
     var wTrackRouter = require('./wTrack')(event, models);
     var salaryRouter = require('./salary')(event, models);
     var opportunityRouter = require('./opportunity')(models, event);
+    var leadsRouter = require('./leads')(models, event);
     var taskRouter = require('./task')(models);
     var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(event, models);
@@ -123,7 +124,7 @@ module.exports = function (app, mainDb) {
     app.use('/invoicingControl', invoicingControlRouter);
     app.use('/paymentTerm', paymentTermRouter);
     app.use('/deliverTo', deliverToTermRouter);
-    app.use('/workflow', workflowRouter);
+    app.use('/workflows', workflowRouter);
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
@@ -137,6 +138,7 @@ module.exports = function (app, mainDb) {
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);
     app.use('/opportunities', opportunityRouter);
+    app.use('/leads', leadsRouter);
     app.use('/task', taskRouter);
     app.use('/jobPositions', jobPositionRouter);
     app.use('/holiday', holidayRouter);
@@ -730,12 +732,12 @@ module.exports = function (app, mainDb) {
             case ('Tasks'):
                 requestHandler.projectsTotalCollectionLength(req, res);
                 break;
-            case ('Leads'):
-                requestHandler.opportunitiesTotalCollectionLength(req, res);
-                break;
-            case ('Opportunities'):
-                requestHandler.opportunitiesTotalCollectionLength(req, res);
-                break;
+            //case ('Leads'):
+            //    requestHandler.opportunitiesTotalCollectionLength(req, res);
+            //    break;
+            //case ('Opportunities'):
+            //    requestHandler.opportunitiesTotalCollectionLength(req, res);
+            //    break;
             //case ('Employees'):
             //    requestHandler.employeesTotalCollectionLength(req, res);
             //    break;
@@ -954,83 +956,83 @@ module.exports = function (app, mainDb) {
 
 //------------------Workflows---------------------------------------------------
 
-    app.get('/relatedStatus', function (req, res) {
-        var data = {};
-        data.type = req.param('type');
-        requestHandler.getRelatedStatus(req, res, data);
-    });
+    //app.get('/relatedStatus', function (req, res) {
+    //    var data = {};
+    //    data.type = req.param('type');
+    //    requestHandler.getRelatedStatus(req, res, data);
+    //});
 
-    app.get('/Workflows', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        requestHandler.getWorkflow(req, res, data);
-    });
+    //app.get('/Workflows', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    requestHandler.getWorkflow(req, res, data);
+    //});
 
-    app.get('/WorkflowContractEnd', function (req, res) {
-        var data = {};
-        data.id = req.param('id');
-        requestHandler.getWorkflowContractEnd(req, res, data);
-    });
+    //app.get('/WorkflowContractEnd', function (req, res) {
+    //    var data = {};
+    //    data.id = req.param('id');
+    //    requestHandler.getWorkflowContractEnd(req, res, data);
+    //});
 
-    app.get('/WorkflowsForDd', function (req, res) {
-        var data = {};
-        var type = {};
-        type.id = req.param('id');
-        data.type = type;
-        requestHandler.getWorkflowsForDd(req, res, data);
-    });
+    //app.get('/WorkflowsForDd', function (req, res) {
+    //    var data = {};
+    //    var type = {};
+    //    type.id = req.param('id');
+    //    data.type = type;
+    //    requestHandler.getWorkflowsForDd(req, res, data);
+    //});
 
-    app.get('/taskWorkflows', function (req, res) {
-        var data = {};
-        var type = {};
-        data.mid = req.param('mid');
-        type.id = "Task";
-        data.type = type;
-        requestHandler.getWorkflowsForDd(req, res, data);
-    });
+    //app.get('/taskWorkflows', function (req, res) {
+    //    var data = {};
+    //    var type = {};
+    //    data.mid = req.param('mid');
+    //    type.id = "Task";
+    //    data.type = type;
+    //    requestHandler.getWorkflowsForDd(req, res, data);
+    //});
 
-    app.get('/projectWorkflows', function (req, res) {
-        var data = {};
-        var type = {};
-        type.name = 'project';
-        type.id = "Project";
-        data.type = type;
-        requestHandler.getWorkflowsForDd(req, res, data);
-    });
+    //app.get('/projectWorkflows', function (req, res) {
+    //    var data = {};
+    //    var type = {};
+    //    type.name = 'project';
+    //    type.id = "Project";
+    //    data.type = type;
+    //    requestHandler.getWorkflowsForDd(req, res, data);
+    //});
 
-    app.post('/Workflows', function (req, res) {
-        var data = {};
-        data.mid = req.headers.mid;
-        for (var i in req.body) {
-            data[i] = req.body[i];
-        }
-        data._id = req.body.wId;
-        requestHandler.createWorkflow(req, res, data);
-    });
+    //app.post('/Workflows', function (req, res) {
+    //    var data = {};
+    //    data.mid = req.headers.mid;
+    //    for (var i in req.body) {
+    //        data[i] = req.body[i];
+    //    }
+    //    data._id = req.body.wId;
+    //    requestHandler.createWorkflow(req, res, data);
+    //});
 
-    app.put('/Workflows/:_id', function (req, res) {
-        var data = {};
-        var _id = req.param('_id');
-        data.status = req.body.status;
-        data.name = req.body.name;
-        requestHandler.updateWorkflow(req, res, _id, data);
-    });
+    //app.put('/Workflows/:_id', function (req, res) {
+    //    var data = {};
+    //    var _id = req.param('_id');
+    //    data.status = req.body.status;
+    //    data.name = req.body.name;
+    //    requestHandler.updateWorkflow(req, res, _id, data);
+    //});
 
-    app.patch('/Workflows/:_id', function (req, res) {
-        var data = {};
-        var _id = req.param('_id');
-        for (var i in req.body) {
-            data[i] = req.body[i];
-        }
-        requestHandler.updateWorkflowOnlySelectedField(req, res, _id, data);
-    });
+    //app.patch('/Workflows/:_id', function (req, res) {
+    //    var data = {};
+    //    var _id = req.param('_id');
+    //    for (var i in req.body) {
+    //        data[i] = req.body[i];
+    //    }
+    //    requestHandler.updateWorkflowOnlySelectedField(req, res, _id, data);
+    //});
 
-    app.delete('/Workflows/:_id', function (req, res) {
-        var _id = req.param('_id');
-        requestHandler.removeWorkflow(req, res, _id);
-    });
+    //app.delete('/Workflows/:_id', function (req, res) {
+    //    var _id = req.param('_id');
+    //    requestHandler.removeWorkflow(req, res, _id);
+    //});
 //-------------------Companies--------------------------------------------------
 
     //app.post('/Companies', function (req, res) {
@@ -1352,53 +1354,53 @@ module.exports = function (app, mainDb) {
     //});
 
 //----------------------Leads----------------------------------------------------------------
-    app.get('/LeadsForChart', function (req, res) {
-        var data = {};
-        data.source = req.param('source');
-        data.dataRange = req.param('dataRange');
-        data.dataItem = req.param('dataItem');
-        requestHandler.getLeadsForChart(req, res, data);
-    });
+//    app.get('/LeadsForChart', function (req, res) {
+//        var data = {};
+//        data.source = req.param('source');
+//        data.dataRange = req.param('dataRange');
+//        data.dataItem = req.param('dataItem');
+//        requestHandler.getLeadsForChart(req, res, data);
+//    });
 
-    app.get('/Leads/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getLeadsById(req, res, data);
-                break;
-            case "list":
-                requestHandler.getFilterOpportunities(req, res);
-                break;
-        }
-    });
+    //app.get('/Leads/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getLeadsById(req, res, data);
+    //            break;
+    //        case "list":
+    //            requestHandler.getFilterOpportunities(req, res);
+    //            break;
+    //    }
+    //});
 
-    app.post('/Leads', function (req, res) {
-        var data = {};
-        data.lead = req.body;
-        requestHandler.createLead(req, res, data);
-    });
+    //app.post('/Leads', function (req, res) {
+    //    var data = {};
+    //    data.lead = req.body;
+    //    requestHandler.createLead(req, res, data);
+    //});
 
-    app.put('/Leads/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.lead = req.body;
-        requestHandler.updateLead(req, res, id, data);
-    });
-    app.patch('/Leads/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.lead = req.body;
-        requestHandler.updateLead(req, res, id, data);
-    });
+    //app.put('/Leads/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.lead = req.body;
+    //    requestHandler.updateLead(req, res, id, data);
+    //});
+    //app.patch('/Leads/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.lead = req.body;
+    //    requestHandler.updateLead(req, res, id, data);
+    //});
 
-    app.delete('/Leads/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeLead(req, res, id);
-    });
+    //app.delete('/Leads/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeLead(req, res, id);
+    //});
 
 //---------------------Opportunities---------------------
 //    app.post('/Opportunities', function (req, res) {
@@ -1437,13 +1439,13 @@ module.exports = function (app, mainDb) {
     //    requestHandler.getOpportunitiesLengthByWorkflows(req, res);
     //});
 
-    app.put('/Opportunities/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.toBeConvert = req.headers.toBeConvert;
-        data.opportunitie = req.body;
-        requestHandler.updateOpportunitie(req, res, id, data);
-    });
+    //app.put('/Opportunities/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.toBeConvert = req.headers.toBeConvert;
+    //    data.opportunitie = req.body;
+    //    requestHandler.updateOpportunitie(req, res, id, data);
+    //});
 
     //app.patch('/Opportunities/:_id', function (req, res) {
     //    var data = {};

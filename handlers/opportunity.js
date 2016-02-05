@@ -8,9 +8,12 @@ var Opportunity = function (models, event) {
         var mongoose = require('mongoose');
         var logWriter = require('../helpers/logWriter.js');
         var opportunitiesSchema = mongoose.Schemas.Opportunitie;
+        var CustomerSchema = mongoose.Schemas.Customer;
+        var WorkflowSchema = mongoose.Schemas.workflow;
         var async = require('async');
         var validator = require('validator');
         var objectId = mongoose.Types.ObjectId;
+        var fs = require('fs');
 
         var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -325,10 +328,42 @@ var Opportunity = function (models, event) {
             });
         };
 
+        this.update = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var data = req.body;
+            var _id = req.params._id;
+
+            data.toBeConvert = req.headers.toBeConvert;
+
+            if (data.workflowForList || data.workflowForKanban) {
+                data = {
+                    $set: {
+                        workflow: data.workflow
+                    }
+                };
+            }
+
+            event.emit('updateSequence', Opportunity, "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
+                if (!data.info) {
+                    data.info = {};
+                }
+                data.sequence = sequence;
+                Opportunity.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({success: 'Opportunities updated success', result: result});
+
+                });
+            });
+        };
+
         this.updateOnlySelectedFields = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
             var data = req.body;
-
+            var _id = req.params.id;
+            var newDirname;
             var fileName = data.fileName;
             delete data.fileName;
 
@@ -336,7 +371,178 @@ var Opportunity = function (models, event) {
                 user: req.session.uId,
                 date: new Date().toISOString()
             };
+
+            if (data.workflow && data.sequenceStart && data.workflowStart) {
+                if (data.sequence === -1) {
+                    event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
+                        event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                            data.sequence = sequence;
+                            if (data.workflow === data.workflowStart) {
+                                data.sequence -= 1;
+                            }
+
+                            Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.status(200).send({success: 'Opportunities updated', sequence: result.sequence});
+                            });
+
+                        });
+                    });
+                } else {
+                    event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                        delete data.sequenceStart;
+                        delete data.workflowStart;
+                        data.info = {};
+                        data.sequence = sequence;
+
+                        Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            res.status(200).send({success: 'Opportunities updated'});
+                        });
+                    });
+                }
+            } else {
+                var query = (data.jobkey) ? {$and: [{name: data.name}, {jobkey: data.jobkey}]} : {name: data.name};
+                Opportunity.find(query, function (err, doc) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (data.notes && data.notes.length != 0) {
+                        var obj = data.notes[data.notes.length - 1];
+                        if (!obj._id) {
+                            obj._id = mongoose.Types.ObjectId();
+                        }
+                        obj.date = new Date();
+                        if (!obj.author) {
+                            obj.author = req.session.uName;
+                        }
+                        data.notes[data.notes.length - 1] = obj;
+                    }
+
+                    Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                        if (!err) {
+                            if (fileName) {
+                                var os = require("os");
+                                var osType = (os.type().split('_')[0]);
+                                var path;
+                                var dir;
+                                switch (osType) {
+                                    case "Windows":
+                                    {
+                                        newDirname = __dirname.replace("\\Modules", "");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                        dir = newDirname + "\/uploads\/" + _id;
+                                    }
+                                        break;
+                                    case "Linux":
+                                    {
+                                        newDirname = __dirname.replace("/Modules", "");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                        dir = newDirname + "\/uploads\/" + _id;
+                                    }
+                                }
+
+                                fs.unlink(path, function (err) {
+                                    console.log(err);
+                                    fs.readdir(dir, function (err, files) {
+                                        if (files && files.length === 0) {
+                                            fs.rmdir(dir, function () {
+                                            });
+                                        }
+                                    });
+                                });
+
+                            }
+                            res.status(200).send({
+                                success : 'Opportunities updated',
+                                notes   : result.notes,
+                                sequence: result.sequence
+                            });
+                        }
+                    });
+                });
+
+            }
+
         };
+
+    this.totalCollectionLength = function (req, res, next) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var data = req.query;
+        var optionsObject = {};
+        var contentSearcher;
+        var accessRollSearcher;
+        var waterfallTasks;
+        var query;
+        var resp = {};
+        var contentType = req.query.contentType;
+
+        optionsObject.$and = [];
+
+        resp.showMore = false;
+
+        switch (contentType) {
+            case ('Opportunities'):
+                optionsObject.$and.push({'isOpportunitie': true});
+                break;
+            case ('Leads'):
+                optionsObject.$and.push({'isOpportunitie': false});
+
+                if (data.filter && data.filter.isConverted) {
+                    optionsObject.$and.push({'isOpportunitie': true});
+                    optionsObject.$and.push({'isConverted': true});
+                }
+                break;
+        }
+
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Opportunity, cb);
+        };
+
+        contentSearcher = function (opportunitiesIds, waterfallCallback) {
+            var queryObject = {};
+            queryObject.$and = [];
+            queryObject.$and.push({_id: {$in: opportunitiesIds}});
+
+            if (optionsObject.$and.length) {
+                queryObject.$and.push(optionsObject);
+            }
+
+            query = Opportunity.count(queryObject);
+
+            query.exec(waterfallCallback);
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            if (data.currentNumber && data.currentNumber < result) {
+                resp.showMore = true;
+            }
+
+            resp.count = result;
+
+            res.status(200).send(resp);
+        });
+
+    };
 
         this.create = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
@@ -350,7 +556,14 @@ var Opportunity = function (models, event) {
 
                 return next(err);
             }
-
+            if (body.company) {
+                if (body.company.id) {
+                    body.company = body.company.id;
+                } else if (body.company.name) {
+                    body.tempCompanyField = body.company.name;
+                    body.company = null;
+                }
+            }
             opportunity = new Opportunity(body);
 
             event.emit('updateSequence', Opportunity, "sequence", 0, 0, opportunity.workflow, opportunity.workflow, true, false, function (sequence) {
@@ -364,6 +577,277 @@ var Opportunity = function (models, event) {
                     res.status(201).send({success: "A new Opportunities create success", id: result._id});
                 });
             });
+        };
+
+        this.getLeadsForChart = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var data = {};
+
+            data.source = req.param('source');
+            data.dataRange = req.param('dataRange');
+            data.dataItem = req.param('dataItem');
+
+            if (!data.dataRange) {
+                data.dataRange = 365;
+            }
+            if (!data.dataItem) {
+                data.dataItem = "M";
+            }
+            switch (data.dataItem) {
+                case "M":
+                    data.dataItem = "$month";
+                    break;
+                case "W":
+                    data.dataItem = "$week";
+                    break;
+                case "D":
+                    data.dataItem = "$dayOfYear";
+                    break;
+                case "DW":
+                    data.dataItem = "$dayOfWeek";
+                    break;
+                case "DM":
+                    data.dataItem = "$dayOfMonth";
+                    break;
+
+            }
+            if (data.source) {
+
+                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                var a = new Date(c);
+                Opportunity.aggregate({
+                    $match: {
+                        $and: [{
+                            createdBy: {$ne: null},
+                            source   : {$ne: ""},
+                            $or      : [{isConverted: true}, {isOpportunitie: false}]
+                        }, {'createdBy.date': {$gte: a}}]
+                    }
+                }, {
+                    $group: {
+                        _id  : {source: "$source", isOpportunitie: "$isOpportunitie"},
+                        count: {$sum: 1}
+                    }
+                }, {
+                    $project: {
+                        "source": "$_id.source",
+                        count   : 1,
+                        "isOpp" : "$_id.isOpportunitie",
+                        _id     : 0
+                    }
+                }).exec(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({data: result});
+
+                });
+            } else {
+                var myItem = {};
+                myItem.$project = {isOpportunitie: 1, convertedDate: 1};
+                myItem.$project.dateBy = {};
+                myItem.$project.dateBy.data.dataItem = "$convertedDate";
+                if (data.dataItem === "$dayOfYear") {
+                    myItem.$project.year = {};
+                    myItem.$project.year.$year = "$convertedDate";
+                }
+                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                var a = new Date(c);
+                Opportunity.aggregate(
+                    {
+                        $match: {
+                            $and: [{
+                                createdBy: {$ne: null},
+                                $or      : [{isConverted: true}, {isOpportunitie: false}]
+                            },
+                                {
+                                    'createdBy.date': {$gte: a}
+                                }]
+                        }
+                    },
+                    myItem,
+                    {
+                        $group: {
+                            _id  : {dateBy: "$dateBy", isOpportunitie: "$isOpportunitie", year: "$year"},
+                            count: {$sum: 1},
+                            date : {$push: "$convertedDate"}
+                        }
+                    },
+                    {
+                        $project: {
+                            "source": "$_id.dateBy",
+                            count   : 1,
+                            date    : 1,
+                            year    : "$_id.year",
+                            "isOpp" : "$_id.isOpportunitie",
+                            _id     : 0
+                        }
+                    },
+                    {
+                        $sort: {year: 1, source: 1}
+                    }
+                ).exec(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.send({data: result});
+                });
+            }
+        };
+
+        this.updateLead = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+            var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+            var data = req.body;
+            var _id = req.params.id;
+
+            function updateOpp() {
+                var createPersonCustomer = function (company) {
+                    if (data.contactName && (data.contactName.first || data.contactName.last)) {
+                        var _person = {
+                            name          : data.contactName,
+                            email         : data.email,
+                            phones        : data.phones,
+                            company       : company._id,
+                            salesPurchases: {
+                                isCustomer : true,
+                                salesPerson: data.salesPerson
+                            },
+                            type          : 'Person',
+                            createdBy     : {user: req.session.uId}
+                        };
+                        Opportunity.find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            if (_persons.length > 0) {
+                                if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
+                                    Customer.update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err) {
+                                        if (err) {
+                                            return next(err);
+                                        }
+                                    });
+                                }
+                            } else {
+                                var _Person = new Customer(_person);
+
+                                _Person.save(function (err) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                };
+
+                if (data.company && data.company._id) {
+                    data.company = data.company._id;
+                } else if (data.company) {
+                    data.tempCompanyField = data.company;
+                    delete data.company;
+                } else {
+                    delete data.company;
+                }
+                if (data.groups && data.groups.group) {
+                    data.groups.group.forEach(function (group, index) {
+                        if (group._id) {
+                            data.groups.group[index] = objectId(group._id.toString());
+                        }
+                    });
+                }
+                if (data.groups && data.groups.users) {
+                    data.groups.users.forEach(function (user, index) {
+                        if (user._id) {
+                            data.groups.users[index] = objectId(user._id.toString());
+                        }
+                    });
+                }
+
+                event.emit('updateSequence', Opportunity, "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
+                    data.sequence = sequence;
+                    Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        if (data.createCustomer) {
+                            if (data.tempCompanyField) {
+                                var _company = {
+                                    name          : {
+                                        first: data.tempCompanyField,
+                                        last : ''
+                                    },
+                                    address       : data.address,
+                                    salesPurchases: {
+                                        isCustomer : true,
+                                        salesPerson: data.salesPerson
+                                    },
+                                    type          : 'Company',
+                                    createdBy     : {user: req.session.uId}
+                                };
+
+                                Customer.find({'name.first': data.tempCompanyField}, function (err, companies) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+
+                                    if (companies.length > 0) {
+                                        if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
+                                            Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
+                                                if (success) {
+                                                    createPersonCustomer(companies[0]);
+                                                }
+                                            });
+                                        }
+                                    } else {
+                                        var _Company = new Customer(_company);
+                                        _Company.save(function (err, _res) {
+                                            if (err) {
+                                                return next(err);
+                                            }
+
+                                            Opportunity.update({_id: _id}, {
+                                                $set: {
+                                                    company : _res._id,
+                                                    customer: _res._id
+                                                }
+                                            }, function (err) {
+                                                if (err) {
+                                                    console.log(err);
+                                                }
+                                            });
+                                            createPersonCustomer(_res);
+                                        });
+                                    }
+                                });
+
+                            } else {
+                                createPersonCustomer({});
+                            }
+                        }
+                        res.status(200).send({success: 'Opportunities updated success', result: result});
+                    });
+                });
+            }
+
+            delete data._id;
+            delete data.createdBy;
+
+            if (data.isOpportunitie && data.isConverted) {
+                Workflow.find({wId: 'Opportunities'}).sort({sequence: 1}).exec(function (err, _workflow) {
+                    if (_workflow.length !== 0) {
+                        data.workflow = _workflow[_workflow.length - 1]._id;
+                    }
+                    updateOpp();
+                });
+            } else {
+                updateOpp();
+            }
         };
 
         function ConvertType(array, type) {
@@ -587,7 +1071,6 @@ var Opportunity = function (models, event) {
             var filter = data.filter;
             var query;
             var sort;
-            var mid;
 
             var count = data.count ? data.count : 100;
             var page = data.page;
@@ -604,8 +1087,6 @@ var Opportunity = function (models, event) {
             or = filterObj['$or'];
 
             caseFilter(filter, or);
-
-            //console.dir(or[0]);
 
             switch (data.contentType) {
                 case ('Opportunities'):
@@ -780,6 +1261,7 @@ var Opportunity = function (models, event) {
                 if (optionsObject.$and.length) {
                     queryObject.$and.push(optionsObject);
                 }
+                queryObject.$and.push({workflow: data.workflowId});
 
                 query = Opportunities
                     .find(queryObject)

@@ -347,11 +347,11 @@ define([
                     }).render().el
                 );
                 populate.getPriority("#priorityDd", this);
-                populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this);
+                populate.getWorkflow("#workflowsDd", "", "/workflows/getWorkflowsForDd", {id: "Leads"}, "name", this);
                 populate.get2name("#customerDd", "/Customers", {}, this, null, true);
                 populate.get2name("#salesPerson", "/employees/getForDdByRelatedUser", {}, this);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this);
-                populate.get("#sourceDd", "/sources", {}, "name", this);
+                populate.get("#sourceDd", "/employees/sources", {}, "name", this);
 
                 this.delegateEvents(this.events);
 

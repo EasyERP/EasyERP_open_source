@@ -1463,17 +1463,17 @@ var Opportunities = function (models, event) {
     }
 
     return {
-        getTotalCount                    : getTotalCount,
+        //getTotalCount                    : getTotalCount,
         //create                           : create,
-        get                              : get,
+        //get                              : get,
         //getCollectionLengthByWorkflows   : getCollectionLengthByWorkflows,
         //getById                          : getById,
         //getFilterOpportunitiesForKanban  : getFilterOpportunitiesForKanban,
         //getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
         //getFilter                        : getFilter,
-        getLeadsForChart                 : getLeadsForChart,
-        update                           : update,
-        updateLead                       : updateLead,
+        //getLeadsForChart                 : getLeadsForChart,
+        //update                           : update,
+        //updateLead                       : updateLead,
         //updateOnlySelectedFields         : updateOnlySelectedFields,
         //remove                           : remove
     }

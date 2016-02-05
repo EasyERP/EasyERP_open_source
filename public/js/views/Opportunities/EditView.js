@@ -456,7 +456,7 @@
                 populate.getPriority("#priorityDd", this);
                 populate.get2name("#customerDd", "/Customers", {}, this, false, true);
                 populate.get2name("#salesPersonDd", "/employees/getForDdByRelatedUser", {}, this, false, true);
-                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Opportunities"}, "name", this);
                 populate.get("#salesTeamDd", "/departments/getForDD", {}, "departmentName", this, false, true);
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {

@@ -706,7 +706,7 @@
                     model: this.currentModel
                 }).render().el
             );
-            populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
+            populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
                 var i;
 
                 for (i = 0; i < data.length; i++) {
