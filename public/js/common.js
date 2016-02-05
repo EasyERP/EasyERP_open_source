@@ -803,7 +803,7 @@
         var self = this;
         var selectLength;
 
-        dataService.getData('/UsersForDd', {mid: 39}, function (response) {
+        dataService.getData('/users/forDd', {mid: 39}, function (response) {
             var options = [];
             var options2 = [];
 

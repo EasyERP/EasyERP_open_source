@@ -7,9 +7,10 @@ define([
     'text!templates/Assignees/addUserDialog.html',
     'views/selectView/selectView',
     'common',
-    "populate"
+    "populate",
+    'constants'
 
-], function (Backbone, $, _, assigneesTemplate, addGroupTemplate, addUserTemplate, selectView, common, populate) {
+], function (Backbone, $, _, assigneesTemplate, addGroupTemplate, addUserTemplate, selectView, common, populate, CONSTANTS) {
     var AssigneesView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -315,10 +316,10 @@ define([
             this.$el.html(this.template({owner: owner, whoCanRW: whoCanRW}));
 
             if (owner !== "") {
-                populate.get("#allUsersSelect", "/UsersForDd", {}, "login", this);
+                populate.get("#allUsersSelect", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this);
 
             } else {
-                populate.get("#allUsersSelect", "/UsersForDd", {}, "login", this, true);
+                populate.get("#allUsersSelect", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, true);
             }
             return this;
         }
