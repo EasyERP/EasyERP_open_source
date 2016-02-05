@@ -10,6 +10,7 @@ var Opportunity = function (models, event) {
         var opportunitiesSchema = mongoose.Schemas.Opportunitie;
         var async = require('async');
         var validator = require('validator');
+        var objectId = mongoose.Types.ObjectId;
 
         var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -172,6 +173,16 @@ var Opportunity = function (models, event) {
             var contentSearcher;
             var optionsObject = {};
             var waterfallTasks;
+            var arrOr = [];
+            var query;
+
+            if (data.person) {
+                arrOr.push({"customer": objectId(data.person)});
+            }
+            if (data.company) {
+                arrOr.push({"customer": objectId(data.company)});
+                arrOr.push({"company": objectId(data.company)});
+            }
 
             accessRollSearcher = function (cb) {
                 accessRoll(req, Opportunity, cb);
@@ -181,21 +192,58 @@ var Opportunity = function (models, event) {
                 var queryObject = {};
                 queryObject.$and = [];
                 queryObject.$and.push({_id: {$in: opportunitiesIds}});
+                queryObject.$and.push({isOpportunitie: true});
+
+                if (arrOr.length) {
+                    queryObject.$and.push({$or: arrOr});
+                }
 
                 if (optionsObject.$and.length) {
                     queryObject.$and.push(optionsObject);
                 }
 
+                query = Opportunity.find(queryObject);
+
+                waterfallCallback(null, query);
             };
 
             waterfallTasks = [accessRollSearcher, contentSearcher];
 
-            async.waterfall(waterfallTasks, function (err, result) {
+            async.waterfall(waterfallTasks, function (err, query) {
                 if (err) {
                     return next(err);
                 }
 
-                res.status(200).send({data: result});
+                if (data.onlyCount.toString().toLowerCase() === "true") {
+                    query.count(function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({listLength: result});
+                    });
+
+                } else {
+                    if (data && data.status && data.status.length > 0) {
+                        query.where('workflow').in(data.status);
+                    }
+                    query
+                        .select("_id name expectedRevenue.currency expectedRevenue.value nextAction.date workflow");
+
+                    query
+                        .populate('workflow', 'name')
+                        .skip((data.page - 1) * data.count)
+                        .limit(data.count);
+
+                    query.exec(function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({listLength: result.length, data: result});
+                    });
+                }
+
             });
         };
 
