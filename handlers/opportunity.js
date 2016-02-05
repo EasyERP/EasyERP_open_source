@@ -482,35 +482,18 @@ var Opportunity = function (models, event) {
     this.totalCollectionLength = function (req, res, next) {
         var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
         var data = req.query;
-        var filterObj = {};
-        var filter = data.filter || {};
-        var contentType = req.params.contentType;
         var optionsObject = {};
         var contentSearcher;
         var accessRollSearcher;
         var waterfallTasks;
         var query;
         var resp = {};
-        var or;
+        var contentType = req.query.contentType;
+
+        optionsObject.$and = [];
 
         resp.showMore = false;
 
-        if (filter && typeof filter === 'object') {
-            optionsObject.$and = [];
-            optionsObject.$or = [];
-            or = optionsObject.$or;
-            caseFilter(filter, or);
-        }
-
-        if (data.filter && data.filter.workflow) {
-            data.filter.workflow = data.filter.workflow.map(function (item) {
-                return item === "null" ? null : item;
-            });
-
-            optionsObject.workflow = {$in: data.filter.workflow.objectID()};
-        } else if (data && !data.newCollection) {
-            optionsObject.workflow = {$in: []};
-        }
         switch (contentType) {
             case ('Opportunities'):
                 optionsObject.$and.push({'isOpportunitie': true});
@@ -521,9 +504,6 @@ var Opportunity = function (models, event) {
                 if (data.filter && data.filter.isConverted) {
                     optionsObject.$and.push({'isOpportunitie': true});
                     optionsObject.$and.push({'isConverted': true});
-                }
-                if (data && data.filter) {
-                    optionsObject.$and.push(filterObj);
                 }
                 break;
         }
