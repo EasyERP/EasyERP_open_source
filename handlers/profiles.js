@@ -13,7 +13,7 @@ var Profiles = function (models) {
         var err;
         var profile;
 
-        if(!validator.validProfileBody(body)){
+        if (!validator.validProfileBody(body)) {
             err = new Error();
             err.status = 404;
 
@@ -32,96 +32,111 @@ var Profiles = function (models) {
         });
 
         /*var data = {};
-        data = req.body;
-            if (!data.profileName) {
-                logWriter.log('Profile.create Incorrect Incoming Data');
-                res.send(400, {error: 'Profile.create Incorrect Incoming Data'});
-                return;
-            } else {
-                models.get(req.session.lastDb, "Profile", ProfileSchema).find({profileName: data.profileName}, function (error, doc) {
-                        if (error) {
-                            logWriter.log("Profile.js create profile.find");
-                            res.send(500, {error: 'Profile.create find error'});
-                        }
-                        if (doc.length > 0) {
-                            res.send(500, {error: 'A Profile with the same name already exists'});
-                        } else if (doc.length === 0) {
-                            saveProfileToDb(data);
-                        }
-                });
-            }
-            function saveProfileToDb(data) {
-                try {
-                    var _profile = new models.get(req.session.lastDb, "Profile", ProfileSchema)({_id: Date.parse(new Date())});
-                    if (data.profileName) {
-                        _profile.profileName = data.profileName;
-                    }
-                    if (data.profileDescription) {
-                        _profile.profileDescription = data.profileDescription;
-                    }
-                    if (data.profileAccess) {
-                        _profile.profileAccess = data.profileAccess.map(function (item) {
-                            item.module = item.module._id;
-                            return item;
-                        });
-                    }
-                    _profile.save(function (err, result) {
-                        try {
-                            if (err) {
-                                logWriter.log("Profile.js saveProfileToDb _profile.save" + err);
-                                res.send(500, {error: "Profile save failed"});
-                            }
-                            if (result) {
-                                res.send(201, {success: "Profile Saved", data: result, id: result._id});
-                            }
-                        }
-                        catch (error) {
-                            logWriter.log("Profile.js saveProfileToDb _profile.save" + error);
-                            res.send(500, {error: 'Profile.create find error'});
-                        }
-                    });
-                }
-                catch (error) {
-                    logWriter.log("Profile.js saveProfileToDb " + error);
-                    res.send(500, {error: 'Profile.create find error'});
-                }
-            }*/
+         data = req.body;
+         if (!data.profileName) {
+         logWriter.log('Profile.create Incorrect Incoming Data');
+         res.send(400, {error: 'Profile.create Incorrect Incoming Data'});
+         return;
+         } else {
+         models.get(req.session.lastDb, "Profile", ProfileSchema).find({profileName: data.profileName}, function (error, doc) {
+         if (error) {
+         logWriter.log("Profile.js create profile.find");
+         res.send(500, {error: 'Profile.create find error'});
+         }
+         if (doc.length > 0) {
+         res.send(500, {error: 'A Profile with the same name already exists'});
+         } else if (doc.length === 0) {
+         saveProfileToDb(data);
+         }
+         });
+         }
+         function saveProfileToDb(data) {
+         try {
+         var _profile = new models.get(req.session.lastDb, "Profile", ProfileSchema)({_id: Date.parse(new Date())});
+         if (data.profileName) {
+         _profile.profileName = data.profileName;
+         }
+         if (data.profileDescription) {
+         _profile.profileDescription = data.profileDescription;
+         }
+         if (data.profileAccess) {
+         _profile.profileAccess = data.profileAccess.map(function (item) {
+         item.module = item.module._id;
+         return item;
+         });
+         }
+         _profile.save(function (err, result) {
+         try {
+         if (err) {
+         logWriter.log("Profile.js saveProfileToDb _profile.save" + err);
+         res.send(500, {error: "Profile save failed"});
+         }
+         if (result) {
+         res.send(201, {success: "Profile Saved", data: result, id: result._id});
+         }
+         }
+         catch (error) {
+         logWriter.log("Profile.js saveProfileToDb _profile.save" + error);
+         res.send(500, {error: 'Profile.create find error'});
+         }
+         });
+         }
+         catch (error) {
+         logWriter.log("Profile.js saveProfileToDb " + error);
+         res.send(500, {error: 'Profile.create find error'});
+         }
+         }*/
 
     };
 
     this.getProfile = function (req, res, next) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                access.getReadAccess(req, req.session.uId, 51, function (access) {
-                    if (access) {
-                        var response = {};
-                        response['data'] = [];
-                        var query = models.get(req.session.lastDb, "Profile", ProfileSchema).find({});
-                        query.sort({profileName: 1}).populate('profileAccess.module');
-                        query.exec(function (err, result) {
-                            if (err || result.length == 0) {
-                                if (err) {
-                                    logWriter.log("Profile.js getProfiles profile.find " + err);
-                                }
-                                res.send(404, {error: "Can't find Profile"});
-                            } else {
-                                response['data'] = result;
-                                res.send(response);
-                            }
-                        });
-                    } else {
-                        res.send(403);
-                    }
-                });
+        var response = {};
+        response['data'] = [];
+        var ProfileModel = models.get(req.session.lastDb, 'Profile', ProfileSchema);
 
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
+        ProfileModel.find()
+            .sort({profileName: 1})
+            .populate('profileAccess.module')
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                } else {
+                    response['data'] = result;
+                    res.send(response);
+                }
+            });
+        /*try {
+         if (req.session && req.session.loggedIn && req.session.lastDb) {
+         access.getReadAccess(req, req.session.uId, 51, function (access) {
+         if (access) {
+         var response = {};
+         response['data'] = [];
+         var query = models.get(req.session.lastDb, "Profile", ProfileSchema).find({});
+         query.sort({profileName: 1}).populate('profileAccess.module');
+         query.exec(function (err, result) {
+         if (err || result.length == 0) {
+         if (err) {
+         logWriter.log("Profile.js getProfiles profile.find " + err);
+         }
+         res.send(404, {error: "Can't find Profile"});
+         } else {
+         response['data'] = result;
+         res.send(response);
+         }
+         });
+         } else {
+         res.send(403);
+         }
+         });
 
-            console.log("requestHandler.js  " + Exception);
-        }
+         } else {
+         res.send(401);
+         }
+         }
+         catch (Exception) {
+
+         console.log("requestHandler.js  " + Exception);
+         }*/
     };
 
     this.getProfileForDd = function (req, res, next) {
