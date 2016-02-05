@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var ProfileSchema = mongoose.Schemas['Profile'];
-var users = mongoose.Schemas['User'];
+var UserSchema = mongoose.Schemas['User'];
 
 var Profiles = function (models) {
     "use strict";
@@ -157,29 +157,29 @@ var Profiles = function (models) {
             });
 
         /*try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                var response = {};
-                response['data'] = [];
-                var query = models.get(req.session.lastDb, "Profile", ProfileSchema).find({});
-                query.select("_id profileName");
-                query.exec(function (err, result) {
-                    if (err || result.length == 0) {
-                        if (err) {
-                            logWriter.log("Profile.js getProfiles profile.find " + err);
-                        }
-                        res.send(404, {error: "Can't find Profile"});
-                    } else {
-                        response['data'] = result;
-                        res.send(response);
-                    }
-                });
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            console.log("requestHandler.js  " + Exception);
-        }*/
+         if (req.session && req.session.loggedIn && req.session.lastDb) {
+         var response = {};
+         response['data'] = [];
+         var query = models.get(req.session.lastDb, "Profile", ProfileSchema).find({});
+         query.select("_id profileName");
+         query.exec(function (err, result) {
+         if (err || result.length == 0) {
+         if (err) {
+         logWriter.log("Profile.js getProfiles profile.find " + err);
+         }
+         res.send(404, {error: "Can't find Profile"});
+         } else {
+         response['data'] = result;
+         res.send(response);
+         }
+         });
+         } else {
+         res.send(401);
+         }
+         }
+         catch (Exception) {
+         console.log("requestHandler.js  " + Exception);
+         }*/
     };
 
     this.updateProfile = function (req, res, next) {
@@ -216,28 +216,49 @@ var Profiles = function (models) {
     };
 
     this.removeProfile = function (req, res, next) {
+
+        var ProfileModel = models.get(req.session.lastDb, 'Profile', ProfileSchema);
+        var UsereModel = models.get(req.session.lastDb, 'Users', UserSchema);
+
         var _id = req.param('_id');
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 51, function (access) {
-                if (access) {
-                    models.get(req.session.lastDb, 'Users', users).update({profile: _id}, {profile: "1387275504000"}, {multi: true}, function (err, result) {
-                        models.get(req.session.lastDb, "Profile", ProfileSchema).remove({_id: _id}, function (err, result) {
-                            if (err) {
-                                logWriter.log("Profile.js remove profile.remove " + err);
-                                res.send(500, {error: "Can't remove Profile"});
-                            } else {
-                                res.send(200, {success: 'Profile removed'});
-                            }
-                        });
-                    });
-                } else {
-                    res.send(403);
+
+        UsereModel.update({profile: _id}, {profile: "1387275504000"}, {multi: true})
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
                 }
+                ProfileModel.remove({_id: _id})
+                    .exec(function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.send(200, {success: 'Profile removed'});
+                    });
             });
 
-        } else {
-            res.send(401);
-        }
+
+        /*var _id = req.param('_id');
+         if (req.session && req.session.loggedIn && req.session.lastDb) {
+         access.getDeleteAccess(req, req.session.uId, 51, function (access) {
+         if (access) {
+         models.get(req.session.lastDb, 'Users', users).update({profile: _id}, {profile: "1387275504000"}, {multi: true}, function (err, result) {
+         models.get(req.session.lastDb, "Profile", ProfileSchema).remove({_id: _id}, function (err, result) {
+         if (err) {
+         logWriter.log("Profile.js remove profile.remove " + err);
+         res.send(500, {error: "Can't remove Profile"});
+         } else {
+         res.send(200, {success: 'Profile removed'});
+         }
+         });
+         });
+         } else {
+         res.send(403);
+         }
+         });
+
+         } else {
+         res.send(401);
+         }*/
     };
 
 };
