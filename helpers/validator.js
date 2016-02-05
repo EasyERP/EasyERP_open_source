@@ -43,7 +43,7 @@ function getValidProfileBody(body) {
 
     //not sure about regexp
     // why not && ?
-    hasName = hasName ? validator.isProfile(body.profileName) : false;
+    hasName = hasName ? validator.isLogin(body.profileName) : false;
 
     return hasName;
 }

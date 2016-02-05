@@ -183,36 +183,52 @@ var Profiles = function (models) {
     };
 
     this.updateProfile = function (req, res, next) {
+
+        var ProfileModel = models.get(req.session.lastDb, 'Profile', ProfileSchema);
+
         var data = {};
         var _id = req.param('_id');
         data = req.body;
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 51, function (access) {
-                if (access) {
-                    try {
-                        delete data._id;
-                        models.get(req.session.lastDb, "Profile", ProfileSchema).update({_id: _id}, data, function (err, result) {
-                            if (result) {
-                                res.send(200, {success: 'Profile updated success'});
-                            } else if (err) {
-                                logWriter.log("Profile.js update profile.update" + err);
-                                res.send(500, {error: "Can't update Profile"});
-                            } else {
-                                res.send(500, {error: "Can't update Profile"});
-                            }
-                        });
-                    }
-                    catch (exception) {
-                        logWriter.log("Profile.js update " + exception);
-                        res.send(500, {error: exception});
-                    }
-                } else {
-                    res.send(403);
+
+        ProfileModel.update({_id: _id}, data)
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
                 }
-            });
-        } else {
-            res.send(401);
-        }
+                res.send(200, {success: 'Profile updated success'});
+        });
+
+
+            /*var data = {};
+            var _id = req.param('_id');
+            data = req.body;
+            if (req.session && req.session.loggedIn && req.session.lastDb) {
+                access.getEditWritAccess(req, req.session.uId, 51, function (access) {
+                    if (access) {
+                        try {
+                            delete data._id;
+                            models.get(req.session.lastDb, "Profile", ProfileSchema).update({_id: _id}, data, function (err, result) {
+                                if (result) {
+                                    res.send(200, {success: 'Profile updated success'});
+                                } else if (err) {
+                                    logWriter.log("Profile.js update profile.update" + err);
+                                    res.send(500, {error: "Can't update Profile"});
+                                } else {
+                                    res.send(500, {error: "Can't update Profile"});
+                                }
+                            });
+                        }
+                        catch (exception) {
+                            logWriter.log("Profile.js update " + exception);
+                            res.send(500, {error: exception});
+                        }
+                    } else {
+                        res.send(403);
+                    }
+                });
+            } else {
+                res.send(401);
+            }*/
     };
 
     this.removeProfile = function (req, res, next) {
