@@ -261,14 +261,14 @@ var User = function (event, models) {
      * @property {JSON} Object - Object with data to create User (like in example)
      * @instance
      */
-    this.create = function(req, res, next){
+    this.create = function (req, res, next) {
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
         var body = req.body;
         var shaSum = crypto.createHash('sha256');
         var err;
         var user;
 
-        if(!validator.validUserBody(body)){
+        if (!validator.validUserBody(body)) {
             err = new Error();
             err.status = 404;
 
@@ -329,7 +329,7 @@ var User = function (event, models) {
         }
     };
 
-    this.remove = function(req, res, next){
+    this.remove = function (req, res, next) {
         var id = req.params.id;
         var err;
 
@@ -350,7 +350,7 @@ var User = function (event, models) {
         });
     };
 
-    this.getByProfile = function(req, res, next){
+    this.getByProfile = function (req, res, next) {
         var profileId = req.params.id;
         var response = {};
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
@@ -366,6 +366,29 @@ var User = function (event, models) {
             });
             response.isOwnProfile = response.data.indexOf(req.session.uName) !== -1;
 
+            res.status(200).send(response);
+        });
+    };
+
+    this.getForDd = function (req, res, next) {
+        var response = {};
+        var data = req.query;
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+        var query;
+
+        query = UserModel.find({}, {login: 1});
+        query.sort({login: 1});
+
+        if (data.page && data.count) {
+            query.skip((data.page - 1) * data.count).limit(data.count);
+        }
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            response.data = result;
             res.status(200).send(response);
         });
     };

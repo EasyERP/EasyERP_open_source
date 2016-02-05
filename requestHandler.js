@@ -1197,13 +1197,13 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function getUsersForDd(req, res) {
+    /*function getUsersForDd(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             users.getUsersForDd(req, res);
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     // Get users for list
     function getFilterUsers(req, res) {
@@ -2875,7 +2875,7 @@ var requestHandler = function (app, event, mainDb) {
         /*createUser                : createUser,*/
         usersTotalCollectionLength: usersTotalCollectionLength,
         getUsers                  : getUsers,
-        getUsersForDd             : getUsersForDd,
+       /* getUsersForDd             : getUsersForDd,*/
         getUserById               : getUserById,
         getFilterUsers            : getFilterUsers,
        /* getAllUserWithProfile     : getAllUserWithProfile,*/

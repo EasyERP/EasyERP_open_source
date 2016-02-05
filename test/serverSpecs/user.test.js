@@ -22,9 +22,9 @@ describe("User Specs", function () {
 
         it("should create user", function (done) {
             var body = {
-                "login": "super.duper",
-                "pass" : "superpass",
-                "email" : "super.user@valid.com",
+                "login"  : "super.duper",
+                "pass"   : "superpass",
+                "email"  : "super.user@valid.com",
                 "profile": 123456789
             };
 
@@ -52,8 +52,8 @@ describe("User Specs", function () {
 
         it("should fail create user", function (done) {
             var body = {
-                "login": "super.duper",
-                "pass" : "superpass",
+                "login"  : "super.duper",
+                "pass"   : "superpass",
                 "profile": 123456789
             };
 
@@ -61,6 +61,28 @@ describe("User Specs", function () {
                 .post('users')
                 .send(body)
                 .expect(404, done);
+        });
+
+        it('should return all users with provided profile', function (done) {
+            aggent
+                .get('users/profiles/1387275598000')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if(err){
+                        return done(err);
+                    }
+
+                    expect(body).to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('count')
+                        .and.to.be.at.least(0);
+                    expect(body)
+                        .to.have.property('data')
+                        .and.to.be.instanceOf(Array);
+                });
+
         });
 
         it("should remove user", function (done) {
