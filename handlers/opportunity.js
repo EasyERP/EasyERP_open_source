@@ -491,7 +491,14 @@ var Opportunity = function (models, event) {
 
                 return next(err);
             }
-
+            if (body.company) {
+                if (body.company.id) {
+                    body.company = body.company.id;
+                } else if (body.company.name) {
+                    body.tempCompanyField = body.company.name;
+                    body.company = null;
+                }
+            }
             opportunity = new Opportunity(body);
 
             event.emit('updateSequence', Opportunity, "sequence", 0, 0, opportunity.workflow, opportunity.workflow, true, false, function (sequence) {
@@ -505,6 +512,124 @@ var Opportunity = function (models, event) {
                     res.status(201).send({success: "A new Opportunities create success", id: result._id});
                 });
             });
+        };
+
+        this.getLeadsForChart = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var data = {};
+
+            data.source = req.param('source');
+            data.dataRange = req.param('dataRange');
+            data.dataItem = req.param('dataItem');
+
+            if (!data.dataRange) {
+                data.dataRange = 365;
+            }
+            if (!data.dataItem) {
+                data.dataItem = "M";
+            }
+            switch (data.dataItem) {
+                case "M":
+                    data.dataItem = "$month";
+                    break;
+                case "W":
+                    data.dataItem = "$week";
+                    break;
+                case "D":
+                    data.dataItem = "$dayOfYear";
+                    break;
+                case "DW":
+                    data.dataItem = "$dayOfWeek";
+                    break;
+                case "DM":
+                    data.dataItem = "$dayOfMonth";
+                    break;
+
+            }
+            if (data.source) {
+
+                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                var a = new Date(c);
+                Opportunity.aggregate({
+                    $match: {
+                        $and: [{
+                            createdBy: {$ne: null},
+                            source   : {$ne: ""},
+                            $or      : [{isConverted: true}, {isOpportunitie: false}]
+                        }, {'createdBy.date': {$gte: a}}]
+                    }
+                }, {
+                    $group: {
+                        _id  : {source: "$source", isOpportunitie: "$isOpportunitie"},
+                        count: {$sum: 1}
+                    }
+                }, {
+                    $project: {
+                        "source": "$_id.source",
+                        count   : 1,
+                        "isOpp" : "$_id.isOpportunitie",
+                        _id     : 0
+                    }
+                }).exec(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({data: result});
+
+                });
+            } else {
+                var myItem = {};
+                myItem.$project = {isOpportunitie: 1, convertedDate: 1};
+                myItem.$project.dateBy = {};
+                myItem.$project.dateBy.data.dataItem = "$convertedDate";
+                if (data.dataItem === "$dayOfYear") {
+                    myItem.$project.year = {};
+                    myItem.$project.year.$year = "$convertedDate";
+                }
+                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                var a = new Date(c);
+                Opportunity.aggregate(
+                    {
+                        $match: {
+                            $and: [{
+                                createdBy: {$ne: null},
+                                $or      : [{isConverted: true}, {isOpportunitie: false}]
+                            },
+                                {
+                                    'createdBy.date': {$gte: a}
+                                }]
+                        }
+                    },
+                    myItem,
+                    {
+                        $group: {
+                            _id  : {dateBy: "$dateBy", isOpportunitie: "$isOpportunitie", year: "$year"},
+                            count: {$sum: 1},
+                            date : {$push: "$convertedDate"}
+                        }
+                    },
+                    {
+                        $project: {
+                            "source": "$_id.dateBy",
+                            count   : 1,
+                            date    : 1,
+                            year    : "$_id.year",
+                            "isOpp" : "$_id.isOpportunitie",
+                            _id     : 0
+                        }
+                    },
+                    {
+                        $sort: {year: 1, source: 1}
+                    }
+                ).exec(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.send({data: result});
+                });
+            }
         };
 
         this.updateLead = function (req, res, next) {
@@ -644,7 +769,6 @@ var Opportunity = function (models, event) {
                     });
                 });
             }
-
 
             delete data._id;
             delete data.createdBy;

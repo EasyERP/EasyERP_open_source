@@ -112,7 +112,7 @@ define([
                 $(window).unbind("resize").resize(function () {
                     self.renderPopulate();
                     if (!self.source) {
-                        dataService.getData("/sources", null, function (response) {
+                        dataService.getData("/employees/sources", null, function (response) {
                             self.source = response;
                             self.renderPopulateSource(self);
                         });

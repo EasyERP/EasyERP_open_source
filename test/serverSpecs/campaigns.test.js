@@ -26,7 +26,7 @@ describe("Campaigns Specs", function () {
 
     it("should get campaigns for dropDown", function (done) {
         aggent
-            .get('campaigns/getForDD')
+            .get('campaigns')
             .expect(200)
             .end(function(err, res){
                 var body = res.body;

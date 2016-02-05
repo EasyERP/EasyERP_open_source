@@ -2655,34 +2655,34 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //}
 
-    function removeLead(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function removeLead(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-        } else {
-            res.send(401);
-        }
-    }
-
-    function getLeadsForChart(req, res, data) {
-        if (req.session && req.session.loggedIn) {
-            access.getReadAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.getLeadsForChart(req, res, data);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getLeadsForChart(req, res, data) {
+    //    if (req.session && req.session.loggedIn) {
+    //        access.getReadAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.getLeadsForChart(req, res, data);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //-------------------Opportunities---------------------------
 
@@ -2991,11 +2991,11 @@ var requestHandler = function (app, event, mainDb) {
         //getApplicationById            : getApplicationById,
         //getApplicationsForKanban      : getApplicationsForKanban,
 
-        createLead      : createLead,
-        updateLead      : updateLead,
-        removeLead      : removeLead,
+        //createLead      : createLead,
+        //updateLead      : updateLead,
+        //removeLead      : removeLead,
         //getLeadsById    : getLeadsById,
-        getLeadsForChart: getLeadsForChart,
+        //getLeadsForChart: getLeadsForChart,
 
         opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
         //getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
