@@ -2605,55 +2605,55 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //}
 
-    function getLeadsById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.getById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getLeadsById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.getById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function createLead(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.lead.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.create(req, data.lead, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createLead(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.lead.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.create(req, data.lead, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-        } else {
-            res.send(401);
-        }
-    }
-
-    function updateLead(req, res, id, data) {
-        var date = Date.now();
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.lead['editedBy'] = {
-                user: req.session.uId,
-                date: date
-            };
-            access.getEditWritAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.updateLead(req, id, data.lead, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateLead(req, res, id, data) {
+    //    var date = Date.now();
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.lead['editedBy'] = {
+    //            user: req.session.uId,
+    //            date: date
+    //        };
+    //        access.getEditWritAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.updateLead(req, id, data.lead, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     function removeLead(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2994,7 +2994,7 @@ var requestHandler = function (app, event, mainDb) {
         createLead      : createLead,
         updateLead      : updateLead,
         removeLead      : removeLead,
-        getLeadsById    : getLeadsById,
+        //getLeadsById    : getLeadsById,
         getLeadsForChart: getLeadsForChart,
 
         opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,

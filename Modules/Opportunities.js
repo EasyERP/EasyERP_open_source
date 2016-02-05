@@ -1472,8 +1472,8 @@ var Opportunities = function (models, event) {
         //getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
         //getFilter                        : getFilter,
         getLeadsForChart                 : getLeadsForChart,
-        update                           : update,
-        updateLead                       : updateLead,
+        //update                           : update,
+        //updateLead                       : updateLead,
         //updateOnlySelectedFields         : updateOnlySelectedFields,
         //remove                           : remove
     }

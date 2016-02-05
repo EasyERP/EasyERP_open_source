@@ -8,6 +8,8 @@ var Opportunity = function (models, event) {
         var mongoose = require('mongoose');
         var logWriter = require('../helpers/logWriter.js');
         var opportunitiesSchema = mongoose.Schemas.Opportunitie;
+        var CustomerSchema = mongoose.Schemas.Customer;
+        var WorkflowSchema = mongoose.Schemas.workflow;
         var async = require('async');
         var validator = require('validator');
         var objectId = mongoose.Types.ObjectId;
@@ -503,6 +505,160 @@ var Opportunity = function (models, event) {
                     res.status(201).send({success: "A new Opportunities create success", id: result._id});
                 });
             });
+        };
+
+        this.updateLead = function (req, res, next) {
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+            var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+            var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+            var data = req.body;
+            var _id = req.params.id;
+
+            function updateOpp() {
+                var createPersonCustomer = function (company) {
+                    if (data.contactName && (data.contactName.first || data.contactName.last)) {
+                        var _person = {
+                            name          : data.contactName,
+                            email         : data.email,
+                            phones        : data.phones,
+                            company       : company._id,
+                            salesPurchases: {
+                                isCustomer : true,
+                                salesPerson: data.salesPerson
+                            },
+                            type          : 'Person',
+                            createdBy     : {user: req.session.uId}
+                        };
+                        Opportunity.find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            if (_persons.length > 0) {
+                                if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
+                                    Customer.update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err) {
+                                        if (err) {
+                                            return next(err);
+                                        }
+                                    });
+                                }
+                            } else {
+                                var _Person = new Customer(_person);
+
+                                _Person.save(function (err) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                };
+
+                if (data.company && data.company._id) {
+                    data.company = data.company._id;
+                } else if (data.company) {
+                    data.tempCompanyField = data.company;
+                    delete data.company;
+                } else {
+                    delete data.company;
+                }
+                if (data.groups && data.groups.group) {
+                    data.groups.group.forEach(function (group, index) {
+                        if (group._id) {
+                            data.groups.group[index] = objectId(group._id.toString());
+                        }
+                    });
+                }
+                if (data.groups && data.groups.users) {
+                    data.groups.users.forEach(function (user, index) {
+                        if (user._id) {
+                            data.groups.users[index] = objectId(user._id.toString());
+                        }
+                    });
+                }
+
+                event.emit('updateSequence', Opportunity, "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
+                    data.sequence = sequence;
+                    Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        if (data.createCustomer) {
+                            if (data.tempCompanyField) {
+                                var _company = {
+                                    name          : {
+                                        first: data.tempCompanyField,
+                                        last : ''
+                                    },
+                                    address       : data.address,
+                                    salesPurchases: {
+                                        isCustomer : true,
+                                        salesPerson: data.salesPerson
+                                    },
+                                    type          : 'Company',
+                                    createdBy     : {user: req.session.uId}
+                                };
+
+                                Customer.find({'name.first': data.tempCompanyField}, function (err, companies) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+
+                                    if (companies.length > 0) {
+                                        if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
+                                            Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
+                                                if (success) {
+                                                    createPersonCustomer(companies[0]);
+                                                }
+                                            });
+                                        }
+                                    } else {
+                                        var _Company = new Customer(_company);
+                                        _Company.save(function (err, _res) {
+                                            if (err) {
+                                                return next(err);
+                                            }
+
+                                            Opportunity.update({_id: _id}, {
+                                                $set: {
+                                                    company : _res._id,
+                                                    customer: _res._id
+                                                }
+                                            }, function (err) {
+                                                if (err) {
+                                                    console.log(err);
+                                                }
+                                            });
+                                            createPersonCustomer(_res);
+                                        });
+                                    }
+                                });
+
+                            } else {
+                                createPersonCustomer({});
+                            }
+                        }
+                        res.status(200).send({success: 'Opportunities updated success', result: result});
+                    });
+                });
+            }
+
+
+            delete data._id;
+            delete data.createdBy;
+
+            if (data.isOpportunitie && data.isConverted) {
+                Workflow.find({wId: 'Opportunities'}).sort({sequence: 1}).exec(function (err, _workflow) {
+                    if (_workflow.length !== 0) {
+                        data.workflow = _workflow[_workflow.length - 1]._id;
+                    }
+                    updateOpp();
+                });
+            } else {
+                updateOpp();
+            }
         };
 
         function ConvertType(array, type) {

@@ -34,10 +34,12 @@ module.exports = function (app, mainDb) {
     var employeeRouter = require('./employee')(event, models);
     var applicationRouter = require('./application')(event, models);
     var departmentRouter = require('./department')(models);
+    var departmentRouter = require('./department')(models);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
     var salaryRouter = require('./salary')(event, models);
     var opportunityRouter = require('./opportunity')(models, event);
+    var leadsRouter = require('./leads')(models, event);
     var taskRouter = require('./task')(models);
     var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(event, models);
@@ -137,6 +139,7 @@ module.exports = function (app, mainDb) {
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);
     app.use('/opportunities', opportunityRouter);
+    app.use('/leads', leadsRouter);
     app.use('/task', taskRouter);
     app.use('/jobPositions', jobPositionRouter);
     app.use('/holiday', holidayRouter);
@@ -1360,34 +1363,34 @@ module.exports = function (app, mainDb) {
         requestHandler.getLeadsForChart(req, res, data);
     });
 
-    app.get('/Leads/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getLeadsById(req, res, data);
-                break;
-            case "list":
-                requestHandler.getFilterOpportunities(req, res);
-                break;
-        }
-    });
+    //app.get('/Leads/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getLeadsById(req, res, data);
+    //            break;
+    //        case "list":
+    //            requestHandler.getFilterOpportunities(req, res);
+    //            break;
+    //    }
+    //});
 
-    app.post('/Leads', function (req, res) {
-        var data = {};
-        data.lead = req.body;
-        requestHandler.createLead(req, res, data);
-    });
+    //app.post('/Leads', function (req, res) {
+    //    var data = {};
+    //    data.lead = req.body;
+    //    requestHandler.createLead(req, res, data);
+    //});
 
-    app.put('/Leads/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.lead = req.body;
-        requestHandler.updateLead(req, res, id, data);
-    });
+    //app.put('/Leads/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.lead = req.body;
+    //    requestHandler.updateLead(req, res, id, data);
+    //});
     app.patch('/Leads/:_id', function (req, res) {
         var data = {};
         var id = req.param('_id');
