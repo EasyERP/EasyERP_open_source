@@ -27,7 +27,7 @@ describe("jobPosition Specs", function () {
 
     it("should create jobPosition", function (done) {
         var body = {
-            name: 'hfdjshghdjsjdb'
+            name: 'fffffffxxfff'
         };
 
         aggent
@@ -65,7 +65,7 @@ describe("jobPosition Specs", function () {
                     return done(err);
                 }
 
-                expect(body.data)
+                expect(body)
                     .to.be.instanceOf(Array);
 
                 done();
@@ -184,13 +184,13 @@ describe("jobPosition Specs", function () {
             });
     });
 
-    it("should get jobPositions totalCount", function (done) {
+    it("should update jobPosition", function (done) {
         var body = {
             name: 'ddddd'
         };
 
         aggent
-            .get('jobPositions/' + id)
+            .patch('jobPositions/' + id)
             .send(body)
             .expect(200)
             .end(function (err, res) {
