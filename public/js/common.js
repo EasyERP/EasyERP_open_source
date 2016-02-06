@@ -927,7 +927,7 @@
             count    : count,
             onlyCount: onlyCount
         }, function (response) {
-            var options = $.map(response.data, function (item) {
+             $.map(response.data, function (item) {
                 item.nextAction.date = utcDateToLocaleDate(item.nextAction.date);
             });
             if (callback) {
