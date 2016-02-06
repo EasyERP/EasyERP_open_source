@@ -25,7 +25,7 @@ module.exports = function (models) {
     }
 
     router.get('/', handler.getSorted);
-    router.get('/:viewType', cacheRetriver, handler.getForView);
+    router.get('/:id', cacheRetriver, handler.getForView);
     router.post('/', handler.create);
     router.post('/generate', handler.generate);
     router.patch('/', handler.putchBulk);
