@@ -198,8 +198,8 @@ var Users = function (mainDb, models) {
         }
     }*/
 
-    function getUsers(req, response, data) {
-        /**
+    /*function getUsers(req, response, data) {
+        /!**
          * __Type__ `GET`
          *
          * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
@@ -208,7 +208,7 @@ var Users = function (mainDb, models) {
          *
          * @method Users
          * @instance
-         */
+         *!/
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, upass: 0});
@@ -226,7 +226,7 @@ var Users = function (mainDb, models) {
                 response.send(res);
             }
         });
-    }
+    }*/
 
    /* function getUsersForDd(req, response) {
         var res = {};
@@ -497,7 +497,7 @@ var Users = function (mainDb, models) {
 
         /*login: login,*/
 
-        getUsers: getUsers,
+       /* getUsers: getUsers,*/
 
         getUserById: getUserById,
 

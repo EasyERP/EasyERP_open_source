@@ -70,7 +70,7 @@ describe("User Specs", function () {
                 .end(function (err, res) {
                     var body = res.body;
 
-                    if(err){
+                    if (err) {
                         return done(err);
                     }
 
@@ -81,6 +81,58 @@ describe("User Specs", function () {
                     expect(body)
                         .to.have.property('data')
                         .and.to.be.instanceOf(Array);
+
+                    done();
+                });
+
+        });
+
+        it('should return all users for dropDown list', function (done) {
+            aggent
+                .get('users/forDd')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body).to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data')
+                        .and.to.be.instanceOf(Array);
+                    expect(body.data.length).to.be.above(0);
+
+                    done();
+                });
+
+        });
+
+        it('should return all users without password', function (done) {
+            aggent
+                .get('users')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+                    var _user;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body).to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data')
+                        .and.to.be.instanceOf(Array);
+                    expect(body.data.length).to.be.above(0);
+
+                    _user = body.data[0];
+                    expect(_user).to.be.instanceOf(Object);
+                    expect(_user).to.have.property('login');
+                    expect(_user).to.not.have.property('pass');
+
+                    done();
                 });
 
         });

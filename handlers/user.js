@@ -167,6 +167,37 @@ var User = function (event, models) {
         updateThisUser(_id, query);
     }
 
+    function findUsers(Model, filterObject, sortObject, data, options, cb) {
+        var queryObject = {};
+        var query = Model.find(queryObject, filterObject);
+
+        if (typeof options === 'function') {
+            cb = options;
+            options = null;
+        }
+
+        if (options) {
+            query.populate('profile');
+
+            if (options.hasOwnProperty('byId')) {
+                queryObject._id = data.id;
+                query
+                    .populate('relatedEmployee', 'imageSrc name fullName')
+                    .populate('savedFilters._id');
+            }
+        }
+
+        if (sortObject) {
+            query.sort(sortObject);
+        }
+
+        if (data.page && data.count) {
+            query.skip((data.page - 1) * data.count).limit(data.count);
+        }
+
+        query.exec(cb);
+    }
+
     /**
      * __Type__ `POST`
      *
@@ -371,19 +402,63 @@ var User = function (event, models) {
     };
 
     this.getForDd = function (req, res, next) {
+        //ToDo in feature add count for pagination
         var response = {};
         var data = req.query;
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
-        var query;
 
-        query = UserModel.find({}, {login: 1});
-        query.sort({login: 1});
+        findUsers(UserModel, {login: 1}, {login: 1}, data, function (err, users) {
+            if (err) {
+                return next(err);
+            }
 
-        if (data.page && data.count) {
-            query.skip((data.page - 1) * data.count).limit(data.count);
+            response.data = users;
+            res.status(200).send(response);
+        });
+    };
+
+    /**
+     * __Type__ `GET`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
+     *
+     * This __method__ allows to get all Users.
+     *
+     * @method Users
+     * @instance
+     */
+    this.getAll = function (req, res, next) {
+        var response = {};
+        var data = req.query;
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+
+        findUsers(UserModel, {__v: 0, pass: 0}, {login: 1}, data, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            response.data = result;
+            res.status(200).send(response);
+        });
+    };
+
+    this.getUsers = function (req, res, next) {
+        var viewType = req.params.viewType;
+        var options;
+        var response = {};
+        var data = req.query;
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+
+        switch (viewType) {
+            case "form":
+                options = {byId: true};
+                break;
+            default:
+                options = {byFilter: true};
+                break;
         }
 
-        query.exec(function (err, result) {
+        findUsers(UserModel, {__v: 0, pass: 0}, {login: 1}, data, options, function (err, result) {
             if (err) {
                 return next(err);
             }

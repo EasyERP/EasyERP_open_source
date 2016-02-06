@@ -10,8 +10,10 @@ module.exports = function (event, models) {
     var handler = new UserHandler(event, models);
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
+    router.get('/', authStackMiddleware, accessStackMiddlware, handler.getAll);
     router.get('/profiles/:id', authStackMiddleware, accessStackMiddlware, handler.getByProfile);
     router.get('/forDd', authStackMiddleware, handler.getForDd);
+    router.get('/:viewType', authStackMiddleware, handler.getUsers);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.post('/login', handler.login);
