@@ -318,6 +318,7 @@ describe("Opportunity Specs", function () {
     });
 
     describe('Opportunity with user without a license', function () {
+
         before(function (done) {
             aggent = request.agent(url);
 
