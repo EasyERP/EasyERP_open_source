@@ -10,7 +10,7 @@ describe("Opportunity Specs", function () {
     'use strict';
     var id;
 
-    describe('Opportunity with admin', function(){
+    describe('Opportunity with admin', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -25,13 +25,13 @@ describe("Opportunity Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
         });
 
-        it('should create Opportunity', function(done){
+        it('should create opportunity', function (done) {
             var body = {
                 name: "Subject"
             };
@@ -58,10 +58,8 @@ describe("Opportunity Specs", function () {
                 });
         });
 
-        it('should fail create Opportunity', function(done){
-            var body = {
-
-            };
+        it('should fail create opportunity', function (done) {
+            var body = {};
 
             aggent
                 .post('opportunities')
@@ -69,7 +67,7 @@ describe("Opportunity Specs", function () {
                 .expect(404, done);
         });
 
-        it('should get Opportunity totalCount', function (done) {
+        it('should get opportunity totalCount', function (done) {
             aggent
                 .get('opportunities/totalCollectionLength')
                 .expect(200)
@@ -90,8 +88,194 @@ describe("Opportunity Specs", function () {
                 });
         });
 
-        it('', function(){
+        it('should get opportunity FilterValues', function (done) {
+            aggent
+                .get('opportunities/getFilterValues')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
 
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Array)
+                        .and.to.be.not.empty;
+
+                    done();
+                });
+        });
+
+        it('should get opportunity ForMiniView', function (done) {
+            aggent
+                .get('opportunities/OpportunitiesForMiniView')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('listLength');
+                    done();
+                });
+        });
+
+        it('should get opportunity LengthByWorkflows', function (done) {
+            aggent
+                .get('opportunities/getLengthByWorkflows')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('arrayOfObjects');
+                    expect(body.arrayOfObjects)
+                        .to.be.instanceOf(Array);
+                    expect(body)
+                        .to.have.property('showMore');
+                    done();
+                });
+        });
+
+        it('should get opportunity for viewType list', function (done) {
+            var query = {
+                viewType   : 'list',
+                contentType: 'Opportunities'
+            };
+
+            aggent
+                .get('opportunities/list')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body.data)
+                        .to.be.instanceOf(Array);
+
+                    done();
+                });
+        });
+
+        it('should get opportunity for viewType form', function (done) {
+            var query = {
+                id: id
+            };
+
+            aggent
+                .get('opportunities/form')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object)
+                        .and.to.have.property('_id');
+
+                    done();
+                });
+        });
+
+        it('should get opportunity for viewType kanban', function (done) {
+
+            var query = {
+                workflowId: '528ce5e3f3f67bc40b000018'
+            };
+
+            aggent
+                .get('opportunities/kanban')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body)
+                        .to.have.property('workflowId');
+
+                    done();
+                });
+        });
+
+        it('should opportunity updateOnlySelectedFields', function (done) {
+            var body = {
+                name: 'test'
+            };
+            aggent
+                .patch('opportunities/' + id)
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('success');
+
+                    done();
+                });
+        });
+
+        it('should opportunity update', function (done) {
+            var body = {
+                _id: id
+            };
+            aggent
+                .put('opportunities/' + id)
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('success');
+                    expect(body)
+                        .to.have.property('result');
+
+                    done();
+                });
         });
 
         it("should remove opportunity", function (done) {
@@ -99,9 +283,41 @@ describe("Opportunity Specs", function () {
                 .delete('opportunities/' + id)
                 .expect(200, done);
         });
+
+        it('should create opportunity createLeadFromSite', function (done) {
+            var body = {
+                email: "test@example.com"
+            };
+
+            aggent
+                .post('opportunities/createLeadFromSite')
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.have.property('success');
+
+                    done();
+                });
+        });
+
+        it('should fai create opportunity createLeadFromSite', function (done) {
+            var body = {};
+
+            aggent
+                .post('opportunities/createLeadFromSite')
+                .send(body)
+                .expect(400, done);
+        });
     });
 
-    describe('Opportunity with user without a license', function(){
+    describe('Opportunity with user without a license', function () {
         before(function (done) {
             aggent = request.agent(url);
 
@@ -115,13 +331,13 @@ describe("Opportunity Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
         });
 
-        it('should fail create Opportunity', function(done){
+        it('should fail create Opportunity', function (done) {
             var body = {
                 name: "Subject"
             };

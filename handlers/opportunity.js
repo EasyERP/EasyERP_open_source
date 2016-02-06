@@ -170,8 +170,8 @@ var Opportunity = function (models, event) {
                         res.status(400).send();
                     }
 
-                    res.status(200).send('Lead created');
-                })
+                    res.status(200).send({success: 'Lead created'});
+                });
             } else {
                 res.status(400).send();
             }
