@@ -13,9 +13,6 @@ module.exports = function (event, models) {
     var moduleId = MODULES.APPLICATIONS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    //router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilter);
-    //router.get('/form', authStackMiddleware, accessStackMiddlware, handler.getById);
-    //router.get('/kanban', authStackMiddleware, accessStackMiddlware, handler.getApplicationsForKanban);
     router.get('/getApplicationsLengthByWorkflows',  authStackMiddleware, handler.getCollectionLengthByWorkflows);
     router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
 

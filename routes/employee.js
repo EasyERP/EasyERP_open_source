@@ -29,8 +29,6 @@ module.exports = function (event, models) {
     router.get('/sources', authStackMiddleware, handler.getSources);
 
     router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewTpe);
-    //router.get('/', authStackMiddleware, accessStackMiddlware, handler.getFilter);
-    //router.get('/', authStackMiddleware, accessStackMiddlware, handler.getById);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.post('/uploadEmployeesFiles', authStackMiddleware, accessStackMiddlware, multipartMiddleware, handler.uploadEmployeesFiles);
