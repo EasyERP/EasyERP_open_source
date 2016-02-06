@@ -265,8 +265,11 @@ define([
                 var currentModel = this.formModel;
                 var newModel = {};
                 var oldvalue = {};
+                var i;
+                var mid = this.mId;
+
                 if (objIndex.length > 1) {
-                    for (var i in this.formModel.toJSON()[objIndex[0]]) {
+                    for (i in this.formModel.toJSON()[objIndex[0]]) {
                         oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
                     }
                     var param = currentModel.get(objIndex[0]) || {};
