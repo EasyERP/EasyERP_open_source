@@ -1,13 +1,17 @@
 /**
  * Created by Roman on 04.05.2015.
  */
-define(['Validation', 'common'], function (Validation, common) {
+define([
+    'Backbone',
+    'common',
+    'constants'
+], function (Backbone, common, CONSTANTS) {
+    'use strict';
+
     var QuotationModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize : function () {
 
-        },
-        defaults   : {
+        defaults: {
             supplier         : {
                 _id : null,
                 name: ''
@@ -34,10 +38,10 @@ define(['Validation', 'common'], function (Validation, common) {
             incoterm         : null,
             products         : []
         },
-        urlRoot    : function () {
-            return "/quotation";
+        urlRoot : function () {
+            return CONSTANTS.URLS.QUOTATION;
         },
-        parse      : function (model) {
+        parse   : function (model) {
             var products = model.products;
 
             if (products) {

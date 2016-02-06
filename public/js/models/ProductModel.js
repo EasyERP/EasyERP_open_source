@@ -1,7 +1,13 @@
 /**
  * Created by soundstorm on 29.04.15.
  */
-define(['Validation', 'common'], function (Validation, common) {
+define([
+    'Backbone',
+    'Validation',
+    'constants'
+], function (Backbone, Validation, CONSTANTS) {
+    'use strict';
+
     var ProductModel = Backbone.Model.extend({
         idAttribute: "_id",
         initialize : function () {
@@ -12,7 +18,7 @@ define(['Validation', 'common'], function (Validation, common) {
                     msg = errors.join('\n');
 
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: msg
                     });
                 }
@@ -48,7 +54,7 @@ define(['Validation', 'common'], function (Validation, common) {
             whoCanRW         : "everyOne"
         },
         urlRoot    : function () {
-            return "/Product";
+            return CONSTANTS.URLS.PRODUCT;
         }
     });
     return ProductModel;

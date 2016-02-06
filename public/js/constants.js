@@ -474,11 +474,41 @@ define([], function () {
         IT_SERVICES: 'IT services',
 
         DASH_VAC_WEEK_BEFORE: 2,
-        DASH_VAC_WEEK_AFTER: 8,
+        DASH_VAC_WEEK_AFTER : 8,
 
         URLS: {
-            USERS: '/users/',
-            USERS_FOR_DD: '/users/forDd'
+            USERS              : '/users/',
+            USERS_FOR_DD       : '/users/forDd',
+            APPLICATIONS       : '/applications/',
+            EMPLOYEES          : '/employees/',
+            CATEGORY           : '/category/',
+            CHARTOFACCOUNT     : '/ChartOfAccount/',
+            COMPANIES          : '/companies/',
+            DEGREES            : '/Degrees/',
+            DEPARTMENTS        : '/Departments/',
+            EVENTS             : '/Events/',
+            HOLIDAY            : '/Holiday/',
+            INVOICE            : '/Invoice/',
+            JOBPOSITIONS       : '/JobPositions/',
+            JOURNALENTRY       : '/journalEntry/',
+            JOURNAL            : '/journal/',
+            LEADS              : '/leads/',
+            MONTHHOURS         : '/monthHours/',
+            OPPORTUNITIES      : '/Opportunities/',
+            PAYMENT            : '/payment/',
+            PAYROLL            : '/payroll/',
+            PERSONS            : '/persons/',
+            PRIORITY           : '/Priority/',
+            PRODUCT            : '/product/',
+            PROFILES           : '/profiles/',
+            PROJECTS           : '/Projects/',
+            QUOTATION          : '/quotation/',
+            SOURCESOFAPPLICANTS: '/SourcesOfApplicants/',
+            TASKS              : '/Tasks/',
+            VACATION           : '/vacation/',
+            WORKFLOWS          : '/workflows/',
+            WTRACK             : '/wTrack/'
+
         },
 
         MID: {
@@ -487,5 +517,5 @@ define([], function () {
             'Persons'     : 49,
             'Companies'   : 50
         }
-    };
+    }
 });

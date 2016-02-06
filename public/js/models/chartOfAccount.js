@@ -1,8 +1,11 @@
 /**
  * Created by lilya on 27/11/15.
  */
-define([], function () {
-
+define([
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
     var ChartOfAccountModel = Backbone.Model.extend({
         idAttribute: "_id",
 
@@ -13,7 +16,7 @@ define([], function () {
         },
 
         urlRoot: function () {
-            return "/ChartOfAccount";
+            return CONSTANTS.URLS.CHARTOFACCOUNT;
         }
     });
     return ChartOfAccountModel;

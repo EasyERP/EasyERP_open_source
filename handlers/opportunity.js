@@ -642,7 +642,7 @@ var Opportunity = function (models, event) {
                 var myItem = {};
                 myItem.$project = {isOpportunitie: 1, convertedDate: 1};
                 myItem.$project.dateBy = {};
-                myItem.$project.dateBy.data.dataItem = "$convertedDate";
+                myItem.$project.dateBy[data.dataItem] = "$convertedDate";
                 if (data.dataItem === "$dayOfYear") {
                     myItem.$project.year = {};
                     myItem.$project.year.$year = "$convertedDate";

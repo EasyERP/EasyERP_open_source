@@ -1,16 +1,17 @@
 /**
  * Created by Roman on 20.05.2015.
  */
-/**
- * Created by Roman on 04.05.2015.
- */
-define(['Validation', 'common'], function (Validation, common, helpers) {
+define([
+    'Backbone',
+    'common',
+    'constants'
+], function (Backbone, common, CONSTANTS) {
+    'use strict';
+
     var PaymentModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize : function () {
 
-        },
-        defaults   : {
+        defaults: {
             supplier        : {
                 _id     : null,
                 fullName: ''
@@ -25,10 +26,10 @@ define(['Validation', 'common'], function (Validation, common, helpers) {
             invoice         : null,
             invoiced        : 0
         },
-        urlRoot    : function () {
-            return "/payment";
+        urlRoot : function () {
+            return CONSTANTS.URLS.PAYMENT;
         },
-        parse      : function (model) {
+        parse   : function (model) {
             var differenceAmount = model.differenceAmount || 0;
             var paidAmount = model.paidAmount || 0;
             var invoiced;
