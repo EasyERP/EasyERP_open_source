@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var RESPONSES = require('../constants/responses');
 var ProfileSchema = mongoose.Schemas['Profile'];
 var UserSchema = mongoose.Schemas['User'];
 
@@ -16,6 +17,7 @@ var Profiles = function (models) {
         if (!validator.validProfileBody(body)) {
             err = new Error();
             err.status = 404;
+            err.message = RESPONSES.PAGE_NOT_FOUND;
 
             return next(err);
         }
@@ -25,6 +27,9 @@ var Profiles = function (models) {
         profile = new ProfileModel(body);
         profile.save(function (err, profile) {
             if (err) {
+                err.status = 404;
+                err.message = RESPONSES.PAGE_NOT_FOUND;
+                
                 return next(err);
             }
 
@@ -99,6 +104,9 @@ var Profiles = function (models) {
             .populate('profileAccess.module')
             .exec(function (err, result) {
                 if (err) {
+                    err.status = 404;
+                    err.message = RESPONSES.PAGE_NOT_FOUND;
+                    
                     return next(err);
                 } else {
                     response['data'] = result;
@@ -149,6 +157,9 @@ var Profiles = function (models) {
             .select("_id profileName")
             .exec(function (err, result) {
                 if (err) {
+                    err.status = 404;
+                    err.message = RESPONSES.PAGE_NOT_FOUND;
+                    
                     return next(err);
                 } else {
                     response['data'] = result;
@@ -193,6 +204,9 @@ var Profiles = function (models) {
         ProfileModel.update({_id: _id}, data)
             .exec(function (err, result) {
                 if (err) {
+                    err.status = 404;
+                    err.message = RESPONSES.PAGE_NOT_FOUND;
+                    
                     return next(err);
                 }
                 res.send(200, {success: 'Profile updated success'});
@@ -241,11 +255,16 @@ var Profiles = function (models) {
         UsereModel.update({profile: _id}, {profile: "1387275504000"}, {multi: true})
             .exec(function (err, result) {
                 if (err) {
+                    err.status = 404;
+                    err.message = RESPONSES.PAGE_NOT_FOUND;
+                    
                     return next(err);
                 }
                 ProfileModel.remove({_id: _id})
                     .exec(function (err, result) {
                         if (err) {
+                            err.status = 404;
+                            err.message = RESPONSES.PAGE_NOT_FOUND;
                             return next(err);
                         }
                         res.send(200, {success: 'Profile removed'});

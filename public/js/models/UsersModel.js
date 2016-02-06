@@ -3,6 +3,7 @@ define([
     'Validation',
     'constants'
 ], function (Backbone, Validation, CONSTANTS) {
+    'use strict';
     var UserModel = Backbone.Model.extend({
         idAttribute: "_id",
         defaults   : {
