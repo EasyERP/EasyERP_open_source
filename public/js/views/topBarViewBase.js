@@ -2,16 +2,17 @@ define([
         'Backbone',
         'jQuery',
         'common',
-        'custom'
+        'custom',
+        'views/Notes/AttachView'
     ],
-    function (Backbone, $, Common, Custom) {
+    function (Backbone, $, Common, Custom, AttachView) {
         'use strict';
         var TopBarView = Backbone.View.extend({
             el        : '#top-bar',
             actionType: null, //Content, Edit, Create
 
             events: {
-                "click .changeContentView"     : 'onChangeContentViewType',
+                "click a.changeContentView"     : 'onChangeContentViewType',
                 "click ul.changeContentIndex a": 'onChangeItemIndex',
                 "click #top-bar-nextBtn"       : "onNextEvent",
                 "click #top-bar-deleteBtn"     : "onDeleteEvent",
@@ -19,13 +20,43 @@ define([
                 "click #top-bar-discardBtn"    : "onDiscardEvent",
                 "click #top-bar-editBtn"       : "onEditEvent",
                 "click #top-bar-saveBtn"       : "onSaveEvent",
-                "click #kanban-settings-Btn"   : "onEditKanban"
+                "click #kanban-settings-Btn"   : "onEditKanban",
+                "click #top-bar-importBtn"      : "importEvent",
+                "click #top-bar-exportBtn"      : "export",
+                "click #top-bar-exportToCsvBtn" : "exportToCsv",
+                "click #top-bar-exportToXlsxBtn": "exportToXlsx",
+                "change .inputAttach"           : "importFiles"
             },
 
             initialize: function (options) {
                 this.actionType = options.actionType || 'Content';
 
                 this.render();
+            },
+
+            exportToCsv: function (event) {
+                event.preventDefault();
+                this.trigger('exportToCsv');
+            },
+
+            exportToXlsx: function (event) {
+                event.preventDefault();
+                this.trigger('exportToXlsx');
+            },
+
+            importEvent: function (event) {
+                event.preventDefault();
+                this.$el.find('#forImport').html(this.importTemplate);
+                this.$el.find('#inputAttach').click();
+                this.trigger('importEvent');
+            },
+
+            importFiles: function (e) {
+                var importFile = new AttachView({});
+
+                this.import = true;
+
+                importFile.sendToServer(e, null, this);
             },
 
             onChangeContentViewType: function (e) {
