@@ -249,7 +249,7 @@ var Opportunity = function (models, event) {
 
         this.opportunitiesForMiniView = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
-            var data = req.body;
+            var data = req.query;
             var accessRollSearcher;
             var contentSearcher;
             var waterfallTasks;
