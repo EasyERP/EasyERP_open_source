@@ -606,13 +606,13 @@ module.exports = function (app, mainDb) {
         requestHandler.getAllUserWithProfile(req, id, res);
     });*/
 
-    app.get('/Users', function (req, res) {
+    /*app.get('/Users', function (req, res) {
         var data = {};
         data.page = req.param('page');
         data.count = req.param('count');
         requestHandler.getUsers(req, res, data);
     });
-
+*/
     app.get('/currentUser', function (req, res) {
         requestHandler.currentUser(req, res);
     });
@@ -649,7 +649,7 @@ module.exports = function (app, mainDb) {
         requestHandler.getUsersForDd(req, res);
     });*/
 
-    app.get('/Users/:viewType', function (req, res) {
+    /*app.get('/Users/:viewType', function (req, res) {
         var data = {};
         for (var i in req.query) {
             data[i] = req.query[i];
@@ -663,7 +663,7 @@ module.exports = function (app, mainDb) {
                 requestHandler.getFilterUsers(req, res);
                 break;
         }
-    });
+    });*/
 
     app.patch('/Users/:_id', function (req, res) {
         var data = {};
