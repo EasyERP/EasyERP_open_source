@@ -13,7 +13,7 @@ describe("Employee Specs", function () {
     'use strict';
     var id;
 
-    describe('Employee with admin', function(){
+    describe('Employee with admin', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -28,7 +28,7 @@ describe("Employee Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
@@ -43,7 +43,7 @@ describe("Employee Specs", function () {
                 "department" : "55b92ace21e4b7c40f00000f",
                 "jobPosition": "55b92acf21e4b7c40f00001d",
                 "dateBirth"  : "28 Dec, 1990",
-                "hire"         : [{
+                "hire"       : [{
                     department : "55b92ace21e4b7c40f00000f",
                     jobPosition: "55b92acf21e4b7c40f00001d",
                     manager    : "56938d2cd87c9004552b639e",
@@ -94,11 +94,31 @@ describe("Employee Specs", function () {
         });
 
         it("should getById employee", function (done) {
+            aggent
+                .get('employees/' + id)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('_id');
+
+                    done();
+                });
+        });
+
+        it("should get by viewType form employee", function (done) {
             var query = {
-                id:  id
+                viewType   : "form"
             };
             aggent
-                .get('employees/form')
+                .get('employees/' + id)
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -117,15 +137,12 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get by viewType employee", function (done) {
+        it("should get by viewType kanban employee", function (done) {
             var query = {
-                viewType   : "list",
-                contentType: "Employees",
-                page       : 1,
-                count      : 100
+                viewType   : "kanban"
             };
             aggent
-                .get('employees/thumbnails')
+                .get('employees/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -139,6 +156,10 @@ describe("Employee Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+                    expect(body)
+                        .to.have.property('time');
+                    expect(body)
+                        .to.have.property('workflowId');
 
                     done();
                 });
@@ -450,7 +471,7 @@ describe("Employee Specs", function () {
         });
     });
 
-    describe('Employee with user without a license', function(){
+    describe('Employee with user without a license', function () {
         before(function (done) {
             aggent = request.agent(url);
 
@@ -464,7 +485,7 @@ describe("Employee Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
@@ -479,7 +500,7 @@ describe("Employee Specs", function () {
                 "department" : "55b92ace21e4b7c40f00000f",
                 "jobPosition": "55b92acf21e4b7c40f00001d",
                 "dateBirth"  : "28 Dec, 1990",
-                "hire"         : [{
+                "hire"       : [{
                     department : "55b92ace21e4b7c40f00000f",
                     jobPosition: "55b92acf21e4b7c40f00001d",
                     manager    : "56938d2cd87c9004552b639e",
