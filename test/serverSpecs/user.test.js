@@ -137,6 +137,33 @@ describe("User Specs", function () {
 
         });
 
+        it('should return user by id without password', function (done) {
+            aggent
+                .get('users/55c1e1276708490b0b000035')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+                    var _user;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body).to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('user')
+                        .and.to.be.instanceOf(Object);
+
+                    _user = body.user;
+
+                    expect(body).to.have.property('savedFilters');
+                    expect(_user).to.not.have.property('pass');
+
+                    done();
+                });
+
+        });
+
         it("should remove user", function (done) {
             aggent
                 .delete('users/' + id)

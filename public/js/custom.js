@@ -1,11 +1,13 @@
 define([
     'Backbone',
+    'jQuery',
     'libs/date.format',
     'common',
     'constants',
     'dataService',
-    'moment'
-], function (Backbone, dateformat, common, CONTENT_TYPES, dataService, moment) {
+    'moment',
+    'constants'
+], function (Backbone, $, dateformat, common, CONTENT_TYPES, dataService, moment, CONSTANTS) {
     'use strict';
 
     var Store = function () {
@@ -54,7 +56,7 @@ define([
             this.contentType = contentType;
         }
 
-        if (typeof windowLocHash != "undefined" && windowLocHash.length == 24) {
+        if (typeof windowLocHash !== "undefined" && windowLocHash.length === 24) {
             id = windowLocHash;
         }
 
@@ -62,7 +64,7 @@ define([
         url = "#easyErp/" + this.contentType + "/" + viewtype + (browserFilter ? '/filter=' + browserFilter : '');
 
         if (id) {
-            if (viewtype != "list" && (viewtype != "thumbnails")) {
+            if (viewtype !== "list" && (viewtype !== "thumbnails")) {
                 url += "/" + id;
             }
             if (collection) {
@@ -70,7 +72,7 @@ define([
             }
         } else {
 
-            if (viewtype == "form" && collection) {
+            if (viewtype === "form" && collection) {
                 var model = collection.getElement();
                 url += "/" + model.attributes._id;
             }
@@ -85,10 +87,10 @@ define([
         var viewType;
         var savedFilter;
 
-        if (option && (option.contentType != App.contentType)) {
+        if (option && (option.contentType !== App.contentType)) {
             App.ownContentType = false;
         }
-        if (App.currentViewType == null) {
+        if (App.currentViewType === null) {
             if (option) {
                 switch (option.contentType) {
                     case CONTENT_TYPES.DASHBOARD:
@@ -311,7 +313,7 @@ define([
         var keys;
         var savedFilters;
 
-        dataService.getData('/currentUser', null, function (response) {
+        dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
             if (response && !response.error) {
                 App.currentUser = response.user;
                 App.savedFilters = response.savedFilters;

@@ -1189,13 +1189,13 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function currentUser(req, res) {
+   /* function currentUser(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             users.getUserById(req, req.session.uId, res);
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     /*function getUsersForDd(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2876,12 +2876,12 @@ var requestHandler = function (app, event, mainDb) {
         usersTotalCollectionLength: usersTotalCollectionLength,
        /* getUsers                  : getUsers,*/
        /* getUsersForDd             : getUsersForDd,*/
-        getUserById               : getUserById,
+       /* getUserById               : getUserById,*/
         /*getFilterUsers            : getFilterUsers,*/
        /* getAllUserWithProfile     : getAllUserWithProfile,*/
         updateUser                : updateUser,
         /*removeUser                : removeUser,*/
-        currentUser               : currentUser,
+        /*currentUser               : currentUser,*/
         updateCurrentUser         : updateCurrentUser,
 
        /* getProfile     : getProfile,

@@ -71,41 +71,6 @@ module.exports = function (app, mainDb) {
 
     var requestHandler;
 
-    /*var winston = require('winston');
-    var logger = new (winston.Logger)({
-        transports       : [
-            new (winston.transports.Console)({
-                json     : false,
-                timestamp: true
-            }),
-            new (winston.transports.File)({
-                name: 'infoFile',
-                filename: 'info.log',
-                level: 'info',
-                json     : false,
-                maxsize: 1024 * 1024 * 10
-            }),
-            new (winston.transports.File)({
-                name: 'errorFile',
-                filename: 'error.log',
-                json     : false,
-                level: 'error',
-                maxsize: 1024 * 1024 * 10
-            })
-        ],
-        exceptionHandlers: [
-            new (winston.transports.Console)({
-                json     : false,
-                timestamp: true
-            }),
-            new winston.transports.File({
-                filename: 'exceptions.log',
-                json    : false
-            })
-        ],
-        exitOnError      : false
-    });*/
-
     app.set('logger', logger);
 
     requestHandler = require("../requestHandler.js")(app, event, mainDb);
@@ -624,29 +589,28 @@ module.exports = function (app, mainDb) {
         requestHandler.getUsers(req, res, data);
     });
 */
-    app.get('/currentUser', function (req, res) {
+    /*app.get('/currentUser', function (req, res) {
         requestHandler.currentUser(req, res);
-    });
+    });*/
 
-    app.post('/currentUser', function (req, res) {
+  /*  app.post('/currentUser', function (req, res) {
         var data = {};
         if (req.body.oldpass && req.body.pass) {
             data.changePass = true;
         }
         requestHandler.updateCurrentUser(req, res, data);
-    });
+    });*/
 
-    app.patch('/currentUser', function (req, res) {
+    /*app.patch('/currentUser', function (req, res) {
         var data = {};
         if (req.body) {
             data.savedFilters = req.body;
         }
 
         requestHandler.updateCurrentUser(req, res, data);
-    });
+    });*/
 
     app.use('/users', userRouter);
-    app.use('/currentUser', userRouter);
 
    /* app.patch('/currentUser/:_id', function (req, res) {
         var data = {};

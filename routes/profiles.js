@@ -10,9 +10,10 @@ module.exports = function (models) {
     var handler = new ProfilesHandler(models);
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.createProfile);
     router.get('/', authStackMiddleware, accessStackMiddlware, handler.getProfile);
     router.get('/forDd', handler.getProfileForDd);
+
+    router.post('/', authStackMiddleware, accessStackMiddlware, handler.createProfile);
     router.put('/:_id', authStackMiddleware, accessStackMiddlware, handler.updateProfile);
     router.delete('/:_id', authStackMiddleware, accessStackMiddlware, handler.removeProfile);
 

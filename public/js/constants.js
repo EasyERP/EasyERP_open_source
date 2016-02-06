@@ -478,7 +478,9 @@ define([], function () {
 
         URLS: {
             USERS: '/users/',
-            USERS_FOR_DD: '/users/forDd'
+            USERS_FOR_DD: '/users/forDd',
+            PROFILES_FOR_DD: '/profiles/forDd',
+            CURRENT_USER: '/users/current'
         },
 
         MID: {
