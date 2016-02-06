@@ -534,8 +534,13 @@ var Employee = function (event, models) {
     this.getByViewTpe = function (req, res, next) {
         var query = req.query;
         var viewType = query.viewType;
+        var id = req.params.id;
 
-        if (query.id){
+        if (viewType === id){
+            viewType = id;
+        }
+
+        if (id.length > 24){
             getById(req, res, next);
             return false;
         }
@@ -547,7 +552,10 @@ var Employee = function (event, models) {
             case "kanban":
                 getApplicationsForKanban(req, res, next);
                 break;
-            default:
+            case "thumbnails":
+                getFilter(req, res, next);
+                break;
+            case "list":
                 getFilter(req, res, next);
                 break;
         }

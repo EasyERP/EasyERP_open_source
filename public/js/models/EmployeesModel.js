@@ -132,7 +132,7 @@
             fire          : []
         },
         urlRoot    : function () {
-            return "/Employees";
+            return "/employees/";
         }
     });
     return EmployeeModel;
