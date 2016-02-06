@@ -11,6 +11,7 @@ describe("Opportunity Specs", function () {
     var id;
 
     describe('Opportunity with admin', function(){
+
         before(function (done) {
             aggent = request.agent(url);
 
@@ -66,6 +67,31 @@ describe("Opportunity Specs", function () {
                 .post('opportunities')
                 .send(body)
                 .expect(404, done);
+        });
+
+        it('should get Opportunity totalCount', function (done) {
+            aggent
+                .get('opportunities/totalCollectionLength')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('count');
+                    expect(body)
+                        .to.have.property('showMore');
+                    done();
+                });
+        });
+
+        it('', function(){
+
         });
 
         it("should remove opportunity", function (done) {
