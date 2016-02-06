@@ -90,10 +90,34 @@ var JobPosition = function (models) {
         });
     };
 
-    this.getById = function (req, res, next) {
+    this.getByViewType = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = req.params.id;
+
+        if (viewType === id) {
+            viewType = id;
+        }
+
+        if (id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case "form":
+                getById(req, res, next);
+                break;
+            default:
+                getFilterJobPositions(req, res, next);
+                break;
+        }
+    };
+
+    function getById(req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
-        var id = req.query.id;
+        var id = req.params.id;
 
         JobPosition
             .findById(id)
@@ -127,9 +151,9 @@ var JobPosition = function (models) {
                     }
                 );
             });
-    };
+    }
 
-    this.getFilterJobPositions = function (req, res, next) {
+    function getFilterJobPositions(req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var sort = req.query.sort;
@@ -181,7 +205,7 @@ var JobPosition = function (models) {
                     res.status(200).send({data: result});
                 });
             });
-    };
+    }
 
     this.create = function (req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
@@ -228,7 +252,7 @@ var JobPosition = function (models) {
         data.numberOfEmployees = data.numberOfEmployees || 0;
         data.totalForecastedEmployees = data.expectedRecruitment + data.numberOfEmployees;
 
-        if (isNaN(data.totalForecastedEmployees)){
+        if (isNaN(data.totalForecastedEmployees)) {
             data.totalForecastedEmployees = 0;
         }
 
