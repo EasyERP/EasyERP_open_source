@@ -1,16 +1,19 @@
 define([
-        "text!templates/Persons/CreateTemplate.html",
-        "collections/Persons/PersonsCollection",
-        "collections/Departments/DepartmentsCollection",
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Persons/CreateTemplate.html',
+
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
-        "models/PersonsModel",
-        "common",
-        "populate"
+        'models/PersonsModel',
+        'common',
+        'populate',
+        'constants'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, AssigneesView, SalesPurchasesView, PersonModel, common, populate) {
-
+    function (Backbone, $, _, CreateTemplate, SelectView, AssigneesView, SalesPurchasesView, PersonModel, common, populate, CONSTANTS) {
+        'use strict';
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Persons",
@@ -18,10 +21,13 @@ define([
             imageSrc   : '',
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
+
                 _.bindAll(this, "saveItem", "render");
                 this.model = new PersonModel();
                 this.models = (options && options.model) ? options.model : null;
                 this.responseObj = {};
+
                 this.render();
             },
 
@@ -47,7 +53,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -111,7 +117,7 @@ define([
 
             saveItem: function () {
                 var self = this;
-                var mid = 39;
+                var mid = this.mId;
                 var thisEl = this.$el;
 
                 var company = $('#companiesDd').data("id");
@@ -121,10 +127,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -163,9 +169,9 @@ define([
                         isCustomer   : thisEl.find("#isCustomer").is(":checked"),
                         isSupplier   : thisEl.find("#isSupplier").is(":checked"),
                         active       : thisEl.find("#active").is(":checked"),
-                        implementedBy: thisEl.find("#implementedBy").data("id"),
-                        salesPerson  : thisEl.find('#employeesDd').data("id"),
-                        salesTeam    : thisEl.find("#departmentDd").data("id"),
+                        implementedBy: thisEl.find("#implementedBy").data("id") || null,
+                        salesPerson  : thisEl.find('#employeesDd').data("id") || null,
+                        salesTeam    : thisEl.find("#departmentDd").data("id") || null,
                         reference    : thisEl.find("#reference").val(),
                         language     : thisEl.find("#language").text()
                     },
@@ -249,7 +255,7 @@ define([
                     }).render().el
                 );
 
-                populate.getCompanies("#companiesDd", "/CompaniesForDd", {}, this, false, true, (this.models) ? this.models._id : null);
+                populate.getCompanies("#companiesDd", "/customers/getCompaniesForDd", {}, this, false, true, (this.models) ? this.models._id : null);
                 common.canvasDraw({model: personModel.toJSON()}, this);
                 this.$el.find('.dateBirth').datepicker({
                     dateFormat : "d M, yy",

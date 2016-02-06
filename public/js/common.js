@@ -454,7 +454,7 @@
         });
     };
     var getLeadsForChart = function (source, dataRange, dataItem, callback) {
-        dataService.getData("/LeadsForChart", {
+        dataService.getData("/leads/getLeadsForChart", {
             source   : source,
             dataRange: dataRange,
             dataItem : dataItem
@@ -927,7 +927,7 @@
             count    : count,
             onlyCount: onlyCount
         }, function (response) {
-            options = $.map(response.data, function (item) {
+             $.map(response.data, function (item) {
                 item.nextAction.date = utcDateToLocaleDate(item.nextAction.date);
             });
             if (callback) {

@@ -408,7 +408,7 @@ define([
                 currencySplitter   : helpers.currencySplitter
             }));
 
-            dataService.getData("/workflow/fetch", {
+            dataService.getData("/workflows/fetch", {
                 wId         : 'Sales Invoice',
                 source      : 'purchase',
                 targetSource: 'invoice'

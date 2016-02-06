@@ -126,6 +126,7 @@ define([
                     e.stopPropagation();
                 } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
                     e.preventDefault();
+                    e.stopPropagation();
                 }
             },
 
@@ -1246,7 +1247,7 @@ define([
                     self.responseObj['#project'] = projects;
                 });
 
-                dataService.getData("/employee/getForDD", null, function (employees) {
+                dataService.getData("/employees/getForDD", null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -1256,7 +1257,7 @@ define([
                     self.responseObj['#employee'] = employees;
                 });
 
-                dataService.getData("/department/getForDD", null, function (departments) {
+                dataService.getData("/departments/getForDD", null, function (departments) {
                     departments = _.map(departments.data, function (department) {
                         department.name = department.departmentName;
 

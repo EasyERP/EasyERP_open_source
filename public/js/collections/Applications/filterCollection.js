@@ -4,7 +4,7 @@
     function (ApplicationModel) {
         var TasksCollection = Backbone.Collection.extend({
             model       : ApplicationModel,
-            url         : "/Applications/",
+            url         : "/applications/",
             page        : null,
             namberToShow: null,
             contentType : null,

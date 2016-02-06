@@ -271,248 +271,244 @@ var Employee = function (event, models) {
             });
     };
 
-    function getAge(birthday) {
-        var today = new Date();
-        var years;
+	//function getAge(birthday) {
+	//	var today = new Date();
+	//	var years;
+    //
+	//	birthday = new Date(birthday);
+	//	years = today.getFullYear() - birthday.getFullYear();
+    //
+	//	birthday.setFullYear(today.getFullYear());
+    //
+	//	if (today < birthday) {
+	//		years--;
+	//	}
+	//	return (years < 0) ? 0 : years;
+	//};
 
-        birthday = new Date(birthday);
-        years = today.getFullYear() - birthday.getFullYear();
+	//function getDate(date) {
+	//	var _date = new Date(date);
+	//	var currentTimeZoneOffsetInMiliseconds = -_date.getTimezoneOffset() * 60 * 1000;
+	//	var valaueOf_date = _date.valueOf();
+	//	valaueOf_date += currentTimeZoneOffsetInMiliseconds;
+	//	return new Date(valaueOf_date);
+	//};
 
-        birthday.setFullYear(today.getFullYear());
-
-        if (today < birthday) {
-            years--;
-        }
-        return (years < 0) ? 0 : years;
-    };
-
-    function getDate(date) {
-        var _date = new Date(date);
-        var currentTimeZoneOffsetInMiliseconds = -_date.getTimezoneOffset() * 60 * 1000;
-        var valaueOf_date = _date.valueOf();
-        valaueOf_date += currentTimeZoneOffsetInMiliseconds;
-        return new Date(valaueOf_date);
-    };
-
-    function create(req, data, res) {
-        try {
-            if (!data) {
-                logWriter.log('Employees.create Incorrect Incoming Data');
-                res.send(400, {error: 'Employees.create Incorrect Incoming Data'});
-                return;
-            } else {
-                savetoDb(data);
-            }
-
-            function savetoDb(data) {
-                var _employee = new models.get(req.session.lastDb, "Employees", employeeSchema)();
-                if (data.uId) {
-                    _employee.createdBy.user = data.uId;
-                    //uId for edited by field on creation
-                    _employee.editedBy.user = data.uId;
-                }
-                if (data.isEmployee) {
-                    _employee.isEmployee = data.isEmployee;
-                }
-                if (data.name) {
-                    if (data.name.first) {
-                        _employee.name.first = data.name.first;
-                    }
-                    if (data.name.last) {
-                        _employee.name.last = data.name.last;
-                    }
-                }
-                if (data.gender) {
-                    _employee.gender = data.gender;
-                }
-                if (data.marital) {
-                    _employee.marital = data.marital;
-                }
-                if (data.subject) {
-                    _employee.subject = data.subject;
-                }
-                if (data.tags) {
-                    _employee.tags = data.tags;
-                }
-                if (data.workAddress) {
-                    if (data.workAddress.street) {
-                        _employee.workAddress.street = data.workAddress.street;
-                    }
-                    if (data.workAddress.city) {
-                        _employee.workAddress.city = data.workAddress.city;
-                    }
-                    if (data.workAddress.state) {
-                        _employee.workAddress.state = data.workAddress.state;
-                    }
-                    if (data.workAddress.zip) {
-                        _employee.workAddress.zip = data.workAddress.zip;
-                    }
-                    if (data.workAddress.country) {
-                        _employee.workAddress.country = data.workAddress.country;
-                    }
-                }
-                if (data.workEmail) {
-                    _employee.workEmail = data.workEmail;
-                }
-                if (data.personalEmail) {
-                    _employee.personalEmail = data.personalEmail;
-                }
-                if (data.skype) {
-                    _employee.skype = data.skype;
-                }
-                if (data.workPhones) {
-                    if (data.workPhones.phone) {
-                        _employee.workPhones.phone = data.workPhones.phone;
-                    }
-                    if (data.workPhones.mobile) {
-                        _employee.workPhones.mobile = data.workPhones.mobile;
-                    }
-                }
-                if (data.social) {
-                    if (data.social.LI) {
-                        _employee.social.LI = data.social.LI;
-                    }
-                    if (data.social.FB) {
-                        _employee.social.FB = data.social.FB;
-                    }
-                }
-                if (data.officeLocation) {
-                    _employee.officeLocation = data.officeLocation;
-                }
-                if (data.relatedUser) {
-                    _employee.relatedUser = data.relatedUser;
-                }
-                if (data.visibility) {
-                    _employee.visibility = data.visibility;
-                }
-                if (data.department) {
-                    _employee.department = data.department;
-                }
-                if (data.groups) {
-                    _employee.groups = data.groups;
-                }
-                if (data.whoCanRW) {
-                    _employee.whoCanRW = data.whoCanRW;
-                }
-                if (data.jobPosition) {
-                    _employee.jobPosition = data.jobPosition;
-                }
-                if (data.manager) {
-                    _employee.manager = data.manager;
-                }
-                if (data.coach) {
-                    _employee.coach = data.coach;
-                }
-                if (data.nationality) {
-                    _employee.nationality = data.nationality;
-                }
-                if (data.identNo) {
-                    _employee.identNo = data.identNo;
-                }
-                if (data.passportNo) {
-                    _employee.passportNo = data.passportNo;
-                }
-                if (data.bankAccountNo) {
-                    _employee.bankAccountNo = data.bankAccountNo;
-                }
-                if (data.otherId) {
-                    _employee.otherId = data.otherId;
-                }
-                if (data.homeAddress) {
-                    if (data.homeAddress.street) {
-                        _employee.homeAddress.street = data.homeAddress.street;
-                    }
-                    if (data.homeAddress.city) {
-                        _employee.homeAddress.city = data.homeAddress.city;
-                    }
-                    if (data.homeAddress.state) {
-                        _employee.homeAddress.state = data.homeAddress.state;
-                    }
-                    if (data.homeAddress.zip) {
-                        _employee.homeAddress.zip = data.homeAddress.zip;
-                    }
-                    if (data.homeAddress.country) {
-                        _employee.homeAddress.country = data.homeAddress.country;
-                    }
-                }
-                if (data.dateBirth) {
-                    _employee.dateBirth = getDate(data.dateBirth);
-                    _employee.age = getAge(data.dateBirth);
-                }
-                if (data.nextAction) {
-                    _employee.nextAction = data.nextAction;
-                }
-                //new source (add Vasya)
-                if (data.source) {
-                    _employee.source = data.source;
-                }
-                if (data.referredBy) {
-                    _employee.referredBy = data.referredBy;
-                }
-                if (data.active) {
-                    _employee.active = data.active;
-                }
-                if (data.workflow) {
-                    _employee.workflow = data.workflow;
-                }
-                if (data.otherInfo) {
-                    _employee.otherInfo = data.otherInfo;
-                }
-                if (data.expectedSalary) {
-                    _employee.expectedSalary = data.expectedSalary;
-                }
-                if (data.proposedSalary) {
-                    _employee.proposedSalary = data.proposedSalary;
-                }
-                if (data.color) {
-                    _employee.color = data.color;
-                }
-                if (data.imageSrc) {
-                    _employee.imageSrc = data.imageSrc;
-                }
-                if (data.jobType) {
-                    _employee.jobType = data.jobType;
-                }
-                if (data.nationality) {
-                    _employee.nationality = data.nationality;
-                }
-                if (data.hire) {
-                    _employee.hire = {
-                        date       : getDate(data.hire),
-                        department : data.department,
-                        jobPosition: data.jobPosition,
-                        manager    : data.manager,
-                        salary     : 0,
-                        jobType    : data.jobType,
-                        info       : 'Hired'
-                    }
-                }
-                ///////////////////////////////////////////////////
-                event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", 0, 0, _employee.workflow, _employee.workflow, true, false, function (sequence) {
-                    _employee.sequence = sequence;
-                    _employee.save(function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            logWriter.log("Employees.js create savetoBd _employee.save " + err);
-                            res.send(500, {error: 'Employees.save BD error'});
-                        } else {
-                            res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
-                            if (result.isEmployee) {
-                                event.emit('recalculate', req);
-                            }
-                        }
-                    });
-                });
-                event.emit('dropHoursCashes', req);
-                event.emit('recollectVacationDash');
-            }
-        }
-        catch (exception) {
-            console.log(exception);
-            logWriter.log("Employees.js  " + exception);
-            res.send(500, {error: 'Employees.save  error'});
-        }
-    };//End create
+	//function create(req, data, res) {
+	//	try {
+	//		if (!data) {
+	//			logWriter.log('Employees.create Incorrect Incoming Data');
+	//			res.send(400, {error: 'Employees.create Incorrect Incoming Data'});
+	//			return;
+	//		} else {
+	//			savetoDb(data);
+	//		}
+    //
+	//		function savetoDb(data) {
+	//			var _employee = new models.get(req.session.lastDb, "Employees", employeeSchema)();
+	//			if (data.uId) {
+	//				_employee.createdBy.user = data.uId;
+	//				//uId for edited by field on creation
+	//				_employee.editedBy.user = data.uId;
+	//			}
+	//			if (data.isEmployee) {
+	//				_employee.isEmployee = data.isEmployee;
+	//			}
+	//			if (data.name) {
+	//				if (data.name.first) {
+	//					_employee.name.first = data.name.first;
+	//				}
+	//				if (data.name.last) {
+	//					_employee.name.last = data.name.last;
+	//				}
+	//			}
+	//			if (data.gender) {
+	//				_employee.gender = data.gender;
+	//			}
+	//			if (data.marital) {
+	//				_employee.marital = data.marital;
+	//			}
+	//			if (data.subject) {
+	//				_employee.subject = data.subject;
+	//			}
+	//			if (data.tags) {
+	//				_employee.tags = data.tags;
+	//			}
+	//			if (data.workAddress) {
+	//				if (data.workAddress.street) {
+	//					_employee.workAddress.street = data.workAddress.street;
+	//				}
+	//				if (data.workAddress.city) {
+	//					_employee.workAddress.city = data.workAddress.city;
+	//				}
+	//				if (data.workAddress.state) {
+	//					_employee.workAddress.state = data.workAddress.state;
+	//				}
+	//				if (data.workAddress.zip) {
+	//					_employee.workAddress.zip = data.workAddress.zip;
+	//				}
+	//				if (data.workAddress.country) {
+	//					_employee.workAddress.country = data.workAddress.country;
+	//				}
+	//			}
+	//			if (data.workEmail) {
+	//				_employee.workEmail = data.workEmail;
+	//			}
+	//			if (data.personalEmail) {
+	//				_employee.personalEmail = data.personalEmail;
+	//			}
+	//			if (data.skype) {
+	//				_employee.skype = data.skype;
+	//			}
+	//			if (data.workPhones) {
+	//				if (data.workPhones.phone) {
+	//					_employee.workPhones.phone = data.workPhones.phone;
+	//				}
+	//				if (data.workPhones.mobile) {
+	//					_employee.workPhones.mobile = data.workPhones.mobile;
+	//				}
+	//			}
+	//			if (data.social) {
+	//				if (data.social.LI) {
+	//					_employee.social.LI = data.social.LI;
+	//				}
+	//				if (data.social.FB) {
+	//					_employee.social.FB = data.social.FB;
+	//				}
+	//			}
+	//			if (data.officeLocation) {
+	//				_employee.officeLocation = data.officeLocation;
+	//			}
+	//			if (data.relatedUser) {
+	//				_employee.relatedUser = data.relatedUser;
+	//			}
+	//			if (data.visibility) {
+	//				_employee.visibility = data.visibility;
+	//			}
+	//			if (data.department) {
+	//				_employee.department = data.department;
+	//			}
+	//			if (data.groups) {
+	//				_employee.groups = data.groups;
+	//			}
+	//			if (data.whoCanRW) {
+	//				_employee.whoCanRW = data.whoCanRW;
+	//			}
+	//			if (data.jobPosition) {
+	//				_employee.jobPosition = data.jobPosition;
+	//			}
+	//			if (data.manager) {
+	//				_employee.manager = data.manager;
+	//			}
+	//			if (data.coach) {
+	//				_employee.coach = data.coach;
+	//			}
+	//			if (data.nationality) {
+	//				_employee.nationality = data.nationality;
+	//			}
+	//			if (data.identNo) {
+	//				_employee.identNo = data.identNo;
+	//			}
+	//			if (data.passportNo) {
+	//				_employee.passportNo = data.passportNo;
+	//			}
+	//			if (data.bankAccountNo) {
+	//				_employee.bankAccountNo = data.bankAccountNo;
+	//			}
+	//			if (data.otherId) {
+	//				_employee.otherId = data.otherId;
+	//			}
+	//			if (data.homeAddress) {
+	//				if (data.homeAddress.street) {
+	//					_employee.homeAddress.street = data.homeAddress.street;
+	//				}
+	//				if (data.homeAddress.city) {
+	//					_employee.homeAddress.city = data.homeAddress.city;
+	//				}
+	//				if (data.homeAddress.state) {
+	//					_employee.homeAddress.state = data.homeAddress.state;
+	//				}
+	//				if (data.homeAddress.zip) {
+	//					_employee.homeAddress.zip = data.homeAddress.zip;
+	//				}
+	//				if (data.homeAddress.country) {
+	//					_employee.homeAddress.country = data.homeAddress.country;
+	//				}
+	//			}
+	//			if (data.dateBirth) {
+	//				_employee.dateBirth = getDate(data.dateBirth);
+	//				_employee.age = getAge(data.dateBirth);
+	//			}
+	//			if (data.nextAction) {
+	//				_employee.nextAction = data.nextAction;
+	//			}
+	//			//new source (add Vasya)
+	//			if (data.source) {
+	//				_employee.source = data.source;
+	//			}
+	//			if (data.referredBy) {
+	//				_employee.referredBy = data.referredBy;
+	//			}
+	//			if (data.active) {
+	//				_employee.active = data.active;
+	//			}
+	//			if (data.workflow) {
+	//				_employee.workflow = data.workflow;
+	//			}
+	//			if (data.otherInfo) {
+	//				_employee.otherInfo = data.otherInfo;
+	//			}
+	//			if (data.expectedSalary) {
+	//				_employee.expectedSalary = data.expectedSalary;
+	//			}
+	//			if (data.proposedSalary) {
+	//				_employee.proposedSalary = data.proposedSalary;
+	//			}
+	//			if (data.color) {
+	//				_employee.color = data.color;
+	//			}
+	//			if (data.imageSrc) {
+	//				_employee.imageSrc = data.imageSrc;
+	//			}
+	//			if (data.jobType) {
+	//				_employee.jobType = data.jobType;
+	//			}
+	//			if (data.nationality) {
+	//				_employee.nationality = data.nationality;
+	//			}
+	//			if (data.hire) {
+	//				_employee.hire = {
+	//					date       : getDate(data.hire),
+	//					department : data.department,
+	//					jobPosition: data.jobPosition
+	//				}
+	//			}
+	//			///////////////////////////////////////////////////
+	//			//event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", 0, 0, _employee.workflow, _employee.workflow, true, false, function (sequence) {
+	//			//	_employee.sequence = sequence;
+	//			//	_employee.save(function (err, result) {
+	//			//		if (err) {
+	//			//			console.log(err);
+	//			//			logWriter.log("Employees.js create savetoBd _employee.save " + err);
+	//			//			res.send(500, {error: 'Employees.save BD error'});
+	//			//		} else {
+	//			//			res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
+	//			//			//if (result.isEmployee) {
+	//			//			//	event.emit('recalculate', req);
+	//			//			//}
+	//			//		}
+	//			//	});
+	//			//});
+	//			////event.emit('dropHoursCashes', req);
+	//			////event.emit('recollectVacationDash');
+	//		}
+	//	}
+	//	catch (exception) {
+	//		console.log(exception);
+	//		logWriter.log("Employees.js  " + exception);
+	//		res.send(500, {error: 'Employees.save  error'});
+	//	}
+	//};//End create
 
     function get(req, response) {
         var res = {};
@@ -620,498 +616,497 @@ var Employee = function (event, models) {
             });
     }
 
-    function getEmployeesAlphabet(req, response) {
-        var query = models.get(req.session.lastDb, "Employees", employeeSchema).aggregate([{$match: {isEmployee: true}}, {$project: {later: {$substr: ["$name.last", 0, 1]}}}, {$group: {_id: "$later"}}]);
-        query.exec(function (err, result) {
-            if (err) {
-                console.log(err);
-                logWriter.log("employees.js get employees alphabet " + err);
-                response.send(500, {error: "Can't find employees"});
-            } else {
-                var res = {};
-                res['data'] = result;
-                response.send(res);
-            }
-        });
-    };
+	//function getEmployeesAlphabet(req, response) {
+	//	var query = models.get(req.session.lastDb, "Employees", employeeSchema).aggregate([{$match: {isEmployee: true}}, {$project: {later: {$substr: ["$name.last", 0, 1]}}}, {$group: {_id: "$later"}}]);
+	//	query.exec(function (err, result) {
+	//		if (err) {
+	//			console.log(err);
+	//			logWriter.log("employees.js get employees alphabet " + err);
+	//			response.send(500, {error: "Can't find employees"});
+	//		} else {
+	//			var res = {};
+	//			res['data'] = result;
+	//			response.send(res);
+	//		}
+	//	});
+	//};
 
-    function getFilter(req, response) {
-        var data = {};
-        var optionsObject = {};
-        var Employees = models.get(req.session.lastDb, "Employees", employeeSchema);
+	//function getFilter(req, response) {
+	//	var data = {};
+	//	var optionsObject = {};
+	//	var Employees = models.get(req.session.lastDb, "Employees", employeeSchema);
+    //
+	//	var viewType;
+	//	var contentType;
+	//	var res = {};
+    //
+	//	var condition;
+	//	var resArray = [];
+	//	var filtrElement = {};
+	//	var key;
+	//	var sort;
+	//	var keySort;
+	//	var project;
+	//	var projectSecond;
+    //
+	//	for (var i in req.query) {
+	//		data[i] = req.query[i];
+	//	}
+    //
+	//	var skip = ((parseInt(data.page ? data.page : 1) - 1) * parseInt(data.count));
+	//	var limit = parseInt(data.count);
+    //
+	//	viewType = data.viewType;
+	//	contentType = data.contentType;
+    //
+	//	res['data'] = [];
+    //
+	//	switch (contentType) {
+	//		case ('Employees'):
+	//		{
+    //
+	//			for (var filterName in
+	//				data.filter) {
+	//				condition = data.filter[filterName]['value'];
+	//				key = data.filter[filterName]['key'];
+    //
+	//				switch (filterName) {
+	//					case 'name':
+	//						filtrElement[key] = {$in: condition.objectID()};
+	//						resArray.push(filtrElement);
+	//						break;
+	//					case 'letter':
+	//						filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+	//						resArray.push(filtrElement);
+	//						break;
+	//					case 'department':
+	//						filtrElement[key] = {$in: condition.objectID()};
+	//						resArray.push(filtrElement);
+	//						break;
+	//					case 'manager':
+	//						filtrElement[key] = {$in: condition.objectID()};
+	//						resArray.push(filtrElement);
+	//						break;
+	//					case 'jobPosition':
+	//						filtrElement[key] = {$in: condition.objectID()};
+	//						resArray.push(filtrElement);
+	//						break;
+	//				}
+	//			}
+	//			;
+    //
+	//			resArray.push({'isEmployee': true});
+    //
+	//			if (resArray.length) {
+    //
+	//				if (data && data.filter && data.filter.condition === 'or') {
+	//					optionsObject['$or'] = resArray;
+	//				} else {
+	//					optionsObject['$and'] = resArray;
+	//				}
+	//			}
+	//		}
+	//			break;
+	//		case ('Applications'):
+	//		{
+	//			for (var filterName in
+	//				data.filter) {
+	//				condition = data.filter[filterName]['value'];
+	//				key = data.filter[filterName]['key'];
+    //
+	//				switch (filterName) {
+	//					case 'name':
+	//						filtrElement[key] = {$in: condition.objectID()};
+	//						resArray.push(filtrElement);
+	//						break;
+	//					case 'letter':
+	//						filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+	//						resArray.push(filtrElement);
+	//						break;
+	//					case 'department':
+	//						filtrElement[key] = {$in: condition.objectID()};
+	//						resArray.push(filtrElement);
+	//						break;
+	//					case 'manager':
+	//						filtrElement[key] = {$in: condition.objectID()};
+	//						resArray.push(filtrElement);
+	//						break;
+	//					case 'jobPosition':
+	//						filtrElement[key] = {$in: condition.objectID()};
+	//						resArray.push(filtrElement);
+	//						break;
+	//				}
+	//			}
+	//			;
+    //
+	//			resArray.push({'isEmployee': false});
+    //
+	//			if (resArray.length) {
+    //
+	//				if (data && data.filter && data.filter.condition === 'or') {
+	//					optionsObject['$or'] = resArray;
+	//				} else {
+	//					optionsObject['$and'] = resArray;
+	//				}
+	//			}
+	//		}
+	//			break;
+	//	}
+    //
+	//	models.get(req.session.lastDb, "Department", department).aggregate(
+	//		{
+	//			$match: {
+	//				users: objectId(req.session.uId)
+	//			}
+	//		}, {
+	//			$project: {
+	//				_id: 1
+	//			}
+	//		},
+	//		function (err, deps) {
+	//			if (!err) {
+	//				var arrOfObjectId = deps.objectID();
+    //
+	//				models.get(req.session.lastDb, "Employees", employeeSchema).aggregate(
+	//					{
+	//						$match: {
+	//							$and: [
+	//								// optionsObject,
+	//								{
+	//									$or: [
+	//										{
+	//											$or: [
+	//												{
+	//													$and: [
+	//														{whoCanRW: 'group'},
+	//														{'groups.users': objectId(req.session.uId)}
+	//													]
+	//												},
+	//												{
+	//													$and: [
+	//														{whoCanRW: 'group'},
+	//														{'groups.group': {$in: arrOfObjectId}}
+	//													]
+	//												}
+	//											]
+	//										},
+	//										{
+	//											$and: [
+	//												{whoCanRW: 'owner'},
+	//												{'groups.owner': objectId(req.session.uId)}
+	//											]
+	//										},
+	//										{whoCanRW: "everyOne"}
+	//									]
+	//								}
+	//							]
+	//						}
+	//					},
+	//					{
+	//						$project: {
+	//							_id: 1
+	//						}
+	//					},
+	//					function (err, result) {
+	//						if (!err) {
+    //
+	//							if (!optionsObject['$and']) {
+	//								optionsObject['$and'] = [];
+	//							}
+    //
+	//							optionsObject['$and'].push({_id: {$in: _.pluck(result, '_id')}});
+    //
+	//							switch (contentType) {
+	//								case ('Employees'):
+	//									switch (viewType) {
+	//										case ('list'):
+	//										{
+	//											if (data.sort) {
+	//												keySort = Object.keys(data.sort)[0];
+	//												data.sort[keySort] = parseInt(data.sort[keySort]);
+	//												sort = data.sort;
+	//											} else {
+	//												sort = {"editedBy.date": -1};
+	//											}
+    //
+	//											project = {
+	//												manager         : {$arrayElemAt: ["$manager", 0]},
+	//												jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+	//												department      : {$arrayElemAt: ["$department", 0]},
+	//												'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+	//												'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+	//												name            : 1,
+	//												'editedBy.date' : 1,
+	//												'createdBy.date': 1,
+	//												dateBirth       : 1,
+	//												skype           : 1,
+	//												workEmail       : 1,
+	//												workPhones      : 1,
+	//												jobType         : 1,
+	//												isEmployee      : 1
+	//											};
+    //
+	//											projectSecond = {
+	//												manager         : 1,
+	//												jobPosition     : 1,
+	//												department      : 1,
+	//												'createdBy.user': 1,
+	//												'editedBy.user' : 1,
+	//												'editedBy.date' : 1,
+	//												'createdBy.date': 1,
+	//												name            : 1,
+	//												dateBirth       : 1,
+	//												skype           : 1,
+	//												workEmail       : 1,
+	//												workPhones      : 1,
+	//												jobType         : 1,
+	//												isEmployee      : 1
+	//											};
+	//										}
+	//											break;
+	//										case ('thumbnails'):
+	//										{
+	//											project = {
+	//												jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
+	//												department         : {$arrayElemAt: ["$department", 0]},
+	//												manager            : {$arrayElemAt: ["$manager", 0]},
+	//												age                : 1,
+	//												relatedUser        : {$arrayElemAt: ["$relatedUser", 0]},
+	//												'workPhones.mobile': 1,
+	//												name               : 1,
+	//												dateBirth          : 1,
+	//												isEmployee         : 1
+	//											};
+    //
+	//											projectSecond = {
+	//												jobPosition        : 1,
+	//												department         : 1,
+	//												manager            : 1,
+	//												age                : 1,
+	//												'relatedUser.login': 1,
+	//												'workPhones.mobile': 1,
+	//												name               : 1,
+	//												dateBirth          : 1,
+	//												isEmployee         : 1
+	//											};
+    //
+	//											sort = {"_id": 1};
+	//										}
+	//											break;
+    //
+	//									}
+	//									break;
+	//								case ('Applications'):
+	//									switch (viewType) {
+	//										case ('list'):
+	//										{
+	//											if (data && data.filter && data.filter.workflow) {
+	//												data.filter.workflow = data.filter.workflow.map(function (item) {
+	//													return item === "null" ? null : item;
+	//												});
+	//												// query.where('workflow').in(data.filter.workflow);
+	//											} else if (data && (!data.newCollection || data.newCollection === 'false')) {
+	//												// query;//.where('workflow').in([]);
+	//											}
+    //
+	//											if (data.sort) {
+	//												keySort = Object.keys(data.sort)[0];
+	//												data.sort[keySort] = parseInt(data.sort[keySort]);
+	//												sort = data.sort;
+	//											} else {
+	//												sort = {"editedBy.date": -1};
+	//											}
+    //
+	//											project = {
+	//												manager         : {$arrayElemAt: ["$manager", 0]},
+	//												jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+	//												department      : {$arrayElemAt: ["$department", 0]},
+	//												'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+	//												'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+	//												name            : 1,
+	//												'editedBy.date' : 1,
+	//												'createdBy.date': 1,
+	//												dateBirth       : 1,
+	//												skype           : 1,
+	//												workEmail       : 1,
+	//												workPhones      : 1,
+	//												jobType         : 1,
+	//												isEmployee      : 1,
+	//												creationDate    : 1,
+	//												workflow        : {$arrayElemAt: ["$workflow", 0]},
+	//												personalEmail   : 1,
+	//												sequence        : 1,
+	//												hire            : 1,
+	//												fire            : 1
+	//											};
+    //
+	//											projectSecond = {
+	//												manager         : 1,
+	//												jobPosition     : 1,
+	//												department      : 1,
+	//												'createdBy.user': 1,
+	//												'editedBy.user' : 1,
+	//												'editedBy.date' : 1,
+	//												'createdBy.date': 1,
+	//												name            : 1,
+	//												dateBirth       : 1,
+	//												skype           : 1,
+	//												workEmail       : 1,
+	//												workPhones      : 1,
+	//												jobType         : 1,
+	//												isEmployee      : 1,
+	//												creationDate    : 1,
+	//												workflow        : 1,
+	//												personalEmail   : 1,
+	//												sequence        : 1,
+	//												hire            : 1,
+	//												fire            : 1
+	//											};
+    //
+	//										}
+	//											break;
+	//									}
+	//									break;
+	//							}
+    //
+	//							Employees.aggregate([{
+	//								$lookup: {
+	//									from                   : "Employees",
+	//									localField             : "manager",
+	//									foreignField: "_id", as: "manager"
+	//								}
+	//							}, {
+	//								$lookup: {
+	//									from                   : "JobPosition",
+	//									localField             : "jobPosition",
+	//									foreignField: "_id", as: "jobPosition"
+	//								}
+	//							}, {
+	//								$lookup: {
+	//									from                   : "Department",
+	//									localField             : "department",
+	//									foreignField: "_id", as: "department"
+	//								}
+	//							}, {
+	//								$lookup: {
+	//									from                   : "Users",
+	//									localField             : "relatedUser",
+	//									foreignField: "_id", as: "relatedUser"
+	//								}
+	//							}, {
+	//								$lookup: {
+	//									from                   : "Users",
+	//									localField             : "createdBy.user",
+	//									foreignField: "_id", as: "createdBy.user"
+	//								}
+	//							}, {
+	//								$lookup: {
+	//									from                   : "Users",
+	//									localField             : "editedBy.user",
+	//									foreignField: "_id", as: "editedBy.user"
+	//								}
+	//							}, {
+	//								$lookup: {
+	//									from                   : "workflows",
+	//									localField             : "workflow",
+	//									foreignField: "_id", as: "workflow"
+	//								}
+	//							}, {
+	//								$project: project
+	//							}, {
+	//								$project: projectSecond
+	//							}, {
+	//								$match: optionsObject
+	//							}, {
+	//								$sort: sort
+	//							}, {
+	//								$skip: skip
+	//							}, {
+	//								$limit: limit
+	//							}
+	//							], function (err, result) {
+	//								if (err) {
+	//									console.log(err);
+	//									return logWriter.log("employees.js getFilter " + err);
+	//								}
+    //
+	//								res['data'] = result;
+	//								response.send(res);
+	//							});
+	//						} else {
+	//							console.log(err);
+	//							logWriter.log("employees.js getFilter " + err);
+	//						}
+	//					}
+	//				);
+	//			} else {
+	//				console.log(err);
+	//				logWriter.log("employees.js getFilter " + err);
+	//			}
+	//		});
+    //
+	//};
 
-        var viewType;
-        var contentType;
-        var res = {};
+	//function getForDd(req, response) {
+	//	var res = {};
+	//	res['data'] = [];
+	//	var query = models.get(req.session.lastDb, 'Employees', employeeSchema).find();
+	//	query.where('isEmployee', true);
+	//	query.select('_id name ');
+	//	query.sort({'name.first': 1});
+	//	query.exec(function (err, result) {
+	//		if (err) {
+	//			console.log(err);
+	//			logWriter.log('Employees.js get Employee.find' + err);
+	//			response.send(500, {error: "Can't find Employee"});
+	//		} else {
+	//			res['data'] = result;
+	//			response.send(res);
+	//		}
+	//	});
+	//};
 
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var sort;
-        var keySort;
-        var project;
-        var projectSecond;
+	//function getForDdByRelatedUser(req, uId, response) {
+	//	var res = {};
+	//	res['data'] = [];
+	//	var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({relatedUser: uId});
+	//	query.where('isEmployee', true);
+	//	query.select('_id name ');
+	//	query.sort({'name.first': 1});
+	//	query.exec(function (err, result) {
+	//		if (err) {
+	//			console.log(err);
+	//			logWriter.log('Employees.js get Employee.find' + err);
+	//			response.send(500, {error: "Can't find Employee"});
+	//		} else {
+	//			res['data'] = result;
+	//			response.send(res);
+	//		}
+	//	});
+	//};
 
-        for (var i in
-            req.query) {
-            data[i] = req.query[i];
-        }
-
-        var skip = ((parseInt(data.page ? data.page : 1) - 1) * parseInt(data.count));
-        var limit = parseInt(data.count);
-
-        viewType = data.viewType;
-        contentType = data.contentType;
-
-        res['data'] = [];
-
-        switch (contentType) {
-            case ('Employees'):
-            {
-
-                for (var filterName in
-                    data.filter) {
-                    condition = data.filter[filterName]['value'];
-                    key = data.filter[filterName]['key'];
-
-                    switch (filterName) {
-                        case 'name':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                            resArray.push(filtrElement);
-                            break;
-                        case 'department':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'manager':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'jobPosition':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                    }
-                }
-                ;
-
-                resArray.push({'isEmployee': true});
-
-                if (resArray.length) {
-
-                    if (data && data.filter && data.filter.condition === 'or') {
-                        optionsObject['$or'] = resArray;
-                    } else {
-                        optionsObject['$and'] = resArray;
-                    }
-                }
-            }
-                break;
-            case ('Applications'):
-            {
-                for (var filterName in
-                    data.filter) {
-                    condition = data.filter[filterName]['value'];
-                    key = data.filter[filterName]['key'];
-
-                    switch (filterName) {
-                        case 'name':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                            resArray.push(filtrElement);
-                            break;
-                        case 'department':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'manager':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'jobPosition':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                    }
-                }
-                ;
-
-                resArray.push({'isEmployee': false});
-
-                if (resArray.length) {
-
-                    if (data && data.filter && data.filter.condition === 'or') {
-                        optionsObject['$or'] = resArray;
-                    } else {
-                        optionsObject['$and'] = resArray;
-                    }
-                }
-            }
-                break;
-        }
-
-        models.get(req.session.lastDb, "Department", department).aggregate(
-            {
-                $match: {
-                    users: objectId(req.session.uId)
-                }
-            }, {
-                $project: {
-                    _id: 1
-                }
-            },
-            function (err, deps) {
-                if (!err) {
-                    var arrOfObjectId = deps.objectID();
-
-                    models.get(req.session.lastDb, "Employees", employeeSchema).aggregate(
-                        {
-                            $match: {
-                                $and: [
-                                    // optionsObject,
-                                    {
-                                        $or: [
-                                            {
-                                                $or: [
-                                                    {
-                                                        $and: [
-                                                            {whoCanRW: 'group'},
-                                                            {'groups.users': objectId(req.session.uId)}
-                                                        ]
-                                                    },
-                                                    {
-                                                        $and: [
-                                                            {whoCanRW: 'group'},
-                                                            {'groups.group': {$in: arrOfObjectId}}
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'owner'},
-                                                    {'groups.owner': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {whoCanRW: "everyOne"}
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            $project: {
-                                _id: 1
-                            }
-                        },
-                        function (err, result) {
-                            if (!err) {
-
-                                if (!optionsObject['$and']) {
-                                    optionsObject['$and'] = [];
-                                }
-
-                                optionsObject['$and'].push({_id: {$in: _.pluck(result, '_id')}});
-
-                                switch (contentType) {
-                                    case ('Employees'):
-                                        switch (viewType) {
-                                            case ('list'):
-                                            {
-                                                if (data.sort) {
-                                                    keySort = Object.keys(data.sort)[0];
-                                                    data.sort[keySort] = parseInt(data.sort[keySort]);
-                                                    sort = data.sort;
-                                                } else {
-                                                    sort = {"editedBy.date": -1};
-                                                }
-
-                                                project = {
-                                                    manager         : {$arrayElemAt: ["$manager", 0]},
-                                                    jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                                    department      : {$arrayElemAt: ["$department", 0]},
-                                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                                                    name            : 1,
-                                                    'editedBy.date' : 1,
-                                                    'createdBy.date': 1,
-                                                    dateBirth       : 1,
-                                                    skype           : 1,
-                                                    workEmail       : 1,
-                                                    workPhones      : 1,
-                                                    jobType         : 1,
-                                                    isEmployee      : 1
-                                                };
-
-                                                projectSecond = {
-                                                    manager         : 1,
-                                                    jobPosition     : 1,
-                                                    department      : 1,
-                                                    'createdBy.user': 1,
-                                                    'editedBy.user' : 1,
-                                                    'editedBy.date' : 1,
-                                                    'createdBy.date': 1,
-                                                    name            : 1,
-                                                    dateBirth       : 1,
-                                                    skype           : 1,
-                                                    workEmail       : 1,
-                                                    workPhones      : 1,
-                                                    jobType         : 1,
-                                                    isEmployee      : 1
-                                                };
-                                            }
-                                                break;
-                                            case ('thumbnails'):
-                                            {
-                                                project = {
-                                                    jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
-                                                    department         : {$arrayElemAt: ["$department", 0]},
-                                                    manager            : {$arrayElemAt: ["$manager", 0]},
-                                                    age                : 1,
-                                                    relatedUser        : {$arrayElemAt: ["$relatedUser", 0]},
-                                                    'workPhones.mobile': 1,
-                                                    name               : 1,
-                                                    dateBirth          : 1,
-                                                    isEmployee         : 1
-                                                };
-
-                                                projectSecond = {
-                                                    jobPosition        : 1,
-                                                    department         : 1,
-                                                    manager            : 1,
-                                                    age                : 1,
-                                                    'relatedUser.login': 1,
-                                                    'workPhones.mobile': 1,
-                                                    name               : 1,
-                                                    dateBirth          : 1,
-                                                    isEmployee         : 1
-                                                };
-
-                                                sort = {"_id": 1};
-                                            }
-                                                break;
-
-                                        }
-                                        break;
-                                    case ('Applications'):
-                                        switch (viewType) {
-                                            case ('list'):
-                                            {
-                                                if (data && data.filter && data.filter.workflow) {
-                                                    data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                        return item === "null" ? null : item;
-                                                    });
-                                                    // query.where('workflow').in(data.filter.workflow);
-                                                } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                                    // query;//.where('workflow').in([]);
-                                                }
-
-                                                if (data.sort) {
-                                                    keySort = Object.keys(data.sort)[0];
-                                                    data.sort[keySort] = parseInt(data.sort[keySort]);
-                                                    sort = data.sort;
-                                                } else {
-                                                    sort = {"editedBy.date": -1};
-                                                }
-
-                                                project = {
-                                                    manager         : {$arrayElemAt: ["$manager", 0]},
-                                                    jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                                    department      : {$arrayElemAt: ["$department", 0]},
-                                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                                                    name            : 1,
-                                                    'editedBy.date' : 1,
-                                                    'createdBy.date': 1,
-                                                    dateBirth       : 1,
-                                                    skype           : 1,
-                                                    workEmail       : 1,
-                                                    workPhones      : 1,
-                                                    jobType         : 1,
-                                                    isEmployee      : 1,
-                                                    creationDate    : 1,
-                                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
-                                                    personalEmail   : 1,
-                                                    sequence        : 1,
-                                                    hire            : 1,
-                                                    fire            : 1
-                                                };
-
-                                                projectSecond = {
-                                                    manager         : 1,
-                                                    jobPosition     : 1,
-                                                    department      : 1,
-                                                    'createdBy.user': 1,
-                                                    'editedBy.user' : 1,
-                                                    'editedBy.date' : 1,
-                                                    'createdBy.date': 1,
-                                                    name            : 1,
-                                                    dateBirth       : 1,
-                                                    skype           : 1,
-                                                    workEmail       : 1,
-                                                    workPhones      : 1,
-                                                    jobType         : 1,
-                                                    isEmployee      : 1,
-                                                    creationDate    : 1,
-                                                    workflow        : 1,
-                                                    personalEmail   : 1,
-                                                    sequence        : 1,
-                                                    hire            : 1,
-                                                    fire            : 1
-                                                };
-
-                                            }
-                                                break;
-                                        }
-                                        break;
-                                }
-
-                                Employees.aggregate([{
-                                    $lookup: {
-                                        from                   : "Employees",
-                                        localField             : "manager",
-                                        foreignField: "_id", as: "manager"
-                                    }
-                                }, {
-                                    $lookup: {
-                                        from                   : "JobPosition",
-                                        localField             : "jobPosition",
-                                        foreignField: "_id", as: "jobPosition"
-                                    }
-                                }, {
-                                    $lookup: {
-                                        from                   : "Department",
-                                        localField             : "department",
-                                        foreignField: "_id", as: "department"
-                                    }
-                                }, {
-                                    $lookup: {
-                                        from                   : "Users",
-                                        localField             : "relatedUser",
-                                        foreignField: "_id", as: "relatedUser"
-                                    }
-                                }, {
-                                    $lookup: {
-                                        from                   : "Users",
-                                        localField             : "createdBy.user",
-                                        foreignField: "_id", as: "createdBy.user"
-                                    }
-                                }, {
-                                    $lookup: {
-                                        from                   : "Users",
-                                        localField             : "editedBy.user",
-                                        foreignField: "_id", as: "editedBy.user"
-                                    }
-                                }, {
-                                    $lookup: {
-                                        from                   : "workflows",
-                                        localField             : "workflow",
-                                        foreignField: "_id", as: "workflow"
-                                    }
-                                }, {
-                                    $project: project
-                                }, {
-                                    $project: projectSecond
-                                }, {
-                                    $match: optionsObject
-                                }, {
-                                    $sort: sort
-                                }, {
-                                    $skip: skip
-                                }, {
-                                    $limit: limit
-                                }
-                                ], function (err, result) {
-                                    if (err) {
-                                        console.log(err);
-                                        return logWriter.log("employees.js getFilter " + err);
-                                    }
-
-                                    res['data'] = result;
-                                    response.send(res);
-                                });
-                            } else {
-                                console.log(err);
-                                logWriter.log("employees.js getFilter " + err);
-                            }
-                        }
-                    );
-                } else {
-                    console.log(err);
-                    logWriter.log("employees.js getFilter " + err);
-                }
-            });
-
-    };
-
-    function getForDd(req, response) {
-        var res = {};
-        res['data'] = [];
-        var query = models.get(req.session.lastDb, 'Employees', employeeSchema).find();
-        //query.where('isEmployee', true);
-        query.select('_id name ');
-        query.sort({'name.first': 1});
-        query.exec(function (err, result) {
-            if (err) {
-                console.log(err);
-                logWriter.log('Employees.js get Employee.find' + err);
-                response.send(500, {error: "Can't find Employee"});
-            } else {
-                res['data'] = result;
-                response.send(res);
-            }
-        });
-    };
-
-    function getForDdByRelatedUser(req, uId, response) {
-        var res = {};
-        res['data'] = [];
-        var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({relatedUser: uId});
-        query.where('isEmployee', true);
-        query.select('_id name ');
-        query.sort({'name.first': 1});
-        query.exec(function (err, result) {
-            if (err) {
-                console.log(err);
-                logWriter.log('Employees.js get Employee.find' + err);
-                response.send(500, {error: "Can't find Employee"});
-            } else {
-                res['data'] = result;
-                response.send(res);
-            }
-        });
-    };
-
-    function getApplications(req, response) {
-        var res = {};
-        res['data'] = [];
-        var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
-
-        query.where('isEmployee', false);
-        query.populate('relatedUser department jobPosition workflow').
-        populate('createdBy.user').
-        populate('editedBy.user');
-
-        query.sort({'name.first': 1});
-        query.exec(function (err, applications) {
-            if (err) {
-                console.log(err);
-                logWriter.log('Employees.js get Application.find' + err);
-                response.send(500, {error: "Can't find Application"});
-            } else {
-                res['data'] = applications;
-                response.send(res);
-            }
-        });
-    };
+	//function getApplications(req, response) {
+	//	var res = {};
+	//	res['data'] = [];
+	//	var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
+    //
+	//	query.where('isEmployee', false);
+	//	query.populate('relatedUser department jobPosition workflow').
+	//	populate('createdBy.user').
+	//	populate('editedBy.user');
+    //
+	//	query.sort({'name.first': 1});
+	//	query.exec(function (err, applications) {
+	//		if (err) {
+	//			console.log(err);
+	//			logWriter.log('Employees.js get Application.find' + err);
+	//			response.send(500, {error: "Can't find Application"});
+	//		} else {
+	//			res['data'] = applications;
+	//			response.send(res);
+	//		}
+	//	});
+	//};
 
     function getApplicationsForKanban(req, data, response) {
 
@@ -1547,39 +1542,39 @@ var Employee = function (event, models) {
         });
     }// end remove
 
-    function getEmployeesImages(req, data, res) {
-        var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({isEmployee: true});
-        query.where('_id').in(data.ids).
-        select('_id imageSrc name').
-        exec(function (error, response) {
-            if (error) {
-                console.log(error);
-                logWriter.log("Employees.js remove employee.remove " + error);
-                res.send(500, {error: "Can't find Employees Imgs"});
-            } else {
-                res.send(200, {data: response});
-            }
-        });
+	//function getEmployeesImages(req, data, res) {
+	//	var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({isEmployee: true});
+	//	query.where('_id').in(data.ids).
+	//	select('_id imageSrc name').
+	//	exec(function (error, response) {
+	//		if (error) {
+	//			console.log(error);
+	//			logWriter.log("Employees.js remove employee.remove " + error);
+	//			res.send(500, {error: "Can't find Employees Imgs"});
+	//		} else {
+	//			res.send(200, {data: response});
+	//		}
+	//	});
+    //
+	//};
 
-    };
-
-    return {
-        getTotalCount                 : getTotalCount,
-        create                        : create,
-        get                           : get,
-        getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
-        getFilter                     : getFilter,
-        getEmployeesAlphabet          : getEmployeesAlphabet,
-        getForDd                      : getForDd,
-        getForDdByRelatedUser         : getForDdByRelatedUser,
-        addAtach                      : addAtach,
-        updateOnlySelectedFields      : updateOnlySelectedFields,
-        remove                        : remove,
-        getApplications               : getApplications,
-        getApplicationsForKanban      : getApplicationsForKanban,
-        getEmployeesImages            : getEmployeesImages,
-        getById                       : getById
-    };
+	return {
+		//getTotalCount                 : getTotalCount,
+		//create                        : create,
+		//get                           : get,//usage was not found
+		//getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
+		//getFilter                     : getFilter,
+		//getEmployeesAlphabet          : getEmployeesAlphabet,
+		//getForDd                      : getForDd,
+		//getForDdByRelatedUser         : getForDdByRelatedUser,
+		//addAtach                      : addAtach,
+		//updateOnlySelectedFields      : updateOnlySelectedFields,
+		//remove                        : remove,
+		//getApplications               : getApplications, //usage was not found
+		//getApplicationsForKanban      : getApplicationsForKanban,
+		//getEmployeesImages            : getEmployeesImages,
+		//getById                       : getById
+	};
 };
 
 module.exports = Employee;

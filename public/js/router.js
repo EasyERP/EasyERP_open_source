@@ -896,9 +896,9 @@ define([
                         getModel.url = '/payroll/form';
                     }
 
-                    getModel.urlRoot = '/' + contentType + '/form';
+                    //getModel.urlRoot = '/' + contentType + '/form';
+                    getModel.urlRoot = getModel.url() + modelId ;
                     getModel.fetch({
-                        data   : {id: modelId},
                         success: function (model) {
                             var topbarView = new topBarView({actionType: "Content"});
                             var contentView = new contentFormView({model: model, startTime: startTime});

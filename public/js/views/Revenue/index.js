@@ -97,7 +97,7 @@ define([
 
             this.changeWeek = _.debounce(this.updateWeek, 500);
 
-            dataService.getData('/employee/bySales', null, function (employess) {
+            dataService.getData('/employees/bySales', null, function (employess) {
                 self.render(employess);
                 self.model.set({
                     currentStartWeek: currentStartWeek,

@@ -245,7 +245,7 @@ define([
             },
 
             filterEmployeesForDD: function (content) {
-                dataService.getData("/employee/getForDD", null, function (employees) {
+                dataService.getData("/employees/getForDD", null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 

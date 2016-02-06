@@ -25,11 +25,11 @@ define([
 
                 this.$el.append(this.template({model: model}));
 
-                populate.get("#departmentDd", "/DepartmentsForDd", {}, "departmentName", this.parrent, isForCreate, true);
-                populate.get2name("#employeesDd", "/getForDdByRelatedUser", {}, this.parrent, isForCreate, true);
-                populate.get("#language", "/Languages", {}, "name", this.parrent, isForCreate, false);
-                //populate.get2name("#employeesDd", "/getSalesPerson", {}, this.parrent, true, true);
-                populate.get2name("#implementedBy", "/Customer", {}, this.parrent, isForCreate, true);
+                populate.get("#departmentDd", "/departments/getForDD", {}, "departmentName", this.parrent, isForCreate, true);
+                populate.get2name("#employeesDd", "/employees/getForDdByRelatedUser", {}, this.parrent, isForCreate, true);
+                populate.get("#language", "/employees/languages", {}, "name", this.parrent, isForCreate, false);
+                //populate.get2name("#employeesDd", "/employee/getPersonsForDd", {}, this.parrent, true, true);
+                populate.get2name("#implementedBy", "/Customers", {}, this.parrent, isForCreate, true);
 
                 return this;
             }

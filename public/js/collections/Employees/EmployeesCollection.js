@@ -5,7 +5,7 @@ define([
         var EmployeesCollection = Backbone.Collection.extend({
             model         : EmployeeModel,
             url           : function () {
-                return "/Employees";
+                return "/employees";
             },
             initialize    : function () {
                 var mid = 39;

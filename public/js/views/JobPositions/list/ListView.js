@@ -19,14 +19,14 @@ define([
             listItemView            : listItemView,
             contentCollection       : contentCollection,
             filterView              : filterView,
-            totalCollectionLengthUrl: '/totalCollectionLength/JobPositions',
+            totalCollectionLengthUrl: '/JobPositions/totalCollectionLength',
             formUrl                 : "#easyErp/JobPositions/form/",
             contentType             : 'JobPositions',//needs in view.prototype.changeLocationHash
 
             events: {
                 "click  .list td:not(.notForm)": "goToEditDialog",
                 "click .stageSelect"           : "showNewSelect",
-                "click .newSelectList li"      : "chooseOption",
+                "click .newSelectList li"      : "chooseOption"
             },
 
             initialize: function (options) {

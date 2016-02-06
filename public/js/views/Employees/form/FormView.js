@@ -1,26 +1,35 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Employees/form/FormTemplate.html',
         'views/Employees/EditView',
         'text!templates/Notes/AddAttachments.html',
-        "common"
+        'common',
+        'constants'
     ],
 
-    function (EmployeesFormTemplate, EditView, addAttachTemplate, common) {
+    function (Backbone, $, _, EmployeesFormTemplate, EditView, addAttachTemplate, common, CONSTANTS) {
+        'use strict';
         var FormEmployeesView = Backbone.View.extend({
-            el                  : '#content-holder',
-            initialize          : function (options) {
+            el         : '#content-holder',
+            contentType: 'Employees',
+
+            initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.formModel = options.model;
-                this.formModel.urlRoot = "/Employees";
+                this.formModel.urlRoot = "/employees";
             },
-            events              : {
+
+            events: {
                 'click .chart-tabs a'                                  : 'changeTab',
                 'click .endContractReasonList, .withEndContract .arrow': 'showEndContractSelect',
                 'click .withEndContract .newSelectList li'             : 'endContract',
                 "click .deleteAttach"                                  : "deleteAttach",
                 "change .inputAttach"                                  : "addAttach",
-
-                'click': 'hideSelect'
+                'click'                                                : 'hideSelect'
             },
+
             fileSizeIsAcceptable: function (file) {
                 if (!file) {
                     return false;
@@ -28,7 +37,7 @@ define([
                 return file.size < App.File.MAXSIZE;
             },
 
-            addAttach   : function (event) {
+            addAttach: function (event) {
                 event.preventDefault();
                 var currentModel = this.formModel;
                 var currentModelID = currentModel.id;
@@ -36,7 +45,7 @@ define([
                 var addInptAttach = $("#employeeForm .input-file .inputAttach")[0].files[0];
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
                     });
 
@@ -45,7 +54,7 @@ define([
                 addFrmAttach.submit(function (e) {
                     var bar = $('.bar');
                     var status = $('.status');
-                    var formURL = "http://" + window.location.host + "/uploadEmployeesFiles";
+                    var formURL = "http://" + window.location.host + "/employees/uploadEmployeesFiles";
                     e.preventDefault();
                     addFrmAttach.ajaxSubmit({
                         url        : formURL,
@@ -88,42 +97,46 @@ define([
                 addFrmAttach.submit();
                 addFrmAttach.off('submit');
             },
+
             deleteAttach: function (e) {
+                var mid = this.mId;
                 var target = $(e.target);
                 if (target.closest("li").hasClass("attachFile")) {
                     target.closest(".attachFile").remove();
                 } else {
                     var id = e.target.id;
                     var currentModel = this.formModel;
-                    currentModel.urlRoot = "/Employees/";
+                    currentModel.urlRoot = "/employees/";
                     var attachments = currentModel.get('attachments');
                     var new_attachments = _.filter(attachments, function (attach) {
-                        if (attach._id != id) {
+                        if (attach._id !== id) {
                             return attach;
                         }
                     });
                     currentModel.save({'attachments': new_attachments},
                         {
                             headers: {
-                                mid: 39
+                                mid: mid
                             },
                             patch  : true,
-                            success: function (model, response, options) {
+                            success: function () {
                                 $('.attachFile_' + id).remove();
                             }
                         });
                 }
             },
 
-            hideSelect           : function () {
+            hideSelect: function () {
                 $(".newSelectList").hide();
             },
+
             showEndContractSelect: function (e) {
                 e.preventDefault();
                 $(e.target).parent().find(".newSelectList").toggle();
                 return false;
             },
-            endContract          : function (e) {
+
+            endContract: function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
                 this.formModel.set({workflow: wfId, contractEndReason: contractEndReason, fired: true});
@@ -137,7 +150,8 @@ define([
                     }
                 });
             },
-            changeTab            : function (e) {
+
+            changeTab: function (e) {
                 $(e.target).closest(".chart-tabs").find("a.active").removeClass("active");
                 $(e.target).addClass("active");
                 var n = $(e.target).parents(".chart-tabs").find("li").index($(e.target).parent());
@@ -160,8 +174,8 @@ define([
             },
 
             deleteItems: function () {
-                var mid = 39;
-                this.formModel.urlRoot = "/Employees";
+                var mid = this.mId;
+                this.formModel.urlRoot = "/employees";
                 this.formModel.destroy({
                     headers: {
                         mid: mid
@@ -170,7 +184,6 @@ define([
                         Backbone.history.navigate("#easyErp/Employees/list", {trigger: true});
                     }
                 });
-
             }
         });
 

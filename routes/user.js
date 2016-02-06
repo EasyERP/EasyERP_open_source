@@ -13,7 +13,7 @@ module.exports = function (event, models) {
     router.get('/', authStackMiddleware, accessStackMiddlware, handler.getAll);
     router.get('/profiles/:id', authStackMiddleware, accessStackMiddlware, handler.getByProfile);
     router.get('/forDd', authStackMiddleware, handler.getForDd);
-    router.get('/:viewType', authStackMiddleware, handler.getUsers);
+    router.get('/:id', authStackMiddleware, handler.getById);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.post('/login', handler.login);

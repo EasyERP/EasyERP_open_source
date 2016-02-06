@@ -138,7 +138,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
                     if (pm) {
-                        common.getImagesPM([pm], "/getEmployeesImages", "#" + id, function (result) {
+                        common.getImagesPM([pm], "/employees/getEmployeesImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -146,7 +146,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     if (customer) {
-                        common.getImagesPM([customer], "/getCustomersImages", "#" + id, function (result) {
+                        common.getImagesPM([customer], "/customers/getCustomersImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -727,7 +727,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         }
                     });
 
-                    dataService.getData("/employee/getForDD", {isEmployee: true}, function (employees) {
+                    dataService.getData("/employees/getForDD", {isEmployee: true}, function (employees) {
                         employees = _.map(employees.data, function (employee) {
                             employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -737,7 +737,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         self.responseObj['#employee'] = employees;
                     });
 
-                    dataService.getData("/department/getForDD", null, function (departments) {
+                    dataService.getData("/departments/getForDD", null, function (departments) {
                         departments = _.map(departments.data, function (department) {
                             department.name = department.departmentName;
 

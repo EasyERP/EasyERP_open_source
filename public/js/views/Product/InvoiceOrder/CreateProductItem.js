@@ -69,10 +69,10 @@ define([
                         }]
 
                 });
-                populate.get2name("#product", "/Customer", {}, this, true, true);
-                populate.get2name("#sourceLocation", "/Customer", {}, this, true, true);
-                populate.get2name("#destinationLocation", "/Customer", {}, this, true, true);
-                populate.get2name("#invoiceControl", "/Customer", {}, this, true, true);
+                populate.get2name("#product", "/Customers", {}, this, true, true);
+                populate.get2name("#sourceLocation", "/Customers", {}, this, true, true);
+                populate.get2name("#destinationLocation", "/Customers", {}, this, true, true);
+                populate.get2name("#invoiceControl", "/Customers", {}, this, true, true);
 
                 this.delegateEvents(this.events);
 

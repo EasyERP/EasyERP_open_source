@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Companies/form/FormTemplate.html',
         'views/Companies/EditView',
         'views/Opportunities/compactContent',
@@ -9,13 +12,19 @@ define([
         'views/Notes/NoteView',
         'views/Notes/AttachView',
         'views/Opportunities/CreateView',
-        'views/Persons/CreateView'
+        'views/Persons/CreateView',
+        'constants'
     ],
 
-    function (CompaniesFormTemplate, EditView, opportunitiesCompactContentView, personsCompactContentView, Custom, common, dataService, noteView, attachView, CreateViewOpportunities, CreateViewPersons) {
+    function (Backbone, $, _, CompaniesFormTemplate, EditView, OpportunitiesCompactContentView, PersonsCompactContentView, Custom, common, dataService, NoteView, AttachView, CreateViewOpportunities, CreateViewPersons, CONSTANTS) {
+        'use strict';
         var FormCompaniesView = Backbone.View.extend({
-            el                  : '#content-holder',
-            initialize          : function (options) {
+            el         : '#content-holder',
+            contentType: 'Companies',
+            flag       : true,
+
+            initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 _.bindAll(this, 'render');
                 this.formModel = options.model;
                 this.formModel.urlRoot = "/Companies";
@@ -31,10 +40,10 @@ define([
 
                 var self = this;
                 var formModel = this.formModel.toJSON();
-                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", null, formModel._id, this.pageMini, this.pageCount, true, function (count) {
+                common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", null, formModel._id, this.pageMini, this.pageCount, true, function (count) {
                     self.allMiniOpp = count.listLength;
                     self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
-                    if (self.allPages == self.pageMini) {
+                    if (self.allPages === self.pageMini) {
                         $(".miniPagination .next").addClass("not-active");
                         $(".miniPagination .last").addClass("not-active");
                     }
@@ -42,10 +51,10 @@ define([
                         $(".miniPagination").hide();
                     }
                 });
-                this.populatePersonsForMiniView("/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, true, function (count) {
+                this.populatePersonsForMiniView("/persons/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, true, function (count) {
                     self.allMiniPersons = count.listLength;
                     self.allPagesPersons = Math.ceil(self.allMiniPersons / self.pageCountPersons);
-                    if (self.allPagesPersons == self.pageMiniPersons) {
+                    if (self.allPagesPersons === self.pageMiniPersons) {
                         $(".miniPaginationPersons .next").addClass("not-active");
                         $(".miniPaginationPersons .last").addClass("not-active");
                     }
@@ -54,8 +63,8 @@ define([
                     }
                 });
             },
-            flag                : true,
-            events              : {
+
+            events: {
                 "click #tabList a"                                           : "switchTab",
                 "click .details"                                             : "toggle",
                 "mouseover .social a"                                        : "socialActive",
@@ -75,43 +84,49 @@ define([
                 "click .miniPaginationPersons .prevPersons:not(.not-active)" : "prevMiniPagePersons",
                 "click .miniPaginationPersons .firstPersons:not(.not-active)": "firstMiniPagePersons",
                 "click .miniPaginationPersons .lastPersons:not(.not-active)" : "lastMiniPagePersons"
-
             },
-            nextMiniPagePersons : function () {
+
+            nextMiniPagePersons: function () {
                 this.pageMiniPersons += 1;
                 this.renderMiniPersons();
             },
-            prevMiniPagePersons : function () {
+
+            prevMiniPagePersons: function () {
                 this.pageMiniPersons -= 1;
                 this.renderMiniPersons();
             },
+
             firstMiniPagePersons: function () {
                 this.pageMiniPersons = 1;
                 this.renderMiniPersons();
             },
-            lastMiniPagePersons : function () {
+
+            lastMiniPagePersons: function () {
                 this.pageMiniPersons = this.allPagesPersons;
                 this.renderMiniPersons();
             },
 
-            nextMiniPage              : function () {
+            nextMiniPage: function () {
                 this.pageMini += 1;
                 this.renderMiniOpp();
             },
-            prevMiniPage              : function () {
+
+            prevMiniPage: function () {
                 this.pageMini -= 1;
                 this.renderMiniOpp();
             },
-            firstMiniPage             : function () {
+
+            firstMiniPage: function () {
                 this.pageMini = 1;
                 this.renderMiniOpp();
             },
-            lastMiniPage              : function () {
+
+            lastMiniPage: function () {
                 this.pageMini = this.allPages;
                 this.renderMiniOpp();
             },
+
             populatePersonsForMiniView: function (url, companyId, page, count, onlyCount, callback) {
-                var self = this;
                 dataService.getData(url, {
                     companyId: companyId,
                     page     : page,
@@ -123,50 +138,52 @@ define([
                     }
                 });
             },
-            renderMiniPersons         : function () {
+
+            renderMiniPersons: function () {
                 var self = this;
                 var formModel = this.formModel.toJSON();
-                this.populatePersonsForMiniView("/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, false, function (collection) {
-                    var isLast = self.pageMiniPersons == self.allPagesPersons ? true : false;
+                this.populatePersonsForMiniView("/persons/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, false, function (collection) {
+                    var isLast = self.pageMiniPersons === self.allPagesPersons ? true : false;
                     var perElem = self.$el.find('#persons');
                     perElem.empty();
                     perElem.append(
-                        new personsCompactContentView({
+                        new PersonsCompactContentView({
                             collection: collection.data
                         }).render({
-                                first: self.pageMiniPersons == 1 ? true : false,
-                                last : isLast,
-                                all  : self.allPagesPersons
-                            }).el
+                            first: self.pageMiniPersons === 1 ? true : false,
+                            last : isLast,
+                            all  : self.allPagesPersons
+                        }).el
                     );
                 });
             },
-            renderMiniOpp             : function () {
+            renderMiniOpp    : function () {
                 var self = this;
                 var formModel = this.formModel.toJSON();
-                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", null, formModel._id, this.pageMini, this.pageCount, false, function (collection) {
-                    var isLast = self.pageMini == self.allPages ? true : false;
+                common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", null, formModel._id, this.pageMini, this.pageCount, false, function (collection) {
+                    var isLast = self.pageMini === self.allPages ? true : false;
                     var oppElem = self.$el.find('#opportunities');
                     oppElem.empty();
                     oppElem.prepend(
-                        new opportunitiesCompactContentView({
+                        new OpportunitiesCompactContentView({
                             collection: collection.data
-                        }).render({first: self.pageMini == 1 ? true : false, last: isLast, all: self.allPages}).el
+                        }).render({first: self.pageMini === 1 ? true : false, last: isLast, all: self.allPages}).el
                     );
                 });
             },
-            render                    : function () {
+
+            render: function () {
                 var formModel = this.formModel.toJSON();
                 this.$el.html(_.template(CompaniesFormTemplate, formModel));
                 this.renderMiniOpp();
                 this.renderMiniPersons();
                 this.$el.find('.formLeftColumn').append(
-                    new noteView({
+                    new NoteView({
                         model: this.formModel
                     }).render().el
                 );
                 this.$el.find('.formLeftColumn').append(
-                    new attachView({
+                    new AttachView({
                         model: this.formModel
                     }).render().el
                 );
@@ -211,7 +228,7 @@ define([
                 new CreateViewPersons({model: model});
             },
 
-            removeEdit: function (e) {
+            removeEdit: function () {
                 $('#editSpan').remove();
                 $("dd .no-long").css({width: "auto"});
             },
@@ -248,8 +265,11 @@ define([
                 var currentModel = this.formModel;
                 var newModel = {};
                 var oldvalue = {};
+                var i;
+                var mid = this.mId;
+
                 if (objIndex.length > 1) {
-                    for (var i in this.formModel.toJSON()[objIndex[0]]) {
+                    for (i in this.formModel.toJSON()[objIndex[0]]) {
                         oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
                     }
                     var param = currentModel.get(objIndex[0]) || {};
@@ -261,7 +281,7 @@ define([
                 }
                 var valid = this.formModel.save(newModel, {
                     headers: {
-                        mid: 39
+                        mid: mid
                     },
                     patch  : true,
                     success: function (model) {
@@ -271,7 +291,7 @@ define([
                     error  : function (model, response) {
                         if (response) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: response.error
                             });
                         }
@@ -315,7 +335,7 @@ define([
             },
 
             deleteItems: function () {
-                var mid = 39;
+                var mid = this.mId;
                 this.formModel.destroy({
                     headers: {
                         mid: mid
@@ -326,7 +346,7 @@ define([
                     error  : function (model, err) {
                         if (err.status === 403) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }

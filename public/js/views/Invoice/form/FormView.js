@@ -72,7 +72,7 @@ define([
             /*renderMiniOpp: function () {
              var self = this;
              var formModel = this.formModel.toJSON();
-             common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
+             common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
              var oppElem = self.$el.find('#opportunities');
              oppElem.empty();
              var isLast = self.pageMini == self.allPages ? true : false;

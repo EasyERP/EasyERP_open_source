@@ -6,10 +6,11 @@ define([
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
         'common',
-        'dataService'
+        'dataService',
+        'constants'
     ],
 
-    function (Backbone, $, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService) {
+    function (Backbone, $, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService, CONSTANTS) {
         "use strict";
 
         var ListViewBase = Backbone.View.extend({
@@ -117,7 +118,8 @@ define([
                     currentNumber: currentNumber,
                     filter       : filter,
                     contentType  : this.contentType,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    mid          : this.mId
                 }, function (response, context) {
                     var page = context.page || 1;
                     var length = context.listLength = response.count || 0;
@@ -183,7 +185,7 @@ define([
 
             deleteItems: function () {
                 var that = this;
-                var mid = 39;
+                var mid = CONSTANTS.MID[this.contentType];
                 var model;
                 var localCounter = 0;
                 var listTableCheckedInput;
@@ -296,8 +298,10 @@ define([
                 }
 
                 dataService.getData(this.totalCollectionLengthUrl, {
-                    sort  : this.sort,
-                    filter: this.filter
+                    sort       : this.sort,
+                    filter     : this.filter,
+                    contentType: this.contentType,
+                    mid        : this.mId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -620,7 +624,9 @@ define([
                 $('#check_all').prop('checked', false);
                 dataService.getData(this.totalCollectionLengthUrl, {
                     filter       : this.filter,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    contentType  : this.contentType,
+                    mid          : this.mId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);

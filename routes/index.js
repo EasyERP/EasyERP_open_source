@@ -25,18 +25,20 @@ module.exports = function (app, mainDb) {
     var invoicingControlRouter = require('./invoicingControl')(models);
     var paymentTermRouter = require('./paymentTerm')(models);
     var deliverToTermRouter = require('./deliverTo')(models);
-    var workflowRouter = require('./workflow')(models);
+    var workflowRouter = require('./workflow')(models, event);
     var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
     var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models);
-    var employeeRouter = require('./employee')(models);
+    var employeeRouter = require('./employee')(event, models);
+    var applicationRouter = require('./application')(event, models);
     var departmentRouter = require('./department')(models);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
     var salaryRouter = require('./salary')(event, models);
-    var opportunityRouter = require('./opportunity')(models);
+    var opportunityRouter = require('./opportunity')(models, event);
+    var leadsRouter = require('./leads')(models, event);
     var taskRouter = require('./task')(models);
     var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(event, models);
@@ -47,6 +49,7 @@ module.exports = function (app, mainDb) {
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
+    var personsRouter = require('./person')(models, event);
     var capacityRouter = require('./capacity')(models);
     var payRollRouter = require('./payroll')(models);
     var importFileRouter = require('./importFile')(models);
@@ -58,6 +61,8 @@ module.exports = function (app, mainDb) {
     var journalRouter = require('./journal')(models);
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
+    var campaignRouter = require('./campaign')(models);
+    var degreesRouter = require('./degrees')(models);
     var profilesRouter = require('./profiles')(models);
 
     var logger = require('../helpers/logger');
@@ -120,7 +125,7 @@ module.exports = function (app, mainDb) {
     app.use('/invoicingControl', invoicingControlRouter);
     app.use('/paymentTerm', paymentTermRouter);
     app.use('/deliverTo', deliverToTermRouter);
-    app.use('/workflow', workflowRouter);
+    app.use('/workflows', workflowRouter);
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
@@ -128,13 +133,15 @@ module.exports = function (app, mainDb) {
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);
-    app.use('/employee', employeeRouter);
-    app.use('/department', departmentRouter);
+    app.use('/employees', employeeRouter);
+    app.use('/applications', applicationRouter);
+    app.use('/departments', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);
-    app.use('/opportunity', opportunityRouter);
+    app.use('/opportunities', opportunityRouter);
+    app.use('/leads', leadsRouter);
     app.use('/task', taskRouter);
-    app.use('/jobPosition', jobPositionRouter);
+    app.use('/jobPositions', jobPositionRouter);
     app.use('/holiday', holidayRouter);
     app.use('/vacation', vacationRouter);
     app.use('/monthHours', monthHoursRouter);
@@ -142,6 +149,8 @@ module.exports = function (app, mainDb) {
     app.use('/dashboard', dashboardRouter);
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
+    app.use('/companies', customersRouter);
+    app.use('/persons', personsRouter);
     app.use('/capacity', capacityRouter);
     app.use('/payroll', payRollRouter);
     app.use('/jobs', jobsRouter);
@@ -150,6 +159,8 @@ module.exports = function (app, mainDb) {
     app.use('/chartOfAccount', chartOfAccountRouter);
     app.use('/currency', currencyRouter);
     app.use('/journal', journalRouter);
+    app.use('/campaigns', campaignRouter);
+    app.use('/degrees', degreesRouter);
     app.use('/profiles', profilesRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
@@ -380,55 +391,55 @@ module.exports = function (app, mainDb) {
         });
     });
 
-    app.post('/uploadEmployeesFiles', multipartMiddleware, function (req, res, next) {
-        var os = require("os");
-        var osType = (os.type().split('_')[0]);
-        var dir;
-        switch (osType) {
-            case "Windows":
-            {
-                dir = __dirname + "\\uploads\\";
-            }
-                break;
-            case "Linux":
-            {
-                dir = __dirname + "\/uploads\/";
-            }
-        }
-        fs.readdir(dir, function (err, files) {
-            if (err) {
-                fs.mkdir(dir, function (errr) {
-                    if (!errr) {
-                        dir += req.headers.id;
-                    }
-                    fs.mkdir(dir, function (errr) {
-                        if (!errr) {
-                            uploadFileArray(req, res, function (files) {
-                                requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
-                            });
-                        }
-                    });
-                });
-            } else {
-                dir += req.headers.id;
-                fs.readdir(dir, function (err, files) {
-                    if (err) {
-                        fs.mkdir(dir, function (errr) {
-                            if (!errr) {
-                                uploadFileArray(req, res, function (files) {
-                                    requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
-                                });
-                            }
-                        });
-                    } else {
-                        uploadFileArray(req, res, function (files) {
-                            requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
-                        });
-                    }
-                });
-            }
-        });
-    });
+    //app.post('/uploadEmployeesFiles', multipartMiddleware, function (req, res, next) {
+    //    var os = require("os");
+    //    var osType = (os.type().split('_')[0]);
+    //    var dir;
+    //    switch (osType) {
+    //        case "Windows":
+    //        {
+    //            dir = __dirname + "\\uploads\\";
+    //        }
+    //            break;
+    //        case "Linux":
+    //        {
+    //            dir = __dirname + "\/uploads\/";
+    //        }
+    //    }
+    //    fs.readdir(dir, function (err, files) {
+    //        if (err) {
+    //            fs.mkdir(dir, function (errr) {
+    //                if (!errr) {
+    //                    dir += req.headers.id;
+    //                }
+    //                fs.mkdir(dir, function (errr) {
+    //                    if (!errr) {
+    //                        uploadFileArray(req, res, function (files) {
+    //                            requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
+    //                        });
+    //                    }
+    //                });
+    //            });
+    //        } else {
+    //            dir += req.headers.id;
+    //            fs.readdir(dir, function (err, files) {
+    //                if (err) {
+    //                    fs.mkdir(dir, function (errr) {
+    //                        if (!errr) {
+    //                            uploadFileArray(req, res, function (files) {
+    //                                requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
+    //                            });
+    //                        }
+    //                    });
+    //                } else {
+    //                    uploadFileArray(req, res, function (files) {
+    //                        requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
+    //                    });
+    //                }
+    //            });
+    //        }
+    //    });
+    //});
 
     app.post('/uploadProjectsFiles', multipartMiddleware, function (req, res, next) {
         var os = require("os");
@@ -708,36 +719,36 @@ module.exports = function (app, mainDb) {
 //-----------------------------getTotalLength---------------------------------------------
     app.get('/totalCollectionLength/:contentType', function (req, res, next) {
         switch (req.params.contentType) {
-            case ('Persons'):
-                requestHandler.customerTotalCollectionLength(req, res);
-                break;
-            case ('Companies'):
-                requestHandler.customerTotalCollectionLength(req, res);
-                break;
-            case ('ownCompanies'):
-                requestHandler.customerTotalCollectionLength(req, res);
-                break;
+            //case ('Persons'):
+            //    requestHandler.customerTotalCollectionLength(req, res);
+            //    break;
+            //case ('Companies'):
+            //    requestHandler.customerTotalCollectionLength(req, res);
+            //    break;
+            //case ('ownCompanies'):
+            //    requestHandler.customerTotalCollectionLength(req, res);
+            //    break;
             case ('Projects'):
                 requestHandler.projectsTotalCollectionLength(req, res);
                 break;
             case ('Tasks'):
                 requestHandler.projectsTotalCollectionLength(req, res);
                 break;
-            case ('Leads'):
-                requestHandler.opportunitiesTotalCollectionLength(req, res);
-                break;
-            case ('Opportunities'):
-                requestHandler.opportunitiesTotalCollectionLength(req, res);
-                break;
-            case ('Employees'):
-                requestHandler.employeesTotalCollectionLength(req, res);
-                break;
-            case ('Applications'):
-                requestHandler.employeesTotalCollectionLength(req, res);
-                break;
-            case ('JobPositions'):
-                requestHandler.jobPositionsTotalCollectionLength(req, res);
-                break;
+            //case ('Leads'):
+            //    requestHandler.opportunitiesTotalCollectionLength(req, res);
+            //    break;
+            //case ('Opportunities'):
+            //    requestHandler.opportunitiesTotalCollectionLength(req, res);
+            //    break;
+            //case ('Employees'):
+            //    requestHandler.employeesTotalCollectionLength(req, res);
+            //    break;
+            //case ('Applications'):
+            //    requestHandler.employeesTotalCollectionLength(req, res);
+            //    break;
+            //case ('JobPositions'):
+            //    requestHandler.jobPositionsTotalCollectionLength(req, res);
+            //    break;
             case ('Users'):
                 requestHandler.usersTotalCollectionLength(req, res);
                 break;
@@ -749,81 +760,81 @@ module.exports = function (app, mainDb) {
 
 //----------------------Accounts----------------------------------------------------------------
 
-    app.get('/getPersonsForDd', function (req, res) {
-        requestHandler.getPersonsForDd(req, res);
-    });
+    //app.get('/getPersonsForDd', function (req, res) {
+    //    requestHandler.getPersonsForDd(req, res);
+    //});
 
-    app.get('/getPersonAlphabet', function (req, res) {
-        requestHandler.getCustomersAlphabet(req, res);
-    });
+    //app.get('/getPersonAlphabet', function (req, res) {
+    //    requestHandler.getCustomersAlphabet(req, res);
+    //});
 
-    app.get('/getPersonsForMiniView', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        requestHandler.getFilterPersonsForMiniView(req, res, data);
-
-    });
+    //app.get('/getPersonsForMiniView', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    requestHandler.getFilterPersonsForMiniView(req, res, data);
+    //
+    //});
 
 //--------------------------Customers----------------------------------------------------------
 
-    app.get('/Customer', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        requestHandler.getCustomer(req, res, data);
-    });
+    //app.get('/Customer', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    requestHandler.getCustomer(req, res, data);
+    //});
 
 //Get images for persons or companies or owncompanies
-    app.get('/getCustomersImages', function (req, res) {
-        requestHandler.getCustomersImages(req, res);
-    });
+//    app.get('/getCustomersImages', function (req, res) {
+//        requestHandler.getCustomersImages(req, res);
+//    });
 
 //----------------------------Persons---------------------------------------------------------
 
-    app.post('/Persons', function (req, res) {
-        var data = {};
-        data.person = req.body;
-        requestHandler.createPerson(req, res, data);
-    });
+    //app.post('/Persons', function (req, res) {
+    //    var data = {};
+    //    data.person = req.body;
+    //    requestHandler.createPerson(req, res, data);
+    //});
 
-    app.get('/Persons/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getPersonById(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterCustomers(req, res);
-                break;
-        }
-    });
+    //app.get('/Persons/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getPersonById(req, res, data);
+    //            break;
+    //        default:
+    //            requestHandler.getFilterCustomers(req, res);
+    //            break;
+    //    }
+    //});
 
-    app.put('/Persons/:_id', function (req, res) {
-        var data = {};
-        var id = req.params._id;
-        var remove = req.headers.remove;
+    //app.put('/Persons/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.params._id;
+    //    var remove = req.headers.remove;
+    //
+    //    data.person = req.body;
+    //    requestHandler.updatePerson(req, res, id, data, remove);
+    //});
 
-        data.person = req.body;
-        requestHandler.updatePerson(req, res, id, data, remove);
-    });
+    //app.patch('/Persons/:_id', function (req, res) {
+    //    var id = req.params._id;
+    //
+    //    requestHandler.personUpdateOnlySelectedFields(req, res, id, req.body);
+    //});
 
-    app.patch('/Persons/:_id', function (req, res) {
-        var id = req.params._id;
-
-        requestHandler.personUpdateOnlySelectedFields(req, res, id, req.body);
-    });
-
-    app.delete('/Persons/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removePerson(req, res, id);
-    });
+    //app.delete('/Persons/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removePerson(req, res, id);
+    //});
 
 //---------------------------Projects--------------------------------------------------------
 
@@ -947,248 +958,248 @@ module.exports = function (app, mainDb) {
 
 //------------------Workflows---------------------------------------------------
 
-    app.get('/relatedStatus', function (req, res) {
-        var data = {};
-        data.type = req.param('type');
-        requestHandler.getRelatedStatus(req, res, data);
-    });
+    //app.get('/relatedStatus', function (req, res) {
+    //    var data = {};
+    //    data.type = req.param('type');
+    //    requestHandler.getRelatedStatus(req, res, data);
+    //});
 
-    app.get('/Workflows', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        requestHandler.getWorkflow(req, res, data);
-    });
+    //app.get('/Workflows', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    requestHandler.getWorkflow(req, res, data);
+    //});
 
-    app.get('/WorkflowContractEnd', function (req, res) {
-        var data = {};
-        data.id = req.param('id');
-        requestHandler.getWorkflowContractEnd(req, res, data);
-    });
+    //app.get('/WorkflowContractEnd', function (req, res) {
+    //    var data = {};
+    //    data.id = req.param('id');
+    //    requestHandler.getWorkflowContractEnd(req, res, data);
+    //});
 
-    app.get('/WorkflowsForDd', function (req, res) {
-        var data = {};
-        var type = {};
-        type.id = req.param('id');
-        data.type = type;
-        requestHandler.getWorkflowsForDd(req, res, data);
-    });
+    //app.get('/WorkflowsForDd', function (req, res) {
+    //    var data = {};
+    //    var type = {};
+    //    type.id = req.param('id');
+    //    data.type = type;
+    //    requestHandler.getWorkflowsForDd(req, res, data);
+    //});
 
-    app.get('/taskWorkflows', function (req, res) {
-        var data = {};
-        var type = {};
-        data.mid = req.param('mid');
-        type.id = "Task";
-        data.type = type;
-        requestHandler.getWorkflowsForDd(req, res, data);
-    });
+    //app.get('/taskWorkflows', function (req, res) {
+    //    var data = {};
+    //    var type = {};
+    //    data.mid = req.param('mid');
+    //    type.id = "Task";
+    //    data.type = type;
+    //    requestHandler.getWorkflowsForDd(req, res, data);
+    //});
 
-    app.get('/projectWorkflows', function (req, res) {
-        var data = {};
-        var type = {};
-        type.name = 'project';
-        type.id = "Project";
-        data.type = type;
-        requestHandler.getWorkflowsForDd(req, res, data);
-    });
+    //app.get('/projectWorkflows', function (req, res) {
+    //    var data = {};
+    //    var type = {};
+    //    type.name = 'project';
+    //    type.id = "Project";
+    //    data.type = type;
+    //    requestHandler.getWorkflowsForDd(req, res, data);
+    //});
 
-    app.post('/Workflows', function (req, res) {
-        var data = {};
-        data.mid = req.headers.mid;
-        for (var i in req.body) {
-            data[i] = req.body[i];
-        }
-        data._id = req.body.wId;
-        requestHandler.createWorkflow(req, res, data);
-    });
+    //app.post('/Workflows', function (req, res) {
+    //    var data = {};
+    //    data.mid = req.headers.mid;
+    //    for (var i in req.body) {
+    //        data[i] = req.body[i];
+    //    }
+    //    data._id = req.body.wId;
+    //    requestHandler.createWorkflow(req, res, data);
+    //});
 
-    app.put('/Workflows/:_id', function (req, res) {
-        var data = {};
-        var _id = req.param('_id');
-        data.status = req.body.status;
-        data.name = req.body.name;
-        requestHandler.updateWorkflow(req, res, _id, data);
-    });
+    //app.put('/Workflows/:_id', function (req, res) {
+    //    var data = {};
+    //    var _id = req.param('_id');
+    //    data.status = req.body.status;
+    //    data.name = req.body.name;
+    //    requestHandler.updateWorkflow(req, res, _id, data);
+    //});
 
-    app.patch('/Workflows/:_id', function (req, res) {
-        var data = {};
-        var _id = req.param('_id');
-        for (var i in req.body) {
-            data[i] = req.body[i];
-        }
-        requestHandler.updateWorkflowOnlySelectedField(req, res, _id, data);
-    });
+    //app.patch('/Workflows/:_id', function (req, res) {
+    //    var data = {};
+    //    var _id = req.param('_id');
+    //    for (var i in req.body) {
+    //        data[i] = req.body[i];
+    //    }
+    //    requestHandler.updateWorkflowOnlySelectedField(req, res, _id, data);
+    //});
 
-    app.delete('/Workflows/:_id', function (req, res) {
-        var _id = req.param('_id');
-        requestHandler.removeWorkflow(req, res, _id);
-    });
+    //app.delete('/Workflows/:_id', function (req, res) {
+    //    var _id = req.param('_id');
+    //    requestHandler.removeWorkflow(req, res, _id);
+    //});
 //-------------------Companies--------------------------------------------------
 
-    app.post('/Companies', function (req, res) {
-        var data = {};
+    //app.post('/Companies', function (req, res) {
+    //    var data = {};
+    //
+    //    data.company = req.body;
+    //    requestHandler.createCompany(req, res, data);
+    //});
+    //app.get('/CompaniesForDd', function (req, res) {
+    //    requestHandler.getCompaniesForDd(req, res);
+    //});
 
-        data.company = req.body;
-        requestHandler.createCompany(req, res, data);
-    });
-    app.get('/CompaniesForDd', function (req, res) {
-        requestHandler.getCompaniesForDd(req, res);
-    });
+    //app.get('/Companies/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getCompanyById(req, res, data);
+    //            break;
+    //        default:
+    //            requestHandler.getFilterCustomers(req, res);
+    //            break;
+    //    }
+    //});
 
-    app.get('/Companies/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getCompanyById(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterCustomers(req, res);
-                break;
-        }
-    });
+    //app.put('/Companies/:_id', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var id = req.param('_id');
+    //    var remove = req.headers.remove;
+    //
+    //    data.mid = req.headers.mid;
+    //    data.company = req.body;
+    //
+    //    if (data.company.salesPurchases.salesPerson && (typeof (data.company.salesPurchases.salesPerson) == 'object')) {
+    //        data.company.salesPurchases.salesPerson = data.company.salesPurchases.salesPerson._id;
+    //    }
+    //    if (data.company.salesPurchases.salesTeam && (typeof (data.company.salesPurchases.salesTeam) == 'object')) {
+    //        data.company.salesPurchases.salesTeam = data.company.salesPurchases.salesTeam._id;
+    //    }
+    //
+    //    requestHandler.updateCompany(req, res, id, data, remove);
+    //});
 
-    app.put('/Companies/:_id', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var id = req.param('_id');
-        var remove = req.headers.remove;
+    //app.patch('/Companies/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.companyUpdateOnlySelectedFields(req, res, id, req.body);
+    //});
 
-        data.mid = req.headers.mid;
-        data.company = req.body;
+    //app.delete('/Companies/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeCompany(req, res, id);
+    //});
 
-        if (data.company.salesPurchases.salesPerson && (typeof (data.company.salesPurchases.salesPerson) == 'object')) {
-            data.company.salesPurchases.salesPerson = data.company.salesPurchases.salesPerson._id;
-        }
-        if (data.company.salesPurchases.salesTeam && (typeof (data.company.salesPurchases.salesTeam) == 'object')) {
-            data.company.salesPurchases.salesTeam = data.company.salesPurchases.salesTeam._id;
-        }
-
-        requestHandler.updateCompany(req, res, id, data, remove);
-    });
-
-    app.patch('/Companies/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.companyUpdateOnlySelectedFields(req, res, id, req.body);
-    });
-
-    app.delete('/Companies/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeCompany(req, res, id);
-    });
-
-    app.get('/getCompaniesAlphabet', function (req, res) {
-        requestHandler.getCustomersAlphabet(req, res);
-    });
+    //app.get('/getCompaniesAlphabet', function (req, res) {
+    //    requestHandler.getCustomersAlphabet(req, res);
+    //});
 
 //------------------JobPositions---------------------------------------------------
-    app.get('/nationality', function (req, res) {
-        requestHandler.getNationality(req, res);
-    });
+//    app.get('/nationality', function (req, res) {
+//        requestHandler.getNationality(req, res);
+//    });
 
-    app.get('/jobType', function (req, res) {
-        requestHandler.getJobType(req, res);
-    });
+    //app.get('/jobType', function (req, res) {
+    //    requestHandler.getJobType(req, res);
+    //});
 
-    app.post('/JobPositions', function (req, res) {
-        var data = {};
-        data.jobPosition = req.body;
-        requestHandler.createJobPosition(req, res, data);
-    });
+    //app.post('/JobPositions', function (req, res) {
+    //    var data = {};
+    //    data.jobPosition = req.body;
+    //    requestHandler.createJobPosition(req, res, data);
+    //});
 
-    app.get('/JobPositionForDd', function (req, res) {
-        requestHandler.getJobPositionForDd(req, res);
-    });
+    //app.get('/JobPositionForDd', function (req, res) {
+    //    requestHandler.getJobPositionForDd(req, res);
+    //});
 
-    app.get('/JobPositions/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getJobPositionById(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterJobPosition(req, res);
-                break;
-        }
+    //app.get('/JobPositions/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getJobPositionById(req, res, data);
+    //            break;
+    //        default:
+    //            requestHandler.getFilterJobPosition(req, res);
+    //            break;
+    //    }
+    //
+    //});
 
-    });
+    //app.patch('/JobPositions/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.jobPosition = req.body;
+    //    requestHandler.updateJobPosition(req, res, id, data);
+    //});
 
-    app.patch('/JobPositions/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.jobPosition = req.body;
-        requestHandler.updateJobPosition(req, res, id, data);
-    });
+    //app.put('/JobPositions/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.jobPosition = req.body;
+    //    requestHandler.updateJobPosition(req, res, id, data);
+    //});
 
-    app.put('/JobPositions/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.jobPosition = req.body;
-        requestHandler.updateJobPosition(req, res, id, data);
-    });
-
-    app.delete('/JobPositions/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeJobPosition(req, res, id);
-    });
+    //app.delete('/JobPositions/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeJobPosition(req, res, id);
+    //});
 
 //------------------Departments---------------------------------------------------
-    app.get('/Departments', function (req, res) {
-        requestHandler.getDepartment(req, res);
-    });
+//    app.get('/Departments', function (req, res) {
+//        requestHandler.getDepartment(req, res);
+//    });
 
-    app.get('/DepartmentsForDd', function (req, res) {
-        requestHandler.getDepartmentForDd(req, res);
-    });
+    //app.get('/DepartmentsForDd', function (req, res) {
+    //    requestHandler.getDepartmentForDd(req, res);
+    //});
 
-    app.post('/Departments', function (req, res) {
-        var data = {};
-        data.department = req.body;
-        requestHandler.createDepartment(req, res, data);
-    });
+    //app.post('/Departments', function (req, res) {
+    //    var data = {};
+    //    data.department = req.body;
+    //    requestHandler.createDepartment(req, res, data);
+    //});
 
-    app.get('/Departments/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getDepartmentById(req, res, data);
-                break;
-            default:
-                requestHandler.getCustomDepartment(req, res, data);
-                break;
-        }
+    //app.get('/Departments/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getDepartmentById(req, res, data);
+    //            break;
+    //        default:
+    //            requestHandler.getCustomDepartment(req, res, data);
+    //            break;
+    //    }
+    //
+    //});
 
-    });
+    //app.put('/Departments/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.department = req.body;
+    //    requestHandler.updateDepartment(req, res, id, data);
+    //});
 
-    app.put('/Departments/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.department = req.body;
-        requestHandler.updateDepartment(req, res, id, data);
-    });
-
-    app.delete('/Departments/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeDepartment(req, res, id);
-    });
-    app.get('/getDepartmentsForEditDd', function (req, res) {
-        var id = req.param('id');
-        requestHandler.getDepartmentForEditDd(req, res, id);
-    });
+    //app.delete('/Departments/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeDepartment(req, res, id);
+    //});
+    //app.get('/getDepartmentsForEditDd', function (req, res) {
+    //    var id = req.param('id');
+    //    requestHandler.getDepartmentForEditDd(req, res, id);
+    //});
 
 //------------------Employee---------------------------------------------------
 
@@ -1196,259 +1207,259 @@ module.exports = function (app, mainDb) {
         requestHandler.Birthdays(req, res);
     });
 
-    app.get('/getForDdByRelatedUser', function (req, res) {
-        requestHandler.getForDdByRelatedUser(req, res);
-    });
+    //app.get('/getForDdByRelatedUser', function (req, res) {
+    //    requestHandler.getForDdByRelatedUser(req, res);
+    //});
 
-    app.get('/Employees/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "list":
-                requestHandler.getEmployeesFilter(req, res);
-                break;
-            case "thumbnails":
-                requestHandler.getEmployeesFilter(req, res);
-                break;
-            case "form":
-                requestHandler.getEmployeesById(req, res);
-                break;
-        }
+    //app.get('/Employees/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "list":
+    //            requestHandler.getEmployeesFilter(req, res);
+    //            break;
+    //        case "thumbnails":
+    //            requestHandler.getEmployeesFilter(req, res);
+    //            break;
+    //        case "form":
+    //            requestHandler.getEmployeesById(req, res);
+    //            break;
+    //    }
+    //
+    //});
 
-    });
+    //app.post('/Employees', function (req, res) {
+    //    var data = {};
+    //    data.employee = req.body;
+    //    requestHandler.createEmployee(req, res, data);
+    //});
 
-    app.post('/Employees', function (req, res) {
-        var data = {};
-        data.employee = req.body;
-        requestHandler.createEmployee(req, res, data);
-    });
+    //app.put('/Employees/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.body._id;
+    //    data.employee = req.body;
+    //});
 
-    app.put('/Employees/:_id', function (req, res) {
-        var data = {};
-        var id = req.body._id;
-        data.employee = req.body;
-    });
+    //app.patch('/Employees/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.employeesUpdateOnlySelectedFields(req, res, id, req.body);
+    //});
 
-    app.patch('/Employees/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.employeesUpdateOnlySelectedFields(req, res, id, req.body);
-    });
+    //app.delete('/Employees/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeEmployees(req, res, id);
+    //});
 
-    app.delete('/Employees/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeEmployees(req, res, id);
-    });
+    //app.get('/getSalesPerson', function (req, res) {
+    //    var data = {};
+    //    requestHandler.getPersonsForDd(req, res, data);
+    //});
 
-    app.get('/getSalesPerson', function (req, res) {
-        var data = {};
-        requestHandler.getPersonsForDd(req, res, data);
-    });
+    //app.get('/getSalesTeam', function (req, res) {
+    //    requestHandler.getDepartmentForDd(req, res);
+    //});
 
-    app.get('/getSalesTeam', function (req, res) {
-        requestHandler.getDepartmentForDd(req, res);
-    });
+    //app.get('/getEmployeesAlphabet', function (req, res) {
+    //    requestHandler.getEmployeesAlphabet(req, res);
+    //});
 
-    app.get('/getEmployeesAlphabet', function (req, res) {
-        requestHandler.getEmployeesAlphabet(req, res);
-    });
-
-    app.get('/getEmployeesImages', function (req, res) {
-        var data = {};
-        data.ids = req.param('ids') || [];
-        requestHandler.getEmployeesImages(req, res, data);
-    });
+    //app.get('/getEmployeesImages', function (req, res) {
+    //    var data = {};
+    //    data.ids = req.param('ids') || [];
+    //    requestHandler.getEmployeesImages(req, res, data);
+    //});
 
 //------------------Applications---------------------------------------------------
 
-    app.get('/getApplicationsLengthByWorkflows', function (req, res) {
-        requestHandler.getApplicationsLengthByWorkflows(req, res);
-    });
+    //app.get('/getApplicationsLengthByWorkflows', function (req, res) {
+    //    requestHandler.getApplicationsLengthByWorkflows(req, res);
+    //});
 
-    app.get('/Applications/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getApplicationById(req, res, data);
-                break;
-            case "list":
-                requestHandler.getEmployeesFilter(req, res);
-                break;
-            case "kanban":
-                requestHandler.getApplicationsForKanban(req, res, data);
-                break;
-        }
+    //app.get('/Applications/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getApplicationById(req, res, data);
+    //            break;
+    //        case "list":
+    //            requestHandler.getEmployeesFilter(req, res);
+    //            break;
+    //        case "kanban":
+    //            requestHandler.getApplicationsForKanban(req, res, data);
+    //            break;
+    //    }
+    //
+    //});
 
-    });
+    //app.post('/Applications', function (req, res) {
+    //    var data = {};
+    //    data.employee = req.body;
+    //    requestHandler.createApplication(req, res, data);
+    //});
 
-    app.post('/Applications', function (req, res) {
-        var data = {};
-        data.employee = req.body;
-        requestHandler.createApplication(req, res, data);
-    });
+    //app.put('/Applications/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.body._id;
+    //    data.employee = req.body;
+    //    requestHandler.updateApplication(req, res, id, data);
+    //});
 
-    app.put('/Applications/:_id', function (req, res) {
-        var data = {};
-        var id = req.body._id;
-        data.employee = req.body;
-        requestHandler.updateApplication(req, res, id, data);
-    });
+    //app.patch('/Applications/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.aplicationUpdateOnlySelectedFields(req, res, id, req.body);
+    //});
 
-    app.patch('/Applications/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.aplicationUpdateOnlySelectedFields(req, res, id, req.body);
-    });
+    //app.delete('/Applications/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeApplication(req, res, id);
+    //});
 
-    app.delete('/Applications/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeApplication(req, res, id);
-    });
+    //app.get('/Degrees', function (req, res) {
+    //    requestHandler.getDegrees(req, res);
+    //});
 
-    app.get('/Degrees', function (req, res) {
-        requestHandler.getDegrees(req, res);
-    });
+    //app.post('/Degrees', function (req, res) {
+    //    var data = {};
+    //    data.degree = req.body;
+    //    requestHandler.createDegree(req, res, data);
+    //});
 
-    app.post('/Degrees', function (req, res) {
-        var data = {};
-        data.degree = req.body;
-        requestHandler.createDegree(req, res, data);
-    });
+    //app.put('/Degrees/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.degree = req.body;
+    //    requestHandler.updateDegree(req, res, id, data);
+    //});
 
-    app.put('/Degrees/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.degree = req.body;
-        requestHandler.updateDegree(req, res, id, data);
-    });
-
-    app.delete('/Degrees/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeDegree(req, res, id);
-    });
+    //app.delete('/Degrees/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeDegree(req, res, id);
+    //});
 
 //----------------------campaign----------------------------------------------------------------
-    app.get('/Campaigns', function (req, res) {
-        requestHandler.getCampaigns(req, res);
-    });
+//    app.get('/Campaigns', function (req, res) {
+//        requestHandler.getCampaigns(req, res);
+//    });
 
-    app.get('/sources', function (req, res) {
-        requestHandler.getSources(req, res);
-    });
-    app.get('/Languages', function (req, res) {
-        requestHandler.getLanguages(req, res);
-    });
+    //app.get('/sources', function (req, res) {
+    //    requestHandler.getSources(req, res);
+    //});
+    //app.get('/Languages', function (req, res) {
+    //    requestHandler.getLanguages(req, res);
+    //});
 
 //----------------------Leads----------------------------------------------------------------
-    app.get('/LeadsForChart', function (req, res) {
-        var data = {};
-        data.source = req.param('source');
-        data.dataRange = req.param('dataRange');
-        data.dataItem = req.param('dataItem');
-        requestHandler.getLeadsForChart(req, res, data);
-    });
+//    app.get('/LeadsForChart', function (req, res) {
+//        var data = {};
+//        data.source = req.param('source');
+//        data.dataRange = req.param('dataRange');
+//        data.dataItem = req.param('dataItem');
+//        requestHandler.getLeadsForChart(req, res, data);
+//    });
 
-    app.get('/Leads/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getLeadsById(req, res, data);
-                break;
-            case "list":
-                requestHandler.getFilterOpportunities(req, res);
-                break;
-        }
-    });
+    //app.get('/Leads/:viewType', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    var viewType = req.params.viewType;
+    //    switch (viewType) {
+    //        case "form":
+    //            requestHandler.getLeadsById(req, res, data);
+    //            break;
+    //        case "list":
+    //            requestHandler.getFilterOpportunities(req, res);
+    //            break;
+    //    }
+    //});
 
-    app.post('/Leads', function (req, res) {
-        var data = {};
-        data.lead = req.body;
-        requestHandler.createLead(req, res, data);
-    });
+    //app.post('/Leads', function (req, res) {
+    //    var data = {};
+    //    data.lead = req.body;
+    //    requestHandler.createLead(req, res, data);
+    //});
 
-    app.put('/Leads/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.lead = req.body;
-        requestHandler.updateLead(req, res, id, data);
-    });
-    app.patch('/Leads/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.lead = req.body;
-        requestHandler.updateLead(req, res, id, data);
-    });
+    //app.put('/Leads/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.lead = req.body;
+    //    requestHandler.updateLead(req, res, id, data);
+    //});
+    //app.patch('/Leads/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.lead = req.body;
+    //    requestHandler.updateLead(req, res, id, data);
+    //});
 
-    app.delete('/Leads/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeLead(req, res, id);
-    });
+    //app.delete('/Leads/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeLead(req, res, id);
+    //});
 
 //---------------------Opportunities---------------------
-    app.post('/Opportunities', function (req, res) {
-        var data = {};
-        data.opportunitie = req.body;
-        requestHandler.createOpportunitie(req, res, data);
-    });
-    app.get('/Opportunities/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getOpportunityById(req, res, data);
-                break;
-            case "kanban":
-                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterOpportunities(req, res);
-        }
-    });
+//    app.post('/Opportunities', function (req, res) {
+//        var data = {};
+//        data.opportunitie = req.body;
+//        requestHandler.createOpportunitie(req, res, data);
+//    });
+//    app.get('/Opportunities/:viewType', function (req, res) {
+//        var data = {};
+//        for (var i in req.query) {
+//            data[i] = req.query[i];
+//        }
+//        var viewType = req.params.viewType;
+//        switch (viewType) {
+//            case "form":
+//                requestHandler.getOpportunityById(req, res, data);
+//                break;
+//            case "kanban":
+//                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
+//                break;
+//            default:
+//                requestHandler.getFilterOpportunities(req, res);
+//        }
+//    });
 
-    app.get('/OpportunitiesForMiniView', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        requestHandler.getFilterOpportunitiesForMiniView(req, res, data);
+    //app.get('/OpportunitiesForMiniView', function (req, res) {
+    //    var data = {};
+    //    for (var i in req.query) {
+    //        data[i] = req.query[i];
+    //    }
+    //    requestHandler.getFilterOpportunitiesForMiniView(req, res, data);
+    //
+    //});
 
-    });
+    //app.get('/getLengthByWorkflows', function (req, res) {
+    //    requestHandler.getOpportunitiesLengthByWorkflows(req, res);
+    //});
 
-    app.get('/getLengthByWorkflows', function (req, res) {
-        requestHandler.getOpportunitiesLengthByWorkflows(req, res);
-    });
+    //app.put('/Opportunities/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.toBeConvert = req.headers.toBeConvert;
+    //    data.opportunitie = req.body;
+    //    requestHandler.updateOpportunitie(req, res, id, data);
+    //});
 
-    app.put('/Opportunities/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.toBeConvert = req.headers.toBeConvert;
-        data.opportunitie = req.body;
-        requestHandler.updateOpportunitie(req, res, id, data);
-    });
-
-    app.patch('/Opportunities/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.toBeConvert = req.headers.toBeConvert;
-        data.opportunitie = req.body;
-        requestHandler.opportunitieUpdateOnlySelectedFields(req, res, id, data);
-    });
-    app.delete('/Opportunities/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeOpportunitie(req, res, id);
-    });
+    //app.patch('/Opportunities/:_id', function (req, res) {
+    //    var data = {};
+    //    var id = req.param('_id');
+    //    data.toBeConvert = req.headers.toBeConvert;
+    //    data.opportunitie = req.body;
+    //    requestHandler.opportunitieUpdateOnlySelectedFields(req, res, id, data);
+    //});
+    //app.delete('/Opportunities/:_id', function (req, res) {
+    //    var id = req.param('_id');
+    //    requestHandler.removeOpportunitie(req, res, id);
+    //});
     app.get('/:id', function (req, res, next) {
         var id = req.param('id');
         if (!isNaN(parseFloat(id))) {

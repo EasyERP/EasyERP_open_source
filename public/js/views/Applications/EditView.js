@@ -1,28 +1,30 @@
 ﻿define([
-    "Backbone",
-    "jQuery",
-    "Underscore",
-    "text!templates/Applications/EditTemplate.html",
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Applications/EditTemplate.html',
     'views/selectView/selectView',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
-    "common",
-    "populate",
-    "custom",
+    'common',
+    'populate',
+    'custom',
     'constants'
-], function (Backbone, $, _, EditTemplate, selectView, attachView, AssigneesView, common, populate, custom, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, SelectView, AttachView, AssigneesView, common, populate, custom, CONSTANTS) {
     'use strict';
     var EditView = Backbone.View.extend({
         el         : "#content-holder",
         contentType: "Applications",
         imageSrc   : '',
         template   : _.template(EditTemplate),
-        initialize : function (options) {
+
+        initialize: function (options) {
+            this.mId = CONSTANTS.MID[this.contentType];
             _.bindAll(this, "saveItem");
             _.bindAll(this, "render", "deleteItem");
             this.employeesCollection = options.collection;
             this.currentModel = options.model || options.collection.getElement();
-            this.currentModel.urlRoot = "/Applications";
+            this.currentModel.urlRoot = "/applications";
             this.responseObj = {};
             this.refuseId = 0;
 
@@ -99,7 +101,7 @@
             var table = this.$el.find('#hireFireTable');
             var tr = table.find('tr').last().prev();
             var dataContent = tr.attr('data-content');
-            var dataId = parseInt(tr.attr('data-id'));
+            var dataId = parseInt(tr.attr('data-id'), 10);
             var newId;
             var row;
             var tds;
@@ -209,7 +211,7 @@
                     }
                     self.hideDialog();
                 },
-                error  : function (model, xhr, options) {
+                error  : function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
@@ -220,6 +222,7 @@
         isEmployee: function (e) {
             e.preventDefault();
             var hired = {};
+            var mid = this.mId;
 
             hired.date = new Date();
             hired.department = this.$el.find("#department").attr("data-id") || null;
@@ -232,7 +235,7 @@
                 hired     : hired
             }, {
                 headers: {
-                    mid: 39
+                    mid: mid
                 },
                 patch  : true,
                 success: function () {
@@ -266,7 +269,9 @@
 
         getWorkflowValue: function (value) {
             var workflows = [];
-            for (var i = 0; i < value.length; i++) {
+            var i;
+
+            for (i = 0; i < value.length; i++) {
                 workflows.push({name: value[i].name, status: value[i].status});
             }
             return workflows;
@@ -312,7 +317,7 @@
             this.hideNewSelect();
 
             var self = this;
-            var mid = 39;
+            var mid = this.mId;
             var $tableFire = this.$el.find('#hireFireTable');
             var jobType;
             var department;
@@ -352,8 +357,8 @@
             var homeAddress = {};
 
             $("dd").find(".homeAddress").each(function () {
-                var el = $(this);
-                homeAddress[el.attr("name")] = $.trim(el.val());
+                var elem = $(this);
+                homeAddress[elem.attr("name")] = $.trim(elem.val());
             });
 
             var dateBirthSt = $.trim(el.find("#dateBirth").val());
@@ -363,10 +368,10 @@
             var groupsId = [];
 
             $(".groupsAndUser tr").each(function () {
-                if ($(this).data("type") == "targetUsers") {
+                if ($(this).data("type") === "targetUsers") {
                     usersId.push($(this).data("id"));
                 }
-                if ($(this).data("type") == "targetGroups") {
+                if ($(this).data("type") === "targetGroups") {
                     groupsId.push($(this).data("id"));
                 }
 
@@ -390,21 +395,21 @@
             _.each(hireArray, function (hire, key) {
                 var tr = self.$el.find("#hire" + key);
                 var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
-                var jobPosition = tr.find('#jobPositionDd').attr('data-id');
-                var department = tr.find('#departmentsDd').attr('data-id');
-                var manager = tr.find('#projectManagerDD').attr('data-id') || null;
+                var jobPos = tr.find('#jobPositionDd').attr('data-id');
+                var depart = tr.find('#departmentsDd').attr('data-id');
+                var manag = tr.find('#projectManagerDD').attr('data-id') || null;
                 var salary = parseInt(tr.find('[data-id="salary"]').text()) || (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
                 var info = tr.find('#statusInfoDd').val();
-                var jobType = $.trim(tr.find('#jobTypeDd').text());
+                var jobT = $.trim(tr.find('#jobTypeDd').text());
 
                 var trFire = $(self.$el.find("[data-content='fire']")).last();
 
                 newHireArray.push({
                     date       : date,
-                    department : department,
-                    jobPosition: jobPosition,
-                    manager    : manager,
-                    jobType    : jobType,
+                    department : depart,
+                    jobPosition: jobPos,
+                    manager    : manag,
+                    jobType    : jobT,
                     salary     : salary,
                     info       : info
                 });
@@ -455,7 +460,6 @@
             newFireArray[newFireArray.length - 1].jobType = newHireArray[newHireArray.length - 1].jobType;
 
             var data = {
-
                 name          : name,
                 gender        : gender,
                 jobType       : jobType,
@@ -478,7 +482,7 @@
                 homeAddress   : homeAddress,
                 dateBirth     : dateBirthSt,
                 source        : sourceId,
-                imageSrc      : this.imageSrc,
+                imageSrc      : $.trim(this.imageSrc) || null,
                 nationality   : nationality,
                 groups        : groups,
                 whoCanRW      : whoCanRW,
@@ -491,15 +495,15 @@
             };
 
             var workflowId = el.find("#workflowsDd").data("id");
-            var workflow = workflowId ? workflowId : null;
+            var workflow = workflowId || null;
             var currentWorkflow = this.currentModel.get('workflow');
-            if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id != workflow)) {
-                data['workflow'] = workflow;
-                data['sequence'] = -1;
-                data['sequenceStart'] = this.currentModel.toJSON().sequence;
-                data['workflowStart'] = currentWorkflow._id;
+
+            if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow)) {
+                data.workflow = workflow;
+                data.sequence = -1;
+                data.sequenceStart = this.currentModel.toJSON().sequence;
+                data.workflowStart = currentWorkflow._id;
             }
-            ;
 
             this.currentModel.save(data, {
                 headers: {
@@ -509,7 +513,6 @@
                 success: function (model, result) {
                     model = model.toJSON();
                     result = result.result;
-                    var editHolder = self.$el;
                     switch (viewType) {
                         case 'list':
                         {
@@ -572,11 +575,11 @@
         deleteItem: function (event) {
             event.preventDefault();
 
-            var mid = 39;
+            var mid = this.mId;
             var self = this;
             var answer = confirm("Really DELETE items ?!");
 
-            if (answer == true) {
+            if (answer === true) {
                 this.currentModel.destroy({
                     headers: {
                         mid: mid
@@ -608,7 +611,7 @@
             }
         },
 
-        hideNewSelect: function (e) {
+        hideNewSelect: function () {
             var editingDates = this.$el.find('.editing');
 
             editingDates.each(function () {
@@ -635,7 +638,7 @@
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
+            this.selectView = new SelectView({
                 e          : e,
                 responseObj: this.responseObj
             });
@@ -661,7 +664,6 @@
         },
 
         render: function () {
-            var id = null;
             var self = this;
             var notDiv;
             var formString = this.template({
@@ -694,7 +696,7 @@
 
             notDiv = this.$el.find('.attach-container');
             notDiv.append(
-                new attachView({
+                new AttachView({
                     model: this.currentModel,
                     url  : "/uploadApplicationFiles"
                 }).render().el
@@ -705,12 +707,13 @@
                     model: this.currentModel
                 }).render().el
             );
-            populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
-                var id;
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].name == "Refused") {
+            populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
+                var i;
+
+                for (i = 0; i < data.length; i++) {
+                    if (data[i].name === "Refused") {
                         self.refuseId = data[i]._id;
-                        if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id == data[i]._id) {
+                        if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id === data[i]._id) {
                             $(".refuseEmployee").hide();
                         }
                         break;
@@ -718,11 +721,11 @@
                 }
             });
 
-            populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this);
-            populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
-            populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
-            populate.get("#nationality", "/nationality", {}, "_id", this);
-            populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
+            populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this);
+            populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this);
+            populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "_id", this);
+            populate.get("#nationality", "/employees/nationality", {}, "_id", this);
+            populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
             populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);

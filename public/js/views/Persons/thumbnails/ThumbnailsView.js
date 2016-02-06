@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'common',
         'views/Persons/EditView',
         'views/Persons/CreateView',
@@ -6,10 +9,11 @@
         "text!templates/Persons/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
         'views/Filter/FilterView',
-        'custom'
+        'constants'
     ],
 
-    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
+    function (Backbone, $, _, common, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
+        'use strict';
         var PersonsThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -22,6 +26,7 @@
             viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.asyncLoadImgs(this.collection);
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -37,22 +42,21 @@
 
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
-
-                this.filterView;
             },
 
-            events        : {
+            events: {
                 "click #showMore"          : "showMore",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click .gotoForm"          : "gotoForm",
                 "click .company"           : "gotoCompanyForm"
             },
-//modified for filter Vasya
-            getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Persons', {
+
+            getTotalLength: function (currentNumber) {
+                dataService.getData('/persons/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    contentType  : this.contentType
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
@@ -68,13 +72,13 @@
                 }, this);
             },
 
-            asyncLoadImgs    : function (collection) {
+            asyncLoadImgs: function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/getCustomersImages");
+                common.getImages(ids, "/customers/getCustomersImages");
             },
-            //modified for filter Vasya
+
             alpabeticalRender: function (e) {
                 var selectedLetter;
                 var target = $(e.target);
@@ -83,24 +87,18 @@
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter = this.filter ? this.filter : {};
+                this.filter = this.filter || {};
 
                 if (e && e.target) {
                     selectedLetter = target.text();
-                    this.filter['letter'] = selectedLetter;
+                    this.filter.letter = selectedLetter;
 
-                    if (target.text() == "All") {
-                        selectedLetter = "";
+                    if (target.text() === "All") {
                         this.filter = {};
                     }
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
                 }
-
-                //if (selectedLetter || selectedLetter === '') {
-                //    delete this.filter['name'];
-                //    this.filter['letter'] = selectedLetter;
-                //}
 
                 this.defaultItemsNumber = 0;
 
@@ -123,22 +121,11 @@
             },
 
             showFilteredPage: function (filter, context) {
-                var itemsNumber = $("#itemsNumber").text();
-
-                var alphaBet = this.$el.find('#startLetter');
-                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 context.startTime = new Date();
                 context.newCollection = false;
-
-                //if (!filter.name) {
-                //    if (selectedLetter !== '') {
-                //        filter['letter'] = selectedLetter;
-                //    }
-                //}
 
                 if (Object.keys(filter).length === 0) {
                     this.filter = {};
@@ -175,17 +162,17 @@
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
                     }
                 });
 
-                self.filterView = new filterView({contentType: self.contentType});
+                self.filterView = new FilterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self);
                 });
                 self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
@@ -209,19 +196,12 @@
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
-
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //};
             },
 
-            showMore        : function (event) {
-                //event.preventDefault();
+            showMore       : function () {
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
-            //modified for filter Vasya
-            showMoreContent : function (newModels) {
+            showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');
@@ -229,7 +209,7 @@
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
-                if (showMore.length != 0) {
+                if (showMore.length !== 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
                     showMore.hide();
@@ -243,13 +223,10 @@
                 this.filterView.renderFilterContent();
             },
 
-            //modified for filter Vasya
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
-                var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
                 var showMore = holder.find('#showMoreDiv');
-                var content = holder.find(".thumbnailwithavatar");
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
@@ -260,18 +237,17 @@
             },
 
             createItem: function () {
-                //create editView in dialog here
-                new createView();
+                new CreateView();
             },
 
             editItem: function () {
-                //create editView in dialog here
-                new editView({collection: this.collection});
+                new EditView({collection: this.collection});
             },
 
             deleteItems: function () {
-                var mid = 39;
+                var mid = this.mId;
                 var model;
+                var self = this;
 
                 model = this.collection.get(this.$el.attr("id"));
                 this.$el.fadeToggle(200, function () {
@@ -287,14 +263,14 @@
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        selectedLetter    : (self.selectedLetter === "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
@@ -304,12 +280,12 @@
 
             exportToCsv: function () {
                 //todo change after routes refactoring
-                window.location = '/Customers/exportToCsv?type=Person'
+                window.location = '/Customers/exportToCsv?type=Person';
             },
 
             exportToXlsx: function () {
                 //todo change after routes refactoring
-                window.location = '/Customers/exportToXlsx?type=Person'
+                window.location = '/Customers/exportToXlsx?type=Person';
             }
         });
 

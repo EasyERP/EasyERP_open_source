@@ -205,8 +205,8 @@ define([
                     }).render().el
                 );
 
-                populate.get("#departmentDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Job positions"}, "name", this, false);
+                populate.get("#departmentDd", "/departments/getForDD", {}, "departmentName", this, false, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Job positions"}, "name", this, false);
                 //for input type number
                 this.$el.find("#expectedRecruitment").spinner({
                     min: 0,

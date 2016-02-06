@@ -1,39 +1,44 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Persons/EditTemplate.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
         "common",
-        "custom",
-        "dataService",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (EditTemplate, selectView, AssigneesView, SalesPurchasesView, common, Custom, dataService, populate) {
-
+    function (Backbone, $, _, EditTemplate, SelectView, AssigneesView, SalesPurchasesView, common, populate, CONSTANTS) {
+        'use strict';
         var EditView = Backbone.View.extend({
             contentType: "Persons",
             imageSrc   : '',
             template   : _.template(EditTemplate),
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
+
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
-                this.currentModel = (options.model) ? options.model : options.collection.getElement();
+                this.currentModel = (options.model) || options.collection.getElement();
                 this.currentModel.urlRoot = "/Persons";
                 this.responseObj = {};
+
                 this.render();
             },
 
             events: {
-                "click #saveBtn"                                                  : "saveItem",
-                "click #cancelBtn"                                                : "hideDialog",
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                "mouseenter .avatar"                                              : "showEdit",
-                "mouseleave .avatar"                                              : "hideEdit",
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .details"                                                  : "showDetailsBox"
+                "click #saveBtn"                                   : "saveItem",
+                "click #cancelBtn"                                 : "hideDialog",
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect",
+                "mouseenter .avatar"                               : "showEdit",
+                "mouseleave .avatar"                               : "hideEdit",
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .details"                                   : "showDetailsBox"
             },
 
             showDetailsBox: function (e) {
@@ -61,7 +66,7 @@ define([
                 $(".crop-images-dialog").remove();
             },
 
-            showEdit  : function () {
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
@@ -69,7 +74,7 @@ define([
 
             },
 
-            hideEdit  : function () {
+            hideEdit: function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"
@@ -77,23 +82,19 @@ define([
 
             },
 
-            saveItem  : function () {
+            saveItem: function () {
                 var self = this;
-                var mid = 39;
+                var mid = this.mId;
                 var thisEl = this.$el;
                 var whoCanRW;
                 var data;
 
-                //var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
                 var dateBirth = thisEl.find(".dateBirth").val();
                 var company = $('#companiesDd').data("id");
-                company = (company) ? company : null;
-
-                /*var department = $("#departmentDd").data("id");
-                 department = (department) ? department : null;*/
+                company = company || null;
 
                 var jobPosition = $.trim(thisEl.find('#jobPositionInput').val());
-                jobPosition = (jobPosition) ? jobPosition : null;
+                jobPosition = jobPosition || null;
 
                 var isCustomer = thisEl.find("#isCustomer").is(":checked");
                 var isSupplier = thisEl.find("#isSupplier").is(":checked");
@@ -104,26 +105,23 @@ define([
                 var reference = thisEl.find("#reference").val();
                 var language = thisEl.find("#language").text();
 
-                //if (event) {
-                //    event.preventDefault()
-                //}
                 if (salesPerson === '') {
-                    salesPerson = null
+                    salesPerson = null;
                 }
                 if (salesTeam === '') {
-                    salesTeam = null
+                    salesTeam = null;
                 }
                 if (implementedBy === '') {
-                    implementedBy = null
+                    implementedBy = null;
                 }
 
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -137,7 +135,6 @@ define([
                         last : $.trim(thisEl.find('#lastName').val())
                     },
                     dateBirth     : dateBirth,
-                    /*department: department,*/
                     company       : company,
                     address       : {
                         street : $.trim(thisEl.find('#addressInput').val()),
@@ -181,7 +178,6 @@ define([
                     headers: {
                         mid: mid
                     },
-                    //wait: true,
                     success: function (model) {
                         self.hideDialog();
                         Backbone.history.fragment = "";
@@ -205,7 +201,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -223,16 +219,17 @@ define([
                 }
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            deleteItem   : function (event) {
-                var mid = 39;
+            deleteItem: function (event) {
                 event.preventDefault();
+
+                var mid = this.mId;
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     this.currentModel.destroy({
                         headers: {
                             mid: mid
@@ -244,7 +241,7 @@ define([
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -254,7 +251,7 @@ define([
 
             },
 
-            render       : function () {
+            render: function () {
                 var self = this;
                 var notDiv;
                 var thisEl;
@@ -310,7 +307,7 @@ define([
                     }).render().el
                 );
 
-                populate.getCompanies("#companiesDd", "/CompaniesForDd", {}, this, false, true);
+                populate.getCompanies("#companiesDd", "/customers/getCompaniesForDd", {}, this, false, true);
 
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
                 thisEl.find('.dateBirth').datepicker({
