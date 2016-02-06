@@ -11,7 +11,7 @@ define([
         var TopBarView = BaseView.extend({
             el            : '#top-bar',
             contentType   : "Employees",
-            actionType    : null, //Content, Edit, Create
+            actionType    : null,
             template      : _.template(ContentTopBarTemplate),
             importTemplate: _.template(importTemplate),
 

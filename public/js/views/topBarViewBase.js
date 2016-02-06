@@ -53,9 +53,7 @@ define([
 
             importFiles: function (e) {
                 var importFile = new AttachView({});
-
                 this.import = true;
-
                 importFile.sendToServer(e, null, this);
             },
 
