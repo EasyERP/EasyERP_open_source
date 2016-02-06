@@ -249,10 +249,9 @@ var Opportunity = function (models, event) {
 
         this.opportunitiesForMiniView = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
-            var data = req.body;
+            var data = req.query;
             var accessRollSearcher;
             var contentSearcher;
-            var optionsObject = {};
             var waterfallTasks;
             var arrOr = [];
             var query;
@@ -279,10 +278,6 @@ var Opportunity = function (models, event) {
                     queryObject.$and.push({$or: arrOr});
                 }
 
-                if (optionsObject.$and.length) {
-                    queryObject.$and.push(optionsObject);
-                }
-
                 query = Opportunity.find(queryObject);
 
                 waterfallCallback(null, query);
@@ -295,7 +290,7 @@ var Opportunity = function (models, event) {
                     return next(err);
                 }
 
-                if (data.onlyCount.toString().toLowerCase() === "true") {
+                if (data && data.onlyCount && data.onlyCount.toString().toLowerCase() === "true") {
                     query.count(function (err, result) {
                         if (err) {
                             return next(err);

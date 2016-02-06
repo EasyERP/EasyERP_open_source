@@ -349,11 +349,11 @@ var Customers = function (models) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
         var type = query.type;
-        var count = query.count || 100;
-        var page = query.page || 1;
+        //var count = query.count || 200;
+        //var page = query.page || 1;
         var queryObject = {};
 
-        var skip = (page - 1) * count;
+       // var skip = (page - 1) * count;
 
         if (type) {
             queryObject.type = type;
@@ -361,8 +361,6 @@ var Customers = function (models) {
 
         Customers
             .find(queryObject)
-            .skip(skip)
-            .limit(count)
             .sort({"editedBy.date": 1})
             .exec(function (err, customers) {
                 if (err) {
