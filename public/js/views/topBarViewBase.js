@@ -111,7 +111,12 @@ define([
                 var viewType = Custom.getCurrentVT();
 
                 $('title').text(this.contentType);
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType, headerType: this.headerType}));
+                this.$el.html(this.template({
+                    viewType: viewType,
+                    contentType: this.contentType,
+                    headerType: this.headerType,
+                    contentHeader: this.contentHeader
+                }));
 
                 Common.displayControlBtnsByActionType(this.actionType, viewType);
 
