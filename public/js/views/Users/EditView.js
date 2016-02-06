@@ -178,7 +178,7 @@
                         }
                     }
                 });
-                populate.get("#profilesDd", "ProfilesForDd", {}, "profileName", this);
+                populate.get("#profilesDd", "profiles/forDd", {}, "profileName", this);
                 common.canvasDraw({model: this.model.toJSON()}, this);
                 return this;
             }
