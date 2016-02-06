@@ -6,7 +6,7 @@ define(function () {
         model     : relatedStatusModel,
         url       : function () {
             var mid = 39,
-                url = "/relatedStatus?mid=" + mid;
+                url = "workflows/relatedStatus?mid=" + mid;
             return url;
         },
         initialize: function (options) {

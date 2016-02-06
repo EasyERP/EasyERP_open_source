@@ -210,7 +210,7 @@
                 var ids = _.map(arr, function (item) {
                     return item.projectmanager._id;
                 });
-                common.getImages(ids, "/getEmployeesImages");
+                common.getImages(ids, "/employees/getEmployeesImages");
             },
 
             pushStages: function (stages) {

@@ -5,7 +5,7 @@ define([
         var JobPositionsCollection = Backbone.Collection.extend({
             model     : JobPositionsModel,
             url       : function () {
-                return "/JobPosition";
+                return "/JobPositions";
             },
             initialize: function () {
                 console.log("JobPosition Collection Init");

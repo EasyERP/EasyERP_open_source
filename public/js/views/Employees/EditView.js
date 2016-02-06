@@ -5,19 +5,14 @@ define([
         "text!templates/Employees/EditTemplate.html",
         'views/Notes/AttachView',
         'views/selectView/selectView',
-        "collections/Employees/EmployeesCollection",
-        "collections/JobPositions/JobPositionsCollection",
-        "collections/Departments/DepartmentsCollection",
-        "collections/Customers/AccountsDdCollection",
-        "collections/Users/UsersCollection",
         'views/Assignees/AssigneesView',
         "common",
         "populate",
         "moment",
         'helpers/keyCodeHelper',
-    'constants'
+        'constants'
     ],
-    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment, keyCodes, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, AttachView, SelectView, AssigneesView, common, populate, moment, keyCodes, CONSTANTS) {
         'use strict';
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -27,6 +22,8 @@ define([
             responseObj: {},
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
+
                 _.bindAll(this, "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 
@@ -36,7 +33,7 @@ define([
                 } else {
                     this.currentModel = options.model;
                 }
-                this.currentModel.urlRoot = '/Employees';
+                this.currentModel.urlRoot = '/employees';
 
                 this.responseObj['#sourceDd'] = [
                     {
@@ -121,7 +118,7 @@ define([
                 var table = this.$el.find('#hireFireTable');
                 var tr = table.find('tr').last();
                 var dataContent = tr.attr('data-content');
-                var dataId = parseInt(tr.attr('data-id'));
+                var dataId = parseInt(tr.attr('data-id'), 10);
                 var newId;
                 var row;
                 var tds;
@@ -141,7 +138,7 @@ define([
 
                 if (contractEndReason) {
                     dataContent = 'fire';
-                    dataId = table.find('[data-content="fire"]').length ? parseInt(table.find('[data-content="fire"]').last().attr('data-id')) : parseInt(table.find('[data-content="hire"]').last().attr('data-id')) - 1;
+                    dataId = table.find('[data-content="fire"]').length ? parseInt(table.find('[data-content="fire"]').last().attr('data-id'), 10) : parseInt(table.find('[data-content="hire"]').last().attr('data-id'), 10) - 1;
                 }
 
                 newId = dataContent + (dataId + 1).toString();
@@ -234,7 +231,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -284,7 +281,6 @@ define([
             activeTab: function () {
                 var tabs;
                 var activeTab;
-                var activeTab;
                 var dialogHolder;
                 var tabId;
 
@@ -298,7 +294,6 @@ define([
                 dialogHolder = $(".dialog-tabs-items");
                 dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
                 dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass("active");
-
             },
 
             endContract: function (e) {
@@ -410,21 +405,21 @@ define([
                 _.each(hireArray, function (hire, key) {
                     var tr = self.$el.find("#hire" + key);
                     var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
-                    var jobPosition = tr.find('#jobPositionDd').attr('data-id');
-                    var department = tr.find('#departmentsDd').attr('data-id');
-                    var manager = tr.find('#projectManagerDD').attr('data-id') || null;
+                    var jobPos = tr.find('#jobPositionDd').attr('data-id');
+                    var depart = tr.find('#departmentsDd').attr('data-id');
+                    var manag = tr.find('#projectManagerDD').attr('data-id') || null;
                     var salary = parseInt(tr.find('[data-id="salary"]').text()) || (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
                     var info = tr.find('#statusInfoDd').val();
-                    var jobType = $.trim(tr.find('#jobTypeDd').text());
+                    var jobT = $.trim(tr.find('#jobTypeDd').text());
 
                     var trFire = $(self.$el.find("#fire" + key));
 
                     newHireArray.push({
                         date       : date,
-                        department : department,
-                        jobPosition: jobPosition,
-                        manager    : manager,
-                        jobType    : jobType,
+                        department : depart,
+                        jobPosition: jobPos,
+                        manager    : manag,
+                        jobType    : jobT,
                         salary     : salary,
                         info       : info
                     });
@@ -545,8 +540,9 @@ define([
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                     headers: {
-                        mid: 39
+                        mid: self.mId
                     },
+                    wait   : true,
                     patch  : true,
                     success: function (model) {
                         if (redirect) {
@@ -569,7 +565,7 @@ define([
                             model = model.toJSON();
                             empThumb = $('#' + model._id);
 
-                            empThumb.find('.age').html(model.result.age);
+                            empThumb.find('.age').html(model.age);
                             empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
                             empThumb.find('.telephone a').html(model.workPhones.mobile);
                             empThumb.find('.telephone a').attr('href', "skype:" + model.workPhones.mobile + "?call");
@@ -593,12 +589,12 @@ define([
             },
             deleteItem: function (event) {
                 event.preventDefault();
-                var mid = 39;
+                var mid = this.mId;
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
 
-                if (answer == true) {
-                    this.currentModel.urlRoot = "/Employees";
+                if (answer === true) {
+                    this.currentModel.urlRoot = "/employees";
                     this.currentModel.destroy({
                         headers: {
                             mid: mid
@@ -657,9 +653,9 @@ define([
                 });
                 var notDiv = this.$el.find('.attach-container');
                 notDiv.append(
-                    new attachView({
+                    new AttachView({
                         model: this.currentModel,
-                        url  : "/uploadEmployeesFiles"
+                        url  : "/employees/uploadEmployeesFiles"
                     }).render().el
                 );
                 notDiv = this.$el.find('.assignees-container');
@@ -671,12 +667,12 @@ define([
                 common.getWorkflowContractEnd("Applications", null, null, "/Workflows", null, "Contract End", function (workflow) {
                     $('.endContractReasonList').attr('data-id', workflow[0]._id);
                 });
-                populate.get("#jobTypeDd", "/jobType", {}, "name", this);
-                populate.get("#nationality", "/nationality", {}, "_id", this);
-                populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
-                populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, false, false);
-                populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
-                populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this);
+                populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "name", this);
+                populate.get("#nationality", "/employees/nationality", {}, "_id", this);
+                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
+                populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this, false, false);
+                populate.get("#relatedUsersDd",  CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
+                populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this);
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
                 $('#dateBirth').datepicker({

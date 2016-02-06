@@ -1199,10 +1199,10 @@ define([
                 App.projectInfo.currentTab = App.projectInfo.currentTab ? App.projectInfo.currentTab : 'overview';
 
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
-                populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
-                populate.get2name("#customerDd", "/Customer", {}, this, false, false);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this);
-                populate.getWorkflow("#workflow", "#workflowNames", "/WorkflowsForDd", {id: "Jobs"}, "name", this);
+                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
+                populate.get2name("#customerDd", "/Customers", {}, this, false, false);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Projects"}, "name", this);
+                populate.getWorkflow("#workflow", "#workflowNames", "/workflows/getWorkflowsForDd", {id: "Jobs"}, "name", this);
 
                 notDiv = this.$el.find('#divForNote');
                 notDiv.html(notesEl);

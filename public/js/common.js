@@ -454,7 +454,7 @@
         });
     };
     var getLeadsForChart = function (source, dataRange, dataItem, callback) {
-        dataService.getData("/LeadsForChart", {
+        dataService.getData("/leads/getLeadsForChart", {
             source   : source,
             dataRange: dataRange,
             dataItem : dataItem

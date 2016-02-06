@@ -150,7 +150,7 @@
             },
 
             getCollectionLengthByWorkflows: function (context) {
-                dataService.getData('/getLengthByWorkflows', {}, function (data) {
+                dataService.getData('/opportunities/getLengthByWorkflows', {}, function (data) {
                     data.arrayOfObjects.forEach(function (object) {
                         var column = context.$("[data-id='" + object._id + "']");
                         column.find('.totalCount').text(object.count);

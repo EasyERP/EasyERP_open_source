@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Applications/list/ListHeader.html',
         'views/Applications/CreateView',
@@ -8,19 +10,20 @@ define([
         'collections/Applications/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService',
-        'text!templates/stages.html'
+        'text!templates/stages.html',
+        'constants'
     ],
-    function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, stagesTamplate) {
+    function ($, _, listViewBase, listTemplate, createView, ListItemView, EditView, CurrentModel, contentCollection, filterView, common, stagesTamplate, CONSTANTS) {
+        'use strict';
         var ApplicationsListView = listViewBase.extend({
 
             createView              : createView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Applications",
-            totalCollectionLengthUrl: '/totalCollectionLength/Applications',
+            totalCollectionLengthUrl: '/applications/totalCollectionLength',
             formUrl                 : "#easyErp/Applications/form/",
 
             events: {
@@ -32,6 +35,7 @@ define([
 
             initialize: function (options) {
                 $(document).off("click");
+                this.mId =  CONSTANTS.MID[this.contentType];
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
@@ -48,10 +52,9 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
-                this.filterView;
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
 
@@ -59,15 +62,16 @@ define([
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-                    return false;
                 }
+
+                $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+                return false;
 
             },
 
             chooseOption: function (e) {
                 var self = this;
+                var mid = this.mId;
                 var targetElement = $(e.target).parents("td");
                 var id = targetElement.attr("id");
                 var obj = this.collection.get(id);
@@ -78,11 +82,11 @@ define([
                     sequenceStart: targetElement.attr("data-sequence")
                 }, {
                     headers : {
-                        mid: 39
+                        mid: mid
                     },
                     patch   : true,
                     validate: false,
-                    success : function (err, model) {
+                    success : function () {
                         self.showFilteredPage({}, self);
                     }
                 });
@@ -95,12 +99,6 @@ define([
                 this.stages = stages;
             },
 
-            //checkCheckbox: function (e) {
-            //    if (!$(e.target).is("input")) {
-            //        $(e.target).closest("li").find("input").prop("checked", !$(e.target).closest("li").find("input").prop("checked"));
-            //    }
-            //},
-
             render: function () {
                 var self;
                 var $currentEl;
@@ -112,7 +110,7 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                var itemView = new listItemView({
+                var itemView = new ListItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
@@ -124,7 +122,6 @@ define([
 
                 common.populateWorkflowsList("Applications", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     self.stages = stages;
-                    var stage = (self.filter) ? self.filter.workflow : null;
                     itemView.trigger('incomingStages', stages);
                 });
 
@@ -137,16 +134,16 @@ define([
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new currentModel({validate: false});
-                model.urlRoot = '/Applications/form';
+                var model = new CurrentModel({validate: false});
+                model.urlRoot = '/applications/form';
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {
-                        new editView({model: model});
+                        new EditView({model: model});
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }

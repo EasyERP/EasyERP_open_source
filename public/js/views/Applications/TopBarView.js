@@ -1,9 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Applications/TopBarTemplate.html',
         'custom',
         'common'
     ],
-    function (ContentTopBarTemplate, Custom, common) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, common) {
+        'use strict';
+
         var TopBarView = Backbone.View.extend({
             el              : '#top-bar',
             contentType     : "Applications",
@@ -63,7 +68,7 @@ define([
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     this.trigger('deleteEvent');
                 }
             },

@@ -245,7 +245,7 @@ define([
                     currentNames.push(employee.name);
                 });
 
-                dataService.getData("/employee/getForDD", null, function (data) {
+                dataService.getData("/employees/getForDD", null, function (data) {
                     var employees = [];
                     _.each(data.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;

@@ -34,7 +34,7 @@ define([
 
             selectCustomer: function (id) {
                 if (id != "") {
-                    dataService.getData('/Customer', {
+                    dataService.getData('/Customers', {
                         id: id
                     }, function (response, context) {
                         var customer = response.data[0];
@@ -213,12 +213,12 @@ define([
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 this.model.save({
                         name         : name,
-                        company      : company,
+                        company      : company || null,
                         campaign     : $('#campaignDd').data("id"),
                         source       : $('#sourceDd').data("id"),
-                        customer     : idCustomer,
+                        customer     : idCustomer || null,
                         address      : address,
-                        salesPerson  : salesPersonId,
+                        salesPerson  : salesPersonId || null,
                         salesTeam    : salesTeamId,
                         contactName  : contactName,
                         email        : email,
@@ -296,11 +296,11 @@ define([
                 );
 
                 populate.getPriority("#priorityDd", this, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Leads"}, "name", this, true);
-                populate.get2name("#customerDd", "/Customer", {}, this, true, true);
-                populate.get("#sourceDd", "/sources", {}, "name", this, true, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Leads"}, "name", this, true);
+                populate.get2name("#customerDd", "/Customers", {}, this, true, true);
+                populate.get("#sourceDd", "/employees/sources", {}, "name", this, true, true);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this, true, true);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
+                populate.get2name("#salesPerson", "/employees/getForDdByRelatedUser", {}, this, true, true);
                 this.delegateEvents(this.events);
 
                 return this;

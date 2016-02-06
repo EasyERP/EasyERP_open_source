@@ -6,7 +6,7 @@
     function (EmployeeModel, common, dataService) {
         var EmployeesCollection = Backbone.Collection.extend({
             model       : EmployeeModel,
-            url         : "/Employees/",
+            url         : "/employees/",
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -87,7 +87,7 @@
             },
 
             getAlphabet: function (callback) {
-                dataService.getData("/getEmployeesAlphabet", {mid: 39}, function (response) {
+                dataService.getData("/employees/getEmployeesAlphabet", {mid: 39}, function (response) {
                     if (callback) {
                         callback(response.data);
                     }

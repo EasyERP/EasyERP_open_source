@@ -1,16 +1,21 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Companies/TopBarTemplate.html',
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
         'custom',
         "common"
     ],
-    function (ContentTopBarTemplate, importTemplate, attachView, Custom, Common) {
+    function (Backbone, $, _, ContentTopBarTemplate, importTemplate, AttachView, Custom, Common) {
+        'use strict';
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Companies",
             actionType : null,
             template   : _.template(ContentTopBarTemplate),
+
             events     : {
                 "click a.changeContentView"     : 'changeContentViewType',
                 "click ul.changeContentIndex a" : 'changeItemIndex',
@@ -27,6 +32,7 @@ define([
             changeContentViewType: function (e) {
                 Custom.changeContentViewType(e, this.contentType, this.collection);
             },
+
             editEvent            : function (event) {
                 event.preventDefault();
                 this.trigger('editEvent');
@@ -81,7 +87,7 @@ define([
             },
 
             importFiles: function (e) {
-                var importFile = new attachView({});
+                var importFile = new AttachView({});
 
                 this.import = true;
 

@@ -175,7 +175,7 @@
                         var ids = [];
                         ids.push(assignedTo);
                         ids['task_id'] = model._id;
-                        common.getImages(ids, "/getEmployeesImages");
+                        common.getImages(ids, "/employees/getEmployeesImages");
                         var result = res.result;
                         self.hideDialog();
                         switch (viewType) {
@@ -338,8 +338,8 @@
                     }).render().el
                 );
                 populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Tasks"}, "name", this);
-                populate.get2name("#assignedToDd", "/getPersonsForDd", {}, this);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Tasks"}, "name", this);
+                populate.get2name("#assignedToDd", "/employees/getPersonsForDd", {}, this);
                 populate.getPriority("#priorityDd", this);
                 this.delegateEvents(this.events);
                 $('#StartDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});

@@ -9,23 +9,23 @@ var requestHandler = function (app, event, mainDb) {
     var _ = require('./node_modules/underscore');
     var logWriter = require("./Modules/additions/logWriter.js")();
     var models = require("./models.js")(dbsObject);
-    var department = require("./Modules/Department.js")(event, models);
+    //var department = require("./Modules/Department.js")(event, models);
     var users = require("./Modules/Users.js")(mainDb, models);
     var profile = require("./Modules/Profile.js")(models);
     var access = require("./Modules/additions/access.js")(models);
     var employee = require("./Modules/Employees.js")(event, models);
     var customer = require("./Modules/Customers.js")(event, models);
-    var workflow = require("./Modules/Workflow.js")(models, event);
+    //var workflow = require("./Modules/Workflow.js")(models, event);
     var project = require("./Modules/Projects.js")(models, event);
-    var jobPosition = require("./Modules/JobPosition.js")(event, models);
-    var degrees = require("./Modules/Degrees.js")(models);
-    var campaigns = require("./Modules/Campaigns.js")(models);
+    //var jobPosition = require("./Modules/JobPosition.js")(event, models);
+    //var degrees = require("./Modules/Degrees.js")(models);
+    //var campaigns = require("./Modules/Campaigns.js")(models);
     var opportunities = require("./Modules/Opportunities.js")(models, event);
     var modules = require("./Modules/Module.js")(models);
-    var sources = require("./Modules/Sources.js")(models);
-    var languages = require("./Modules/Languages.js")(models);
-    var jobType = require("./Modules/JobType.js")(models);
-    var nationality = require("./Modules/Nationality.js")(models);
+    //var sources = require("./Modules/Sources.js")(models);
+    //var languages = require("./Modules/Languages.js")(models);
+    //var jobType = require("./Modules/JobType.js")(models);
+    //var nationality = require("./Modules/Nationality.js")(models);
     var birthdays = require("./Modules/Birthdays.js")(models, event);
     var Scheduler = require("./Modules/Scheduler.js")(dbsObject, models);
     var scheduler = new Scheduler();
@@ -1355,18 +1355,18 @@ var requestHandler = function (app, event, mainDb) {
     };*/
 
     //---------------Persons--------------------------------
-    function getForDdByRelatedUser(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                employee.getForDdByRelatedUser(req, req.session.uId, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-        }
-    };
+    //function getForDdByRelatedUser(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            employee.getForDdByRelatedUser(req, req.session.uId, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //    }
+    //};
 
     function Birthdays(req, res) {
         try {
@@ -1381,112 +1381,112 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function getPersonsForDd(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                employee.getForDd(req, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-        }
-    };
+    //function getPersonsForDd(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            employee.getForDd(req, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //    }
+    //};
 
-    function getFilterPersonsForMiniView(req, res, data) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                customer.getFilterPersonsForMiniView(req, res, data);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-        }
-    };
+    //function getFilterPersonsForMiniView(req, res, data) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            customer.getFilterPersonsForMiniView(req, res, data);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //    }
+    //};
 
-    function getCustomer(req, res, data) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                customer.getCustomers(req, res, data);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-            res.send(500, {error: Exception});
-        }
-    };
+    //function getCustomer(req, res, data) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            customer.getCustomers(req, res, data);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //        res.send(500, {error: Exception});
+    //    }
+    //};
 
-    function getPersonById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    customer.getPersonById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getPersonById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                customer.getPersonById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function createPerson(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    data.person.uId = req.session.uId;
-                    customer.create(req, data.person, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createPerson(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                data.person.uId = req.session.uId;
+    //                customer.create(req, data.person, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function updatePerson(req, res, id, data, remove) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                data.person.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //
+    //                customer.update(req, id, remove, data.person, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function updatePerson(req, res, id, data, remove) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    data.person.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    }
-
-                    customer.update(req, id, remove, data.person, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
-
-    function personUpdateOnlySelectedFields(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    customer.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function personUpdateOnlySelectedFields(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                customer.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     function uploadFile(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1508,19 +1508,19 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function removePerson(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 49, function (access) {
-                if (access) {
-                    customer.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function removePerson(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 49, function (access) {
+    //            if (access) {
+    //                customer.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //---------------------Project--------------------------------
     function createProject(req, res, data) {
@@ -1848,565 +1848,565 @@ var requestHandler = function (app, event, mainDb) {
 
     //------------------Workflow---------------------------------
 
-    function getRelatedStatus(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            workflow.getRelatedStatus(req, res, data);
-        } else {
-            res.send(401);
-        }
-    };
+    //function getRelatedStatus(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        workflow.getRelatedStatus(req, res, data);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getWorkflow(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            /*access.getReadAccess(req, req.session.uId, 44, function (access) {
-             if (access) {*/
-            workflow.get(req, data, res);
-            /* } else {
-             res.send(403);
-             }
-             });*/
-        } else {
-            res.send(401);
-        }
-    };
+    //function getWorkflow(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        /*access.getReadAccess(req, req.session.uId, 44, function (access) {
+    //         if (access) {*/
+    //        workflow.get(req, data, res);
+    //        /* } else {
+    //         res.send(403);
+    //         }
+    //         });*/
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getWorkflowsForDd(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            workflow.getWorkflowsForDd(req, data, res);
-        } else {
-            res.send(401);
-        }
-    };
+    //function getWorkflowsForDd(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        workflow.getWorkflowsForDd(req, data, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function createWorkflow(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 44, function (access) {
-                if (access) {
-                    workflow.create(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createWorkflow(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 44, function (access) {
+    //            if (access) {
+    //                workflow.create(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function updateWorkflow(req, res, _id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 44, function (access) {
+    //            if (access) {
+    //                workflow.update(req, _id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function updateWorkflow(req, res, _id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 44, function (access) {
-                if (access) {
-                    workflow.update(req, _id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function updateWorkflowOnlySelectedField(req, res, _id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 44, function (access) {
+    //            if (access) {
+    //                workflow.updateOnlySelectedFields(req, _id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
-
-    function updateWorkflowOnlySelectedField(req, res, _id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 44, function (access) {
-                if (access) {
-                    workflow.updateOnlySelectedFields(req, _id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function removeWorkflow(req, res, _id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    workflow.remove(req, _id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function removeWorkflow(req, res, _id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                workflow.remove(req, _id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //---------------------Companies-------------------------------
 
-    function getCompaniesForDd(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            customer.getCompaniesForDd(req, res);
+    //function getCompaniesForDd(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        customer.getCompaniesForDd(req, res);
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function getCompanyById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.getCompanyById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getCompanyById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.getCompanyById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function removeCompany(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function createCompany(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.company.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.create(req, data.company, res);
+    //
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function removeCompany(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function createCompany(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.company.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.create(req, data.company, res);
-
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
-
-    function updateCompany(req, res, id, data, remove) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            var date = mongoose.Schema.Types.Date;
-            data.company.editedBy = {
-                user: req.session.uId,
-                date: new Date().toISOString()
-            }
-            access.getEditWritAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.update(req, id, remove, data.company, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-    function companyUpdateOnlySelectedFields(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    customer.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateCompany(req, res, id, data, remove) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        var date = mongoose.Schema.Types.Date;
+    //        data.company.editedBy = {
+    //            user: req.session.uId,
+    //            date: new Date().toISOString()
+    //        }
+    //        access.getEditWritAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.update(req, id, remove, data.company, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
+    //function companyUpdateOnlySelectedFields(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                customer.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     // Get  Persons or Companies or ownCompanies for list and thumbnail
-    function getFilterCustomers(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 50, function (access) {
-                if (access) {
-                    customer.getFilterCustomers(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function getFilterCustomers(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 50, function (access) {
+    //            if (access) {
+    //                customer.getFilterCustomers(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     // Get  Persons or Companies or ownCompanies images for thumbnails
-    function getCustomersImages(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            /*access.getReadAccess(req, req.session.uId, 43, function (access) {
-             if (access) {
-             customer.getCustomersImages(req, res);
-             } else {
-             res.send(403);
-             }
-             });*/
-            customer.getCustomersImages(req, res);
-        } else {
-            res.send(401);
-        }
-    };
+    //function getCustomersImages(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        /*access.getReadAccess(req, req.session.uId, 43, function (access) {
+    //         if (access) {
+    //         customer.getCustomersImages(req, res);
+    //         } else {
+    //         res.send(403);
+    //         }
+    //         });*/
+    //        customer.getCustomersImages(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     // Get Alphabet for Companies or ownCompanies or Persons
-    function getCustomersAlphabet(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                customer.getCustomersAlphabet(req, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            console.log("requestHandler.js  " + Exception);
-        }
-    };
+    //function getCustomersAlphabet(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            customer.getCustomersAlphabet(req, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        console.log("requestHandler.js  " + Exception);
+    //    }
+    //};
 
     //---------------------JobPosition--------------------------------
 
     // get  jobPositions Total count
-    function jobPositionsTotalCollectionLength(req, res) {
-        jobPosition.getTotalCount(req, res);
-    }
+    //function jobPositionsTotalCollectionLength(req, res) {
+    //    jobPosition.getTotalCount(req, res);
+    //}
 
-    function createJobPosition(req, res, data) {
+    //function createJobPosition(req, res, data) {
+    //
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.jobPosition.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                jobPosition.create(req, data.jobPosition, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.jobPosition.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    jobPosition.create(req, data.jobPosition, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getJobType(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        jobType.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getJobType(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            jobType.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getNationality(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        nationality.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getNationality(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            nationality.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
-
-    function getJobPositionForDd(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            jobPosition.getJobPositionForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    };
+    //function getJobPositionForDd(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        jobPosition.getJobPositionForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     // Get JobPosition for list
-    function getFilterJobPosition(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    // jobPosition.getFilter(req, res);
-                    jobPosition.get(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getFilterJobPosition(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                // jobPosition.getFilter(req, res);
+    //                jobPosition.get(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getJobPositionById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    jobPosition.getJobPositionById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
+    //function getJobPositionById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                jobPosition.getJobPositionById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //
+    //};
 
-    };
+    //function updateJobPosition(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.jobPosition.editedBy = {
+    //            user: req.session.uId,
+    //            date: new Date().toISOString()
+    //        }
+    //        access.getEditWritAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                jobPosition.update(req, id, data.jobPosition, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function updateJobPosition(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.jobPosition.editedBy = {
-                user: req.session.uId,
-                date: new Date().toISOString()
-            }
-            access.getEditWritAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    jobPosition.update(req, id, data.jobPosition, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function removeJobPosition(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 14, function (access) {
-                if (access) {
-                    jobPosition.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function removeJobPosition(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 14, function (access) {
+    //            if (access) {
+    //                jobPosition.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //---------------------Employee--------------------------------
 
-    function employeesTotalCollectionLength(req, res) {
-        employee.getTotalCount(req, res);
-    }
+    //function employeesTotalCollectionLength(req, res) {
+    //    employee.getTotalCount(req, res);
+    //}
 
-    function createEmployee(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    data.employee.uId = req.session.uId;
-                    employee.create(req, data.employee, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createEmployee(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                data.employee.uId = req.session.uId;
+    //                employee.create(req, data.employee, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
-
-    function uploadEmployeesFile(req, res, id, files) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.addAtach(req, id, files, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function uploadEmployeesFile(req, res, id, files) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.addAtach(req, id, files, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     // get employee or Applications for list or thumbnails
-    function getEmployeesFilter(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.getFilter(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    }
+    //function getEmployeesFilter(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.getFilter(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     // Get Employee form by employee id
-    function getEmployeesById(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.getById(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function getEmployeesById(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.getById(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //
+    //};
 
-        } else {
-            res.send(401);
-        }
+    //function updateEmployees(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                data.employee.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //
+    //                employee.update(req, id, data.employee, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
+    //function employeesUpdateOnlySelectedFields(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                employee.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    };
-
-    function updateEmployees(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    data.employee.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-
-                    employee.update(req, id, data.employee, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-    function employeesUpdateOnlySelectedFields(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    employee.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
-
-    function removeEmployees(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-    function getEmployeesAlphabet(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                employee.getEmployeesAlphabet(req, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            console.log("requestHandler.js  " + Exception);
-        }
-    };
+    //function removeEmployees(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
+    //function getEmployeesAlphabet(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            employee.getEmployeesAlphabet(req, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        console.log("requestHandler.js  " + Exception);
+    //    }
+    //};
 
     //---------------------Application--------------------------------
-    function getApplicationsLengthByWorkflows(req, res) {
-        employee.getCollectionLengthByWorkflows(req, res);
-    }
+    //function getApplicationsLengthByWorkflows(req, res) {
+    //    employee.getCollectionLengthByWorkflows(req, res);
+    //}
 
-    function createApplication(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    data.employee.uId = req.session.uId;
-                    employee.create(req, data.employee, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createApplication(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                data.employee.uId = req.session.uId;
+    //                employee.create(req, data.employee, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function getApplicationById(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                employee.getById(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getApplicationById(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    employee.getById(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function getApplicationsForKanban(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                employee.getApplicationsForKanban(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
+    //function getEmployeesImages(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 42, function (access) {
+    //            if (access) {
+    //                employee.getEmployeesImages(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getApplicationsForKanban(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    employee.getApplicationsForKanban(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function getEmployeesImages(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 42, function (access) {
-                if (access) {
-                    employee.getEmployeesImages(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
-
-    function updateApplication(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    data.employee.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    }
-
-                    employee.update(req, id, data.employee, res);
-                } else {
-                    res.send(403);
-                }
-            })
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function updateApplication(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                data.employee.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                }
+    //
+    //                employee.update(req, id, data.employee, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        })
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     function uploadApplicationFile(req, res, id, files) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2421,406 +2421,406 @@ var requestHandler = function (app, event, mainDb) {
             res.send(401);
         }
     };
-    function aplicationUpdateOnlySelectedFields(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    employee.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function aplicationUpdateOnlySelectedFields(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                employee.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function removeApplication(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    employee.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };
+    //function removeApplication(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 43, function (access) {
+    //            if (access) {
+    //                employee.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     //---------------------Department--------------------------------
-    function createDepartment(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.department.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.create(req, data.department, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function createDepartment(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.department.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.create(req, data.department, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getDepartment(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.get(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getDepartment(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.get(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function updateDepartment(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.department.editedBy = {
-                user: req.session.uId,
-                date: new Date().toISOString()
-            }
-            access.getEditWritAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.update(req, id, data.department, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateDepartment(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.department.editedBy = {
+    //            user: req.session.uId,
+    //            date: new Date().toISOString()
+    //        }
+    //        access.getEditWritAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.update(req, id, data.department, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function removeDepartment(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function removeDepartment(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getDepartmentForDd(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            department.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getDepartmentForDd(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        department.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getDepartmentForEditDd(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            department.getForEditDd(req, id, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getDepartmentForEditDd(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        department.getForEditDd(req, id, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getCustomDepartment(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.getCustomDepartment(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function getCustomDepartment(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.getCustomDepartment(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    };
-
-    function getDepartmentById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 15, function (access) {
-                if (access) {
-                    department.getDepartmentById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-
-    };
+    //function getDepartmentById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 15, function (access) {
+    //            if (access) {
+    //                department.getDepartmentById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //
+    //};
 
     //---------------------Deegree--------------------------------
-    function createDegree(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            degrees.create(req, data.degree, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function createDegree(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        degrees.create(req, data.degree, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getDegrees(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            degrees.get(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getDegrees(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        degrees.get(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function updateDegree(req, res, id, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            degrees.update(req, id, data.degree, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateDegree(req, res, id, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        degrees.update(req, id, data.degree, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function removeDegree(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            degrees.remove(req, id, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function removeDegree(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        degrees.remove(req, id, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //-----------------Campaigns--------------------------------------
-    function getCampaigns(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            campaigns.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getCampaigns(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        campaigns.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getLeadsById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.getById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getLeadsById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.getById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function createLead(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.lead.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.create(req, data.lead, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createLead(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.lead.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.create(req, data.lead, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-        } else {
-            res.send(401);
-        }
-    }
+    //function updateLead(req, res, id, data) {
+    //    var date = Date.now();
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.lead['editedBy'] = {
+    //            user: req.session.uId,
+    //            date: date
+    //        };
+    //        access.getEditWritAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.updateLead(req, id, data.lead, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function updateLead(req, res, id, data) {
-        var date = Date.now();
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.lead['editedBy'] = {
-                user: req.session.uId,
-                date: date
-            };
-            access.getEditWritAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.updateLead(req, id, data.lead, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function removeLead(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-        } else {
-            res.send(401);
-        }
-    }
-
-    function removeLead(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    }
-
-    function getLeadsForChart(req, res, data) {
-        if (req.session && req.session.loggedIn) {
-            access.getReadAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.getLeadsForChart(req, res, data);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getLeadsForChart(req, res, data) {
+    //    if (req.session && req.session.loggedIn) {
+    //        access.getReadAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.getLeadsForChart(req, res, data);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     //-------------------Opportunities---------------------------
 
     // Get  Leads or Opportunities for List
-    function getFilterOpportunities(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 24, function (access) {
-                if (access) {
-                    opportunities.getFilter(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
+    //function getFilterOpportunities(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 24, function (access) {
+    //            if (access) {
+    //                opportunities.getFilter(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     // Get  Leads or Opportunities total count
-    function opportunitiesTotalCollectionLength(req, res) {
-        opportunities.getTotalCount(req, res);
-    }
+    //function opportunitiesTotalCollectionLength(req, res) {
+    //    opportunities.getTotalCount(req, res);
+    //}
 
-    function getOpportunitiesLengthByWorkflows(req, res) {
-        opportunities.getCollectionLengthByWorkflows(req, res);
-    }
+    //function getOpportunitiesLengthByWorkflows(req, res) {
+    //    opportunities.getCollectionLengthByWorkflows(req, res);
+    //}
 
-    function createOpportunitie(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.opportunitie.uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.create(req, data.opportunitie, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function createOpportunitie(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.opportunitie.uId = req.session.uId;
+    //        access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.create(req, data.opportunitie, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-        } else {
-            res.send(401);
-        }
-    }
+    //function getOpportunityById(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.getById(req, data.id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getOpportunityById(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.getById(req, data.id, res);
-                } else {
-                    res.send(403);
-                }
-            });
+    //function getFilterOpportunitiesForMiniView(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.getFilterOpportunitiesForMiniView(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-        } else {
-            res.send(401);
-        }
-    }
+    //function getFilterOpportunitiesForKanban(req, res, data) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.getFilterOpportunitiesForKanban(req, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
-    function getFilterOpportunitiesForMiniView(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.getFilterOpportunitiesForMiniView(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function updateOpportunitie(req, res, id, data) {
+    //    var date = Date.now();
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        data.opportunitie['editedBy'] = {
+    //            user: req.session.uId,
+    //            date: date
+    //        };
+    //        access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.update(req, id, data.opportunitie, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getFilterOpportunitiesForKanban(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.getFilterOpportunitiesForKanban(req, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function opportunitieUpdateOnlySelectedFields(req, res, id, data) {
+    //    data = data.opportunitie;
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                data.editedBy = {
+    //                    user: req.session.uId,
+    //                    date: new Date().toISOString()
+    //                };
+    //                opportunities.updateOnlySelectedFields(req, id, data, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function updateOpportunitie(req, res, id, data) {
-        var date = Date.now();
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            data.opportunitie['editedBy'] = {
-                user: req.session.uId,
-                date: date
-            };
-            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.update(req, id, data.opportunitie, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
-
-    function opportunitieUpdateOnlySelectedFields(req, res, id, data) {
-        data = data.opportunitie;
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    opportunities.updateOnlySelectedFields(req, id, data, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    }
-
-    function removeOpportunitie(req, res, id) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getDeleteAccess(req, req.session.uId, 25, function (access) {
-                if (access) {
-                    opportunities.remove(req, id, res);
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    }
+    //function removeOpportunitie(req, res, id) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getDeleteAccess(req, req.session.uId, 25, function (access) {
+    //            if (access) {
+    //                opportunities.remove(req, id, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     function uploadOpportunitiesFiles(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2836,26 +2836,26 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function getSources(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            sources.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getSources(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        sources.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
-    function getLanguages(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            languages.getForDd(req, res);
-        } else {
-            res.send(401);
-        }
-    }
+    //function getLanguages(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        languages.getForDd(req, res);
+    //    } else {
+    //        res.send(401);
+    //    }
+    //}
 
     // Get  Persons or Companies or ownCompanies total count
-    function customerTotalCollectionLength(req, res) {
-        customer.getTotalCount(req, res);
-    }
+    //function customerTotalCollectionLength(req, res) {
+    //    customer.getTotalCount(req, res);
+    //}
 
     function projectsTotalCollectionLength(req, res) {
         project.getTotalCount(req, res);
@@ -2867,7 +2867,7 @@ var requestHandler = function (app, event, mainDb) {
 
     return {
 
-        mongoose            : mongoose,
+        //mongoose            : mongoose,
         getModules          : getModules,
         redirectFromModuleId: redirectFromModuleId,
 
@@ -2890,14 +2890,14 @@ var requestHandler = function (app, event, mainDb) {
         updateProfile  : updateProfile,
         removeProfile  : removeProfile,*/
 
-        createPerson                  : createPerson,
-        getPersonById                 : getPersonById,
-        updatePerson                  : updatePerson,
-        removePerson                  : removePerson,
+        //createPerson                  : createPerson,
+       // getPersonById                 : getPersonById,
+        //updatePerson                  : updatePerson,
+        //removePerson                  : removePerson,
         uploadFile                    : uploadFile,
-        getCustomer                   : getCustomer,
-        getFilterPersonsForMiniView   : getFilterPersonsForMiniView,
-        personUpdateOnlySelectedFields: personUpdateOnlySelectedFields,
+        //getCustomer                   : getCustomer,
+        //getFilterPersonsForMiniView   : getFilterPersonsForMiniView,
+        //personUpdateOnlySelectedFields: personUpdateOnlySelectedFields,
 
         projectsTotalCollectionLength    : projectsTotalCollectionLength,//for Showmore and Lists
         getProjects                      : getProjects,//for Thumbnails
@@ -2925,95 +2925,95 @@ var requestHandler = function (app, event, mainDb) {
         removeTask               : removeTask,
         getTasksPriority         : getTasksPriority,
 
-        getCompaniesForDd              : getCompaniesForDd,
-        getCompanyById                 : getCompanyById,
-        removeCompany                  : removeCompany,
-        createCompany                  : createCompany,
-        updateCompany                  : updateCompany,
-        companyUpdateOnlySelectedFields: companyUpdateOnlySelectedFields,
-        getFilterCustomers             : getFilterCustomers,
-        getCustomersImages             : getCustomersImages,
-        getCustomersAlphabet           : getCustomersAlphabet,
+        //getCompaniesForDd              : getCompaniesForDd,
+        //getCompanyById                 : getCompanyById,
+        //removeCompany                  : removeCompany,
+        //createCompany                  : createCompany,
+        //updateCompany                  : updateCompany,
+        //companyUpdateOnlySelectedFields: companyUpdateOnlySelectedFields,
+        //getFilterCustomers             : getFilterCustomers,
+        //getCustomersImages             : getCustomersImages,
+        //getCustomersAlphabet           : getCustomersAlphabet,
 
-        getRelatedStatus               : getRelatedStatus,
-        getWorkflow                    : getWorkflow,
-        createWorkflow                 : createWorkflow,
-        updateWorkflow                 : updateWorkflow,
-        getWorkflowsForDd              : getWorkflowsForDd,
-        removeWorkflow                 : removeWorkflow,
-        updateWorkflowOnlySelectedField: updateWorkflowOnlySelectedField,
+        //getRelatedStatus               : getRelatedStatus,
+        //getWorkflow                    : getWorkflow,
+        //createWorkflow                 : createWorkflow,
+        //updateWorkflow                 : updateWorkflow,
+        //getWorkflowsForDd              : getWorkflowsForDd,
+        //removeWorkflow                 : removeWorkflow,
+        //updateWorkflowOnlySelectedField: updateWorkflowOnlySelectedField,
 
-        jobPositionsTotalCollectionLength: jobPositionsTotalCollectionLength,
-        createJobPosition                : createJobPosition,
-        updateJobPosition                : updateJobPosition,
-        removeJobPosition                : removeJobPosition,
-        getJobPositionById               : getJobPositionById,
-        getJobPositionForDd              : getJobPositionForDd,
+        //jobPositionsTotalCollectionLength: jobPositionsTotalCollectionLength,
+       // createJobPosition                : createJobPosition,
+        //updateJobPosition                : updateJobPosition,
+        //removeJobPosition                : removeJobPosition,
+        //getJobPositionById               : getJobPositionById,
+        //getJobPositionForDd              : getJobPositionForDd,
 
-        createEmployee       : createEmployee,
-        getFilterJobPosition : getFilterJobPosition,
-        getForDdByRelatedUser: getForDdByRelatedUser,
-        getEmployeesById     : getEmployeesById,
-        removeEmployees      : removeEmployees,
-        updateEmployees      : updateEmployees,
-        getEmployeesAlphabet : getEmployeesAlphabet,
-        getEmployeesImages   : getEmployeesImages,
+        //createEmployee       : createEmployee,
+        //getFilterJobPosition : getFilterJobPosition,
+        //getForDdByRelatedUser: getForDdByRelatedUser,
+        //getEmployeesById     : getEmployeesById,
+        //removeEmployees      : removeEmployees,
+        //updateEmployees      : updateEmployees,
+        //getEmployeesAlphabet : getEmployeesAlphabet,
+        //getEmployeesImages   : getEmployeesImages,
 
         Birthdays: Birthdays,
 
-        getPersonsForDd   : getPersonsForDd,
-        getDepartmentForDd: getDepartmentForDd,
+        //getPersonsForDd   : getPersonsForDd,
+        //getDepartmentForDd: getDepartmentForDd,
 
-        getApplicationsLengthByWorkflows  : getApplicationsLengthByWorkflows,
-        createApplication                 : createApplication,
-        removeApplication                 : removeApplication,
-        updateApplication                 : updateApplication,
+       // getApplicationsLengthByWorkflows  : getApplicationsLengthByWorkflows,
+       // createApplication                 : createApplication,
+       // removeApplication                 : removeApplication,
+       // updateApplication                 : updateApplication,
         uploadApplicationFile             : uploadApplicationFile,
-        aplicationUpdateOnlySelectedFields: aplicationUpdateOnlySelectedFields,
-        employeesUpdateOnlySelectedFields : employeesUpdateOnlySelectedFields,
+        //aplicationUpdateOnlySelectedFields: aplicationUpdateOnlySelectedFields,
+        //employeesUpdateOnlySelectedFields : employeesUpdateOnlySelectedFields,
 
-        getDepartment         : getDepartment,
-        createDepartment      : createDepartment,
-        updateDepartment      : updateDepartment,
-        removeDepartment      : removeDepartment,
-        getDepartmentById     : getDepartmentById,
-        getCustomDepartment   : getCustomDepartment,
-        getDepartmentForEditDd: getDepartmentForEditDd,
-        createDegree          : createDegree,
-        getDegrees            : getDegrees,
-        updateDegree          : updateDegree,
-        removeDegree          : removeDegree,
+        //getDepartment         : getDepartment,
+        //createDepartment      : createDepartment,
+        //updateDepartment      : updateDepartment,
+        //removeDepartment      : removeDepartment,
+        //getDepartmentById     : getDepartmentById,
+        //getCustomDepartment   : getCustomDepartment,
+        //getDepartmentForEditDd: getDepartmentForEditDd,
+        //createDegree          : createDegree,
+        //getDegrees            : getDegrees,
+        //updateDegree          : updateDegree,
+        //removeDegree          : removeDegree,
 
-        getCampaigns                  : getCampaigns,
-        employeesTotalCollectionLength: employeesTotalCollectionLength,
-        getEmployeesFilter            : getEmployeesFilter,
-        uploadEmployeesFile           : uploadEmployeesFile,
-        getApplicationById            : getApplicationById,
-        getApplicationsForKanban      : getApplicationsForKanban,
+        //getCampaigns                  : getCampaigns,
+        //employeesTotalCollectionLength: employeesTotalCollectionLength,
+        //getEmployeesFilter            : getEmployeesFilter,
+        //uploadEmployeesFile           : uploadEmployeesFile,
+        //getApplicationById            : getApplicationById,
+        //getApplicationsForKanban      : getApplicationsForKanban,
 
-        createLead      : createLead,
-        updateLead      : updateLead,
-        removeLead      : removeLead,
-        getLeadsById    : getLeadsById,
-        getLeadsForChart: getLeadsForChart,
+        //createLead      : createLead,
+        //updateLead      : updateLead,
+        //removeLead      : removeLead,
+        //getLeadsById    : getLeadsById,
+        //getLeadsForChart: getLeadsForChart,
 
-        opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
-        getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
-        createOpportunitie                  : createOpportunitie,
-        getFilterOpportunities              : getFilterOpportunities,
-        getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
-        getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
-        getOpportunityById                  : getOpportunityById,
-        updateOpportunitie                  : updateOpportunitie,
-        removeOpportunitie                  : removeOpportunitie,
-        opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
+        //opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
+        //getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
+        //createOpportunitie                  : createOpportunitie,
+        //getFilterOpportunities              : getFilterOpportunities,
+        //getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
+        //getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
+        //getOpportunityById                  : getOpportunityById,
+        //updateOpportunitie                  : updateOpportunitie,
+        //removeOpportunitie                  : removeOpportunitie,
+        //opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
         uploadOpportunitiesFiles            : uploadOpportunitiesFiles,
 
-        getSources                   : getSources,
-        getLanguages                 : getLanguages,
-        getJobType                   : getJobType,
-        getNationality               : getNationality,
-        customerTotalCollectionLength: customerTotalCollectionLength,
+        //getSources                   : getSources,
+        //getLanguages                 : getLanguages,
+        //getJobType                   : getJobType,
+        //getNationality               : getNationality,
+        //customerTotalCollectionLength: customerTotalCollectionLength,
 
         initScheduler: initScheduler
     }

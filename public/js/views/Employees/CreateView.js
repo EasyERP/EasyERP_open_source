@@ -1,40 +1,44 @@
 define([
-    'Backbone',
-    "text!templates/Employees/CreateTemplate.html",
-    "models/EmployeesModel",
-    "common",
-    "populate",
-    'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
-    'views/selectView/selectView',
-    'constants'
-], function (Backbone, CreateTemplate, EmployeeModel, common, populate, attachView, AssigneesView, selectView, CONSTANTS) {
-    'use strict';
-    var CreateView = Backbone.View.extend({
-        el         : "#content-holder",
-        contentType: "Employees",
-        template   : _.template(CreateTemplate),
-        imageSrc   : '',
-        responseObj: {},
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        "text!templates/Employees/CreateTemplate.html",
+        "models/EmployeesModel",
+        "common",
+        "populate",
+        'views/Notes/AttachView',
+        'views/Assignees/AssigneesView',
+        'views/selectView/selectView',
+        'constants'
+    ],
+    function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, SelectView, CONSTANTS) {
+        "use strict";
+        var CreateView = Backbone.View.extend({
+            el         : "#content-holder",
+            contentType: "Employees",
+            template   : _.template(CreateTemplate),
+            imageSrc   : '',
+            responseObj: {},
 
-        initialize: function () {
-            _.bindAll(this, "saveItem");
-            this.model = new EmployeeModel();
-            this.responseObj['#sourceDd'] = [
-                {
-                    _id : 'www.rabota.ua',
-                    name: 'www.rabota.ua'
-                }, {
-                    _id : 'www.work.ua',
-                    name: 'www.work.ua'
-                }, {
-                    _id : 'www.ain.net',
-                    name: 'www.ain.net'
-                }, {
-                    _id : 'other',
-                    name: 'other'
-                }
-            ];
+            initialize: function () {
+                this.mId = CONSTANTS.MID[this.contentType];
+                _.bindAll(this, "saveItem");
+                this.model = new EmployeeModel();
+                this.responseObj['#sourceDd'] = [
+                    {
+                        _id : 'www.rabota.ua',
+                        name: 'www.rabota.ua'
+                    }, {
+                        _id : 'www.work.ua',
+                        name: 'www.work.ua'
+                    }, {
+                        _id : 'www.ain.net',
+                        name: 'www.ain.net'
+                    }, {
+                        _id : 'other',
+                        name: 'other'
+                    }
+                ];
 
             this.responseObj['#genderDd'] = [
                 {
@@ -69,9 +73,9 @@ define([
             "click"                                            : "hideNewSelect"
         },
 
-        showNewSelect: function (e, prev, next) {
-            var $target = $(e.target);
-            e.stopPropagation();
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
                 return false;
@@ -81,10 +85,10 @@ define([
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
+                this.selectView = new SelectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
 
             $target.append(this.selectView.render().el);
 
@@ -103,51 +107,52 @@ define([
             }
         },
 
-        addAttach: function (event) {
-            var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
-            $(".attachContainer").append('<li class="attachFile">' +
-                '<a href="javascript:;">' + s + '</a>' +
-                '<a href="javascript:;" class="deleteAttach">Delete</a></li>'
-            );
-            $(".attachContainer .attachFile:last").append($(".input-file .inputAttach").attr("hidden", "hidden"));
-            $(".input-file").append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
-        },
+            addAttach: function () {
+                var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
+                $(".attachContainer").append('<li class="attachFile">' +
+                    '<a href="javascript:;">' + s + '</a>' +
+                    '<a href="javascript:;" class="deleteAttach">Delete</a></li>'
+                );
+                $(".attachContainer .attachFile:last").append($(".input-file .inputAttach").attr("hidden", "hidden"));
+                $(".input-file").append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
+            },
 
         deleteAttach: function (e) {
             $(e.target).closest(".attachFile").remove();
         },
 
-        updateAssigneesPagination: function (el) {
-            var pag = el.find(".userPagination .text");
-            el.find(".userPagination .nextUserList").remove();
-            el.find(".userPagination .prevUserList").remove();
-            el.find(".userPagination .nextGroupList").remove();
-            el.find(".userPagination .prevGroupList").remove();
+            updateAssigneesPagination: function (el) {
+                el.find(".userPagination .nextUserList").remove();
+                el.find(".userPagination .prevUserList").remove();
+                el.find(".userPagination .nextGroupList").remove();
+                el.find(".userPagination .prevGroupList").remove();
 
-            var list = el.find("ul");
-            var count = list.find("li").length;
-            var s = "";
-            var page = parseInt(list.attr("data-page"));
-            if (page > 1) {
-                el.find(".userPagination").prepend("<a class='prevUserList' href='javascript:;'>« prev</a>");
-            }
-            if (count === 0) {
-                s += "0-0 of 0";
-            } else {
-                if ((page) * 20 - 1 < count) {
-                    s += ((page - 1) * 20 + 1) + "-" + ((page) * 20) + " of " + count;
-                } else {
-                    s += ((page - 1) * 20 + 1) + "-" + (count) + " of " + count;
+                var pag = el.find(".userPagination .text");
+                var i;
+                var list = el.find("ul");
+                var count = list.find("li").length;
+                var s = "";
+                var page = parseInt(list.attr("data-page"), 10);
+                if (page > 1) {
+                    el.find(".userPagination").prepend("<a class='prevUserList' href='javascript:;'>« prev</a>");
                 }
-            }
+                if (count === 0) {
+                    s += "0-0 of 0";
+                } else {
+                    if (page * 20 - 1 < count) {
+                        s += ((page - 1) * 20 + 1) + "-" + (page * 20) + " of " + count;
+                    } else {
+                        s += ((page - 1) * 20 + 1) + "-" + count + " of " + count;
+                    }
+                }
 
-            if (page < count / 20) {
-                el.find(".userPagination").append("<a class='nextUserList' href='javascript:;'>next »</a>");
-            }
-            el.find("ul li").hide();
-            for (var i = (page - 1) * 20; i < 20 * page; i++) {
-                el.find("ul li").eq(i).show();
-            }
+                if (page < count / 20) {
+                    el.find(".userPagination").append("<a class='nextUserList' href='javascript:;'>next »</a>");
+                }
+                el.find("ul li").hide();
+                for (i = (page - 1) * 20; i < 20 * page; i++) {
+                    el.find("ul li").eq(i).show();
+                }
 
             pag.text(s);
         },
@@ -212,25 +217,25 @@ define([
             this.$(".tab").hide().eq(index).show();
         },
 
-        saveItem: function () {
-            var self = this;
-            var mid = 39;
-            var thisEl = this.$el;
-            var employeeModel = new EmployeeModel();
-            var name = {
-                first: $.trim(thisEl.find("#first").val()),
-                last : $.trim(thisEl.find("#last").val())
-            };
-            thisEl.find("#createBtnDialog").attr("disabled", "disabled");
-            var workAddress = {};
-            $("dd").find(".workAddress").each(function () {
-                var el = $(this);
-                workAddress[el.attr("name")] = $.trim(el.val());
-            });
-            var tags = $.trim(thisEl.find("#tags").val()).split(',');
-            var workEmail = $.trim(thisEl.find("#workEmail").val());
-            var personalEmail = $.trim(thisEl.find("#personalEmail").val());
-            var skype = $.trim(thisEl.find("#skype").val());
+            saveItem: function () {
+                var self = this;
+                var mid = this.mId;
+                var thisEl = this.$el;
+                var employeeModel = new EmployeeModel();
+                var name = {
+                    first: $.trim(thisEl.find("#first").val()),
+                    last : $.trim(thisEl.find("#last").val())
+                };
+                thisEl.find("#createBtnDialog").attr("disabled", "disabled");
+                var workAddress = {};
+                $("dd").find(".workAddress").each(function () {
+                    var el = $(this);
+                    workAddress[el.attr("name")] = $.trim(el.val());
+                });
+                //var tags = $.trim(thisEl.find("#tags").val()).split(',');
+                var workEmail = $.trim(thisEl.find("#workEmail").val());
+                var personalEmail = $.trim(thisEl.find("#personalEmail").val());
+                var skype = $.trim(thisEl.find("#skype").val());
 
             var phone = $.trim(thisEl.find("#phone").val());
             var mobile = $.trim(thisEl.find("#mobile").val());
@@ -262,127 +267,135 @@ define([
             var LI = $.trim(thisEl.find('#LI').val());
             var FB = $.trim(thisEl.find('#FB').val());
 
-            var homeAddress = {};
-            $("dd").find(".homeAddress").each(function () {
-                var el = $(this);
-                homeAddress[el.attr("name")] = el.val();
-            });
-            // date parse
-            var dateBirthSt = $.trim(thisEl.find("#dateBirth").val());
-            var hire = $.trim(thisEl.find("#hire").val());
-
-            var active = (thisEl.find("#active").is(":checked")) ? true : false;
-            var sourceId = thisEl.find("#sourceDd").attr("data-id");
-            var usersId = [];
-            var groupsId = [];
-            $(".groupsAndUser tr").each(function () {
-                if ($(this).data("type") == "targetUsers") {
-                    usersId.push($(this).attr("data-id"));
-                }
-                if ($(this).data("type") == "targetGroups") {
-                    groupsId.push($(this).attr("data-id"));
-                }
-
-            });
-            var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
-            var valid = employeeModel.save({
-                    name          : name,
-                    gender        : gender ? gender : "",
-                    jobType       : jobType ? jobType : "",
-                    marital       : marital ? marital : "",
-                    imageSrc      : this.imageSrc,
-                    workAddress   : workAddress,
-                    workEmail     : workEmail,
-                    personalEmail : personalEmail,
-                    skype         : skype,
-                    workPhones    : workPhones,
-                    officeLocation: officeLocation,
-                    relatedUser   : relatedUser ? relatedUser : "",
-                    department    : department,
-                    jobPosition   : jobPosition ? jobPosition : "",
-                    bankAccountNo : bankAccountNo,
-                    manager       : manager ? manager : "",
-                    coach         : coach ? coach : "",
-                    identNo       : identNo,
-                    passportNo    : passportNo,
-                    otherId       : otherId,
-                    homeAddress   : homeAddress,
-                    dateBirth     : dateBirthSt,
-                    active        : active,
-                    source        : sourceId,
-                    nationality   : nationality,
-                    social        : {
-                        LI: LI,
-                        FB: FB
-                    },
-                    groups        : {
-                        owner: thisEl.find("#allUsersSelect").attr("data-id"),
-                        users: usersId,
-                        group: groupsId
-                    },
-                    whoCanRW      : whoCanRW,
-                    hire          : hire
-                },
-                {
-                    headers: {
-                        mid: mid
-                    },
-                    wait   : true,
-                    success: function (model, response) {
-                        self.attachView.sendToServer(null, model.changed);
-                    },
-                    error  : function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
+                var homeAddress = {};
+                $("dd").find(".homeAddress").each(function () {
+                    var el = $(this);
+                    homeAddress[el.attr("name")] = el.val();
                 });
-            if (!valid) {
-                $("#createBtnDialog").removeAttr("disabled");
-            }
-        },
+                // date parse 
+                var dateBirthSt = $.trim(thisEl.find("#dateBirth").val());
+                var hire = [{
+                    date       : $.trim(thisEl.find("#hire").val()),
+                    department : department,
+                    manager    : manager || null,
+                    jobPosition: jobPosition,
+                    jobType    : jobType,
+                    salary     : 0,
+                    info       : 'Hired'
+                }];
 
-        render: function () {
-            var formString = this.template();
-            var self = this;
-            this.$el = $(formString).dialog({
-                dialogClass: "edit-dialog",
-                width      : 800,
-                title      : "Create Employee",
-                buttons    : {
-                    save  : {
-                        text : "Create",
-                        class: "btn",
-                        id   : "createBtnDialog",
-                        click: self.saveItem
+                var active = (thisEl.find("#active").is(":checked")) ? true : false;
+                var sourceId = thisEl.find("#sourceDd").attr("data-id");
+                var usersId = [];
+                var groupsId = [];
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") === "targetUsers") {
+                        usersId.push($(this).attr("data-id"));
+                    }
+                    if ($(this).data("type") === "targetGroups") {
+                        groupsId.push($(this).attr("data-id"));
+                    }
+
+                });
+                var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
+                var valid = employeeModel.save({
+                        name          : name,
+                        gender        : gender || "",
+                        jobType       : jobType || "",
+                        marital       : marital || "",
+                        imageSrc      : $.trim(this.imageSrc) || null,
+                        workAddress   : workAddress,
+                        workEmail     : workEmail,
+                        personalEmail : personalEmail,
+                        skype         : skype,
+                        workPhones    : workPhones,
+                        officeLocation: officeLocation,
+                        relatedUser   : relatedUser || null,
+                        department    : department,
+                        jobPosition   : jobPosition || null,
+                        bankAccountNo : bankAccountNo,
+                        manager       : manager || null,
+                        coach         : coach || null,
+                        identNo       : identNo,
+                        passportNo    : passportNo,
+                        otherId       : otherId,
+                        homeAddress   : homeAddress,
+                        dateBirth     : dateBirthSt,
+                        active        : active,
+                        source        : sourceId,
+                        nationality   : nationality,
+                        social        : {
+                            LI: LI,
+                            FB: FB
+                        },
+                        groups        : {
+                            owner: thisEl.find("#allUsersSelect").attr("data-id"),
+                            users: usersId,
+                            group: groupsId
+                        },
+                        whoCanRW      : whoCanRW,
+                        hire          : hire
                     },
-                    cancel: {
-                        text : "Cancel",
-                        class: "btn",
-                        click: function () {
-                            self.hideDialog();
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function (model) {
+                            self.attachView.sendToServer(null, model.changed);
+                        },
+                        error  : function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
+                if (!valid) {
+                    $("#createBtnDialog").removeAttr("disabled");
+                }
+            },
+
+            render: function () {
+                var formString = this.template();
+                var self = this;
+                this.$el = $(formString).dialog({
+                    dialogClass: "edit-dialog",
+                    width      : 800,
+                    title      : "Create Employee",
+                    buttons    : {
+                        save  : {
+                            text : "Create",
+                            class: "btn",
+                            id   : "createBtnDialog",
+                            click: self.saveItem
+                        },
+                        cancel: {
+                            text : "Cancel",
+                            class: "btn",
+                            click: function () {
+                                self.hideDialog();
+                            }
                         }
                     }
-                }
-            });
-            var notDiv = this.$el.find('.attach-container');
-            this.attachView = new attachView({
-                model   : new EmployeeModel(),
-                url     : "/uploadEmployeesFiles",
-                isCreate: true
-            });
-            notDiv.append(this.attachView.render().el);
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+                });
+                var notDiv = this.$el.find('.attach-container');
+                this.attachView = new AttachView({
+                    model   : new EmployeeModel(),
+                    url     : "/employees/uploadEmployeesFiles",
+                    isCreate: true
+                });
+                notDiv.append(this.attachView.render().el);
+                notDiv = this.$el.find('.assignees-container');
+                notDiv.append(
+                    new AssigneesView({
+                        model: this.currentModel
+                    }).render().el
+                );
 
-            populate.get("#jobTypeDd", "/jobType", {}, "name", this, true);
-            populate.get("#nationality", "/nationality", {}, "_id", this, true);
-            populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this, true);
-            populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, true, true);
-            populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, true, true);
-            populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this, true);
+                populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "name", this, true);
+                populate.get("#nationality", "/employees/nationality", {}, "_id", this, true);
+                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this, true);
+                populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this, true, true);
+                populate.get("#relatedUsersDd",  CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, true, true);
+                populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this, true);
 
             common.canvasDraw({model: this.model.toJSON()}, this);
 

@@ -1,16 +1,22 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Persons/form/FormTemplate.html',
         'views/Persons/EditView',
         'views/Opportunities/compactContent',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
         'views/Opportunities/CreateView',
-        'common'
+        'common',
+        'constants'
     ],
 
-    function (personFormTemplate, editView, opportunitiesCompactContentView, noteView, attachView, createViewOpportunities, common) {
+    function (Backbone, $, _, personFormTemplate, EditView, OpportunitiesCompactContentView, NoteView, AttachView, CreateViewOpportunities, common, CONSTANTS) {
+        'use strict';
         var personTasksView = Backbone.View.extend({
-            el    : '#content-holder',
+            el: '#content-holder',
+
             events: {
                 "click .checkbox"                                                         : "checked",
                 "click .person-checkbox:not(.disabled)"                                   : "personsSalesChecked",
@@ -30,6 +36,7 @@ define([
             },
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.formModel = options.model;
                 this.formModel.on("change", this.render, this);
                 this.formModel.urlRoot = "/Persons";
@@ -40,10 +47,10 @@ define([
                 var self = this;
                 var formModel = this.formModel.toJSON();
 
-                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
+                common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
                     self.allMiniOpp = opps.listLength;
                     self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
-                    if (self.allPages == self.pageMini) {
+                    if (self.allPages === self.pageMini) {
                         $(".miniPagination .next").addClass("not-active");
                         $(".miniPagination .last").addClass("not-active");
                     }
@@ -77,14 +84,14 @@ define([
                 var self = this;
                 var formModel = this.formModel.toJSON();
 
-                common.populateOpportunitiesForMiniView("/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
+                common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
                     var oppElem = self.$el.find('#opportunities');
                     var isLast = self.pageMini === self.allPages;
 
                     oppElem.empty();
 
                     oppElem.append(
-                        new opportunitiesCompactContentView({
+                        new OpportunitiesCompactContentView({
                             collection: collection.data
                         }).render({first: self.pageMini === 1, last: isLast, all: self.allPages}).el
                     );
@@ -97,7 +104,7 @@ define([
                 e.preventDefault();
 
                 model = this.formModel.toJSON();
-                new createViewOpportunities({
+                new CreateViewOpportunities({
                     model    : model,
                     elementId: 'personAttach'
                 });
@@ -114,7 +121,7 @@ define([
                 }
             },
 
-            removeEdit: function (e) {
+            removeEdit: function () {
                 $('#editSpan').remove();
                 $("dd .no-long").css({width: "auto"});
             },
@@ -138,11 +145,11 @@ define([
                         if ($('#' + this.prevQuickEdit.id).hasClass('with-checkbox')) {
                             $('#' + this.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($('#' + this.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
                             $('.quickEdit').removeClass('quickEdit');
-                        } else if (this.prevQuickEdit.id == 'email') {
+                        } else if (this.prevQuickEdit.id === 'email') {
                             $("#" + this.prevQuickEdit.id).append('<a href="mailto:' + this.text + '">' + this.text + '</a>');
                             $('.quickEdit').removeClass('quickEdit');
                         } else {
-                            $('.quickEdit').text(this.text ? this.text : "").removeClass('quickEdit');
+                            $('.quickEdit').text(this.text || "").removeClass('quickEdit');
                         }
                     }
                 }
@@ -156,7 +163,7 @@ define([
                     this.text = this.formModel.get(objIndex[0]);
                 }
 
-                if (parent[0].id == 'dateBirth') {
+                if (parent[0].id === 'dateBirth') {
                     $("#" + parent[0].id).text('');
                     $("#" + parent[0].id).append('<input id="editInput" maxlength="48" type="text" readonly class="left has-datepicker"/>');
                     $('.has-datepicker').datepicker({
@@ -181,26 +188,26 @@ define([
             saveCheckboxChange: function (e) {
                 var parent = $(e.target).parent();
                 var objIndex = parent[0].id.replace('_', '.');
-                currentModel = this.model;
+                var currentModel = this.model;
                 currentModel[objIndex] = ($("#" + parent[0].id + " input").prop("checked"));
                 this.formModel.save(currentModel, {
                     headers: {
-                        mid: 39
+                        mid: this.mId
                     },
                     patch  : true
                 });
             },
             saveClick         : function (e) {
                 e.preventDefault();
-                var self = this;
                 var parent = $(e.target).parent().parent();
                 var objIndex = parent[0].id.split('_'); //replace change to split;
                 var currentModel = this.model;
                 var newModel = {};
                 var oldvalue = {};
+                var i;
 
                 if (objIndex.length > 1) {
-                    for (var i in this.formModel.toJSON()[objIndex[0]]) {
+                    for (i in this.formModel.toJSON()[objIndex[0]]) {
                         oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
 
                     }
@@ -214,7 +221,7 @@ define([
                 }
                 var valid = this.formModel.save(newModel, {
                     headers: {
-                        mid: 39
+                        mid: this.mId
                     },
                     patch  : true,
                     success: function (model) {
@@ -224,7 +231,7 @@ define([
                     error  : function (model, response) {
                         if (response) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: response.error
                             });
                         }
@@ -237,7 +244,7 @@ define([
             },
 
             personsSalesChecked: function (e) {
-                if ($(e.target).get(0).tagName.toLowerCase() == "span") {
+                if ($(e.target).get(0).tagName.toLowerCase() === "span") {
                     $(e.target).parent().toggleClass("active");
                 } else {
                     $(e.target).toggleClass("active");
@@ -264,12 +271,12 @@ define([
                 el.html(_.template(personFormTemplate, formModel));
                 this.renderMiniOpp();
                 el.find('.formLeftColumn').append(
-                    new noteView({
+                    new NoteView({
                         model: this.formModel
                     }).render().el
                 );
                 el.find('.formLeftColumn').append(
-                    new attachView({
+                    new AttachView({
                         model: this.formModel
                     }).render().el
                 );
@@ -282,11 +289,11 @@ define([
 
             editItem: function () {
                 //create editView in dialog here
-                new editView({model: this.formModel});
+                new EditView({model: this.formModel});
             },
 
             deleteItems: function () {
-                var mid = 39;
+                var mid = this.mId;
                 this.formModel.destroy({
                     headers: {
                         mid: mid
@@ -297,7 +304,7 @@ define([
                     error  : function (model, err) {
                         if (err.status === 403) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }

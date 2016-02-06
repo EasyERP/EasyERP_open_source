@@ -83,7 +83,7 @@ define([
 
             this.changeWeek = _.debounce(this.updateWeek, 1);
 
-            dataService.getData('/employee/bySales', null, function (employess) {
+            dataService.getData('/employees/bySales', null, function (employess) {
 
                 self.render(employess);
                 self.$currentStartWeek.val(currentStartWeek);

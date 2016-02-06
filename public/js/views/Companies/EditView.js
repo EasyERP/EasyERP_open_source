@@ -1,45 +1,46 @@
 define([
-        "text!templates/Companies/EditTemplate.html",
-        "collections/Companies/CompaniesCollection",
-        "collections/Employees/EmployeesCollection",
-        "collections/Persons/PersonsCollection",
-        "collections/Departments/DepartmentsCollection",
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Companies/EditTemplate.html',
         'views/Assignees/AssigneesView',
         'views/CustomersSuppliers/salesPurchases',
         'views/selectView/selectView',
-        "common",
-        "populate"
+        'common',
+        'constants'
     ],
-    function (EditTemplate, CompaniesCollection, EmployeesCollection, PersonsCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, selectView, common, populate) {
+    function (Backbone, $, _, EditTemplate, AssigneesView, SalesPurchasesView, SelectView, common, CONSTANTS) {
+        'use strict';
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Companies",
             imageSrc   : '',
-            template: _.template(EditTemplate),
+            template   : _.template(EditTemplate),
 
-            initialize : function (options) {
+            initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
-                this.currentModel = (options.model) ? options.model : options.collection.getElement();
+                this.currentModel = (options.model) || options.collection.getElement();
                 this.currentModel.urlRoot = "/Companies";
                 this.responseObj = {};
 
                 this.render();
             },
 
-            events       : {
-                "click #tabList a"                                                : "switchTab",
-                "click #contacts"                                                 : "editContacts",
-                "click #saveBtn"                                                  : "saveItem",
-                "click #cancelBtn"                                                : "hideDialog",
-                "mouseenter .avatar"                                              : "showEdit",
-                "mouseleave .avatar"                                              : "hideEdit",
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li"                                         : "chooseOption",
-                "click"                                                           : "hideNewSelect",
-                "click .details"                                                  : "toggleDetails",
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+            events: {
+                "click #tabList a"                                 : "switchTab",
+                "click #contacts"                                  : "editContacts",
+                "click #saveBtn"                                   : "saveItem",
+                "click #cancelBtn"                                 : "hideDialog",
+                "mouseenter .avatar"                               : "showEdit",
+                "mouseleave .avatar"                               : "hideEdit",
+                "click .current-selected"                          : "showNewSelect",
+                "click .newSelectList li"                          : "chooseOption",
+                "click"                                            : "hideNewSelect",
+                "click .details"                                   : "toggleDetails",
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
             hideNewSelect: function () {
@@ -50,8 +51,7 @@ define([
                 }
             },
 
-
-            showNewSelect: function (e, prev, next) {
+            showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
@@ -63,7 +63,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -73,11 +73,11 @@ define([
                 return false;
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            changeTab    : function (e) {
+            changeTab: function (e) {
                 var holder = $(e.target);
                 var n;
                 var dialog_holder;
@@ -90,7 +90,7 @@ define([
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
-            chooseUser   : function (e) {
+            chooseUser: function (e) {
                 $(e.target).toggleClass("choosen");
             },
 
@@ -98,14 +98,14 @@ define([
                 $("#details-dialog").toggle();
             },
 
-            hideDialog   : function () {
+            hideDialog: function () {
                 $(".edit-companies-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
 
-            showEdit     : function () {
+            showEdit: function () {
                 $(".upload").animate({
                     height : "20px",
                     display: "block"
@@ -113,7 +113,7 @@ define([
 
             },
 
-            hideEdit     : function () {
+            hideEdit: function () {
                 $(".upload").animate({
                     height : "0px",
                     display: "block"
@@ -121,7 +121,7 @@ define([
 
             },
 
-            switchTab    : function (e) {
+            switchTab: function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -141,9 +141,9 @@ define([
                 this.$(".tab").hide().eq(index).show();
             },
 
-            saveItem    : function (event) {
+            saveItem: function (event) {
                 var self = this;
-                var mid = 39;
+                var mid = this.mId;
                 var usersId = [];
                 var groupsId = [];
                 var whoCanRW;
@@ -161,23 +161,23 @@ define([
                 var language = thisEl.find("#language").text();
 
                 if (event) {
-                    event.preventDefault()
+                    event.preventDefault();
                 }
                 if (salesPerson === '') {
-                    salesPerson = null
+                    salesPerson = null;
                 }
                 if (salesTeam === '') {
-                    salesTeam = null
+                    salesTeam = null;
                 }
                 if (implementedBy === '') {
-                    implementedBy = null
+                    implementedBy = null;
                 }
 
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
                 });
@@ -252,7 +252,7 @@ define([
                 event.preventDefault();
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     this.currentModel.destroy({
                         headers: {
                             mid: mid
@@ -264,7 +264,7 @@ define([
                         error  : function (models, err) {
                             if (err.status === 403) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -274,7 +274,6 @@ define([
             },
 
             render: function () {
-
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });

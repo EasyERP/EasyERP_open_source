@@ -594,21 +594,21 @@ var JobPosition = function (event, models) {
     };// end remove
 
     return {
-        getTotalCount: getTotalCount,
+        //getTotalCount: getTotalCount,
 
-        getJobPositionById: getJobPositionById,
+        //getJobPositionById: getJobPositionById,
 
-        create: create,
+        //create: create,
 
-        get: get,
+       // get: get,
 
-        getFilter: getFilter,
+        //getFilter: getFilter,
 
-        update: update,
+        //update: update,
 
-        remove: remove,
+        //remove: remove,
 
-        getJobPositionForDd: getJobPositionForDd
+        //getJobPositionForDd: getJobPositionForDd
     };
 };
 
