@@ -4,9 +4,10 @@ define([
         "common",
         "populate",
         'views/Notes/AttachView',
-        'views/Assignees/AssigneesView'
+        'views/Assignees/AssigneesView',
+    'constants'
     ],
-    function (CreateTemplate, ApplicationModel, common, populate, attachView, AssigneesView) {
+    function (CreateTemplate, ApplicationModel, common, populate, attachView, AssigneesView, CONSTANTS) {
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Applications",
@@ -354,7 +355,7 @@ define([
                 populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
                 populate.get("#nationality", "/nationality", {}, "_id", this);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
-                populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
+                populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
 
                 common.canvasDraw({model: this.model.toJSON()}, this);
                 $('#nextAction').datepicker({

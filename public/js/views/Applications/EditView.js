@@ -8,8 +8,9 @@
     'views/Assignees/AssigneesView',
     "common",
     "populate",
-    "custom"
-], function (Backbone, $, _, EditTemplate, selectView, attachView, AssigneesView, common, populate, custom) {
+    "custom",
+    'constants'
+], function (Backbone, $, _, EditTemplate, selectView, attachView, AssigneesView, common, populate, custom, CONSTANTS) {
     'use strict';
     var EditView = Backbone.View.extend({
         el         : "#content-holder",
@@ -204,6 +205,7 @@
                             }
 
                         }
+                            break;
                     }
                     self.hideDialog();
                 },
@@ -721,7 +723,7 @@
             populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
             populate.get("#nationality", "/nationality", {}, "_id", this);
             populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
-            populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
+            populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 

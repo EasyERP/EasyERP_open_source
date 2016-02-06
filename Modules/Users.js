@@ -228,7 +228,7 @@ var Users = function (mainDb, models) {
         });
     }
 
-    function getUsersForDd(req, response) {
+   /* function getUsersForDd(req, response) {
         var res = {};
         var data = {};
         for (var i in req.query) {
@@ -250,7 +250,7 @@ var Users = function (mainDb, models) {
                 response.send(res);
             }
         });
-    }
+    }*/
 
     function getUserById(req, id, response) {
         var query = models.get(req.session.lastDb, 'Users', userSchema).findById(id);
@@ -503,7 +503,7 @@ var Users = function (mainDb, models) {
 
         getFilter: getFilter,
 
-        getUsersForDd: getUsersForDd,
+        /*getUsersForDd: getUsersForDd,*/
 
         updateUser: updateUser,
 

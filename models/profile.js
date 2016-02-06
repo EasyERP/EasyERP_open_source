@@ -23,5 +23,5 @@
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Profile'] = ProfileSchema;
+    mongoose.Schemas.Profile = ProfileSchema;
 })();

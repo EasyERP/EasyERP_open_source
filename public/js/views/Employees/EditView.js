@@ -14,9 +14,10 @@ define([
         "common",
         "populate",
         "moment",
-        'helpers/keyCodeHelper'
+        'helpers/keyCodeHelper',
+    'constants'
     ],
-    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment, keyCodes) {
+    function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment, keyCodes, CONSTANTS) {
         'use strict';
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -674,7 +675,7 @@ define([
                 populate.get("#nationality", "/nationality", {}, "_id", this);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, false, false);
-                populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, false, true);
+                populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
                 populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this);
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
 

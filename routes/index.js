@@ -645,9 +645,9 @@ module.exports = function (app, mainDb) {
         requestHandler.updateCurrentUser(req, res, data);
     });*/
 
-    app.get('/UsersForDd', function (req, res) {
+   /* app.get('/UsersForDd', function (req, res) {
         requestHandler.getUsersForDd(req, res);
-    });
+    });*/
 
     app.get('/Users/:viewType', function (req, res) {
         var data = {};

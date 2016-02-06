@@ -474,6 +474,11 @@ define([], function () {
         IT_SERVICES: 'IT services',
 
         DASH_VAC_WEEK_BEFORE: 2,
-        DASH_VAC_WEEK_AFTER: 8
+        DASH_VAC_WEEK_AFTER: 8,
+
+        URLS: {
+            USERS: '/users/',
+            USERS_FOR_DD: '/users/forDd'
+        }
     };
 });

@@ -1,7 +1,8 @@
 define([
     'Backbone',
-    'Validation'
-], function (Backbone, Validation) {
+    'Validation',
+    'constants'
+], function (Backbone, Validation, CONSTANTS) {
     var UserModel = Backbone.Model.extend({
         idAttribute: "_id",
         defaults   : {
@@ -52,7 +53,7 @@ define([
             }
         },
         urlRoot    : function () {
-            return "/users";
+            return CONSTANTS.URLS.USERS;
         }
     });
     return UserModel;
