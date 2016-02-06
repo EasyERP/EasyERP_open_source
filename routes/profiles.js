@@ -12,7 +12,7 @@ module.exports = function (models) {
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.createProfile);
     router.get('/', authStackMiddleware, accessStackMiddlware, handler.getProfile);
-    router.get('/forDd', handler.getProfileForDd);
+    router.get('/forDd', authStackMiddleware, accessStackMiddlware, handler.getProfileForDd);
     router.put('/:_id', authStackMiddleware, accessStackMiddlware, handler.updateProfile);
     router.delete('/:_id', authStackMiddleware, accessStackMiddlware, handler.removeProfile);
 
