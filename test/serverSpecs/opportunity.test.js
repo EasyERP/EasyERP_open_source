@@ -10,7 +10,7 @@ describe("Opportunity Specs", function () {
     'use strict';
     var id;
 
-    describe('Opportunity with admin', function(){
+    describe('Opportunity with admin', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -25,13 +25,13 @@ describe("Opportunity Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
         });
 
-        it('should create Opportunity', function(done){
+        it('should create Opportunity', function (done) {
             var body = {
                 name: "Subject"
             };
@@ -58,10 +58,8 @@ describe("Opportunity Specs", function () {
                 });
         });
 
-        it('should fail create Opportunity', function(done){
-            var body = {
-
-            };
+        it('should fail create Opportunity', function (done) {
+            var body = {};
 
             aggent
                 .post('opportunities')
@@ -90,8 +88,65 @@ describe("Opportunity Specs", function () {
                 });
         });
 
-        it('', function(){
+        it('should get opportunity FilterValues', function (done) {
+            aggent
+                .get('opportunities/getFilterValues')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
 
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Array)
+                        .and.to.be.not.empty;
+
+                    done();
+                });
+        });
+
+        it('should get opportunity ForMiniView', function (done) {
+            aggent
+                .get('opportunities/OpportunitiesForMiniView')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('listLength');
+                    done();
+                });
+        });
+
+        it('should get opportunity LengthByWorkflows', function(done){
+            aggent
+                .get('opportunities/getLengthByWorkflows')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('arrayOfObjects');
+                    expect(body.arrayOfObjects)
+                        .to.be.instanceOf(Array);
+                    expect(body)
+                        .to.have.property('showMore');
+                    done();
+                });
         });
 
         it("should remove opportunity", function (done) {
@@ -101,7 +156,7 @@ describe("Opportunity Specs", function () {
         });
     });
 
-    describe('Opportunity with user without a license', function(){
+    describe('Opportunity with user without a license', function () {
         before(function (done) {
             aggent = request.agent(url);
 
@@ -115,13 +170,13 @@ describe("Opportunity Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
         });
 
-        it('should fail create Opportunity', function(done){
+        it('should fail create Opportunity', function (done) {
             var body = {
                 name: "Subject"
             };
