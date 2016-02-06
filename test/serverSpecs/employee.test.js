@@ -115,7 +115,7 @@ describe("Employee Specs", function () {
 
         it("should get by viewType form employee", function (done) {
             var query = {
-                viewType   : "form"
+                viewType: "form"
             };
             aggent
                 .get('employees/' + id)
@@ -137,12 +137,16 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get by viewType kanban employee", function (done) {
+        it("should get by viewType thumbnails employee", function (done) {
             var query = {
-                viewType   : "kanban"
+                viewType     : "thumbnails",
+                contentType  : 'Employees',
+                count        : 100,
+                page         : 1,
+                newCollection: false
             };
             aggent
-                .get('employees/')
+                .get('employees/thumbnails')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -156,10 +160,6 @@ describe("Employee Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
-                    expect(body)
-                        .to.have.property('time');
-                    expect(body)
-                        .to.have.property('workflowId');
 
                     done();
                 });

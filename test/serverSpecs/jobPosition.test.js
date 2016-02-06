@@ -130,7 +130,7 @@ describe("jobPosition Specs", function () {
                 id: id
             };
             aggent
-                .get('jobPositions/form')
+                .get('jobPositions/' + id)
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
