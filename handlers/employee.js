@@ -293,8 +293,8 @@ var Employee = function (event, models) {
 
     function getById(req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        var data = req.query;
-        var query = Employee.findById(data.id);
+        var id = req.params.id;
+        var query = Employee.findById(id);
 
         query.populate('coach', 'name _id')
             .populate('relatedUser', 'login _id')
