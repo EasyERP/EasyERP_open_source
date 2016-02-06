@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var RESPONSES = require('../constants/responses');
+var MAIN = require('../constants/mainConstants');
 var ProfileSchema = mongoose.Schemas['Profile'];
 var UserSchema = mongoose.Schemas['User'];
 
@@ -209,7 +210,7 @@ var Profiles = function (models) {
                     
                     return next(err);
                 }
-                res.send(200, {success: 'Profile updated success'});
+                res.send(200, {success: 'Profile updated'});
         });
 
 
@@ -252,7 +253,7 @@ var Profiles = function (models) {
 
         var _id = req.param('_id');
 
-        UsereModel.update({profile: _id}, {profile: "1387275504000"}, {multi: true})
+        UsereModel.update({profile: _id}, {profile: MAIN.BANED_PROFILE}, {multi: true})
             .exec(function (err, result) {
                 if (err) {
                     err.status = 404;

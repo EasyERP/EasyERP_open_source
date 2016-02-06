@@ -129,7 +129,7 @@ define([
                         }
                     }
                 });
-                populate.get("#profilesDd", "ProfilesForDd", {}, "profileName", this, true);
+                populate.get("#profilesDd", "profiles/forDd", {}, "profileName", this, true);
                 common.canvasDraw({model: this.model.toJSON()}, this);
                 return this;
             }
