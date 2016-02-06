@@ -540,7 +540,7 @@ var Employee = function (event, models) {
             viewType = id;
         }
 
-        if (id.length > 24){
+        if (id.length >= 24){
             getById(req, res, next);
             return false;
         }

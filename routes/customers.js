@@ -16,15 +16,16 @@ module.exports = function (models, event) {
     router.get('/getCompaniesAlphabet', authStackMiddleware, handler.getCompaniesAlphabet);
     router.get('/exportToXlsx', authStackMiddleware, handler.exportToXlsx);
     router.get('/exportToCsv', authStackMiddleware, handler.exportToCsv);
-    router.get('/form', authStackMiddleware, accessStackMiddlware, handler.getById);
-    router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
-    router.get('/thumbnails', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
     router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.getTotalCount);
-    router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getById);
+    router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.udateOnlySelectedFields);
     router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
+
+    //router.get('/form', authStackMiddleware, accessStackMiddlware, handler.getById);
+    //router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
+    //router.get('/thumbnails', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
 
     return router;
 };
