@@ -2,23 +2,30 @@ define([
         'Backbone',
         'jQuery',
         'common',
-        'custom'
+        'custom',
+        'views/Notes/AttachView'
     ],
-    function (Backbone, $, Common, Custom) {
+    function (Backbone, $, Common, Custom, AttachView) {
         'use strict';
         var TopBarView = Backbone.View.extend({
             el        : '#top-bar',
             actionType: null, //Content, Edit, Create
 
             events: {
-                "click a.changeContentView"    : 'onChangeContentViewType',
-                "click ul.changeContentIndex a": 'onChangeItemIndex',
-                "click #top-bar-nextBtn"       : "onNextEvent",
-                "click #top-bar-deleteBtn"     : "onDeleteEvent",
-                "click #top-bar-createBtn"     : "onCreateEvent",
-                "click #top-bar-discardBtn"    : "onDiscardEvent",
-                "click #top-bar-editBtn"       : "onEditEvent",
-                "click #top-bar-saveBtn"       : "onSaveEvent"
+                "click a.changeContentView"     : 'onChangeContentViewType',
+                "click ul.changeContentIndex a" : 'onChangeItemIndex',
+                "click #top-bar-nextBtn"        : "onNextEvent",
+                "click #top-bar-deleteBtn"      : "onDeleteEvent",
+                "click #top-bar-createBtn"      : "onCreateEvent",
+                "click #top-bar-discardBtn"     : "onDiscardEvent",
+                "click #top-bar-editBtn"        : "onEditEvent",
+                "click #top-bar-saveBtn"        : "onSaveEvent",
+                "click #kanban-settings-Btn"    : "onEditKanban",
+                "click #top-bar-importBtn"      : "importEvent",
+                "click #top-bar-exportBtn"      : "export",
+                "click #top-bar-exportToCsvBtn" : "exportToCsv",
+                "click #top-bar-exportToXlsxBtn": "exportToXlsx",
+                "change .inputAttach"           : "importFiles"
             },
 
             initialize: function (options) {
@@ -27,7 +34,31 @@ define([
                 this.render();
             },
 
+            exportToCsv: function (event) {
+                event.preventDefault();
+                this.trigger('exportToCsv');
+            },
+
+            exportToXlsx: function (event) {
+                event.preventDefault();
+                this.trigger('exportToXlsx');
+            },
+
+            importEvent: function (event) {
+                event.preventDefault();
+                this.$el.find('#forImport').html(this.importTemplate);
+                this.$el.find('#inputAttach').click();
+                this.trigger('importEvent');
+            },
+
+            importFiles: function (e) {
+                var importFile = new AttachView({});
+                this.import = true;
+                importFile.sendToServer(e, null, this);
+            },
+
             onChangeContentViewType: function (e) {
+                e.preventDefault();
                 Custom.changeContentViewType(e, this.contentType, this.collection);
             },
 
@@ -71,11 +102,21 @@ define([
                 }
             },
 
+            onEditKanban: function (event) {
+                event.preventDefault();
+                this.trigger('editKanban');
+            },
+
             render: function () {
                 var viewType = Custom.getCurrentVT();
 
                 $('title').text(this.contentType);
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
+                this.$el.html(this.template({
+                    viewType: viewType,
+                    contentType: this.contentType,
+                    headerType: this.headerType,
+                    contentHeader: this.contentHeader
+                }));
 
                 Common.displayControlBtnsByActionType(this.actionType, viewType);
 
