@@ -71,12 +71,8 @@ describe("Application Specs", function () {
         });
 
         it("should getById application", function (done) {
-            var query = {
-                id:  id
-            };
             aggent
-                .get('applications/form')
-                .query(query)
+                .get('applications/' + id)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -94,15 +90,12 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get by viewType application", function (done) {
+        it("should get by viewType list application", function (done) {
             var query = {
-                viewType   : "list",
-                contentType: "Applications",
-                page       : 1,
-                count      : 100
+                viewType   : "list"
             };
             aggent
-                .get('applications/list')
+                .get('applications/' + id)
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -121,12 +114,13 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get by viewType application", function (done) {
+        it("should get by viewType kanban application", function (done) {
             var query = {
+                viewType   : "kanban",
                 workflowId: '528ce5e3f3f67bc40b000018'
             };
             aggent
-                .get('applications/kanban')
+                .get('applications/' + id)
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
