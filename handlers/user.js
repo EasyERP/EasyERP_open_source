@@ -462,19 +462,23 @@ var User = function (event, models) {
 
         query = UserModel.findById(id, {__v: 0, pass: 0});
         query
-            .populate('profile', '_id profileName')
+            .populate('profile')
             .populate('relatedEmployee', 'imageSrc name fullName')
             .populate('savedFilters._id');
 
         query.exec(function (err, result) {
-            var newUserResult;
+            var newUserResult = {};
             var savedFilters;
 
             if (err) {
                 return next(err);
             }
 
-            savedFilters = result.toJSON().savedFilters;
+            savedFilters = result ? result.toJSON().savedFilters : null;
+
+            if (savedFilters) {
+                newUserResult = _.groupBy(savedFilters, '_id.contentView');
+            }
             newUserResult = _.groupBy(savedFilters, '_id.contentView');
             res.status(200).send({user: result, savedFilters: newUserResult});
         });

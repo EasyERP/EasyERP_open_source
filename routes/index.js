@@ -640,12 +640,12 @@ module.exports = function (app, mainDb) {
         }
     });*/
 
-    app.patch('/Users/:_id', function (req, res) {
+    /*app.patch('/Users/:_id', function (req, res) {
         var data = {};
         var id = req.param('_id');
         data.user = req.body;
         requestHandler.updateUser(req, res, id, data);
-    });
+    });*/
 
     /*app.delete('/Users/:_id', function (req, res) {
         var id = req.param('_id');
