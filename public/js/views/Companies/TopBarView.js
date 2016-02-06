@@ -1,62 +1,19 @@
 define([
-        'Backbone',
-        'jQuery',
         'Underscore',
+        'views/topBarViewBase',
         'text!templates/Companies/TopBarTemplate.html',
         'text!templates/Notes/importTemplate.html',
-        'views/Notes/AttachView',
-        'custom',
-        "common"
+        'custom'
     ],
-    function (Backbone, $, _, ContentTopBarTemplate, importTemplate, AttachView, Custom, Common) {
+    function (_, BaseView, ContentTopBarTemplate, importTemplate, Custom) {
         'use strict';
-        var TopBarView = Backbone.View.extend({
-            el         : '#top-bar',
-            contentType: "Companies",
-            actionType : null,
-            template   : _.template(ContentTopBarTemplate),
 
-            events     : {
-                "click a.changeContentView"     : 'changeContentViewType',
-                "click ul.changeContentIndex a" : 'changeItemIndex',
-                "click #top-bar-deleteBtn"      : "deleteEvent",
-                "click #top-bar-discardBtn"     : "discardEvent",
-                "click #top-bar-editBtn"        : "editEvent",
-                "click #top-bar-createBtn"      : "createEvent",
-                "click #top-bar-exportToCsvBtn" : "exportToCsv",
-                "click #top-bar-exportToXlsxBtn": "exportToXlsx",
-                "click #top-bar-importBtn"      : "importEvent",
-                "change .inputAttach"           : "importFiles"
-            },
-
-            changeContentViewType: function (e) {
-                Custom.changeContentViewType(e, this.contentType, this.collection);
-            },
-
-            editEvent            : function (event) {
-                event.preventDefault();
-                this.trigger('editEvent');
-            },
-
-            changeItemIndex: function (e) {
-                var actionType = "Content";
-                Custom.changeItemIndex(e, actionType, this.contentType, this.collection);
-            },
-
-            createEvent: function (event) {
-                event.preventDefault();
-                this.trigger('createEvent');
-            },
-
-            exportToCsv: function (event) {
-                event.preventDefault();
-                this.trigger('exportToCsv');
-            },
-
-            exportToXlsx: function (event) {
-                event.preventDefault();
-                this.trigger('exportToXlsx');
-            },
+        var TopBarView = BaseView.extend({
+            el            : '#top-bar',
+            contentType   : "Companies",
+            actionType    : null,
+            template      : _.template(ContentTopBarTemplate),
+            importTemplate: _.template(importTemplate),
 
             initialize: function (options) {
                 this.actionType = options.actionType;
@@ -68,45 +25,7 @@ define([
                     this.collection.bind('reset', _.bind(this.render, this));
                 }
                 this.render();
-            },
-
-            render: function () {
-                $('title').text(this.contentType);
-                var viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
-                Common.displayControlBtnsByActionType(this.actionType, viewType);
-                return this;
-            },
-
-            importEvent: function (event) {
-                var template = _.template(importTemplate);
-                this.$el.find('#forImport').html(template);
-                event.preventDefault();
-                this.$el.find('#inputAttach').click();
-                this.trigger('importEvent');
-            },
-
-            importFiles: function (e) {
-                var importFile = new AttachView({});
-
-                this.import = true;
-
-                importFile.sendToServer(e, null, this);
-            },
-
-            deleteEvent: function (event) {
-                event.preventDefault();
-                var answer = confirm("Really DELETE items ?!");
-                if (answer) {
-                    this.trigger('deleteEvent');
-                }
-            },
-
-            discardEvent: function (event) {
-                event.preventDefault();
-                Backbone.history.navigate("home/content-" + this.contentType, {trigger: true});
             }
-
         });
         return TopBarView;
     });
