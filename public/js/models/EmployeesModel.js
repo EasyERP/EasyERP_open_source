@@ -1,4 +1,11 @@
-﻿define(['Validation', 'common'], function (Validation, common) {
+﻿define([
+    'Backbone',
+    'Validation',
+    'common',
+    'constants'
+], function (Backbone, Validation, common, CONSTANTS) {
+    'use strict';
+
     var EmployeeModel = Backbone.Model.extend({
         idAttribute: "_id",
         initialize : function () {
@@ -9,7 +16,7 @@
                     msg = errors.join('\n');
 
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: msg
                     });
                 }
@@ -132,7 +139,7 @@
             fire          : []
         },
         urlRoot    : function () {
-            return "/Employees";
+            return CONSTANTS.URLS.EMPLOYEES;
         }
     });
     return EmployeeModel;

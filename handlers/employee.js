@@ -218,7 +218,7 @@ var Employee = function (event, models) {
             body.age = getAge(body.dateBirth);
         }
 
-        if(!validatorEmployee.validEmployeeBody(body)){
+        if (!validatorEmployee.validEmployeeBody(body)) {
             err = new Error();
             err.status = 404;
 
@@ -291,7 +291,7 @@ var Employee = function (event, models) {
         return resArray;
     }
 
-    this.getById = function (req, res, next) {
+    function getById(req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
         var query = Employee.findById(data.id);
@@ -321,7 +321,7 @@ var Employee = function (event, models) {
 
             res.status(200).send(employee);
         });
-    };
+    }
 
     this.totalCollectionLength = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -531,7 +531,37 @@ var Employee = function (event, models) {
         });
     };
 
-    this.getFilter = function (req, res, next) {
+    this.getByViewTpe = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = req.params.id;
+
+        if (viewType === id){
+            viewType = id;
+        }
+
+        if (id.length > 24){
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case "form":
+                getById(req, res, next);
+                break;
+            case "kanban":
+                getApplicationsForKanban(req, res, next);
+                break;
+            case "thumbnails":
+                getFilter(req, res, next);
+                break;
+            case "list":
+                getFilter(req, res, next);
+                break;
+        }
+    };
+
+    function getFilter(req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
         var contentType = data.contentType;
@@ -791,7 +821,7 @@ var Employee = function (event, models) {
             res.status(200).send({data: result});
         });
 
-    };
+    }
 
     this.updateOnlySelectedFields = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -1064,7 +1094,7 @@ var Employee = function (event, models) {
         });
     };
 
-    this.getApplicationsForKanban = function (req, res, next) {
+    function getApplicationsForKanban(req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var response = {};
         var startTime = new Date();
@@ -1181,7 +1211,7 @@ var Employee = function (event, models) {
                             });
                     });
             });
-    };
+    }
 
     this.getForDdByRelatedUser = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);

@@ -1,15 +1,16 @@
 /**
  * Created by soundstorm on 29.04.15.
  */
-define(['Validation', 'common'], function (Validation, common) {
+define([
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
     var Model = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize : function () {
-
-        },
 
         urlRoot: function () {
-            return "/category/";
+            return CONSTANTS.URLS.CATEGORY;
         }
     });
     return Model;

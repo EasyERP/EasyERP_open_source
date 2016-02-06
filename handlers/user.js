@@ -2,10 +2,12 @@ var mongoose = require('mongoose');
 
 var User = function (event, models) {
     "use strict";
+    var _ = require('underscore');
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
     var constants = require('../constants/responses');
+    var mainConstants = require('../constants/mainConstants');
 
     var validator = require('../helpers/validator');
     var logger = require('../helpers/logger');
@@ -167,32 +169,32 @@ var User = function (event, models) {
         updateThisUser(_id, query);
     }
 
-    function findUsers(Model, filterObject, sortObject, data, options, cb) {
+    function findUsers(Model, filterObject, sortObject, data, cb) {
         var queryObject = {};
         var query = Model.find(queryObject, filterObject);
+        var count;
+        var page;
 
-        if (typeof options === 'function') {
-            cb = options;
-            options = null;
-        }
 
-        if (options) {
-            query.populate('profile');
 
-            if (options.hasOwnProperty('byId')) {
-                queryObject._id = data.id;
-                query
-                    .populate('relatedEmployee', 'imageSrc name fullName')
-                    .populate('savedFilters._id');
-            }
-        }
+        query.populate('profile');
 
         if (sortObject) {
             query.sort(sortObject);
         }
 
         if (data.page && data.count) {
-            query.skip((data.page - 1) * data.count).limit(data.count);
+            count = parseInt(data.count, 10);
+            page = parseInt(data.page, 10);
+
+            if (isNaN(count)) {
+                count = mainConstants.COUNT_PER_PAGE;
+            }
+            if (isNaN(page)) {
+                page = 1;
+            }
+
+            query.skip((page - 1) * count).limit(count);
         }
 
         query.exec(cb);
@@ -442,29 +444,28 @@ var User = function (event, models) {
         });
     };
 
-    this.getUsers = function (req, res, next) {
-        var viewType = req.params.viewType;
-        var options;
-        var response = {};
-        var data = req.query;
+    this.getById = function (req, res, next) {
+        var id = req.params.id;
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+        var query;
 
-        switch (viewType) {
-            case "form":
-                options = {byId: true};
-                break;
-            default:
-                options = {byFilter: true};
-                break;
-        }
+        query = UserModel.findById(id, {__v: 0, pass: 0});
+        query
+            .populate('profile', '_id profileName')
+            .populate('relatedEmployee', 'imageSrc name fullName')
+            .populate('savedFilters._id');
 
-        findUsers(UserModel, {__v: 0, pass: 0}, {login: 1}, data, options, function (err, result) {
+        query.exec(function (err, result) {
+            var newUserResult;
+            var savedFilters;
+
             if (err) {
                 return next(err);
             }
 
-            response.data = result;
-            res.status(200).send(response);
+            savedFilters = result.toJSON().savedFilters;
+            newUserResult = _.groupBy(savedFilters, '_id.contentView');
+            res.status(200).send({user: result, savedFilters: newUserResult});
         });
     };
 };

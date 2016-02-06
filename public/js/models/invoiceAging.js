@@ -1,4 +1,6 @@
-define(['Validation', 'common'], function (Validation, common, helpers) {
+define([
+    'Backbone'
+], function (Backbone) {
     "use strict";
 
     var Model = Backbone.Model.extend({

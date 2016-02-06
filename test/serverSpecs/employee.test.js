@@ -457,8 +457,8 @@ describe("Employee Specs", function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'testUser',
-                    pass : 'qwerty',
+                    login: 'ArturMyhalko',
+                    pass : 'thinkmobiles2015',
                     dbId : 'production'
                 })
                 .expect(200, done);

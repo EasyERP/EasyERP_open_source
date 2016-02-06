@@ -1,8 +1,12 @@
 ﻿define([
+        'Backbone',
         'common',
-        'Validation'
+        'Validation',
+        'constants'
     ],
-    function (common, Validation) {
+    function (Backbone, common, Validation, CONSTANTS) {
+        'use strict';
+
         var OpportunityModel = Backbone.Model.extend({
             idAttribute: "_id",
             initialize : function () {
@@ -13,7 +17,7 @@
                         msg = errors.join('\n');
 
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: msg
                         });
                     }
@@ -125,7 +129,7 @@
                 workflow       : ''
             },
             urlRoot    : function () {
-                return "/Opportunities";
+                return CONSTANTS.URLS.OPPORTUNITIES;
             }
         });
         return OpportunityModel;

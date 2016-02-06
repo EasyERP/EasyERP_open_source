@@ -1,8 +1,12 @@
 define([
+        'Backbone',
         'common',
-        'Validation'
+        'Validation',
+        'constants'
     ],
-    function (common, Validation) {
+    function (Backbone, common, Validation, CONSTANTS) {
+        'use strict';
+
         var TaskModel = Backbone.Model.extend({
             idAttribute: "_id",
             initialize : function () {
@@ -13,7 +17,7 @@ define([
                         msg = errors.join('\n');
 
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: msg
                         });
                     }
@@ -63,7 +67,7 @@ define([
             },
 
             urlRoot: function () {
-                return "/Tasks";
+                return CONSTANTS.URLS.TASKS;
             }
         });
         return TaskModel;

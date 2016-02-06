@@ -12,9 +12,6 @@ module.exports = function (event, models) {
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
 
-    router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilter);
-    router.get('/thumbnails', authStackMiddleware, accessStackMiddlware, handler.getFilter);
-    router.get('/form', authStackMiddleware, accessStackMiddlware, handler.getById);
     router.get('/getForProjectDetails', authStackMiddleware, handler.getForProjectDetails);
     router.get('/getForDD', authStackMiddleware, handler.getForDD);
     router.get('/bySales', authStackMiddleware, handler.getBySales);
@@ -30,6 +27,9 @@ module.exports = function (event, models) {
     router.get('/nationality', authStackMiddleware, handler.getNationality);
     router.get('/languages', authStackMiddleware, handler.getLanguages);
     router.get('/sources', authStackMiddleware, handler.getSources);
+
+    router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewTpe);
+
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.post('/uploadEmployeesFiles', authStackMiddleware, accessStackMiddlware, multipartMiddleware, handler.uploadEmployeesFiles);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);

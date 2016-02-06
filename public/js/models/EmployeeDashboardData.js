@@ -1,9 +1,10 @@
-define([], function () {
+define([
+    'Backbone'
+], function (Backbone) {
+    'use strict';
     var EmployeeForDashboard = Backbone.Model.extend({
         idAttribute: "employee"
-        /*urlRoot: function () {
-         return "/Vacation";
-         }*/
+
     });
 
     return EmployeeForDashboard;

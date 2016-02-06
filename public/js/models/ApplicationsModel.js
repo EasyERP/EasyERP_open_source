@@ -1,7 +1,12 @@
 ﻿define([
-        'common', 'Validation', 'moment'
+        'Backbone',
+        'common',
+        'Validation',
+        'moment',
+        'constants'
     ],
-    function (common, Validation, moment) {
+    function (Backbone, common, Validation, moment, CONSTANTS) {
+        'use strict';
         var ApplicationModel = Backbone.Model.extend({
             idAttribute: "_id",
             initialize : function () {
@@ -12,7 +17,7 @@
                         msg = errors.join('\n');
 
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: msg
                         });
                     }
@@ -112,7 +117,7 @@
                 }
             },
             urlRoot    : function () {
-                return "/applications";
+                return CONSTANTS.URLS.APPLICATIONS;
             }
         });
         return ApplicationModel;

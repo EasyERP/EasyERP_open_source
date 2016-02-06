@@ -1,7 +1,10 @@
 /**
  * Created by Roman on 17.06.2015.
  */
-define([], function () {
+define([
+    'Backbone'
+], function (Backbone) {
+    'use strict';
     var MainModel = Backbone.Model.extend({
         defaults: {
             bySales         : [],

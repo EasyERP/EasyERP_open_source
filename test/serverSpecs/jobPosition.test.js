@@ -36,7 +36,7 @@ describe("jobPosition Specs", function () {
 
         it("should create jobPosition", function (done) {
             var body = {
-                name: 'fffffffxxfff'
+                name: 'testJobPosition'
             };
 
             aggent
@@ -233,8 +233,8 @@ describe("jobPosition Specs", function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'testUser',
-                    pass : 'qwerty',
+                    login: 'ArturMyhalko',
+                    pass : 'thinkmobiles2015',
                     dbId : 'production'
                 })
                 .expect(200, done);

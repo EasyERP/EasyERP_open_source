@@ -2,16 +2,19 @@
  * Created by soundstorm on 29.06.15.
  */
 define([
-    'common'
-], function (common) {
+    'Backbone',
+    'common',
+    'constants'
+], function (Backbone, common, CONSTANTS) {
+    'use strict';
+
     var HolidayModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize : function () {
+
+        urlRoot: function () {
+            return CONSTANTS.URLS.HOLIDAY;
         },
-        urlRoot    : function () {
-            return "/Holiday";
-        },
-        parse      : function (holiday) {
+        parse  : function (holiday) {
             holiday.date = common.utcDateToLocaleDate(holiday.date);
 
             return holiday;

@@ -1,15 +1,18 @@
-define(function () {
+define([
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
     var EventModel = Backbone.Model.extend({
         idAttribute: "id",
-        initialize : function () {
-        },
-        defaults   : {
+
+        defaults: {
             color      : "",
             assignedTo : "Nobody",
             description: '',
             eventType  : "call"
         },
-        urlRoot    : "/Events"
+        urlRoot : CONSTANTS.URLS.EVENTS
     });
     return EventModel;
 });

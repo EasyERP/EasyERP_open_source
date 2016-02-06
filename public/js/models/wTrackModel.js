@@ -1,7 +1,12 @@
 /**
  * Created by Roman on 04.05.2015.
  */
-define(['Validation', 'common', 'moment'], function (Validation, common, moment) {
+define([
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
+
     var wTrackModel = Backbone.Model.extend({
         idAttribute: "_id",
 
@@ -29,7 +34,7 @@ define(['Validation', 'common', 'moment'], function (Validation, common, moment)
             rate       : 0
         },
         urlRoot : function () {
-            return "/wTrack/";
+            return CONSTANTS.URLS.WTRACK;
         },
         parse   : function (model) {
             var profit;

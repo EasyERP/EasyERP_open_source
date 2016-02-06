@@ -1,13 +1,18 @@
 /**
  * Created by soundstorm on 30.06.15.
  */
-define(['collections/Dashboard/hiredFired'], function (childCollection) {
+define([
+    'Backbone',
+    'collections/Dashboard/hiredFired'
+], function (Backbone, ChildCollection) {
+    'use strict';
+
     var Model = Backbone.Model.extend({
         idAttribute: "_id",
 
         parse: function (model) {
             if (model.data) {
-                model.data = new childCollection(model.data);
+                model.data = new ChildCollection(model.data);
             }
 
             return model;

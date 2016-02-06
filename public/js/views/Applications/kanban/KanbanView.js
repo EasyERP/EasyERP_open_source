@@ -177,7 +177,7 @@
 
             asyncFetc: function (workflows) {
                 _.each(workflows.toJSON(), function (wfModel) {
-                    dataService.getData('/applications/kanban', {workflowId: wfModel._id}, this.asyncRender, this);
+                    dataService.getData('/applications/kanban', {workflowId: wfModel._id, viewType: 'kanban'}, this.asyncRender, this);
                 }, this);
             },
 
