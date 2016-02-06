@@ -13,14 +13,14 @@ define([
 
             events: {
                 "click a.changeContentView"     : 'onChangeContentViewType',
-                "click ul.changeContentIndex a": 'onChangeItemIndex',
-                "click #top-bar-nextBtn"       : "onNextEvent",
-                "click #top-bar-deleteBtn"     : "onDeleteEvent",
-                "click #top-bar-createBtn"     : "onCreateEvent",
-                "click #top-bar-discardBtn"    : "onDiscardEvent",
-                "click #top-bar-editBtn"       : "onEditEvent",
-                "click #top-bar-saveBtn"       : "onSaveEvent",
-                "click #kanban-settings-Btn"   : "onEditKanban",
+                "click ul.changeContentIndex a" : 'onChangeItemIndex',
+                "click #top-bar-nextBtn"        : "onNextEvent",
+                "click #top-bar-deleteBtn"      : "onDeleteEvent",
+                "click #top-bar-createBtn"      : "onCreateEvent",
+                "click #top-bar-discardBtn"     : "onDiscardEvent",
+                "click #top-bar-editBtn"        : "onEditEvent",
+                "click #top-bar-saveBtn"        : "onSaveEvent",
+                "click #kanban-settings-Btn"    : "onEditKanban",
                 "click #top-bar-importBtn"      : "importEvent",
                 "click #top-bar-exportBtn"      : "export",
                 "click #top-bar-exportToCsvBtn" : "exportToCsv",
@@ -111,7 +111,7 @@ define([
                 var viewType = Custom.getCurrentVT();
 
                 $('title').text(this.contentType);
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
+                this.$el.html(this.template({viewType: viewType, contentType: this.contentType, headerType: this.headerType}));
 
                 Common.displayControlBtnsByActionType(this.actionType, viewType);
 
