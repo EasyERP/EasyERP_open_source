@@ -64,7 +64,7 @@ define([
                 });
             },
 
-            events              : {
+            events: {
                 "click #tabList a"                                           : "switchTab",
                 "click .details"                                             : "toggle",
                 "mouseover .social a"                                        : "socialActive",
@@ -84,15 +84,14 @@ define([
                 "click .miniPaginationPersons .prevPersons:not(.not-active)" : "prevMiniPagePersons",
                 "click .miniPaginationPersons .firstPersons:not(.not-active)": "firstMiniPagePersons",
                 "click .miniPaginationPersons .lastPersons:not(.not-active)" : "lastMiniPagePersons"
-
             },
 
-            nextMiniPagePersons : function () {
+            nextMiniPagePersons: function () {
                 this.pageMiniPersons += 1;
                 this.renderMiniPersons();
             },
 
-            prevMiniPagePersons : function () {
+            prevMiniPagePersons: function () {
                 this.pageMiniPersons -= 1;
                 this.renderMiniPersons();
             },
@@ -102,27 +101,27 @@ define([
                 this.renderMiniPersons();
             },
 
-            lastMiniPagePersons : function () {
+            lastMiniPagePersons: function () {
                 this.pageMiniPersons = this.allPagesPersons;
                 this.renderMiniPersons();
             },
 
-            nextMiniPage              : function () {
+            nextMiniPage: function () {
                 this.pageMini += 1;
                 this.renderMiniOpp();
             },
 
-            prevMiniPage              : function () {
+            prevMiniPage: function () {
                 this.pageMini -= 1;
                 this.renderMiniOpp();
             },
 
-            firstMiniPage             : function () {
+            firstMiniPage: function () {
                 this.pageMini = 1;
                 this.renderMiniOpp();
             },
 
-            lastMiniPage              : function () {
+            lastMiniPage: function () {
                 this.pageMini = this.allPages;
                 this.renderMiniOpp();
             },
@@ -140,7 +139,7 @@ define([
                 });
             },
 
-            renderMiniPersons         : function () {
+            renderMiniPersons: function () {
                 var self = this;
                 var formModel = this.formModel.toJSON();
                 this.populatePersonsForMiniView("/persons/getPersonsForMiniView", formModel._id, this.pageMiniPersons, this.pageCountPersons, false, function (collection) {
@@ -158,7 +157,7 @@ define([
                     );
                 });
             },
-            renderMiniOpp             : function () {
+            renderMiniOpp    : function () {
                 var self = this;
                 var formModel = this.formModel.toJSON();
                 common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", null, formModel._id, this.pageMini, this.pageCount, false, function (collection) {
@@ -173,7 +172,7 @@ define([
                 });
             },
 
-            render                    : function () {
+            render: function () {
                 var formModel = this.formModel.toJSON();
                 this.$el.html(_.template(CompaniesFormTemplate, formModel));
                 this.renderMiniOpp();
@@ -279,7 +278,7 @@ define([
                 }
                 var valid = this.formModel.save(newModel, {
                     headers: {
-                        mid: 39
+                        mid: mid
                     },
                     patch  : true,
                     success: function (model) {
@@ -333,7 +332,7 @@ define([
             },
 
             deleteItems: function () {
-                var mid = 39;
+                var mid = this.mId;
                 this.formModel.destroy({
                     headers: {
                         mid: mid

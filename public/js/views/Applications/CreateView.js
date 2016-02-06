@@ -8,9 +8,10 @@ define([
         "populate",
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
-    'constants'
+        'constants'
     ],
-    function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, attachView, AssigneesView, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, AssigneesView, CONSTANTS) {
+        'use strict';
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Applications",
@@ -241,14 +242,12 @@ define([
                         marital    : marital,
                         workAddress: workAddress,
                         social     : social,
-
                         tags         : tags,
                         workEmail    : workEmail,
                         personalEmail: personalEmail,
                         skype        : skype,
                         workPhones   : workPhones,
                         bankAccountNo: bankAccountNo,
-
                         relatedUser: relatedUser,
                         department : department,
                         jobPosition: jobPosition,
@@ -256,23 +255,18 @@ define([
                         identNo    : identNo,
                         passportNo : passportNo,
                         otherId    : otherId,
-
                         homeAddress: homeAddress,
                         dateBirth  : dateBirthSt,
                         source     : sourceId,
                         imageSrc   : this.imageSrc,
                         nationality: nationality,
                         groups     : groups,
-
                         whoCanRW  : whoCanRW,
                         nextAction: nextAction,
-
                         referredBy    : referredBy,
                         expectedSalary: expectedSalary,
                         proposedSalary: proposedSalary,
-
                         workflow: workflow
-
                     },
                     {
                         headers: {

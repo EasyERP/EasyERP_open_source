@@ -19,7 +19,7 @@
         template   : _.template(EditTemplate),
 
         initialize: function (options) {
-            this.mId =  CONSTANTS.MID[this.contentType];
+            this.mId = CONSTANTS.MID[this.contentType];
             _.bindAll(this, "saveItem");
             _.bindAll(this, "render", "deleteItem");
             this.employeesCollection = options.collection;

@@ -63,6 +63,7 @@ module.exports = function (app, mainDb) {
     var userRouter = require('./user')(event, models);
     var campaignRouter = require('./campaign')(models);
     var degreesRouter = require('./degrees')(models);
+    var profilesRouter = require('./profiles')(models);
 
     var logger = require('../helpers/logger');
 

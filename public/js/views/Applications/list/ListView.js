@@ -30,7 +30,6 @@ define([
                 "click .list td:not(.notForm)": "goToEditDialog",
                 "click .stageSelect"          : "showNewSelect",
                 "click .newSelectList li"     : "chooseOption"
-
             },
 
             initialize: function (options) {
