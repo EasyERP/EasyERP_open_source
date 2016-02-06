@@ -927,9 +927,11 @@
             count    : count,
             onlyCount: onlyCount
         }, function (response) {
-             $.map(response.data, function (item) {
-                item.nextAction.date = utcDateToLocaleDate(item.nextAction.date);
-            });
+            if (response.data){
+                $.map(response.data, function (item) {
+                    item.nextAction.date = utcDateToLocaleDate(item.nextAction.date);
+                });
+            }
             if (callback) {
                 callback(response);
             }

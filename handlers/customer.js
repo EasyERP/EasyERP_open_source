@@ -353,7 +353,7 @@ var Customers = function (models) {
         //var page = query.page || 1;
         var queryObject = {};
 
-       // var skip = (page - 1) * count;
+        // var skip = (page - 1) * count;
 
         if (type) {
             queryObject.type = type;
@@ -521,7 +521,7 @@ var Customers = function (models) {
         });
     };
 
-    this.getById = function (req, res, next) {
+    function getById(req, res, next) {
         /**
          * __Type__ `GET`
          *
@@ -535,7 +535,7 @@ var Customers = function (models) {
          * @instance
          */
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var id = req.query.id;
+        var id = req.params.id;
 
         Model
             .findById(id)
@@ -556,10 +556,9 @@ var Customers = function (models) {
 
                 res.status(200).send(customer);
             });
+    }
 
-    };
-
-    this.getFilterCustomers = function (req, res, next) {
+    function getFilterCustomers(req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var data = req.query;
         var contentType = data.contentType;
@@ -707,6 +706,30 @@ var Customers = function (models) {
             res.status(200).send({data: result});
         });
 
+    }
+
+    this.getByViewType = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = req.params.id;
+
+        if (viewType === id) {
+            viewType = id;
+        }
+
+        if (id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case "form":
+                getById(req, res, next);
+                break;
+            default:
+                getFilterCustomers(req, res, next);
+                break;
+        }
     };
 
     this.update = function (req, res, next) {
