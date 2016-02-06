@@ -11,14 +11,15 @@ define([
             actionType: null, //Content, Edit, Create
 
             events: {
-                "click a.changeContentView"    : 'onChangeContentViewType',
+                "click .changeContentView"     : 'onChangeContentViewType',
                 "click ul.changeContentIndex a": 'onChangeItemIndex',
                 "click #top-bar-nextBtn"       : "onNextEvent",
                 "click #top-bar-deleteBtn"     : "onDeleteEvent",
                 "click #top-bar-createBtn"     : "onCreateEvent",
                 "click #top-bar-discardBtn"    : "onDiscardEvent",
                 "click #top-bar-editBtn"       : "onEditEvent",
-                "click #top-bar-saveBtn"       : "onSaveEvent"
+                "click #top-bar-saveBtn"       : "onSaveEvent",
+                "click #kanban-settings-Btn"   : "onEditKanban"
             },
 
             initialize: function (options) {
@@ -28,6 +29,7 @@ define([
             },
 
             onChangeContentViewType: function (e) {
+                e.preventDefault();
                 Custom.changeContentViewType(e, this.contentType, this.collection);
             },
 
@@ -69,6 +71,11 @@ define([
                 if (answer) {
                     this.trigger('deleteEvent');
                 }
+            },
+
+            onEditKanban: function (event) {
+                event.preventDefault();
+                this.trigger('editKanban');
             },
 
             render: function () {
