@@ -494,7 +494,9 @@
                                 <td><%=model.fire[key].department.departmentName !== model.hire[key].department.departmentName ? model.fire[key].department.departmentName : ''%></td>
                                 <td><%=model.fire[key].manager && model.hire[key].manager.name.last !== model.fire[key].manager.name.last ? model.fire[key].manager.name.first + ' ' + model.fire[key].manager.name.last : ""%></td>
                                 <td><%=model.fire[key].jobType !== model.hire[key].jobType ? model.fire[key].jobType : ''%></td>
+                                <%if (model.enableView) {%>
                                 <td><%=model.fire[key].salary%></td>
+                                <% } %>
                                 <td>
                                     <!--<a id="statusInfoDd" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " class="current-selected" href="javascript:;">-->
                                     <!--<%=model.fire[key].info ? model.fire[key].info : "Select"%>-->
