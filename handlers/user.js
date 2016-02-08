@@ -508,6 +508,20 @@ var User = function (event, models) {
             res.status(200).send({user: result, savedFilters: newUserResult});
         });
     };
+
+    this.totalCollectionLength = function (req, res, next) {
+        var response = {};
+        var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, pass: 0});
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            response.count = result.length;
+            res.status(200).send(response);
+        });
+    };
 };
 
 module.exports = User;
