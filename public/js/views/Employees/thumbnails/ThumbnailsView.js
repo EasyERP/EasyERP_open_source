@@ -200,7 +200,7 @@
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
                     var model = new CurrentModel({validate: false});
-                    model.urlRoot = '/employees/form';
+                    model.urlRoot = '/employees/' + id;
                     model.fetch({
                         data   : {id: id},
                         success: function (model) {
