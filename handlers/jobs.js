@@ -49,7 +49,7 @@ var Jobs = function (models, event) {
             }
         }
 
-            return resArray;
+        return resArray;
     };
 
     this.create = function (req, res, next) {
@@ -64,6 +64,11 @@ var Jobs = function (models, event) {
         data.wTracks = [];
 
         data.project = objectId(data.project);
+
+        data.createdBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
         newModel = new JobsModel(data);
 
@@ -446,6 +451,10 @@ var Jobs = function (models, event) {
         var updatewTracks;
         var products;
         var type;
+        var editedBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
         if (id) {
             if (data.workflowId) {
@@ -455,6 +464,8 @@ var Jobs = function (models, event) {
             } else if (data.type) {
                 query = {type: data.type};
             }
+
+            query.editedBy = editedBy;
 
             delete data._id;
 
@@ -471,7 +482,7 @@ var Jobs = function (models, event) {
 
             async.each(products, function (product, cb) {
 
-                JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                JobsModel.findByIdAndUpdate(product.jobs, {type: type, editedBy: editedBy}, {new: true}, function (err, result) {
                     if (err) {
                         return next(err);
                     }

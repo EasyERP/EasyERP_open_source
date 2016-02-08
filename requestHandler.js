@@ -331,6 +331,10 @@ var requestHandler = function (app, event, mainDb) {
             var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
             var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
             var paralellTasks;
+            var editedBy = {
+                user: req.session.uId,
+                date: new Date()
+            };
 
             var query = Project.find({_id: pId}, {_id: 1, bonus: 1}).lean();
 
@@ -587,7 +591,7 @@ var requestHandler = function (app, event, mainDb) {
                         return console.log(err);
                     }
                     async.each(result, function (el, cb) {
-                        Job.findByIdAndUpdate(el._id, {$set: {wTracks: el.ids}}, {new: true}, function (err) {
+                        Job.findByIdAndUpdate(el._id, {$set: {wTracks: el.ids, editedBy: editedBy}}, {new: true}, function (err) {
 
                             cb();
                         })
@@ -610,6 +614,10 @@ var requestHandler = function (app, event, mainDb) {
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var count = 0;
+        var editedBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
         var query = Job.find({'project': pId}).lean();
 
@@ -793,7 +801,7 @@ var requestHandler = function (app, event, mainDb) {
                             budgetTotal: budgetTotal
                         };
 
-                        Job.update({_id: jobID}, {$set: {budget: budget}}, function (err, result) {
+                        Job.update({_id: jobID}, {$set: {budget: budget, editedBy: editedBy}}, function (err, result) {
                             if (err) {
                                 return next(err);
                             }

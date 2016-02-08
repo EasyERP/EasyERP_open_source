@@ -106,6 +106,10 @@ var Quotation = function (models, event) {
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var products;
         var project;
+        var editedBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
         Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
             if (err) {
@@ -118,7 +122,7 @@ var Quotation = function (models, event) {
                 async.each(products, function (product, cb) {
                     var jobs = product.jobs;
 
-                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered"}}, {new: true}, function (err, result) {
+                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered", editedBy: editedBy}}, {new: true}, function (err, result) {
                         if (err) {
                             return cb(err);
                         }
@@ -162,6 +166,10 @@ var Quotation = function (models, event) {
         var quotation;
         var project;
         var rates;
+        var editedBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
         currencyHalper(body.orderDate, function (err, oxr) {
             oxr = oxr || {};
@@ -247,7 +255,8 @@ var Quotation = function (models, event) {
                             JobsModel.findByIdAndUpdate(jobs, {
                                 $set: {
                                     quotation: id,
-                                    type     : "Quoted"
+                                    type     : "Quoted",
+                                    editedBy: editedBy
                                 }
                             }, {new: true}, function (err, result) {
                                 if (err) {
@@ -739,6 +748,10 @@ var Quotation = function (models, event) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var editedBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
         Quotation.findByIdAndRemove(id, function (err, quotation) {
             if (err) {
@@ -751,7 +764,8 @@ var Quotation = function (models, event) {
 
                 JobsModel.findByIdAndUpdate(product.jobs, {
                     type     : type,
-                    quotation: null
+                    quotation: null,
+                    editedBy: editedBy
                 }, {new: true}, function (err, result) {
                     var wTracks;
 
