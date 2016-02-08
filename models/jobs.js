@@ -16,7 +16,15 @@ module.exports = (function () {
             budgetTotal  : {type: Object, default: {}}
         },
         quotation: {type: ObjectId, ref: 'Quotation', default: null},
-        invoice  : {type: ObjectId, ref: 'Invoice', default: null}
+        invoice  : {type: ObjectId, ref: 'Invoice', default: null},
+        editedBy   : {
+            user: {type: ObjectId, ref: 'Users', default: null},
+            date: {type: Date, default: Date.now}
+        },
+        createdBy  : {
+            user: {type: ObjectId, ref: 'Users', default: null},
+            date: {type: Date, default: Date.now}
+        }
     }, {collection: 'jobs'});
 
     mongoose.model('jobs', jobsSchema);
