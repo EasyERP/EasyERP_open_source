@@ -108,18 +108,19 @@ describe("Workflow Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+
                     done();
                 });
         });
 
         it("should get getWorkflowsForDd", function (done) {
             var body = {
-                id: id
+                id: "testCreateWF"
             };
 
             aggent
                 .get('workflows/getWorkflowsForDd')
-                .send(body)
+                .query(body)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -132,16 +133,19 @@ describe("Workflow Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+
                     done();
                 });
         });
 
-        it("should get getFirstForConvert", function (done) {
-            var body = {};
+/*        it("should get getFirstForConvert", function (done) {
+            var body = {
+                wId: "testCreateWF"
+            };
 
             aggent
                 .get('workflows/getFirstForConvert')
-                .send(body)
+                .query(body)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -178,7 +182,7 @@ describe("Workflow Specs", function () {
                         .to.have.property('data');
                     done();
                 });
-        });
+        });*/
 
         it("should update workflow", function (done) {
             var body = {
