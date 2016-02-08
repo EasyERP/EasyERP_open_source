@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var User = function (event, models) {
     "use strict";
-    var _ = require('underscore');
+    var _ = require('lodash');
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
@@ -36,7 +36,7 @@ var User = function (event, models) {
         var byDefault = data.byDefault;
         var viewType = data.viewType;
         var _id = req.session.uId;
-        var id;
+        var id = req.params.id;
         var SavedFilters = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
         var filterModel = new SavedFilters();
         var newSavedFilters;
@@ -77,6 +77,10 @@ var User = function (event, models) {
                 saveChanges();
             }
 
+        }
+
+        if(id && _id !== id){
+            _id = id;
         }
 
         if (data.changePass) {
@@ -218,16 +222,19 @@ var User = function (event, models) {
     this.login = function (req, res, next) {
         var data = req.body;
         var UserModel = models.get(data.dbId, 'Users', userSchema);
+        var login = data.login || data.email;
         var err;
         var queryObject;
 
-        if ((data.login || data.email) && data.pass) {
+        login = login.toLowerCase();
+
+        if (login && data.pass) {
             queryObject = {
                 $or: [
                     {
-                        login: {$regex: data.login, $options: 'i'}
+                        login: login
                     }, {
-                        email: {$regex: data.login, $options: 'i'}
+                        email: login
                     }
                 ]
             };
@@ -326,8 +333,12 @@ var User = function (event, models) {
         var options = {};
         var data = req.body;
         var _id = req.session.uId;
+        var id = req.params.id;
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
         var shaSum;
         var _oldPass;
+
+        _id = (id && _id !== id) ? id : _id;
 
         if (req.body.oldpass && req.body.pass) {
             options.changePass = true;
@@ -337,8 +348,8 @@ var User = function (event, models) {
             shaSum = crypto.createHash('sha256');
             shaSum.update(data.pass);
             data.pass = shaSum.digest('hex');
-            models.get(req.session.lastDb, 'Users', userSchema).findById(_id, function (err, result) {
 
+            UserModel.findById(_id, function (err, result) {
                 if (err) {
                     return next(err);
                 }
@@ -445,7 +456,36 @@ var User = function (event, models) {
     };
 
     this.getById = function (req, res, next) {
-        var id = req.params.id;
+        var id = req.params.id || req.session.uId;
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+        var query;
+
+        query = UserModel.findById(id, {__v: 0, pass: 0});
+        query
+            .populate('profile')
+            .populate('relatedEmployee', 'imageSrc name fullName')
+            .populate('savedFilters._id');
+
+        query.exec(function (err, result) {
+            var newUserResult = {};
+            var savedFilters;
+
+            if (err) {
+                return next(err);
+            }
+
+            savedFilters = result ? result.toJSON().savedFilters : null;
+
+            if (savedFilters) {
+                newUserResult = _.groupBy(savedFilters, '_id.contentView');
+            }
+            newUserResult = _.groupBy(savedFilters, '_id.contentView');
+            res.status(200).send({user: result, savedFilters: newUserResult});
+        });
+    };
+
+    this.getCurrent = function (req, res, next) {
+        var id = req.session.uId;
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
         var query;
 
@@ -466,6 +506,20 @@ var User = function (event, models) {
             savedFilters = result.toJSON().savedFilters;
             newUserResult = _.groupBy(savedFilters, '_id.contentView');
             res.status(200).send({user: result, savedFilters: newUserResult});
+        });
+    };
+
+    this.totalCollectionLength = function (req, res, next) {
+        var response = {};
+        var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, pass: 0});
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            response.count = result.length;
+            res.status(200).send(response);
         });
     };
 };

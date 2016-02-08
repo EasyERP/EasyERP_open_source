@@ -8,7 +8,7 @@ define([
     'constants'
 
 ], function (Backbone, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
-
+    'use strict';
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
@@ -88,7 +88,7 @@ define([
             });
 
             if (!App || !App.currentUser) {
-                dataService.getData('/currentUser', null, function (response) {
+                dataService.getData(CONTENT_TYPES.URLS.CURRENT_USER, null, function (response) {
                     if (response && !response.error) {
                         App.currentUser = response.user;
                         App.savedFilters = response.savedFilters;
@@ -899,7 +899,7 @@ define([
                     }
 
                     //getModel.urlRoot = '/' + contentType + '/form';
-                    getModel.urlRoot = getModel.url() + modelId ;
+                    getModel.urlRoot = getModel.url() + modelId;
                     getModel.fetch({
                         success: function (model) {
                             var topbarView = new topBarView({actionType: "Content"});

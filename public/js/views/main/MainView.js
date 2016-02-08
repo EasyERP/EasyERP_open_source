@@ -1,10 +1,14 @@
 define([
+    'Backbone',
+    'Underscore',
+    'jQuery',
     'text!templates/main/MainTemplate.html',
     'views/menu/LeftMenuView',
     'collections/menu/MenuItems',
     'views/menu/TopMenuView',
-    'dataService'
-], function (MainTemplate, LeftMenuView, MenuItemsCollection, TopMenuView, dataService) {
+    'dataService',
+    'constants'
+], function (Backbone, _, $, MainTemplate, LeftMenuView, MenuItemsCollection, TopMenuView, dataService, CONSTANTS) {
 
     var MainView = Backbone.View.extend({
         el             : '#wrapper',
@@ -66,8 +70,9 @@ define([
         },
         render         : function () {
             var currentUser;
+
             if (!App || !App.currentUser || !App.currentUser.login) {
-                dataService.getData('/currentUser', null, function (response, context) {
+                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response, context) {
                     currentUser = response.user;
                     App.currentUser = currentUser;
                     App.savedFilters = response.savedFilters;

@@ -252,7 +252,7 @@ var Users = function (mainDb, models) {
         });
     }*/
 
-    function getUserById(req, id, response) {
+   /* function getUserById(req, id, response) {
         var query = models.get(req.session.lastDb, 'Users', userSchema).findById(id);
         var key;
         var newUserResult = {};
@@ -274,7 +274,7 @@ var Users = function (mainDb, models) {
                 response.send({user: result, savedFilters: newUserResult});
             }
         });
-    }
+    }*/
 
     function getFilter(req, response) {
         var res = {};
@@ -499,7 +499,7 @@ var Users = function (mainDb, models) {
 
        /* getUsers: getUsers,*/
 
-        getUserById: getUserById,
+       /* getUserById: getUserById,*/
 
         getFilter: getFilter,
 
