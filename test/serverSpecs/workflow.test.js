@@ -138,7 +138,7 @@ describe("Workflow Specs", function () {
                 });
         });
 
-/*        it("should get getFirstForConvert", function (done) {
+        it("should get getFirstForConvert", function (done) {
             var body = {
                 wId: "testCreateWF"
             };
@@ -157,17 +157,20 @@ describe("Workflow Specs", function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('data');
+                        .to.have.property('_id');
+
                     done();
                 });
         });
 
         it("should fetch", function (done) {
-            var body = {};
+            var body = {
+                wId: "testCreateWF"
+            };
 
             aggent
                 .get('workflows/fetch')
-                .send(body)
+                .query(body)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -177,12 +180,11 @@ describe("Workflow Specs", function () {
                     }
 
                     expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('data');
+                        .to.be.instanceOf(Array);
+
                     done();
                 });
-        });*/
+        });
 
         it("should update workflow", function (done) {
             var body = {
