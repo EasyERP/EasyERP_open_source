@@ -7,9 +7,10 @@ define([
         "custom",
         "common",
         "dataService",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (EditTemplate, noteView, attachView, AssigneesView, BonusView, custom, common, dataService, populate) {
+    function (EditTemplate, noteView, attachView, AssigneesView, BonusView, custom, common, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Projects",
@@ -128,13 +129,13 @@ define([
                         if (!employeeId) {
                             value = 'Employee';
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: 'Please, choose ' + value + ' first.'
                             });
                         } else if (!bonusId) {
                             value = 'Bonus';
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: 'Please, choose ' + value + ' first.'
                             });
                         }
@@ -339,7 +340,7 @@ define([
                     model: this.currentModel
                 });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
-                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
+                populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
                 populate.get2name("#customerDd", "/Customers", {}, this, false, false);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Projects"}, "name", this);
                 var model = this.currentModel.toJSON();

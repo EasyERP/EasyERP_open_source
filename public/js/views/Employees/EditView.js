@@ -669,7 +669,7 @@ define([
                 });
                 populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "name", this);
                 populate.get("#nationality", "/employees/nationality", {}, "_id", this);
-                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
+                populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
                 populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this, false, false);
                 populate.get("#relatedUsersDd",  CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
                 populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this);

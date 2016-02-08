@@ -13,9 +13,10 @@ define([
         'collections/PayrollPayments/editCollection',
         'dataService',
         'populate',
-        'async'
+        'async',
+    'constants'
     ],
-    function (paginationTemplate, listTemplate, filterView, DialogView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async) {
+    function (paginationTemplate, listTemplate, filterView, DialogView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, CONSTANTS) {
         "use strict";
 
         var PaymentListView = Backbone.View.extend({
@@ -691,7 +692,7 @@ define([
                     pagenation.show();
                 }
 
-                dataService.getData("/employees/getForDD", null, function (employees) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 

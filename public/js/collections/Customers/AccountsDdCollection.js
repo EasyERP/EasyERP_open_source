@@ -1,4 +1,10 @@
-define(function () {
+define([
+    'Backbone',
+    'jQuery',
+    'constants'
+], function (Backbone, $, CONSTANTS) {
+    'use strict';
+
     var AccountModel = Backbone.Model.extend({
         idAttribute: '_id'
     });
@@ -6,7 +12,7 @@ define(function () {
     var AccountsDdCollection = Backbone.Collection.extend({
         model: AccountModel,
         url  : function () {
-            var url = "/employees/getPersonsForDd";
+            var url = CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD;
             return url;
         },
 
@@ -23,8 +29,6 @@ define(function () {
                 error  : this.fetchError
             });
         },
-
-        parse: true,
 
         parse: function (response) {
             return response.data;

@@ -1,12 +1,15 @@
 ﻿define([
+        'Backbone',
         'models/CompaniesModel',
-        'common',
-        "dataService"
+        "dataService",
+        'constants'
     ],
-    function (CompanyModel, common, dataService) {
+    function (Backbone, CompanyModel, dataService, CONSTANTS) {
+        'use strict';
+
         var CompaniesCollection = Backbone.Collection.extend({
             model       : CompanyModel,
-            url         : "/Companies/",
+            url         : CONSTANTS.URLS.COMPANIES,
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -29,7 +32,7 @@
                         that.page++;
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
@@ -37,7 +40,7 @@
             },
             filterByWorkflow: function (id) {
                 return this.filter(function (data) {
-                    return data.get("workflow")._id == id;
+                    return data.get("workflow")._id === id;
                 });
             },
             showMore        : function (options) {
@@ -47,18 +50,18 @@
                 if (options) {
                     var count = options.count;
 
-                    filterObject['viewType'] = options.viewType ? options.viewType : this.viewType;
-                    filterObject['contentType'] = options.contentType ? options.contentType : this.contentType;
-                    filterObject['filter'] = options.filter ? options.filter : {};
+                    filterObject.viewType = options.viewType || this.viewType;
+                    filterObject.contentType = options.contentType || this.contentType;
+                    filterObject.filter = options.filter || {};
 
                     if (count) {
                         if (count !== 'all') {
-                            filterObject['page'] = options.page ? options.page : this.page;
-                            filterObject['count'] = count;
+                            filterObject.page = options.page || this.page;
+                            filterObject.count = count;
                         }
                     } else {
-                        filterObject['page'] = options.page ? options.page : this.page;
-                        filterObject['count'] = this.namberToShow;
+                        filterObject.page = options.page || this.page;
+                        filterObject.count = this.namberToShow;
                     }
 
                 }
@@ -71,11 +74,11 @@
                         that.trigger('showmore', models);
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }
@@ -85,11 +88,11 @@
                 var that = this;
                 var filterObject = options || {};
                 that.page = 1;
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['filter'] = (options) ? options.filter : {};
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.filter = options ? options.filter : {};
                 this.fetch({
                     data   : filterObject,
                     waite  : true,
@@ -112,7 +115,6 @@
                 });
             },
 
-            parse: true,
             parse: function (response) {
                 return response.data;
             }

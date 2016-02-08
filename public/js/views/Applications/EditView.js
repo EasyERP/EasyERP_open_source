@@ -725,7 +725,7 @@
             populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this);
             populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "_id", this);
             populate.get("#nationality", "/employees/nationality", {}, "_id", this);
-            populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
+            populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
             populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);

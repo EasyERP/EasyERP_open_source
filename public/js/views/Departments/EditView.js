@@ -5,9 +5,10 @@ define([
         "collections/Customers/AccountsDdCollection",
         "common",
         "custom",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (EditTemplate, selectView, DepartmentsCollection, AccountsDdCollection, common, Custom, populate) {
+    function (EditTemplate, selectView, DepartmentsCollection, AccountsDdCollection, common, Custom, populate, CONSTANTS) {
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Departments",
@@ -27,14 +28,14 @@ define([
                 this.render();
             },
             events     : {
-                'click .dialog-tabs a'                                            : 'changeTab',
-                'click #sourceUsers li'                                           : 'addUsers',
-                'click #targetUsers li'                                           : 'removeUsers',
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                "click .prevUserList"                                             : "prevUserList",
-                "click .nextUserList"                                             : "nextUserList",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+                'click .dialog-tabs a'                             : 'changeTab',
+                'click #sourceUsers li'                            : 'addUsers',
+                'click #targetUsers li'                            : 'removeUsers',
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect",
+                "click .prevUserList"                              : "prevUserList",
+                "click .nextUserList"                              : "nextUserList",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
             nextUserList: function (e, page) {
@@ -240,7 +241,7 @@ define([
                             click: self.deleteItem
                         }]
                 });
-                populate.get2name("#departmentManager", "/employees/getPersonsForDd", {}, this, false, true);
+                populate.get2name("#departmentManager", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false, true);
                 populate.getParrentDepartment("#parentDepartment", "/departments/getDepartmentsForEditDd", {id: this.currentModel.toJSON()._id}, this, false, true);
                 var k = this.currentModel.toJSON().users;
                 var b = $.map(this.currentModel.toJSON().users, function (item) {

@@ -6,31 +6,32 @@ define([
         "models/DepartmentsModel",
         "common",
         "custom",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (CreateTemplate, selectView, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate) {
+    function (CreateTemplate, selectView, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Departments",
             template   : _.template(CreateTemplate),
 
-            initialize    : function (options) {
+            initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
                 this.departmentsCollection = new DepartmentsCollection();
                 this.model = new DepartmentsModel();
                 this.responseObj = {};
                 this.render();
             },
-            events        : {
-                'click .dialog-tabs a'                                            : 'changeTab',
-                'click #sourceUsers li'                                           : 'addUsers',
-                'click #targetUsers li'                                           : 'removeUsers',
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                "click .prevUserList"                                             : "prevUserList",
-                "click .nextUserList"                                             : "nextUserList",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+            events    : {
+                'click .dialog-tabs a'                             : 'changeTab',
+                'click #sourceUsers li'                            : 'addUsers',
+                'click #targetUsers li'                            : 'removeUsers',
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect",
+                "click .prevUserList"                              : "prevUserList",
+                "click .nextUserList"                              : "nextUserList",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
                 // 'keydown': 'keydownHandler'
             },
 
@@ -212,7 +213,7 @@ define([
                         }]
 
                 });
-                populate.get2name("#departmentManager", "/employees/getPersonsForDd", {}, this, true, true);
+                populate.get2name("#departmentManager", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true, true);
                 populate.getParrentDepartment("#parentDepartment", "/departments/getSalesTeam", {}, this, true, true);
                 common.populateUsersForGroups('#sourceUsers', '#targetUsers', null, 1);
                 this.delegateEvents(this.events);

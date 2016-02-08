@@ -2,13 +2,16 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'Backbone',
         'models/PaymentModel',
-        'common'
+        'constants'
     ],
-    function (PaymentModel, common) {
+    function (Backbone, PaymentModel, CONSTANTS) {
+        'use strict';
+
         var PaymentCollection = Backbone.Collection.extend({
             model       : PaymentModel,
-            url         : "/payment/customers/",
+            url         : CONSTANTS.URLS.PAYMENTCUSTOMERS,
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -18,10 +21,10 @@ define([
                 var that = this;
                 var filterObject = options || {};
 
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
 
                 this.fetch({
                     data   : filterObject,
@@ -32,7 +35,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }
@@ -59,7 +62,7 @@ define([
                         that.page++;
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }

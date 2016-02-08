@@ -38,10 +38,11 @@ define([
         'custom',
         'dataService',
         'async',
-        'helpers'
+        'helpers',
+    'constants'
     ],
 
-    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers, CONSTANTS) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -1199,7 +1200,7 @@ define([
                 App.projectInfo.currentTab = App.projectInfo.currentTab ? App.projectInfo.currentTab : 'overview';
 
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
-                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this);
+                populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
                 populate.get2name("#customerDd", "/Customers", {}, this, false, false);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Projects"}, "name", this);
                 populate.getWorkflow("#workflow", "#workflowNames", "/workflows/getWorkflowsForDd", {id: "Jobs"}, "name", this);

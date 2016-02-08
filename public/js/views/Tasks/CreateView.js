@@ -4,9 +4,10 @@ define([
         "common",
         "populate",
         'views/Notes/AttachView',
-        'views/selectView/selectView'
+        'views/selectView/selectView',
+        'constants'
     ],
-    function (CreateTemplate, TaskModel, common, populate, attachView, selectView) {
+    function (CreateTemplate, TaskModel, common, populate, attachView, selectView, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -32,16 +33,16 @@ define([
                 this.render();
             },
 
-            events      : {
-                "click #tabList a"                                                : "switchTab",
-                "click #deadline"                                                 : "showDatePicker",
-                "change #workflowNames"                                           : "changeWorkflows",
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click"                                                           : "hideNewSelect"
+            events: {
+                "click #tabList a"                                 : "switchTab",
+                "click #deadline"                                  : "showDatePicker",
+                "change #workflowNames"                            : "changeWorkflows",
+                "click .current-selected"                          : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click"                                            : "hideNewSelect"
             },
 
-            addAttach   : function (event) {
+            addAttach: function (event) {
                 var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
                 $(".attachContainer").append('<li class="attachFile">' +
                     '<a href="javascript:;">' + s + '</a>' +
@@ -77,7 +78,7 @@ define([
 
             },
 
-            switchTab     : function (e) {
+            switchTab: function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -87,11 +88,11 @@ define([
                 this.$(".tab").hide().eq(index).show();
             },
 
-            hideDialog    : function () {
+            hideDialog: function () {
                 $(".edit-dialog").remove();
             },
 
-            saveItem  : function () {
+            saveItem: function () {
                 var self = this;
                 var mid = 39;
                 var summary = $.trim(this.$el.find("#summaryTask").val());
@@ -168,10 +169,10 @@ define([
                 }
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            render       : function () {
+            render      : function () {
                 var afterPid = (window.location.hash).split('pId=')[1];
                 var forKanban = (window.location.hash).split('kanban/')[1];
                 var projectID = afterPid ? afterPid.split('/')[0] : forKanban;
@@ -209,7 +210,7 @@ define([
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, true);
                 }
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Tasks"}, "name", this, true);
-                populate.get2name("#assignedToDd", "/employees/getPersonsForDd", {}, this, true);
+                populate.get2name("#assignedToDd", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true);
                 populate.getPriority("#priorityDd", this, true);
                 $('#StartDate').datepicker({
                     dateFormat : "d M, yy",

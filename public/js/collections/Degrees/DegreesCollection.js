@@ -1,11 +1,16 @@
 define([
-        'models/DegreeModel'
+        'Backbone',
+        'jQuery',
+        'models/DegreeModel',
+        'constants'
     ],
-    function (DegreeModel) {
+    function (Backbone, $, DegreeModel, CONSTANTS) {
+        'use strict';
+
         var DegreesCollection = Backbone.Collection.extend({
             model     : DegreeModel,
             url       : function () {
-                return "/Degrees";
+                return CONSTANTS.URLS.DEGREES;
             },
             initialize: function () {
                 var mid = 39;
@@ -19,7 +24,6 @@ define([
                     error  : this.fetchError
                 });
             },
-            parse     : true,
 
             parse: function (response) {
                 return response.data;

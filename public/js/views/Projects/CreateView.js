@@ -6,9 +6,10 @@ define([
         'views/Assignees/AssigneesView',
         'views/Bonus/BonusView',
         'views/selectView/selectView',
-        'custom'
+        'custom',
+    'constants'
     ],
-    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView, customFile) {
+    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView, customFile, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -284,7 +285,7 @@ define([
                     model: new ProjectModel()
                 });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);
-                populate.get2name("#projectManagerDD", "/employees/getPersonsForDd", {}, this, true);
+                populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true);
                 populate.get2name("#customerDd", "/Customers", {}, this, true, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Projects"}, "name", this, true);
 
