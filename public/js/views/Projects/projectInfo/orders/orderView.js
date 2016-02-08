@@ -2,9 +2,10 @@
  * Created by liliya on 20.10.15.
  */
 define([
+    'Underscore',
+    'jQuery',
     'text!templates/Projects/projectInfo/orders/ListTemplate.html',
     'text!templates/Projects/projectInfo/orders/ListHeader.html',
-    'text!templates/stages.html',
     'text!templates/Pagination/PaginationTemplate.html',
     'views/salesOrder/EditView',
     'views/salesOrder/list/ListView',
@@ -12,9 +13,12 @@ define([
     'models/QuotationModel',
     'dataService',
     'common',
-    'helpers'
+    'helpers',
+    'constants'
 
-], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common, helpers) {
+], function (_, $, ListTemplate, lisHeader, paginationTemplate, EditView, listView, quotationCollection, OrderModel, dataService, common, helpers, CONSTANTS) {
+    'use strict';
+
     var orderView = listView.extend({
 
         el                      : '#orders',
@@ -44,10 +48,10 @@ define([
             this.projectID = options.projectId;
             this.customerId = options.customerId;
             this.projectManager = options.projectManager;
-            this.filter = options.filter ? options.filter : {};
+            this.filter = options.filter || {};
             this.defaultItemsNumber = 50;
-            this.page = options.page ? options.page : 1;
-            this.startNumber = options.startNumber ? options.startNumber : 1;
+            this.page = options.page || 1;
+            this.startNumber = options.startNumber || 1;
 
             if (this.startNumber < 50) {
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
@@ -58,17 +62,17 @@ define([
 
         showOrderDialog: function (id) {
             var self = this;
-            var model = new orderModel({validate: false});
+            var model = new OrderModel({validate: false});
 
             model.urlRoot = '/Order/form/' + id;
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true, projectManager: self.projectManager});
+                    new EditView({model: model, redirect: true, projectManager: self.projectManager});
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please refresh browser'
                     });
                 }
@@ -83,7 +87,7 @@ define([
             var id = tr.data("id");
             var notEditable = tr.hasClass('notEditable');
             var onlyView;
-            var model = new orderModel({validate: false});
+            var model = new OrderModel({validate: false});
 
             if (notEditable) {
                 onlyView = true;
@@ -93,7 +97,7 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({
+                    new EditView({
                         model         : model,
                         redirect      : true,
                         projectManager: self.projectManager,
@@ -102,7 +106,7 @@ define([
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please refresh browser'
                     });
                 }
@@ -232,9 +236,9 @@ define([
 
             if (this.collection.length > 0) {
                 $currentEl.find('#orderTable').html(this.templateList({
-                    orderCollection: this.collection.toJSON(),
-                    startNumber    : 0,
-                    dateToLocal    : common.utcDateToLocaleDate,
+                    orderCollection : this.collection.toJSON(),
+                    startNumber     : 0,
+                    dateToLocal     : common.utcDateToLocaleDate,
                     currencySplitter: helpers.currencySplitter
                 }));
             }
@@ -310,8 +314,6 @@ define([
 
                 if (itemsNumber * (page - 1) > length) {
                     context.page = page = Math.ceil(length / itemsNumber);
-                    // context.fetchSortCollection(context.sort);
-                    // context.changeLocationHash(page, context.defaultItemsNumber, filter);
                 }
 
                 context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
@@ -351,7 +353,7 @@ define([
             count = listTableCheckedInput.length;
             this.collectionLength = this.collection.length;
 
-            if (answer == true) {
+            if (answer === true) {
                 $.each(listTableCheckedInput, function (index, checkbox) {
                     model = that.collection.get(checkbox.value);
                     model.destroy({
@@ -372,7 +374,7 @@ define([
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -467,7 +469,7 @@ define([
                 }
             });
 
-            dataService.getData("/workflows/fetch", {
+            dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
                 source      : 'purchase',
                 targetSource: 'order'

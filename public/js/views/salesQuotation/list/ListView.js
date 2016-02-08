@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/salesQuotation/list/ListHeader.html',
         'text!templates/salesQuotation/wTrack/ListHeader.html',
@@ -10,17 +12,17 @@ define([
         'models/QuotationModel',
         'collections/salesQuotation/filterCollection',
         'views/Filter/FilterView',
-        'common',
         'dataService',
-        'constants',
-        'helpers'
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
+    function ($, _, listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, ListItemView, ListTotalView, EditView, CurrentModel, contentCollection, filterView, dataService, CONSTANTS) {
+        'use strict';
+
         var QuotationListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             contentType             : CONSTANTS.SALESQUOTATION, //needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
@@ -37,8 +39,7 @@ define([
                 this.startTime = options.startTime;
                 this.collection = options.collection;
 
-                this.filter = options.filter ? options.filter : {};
-                //this.filter.forSales = true;
+                this.filter = options.filter || {};
                 this.filter.forSales = {
                     key  : 'forSales',
                     value: ['true']
@@ -118,22 +119,20 @@ define([
                     this.hideNewSelect();
 
                     return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {
-                        stagesCollection: this.stages
-                    }));
-                    return false;
                 }
+                $(e.target).parent().append(_.template(stagesTemplate, {
+                    stagesCollection: this.stages
+                }));
+                return false;
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").remove();
             },
 
             render: function () {
                 var self;
                 var $currentEl;
-                var FilterView = filterView;
                 var templ;
 
                 $('.ui-dialog ').remove();
@@ -146,25 +145,25 @@ define([
                 if (App.weTrack) {
                     templ = _.template(listForWTrack);
                     $currentEl.append(templ);
-                    $currentEl.append(new listItemView({
+                    $currentEl.append(new ListItemView({
                         collection : this.collection,
                         page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());//added two parameters page and items number
 
-                    $currentEl.append(new listTotalView({
+                    $currentEl.append(new ListTotalView({
                         element : $currentEl.find("#listTable"),
                         cellSpan: 5
                     }).render());
                 } else {
                     $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
+                    $currentEl.append(new ListItemView({
                         collection : this.collection,
                         page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());//added two parameters page and items number
 
-                    $currentEl.append(new listTotalView({
+                    $currentEl.append(new ListTotalView({
                         element : $currentEl.find("#listTable"),
                         cellSpan: 5
                     }).render());
@@ -176,7 +175,7 @@ define([
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-                dataService.getData("/workflows/fetch", {
+                dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                     wId         : 'Sales Order',
                     source      : 'purchase',
                     targetSource: 'quotation'
@@ -184,23 +183,23 @@ define([
                     self.stages = stages;
                 });
 
-                return this
+                return this;
             },
 
             goToEditDialog: function (e) {
                 e.preventDefault();
 
                 var id = $(e.target).closest("tr").data("id");
-                var model = new currentModel({validate: false});
+                var model = new CurrentModel({validate: false});
 
                 model.urlRoot = '/quotation/form/' + id;
                 model.fetch({
                     success: function (model) {
-                        new editView({model: model});
+                        new EditView({model: model});
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Please refresh browser"
                         });
                     }

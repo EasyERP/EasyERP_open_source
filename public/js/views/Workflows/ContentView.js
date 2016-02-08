@@ -1,11 +1,17 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Workflows/list/ListTemplate.html',
         'views/Workflows/list/ListItemView',
         'collections/RelatedStatuses/RelatedStatusesCollection',
         'custom',
-        "models/WorkflowsModel"
+        "models/WorkflowsModel",
+        'constants'
     ],
-    function (ListTemplate, ListItemView, RelatedStatusesCollection, Custom, WorkflowsModel) {
+    function (Backbone, $, _, ListTemplate, ListItemView, RelatedStatusesCollection, Custom, WorkflowsModel, CONSTANTS) {
+        'use strict';
+
         var ContentView = Backbone.View.extend({
             el        : '#content-holder',
             initialize: function (options) {
@@ -15,6 +21,7 @@ define([
                 this.relatedStatusesCollection.bind('reset', _.bind(this.render, this));
                 this.collection = options.collection;
                 this.collection.bind('reset', _.bind(this.render, this));
+
                 this.render();
             },
 
@@ -46,7 +53,7 @@ define([
                 var sequence = tdName.data("sequence");
 
                 var model = this.collection.get(id);
-                this.collection.url = "/Workflows";
+                this.collection.url = CONSTANTS.URLS.WORKFLOWS;
                 var obj = {
                     name    : name,
                     status  : status,
@@ -58,7 +65,7 @@ define([
                     headers: {
                         mid: mid
                     },
-                    success: function (model) {
+                    success: function () {
                         var targetParent = $(e.target).parent();
                         targetParent.siblings().find("span.name").text(obj.name);
                         targetParent.siblings().find("span.status").text(obj.status);
@@ -84,7 +91,6 @@ define([
 
             edit: function (e) {
                 e.preventDefault();
-                var targetParent = $(e.target).parent();
                 $("span").removeClass("hidden");
                 $(".addnew, .SaveCancel").remove();
                 $(".name input, input.nameStatus, select, a:contains('Cancel'), a:contains('Save')").remove();
@@ -101,9 +107,11 @@ define([
                 var statusText = td.siblings("div.status").text().trim();
                 this.relatedStatusesCollection.forEach(function (status) {
                     var statusJson = status.toJSON();
-                    (statusJson.status == statusText) ?
-                        select.append($("<option>").text(statusJson.status).attr('selected', 'selected')) :
+                    if (statusJson.status === statusText) {
+                        select.append($("<option>").text(statusJson.status).attr('selected', 'selected'));
+                    } else {
                         select.append($("<option>").text(statusJson.status));
+                    }
                 });
 
                 td.siblings(".name").append(
@@ -118,16 +126,13 @@ define([
                 var mid = 39;
                 e.preventDefault();
                 var tr = $(e.target).closest("div.row");
-                var name = tr.find("div.name input").val();
-                var status = tr.find("div.status option:selected").text();
                 var tdName = tr.find("div.name");
                 var id = tdName.data("id");
-                var sequence = tdName.data("sequence");
                 var model = this.collection.get(id);
-                this.collection.url = "/Workflows";
+                this.collection.url = CONSTANTS.URLS.WORKFLOWS;
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     model.destroy({
                         headers: {
                             mid: mid
@@ -195,7 +200,7 @@ define([
                     containment: 'document',
                     stop       : function (event, ui) {
                         var id = ui.item.find("div.name").attr("id");
-                        self.collection.url = "/Workflows";
+                        self.collection.url = CONSTANTS.URLS.WORKFLOWS;
                         var model = self.collection.get(id);
                         var sequence = 0;
                         if (ui.item.next().hasClass("row")) {

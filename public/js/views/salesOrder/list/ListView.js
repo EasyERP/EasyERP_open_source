@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/salesQuotation/list/ListHeader.html',
         'text!templates/salesOrder/wTrack/ListHeader.html',
@@ -10,16 +12,18 @@ define([
         'models/QuotationModel',
         'collections/salesQuotation/filterCollection',
         'views/Filter/FilterView',
-        'common',
-        'dataService'
+        'dataService',
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+    function ($, _, listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, filterView, dataService, CONSTANTS) {
+        'use strict';
+
         var OrdersListView = listViewBase.extend({
 
             createView              : createView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : 'salesOrder',//needs in view.prototype.changeLocationHash
@@ -29,7 +33,7 @@ define([
                 this.startTime = options.startTime;
                 this.collection = options.collection;
 
-                this.filter = options.filter ? options.filter : {};
+                this.filter = options.filter || {};
                 this.filter.forSales = {
                     key  : 'forSales',
                     value: ['true']
@@ -110,13 +114,13 @@ define([
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-                    return false;
                 }
+
+                $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+                return false;
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").remove();
             },
 
@@ -132,21 +136,21 @@ define([
                 $currentEl.html('');
                 if (App.weTrack) {
                     $currentEl.append(_.template(listForWTrack));
-                    $currentEl.append(new listItemView({
+                    $currentEl.append(new ListItemView({
                         collection : this.collection,
                         page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
                 } else {
                     $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
+                    $currentEl.append(new ListItemView({
                         collection : this.collection,
                         page       : this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
                 }
                 //added two parameters page and items number
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
+                $currentEl.append(new ListTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
@@ -154,7 +158,7 @@ define([
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-                dataService.getData("/workflows/fetch", {
+                dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                     wId         : 'Sales Order',
                     source      : 'purchase',
                     targetSource: 'order'
@@ -170,7 +174,7 @@ define([
                 var id = tr.data("id");
                 var notEditable = tr.hasClass('notEditable');
                 var onlyView;
-                var model = new quotationModel({validate: false});
+                var model = new QuotationModel({validate: false});
 
                 if (notEditable) {
                     onlyView = true;
@@ -180,11 +184,11 @@ define([
                 model.fetch({
                     data   : {contentType: this.contentType},
                     success: function (model) {
-                        new editView({model: model, onlyView: onlyView});
+                        new EditView({model: model, onlyView: onlyView});
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
