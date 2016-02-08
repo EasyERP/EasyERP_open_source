@@ -86,6 +86,34 @@ describe("Workflow Specs", function () {
                 });
         });
 
+        it("should update only selected fields", function (done) {
+            var body = {
+                color: '#2C3E51',
+                sequenceStart: 1,
+                sequence: 2,
+                wId:id
+            };
+
+            aggent
+                .patch('workflows/' + id)
+                .send(body)
+                .expect(200)
+                .end(function(err, res){
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('success');
+
+                    done();
+                });
+        });
+
         it("should delete workflow", function (done) {
             aggent
                 .delete('workflows/' + id)
