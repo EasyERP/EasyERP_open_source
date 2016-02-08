@@ -2,32 +2,30 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
-        'models/PaymentModel'
+        'Backbone',
+        'models/PaymentModel',
+        'constants'
     ],
-    function (PaymentModel) {
+    function (Backbone, PaymentModel, CONSTANTS) {
+        'use strict';
+
         var PaymentCollection = Backbone.Collection.extend({
             model: PaymentModel,
-            url  : "/payment/",
+            url  : CONSTANTS.URLS.PAYMENT,
 
-            initialize: function (options) {
+            initialize: function () {
 
                 this.fetch({
                     reset  : true,
                     success: function () {
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
                 });
-            },
-            /*parse: function(model){
-             if (model.date) {
-             model.date = common.utcDateToLocaleDate(model.date);
-             }
-             return model;
-             }*/
+            }
         });
         return PaymentCollection;
     });

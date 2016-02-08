@@ -24,6 +24,7 @@ define([
     ],
 
     function (listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
+        'use strict';
         var wTrackListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -65,8 +66,8 @@ define([
                 "click td.editable"                                : "editRow",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc"                                 : "autoCalc",
-                "change .editable"                                : "setEditable",
-                "keydown input.editing"                           : "keyDown",
+                "change .editable"                                 : "setEditable",
+                "keydown input.editing"                            : "keyDown",
                 "click"                                            : "removeInputs"
             },
 
@@ -256,7 +257,7 @@ define([
 
                     if (value === '') {
                         if (el.children('input').length) {
-                            value = input.val() || '0' ; // in case of empty input
+                            value = input.val() || '0'; // in case of empty input
 
                         } else {
                             value = '0';
@@ -756,7 +757,7 @@ define([
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                    if (model){
+                    if (model) {
                         model.changed = this.changedModels[id];
                     }
                 }
@@ -1281,7 +1282,7 @@ define([
                 this.$saveBtn = $('#top-bar-saveBtn');
 
                 return this;
-            },
+            }
         });
 
         return wTrackListView;

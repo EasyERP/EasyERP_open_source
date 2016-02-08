@@ -1,4 +1,10 @@
-define(function () {
+define([
+    'Backbone',
+    'jQuery',
+    'constants'
+], function (Backbone, $, CONSTANTS) {
+    'use strict';
+
     var WorkflowModel = Backbone.Model.extend({
         idAttribute: '_id'
     });
@@ -6,8 +12,7 @@ define(function () {
     var WorkflowsCollection = Backbone.Collection.extend({
         model     : WorkflowModel,
         url       : function () {
-            var mid = 39,
-                url = "/Workflows";
+            var url = CONSTANTS.URLS.WORKFLOWS;
             return url;
         },
         initialize: function () {
@@ -25,11 +30,9 @@ define(function () {
             });
         },
 
-        parse: true,
-
         parse: function (response) {
             return response.data;
-        },
+        }
     });
     return WorkflowsCollection;
 });

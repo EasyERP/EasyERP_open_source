@@ -1,19 +1,23 @@
 define([
-        'models/journalEntry'
+        'Backbone',
+        'models/journalEntry',
+        'constants'
     ],
-    function (JournalEntryModel) {
+    function (Backbone, JournalEntryModel, CONSTANTS) {
+        'use strict';
+
         var JournalEntryCollection = Backbone.Collection.extend({
             model: JournalEntryModel,
-            url  : "/journal/journalEntry/",
+            url  : CONSTANTS.URLS.JOURNAL_ENTRY,
 
             showMore: function (options) {
                 var that = this;
                 var filterObject = options || {};
 
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
 
                 this.fetch({
                     data   : filterObject,
@@ -24,7 +28,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

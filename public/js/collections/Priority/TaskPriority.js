@@ -1,11 +1,14 @@
 ﻿define([
-        "models/Priority"
+        'Backbone',
+        'jQuery',
+        "models/Priority",
+        'constants'
     ],
-    function (PriorityModel) {
+    function (Backbone, $, PriorityModel, CONSTANTS) {
         var taskPriorityCollection = Backbone.Collection.extend({
             model     : PriorityModel,
             url       : function () {
-                return "/Priority";
+                return CONSTANTS.URLS.PRIORITY;
             },
             initialize: function () {
                 var mid = 39;
@@ -20,10 +23,9 @@
                     error  : this.fetchError
                 });
             },
-            parse     : true,
             parse     : function (response) {
                 return response.data;
-            },
+            }
         });
         return taskPriorityCollection;
     });

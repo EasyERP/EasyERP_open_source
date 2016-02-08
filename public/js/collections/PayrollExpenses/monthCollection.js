@@ -1,9 +1,12 @@
 /**
  * Created by lilya on 16/11/15.
  */
-define(
-    function () {
-        var PayRollCollection = Backbone.Collection.extend({});
+define([
+    'Backbone'
+], function (Backbone) {
+    'use strict';
 
-        return PayRollCollection;
-    });
+    var PayRollCollection = Backbone.Collection.extend({});
+
+    return PayRollCollection;
+});

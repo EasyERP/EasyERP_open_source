@@ -1,11 +1,17 @@
 define([
-        'models/JobPositionsModel'
+        'Backbone',
+        'jQuery',
+        'models/JobPositionsModel',
+        'constants'
+
     ],
-    function (JobPositionsModel) {
+    function (Backbone, $, JobPositionsModel, CONSTANTS) {
+        'use strict';
+
         var JobPositionsCollection = Backbone.Collection.extend({
             model     : JobPositionsModel,
             url       : function () {
-                return "/JobPositions";
+                return CONSTANTS.URLS.JOBPOSITIONS;
             },
             initialize: function () {
                 console.log("JobPosition Collection Init");
@@ -20,7 +26,6 @@ define([
                     error  : this.fetchError
                 });
             },
-            parse     : true,
             parse     : function (response) {
                 return response.data;
             }

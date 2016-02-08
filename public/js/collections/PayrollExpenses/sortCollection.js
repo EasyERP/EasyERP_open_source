@@ -2,12 +2,16 @@
  * Created by lilya on 19/11/15.
  */
 define([
-        'models/PayRollModel'
+        'Backbone',
+        'models/PayRollModel',
+        'constants'
     ],
-    function (PayRollModel) {
+    function (Backbone, PayRollModel, CONSTANTS) {
+        'use strict';
+
         var PayRollCollection = Backbone.Collection.extend({
             model: PayRollModel,
-            url  : "/payroll/",
+            url  : CONSTANTS.URLS.PAYROLL,
 
             initialize: function (options) {
                 this.startTime = new Date();
@@ -19,7 +23,7 @@ define([
                     success: function () {
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }

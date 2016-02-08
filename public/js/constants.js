@@ -481,7 +481,6 @@ define([], function () {
             USERS_FOR_DD          : '/users/forDd',
             APPLICATIONS          : '/applications/',
             EMPLOYEES             : '/employees/',
-            CATEGORY              : '/category/',
             CHARTOFACCOUNT        : '/ChartOfAccount/',
             COMPANIES             : '/companies/',
             DEGREES               : '/Degrees/',
@@ -498,7 +497,6 @@ define([], function () {
             PAYMENT               : '/payment/',
             PAYROLL               : '/payroll/',
             PERSONS               : '/persons/',
-            PRIORITY              : '/Priority/',
             PRODUCT               : '/product/',
             PROFILES              : '/profiles/',
             PROJECTS              : '/Projects/',
@@ -506,7 +504,6 @@ define([], function () {
             SOURCESOFAPPLICANTS   : '/SourcesOfApplicants/',
             TASKS                 : '/Tasks/',
             VACATION              : '/vacation/',
-            WORKFLOWS             : '/workflows/',
             WTRACK                : '/wTrack/',
             BIRTHDAYS             : '/birthdays/',
             BONUSTYPE             : '/bonusType/',
@@ -516,7 +513,18 @@ define([], function () {
             CUSTOMERS             : '/customers/',
             DASHBOARD_HR          : 'dashboard/hr',
             DASHBOARD_VACATION    : 'dashboard/vacation',
-            EMPLOYEES_GETFORDD    : "/employees/getForDD"
+            EMPLOYEES_GETFORDD    : "/employees/getForDD",
+            EMPLOYEES_ALPHABET    : "/employees/getEmployeesAlphabet",
+            INVOICE_STATS         : "/invoice/stats/",
+            REVENUE_SYNTHETIC     : 'revenue/synthetic',
+            JOBS                  : '/jobs/',
+            JOURNAL_ENTRY         : "/journal/journalEntry/",
+            WORKFLOWS             : '/workflows/',
+            MODULES               : "/getModules",
+            PAYMENT_SALARY        : "/payment/salary/",
+            PRIORITY              : "/Priority",
+            PRODUCT_ALPHABET      : "/product/getProductsAlphabet",
+            CATEGORY              : "/category/"
         },
 
         MID: {

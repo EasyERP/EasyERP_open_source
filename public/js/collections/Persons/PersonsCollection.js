@@ -1,13 +1,17 @@
 define([
+        'Backbone',
+        'jQuery',
         "models/PersonsModel",
-        'common'
+        'constants'
     ],
-    function (PersonModel, common) {
+    function (Backbone, $, PersonModel, CONSTANTS) {
+        'use strict';
+
         var PersonsCollection = Backbone.Collection.extend({
             model      : PersonModel,
             idAttribute: "_id",
             url        : function () {
-                return "/persons";
+                return CONSTANTS.URLS.PERSONS;
             },
             initialize : function () {
                 var mid = 39;
@@ -29,7 +33,6 @@ define([
                 return new PersonsCollection(filtered);
             },
 
-            parse: true,
             parse: function (response) {
                 return response.data;
             },

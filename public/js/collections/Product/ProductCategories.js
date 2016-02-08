@@ -1,10 +1,12 @@
 ﻿define([
-        'models/Category'
+        'Backbone',
+        'models/Category',
+        'constants'
     ],
-    function (Model) {
+    function (Backbone, Model, CONSTANTS) {
         var Collection = Backbone.Collection.extend({
             model: Model,
-            url  : "/category/",
+            url  : CONSTANTS.URLS.CATEGORY,
 
             initialize: function (options) {
 
@@ -15,7 +17,7 @@
 
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
@@ -23,7 +25,7 @@
             },
 
             parse: function (response) {
-                return response.data
+                return response.data;
             }
         });
 

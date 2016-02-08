@@ -1,11 +1,14 @@
 define([
+    'Backbone',
     'models/jobsModel',
-    'custom'
-], function (JobsModel, custom) {
-    var JobsCollection = Backbone.Collection.extend({
+    'custom',
+    'constants'
+], function (Backbone, JobsModel, custom, CONSTANTS) {
+    'use strict';
 
+    var JobsCollection = Backbone.Collection.extend({
         model       : JobsModel,
-        url         : '/jobs/',
+        url         : CONSTANTS.URLS.JOBS,
         contentType : null,
         page        : null,
         numberToShow: null,
@@ -54,11 +57,11 @@ define([
             var that = this;
             var filterObject = options || {};
 
-            filterObject['page'] = (options && options.page) ? options.page : this.page;
-            filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-            filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-            filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-            filterObject['filter'] = (options) ? options.filter : {};
+            filterObject.page = (options && options.page) ? options.page : this.page;
+            filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+            filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+            filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+            filterObject.filter = options ? options.filter : {};
 
             if (options && options.contentType && !(options.filter)) {
                 options.filter = {};
@@ -73,7 +76,7 @@ define([
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Some Error."
                     });
                 }

@@ -1,12 +1,16 @@
 /**
  * Created by Liliya on 23.06.2015.
  */
-define(['models/MonthHoursModel'
-], function (MonthHoursModel) {
-    var MonthHoursCollection = Backbone.Collection.extend({
+define([
+    'Backbone',
+    'models/MonthHoursModel',
+    'constants'
+], function (Backbone, MonthHoursModel, CONSTANTS) {
+    'use strict';
 
+    var MonthHoursCollection = Backbone.Collection.extend({
         model       : MonthHoursModel,
-        url         : '/monthHours/',
+        url         : CONSTANTS.URLS.MONTHHOURS,
         contentType : null,
         page        : null,
         numberToShow: null,
@@ -43,11 +47,11 @@ define(['models/MonthHoursModel'
             var that = this;
             var filterObject = options || {};
 
-            filterObject['page'] = (options && options.page) ? options.page : this.page;
-            filterObject['count'] = (options && options.count) ? options.count : this.numberToShow;
-            filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-            filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-            filterObject['filter'] = (options) ? options.filter : {};
+            filterObject.page = (options && options.page) ? options.page : this.page;
+            filterObject.count = (options && options.count) ? options.count : this.numberToShow;
+            filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+            filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+            filterObject.filter = options ? options.filter : {};
 
             if (options && options.contentType && !(options.filter)) {
                 options.filter = {};
@@ -62,7 +66,7 @@ define(['models/MonthHoursModel'
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Some Error."
                     });
                 }
