@@ -148,38 +148,6 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should update application", function (done) {
-            var body = {
-                'social': {
-                    LI: 'test'
-                }
-            };
-            aggent
-                .patch('applications/' + id)
-                .send(body)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('_id');
-
-                    done();
-                });
-        });
-
-        it("should delete application", function (done) {
-            aggent
-                .delete('applications/' + id)
-                .expect(200, done);
-        });
-
         it("should get applications length by workflows", function(done){
             aggent
                 .get('applications/getApplicationsLengthByWorkflows')
@@ -229,6 +197,39 @@ describe("Application Specs", function () {
                     done();
                 });
         });
+
+        it("should update application", function (done) {
+            var body = {
+                'social': {
+                    LI: 'test'
+                }
+            };
+            aggent
+                .patch('applications/' + id)
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('_id');
+
+                    done();
+                });
+        });
+
+        it("should delete application", function (done) {
+            aggent
+                .delete('applications/' + id)
+                .expect(200, done);
+        });
+
     });
 
     describe('Application with user without a license', function () {
