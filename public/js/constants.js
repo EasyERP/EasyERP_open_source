@@ -477,6 +477,8 @@ define([], function () {
         DASH_VAC_WEEK_AFTER : 8,
 
         URLS: {
+            PROFILES_FOR_DD       : '/profiles/forDd',
+            CURRENT_USER          : '/users/current',
             USERS                 : '/users/',
             USERS_FOR_DD          : '/users/forDd',
             APPLICATIONS          : '/applications/',
@@ -527,7 +529,6 @@ define([], function () {
             CATEGORY              : "/category/",
             PROJECT_DASHBOARD     : "project/getProjectPMForDashboard",
             PAYMENT_SUPPLIER      : "/payment/supplier/",
-            CURRENT_USER          : '/currentUser',
             APPLICATIONS_WFLENGTH : '/applications/getApplicationsLengthByWorkflows',
             APPLICATIONS_KANBAN   : '/applications/kanban',
             EMPLOYEES_NATIONALITY : "/employees/nationality",

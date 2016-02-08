@@ -226,7 +226,7 @@ var User = function (event, models) {
         var err;
         var queryObject;
 
-        login = login.toLowerCase();
+        //login = login.toLowerCase(); commented by Liliya
 
         if (login && data.pass) {
             queryObject = {
