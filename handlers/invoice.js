@@ -111,6 +111,10 @@ var Invoice = function (models, event) {
         var request;
         var parallelTasks;
         var waterFallTasks;
+        var editedBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
         function fetchFirstWorkflow(callback) {
             if (forSales === "true") {
@@ -251,7 +255,8 @@ var Invoice = function (models, event) {
                     $set: {
                         invoice : invoiceId,
                         type    : "Invoiced",
-                        workflow: CONSTANTS.JOBSFINISHED
+                        workflow: CONSTANTS.JOBSFINISHED,
+                        editedBy: editedBy
                     }
                 }, {new: true}, function (err, job) {
                     if (err) {
@@ -791,6 +796,10 @@ var Invoice = function (models, event) {
         var wTrack = models.get(db, "wTrack", wTrackSchema);
         var Order = models.get(db, 'Quotation', OrderSchema);
         var JobsModel = models.get(db, 'jobs', JobsSchema);
+        var editedBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
         if (checkDb(db)) {
             moduleId = 64
@@ -849,7 +858,8 @@ var Invoice = function (models, event) {
                                 JobsModel.findByIdAndUpdate(id, {
                                     type    : "Ordered",
                                     invoice : null,
-                                    workflow: CONSTANTS.JOBSINPROGRESS
+                                    workflow: CONSTANTS.JOBSINPROGRESS,
+                                    editedBy: editedBy
                                 }, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);

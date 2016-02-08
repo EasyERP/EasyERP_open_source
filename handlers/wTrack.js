@@ -926,6 +926,12 @@ var wTrack = function (event, models) {
             };
 
             if (createJob) {
+                var editedBy = {
+                    user: req.session.uId,
+                    date: new Date()
+                };
+                job.createdBy = editedBy;
+
                 var newJob = new Job(job);
 
                 newJob.save(function (err, job) {
@@ -935,7 +941,7 @@ var wTrack = function (event, models) {
 
                     jobId = job.toJSON()._id;
 
-                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function (err) {
+                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}, $set: {editedBy: editedBy}}, {new: true}, function (err) {
                         if (err) {
                             console.log(err);
                         }
