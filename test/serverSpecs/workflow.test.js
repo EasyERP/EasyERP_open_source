@@ -37,7 +37,11 @@ describe("Workflow Specs", function () {
 
         it("should create workflow", function (done) {
             var body = {
-                name: "testWorkflow_7"
+                name    : "testWorkflow_10",
+                "status": "New",
+                "_id"   : "testCreateWF",
+                "wName" : "testCreateWF",
+                visible : true
             };
             aggent
                 .post('workflows')
@@ -56,15 +60,129 @@ describe("Workflow Specs", function () {
                         .to.have.property('success');
                     expect(body)
                         .to.have.property('createdModel');
-
                     id = body.createdModel._id;
+                    done();
+                });
+        });
+
+        it("should get workflow", function (done) {
+            var body = {
+                id: "testCreateWF"
+            };
+
+            aggent
+                .get('workflows')
+                .query(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+
+                    done();
+                });
+        });
+
+        it("should get relatedStatus", function (done) {
+            var body = {};
+
+            aggent
+                .get('workflows/relatedStatus')
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    done();
+                });
+        });
+
+        it("should get getWorkflowsForDd", function (done) {
+            var body = {
+                id: id
+            };
+
+            aggent
+                .get('workflows/getWorkflowsForDd')
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    done();
+                });
+        });
+
+        it("should get getFirstForConvert", function (done) {
+            var body = {};
+
+            aggent
+                .get('workflows/getFirstForConvert')
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    done();
+                });
+        });
+
+        it("should fetch", function (done) {
+            var body = {};
+
+            aggent
+                .get('workflows/fetch')
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
                     done();
                 });
         });
 
         it("should update workflow", function (done) {
             var body = {
-                name: "testWorkflow_8"
+                name: "testWorkflow_updated"
             };
             aggent
                 .put('workflows/' + id)
@@ -88,17 +206,17 @@ describe("Workflow Specs", function () {
 
         it("should update only selected fields", function (done) {
             var body = {
-                color: '#2C3E51',
+                color        : '#2C3E51',
                 sequenceStart: 1,
-                sequence: 2,
-                wId:id
+                sequence     : 2,
+                wId          : id
             };
 
             aggent
                 .patch('workflows/' + id)
                 .send(body)
                 .expect(200)
-                .end(function(err, res){
+                .end(function (err, res) {
                     var body = res.body;
 
                     if (err) {
@@ -142,5 +260,19 @@ describe("Workflow Specs", function () {
                 .expect(302, done);
         });
 
+        it("should fail create workflow", function (done) {
+            var body = {
+                name    : "testWorkflow_10",
+                "status": "New",
+                "_id"   : "testCreateWF",
+                "wName" : "testCreateWF",
+                visible : true
+            };
+            aggent
+                .post('workflows')
+                .send(body)
+                .expect(403, done);
+
+        });
     });
 });

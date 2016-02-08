@@ -284,7 +284,7 @@ var workflows = function (models, event) {
 
         updateSequence(Workflow, "sequence", data.sequenceStart, data.sequence, data.wId, false, false, function (sequence) {
             data.sequence = sequence;
-            Workflow.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, res) {
+            Workflow.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err) {
                 if (err) {
                     return next(err);
                 }
