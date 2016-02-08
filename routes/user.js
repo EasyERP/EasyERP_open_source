@@ -14,6 +14,7 @@ module.exports = function (event, models) {
     router.get('/profiles/:id', authStackMiddleware, accessStackMiddlware, handler.getByProfile);
     router.get('/forDd', authStackMiddleware, handler.getForDd);
     router.get('/current', authStackMiddleware, handler.getCurrent);
+    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
     router.get('/:id', authStackMiddleware, handler.getById);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
