@@ -576,8 +576,8 @@ var Employee = function (event, models) {
         var project;
         var projectSecond;
 
-        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count, 10));
-        var limit = parseInt(data.count, 10);
+        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count || 100, 10));
+        var limit = parseInt(data.count, 10) || 100;
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {

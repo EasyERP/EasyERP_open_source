@@ -13,7 +13,7 @@ describe("Application Specs", function () {
     'use strict';
     var id;
 
-    describe('Application with admin', function(){
+    describe('Application with admin', function () {
         before(function (done) {
             aggent = request.agent(url);
 
@@ -27,7 +27,7 @@ describe("Application Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
@@ -35,11 +35,11 @@ describe("Application Specs", function () {
 
         it("should create application", function (done) {
             var body = {
-                "name"       : {
+                "name"     : {
                     "first": "test",
                     "last" : "test"
                 },
-                "dateBirth"  : "28 Dec, 1990"
+                "dateBirth": "28 Dec, 1990"
             };
 
             aggent
@@ -71,8 +71,12 @@ describe("Application Specs", function () {
         });
 
         it("should getById application", function (done) {
+            var query = {
+                id: id
+            };
             aggent
                 .get('applications/' + id)
+                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -90,12 +94,16 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get by viewType list application", function (done) {
+        it("should get by viewType application", function (done) {
             var query = {
-                viewType   : "list"
+                viewType     : "list",
+                contentType  : 'Applications',
+                count        : 100,
+                page         : 1,
+                newCollection: false
             };
             aggent
-                .get('applications/' + id)
+                .get('applications/list')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -114,13 +122,12 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get by viewType kanban application", function (done) {
+        it("should get by viewType application", function (done) {
             var query = {
-                viewType   : "kanban",
                 workflowId: '528ce5e3f3f67bc40b000018'
             };
             aggent
-                .get('applications/' + id)
+                .get('applications/kanban')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -176,7 +183,7 @@ describe("Application Specs", function () {
         });
     });
 
-    describe('Application with user without a license', function(){
+    describe('Application with user without a license', function () {
         before(function (done) {
             aggent = request.agent(url);
 
@@ -190,7 +197,7 @@ describe("Application Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
@@ -198,17 +205,17 @@ describe("Application Specs", function () {
 
         it("should fail create application", function (done) {
             var body = {
-                "name"       : {
+                "name"     : {
                     "first": "test",
                     "last" : "test"
                 },
-                "dateBirth"  : "28 Dec, 1990"
+                "dateBirth": "28 Dec, 1990"
             };
 
             aggent
                 .post('applications')
                 .send(body)
-                .expect(403,done);
+                .expect(403, done);
         });
     });
 });

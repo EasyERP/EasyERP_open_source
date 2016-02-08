@@ -68,7 +68,7 @@ describe("Person Specs", function () {
 
         it("should get by _id person", function (done) {
             aggent
-                .get('persons/form')
+                .get('persons/' + id)
                 .query({id: '55b92ad521e4b7c40f00060f'})
                 .expect(200)
                 .end(function(err, res){

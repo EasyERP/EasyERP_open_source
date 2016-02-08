@@ -893,7 +893,9 @@ define([
                     var getModel = new contentFormModel();
 
                     if (contentType === 'PayrollExpenses') {
-                        getModel.url = '/payroll/form';
+                        getModel.url = function () {
+                            return '/payroll/' + modelId;
+                        }
                     }
 
                     //getModel.urlRoot = '/' + contentType + '/form';

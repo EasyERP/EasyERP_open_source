@@ -115,7 +115,7 @@ describe("Employee Specs", function () {
 
         it("should get by viewType form employee", function (done) {
             var query = {
-                viewType   : "form"
+                viewType: "form"
             };
             aggent
                 .get('employees/' + id)
@@ -139,10 +139,14 @@ describe("Employee Specs", function () {
 
         it("should get by viewType thumbnails employee", function (done) {
             var query = {
-                viewType   : "thumbnails"
+                viewType     : "thumbnails",
+                contentType  : 'Employees',
+                count        : 100,
+                page         : 1,
+                newCollection: false
             };
             aggent
-                .get('employees/' + id)
+                .get('employees/thumbnails')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -154,10 +158,8 @@ describe("Employee Specs", function () {
 
                     expect(body)
                         .to.be.instanceOf(Object);
-                    //expect(body)
-                    //    .to.have.property('data');
-                    //expect(body.data)
-                    //    .to.be.instanceOf(Array);
+                    expect(body)
+                        .to.have.property('data');
 
                     done();
                 });

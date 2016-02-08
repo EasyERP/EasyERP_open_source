@@ -325,7 +325,7 @@ var PayRoll = function (models) {
     };
 
     function getByDataKey(req, res, next) {
-        var id = req.query.id;
+        var id = req.params.id;
         var data = req.query;
         var error;
         var sort = data.sort || {"employee.name": 1};
@@ -363,12 +363,12 @@ var PayRoll = function (models) {
     this.getSorted = function (req, res, next) {
         var data = req.query;
         var db = req.session.lastDb;
-        var dataKey = data.dataKey;
+        var dataKey = req.query.dataKey;
         var queryObject = {dataKey: parseInt(dataKey, 10)};
         var sort = data.sort || {"employee": 1};
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
 
-        var query = Payroll.find(queryObject).sort(sort).lean();
+        var query = Payroll.find(queryObject).sort(sort).populate('employee', 'name').populate('type').lean();
 
         query.exec(function (err, result) {
             if (err) {
@@ -408,9 +408,7 @@ var PayRoll = function (models) {
     }
 
     this.getForView = function (req, res, next) {
-        var query = req.query;
-
-        if (query.id) {
+        if (req.params.id !== 'list') {
             getByDataKey(req, res, next);
         } else {
             getForView(req, res, next);
