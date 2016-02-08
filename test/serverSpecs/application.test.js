@@ -94,13 +94,10 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get by viewType application", function (done) {
+        it("should get by viewType list application", function (done) {
             var query = {
                 viewType     : "list",
-                contentType  : 'Applications',
-                count        : 100,
-                page         : 1,
-                newCollection: false
+                contentType  : 'Applications'
             };
             aggent
                 .get('applications/list')
@@ -122,9 +119,10 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get by viewType application", function (done) {
+        it("should get by viewType kanban application", function (done) {
             var query = {
-                workflowId: '528ce5e3f3f67bc40b000018'
+                workflowId: '528ce5e3f3f67bc40b000018',
+                viewType     : "kanban"
             };
             aggent
                 .get('applications/kanban')
@@ -145,6 +143,56 @@ describe("Application Specs", function () {
                         .to.have.property('time');
                     expect(body)
                         .to.have.property('workflowId');
+
+                    done();
+                });
+        });
+
+        it("should get applications length by workflows", function(done){
+            aggent
+                .get('applications/getApplicationsLengthByWorkflows')
+                .expect(200)
+                .end(function(err, res){
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('showMore');
+                    expect(body)
+                        .to.have.property('arrayOfObjects')
+                        .and.to.be.instanceOf(Array);
+
+                    done();
+                });
+        });
+
+        it("should get total collection length",function(done){
+            var body = {
+                contentType: 'Applications'
+            };
+
+            aggent
+                .get('applications/totalCollectionLength')
+                .query(body)
+                .expect(200)
+                .end(function(err, res){
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('showMore');
+                    expect(body)
+                        .to.have.property('count');
 
                     done();
                 });
@@ -181,6 +229,7 @@ describe("Application Specs", function () {
                 .delete('applications/' + id)
                 .expect(200, done);
         });
+
     });
 
     describe('Application with user without a license', function () {
