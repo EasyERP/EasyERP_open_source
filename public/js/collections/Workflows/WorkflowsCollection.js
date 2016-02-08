@@ -1,12 +1,14 @@
 define([
-        'models/WorkflowsModel',
+        'Backbone',
+        'models/WorkflowsModel'
     ],
-    function (WorkflowsModel) {
+    function (Backbone, WorkflowsModel) {
+        'use strict';
         var WorkflowsCollection = Backbone.Collection.extend({
             model     : WorkflowsModel,
             url       : function () {
-                var mid = 39,
-                    url = "/Workflows?mid=" + mid + "&id=" + this.type;
+                var mid = 39;
+                var url = "/Workflows?mid=" + mid + "&id=" + this.type;
                 return url;
             },
             initialize: function (options) {
@@ -22,7 +24,6 @@ define([
                     error  : this.fetchError
                 });
             },
-            parse     : true,
             parse     : function (response) {
                 return response.data;
             },

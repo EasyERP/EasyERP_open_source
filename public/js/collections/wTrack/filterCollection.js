@@ -1,11 +1,14 @@
 ﻿define([
+        'Backbone',
         'models/wTrackModel',
-        'common'
+        'constants'
     ],
-    function (wTrackModel, common) {
+    function (Backbone, wTrackModel, CONSTANTS) {
+        'use strict';
+
         var wTrackCollection = Backbone.Collection.extend({
             model       : wTrackModel,
-            url         : "/wTrack/",
+            url         : CONSTANTS.URLS.WTRACK,
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -33,7 +36,7 @@
                         that.page++;
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
@@ -44,11 +47,11 @@
                 var that = this;
                 var filterObject = options || {};
 
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['filter'] = (options) ? options.filter : {};
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.filter = options ? options.filter : {};
 
                 if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
@@ -63,7 +66,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

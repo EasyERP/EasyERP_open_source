@@ -1,4 +1,8 @@
-﻿define(function () {
+﻿define([
+    'Backbone'
+], function (Backbone) {
+    'use strict';
+
     var ProjectModelDd = Backbone.Model.extend({
         idAttribute: "_id"
     });
@@ -17,10 +21,9 @@
                 error  : this.fetchError
             });
         },
-        parse     : true,
         parse     : function (response) {
             return response.data;
-        },
+        }
     });
     return ProjectsDdCollection;
 });

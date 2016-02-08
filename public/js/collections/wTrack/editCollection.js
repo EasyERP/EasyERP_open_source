@@ -1,14 +1,17 @@
 ﻿define([
+        'Backbone',
         './filterCollection'
     ],
-    function (ParrantCollection) {
+    function (Backbone, ParrantCollection) {
+        'use strict';
+
         var EditableColection = ParrantCollection.extend({
 
             initialize: function () {
                 this.on("change", this.change, this);
             },
 
-            save: function (changedValues) {
+            save: function () {
                 var self = this;
                 var model;
                 var models = [];
@@ -28,22 +31,8 @@
                     }
                 };
 
-                //var saveObject = {
-                //    trigger: this.trigger,
-                //    url: this.url,
-                //    toJSON: function () {
-                //        return newModel;
-                //    }
-                //};
-                //
-                //var options = {
-                //    success: function (model, resp, xhr) {
-                //        self.trigger('saved', model);
-                //    }
-                //};
-
                 var updatedOptions = {
-                    success: function (model, resp, xhr) {
+                    success: function () {
                         self.trigger('updated');
                     }
                 };
@@ -80,7 +69,7 @@
                         };
 
                         var options = {
-                            success: function (model, resp, xhr) {
+                            success: function (model) {
                                 self.trigger('saved', model);
                             }
                         };

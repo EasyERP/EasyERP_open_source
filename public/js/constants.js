@@ -524,7 +524,9 @@ define([], function () {
             PAYMENT_SALARY        : "/payment/salary/",
             PRIORITY              : "/Priority",
             PRODUCT_ALPHABET      : "/product/getProductsAlphabet",
-            CATEGORY              : "/category/"
+            CATEGORY              : "/category/",
+            PROJECT_DASHBOARD     : "project/getProjectPMForDashboard",
+            PAYMENT_SUPPLIER      : "/payment/supplier/"
         },
 
         MID: {

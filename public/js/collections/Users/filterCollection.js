@@ -1,9 +1,10 @@
 ﻿define([
     'Backbone',
+    'Underscore',
     'models/UsersModel',
     'common',
     'constants'
-], function (Backbone, UserModel, common, CONSTANTS) {
+], function (Backbone, _, UserModel, common, CONSTANTS) {
     'use strict';
     var UsersCollection = Backbone.Collection.extend({
         model       : UserModel,
@@ -13,16 +14,13 @@
         viewType    : null,
         contentType : null,
 
-        initialize  : function (options) {
+        initialize: function (options) {
             var that = this;
 
             this.startTime = new Date();
             this.namberToShow = options.count;
             this.page = options.page || 1;
 
-            /*if (options && options.viewType) {
-                this.url += options.viewType;
-            }*/
             this.fetch({
                 data   : options,
                 reset  : true,
