@@ -8,7 +8,7 @@ define([
     'constants'
 
 ], function (Backbone, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
-
+    'use strict';
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
@@ -899,7 +899,7 @@ define([
                     }
 
                     //getModel.urlRoot = '/' + contentType + '/form';
-                    getModel.urlRoot = getModel.url() + modelId ;
+                    getModel.urlRoot = getModel.url() + modelId;
                     getModel.fetch({
                         success: function (model) {
                             var topbarView = new topBarView({actionType: "Content"});

@@ -28,7 +28,7 @@
     "lodash": "^3.8.0",
     "money": "^0.2.0",
     "mongodb": "^2.0.44",
-    "mongoose": "4.4.2",
+    "mongoose": "4.0.8",
     "mongoose-schema-extend": "^0.2.0",
     "morgan": "1.5.1",
     "mssql": "2.1.3",
