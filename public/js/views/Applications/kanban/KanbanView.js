@@ -160,7 +160,7 @@
                 e.preventDefault();
                 var id = $(e.target).closest(".inner").data("id");
                 var model = new CurrentModel();
-                model.urlRoot = '/applications/form';
+                model.urlRoot = '/applications/' + id;
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {

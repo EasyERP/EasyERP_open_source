@@ -21,6 +21,7 @@ var Employee = function (event, models) {
     var validatorEmployee = require('../helpers/validator');
     var Payroll = require('../handlers/payroll');
     var payrollHandler = new Payroll(models);
+    var ids = ['52203e707d4dba8813000003', '563f673270bbc2b740ce89ae', '55b8cb7d0ce4affc2a0015cb', '55ba2ef1d79a3a343900001c', '560255d1638625cf32000005'];
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
@@ -319,6 +320,10 @@ var Employee = function (event, models) {
                 return next(err);
             }
 
+            if (ids.indexOf(req.session.uId) !== -1) {
+                employee._doc.enableView = true;
+            }
+
             res.status(200).send(employee);
         });
     }
@@ -540,7 +545,7 @@ var Employee = function (event, models) {
             viewType = id;
         }
 
-        if (id.length >= 24){
+        if (id && id.length >= 24){
             getById(req, res, next);
             return false;
         }
