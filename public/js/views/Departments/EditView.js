@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Departments/EditTemplate.html",
         'views/selectView/selectView',
         "collections/Departments/DepartmentsCollection",
@@ -8,7 +11,9 @@ define([
         "populate",
         'constants'
     ],
-    function (EditTemplate, selectView, DepartmentsCollection, AccountsDdCollection, common, Custom, populate, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, selectView, DepartmentsCollection, AccountsDdCollection, common, Custom, populate, CONSTANTS) {
+        'use strict';
+
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Departments",
@@ -21,13 +26,15 @@ define([
                     this.currentModel = options.myModel;
                 }
                 else {
-                    this.currentModel = (options.model) ? options.model : options.collection.getElement();
+                    this.currentModel = options.model || options.collection.getElement();
                 }
                 this.currentModel.urlRoot = '/Departments';
                 this.responseObj = {};
+
                 this.render();
             },
-            events     : {
+
+            events: {
                 'click .dialog-tabs a'                             : 'changeTab',
                 'click #sourceUsers li'                            : 'addUsers',
                 'click #targetUsers li'                            : 'removeUsers',
@@ -38,14 +45,14 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
-            nextUserList: function (e, page) {
-                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) + 1);
+            nextUserList: function (e) {
+                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page"), 10) + 1);
                 this.updateAssigneesPagination($(e.target).closest(".left"));
 
             },
 
-            prevUserList: function (e, page) {
-                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) - 1);
+            prevUserList: function (e) {
+                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page"), 10) - 1);
                 this.updateAssigneesPagination($(e.target).closest(".left"));
             },
 
@@ -62,7 +69,7 @@ define([
                 var list = el.find("ul");
                 var count = list.find("li").length;
                 var s = "";
-                var page = parseInt(list.attr("data-page"));
+                var page = parseInt(list.attr("data-page"), 10);
                 if (page > 1) {
                     el.find(".userPagination").prepend("<a class='prevUserList' href='javascript:;'>« prev</a>");
                 }
@@ -70,9 +77,9 @@ define([
                     s += "0-0 of 0";
                 } else {
                     if ((page) * 20 - 1 < count) {
-                        s += ((page - 1) * 20 + 1) + "-" + ((page) * 20) + " of " + count;
+                        s += ((page - 1) * 20 + 1) + "-" + (page * 20) + " of " + count;
                     } else {
-                        s += ((page - 1) * 20 + 1) + "-" + (count) + " of " + count;
+                        s += ((page - 1) * 20 + 1) + "-" + count + " of " + count;
                     }
                 }
                 if (page < count / 20) {

@@ -1,19 +1,23 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/Departments/list/ListTemplate.html'
     ],
-    function (ListTemplate) {
+    function (Backbone, _, ListTemplate) {
+        'use strict';
+
         var DepartmentsListItemView = Backbone.View.extend({
-            el: '#listTable',
+            el        : '#listTable',
             initialize: function (options) {
                 this.collection = options.collection;
                 this.startNumber = options.startNumber;
             },
-            render: function () {
+            render    : function () {
                 this.$el.append(_.template(ListTemplate, {
                     departmentsCollection: this.collection.toJSON(),
                     startNumber          : this.startNumber
                 }));
-            },
+            }
         });
         return DepartmentsListItemView;
     });

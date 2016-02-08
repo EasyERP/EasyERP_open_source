@@ -1,8 +1,13 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/JobPositions/form/FormTemplate.html',
         'views/JobPositions/EditView'
     ],
-    function (FormTemplate, EditView) {
+    function (Backbone, $, _, FormTemplate, EditView) {
+        'use strict';
+
         var FormView = Backbone.View.extend({
             el        : '#content-holder',
             initialize: function (options) {

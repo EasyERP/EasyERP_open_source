@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/JobPositions/CreateTemplate.html",
         "collections/Departments/DepartmentsCollection",
         "collections/Workflows/WorkflowsCollection",
@@ -8,7 +11,9 @@ define([
         "populate",
         'constants'
     ],
-    function (CreateTemplate, DepartmentsCollection, WorkflowsCollection, JobPositionsModel, AssigneesView, common, populate, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, DepartmentsCollection, WorkflowsCollection, JobPositionsModel, AssigneesView, common, populate, CONSTANTS) {
+        'use strict';
+
         var CreateView = Backbone.View.extend({
             el            : "#content-holder",
             contentType   : "JobPositions",
@@ -70,8 +75,9 @@ define([
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
             getWorkflowValue: function (value) {
+                var i;
                 var workflows = [];
-                for (var i = 0; i < value.length; i++) {
+                for (i = 0; i < value.length; i++) {
                     workflows.push({name: value[i].name, status: value[i].status});
                 }
                 return workflows;
@@ -93,18 +99,18 @@ define([
                 var self = this;
                 var mid = 39;
                 var name = $.trim($("#name").val());
-                var expectedRecruitment = parseInt($.trim($("#expectedRecruitment").val()));
+                var expectedRecruitment = parseInt($.trim($("#expectedRecruitment").val()), 10);
                 var description = $.trim($("#description").val());
                 var requirements = $.trim($("#requirements").val());
                 var workflow = this.$("#workflowsDd").data("id");
-                var department = this.$("#departmentDd").data("id") ? this.$("#departmentDd").data("id") : null;
+                var department = this.$("#departmentDd").data("id") || null;
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
                 });

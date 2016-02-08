@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/JobPositions/EditTemplate.html",
         "collections/JobPositions/JobPositionsCollection",
         "collections/Departments/DepartmentsCollection",
@@ -7,9 +10,11 @@ define([
         "custom",
         'common',
         "populate",
-    'constants'
+        'constants'
     ],
-    function (EditTemplate, JobPositionsCollection, DepartmentsCollection, WorkflowsCollection, AssigneesView, Custom, common, populate, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, JobPositionsCollection, DepartmentsCollection, WorkflowsCollection, AssigneesView, Custom, common, populate, CONSTANTS) {
+        'use strict';
+
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "JobPositions",
@@ -21,10 +26,11 @@ define([
                     this.currentModel = options.myModel;
                 }
                 else {
-                    this.currentModel = (options.model) ? options.model : options.collection.getElement();
+                    this.currentModel = options.model || options.collection.getElement();
                 }
-                this.currentModel.urlRoot = "/JobPositions";
+                this.currentModel.urlRoot = CONSTANTS.URLS.JOBPOSITIONS;
                 this.responseObj = {};
+
                 this.render();
             },
 
@@ -37,7 +43,7 @@ define([
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click"                                                           : "hideNewSelect",
+                "click"                                                           : "hideNewSelect"
             },
             notHide      : function () {
                 return false;
@@ -90,20 +96,20 @@ define([
                 var self = this;
                 var mid = 39;
                 var name = $.trim($("#name").val());
-                var expectedRecruitment = parseInt($.trim($("#expectedRecruitment").val()));
+                var expectedRecruitment = parseInt($.trim($("#expectedRecruitment").val()), 10);
                 var description = $.trim($("#description").val());
                 var requirements = $.trim($("#requirements").val());
                 var department = this.$("#departmentDd").data("id");
-                if (department == "") {
+                if (department === "") {
                     department = null;
                 }
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
                 });
@@ -123,8 +129,8 @@ define([
                     },
                     whoCanRW           : whoCanRW
                 };
-                if (!currentWorkflow || ( currentWorkflow && currentWorkflow._id && (currentWorkflow._id != workflow))) {
-                    data['workflow'] = workflow || null;
+                if (!currentWorkflow || ( currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow))) {
+                    data.workflow = workflow || null;
                 }
                 this.currentModel.save(data, {
                     headers: {
@@ -132,7 +138,7 @@ define([
                     },
                     wait   : true,
                     patch  : true,
-                    success: function (model) {
+                    success: function () {
                         self.hideDialog();
                         Backbone.history.fragment = "";
                         Backbone.history.navigate(location, {trigger: true});
@@ -152,7 +158,7 @@ define([
                 event.preventDefault();
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     this.currentModel.destroy({
                         headers: {
                             mid: mid
@@ -206,7 +212,7 @@ define([
                     }).render().el
                 );
 
-                populate.get("#departmentDd",  CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, false, true);
+                populate.get("#departmentDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, false, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Job positions"}, "name", this, false);
                 //for input type number
                 this.$el.find("#expectedRecruitment").spinner({
