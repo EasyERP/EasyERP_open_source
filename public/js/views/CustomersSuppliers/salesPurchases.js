@@ -3,10 +3,11 @@
  */
 define([
         'text!templates/CustomersSuppliers/salesPurchases.html',
-        'populate'
+        'populate',
+        'constants'
     ],
 
-    function (listTemplate, populate) {
+    function (listTemplate, populate, CONSTANTS) {
         var salesPurchases = Backbone.View.extend({
 
             template: _.template(listTemplate),
@@ -25,11 +26,11 @@ define([
 
                 this.$el.append(this.template({model: model}));
 
-                populate.get("#departmentDd", "/departments/getForDD", {}, "departmentName", this.parrent, isForCreate, true);
-                populate.get2name("#employeesDd", "/employees/getForDdByRelatedUser", {}, this.parrent, isForCreate, true);
-                populate.get("#language", "/employees/languages", {}, "name", this.parrent, isForCreate, false);
+                populate.get("#departmentDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this.parrent, isForCreate, true);
+                populate.get2name("#employeesDd", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this.parrent, isForCreate, true);
+                populate.get("#language", CONSTANTS.URLS.EMPLOYEES_LANGUAGES, {}, "name", this.parrent, isForCreate, false);
                 //populate.get2name("#employeesDd", "/employee/getPersonsForDd", {}, this.parrent, true, true);
-                populate.get2name("#implementedBy", "/Customers", {}, this.parrent, isForCreate, true);
+                populate.get2name("#implementedBy", CONSTANTS.URLS.CUSTOMERS, {}, this.parrent, isForCreate, true);
 
                 return this;
             }

@@ -494,14 +494,14 @@ define([
                     }).render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this/*, true, true*/);
+                populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this/*, true, true*/);
 
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
 
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();

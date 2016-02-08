@@ -707,7 +707,7 @@
                     model: this.currentModel
                 }).render().el
             );
-            populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
+            populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Applications"}, "name", this, false, function (data) {
                 var i;
 
                 for (i = 0; i < data.length; i++) {
@@ -721,10 +721,10 @@
                 }
             });
 
-            populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this);
-            populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this);
-            populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "_id", this);
-            populate.get("#nationality", "/employees/nationality", {}, "_id", this);
+            populate.get("#departmentsDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this);
+            populate.get("#jobPositionDd", CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, "name", this);
+            populate.get("#jobTypeDd", CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, "_id", this);
+            populate.get("#nationality", CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, "_id", this);
             populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
             populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
 

@@ -242,7 +242,7 @@ define([
                         }]
                 });
                 populate.get2name("#departmentManager", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false, true);
-                populate.getParrentDepartment("#parentDepartment", "/departments/getDepartmentsForEditDd", {id: this.currentModel.toJSON()._id}, this, false, true);
+                populate.getParrentDepartment("#parentDepartment", CONSTANTS.URLS.DEPARTMENTS_FOREDITDD, {id: this.currentModel.toJSON()._id}, this, false, true);
                 var k = this.currentModel.toJSON().users;
                 var b = $.map(this.currentModel.toJSON().users, function (item) {
                     return $('<li/>').text(item.login).attr("id", item._id);

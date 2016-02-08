@@ -390,12 +390,12 @@ define([
                     }).render().el
                 );
 
-                populate.get("#jobTypeDd", "/jobPositions/jobType", {}, "name", this, true);
-                populate.get("#nationality", "/employees/nationality", {}, "_id", this, true);
+                populate.get("#jobTypeDd", CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, "name", this, true);
+                populate.get("#nationality", CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, "_id", this, true);
                 populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true);
-                populate.get("#jobPositionDd", "/jobPositions/getForDd", {}, "name", this, true, true);
+                populate.get("#jobPositionDd", CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, "name", this, true, true);
                 populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, true, true);
-                populate.get("#departmentsDd", "/departments/getForDD", {}, "departmentName", this, true);
+                populate.get("#departmentsDd",  CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, true);
 
             common.canvasDraw({model: this.model.toJSON()}, this);
 

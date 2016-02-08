@@ -5,9 +5,10 @@ define([
         "custom",
         'common',
         'dataService',
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (EditTemplate, selectView, AssigneesView, Custom, common, dataService, populate) {
+    function (EditTemplate, selectView, AssigneesView, Custom, common, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -23,17 +24,17 @@ define([
                 this.render();
             },
 
-            events    : {
-                "click #convertToOpportunity"                                     : "openDialog",
-                "click #tabList a"                                                : "switchTab",
-                "click .breadcrumb a, #cancelCase, #reset"                        : "changeWorkflow",
-                "change #customer"                                                : "selectCustomer",
-                "change #workflowNames"                                           : "changeWorkflows",
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+            events: {
+                "click #convertToOpportunity"                      : "openDialog",
+                "click #tabList a"                                 : "switchTab",
+                "click .breadcrumb a, #cancelCase, #reset"         : "changeWorkflow",
+                "change #customer"                                 : "selectCustomer",
+                "change #workflowNames"                            : "changeWorkflows",
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
             openDialog: function (e) {
@@ -41,7 +42,7 @@ define([
                 $("#convert-dialog-form").dialog("open");
             },
 
-            changeTab : function (e) {
+            changeTab: function (e) {
                 $(e.target).closest(".dialog-tabs").find("a.active").removeClass("active");
                 $(e.target).addClass("active");
                 var n = $(e.target).parents(".dialog-tabs").find("li").index($(e.target).parent());
@@ -211,7 +212,7 @@ define([
                 });
             },
 
-            deleteItem   : function (event) {
+            deleteItem: function (event) {
                 var mid = 39;
                 event.preventDefault();
                 var self = this;
@@ -272,7 +273,7 @@ define([
 
             selectCustomer: function (id) {
                 if (id != "") {
-                    dataService.getData('/Customers', {
+                    dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                         id: id
                     }, function (response, context) {
                         var customer = response.data[0];
@@ -347,9 +348,9 @@ define([
                     }).render().el
                 );
                 populate.getPriority("#priorityDd", this);
-                populate.getWorkflow("#workflowsDd", "", "/workflows/getWorkflowsForDd", {id: "Leads"}, "name", this);
-                populate.get2name("#customerDd", "/Customers", {}, this, null, true);
-                populate.get2name("#salesPerson", "/employees/getForDdByRelatedUser", {}, this);
+                populate.getWorkflow("#workflowsDd", "", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Leads"}, "name", this);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, null, true);
+                populate.get2name("#salesPerson", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this);
                 populate.get("#sourceDd", "/employees/sources", {}, "name", this);
 

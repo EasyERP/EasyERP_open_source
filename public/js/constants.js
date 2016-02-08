@@ -526,7 +526,21 @@ define([], function () {
             PRODUCT_ALPHABET      : "/product/getProductsAlphabet",
             CATEGORY              : "/category/",
             PROJECT_DASHBOARD     : "project/getProjectPMForDashboard",
-            PAYMENT_SUPPLIER      : "/payment/supplier/"
+            PAYMENT_SUPPLIER      : "/payment/supplier/",
+            CURRENT_USER          : '/currentUser',
+            APPLICATIONS_WFLENGTH : '/applications/getApplicationsLengthByWorkflows',
+            APPLICATIONS_KANBAN   : '/applications/kanban',
+            EMPLOYEES_NATIONALITY : "/employees/nationality",
+            JOBPOSITIONS_JOBTYPE  : "/jobPositions/jobType",
+            JOBPOSITIONS_FORDD    : "/jobPositions/getForDd",
+            DEPARTMENTS_FORDD     : "/departments/getForDD",
+            WORKFLOWS_FORDD       : "/workflows/getWorkflowsForDd",
+            EMPLOYEES_RELATEDUSER : "/employees/getForDdByRelatedUser",
+            PROJECT_TYPE          : '/projectType',
+            EMPLOYEES_LANGUAGES   : "/employees/languages",
+            DEPARTMENTS_FOREDITDD : "/departments/getDepartmentsForEditDd",
+            CURRENCY_FORDD        : "/currency/getForDd",
+            SUPPLIER              : '/supplier'
         },
 
         MID: {

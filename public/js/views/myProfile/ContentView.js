@@ -7,9 +7,10 @@ define([
         'common',
         'models/UsersModel',
         'dataService',
-        'populate'
+        'populate',
+        'constants'
     ],
-    function (Backbone, _, $, UsersPagesTemplate, ChangePassword, common, UsersModel, dataService, populate) {
+    function (Backbone, _, $, UsersPagesTemplate, ChangePassword, common, UsersModel, dataService, populate, CONSTANTS) {
         'use strict';
         var ContentView = Backbone.View.extend({
             el         : '#content-holder',
@@ -157,7 +158,7 @@ define([
                         email          : email,
                         login          : login,
                         relatedEmployee: relatedEmployee,
-                        imageSrc      : self.imageSrc
+                        imageSrc       : self.imageSrc
                     });
 
                     context.UsersModel.save(context.UsersModel.changedAttributes(), {
@@ -224,7 +225,7 @@ define([
             render: function () {
                 var self = this;
                 dataService.getData('/currentUser', null, function (response, context) {
-                    dataService.getData('/employees/getForDdByRelatedUser', null, function (relatedEmployee) {
+                    dataService.getData(CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, null, function (relatedEmployee) {
                         var date = new Date();
                         var minutes = date.getTimezoneOffset();
                         var timezone;

@@ -209,7 +209,7 @@ define([
                 } else {
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, true);
                 }
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Tasks"}, "name", this, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Tasks"}, "name", this, true);
                 populate.get2name("#assignedToDd", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true);
                 populate.getPriority("#priorityDd", this, true);
                 $('#StartDate').datepicker({

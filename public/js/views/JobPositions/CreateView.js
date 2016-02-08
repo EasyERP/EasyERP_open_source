@@ -5,9 +5,10 @@ define([
         "models/JobPositionsModel",
         'views/Assignees/AssigneesView',
         "common",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (CreateTemplate, DepartmentsCollection, WorkflowsCollection, JobPositionsModel, AssigneesView, common, populate) {
+    function (CreateTemplate, DepartmentsCollection, WorkflowsCollection, JobPositionsModel, AssigneesView, common, populate, CONSTANTS) {
         var CreateView = Backbone.View.extend({
             el            : "#content-holder",
             contentType   : "JobPositions",
@@ -179,8 +180,8 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
-                populate.get("#departmentDd", "/departments/getForDD", {}, "departmentName", this, true, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Job positions"}, "name", this, true);
+                populate.get("#departmentDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, true, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Job positions"}, "name", this, true);
                 this.delegateEvents(this.events);
                 return this;
             }

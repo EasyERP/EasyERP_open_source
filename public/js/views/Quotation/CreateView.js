@@ -344,14 +344,14 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+                populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
                 if (App.weTrack && this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 } else {
-                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                    populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
                 }
 
                 dataService.getData("/project/getForWtrack", null, function (projects) {

@@ -10,9 +10,10 @@
         'views/Applications/CreateView',
         'collections/Applications/ApplicationsCollection',
         'models/ApplicationsModel',
-        'dataService'
+        'dataService',
+        'constants'
     ],
-    function (Backbone, $, _, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, dataService) {
+    function (Backbone, $, _, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, dataService, CONSTANTS) {
         'use strict';
         var collection = new ApplicationsCollection();
         var ApplicationsKanbanView = Backbone.View.extend({
@@ -41,7 +42,7 @@
                 if (this.foldWorkflows.length === 0) {
                     this.foldWorkflows = ["Empty"];
                 }
-                dataService.postData('/currentUser', {'kanbanSettings.applications.foldWorkflows': this.foldWorkflows}, function (error, success) {
+                dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.applications.foldWorkflows': this.foldWorkflows}, function (error, success) {
                 });
             },
 
@@ -95,7 +96,7 @@
                 if (countPerPage === 0) {
                     countPerPage = 5;
                 }
-                dataService.postData('/currentUser', {'kanbanSettings.applications.countPerPage': countPerPage}, function (error, success) {
+                dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.applications.countPerPage': countPerPage}, function (error, success) {
                     if (success) {
                         $(".edit-dialog").remove();
                         Backbone.history.fragment = '';
@@ -111,7 +112,7 @@
             },
 
             editKanban: function () {
-                dataService.getData('/currentUser', null, function (user, context) {
+                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (user, context) {
                     var tempDom = _.template(kanbanSettingsTemplate, {applications: user.user.kanbanSettings.applications});
                     context.$el = $(tempDom).dialog({
                         dialogClass: "edit-dialog",
@@ -140,7 +141,7 @@
             },
 
             getCollectionLengthByWorkflows: function (context) {
-                dataService.getData('/applications/getApplicationsLengthByWorkflows', {}, function (data) {
+                dataService.getData(CONSTANTS.URLS.APPLICATIONS_WFLENGTH, {}, function (data) {
                     data.arrayOfObjects.forEach(function (object) {
                         var column = context.$("[data-id='" + object._id + "']");
                         column.find('.totalCount').text(object.count);
@@ -168,7 +169,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
@@ -177,7 +178,10 @@
 
             asyncFetc: function (workflows) {
                 _.each(workflows.toJSON(), function (wfModel) {
-                    dataService.getData('/applications/kanban', {workflowId: wfModel._id, viewType: 'kanban'}, this.asyncRender, this);
+                    dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
+                        workflowId: wfModel._id,
+                        viewType  : 'kanban'
+                    }, this.asyncRender, this);
                 }, this);
             },
 
@@ -302,7 +306,7 @@
 
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
-                        dataService.getData('/applications/kanban', {
+                        dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
                             workflowId: wfModel._id,
                             filter    : this.filter
                         }, this.asyncRender, this);
@@ -327,7 +331,7 @@
 
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
-                        dataService.getData('/applications/kanban', {
+                        dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
                             workflowId: wfModel._id,
                             filter    : this.filter
                         }, this.asyncRender, this);

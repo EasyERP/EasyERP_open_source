@@ -6,9 +6,10 @@ define([
         'views/Assignees/AssigneesView',
         "custom",
         'common',
-        "populate"
+        "populate",
+    'constants'
     ],
-    function (EditTemplate, JobPositionsCollection, DepartmentsCollection, WorkflowsCollection, AssigneesView, Custom, common, populate) {
+    function (EditTemplate, JobPositionsCollection, DepartmentsCollection, WorkflowsCollection, AssigneesView, Custom, common, populate, CONSTANTS) {
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "JobPositions",
@@ -205,8 +206,8 @@ define([
                     }).render().el
                 );
 
-                populate.get("#departmentDd", "/departments/getForDD", {}, "departmentName", this, false, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Job positions"}, "name", this, false);
+                populate.get("#departmentDd",  CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, false, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Job positions"}, "name", this, false);
                 //for input type number
                 this.$el.find("#expectedRecruitment").spinner({
                     min: 0,

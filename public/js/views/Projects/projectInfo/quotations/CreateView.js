@@ -207,7 +207,7 @@ define([
             },
 
             getForDd: function (projectID, customerId) {
-                populate.get("#supplierDd", "/Customers", {}, "fullName", this, false, false, customerId);
+                populate.get("#supplierDd", CONSTANTS.URLS.CUSTOMERS, {}, "fullName", this, false, false, customerId);
 
                 if (projectID) {
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false, projectID);
