@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var User = function (event, models) {
     "use strict";
-    var _ = require('underscore');
+    var _ = require('lodash');
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
