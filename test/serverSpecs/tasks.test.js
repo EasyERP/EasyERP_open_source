@@ -3,6 +3,8 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
+//todo add test for rout /getTasksLengthByWorkflows -> /Tasks/getLengthByWorkflows
+
 describe("Tasks Specs", function () {
     'use strict';
 
@@ -525,7 +527,7 @@ describe("Tasks Specs", function () {
 
         it('should return priorities list', function (done) {
             aggent
-                .get('Priority')
+                .get('tasks/priority')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -676,7 +678,7 @@ describe("Tasks Specs", function () {
 
         it('should fail return priorities list', function (done) {
             aggent
-                .get('Priority')
+                .get('tasks/priority')
                 .expect(403, done);
 
         });

@@ -5,7 +5,7 @@
         var taskPriorityCollection = Backbone.Collection.extend({
             model     : PriorityModel,
             url       : function () {
-                return "/Priority";
+                return "/tasks/priority";
             },
             initialize: function () {
                 var mid = 39;

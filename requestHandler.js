@@ -1713,26 +1713,26 @@ var requestHandler = function (app, event, mainDb) {
     };
 
     //---------------------Tasks-------------------------------
-    function createTask(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 40, function (access) {
-                if (access) {
-                    data.task.uId = req.session.uId;
-                    project.createTask(req, data.task, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
+    /*function createTask(req, res/!*, data*!/) {
+        //if (req.session && req.session.loggedIn && req.session.lastDb) {
+            //access.getEditWritAccess(req, req.session.uId, 40, function (access) {
+                //if (access) {
+                    //data.task.uId = req.session.uId;
+                    project.createTask(req, res);
+                //} else {
+                //    res.send(403);
+                //}
+            //});
+        /!*} else {
             res.send(401);
-        }
-    };
+        }*!/
+    };*/
 
     function getTasksLengthByWorkflows(req, options, res) {
         project.getCollectionLengthByWorkflows(req, options, res);
     }
 
-    function getTaskById(req, res, data) {
+/*    function getTaskById(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 40, function (access) {
                 if (access) {
@@ -1778,7 +1778,7 @@ var requestHandler = function (app, event, mainDb) {
             res.send(401);
         }
 
-    };
+    };*/
 
     function removeTask(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1814,7 +1814,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function taskUpdateOnlySelectedFields(req, res, id, data) {
+    /*function taskUpdateOnlySelectedFields(req, res, id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 40, function (access) {
                 if (access) {
@@ -1830,7 +1830,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
     function uploadTasksFiles(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2920,14 +2920,14 @@ var requestHandler = function (app, event, mainDb) {
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
         getProjectByEndDateForDashboard  : getProjectByEndDateForDashboard,
         updateOnlySelectedFields         : updateOnlySelectedFields,
-        taskUpdateOnlySelectedFields     : taskUpdateOnlySelectedFields,
+        /*taskUpdateOnlySelectedFields     : taskUpdateOnlySelectedFields,*/
         getProjectType                   : getProjectType,
 
-        createTask               : createTask,
+        /*createTask               : createTask,*/
         getTasksLengthByWorkflows: getTasksLengthByWorkflows,
-        getTaskById              : getTaskById,
+        /*getTaskById              : getTaskById,
         getTasksForList          : getTasksForList,
-        getTasksForKanban        : getTasksForKanban,
+        getTasksForKanban        : getTasksForKanban,*/
         updateTask               : updateTask,
         uploadTasksFiles         : uploadTasksFiles,
         removeTask               : removeTask,

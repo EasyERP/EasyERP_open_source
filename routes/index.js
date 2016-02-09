@@ -64,6 +64,7 @@ module.exports = function (app, mainDb) {
     var campaignRouter = require('./campaign')(models);
     var degreesRouter = require('./degrees')(models);
     var profilesRouter = require('./profiles')(models);
+    var tasksRouter = require('./tasks')(models, mainDb);
 
     var logger = require('../helpers/logger');
 
@@ -127,6 +128,7 @@ module.exports = function (app, mainDb) {
     app.use('/campaigns', campaignRouter);
     app.use('/degrees', degreesRouter);
     app.use('/profiles', profilesRouter);
+    app.use('/tasks', tasksRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -868,6 +870,11 @@ module.exports = function (app, mainDb) {
     });
 
 //--------------Tasks----------------------------------------------------------
+
+
+    //todo change /Priority -> /Tasks/Priority on frontend
+    //todo and /getTasksLengthByWorkflows -> /Tasks/getLengthByWorkflows
+
     app.get('/getTasksLengthByWorkflows', function (req, res) {
         var options = {};
         for (var i in req.query) {
@@ -876,7 +883,22 @@ module.exports = function (app, mainDb) {
         requestHandler.getTasksLengthByWorkflows(req, options, res);
     });
 
-    app.post('/Tasks', function (req, res) {
+   /* app.get('/Priority', function (req, res) {
+        requestHandler.getTasksPriority(req, res);
+    });*/
+
+
+    //maybe unused
+    /*app.put('/Tasks/:_id', function (req, res) {
+     var data = {};
+     var id = req.param('_id');
+     data.task = req.body;
+     var remove = req.headers.remove;
+     requestHandler.updateTask(req, res, id, data, remove);
+     });*/
+
+
+   /* app.post('/Tasks', function (req, res) {
         var data = {};
         data.task = req.body;
         requestHandler.createTask(req, res, data);
@@ -898,18 +920,6 @@ module.exports = function (app, mainDb) {
         }
     });
 
-    app.get('/Priority', function (req, res) {
-        requestHandler.getTasksPriority(req, res);
-    });
-
-    /*app.put('/Tasks/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.task = req.body;
-        var remove = req.headers.remove;
-        requestHandler.updateTask(req, res, id, data, remove);
-    });*/
-
     app.patch('/Tasks/:_id', function (req, res) {
         var id = req.param('_id');
         requestHandler.taskUpdateOnlySelectedFields(req, res, id, req.body);
@@ -918,7 +928,7 @@ module.exports = function (app, mainDb) {
     app.delete('/Tasks/:_id', function (req, res) {
         var id = req.param('_id');
         requestHandler.removeTask(req, res, id);
-    });
+    });*/
 
 //------------------Workflows---------------------------------------------------
 
