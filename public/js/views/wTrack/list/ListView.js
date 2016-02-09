@@ -1097,7 +1097,7 @@ define([
                             } else {
 
                                 model = that.collection.get(value);
-                               /* if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed'){*/
+                                if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed'){
                                     model.destroy({
                                         headers: {
                                             mid: mid
@@ -1128,13 +1128,13 @@ define([
 
                                         }
                                     });
-                               /* } else {
+                                } else {
                                     message = "You can't delete tCard with closed project.";
                                     App.render({
                                         type   : 'error',
                                         message: message
                                     });
-                                }*/
+                                }
 
                             }
                         });
