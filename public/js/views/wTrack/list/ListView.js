@@ -63,7 +63,7 @@ define([
 
             events: {
                 "click .stageSelect"                               : "showNewSelect",
-                "click td.editable"                                : "editRow",
+                "click tr.enableEdit"                              : "editRow",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc"                                 : "autoCalc",
                 "change .editable"                                 : "setEditable",
@@ -211,32 +211,39 @@ define([
                     row = target.closest('tr');
                     model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
                     hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
-
                     $(selectedWtrack).attr('checked', false);
 
-                    model.set({"isPaid": false});
-                    model.set({"amount": 0});
-                    model.set({"cost": 0});
-                    model.set({"revenue": 0});
-                    model = model.toJSON();
-                    delete model._id;
-                    _model = new currentModel(model);
+                    if (model.toJSON().workflow.name !== 'Closed') {
+                        model.set({"isPaid": false});
+                        model.set({"amount": 0});
+                        model.set({"cost": 0});
+                        model.set({"revenue": 0});
+                        model = model.toJSON();
+                        delete model._id;
+                        _model = new currentModel(model);
 
-                    this.showSaveCancelBtns();
-                    this.editCollection.add(_model);
+                        this.showSaveCancelBtns();
+                        this.editCollection.add(_model);
 
-                    cid = _model.cid;
+                        cid = _model.cid;
 
-                    if (!this.changedModels[cid]) {
-                        this.changedModels[cid] = model;
+                        if (!this.changedModels[cid]) {
+                            this.changedModels[cid] = model;
+                        }
+
+                        this.$el.find('#listTable').prepend('<tr class="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                        row = this.$el.find('.false');
+
+                        tdsArr = row.find('td');
+                        $(tdsArr[0]).find('input').val(cid);
+                        $(tdsArr[1]).text("New");
+                    } else {
+                        message = "You can't copy tCard with closed project.";
+                        App.render({
+                            type   : 'error',
+                            message: message
+                        });
                     }
-
-                    this.$el.find('#listTable').prepend('<tr class="false" data-id="' + cid + '">' + row.html() + '</tr>');
-                    row = this.$el.find('.false');
-
-                    tdsArr = row.find('td');
-                    $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[1]).text("New");
                 }
             },
 
@@ -367,7 +374,8 @@ define([
                 }
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
+                e.stopPropagation();
                 var el = $(e.target);
                 var self = this;
                 var tr = $(e.target).closest('tr');
@@ -704,6 +712,7 @@ define([
             },
 
             checked: function (e) {
+                e.stopPropagation();
                 var $thisEl = this.$el;
                 var rawRows;
                 var $checkedEls;
@@ -1063,6 +1072,7 @@ define([
                     model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
+                var message;
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {
@@ -1087,36 +1097,45 @@ define([
                             } else {
 
                                 model = that.collection.get(value);
-                                model.destroy({
-                                    headers: {
-                                        mid: mid
-                                    },
-                                    wait   : true,
-                                    success: function () {
-                                        that.listLength--;
-                                        localCounter++;
+                                if (model.toJSON().workflow.name !== 'Closed'){
+                                    model.destroy({
+                                        headers: {
+                                            mid: mid
+                                        },
+                                        wait   : true,
+                                        success: function () {
+                                            that.listLength--;
+                                            localCounter++;
 
-                                        if (index === count - 1) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    },
-                                    error  : function (model, res) {
-                                        if (res.status === 403 && index === 0) {
-                                            App.render({
-                                                type   : 'error',
-                                                message: "You do not have permission to perform this action"
-                                            });
-                                        }
-                                        that.listLength--;
-                                        localCounter++;
-                                        if (index == count - 1) {
                                             if (index === count - 1) {
                                                 that.triggerDeleteItemsRender(localCounter);
                                             }
-                                        }
+                                        },
+                                        error  : function (model, res) {
+                                            if (res.status === 403 && index === 0) {
+                                                App.render({
+                                                    type   : 'error',
+                                                    message: "You do not have permission to perform this action"
+                                                });
+                                            }
+                                            that.listLength--;
+                                            localCounter++;
+                                            if (index == count - 1) {
+                                                if (index === count - 1) {
+                                                    that.triggerDeleteItemsRender(localCounter);
+                                                }
+                                            }
 
-                                    }
-                                });
+                                        }
+                                    });
+                                } else {
+                                    message = "You can't delete tCard with closed project.";
+                                    App.render({
+                                        type   : 'error',
+                                        message: message
+                                    });
+                                }
+
                             }
                         });
                     }
@@ -1132,6 +1151,7 @@ define([
                 var editedCollectin = this.editCollection;
                 var copiedCreated;
                 var dataId;
+                var enable;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
@@ -1156,7 +1176,8 @@ define([
                     model = collection.get(id);
                     model = model.toJSON();
                     model.startNumber = rowNumber;
-                    tr.replaceWith(template({model: model}));
+                    enable = model && model.workflow.name !== 'Closed' ? true : false;
+                    tr.replaceWith(template({model: model, enable: enable}));
                     cb();
                 }, function (err) {
                     if (!err) {
