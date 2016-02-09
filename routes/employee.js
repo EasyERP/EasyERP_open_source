@@ -28,6 +28,8 @@ module.exports = function (event, models) {
     router.get('/languages', authStackMiddleware, handler.getLanguages);
     router.get('/sources', authStackMiddleware, handler.getSources);
 
+    router.get('/birthdays', authStackMiddleware, handler.getBirthdays);
+
     router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewTpe);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);

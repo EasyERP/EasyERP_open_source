@@ -183,7 +183,7 @@
         var now = new Date();
 
         data['date'] = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        data['currentEmployees'] = currentEmployees,
+        data['currentEmployees'] = currentEmployees;
 
         models.get(req.session.lastDb, "birthdays", birthdaysSchema).findByIdAndUpdate({ _id: 1 }, data, {new: true, upsert: true }, function (error, birth) {
             if (error) {

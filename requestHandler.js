@@ -26,7 +26,7 @@ var requestHandler = function (app, event, mainDb) {
     //var languages = require("./Modules/Languages.js")(models);
     //var jobType = require("./Modules/JobType.js")(models);
     //var nationality = require("./Modules/Nationality.js")(models);
-    var birthdays = require("./Modules/Birthdays.js")(models, event);
+    //var birthdays = require("./Modules/Birthdays.js")(models, event);
     var Scheduler = require("./Modules/Scheduler.js")(dbsObject, models);
     var scheduler = new Scheduler();
 
@@ -1376,18 +1376,18 @@ var requestHandler = function (app, event, mainDb) {
     //    }
     //};
 
-    function Birthdays(req, res) {
-        try {
-            if (req.session && req.session.loggedIn && req.session.lastDb) {
-                birthdays.get(req, res);
-            } else {
-                res.send(401);
-            }
-        }
-        catch (Exception) {
-            errorLog("requestHandler.js  " + Exception);
-        }
-    };
+    //function Birthdays(req, res) {
+    //    try {
+    //        if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //            birthdays.get(req, res);
+    //        } else {
+    //            res.send(401);
+    //        }
+    //    }
+    //    catch (Exception) {
+    //        errorLog("requestHandler.js  " + Exception);
+    //    }
+    //};
 
     //function getPersonsForDd(req, res) {
     //    try {
@@ -2967,7 +2967,7 @@ var requestHandler = function (app, event, mainDb) {
         //getEmployeesAlphabet : getEmployeesAlphabet,
         //getEmployeesImages   : getEmployeesImages,
 
-        Birthdays: Birthdays,
+        //Birthdays: Birthdays,
 
         //getPersonsForDd   : getPersonsForDd,
         //getDepartmentForDd: getDepartmentForDd,
