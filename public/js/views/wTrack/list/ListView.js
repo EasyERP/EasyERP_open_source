@@ -235,6 +235,12 @@ define([
                         tdsArr = row.find('td');
                         $(tdsArr[0]).find('input').val(cid);
                         $(tdsArr[1]).text("New");
+                    } else {
+                        message = "You can't copy tCard with closed project.";
+                        App.render({
+                            type   : 'error',
+                            message: message
+                        });
                     }
                 }
             },
@@ -1066,6 +1072,7 @@ define([
                     model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
+                var message;
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {
@@ -1090,36 +1097,45 @@ define([
                             } else {
 
                                 model = that.collection.get(value);
-                                model.destroy({
-                                    headers: {
-                                        mid: mid
-                                    },
-                                    wait   : true,
-                                    success: function () {
-                                        that.listLength--;
-                                        localCounter++;
+                                if (model.toJSON().workflow.name !== 'Closed'){
+                                    model.destroy({
+                                        headers: {
+                                            mid: mid
+                                        },
+                                        wait   : true,
+                                        success: function () {
+                                            that.listLength--;
+                                            localCounter++;
 
-                                        if (index === count - 1) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    },
-                                    error  : function (model, res) {
-                                        if (res.status === 403 && index === 0) {
-                                            App.render({
-                                                type   : 'error',
-                                                message: "You do not have permission to perform this action"
-                                            });
-                                        }
-                                        that.listLength--;
-                                        localCounter++;
-                                        if (index == count - 1) {
                                             if (index === count - 1) {
                                                 that.triggerDeleteItemsRender(localCounter);
                                             }
-                                        }
+                                        },
+                                        error  : function (model, res) {
+                                            if (res.status === 403 && index === 0) {
+                                                App.render({
+                                                    type   : 'error',
+                                                    message: "You do not have permission to perform this action"
+                                                });
+                                            }
+                                            that.listLength--;
+                                            localCounter++;
+                                            if (index == count - 1) {
+                                                if (index === count - 1) {
+                                                    that.triggerDeleteItemsRender(localCounter);
+                                                }
+                                            }
 
-                                    }
-                                });
+                                        }
+                                    });
+                                } else {
+                                    message = "You can't delete tCard with closed project.";
+                                    App.render({
+                                        type   : 'error',
+                                        message: message
+                                    });
+                                }
+
                             }
                         });
                     }

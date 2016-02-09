@@ -733,12 +733,14 @@ define([
             this.copyEl = this.$el.find('#top-bar-copyBtn');
             this.$saveBtn = this.$el.find('#saveBtn');
             this.$createBtn = this.$el.find('#createBtn');
+            this.$removeBtn = this.$el.find('#deletewTrack');
             this.genInvoiceEl.hide();
             this.copyEl.hide();
 
             if (this.project.toJSON().workflow.name === 'Closed'){
                 this.$createBtn.remove();
                 this.copyEl.remove();
+                this.$removeBtn.remove();
             }
 
             $('#savewTrack').hide();
