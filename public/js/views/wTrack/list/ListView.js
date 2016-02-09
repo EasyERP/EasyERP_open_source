@@ -1097,7 +1097,7 @@ define([
                             } else {
 
                                 model = that.collection.get(value);
-                                if (model.toJSON().workflow.name !== 'Closed'){
+                                if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed'){
                                     model.destroy({
                                         headers: {
                                             mid: mid

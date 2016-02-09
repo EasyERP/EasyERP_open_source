@@ -2625,7 +2625,7 @@ var wTrack = function (models) {
                         arrayGrouped.forEach(function (element) {
                             var key = element.year * 100 + element.month;
 
-                            if (!empObj[element.employee._id]) {
+                            if (element.employee && !empObj[element.employee._id]) {
 
                                 empObj[element.employee._id] = {};
                                 empObj[element.employee._id] = element.employee;
