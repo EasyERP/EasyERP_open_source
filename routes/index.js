@@ -902,13 +902,13 @@ module.exports = function (app, mainDb) {
         requestHandler.getTasksPriority(req, res);
     });
 
-    //app.put('/Tasks/:_id', function (req, res) {
+    /*app.put('/Tasks/:_id', function (req, res) {
         var data = {};
         var id = req.param('_id');
         data.task = req.body;
         var remove = req.headers.remove;
         requestHandler.updateTask(req, res, id, data, remove);
-    });
+    });*/
 
     app.patch('/Tasks/:_id', function (req, res) {
         var id = req.param('_id');
