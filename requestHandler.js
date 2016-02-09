@@ -1728,9 +1728,9 @@ var requestHandler = function (app, event, mainDb) {
         }*!/
     };*/
 
-    function getTasksLengthByWorkflows(req, options, res) {
+    /*function getTasksLengthByWorkflows(req, options, res) {
         project.getCollectionLengthByWorkflows(req, options, res);
-    }
+    }*/
 
 /*    function getTaskById(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2924,7 +2924,7 @@ var requestHandler = function (app, event, mainDb) {
         getProjectType                   : getProjectType,
 
         /*createTask               : createTask,*/
-        getTasksLengthByWorkflows: getTasksLengthByWorkflows,
+        /*getTasksLengthByWorkflows: getTasksLengthByWorkflows,*/
         /*getTaskById              : getTaskById,
         getTasksForList          : getTasksForList,
         getTasksForKanban        : getTasksForKanban,*/

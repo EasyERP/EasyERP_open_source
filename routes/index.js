@@ -872,16 +872,13 @@ module.exports = function (app, mainDb) {
 //--------------Tasks----------------------------------------------------------
 
 
-    //todo change /Priority -> /Tasks/Priority on frontend
-    //todo and /getTasksLengthByWorkflows -> /Tasks/getLengthByWorkflows
-
-    app.get('/getTasksLengthByWorkflows', function (req, res) {
+    /*app.get('/getTasksLengthByWorkflows', function (req, res) {
         var options = {};
         for (var i in req.query) {
             options[i] = req.query[i];
         }
         requestHandler.getTasksLengthByWorkflows(req, options, res);
-    });
+    });*/
 
    /* app.get('/Priority', function (req, res) {
         requestHandler.getTasksPriority(req, res);

@@ -44,6 +44,14 @@ var Tasks = function (models) {
         project.getTasksPriority(req, res);
     };
 
+    this.getLengthByWorkflows = function(req, res, next) {
+        var options = {};
+        for (var i in req.query) {
+            options[i] = req.query[i];
+        }
+        project.getCollectionLengthByWorkflows(req, options, res);
+    }
+
     //ToDo refactor and move this to helpers (and pull out from everywhere)
     event.on('updateSequence', function (model, sequenceField, start, end, workflowStart, workflowEnd, isCreate, isDelete, callback) {
         var query;

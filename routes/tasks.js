@@ -15,6 +15,8 @@ module.exports = function (models, mainDb) {
 
     router.get('/priority', authStackMiddleware, accessStackMiddlware, handler.getTasksPriority);
 
+    router.get('/getLengthByWorkflows', handler.getLengthByWorkflows);
+
     router.get('/:viewType', authStackMiddleware, accessStackMiddlware, handler.getTasks);
 
     router.patch('/:_id', authStackMiddleware, accessStackMiddlware, handler.taskUpdateOnlySelectedFields);
