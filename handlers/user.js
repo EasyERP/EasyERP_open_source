@@ -79,7 +79,7 @@ var User = function (event, models) {
 
         }
 
-        if(id && _id !== id){
+        if (id && _id !== id) {
             _id = id;
         }
 
@@ -179,8 +179,6 @@ var User = function (event, models) {
         var count;
         var page;
 
-
-
         query.populate('profile');
 
         if (sortObject) {
@@ -226,8 +224,6 @@ var User = function (event, models) {
         var err;
         var queryObject;
 
-        //login = login.toLowerCase(); commented by Liliya
-
         if (login && data.pass) {
             queryObject = {
                 $or: [
@@ -238,6 +234,7 @@ var User = function (event, models) {
                     }
                 ]
             };
+
             UserModel.findOne(queryObject, {login: 1, pass: 1}, function (err, _user) {
                 var shaSum = crypto.createHash('sha256');
                 var lastAccess;
