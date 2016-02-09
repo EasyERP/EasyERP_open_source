@@ -62,11 +62,11 @@ define([
 
             events: {
                 "click .stageSelect"                               : "showNewSelect",
-                "click td.editable"                                : "editRow",
+                "click tr.enableEdit"                              : "editRow",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc"                                 : "autoCalc",
-                "change .editable"                                : "setEditable",
-                "keydown input.editing"                           : "keyDown",
+                "change .editable"                                 : "setEditable",
+                "keydown input.editing"                            : "keyDown",
                 "click"                                            : "removeInputs"
             },
 
@@ -255,7 +255,7 @@ define([
 
                     if (value === '') {
                         if (el.children('input').length) {
-                            value = input.val() || '0' ; // in case of empty input
+                            value = input.val() || '0'; // in case of empty input
 
                         } else {
                             value = '0';
@@ -365,7 +365,8 @@ define([
                 }
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
+                e.stopPropagation();
                 var el = $(e.target);
                 var self = this;
                 var tr = $(e.target).closest('tr');
@@ -755,7 +756,7 @@ define([
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                    if (model){
+                    if (model) {
                         model.changed = this.changedModels[id];
                     }
                 }
@@ -1132,6 +1133,7 @@ define([
                 var editedCollectin = this.editCollection;
                 var copiedCreated;
                 var dataId;
+                var enable;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
@@ -1156,7 +1158,8 @@ define([
                     model = collection.get(id);
                     model = model.toJSON();
                     model.startNumber = rowNumber;
-                    tr.replaceWith(template({model: model}));
+                    enable = model && model.workflow.name !== 'Closed' ? true : false;
+                    tr.replaceWith(template({model: model, enable: enable}));
                     cb();
                 }, function (err) {
                     if (!err) {
