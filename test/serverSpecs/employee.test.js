@@ -434,6 +434,26 @@ describe("Employee Specs", function () {
                 });
         });
 
+        it("should get employee birthdays", function(done){
+            aggent
+                .get('employees/birthdays')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+
+                    done();
+                });
+        });
+
         it("should update employee", function (done) {
             var body = {
                 source: 'testSource'

@@ -1591,18 +1591,18 @@ var Employee = function (event, models) {
                     .lean()
                     .exec(function (err, resArray) {
                         if (err) {
-                            return callback(req, separateWeklyAndMonthly([]), res);
+                            return callback(req, res, next, separateWeklyAndMonthly([]));
                         }
                         resArray.map(function (employee) {
                             employee.age = getAge(employee.dateBirth);
                             return employee;
                         });
-                        callback(req, separateWeklyAndMonthly(resArray), res);
+                        callback(req, res, next, separateWeklyAndMonthly(resArray));
                     });
             });
     };
 
-    var set = function (req, currentEmployees, res) {
+    var set = function (req, res, next, currentEmployees) {
         var result = {};
         var data = {};
         var now = new Date();
@@ -1614,16 +1614,16 @@ var Employee = function (event, models) {
         Birthdays.findByIdAndUpdate({_id: 1}, data, {new: true, upsert: true}, function (err, birth) {
             if (err) {
                 if (res) {
-                    res.send(400, {error: 'Employees.create Incorrect Incoming Data'});
-                }
-                return;
-            } else {
-                result.data = birth.currentEmployees;
-                if (res) {
-                    res.send(result);
+                    return next(err);
+                    //res.send(400, {error: 'Employees.create Incorrect Incoming Data'});
                 }
                 return;
             }
+            result.data = birth.currentEmployees;
+            if (res) {
+                res.send(result);
+            }
+            return;
         });
     };
 
