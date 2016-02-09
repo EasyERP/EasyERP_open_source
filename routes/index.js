@@ -902,7 +902,7 @@ module.exports = function (app, mainDb) {
         requestHandler.getTasksPriority(req, res);
     });
 
-    app.put('/Tasks/:_id', function (req, res) {
+    //app.put('/Tasks/:_id', function (req, res) {
         var data = {};
         var id = req.param('_id');
         data.task = req.body;
