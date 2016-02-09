@@ -130,7 +130,7 @@ var wTrack = function (event, models) {
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                                 event.emit('recollectProjectInfo');
                             }
-                            
+
                             cb(null, wTrack);
                         });
                     }, function (err) {
