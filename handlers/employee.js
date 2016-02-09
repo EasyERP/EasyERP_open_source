@@ -1615,15 +1615,12 @@ var Employee = function (event, models) {
             if (err) {
                 if (res) {
                     return next(err);
-                    //res.send(400, {error: 'Employees.create Incorrect Incoming Data'});
                 }
-                return;
             }
             result.data = birth.currentEmployees;
             if (res) {
                 res.send(result);
             }
-            return;
         });
     };
 
