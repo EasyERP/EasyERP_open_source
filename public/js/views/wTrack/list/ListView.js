@@ -209,32 +209,33 @@ define([
                     row = target.closest('tr');
                     model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
                     hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
-
                     $(selectedWtrack).attr('checked', false);
 
-                    model.set({"isPaid": false});
-                    model.set({"amount": 0});
-                    model.set({"cost": 0});
-                    model.set({"revenue": 0});
-                    model = model.toJSON();
-                    delete model._id;
-                    _model = new currentModel(model);
+                    if (model.toJSON().workflow.name !== 'Closed') {
+                        model.set({"isPaid": false});
+                        model.set({"amount": 0});
+                        model.set({"cost": 0});
+                        model.set({"revenue": 0});
+                        model = model.toJSON();
+                        delete model._id;
+                        _model = new currentModel(model);
 
-                    this.showSaveCancelBtns();
-                    this.editCollection.add(_model);
+                        this.showSaveCancelBtns();
+                        this.editCollection.add(_model);
 
-                    cid = _model.cid;
+                        cid = _model.cid;
 
-                    if (!this.changedModels[cid]) {
-                        this.changedModels[cid] = model;
+                        if (!this.changedModels[cid]) {
+                            this.changedModels[cid] = model;
+                        }
+
+                        this.$el.find('#listTable').prepend('<tr class="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                        row = this.$el.find('.false');
+
+                        tdsArr = row.find('td');
+                        $(tdsArr[0]).find('input').val(cid);
+                        $(tdsArr[1]).text("New");
                     }
-
-                    this.$el.find('#listTable').prepend('<tr class="false" data-id="' + cid + '">' + row.html() + '</tr>');
-                    row = this.$el.find('.false');
-
-                    tdsArr = row.find('td');
-                    $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[1]).text("New");
                 }
             },
 
@@ -705,6 +706,7 @@ define([
             },
 
             checked: function (e) {
+                e.stopPropagation();
                 var $thisEl = this.$el;
                 var rawRows;
                 var $checkedEls;
