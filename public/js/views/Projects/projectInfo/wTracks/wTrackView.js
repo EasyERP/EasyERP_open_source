@@ -566,6 +566,7 @@ define([
         },
 
         checked: function (e) {
+            e.stopPropagation();
             var el = this.$el;
             var checkLength;
             var rawRows;
