@@ -674,7 +674,7 @@ describe("Tasks Specs", function () {
                 .expect(403, done);
         });
 
-        it('should return priorities list', function (done) {
+        it('should fail return priorities list', function (done) {
             aggent
                 .get('Priority')
                 .expect(403, done);
