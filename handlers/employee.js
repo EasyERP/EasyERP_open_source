@@ -17,6 +17,7 @@ var Employee = function (event, models) {
     var SourceSchema = mongoose.Schemas.source;
     var _ = require('underscore');
     var fs = require('fs');
+    var moment = require('../public/js/libs/moment/moment');
     var objectId = mongoose.Types.ObjectId;
     var validatorEmployee = require('../helpers/validator');
     var Payroll = require('../handlers/payroll');
@@ -1391,6 +1392,34 @@ var Employee = function (event, models) {
             }
 
             res.status(200).send({data: result});
+        });
+    };
+
+    this.getSalaryByMonth = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var query = req.query;
+        var _id = query._id;
+        var month = query.month;
+        var year = query.year;
+        var date = moment().year(year).month(month - 1).date(1);
+
+        Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
+            if (err){
+                return next(err);
+            }
+            var hire = result.hire;
+            var salary = 0;
+            var i;
+            var length = hire.length;
+
+            for (i = length - 1; i >= 0; i--){
+                if (date >= hire[i].date){
+                    salary = hire[i].salary;
+                    break;
+                }
+            }
+
+            return res.status(200).send({data: salary});
         });
     };
 
