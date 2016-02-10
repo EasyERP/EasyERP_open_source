@@ -1,5 +1,5 @@
 /**
- * Created by den on 09.02.16.
+ * Created by den on 10.02.16.
  */
 require('../../config/development');
 
@@ -9,12 +9,11 @@ var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-describe("jobs Specs", function () {
+describe("Vacation Specs", function () {
     'use strict';
     var id;
-    var projectId;
 
-    describe("Jobs with admin", function () {
+    describe("Vacation with admin", function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -35,9 +34,17 @@ describe("jobs Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create jobs", function (done) {
+        it("should create vacation", function (done) {
+            var body = {
+                month   : 2,
+                year    : 2016,
+                vacArray: [null, null, null, null, null, "V", null, null, "V", null, null, "V", null, null, null
+                    , null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+            };
+
             aggent
-                .post('jobs')
+                .post('vacation')
+                .send(body)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -50,26 +57,26 @@ describe("jobs Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('success');
-                    expect(body.success)
-                        .to.have.property('_id');
-
+                    //expect(body.success)
+                    //    .to.have.property('_id');
+console.log(body.success._id);
                     id = body.success._id;
-                    projectId = body.success.projectId;
-
+console.log(id);
                     done();
                 });
         });
 
-        it("should get jobs", function (done) {
+        it("should get For list View of vacation", function (done) {
             var body = {
-                page : 1,
-                count: 1
+                month   : 2,
+                viewType: "list",
+                year    : 2016
             };
 
             aggent
-                .get('jobs')
-                .query(body)
+                .get('vacation/list')
                 .expect(200)
+                .query(body)
                 .end(function (err, res) {
                     var body = res.body;
 
@@ -78,21 +85,23 @@ describe("jobs Specs", function () {
                     }
 
                     expect(body)
-                        .to.be.instanceOf(Object);
+                        .to.be.instanceOf(Array);
 
                     done();
                 });
         });
 
-        it("should get jobs ForDD", function (done) {
+        it("should get For attendance View of vacation", function (done) {
             var body = {
-                projectId: projectId
+                month   : 2,
+                viewType: "list",
+                year    : 2016
             };
 
             aggent
-                .get('jobs/getForDD')
-                .query(body)
+                .get('vacation/attendance')
                 .expect(200)
+                .query(body)
                 .end(function (err, res) {
                     var body = res.body;
 
@@ -101,50 +110,23 @@ describe("jobs Specs", function () {
                     }
 
                     expect(body)
-                        .to.be.instanceOf(Object);
+                        .to.be.instanceOf(Array);
 
                     done();
                 });
         });
 
-        it("should get totalCollectionLength for jobs", function (done) {
+        it("should update vacation", function (done) {
             var body = {
-                filter: {
-                    projectManager: {
-                        key  : "projectmanager._id",
-                        value: ["55b92ad221e4b7c40f00004f",""]
-                    }
-               }
+                _id     : id,
+                month   : 2,
+                year    : 2016,
+                vacArray: [null, null, null, null, null, "V", "V", null, "V", null, null, null, "P", null, null, null, "S", null, null
+                    , null, null, null, null, null, null, null, null, null, null]
             };
 
             aggent
-                .get('jobs/totalCollectionLength')
-                .query(body)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count');
-
-                    done();
-                });
-        });
-
-        it("should update jobs", function (done) {
-            var body = {
-                _id : id,
-                name: "testJobsName"
-            };
-
-            aggent
-                .post('jobs/update')
+                .patch('vacation')
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
@@ -157,43 +139,34 @@ describe("jobs Specs", function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('_id');
-                    expect(body)
-                        .to.have.property('project');
+                        .to.have.property('success');
 
                     done();
                 });
         });
 
-        it("should delete jobs", function (done) {
-            var body = {
-                _id: id
-            };
-
+        it("should delete vacation", function (done) {
             aggent
-                .post('jobs/remove')
-                .send(body)
+                .delete('vacation/' + id)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
-
                     if (err) {
-                        return done(err);
+                        done(err);
                     }
 
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('_id');
-                    expect(body)
-                        .to.have.property('project');
+                        .to.have.property('success');
+                    console.log(body.success);
 
                     done();
                 });
         });
     });
 
-    describe("Jobs with user without a license ", function () {
+    describe("Vacation with user without a license", function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -214,9 +187,17 @@ describe("jobs Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create jobs", function (done) {
+        it("should fail create vacation", function (done) {
+            var body = {
+                month   : 2,
+                year    : 2016,
+                vacArray: [null, null, null, null, null, "V", null, null, "V", null, null, null, null, null, null
+                    , null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+            };
+
             aggent
-                .post('jobs')
+                .post('vacation')
+                .send(body)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -229,8 +210,8 @@ describe("jobs Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('success');
-                    //expect(body)
-                    //    .to.have.property('id');
+                    expect(body.success)
+                        .to.have.property('_id');
 
                     id = body.success._id;
 
@@ -238,5 +219,4 @@ describe("jobs Specs", function () {
                 });
         });
     });
-
 });
