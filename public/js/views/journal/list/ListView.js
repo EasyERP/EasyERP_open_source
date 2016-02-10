@@ -1,21 +1,20 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/journal/list/ListHeader.html',
         'views/journal/list/ListItemView',
         'views/journal/CreateView',
-        'models/JournalModel',
-        'collections/journal/filterCollection',
-        'dataService',
-        'custom'
+        'collections/journal/filterCollection'
     ],
 
-    function (listViewBase, listTemplate, listItemView, createView, currentModel, contentCollection, dataService, custom) {
+    function ($, _, listViewBase, listTemplate, ListItemView, createView, contentCollection) {
         "use strict";
 
         var ListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: '/journal/totalCollectionLength',
             contentType             : 'journal',
@@ -48,7 +47,7 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection : this.collection,
                     itemsNumber: this.collection.namberToShow
                 });

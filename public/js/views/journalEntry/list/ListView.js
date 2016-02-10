@@ -1,19 +1,20 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/journalEntry/list/ListHeader.html',
         'views/journalEntry/list/ListItemView',
-        'models/journalEntry',
         'collections/journalEntry/filterCollection',
-        'dataService',
-        'custom',
         'constants',
         'helpers'
     ],
 
-    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom, CONSTANTS, helpers) {
+    function ($, _, listViewBase, listTemplate, ListItemView, contentCollection, CONSTANTS, helpers) {
+        'use strict';
+
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: '/journalEntry/totalCollectionLength',
             contentType             : CONSTANTS.JOURNALENTRY,
@@ -41,19 +42,19 @@ define([
                 var total = {
                     debit : 0,
                     credit: 0
-                }
+                };
 
                 $rows.each(function (index, element) {
                     var $curElement = $(element);
                     var $debit = $curElement.find('.debit');
                     var $credit = $curElement.find('.credit');
 
-                    var debitVal = parseInt($debit.attr('data-amount'));
-                    var creditVal = parseInt($credit.attr('data-amount'));
+                    var debitVal = parseInt($debit.attr('data-amount'), 10);
+                    var creditVal = parseInt($credit.attr('data-amount'), 10);
 
                     total.debit += debitVal;
                     total.credit += creditVal;
-                })
+                });
 
                 return total;
             },
@@ -70,7 +71,7 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection : this.collection,
                     itemsNumber: this.collection.namberToShow
                 });
@@ -86,8 +87,8 @@ define([
 
                 $footer = $currentEl.find('#listFooter');
 
-                $footer.find('#totalDebit').text(helpers.currencySplitter(total['debit'].toFixed(2)));
-                $footer.find('#totalCredit').text(helpers.currencySplitter(total['credit'].toFixed(2)));
+                $footer.find('#totalDebit').text(helpers.currencySplitter(total.debit.toFixed(2)));
+                $footer.find('#totalCredit').text(helpers.currencySplitter(total.credit.toFixed(2)));
             }
 
         });

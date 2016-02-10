@@ -1,10 +1,13 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/invoiceAging/list/ListTemplate.html',
         'helpers',
         'async'
     ],
 
-    function (listTemplate, helpers, async) {
+    function (Backbone, $, _, listTemplate, helpers, async) {
         "use strict";
 
         var ListItemView = Backbone.View.extend({
@@ -28,7 +31,7 @@
 
                         val = val.replace(' ', '') || 0;
 
-                        total += parseInt(val);
+                        total += parseInt(val, 10);
                     });
 
                     total = total.toFixed(2);
@@ -49,7 +52,7 @@
 
                         val = val.replace(' ', '') || 0;
 
-                        total += parseInt(val);
+                        total += parseInt(val, 10);
 
                     });
 
@@ -71,7 +74,7 @@
 
                         val = val.replace(' ', '') || 0;
 
-                        total += parseInt(val);
+                        total += parseInt(val, 10);
 
                     });
 
@@ -93,7 +96,7 @@
 
                         val = val.replace(' ', '') || 0;
 
-                        total += parseInt(val);
+                        total += parseInt(val, 10);
                     });
 
                     total = total.toFixed(2);
@@ -114,7 +117,7 @@
 
                         val = val.replace(' ', '') || 0;
 
-                        total += parseInt(val);
+                        total += parseInt(val, 10);
                     });
 
                     total = total.toFixed(2);
@@ -135,7 +138,7 @@
 
                         val = val.replace(' ', '') || 0;
 
-                        total += parseInt(val);
+                        total += parseInt(val, 10);
                     });
 
                     total = total.toFixed(2);

@@ -1,22 +1,23 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'd3',
     'text!templates/invoiceCharts/index.html',
     'text!templates/invoiceCharts/tableBody.html',
     'collections/invoiceCharts/invoiceCharts',
-    'dataService',
     'helpers',
-    'async',
-    'custom',
     'moment',
     'constants'
-], function (mainTemplate, tableBodyTemplate, InvoiceCharts, dataService, helpers, async, custom, moment, CONSTANTS) {
+], function (Backbone, $, _, d3, mainTemplate, tableBodyTemplate, InvoiceCharts, helpers, moment, CONSTANTS) {
     "use strict";
     var View = Backbone.View.extend({
         el: '#content-holder',
 
         contentType: CONSTANTS.DASHBOARD_VACATION,
 
-        template : _.template(mainTemplate),
-        tableBodyTemplate : _.template(tableBodyTemplate),
+        template         : _.template(mainTemplate),
+        tableBodyTemplate: _.template(tableBodyTemplate),
 
         expandAll: false,
 
@@ -54,14 +55,14 @@ define([
             this.render();
         },
 
-        changeDateRange: function(){
+        changeDateRange: function () {
             this.startDate = this.$startDate.val();
             this.endDate = this.$endDate.val();
 
             this.collection = new InvoiceCharts({
-                byWeek: this.byWeek,
+                byWeek   : this.byWeek,
                 startDate: this.startDate,
-                endDate: this.endDate
+                endDate  : this.endDate
             });
             this.collection.on('reset', this.renderContent, this);
         },
@@ -75,9 +76,9 @@ define([
 
             this.byWeek = true;
             this.collection = new InvoiceCharts({
-                byWeek: true,
+                byWeek   : true,
                 startDate: this.startDate,
-                endDate: this.endDate
+                endDate  : this.endDate
             });
             this.collection.on('reset', this.renderContent, this);
         },
@@ -92,7 +93,7 @@ define([
             this.byWeek = false;
             this.collection = new InvoiceCharts({
                 startDate: this.startDate,
-                endDate: this.endDate
+                endDate  : this.endDate
             });
             this.collection.on('reset', this.renderContent, this);
         },
@@ -194,7 +195,7 @@ define([
                 .attr('stroke', 'yellow')
                 .attr('stroke-width', 2)
                 .style('fill', 'none')
-               /* .attr("class", "line")*/
+                /* .attr("class", "line")*/
                 .attr("d", line);
 
             topChart.selectAll(".circle")
@@ -265,23 +266,23 @@ define([
             return this;
         },
 
-        renderContent: function(){
+        renderContent: function () {
             var self = this;
             var count = this.collection.length;
             var tdWidth = Math.floor(100 / (count + 1));
             var $tableContainer = this.$el.find('#results');
 
             $tableContainer.html(this.tableBodyTemplate({
-                collection: self.collection,
+                collection      : self.collection,
                 currencySplitter: helpers.currencySplitter,
-                tdWidth: tdWidth,
-                count: count
+                tdWidth         : tdWidth,
+                count           : count
             }));
 
             this.renderByFilter();
         },
 
-        render: function (options) {
+        render: function () {
             var self = this;
             var $currentEl = this.$el;
 
