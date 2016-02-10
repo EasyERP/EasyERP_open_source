@@ -906,6 +906,7 @@ var requestHandler = function (app, event, mainDb) {
         });
     });
 
+    //ToDo refactor and move this to helpers (and pull out from everywhere)
     //binding for Sequence
     event.on('updateSequence', function (model, sequenceField, start, end, workflowStart, workflowEnd, isCreate, isDelete, callback) {
         var query;
@@ -1795,7 +1796,8 @@ var requestHandler = function (app, event, mainDb) {
         }
     };*/
 
-    function updateTask(req, res, id, data, remove) {
+    //maybe unused
+    /*function updateTask(req, res, id, data, remove) {
         var date = Date.now();
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 40, function (access) {
@@ -1812,7 +1814,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     /*function taskUpdateOnlySelectedFields(req, res, id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2928,7 +2930,7 @@ var requestHandler = function (app, event, mainDb) {
         /*getTaskById              : getTaskById,
         getTasksForList          : getTasksForList,
         getTasksForKanban        : getTasksForKanban,*/
-        updateTask               : updateTask,
+        /*updateTask               : updateTask,*/
         uploadTasksFiles         : uploadTasksFiles,
         /*removeTask               : removeTask,
         getTasksPriority         : getTasksPriority,*/

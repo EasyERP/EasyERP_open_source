@@ -4,7 +4,7 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var tasksSchema = mongoose.Schema({
-        summary: { type: String, default: '' },
+        summary: { type: String, required: true },
         taskCount: { type: Number, default: 0 },
         project: { type: ObjectId, ref: 'Project', default: null },
         assignedTo: { type: ObjectId, ref: 'Employees', default: null },
