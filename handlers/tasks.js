@@ -14,103 +14,34 @@ var Tasks = function (models, event) {
     //ToDo move validation logic to validator and use it
 
     this.createTask = function (req, res, next) {
-        var data = {};
-        data = req.body;
-        data.uId = req.session.uId;
-        var projectId = data.project;
-        var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).find({project: projectId});
-        query.sort({taskCount: -1});
-        query.exec(function (error, tasks) {
-            if (error) {
+        var body = req.body;
+        body.uId = req.session.uId;
+        var projectId = body.project;
+        var TasksModel = models.get(req.session.lastDb, 'Tasks', tasksSchema);
 
-            } else {
+        if (!validator.validTaskBody(body)) {
+            err = new Error();
+            err.status = 404;
+            err.message = RESPONSES.PAGE_NOT_FOUND;
+
+            return next(err);
+        }
+
+        TasksModel.find({project: projectId})
+            .sort({taskCount: -1})
+            .exec(function (err, tasks) {
+                if (err) {
+                    err.status = 404;
+                    err.message = RESPONSES.PAGE_NOT_FOUND;
+
+                    return next(err);
+                }
+
                 var n = (tasks[0]) ? ++tasks[0].taskCount : 1;
-                var task = new models.get(req.session.lastDb, 'Tasks', tasksSchema)({taskCount: n});
-                task.summary = data.summary;
-                if (data.project) {
-                    task.project = data.project;
-                }
-                if (data.assignedTo) {
-                    task.assignedTo = data.assignedTo;
-                    task.assignedTo = data.assignedTo;
-                }
-                if (data.type) {
-                    task.type = data.type;
-                }
-                if (data.tags) {
-                    task.tags = data.tags;
-                }
-                if (data.description) {
-                    task.description = data.description;
-                }
-                if (data.priority) {
-                    task.priority = data.priority;
-                }
-                if (data.sequence) {
-                    task.sequence = data.sequence;
-                }
-                if (data.customer) {
-                    task.customer = data.customer;
-                }
-                if (data.StartDate) {
-                    task.StartDate = new Date(data.StartDate);
-                    if (!data.estimated) {
-                        task.EndDate = new Date(data.StartDate);
-                    }
-                }
-                if (data.workflow) {
-                    task.workflow = data.workflow;
-                }
-                if (data.uId) {
-                    task.createdBy.user = data.uId;
-                    task.createdBy.date = new Date();
-                    task.editedBy.date = new Date();
-                    task.editedBy.user = data.uId;
-                }
-                if (data.logged) {
-                    task.logged = data.logged;
-                }
+                body = validator.parseTaskBody(body);
+                body.taskCount = n;
 
-                if (data.attachments) {
-                    if (data.attachments.id) {
-                        task.attachments.id = data.attachments.id;
-                    }
-                    if (data.attachments.name) {
-                        task.attachments.name = data.attachments.name;
-                    }
-                    if (data.attachments.path) {
-                        task.attachments.path = data.attachments.path;
-                    }
-                    if (data.attachments.size) {
-                        task.attachments.size = data.attachments.size;
-                    }
-                    if (data.attachments.uploadDate) {
-                        task.attachments.uploadDate = data.attachments.uploadDate;
-                    }
-                    if (data.attachments.uploaderName) {
-                        task.attachments.uploaderName = data.attachments.uploaderName;
-                    }
-                }
-
-                if (data.notes) {
-                    task.notes = data.notes;
-                }
-
-                if (data.estimated) {
-                    task.remaining = data.estimated - data.logged;
-                    if (data.estimated !== 0) {
-                        task.progress = Math.round((data.logged / data.estimated) * 100);
-                    } else {
-                        task.progress = 0;
-                    }
-                    task.estimated = data.estimated;
-
-                    var StartDate = (data.StartDate) ? new Date(data.StartDate) : new Date();
-                    task.EndDate = calculateTaskEndDate(StartDate, data.estimated);
-                    task.duration = returnDuration(StartDate, task.EndDate);
-                }
-
-                console.log(req.session.lastDb, 'Tasks', tasksSchema);
+                var task = new TasksModel(body);
 
                 event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", 0, 0, task.workflow._id, task.workflow._id, true, false, function (sequence) {
                     task.sequence = sequence;
@@ -124,8 +55,7 @@ var Tasks = function (models, event) {
                         }
                     });
                 });
-            }
-        });
+            });
 
     };
 
@@ -268,18 +198,11 @@ var Tasks = function (models, event) {
             case "kanban":
                 getTasksForKanban(req, data, res);
                 break;
-        };
+        }
+        ;
         function getTaskById(req, data, response) {
             var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).findById(data.id);
-            query.populate('project', '_id projectShortDesc projectName').
-            populate(' assignedTo', '_id name imageSrc').
-            populate('createdBy.user').
-            populate('createdBy.user').
-            populate('editedBy.user').
-            populate('groups.users').
-            populate('groups.group').
-            populate('workflow').
-            exec(function (err, task) {
+            query.populate('project', '_id projectShortDesc projectName').populate(' assignedTo', '_id name imageSrc').populate('createdBy.user').populate('createdBy.user').populate('editedBy.user').populate('groups.users').populate('groups.group').populate('workflow').exec(function (err, task) {
                 if (err) {
                     console.log(err);
                     logWriter.log("Project.js getTasksByProjectId task.find " + err);
@@ -381,82 +304,82 @@ var Tasks = function (models, event) {
                                     query
                                         .aggregate([{
                                             $lookup: {
-                                                from        : "Employees",
-                                                localField  : "assignedTo",
+                                                from: "Employees",
+                                                localField: "assignedTo",
                                                 foreignField: "_id",
                                                 as: "assignedTo"
                                             }
                                         }, {
                                             $lookup: {
-                                                from        : "Project",
-                                                localField  : "project",
+                                                from: "Project",
+                                                localField: "project",
                                                 foreignField: "_id",
                                                 as: "project"
                                             }
                                         }, {
                                             $lookup: {
-                                                from        : "Users",
-                                                localField  : "createdBy.user",
+                                                from: "Users",
+                                                localField: "createdBy.user",
                                                 foreignField: "_id",
                                                 as: "createdBy.user"
                                             }
                                         }, {
                                             $lookup: {
-                                                from        : "Users",
-                                                localField  : "editedBy.user",
+                                                from: "Users",
+                                                localField: "editedBy.user",
                                                 foreignField: "_id",
                                                 as: "editedBy.user"
                                             }
                                         }, {
                                             $lookup: {
-                                                from        : "workflows",
-                                                localField  : "workflow",
+                                                from: "workflows",
+                                                localField: "workflow",
                                                 foreignField: "_id",
                                                 as: "workflow"
                                             }
                                         }, {
                                             $project: {
-                                                _id             : 1,
-                                                summary         : 1,
-                                                type            : 1,
-                                                workflow        : {$arrayElemAt: ["$workflow", 0]},
-                                                assignedTo      : {$arrayElemAt: ["$assignedTo", 0]},
-                                                project         : {$arrayElemAt: ["$project", 0]},
+                                                _id: 1,
+                                                summary: 1,
+                                                type: 1,
+                                                workflow: {$arrayElemAt: ["$workflow", 0]},
+                                                assignedTo: {$arrayElemAt: ["$assignedTo", 0]},
+                                                project: {$arrayElemAt: ["$project", 0]},
                                                 'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                                'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                                'editedBy.user': {$arrayElemAt: ["$editedBy.user", 0]},
                                                 'createdBy.date': 1,
-                                                'editedBy.date' : 1,
-                                                StartDate       : 1,
-                                                EndDate         : 1,
-                                                logged          : 1,
-                                                tags            : 1,
-                                                progress        : 1,
-                                                status          : 1,
-                                                estimated       : 1,
-                                                sequence        : 1,
-                                                taskCount       : 1
+                                                'editedBy.date': 1,
+                                                StartDate: 1,
+                                                EndDate: 1,
+                                                logged: 1,
+                                                tags: 1,
+                                                progress: 1,
+                                                status: 1,
+                                                estimated: 1,
+                                                sequence: 1,
+                                                taskCount: 1
                                             }
                                         }, {
                                             $project: {
-                                                _id             : 1,
-                                                summary         : 1,
-                                                type            : 1,
-                                                workflow        : 1,
-                                                project         : 1,
-                                                assignedTo      : 1,
+                                                _id: 1,
+                                                summary: 1,
+                                                type: 1,
+                                                workflow: 1,
+                                                project: 1,
+                                                assignedTo: 1,
                                                 'createdBy.date': 1,
-                                                'editedBy.date' : 1,
+                                                'editedBy.date': 1,
                                                 'createdBy.user': 1,
-                                                'editedBy.user' : 1,
-                                                StartDate       : 1,
-                                                EndDate         : 1,
-                                                logged          : 1,
-                                                tags            : 1,
-                                                progress        : 1,
-                                                status          : 1,
-                                                estimated       : 1,
-                                                sequence        : 1,
-                                                taskCount       : 1
+                                                'editedBy.user': 1,
+                                                StartDate: 1,
+                                                EndDate: 1,
+                                                logged: 1,
+                                                tags: 1,
+                                                progress: 1,
+                                                status: 1,
+                                                estimated: 1,
+                                                sequence: 1,
+                                                taskCount: 1
                                             }
                                         }, {
                                             $match: obj
@@ -552,20 +475,13 @@ var Tasks = function (models, event) {
                             },
                             function (err, projectsId) {
                                 if (!err) {
-                                    var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
-                                    where('project').in(projectsId.objectID()).
-                                    where('workflow', objectId(data.workflowId));
+                                    var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).where('project').in(projectsId.objectID()).where('workflow', objectId(data.workflowId));
 
                                     if (data.filter && data.filter.type) {
                                         query.where('type').in(data.filter.type);
                                     }
 
-                                    query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
-                                    populate('assignedTo', 'name').
-                                    populate('project', 'projectShortDesc').
-                                    sort({'sequence': -1}).
-                                    limit(req.session.kanbanSettings.tasks.countPerPage).
-                                    exec(function (err, result) {
+                                    query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").populate('assignedTo', 'name').populate('project', 'projectShortDesc').sort({'sequence': -1}).limit(req.session.kanbanSettings.tasks.countPerPage).exec(function (err, result) {
                                         if (!err) {
                                             var localRemaining = 0;
                                             result.forEach(function (value) {
@@ -712,15 +628,15 @@ var Tasks = function (models, event) {
                                     },
                                     {
                                         $project: {
-                                            _id      : 1,
-                                            workflow : 1,
+                                            _id: 1,
+                                            workflow: 1,
                                             remaining: 1
                                         }
                                     },
                                     {
                                         $group: {
-                                            _id           : "$workflow",
-                                            count         : {$sum: 1},
+                                            _id: "$workflow",
+                                            count: {$sum: 1},
                                             totalRemaining: {$sum: '$remaining'}
                                         }
                                     },

@@ -19,7 +19,7 @@ describe("Tasks Specs", function () {
         var summary = "testTest";
         var estimated = 170;
         var logged = 12;
-        var progress = Number(((logged / estimated) * 100).toFixed(0));
+        var progress = Math.round((logged / estimated) * 100);
         var adminId = "52203e707d4dba8813000003";
 
         before(function (done) {
