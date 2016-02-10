@@ -271,6 +271,38 @@ describe("Tasks Specs", function () {
 
         });
 
+        it('should return workflows list with task count and hours remain', function (done) {
+            aggent
+                .get('tasks/getLengthByWorkflows')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.have.property('arrayOfObjects')
+                        .and.to.be.instanceOf(Array);
+
+                    var workflowNew = body.arrayOfObjects[0];
+
+                    expect(workflowNew)
+                        .to.have.property('_id')
+                        .and.to.be.equal(workflow);
+                    expect(workflowNew)
+                        .to.have.property('count')
+                        .and.to.be.above(0);
+                    expect(workflowNew)
+                        .to.have.property('totalRemaining')
+                        .and.to.be.above(0);
+
+                    done();
+                });
+
+        });
+
         it('should return tasks for kanban', function (done) {
             aggent
                 .get('tasks/kanban')
@@ -622,6 +654,13 @@ describe("Tasks Specs", function () {
             aggent
                 .get('tasks/form')
                 .query({id: id})
+                .expect(403, done);
+
+        });
+
+        it('should fail return workflows list', function (done) {
+            aggent
+                .get('tasks/getLengthByWorkflows')
                 .expect(403, done);
 
         });
