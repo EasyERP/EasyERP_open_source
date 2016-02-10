@@ -500,7 +500,7 @@ define([], function () {
             PAYMENT            : '/payment/',
             PAYROLL            : '/payroll/',
             PERSONS            : '/persons/',
-            PRIORITY           : '/Priority/',
+            PRIORITY           : '/tasks/priority/',
             PRODUCT            : '/product/',
             PROFILES           : '/profiles/',
             PROJECTS           : '/Projects/',

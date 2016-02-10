@@ -1780,7 +1780,7 @@ var requestHandler = function (app, event, mainDb) {
 
     };*/
 
-    function removeTask(req, res, id) {
+    /*function removeTask(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 40, function (access) {
                 if (access) {
@@ -1793,7 +1793,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     function updateTask(req, res, id, data, remove) {
         var date = Date.now();
@@ -1846,13 +1846,13 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function getTasksPriority(req, res) {
+    /*function getTasksPriority(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             project.getTasksPriority(req, res);
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     //------------------Workflow---------------------------------
 
@@ -2930,8 +2930,8 @@ var requestHandler = function (app, event, mainDb) {
         getTasksForKanban        : getTasksForKanban,*/
         updateTask               : updateTask,
         uploadTasksFiles         : uploadTasksFiles,
-        removeTask               : removeTask,
-        getTasksPriority         : getTasksPriority,
+        /*removeTask               : removeTask,
+        getTasksPriority         : getTasksPriority,*/
 
         //getCompaniesForDd              : getCompaniesForDd,
         //getCompanyById                 : getCompanyById,
