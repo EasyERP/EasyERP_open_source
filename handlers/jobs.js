@@ -384,8 +384,14 @@ var Jobs = function (models, event) {
     this.getForDD = function (req, res, next) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var all = req.query.all;
+        var queryObj = {type: "Not Quoted", 'project': objectId(pId)};
 
-        query.find({type: "Not Quoted", 'project': objectId(pId)}, {
+        if (all) {
+            queryObj = {'project': objectId(pId)};
+        }
+
+        query.find(queryObj, {
             name    : 1,
             _id     : 1,
             "budget": 1
