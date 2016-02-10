@@ -848,6 +848,7 @@ var requestHandler = function (app, event, mainDb) {
                                 }
                                 event.emit('updateQuntity', {jobId: jobID, quontity: budget.budgetTotal.hoursSum, req: req});
 
+                                event.emit('updateQuntity', {jobId: jobID, quontity: budget.budgetTotal.hoursSum, req: req});
                                 console.log(count++);
                             })
                         });
@@ -914,43 +915,41 @@ var requestHandler = function (app, event, mainDb) {
     event.on('updateQuntity', function (options) {
         var req = options.req;
         var jobId = options.jobId;
-        var quontity = options.quontity;
         var newProducts;
-        var i;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
-        var id;
 
-            Job.findById(jobId, function (err, job) {
-                if (err){
-                    console.log(err);
-                }
-                if (job && job.quotation){
-                    Quotation.findById(job.quotation, {products: 1}, function (err, result) {
+        Job.findById(jobId, function (err, job) {
+            if (err){
+                console.log(err);
+            }
+            if (job && job.quotation){
+                Quotation.findById(job.quotation, {products: 1}, function (err, result) {
+                    if (err){
+                        console.log(err);
+                    }
+
+                    var products = result.toJSON().products;
+                    var obj = _.find(products, function (obj) {
+                        return obj.jobs.toString() === jobId.toString();
+                    });
+                    var index = _.indexOf(products, obj);
+                    newProducts = _.clone(products);
+
+                    obj.quantity = job.toJSON().budget.budgetTotal.hoursSum;
+                    newProducts[index] = obj;
+
+                    Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
                         if (err){
                             console.log(err);
                         }
-
-                        var products = result.toJSON().products;
-                        var obj = _.find(products, function (obj) {
-                            return obj.jobs.toString() === jobId.toString();
-                        });
-                        var index = _.indexOf(products, obj);
-                        newProducts = _.clone(products);
-
-                        obj.quantity = job.toJSON().budget.budgetTotal.hoursSum;
-                        newProducts[index] = obj;
-
-                        Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
-                            if (err){
-                                console.log(err);
-                            }
-                        });
                     });
+                });
 
-                }
-            });
+            }
+        });
     });
+
 
     //if name was updated, need update related wTrack, or other models
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {

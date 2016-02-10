@@ -107,7 +107,7 @@ define([
                 var tr = this.$listTable.find('.false');
                 var projectId = tr.find('[data-content="project"]').attr('data-id');
 
-                dataService.getData("/jobs/getForDD", {"projectId": projectId, 'all': true}, function (jobs) {
+                dataService.getData("/jobs/getForDD", {"projectId": projectId, "all": true}, function (jobs) {
 
                     self.responseObj['#jobs'] = jobs;
 
@@ -127,7 +127,6 @@ define([
                     e.stopPropagation();
                 } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
                     e.preventDefault();
-                    e.stopPropagation();
                 }
             },
 
@@ -654,7 +653,7 @@ define([
 
                         changedAttr.project = project;
 
-                        dataService.getData("/jobs/getForDD", {"projectId": project, 'all': true}, function (jobs) {
+                        dataService.getData("/jobs/getForDD", {"projectId": project, "all": true}, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
 
