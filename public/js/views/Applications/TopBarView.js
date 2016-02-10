@@ -2,8 +2,7 @@ define([
         'Underscore',
         'views/topBarViewBase',
         'text!templates/Applications/TopBarTemplate.html',
-        'custom',
-        'common'
+        'custom'
     ],
     function (_, BaseView, ContentTopBarTemplate, Custom) {
         'use strict';
@@ -27,6 +26,6 @@ define([
                 this.render();
             }
         });
-        
+
         return TopBarView;
     });

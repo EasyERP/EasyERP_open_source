@@ -2,6 +2,9 @@
  * Created by lilya on 27/11/15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
         'text!templates/ChartOfAccount/list/cancelEdit.html',
@@ -9,10 +12,11 @@ define([
         'collections/ChartOfAccount/filterCollection',
         'collections/ChartOfAccount/editCollection',
         'models/chartOfAccount',
-        "populate",
         "async"
     ],
-    function (listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
+    function (Backbone, $, _, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, async) {
+        'use strict';
+
         var ProjectsListView = Backbone.View.extend({
             el           : '#content-holder',
             contentType  : "ChartOfAccount",
@@ -56,7 +60,7 @@ define([
                         $.each($("#chartOfAccount input:checked"), function (index, checkbox) {
                             value = checkbox.value;
 
-                            model = that.collection.get(value) ? that.collection.get(value) : that.editCollection.get(value);
+                            model = that.collection.get(value) || that.editCollection.get(value);
                             model.destroy({
                                 headers: {
                                     mid: mid
@@ -73,13 +77,13 @@ define([
                                 error  : function (model, res) {
                                     if (res.status === 403 && index === 0) {
                                         App.render({
-                                            type: 'error',
+                                            type   : 'error',
                                             message: "You do not have permission to perform this action"
                                         });
                                     }
                                     that.listLength--;
                                     localCounter++;
-                                    if (index == count - 1) {
+                                    if (index === count - 1) {
                                         if (index === count - 1) {
                                             that.deleteItemsRender(localCounter);
                                         }
@@ -183,7 +187,7 @@ define([
 
             resetCollection: function (model) {
                 if (model && model._id) {
-                    model = new currentModel(model);
+                    model = new CurrentModel(model);
                     this.collection.add(model);
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
@@ -221,7 +225,7 @@ define([
 
             createItem: function () {
                 var startData = {};
-                var model = new currentModel(startData);
+                var model = new CurrentModel(startData);
 
                 startData.cid = model.cid;
 
@@ -229,7 +233,7 @@ define([
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
-                    new createView(startData);
+                    new CreateView(startData);
                 }
 
                 this.changed = true;
@@ -250,13 +254,11 @@ define([
                 return false;
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
                 $(".newSelectList").hide();
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var trId = tr.data('id');
-                var colType = el.data('type');
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
 
@@ -290,7 +292,7 @@ define([
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
-                    this.showSaveCancelBtns()
+                    this.showSaveCancelBtns();
                 }
             },
 
@@ -322,7 +324,7 @@ define([
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                     if (editedElementContent === 'code') {
-                        editedElementValue = parseInt(editedElementValue);
+                        editedElementValue = parseInt(editedElementValue, 10);
 
                         if (isNaN(editedElementValue)) {
                             editedCol.addClass('errorContent');
@@ -385,7 +387,7 @@ define([
 
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
-                this.collection = new contentCollection({
+                this.collection = new ContentCollection({
                     viewType        : 'list',
                     sort            : sortObject,
                     page            : this.page,
@@ -423,20 +425,21 @@ define([
 
             saveItem: function () {
                 var model;
+                var id;
 
                 var errors = this.$el.find('.errorContent');
 
-                for (var id in this.changedModels) {
-                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                for (id in this.changedModels) {
+                    model = this.editCollection.get(id) || this.collection.get(id);
                     model.changed = this.changedModels[id];
                 }
 
                 if (errors.length) {
-                    return
+                    return;
                 }
                 this.editCollection.save();
 
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     delete this.changedModels[id];
                 }
 
@@ -463,7 +466,7 @@ define([
 
             errorFunction: function () {
                 App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: "Some error"
                 });
             },

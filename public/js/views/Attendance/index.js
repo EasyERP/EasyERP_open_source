@@ -2,16 +2,19 @@
  * Created by German on 30.06.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Attendance/index.html',
     'models/AttendanceModel',
     'views/Attendance/MonthView',
-    'views/Attendance/StatisticsView',
-    'populate',
     'moment',
     'dataService',
     'views/selectView/selectView',
     'constants'// added view for employees dd list
-], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, selectView, CONSTANTS) {
+], function (Backbone, $, _, mainTemplate, AttendanceModel, MonthView, moment, dataService, SelectView, CONSTANTS) {
+    'use strict';
+
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -53,7 +56,7 @@ define([
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
-                    return employee
+                    return employee;
                 });   // changed for getting proper form of names
 
                 self.model.set({
@@ -82,9 +85,7 @@ define([
             });
         },
 
-
-
-        showNewSelect: function (e, prev, next) {
+        showNewSelect: function (e) {
             //populate.showSelect(e, prev, next, this);
 
             var $target = $(e.target);
@@ -97,9 +98,9 @@ define([
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
+            this.selectView = new SelectView({
                 e          : e,
-                responseObj: {'#employee' : this.model.get("employees")}
+                responseObj: {'#employee': this.model.get("employees")}
             });
 
             $target.append(this.selectView.render().el);
@@ -154,7 +155,7 @@ define([
             var self = this;
             self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
-            dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function () {
                 //ToDo Hired and Not Hired
             });
         },

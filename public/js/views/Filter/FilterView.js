@@ -14,7 +14,7 @@ define([
     'models/UsersModel',
     'dataService',
     'async'
-], function (Backbone, _, $, ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, usersModel, dataService, async) {
+], function (Backbone, _, $, ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, UsersModel, dataService, async) {
     "use strict";
 
     var FilterView;
@@ -73,7 +73,7 @@ define([
 
             this.setDbOnce = _.debounce(
                 function () {
-                    this.trigger('filter', App.filter)
+                    this.trigger('filter', App.filter);
                 }, 500);
         },
 
@@ -84,6 +84,7 @@ define([
             var length;
             var targetId = target.attr('id');
             var keys;
+            var i;
 
             dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
                 if (response && !response.error) {
@@ -93,10 +94,10 @@ define([
                     length = App.savedFilters[self.parentContentType].length;
                     savedFilters = App.savedFilters[self.parentContentType];
 
-                    for (var i = length - 1; i >= 0; i--) {
-                        if (savedFilters[i]['_id']['_id'] === targetId) {
-                            keys = Object.keys(savedFilters[i]['_id']['filter']);
-                            App.filter = savedFilters[i]['_id']['filter'][keys[0]];
+                    for (i = length - 1; i >= 0; i--) {
+                        if (savedFilters[i]._id._id === targetId) {
+                            keys = Object.keys(savedFilters[i]._id.filter);
+                            App.filter = savedFilters[i]._id.filter.keys[0];
                         }
                     }
 
@@ -118,13 +119,14 @@ define([
             var filterKey;
             var filterValue;
             var newFilterValue = [];
+            var i;
 
             _.forEach(filterKeys, function (filterkey) {
-                filterKey = filter[filterkey]['key'];
+                filterKey = filter[filterkey].key;
                 newFilterValue = [];
                 if (filterKey) {
-                    filterValue = filter[filterkey]['value'];
-                    for (var i = filterValue.length - 1; i >= 0; i--) {
+                    filterValue = filter[filterkey].value;
+                    for (i = filterValue.length - 1; i >= 0; i--) {
                         newFilterValue.push(filterValue[i]);
                     }
                 } else {
@@ -141,14 +143,14 @@ define([
         },
 
         saveFilter: function () {
-            var currentUser = new usersModel(App.currentUser);
+            var currentUser = new UsersModel(App.currentUser);
             var key;
             var id;
             var filterObj = {};
             var mid = 39;
             var filterName = this.$el.find('#forFilterName').val();
             var byDefault = this.$el.find('.defaultFilter').prop('checked') ? this.parentContentType : "";
-            var viewType = this.viewType ? this.viewType : "";
+            var viewType = this.viewType || "";
             var bool = true;
             var self = this;
             var filters;
@@ -166,7 +168,8 @@ define([
             // changed to easier method
             allFilterNames.each(function (index, elem) {
                 if (elem.innerHTML === filterName) {
-                    return allowName = false;
+                    allowName = false;
+                    return false;
                 }
             });
             // end
@@ -199,12 +202,12 @@ define([
             }
 
             if (bool && filterName.length > 0) {
-                filterObj['filter'] = {};
-                filterObj['filter'][filterName] = {};
-                filterObj['filter'][filterName] = App.filter;
-                filterObj['key'] = key;
-                filterObj['useByDefault'] = byDefault;
-                filterObj['viewType'] = viewType;
+                filterObj.filter = {};
+                filterObj.filter[filterName] = {};
+                filterObj.filter[filterName] = App.filter;
+                filterObj.key = key;
+                filterObj.useByDefault = byDefault;
+                filterObj.viewType = viewType;
 
                 currentUser.changed = filterObj;
 
@@ -219,9 +222,9 @@ define([
                         validate: false,
                         success : function (model) {
                             updatedInfo = model.get('success');
-                            filters = updatedInfo['savedFilters'];
+                            filters = updatedInfo.savedFilters;
                             length = filters.length;
-                            id = filters[length - 1]['_id'];
+                            id = filters[length - 1]._id;
                             App.savedFilters[self.parentContentType].push(
                                 {
                                     _id      : {
@@ -251,15 +254,15 @@ define([
         },
 
         removeFilterFromDB: function (e) {
-            var currentUser = new usersModel(App.currentUser);
+            var currentUser = new UsersModel(App.currentUser);
             var filterObj = {};
             var mid = 39;
             var savedFilters = App.savedFilters[this.parentContentType];
             var filterID = $(e.target).attr('id'); //chosen current filter id
             var i = 0;
 
-            filterObj['deleteId'] = filterID;
-            filterObj['byDefault'] = this.parentContentType;
+            filterObj.deleteId = filterID;
+            filterObj.byDefault = this.parentContentType;
 
             currentUser.changed = filterObj;
 
@@ -284,7 +287,7 @@ define([
             $.find('#' + filterID)[0].remove();
             $.find('#' + filterID)[0].remove();
 
-            for (var i = savedFilters.length - 1; i >= 0; i--) {
+            for (i = savedFilters.length - 1; i >= 0; i--) {
                 if (savedFilters[i]['_id']['_id'] === filterID) {
                     App.savedFilters[this.parentContentType].splice(i, 1);
                 }
@@ -319,23 +322,23 @@ define([
                     App.filter[filterObjectName] = {
                         key  : groupType,
                         value: [],
-                        type : filterType ? filterType : null
+                        type : filterType || null
                     };
                 }
 
-                App.filter[filterObjectName]['value'].push(currentValue);
+                App.filter[filterObjectName].value.push(currentValue);
                 collectionElement.set({status: true});
 
                 groupNameElement.addClass('checkedGroup');
 
             } else {
-                index = App.filter[filterObjectName]['value'].indexOf(currentValue);
+                index = App.filter[filterObjectName].value.indexOf(currentValue);
 
                 if (index >= 0) {
-                    App.filter[filterObjectName]['value'].splice(index, 1);
+                    App.filter[filterObjectName].value.splice(index, 1);
                     collectionElement.set({status: false});
 
-                    if (App.filter[filterObjectName]['value'].length === 0) {
+                    if (App.filter[filterObjectName].value.length === 0) {
                         delete App.filter[filterObjectName];
                         groupNameElement.removeClass('checkedGroup');
                     }

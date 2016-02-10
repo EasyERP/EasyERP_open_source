@@ -2,11 +2,16 @@
  * Created by soundstorm on 14.05.15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/customerPayments/list/ListTotal.html',
         'helpers'
     ],
 
-    function (listTemplate, helpers) {
+    function (Backbone, $, _, listTemplate, helpers) {
+        'use strict';
+
         var supplierPaymentsListTotalView = Backbone.View.extend({
             el: '#listTotal',
 
@@ -22,12 +27,6 @@ define([
                     cellSpan        : this.cellSpan,
                     currencySplitter: helpers.currencySplitter
                 };
-
-                //this.element.find(".total").each(function () {
-                //    var currentText = $(this).text().replace(' ', '');
-                //
-                //    result.total += parseFloat(currentText);
-                //});
 
                 this.element.find(".totalPaidAmount").each(function () {
                     var currentText = $(this).text().replace(' ', '');
