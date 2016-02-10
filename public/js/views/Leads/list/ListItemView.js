@@ -1,9 +1,12 @@
 ﻿define([
-        'common',
+        'Backbone',
+        'Underscore',
         'text!templates/Leads/list/ListTemplate.html'
     ],
 
-    function (common, ListTemplate) {
+    function (Backbone, _, ListTemplate) {
+        'use strict';
+
         var LeadsListItemView = Backbone.View.extend({
             el        : '#listTable',
             stages    : null,
@@ -18,7 +21,6 @@
             },
 
             render: function () {
-                var self = this;
                 this.$el.append(_.template(ListTemplate, {
                     leadsCollection: this.collection.toJSON(),
                     startNumber    : this.startNumber
