@@ -192,7 +192,7 @@ define([
             },
 
             getMinDate: function (context) {
-                dataService.getData('/employee/getYears', {}, function (response) {
+                dataService.getData('/employees/getMinHireDate', {}, function (response) {
                     var minDate = new Date(response.min);
 
                     $('#startDate').datepicker('option', 'minDate', minDate);
