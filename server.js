@@ -24,6 +24,7 @@ var app;
 
 //var open = require('open');
 mainDb.on('error', function (err) {
+    'use strict';
     err = err || 'connection error';
 
     process.exit(1, err);
