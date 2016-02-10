@@ -23,11 +23,7 @@ var app;
 //mongoose.set('debug', true);
 
 //var open = require('open');
-mainDb.on('error', function (err) {
-    err = err || 'connection error';
-
-    process.exit(1, err);
-});
+mainDb.on('error', console.error.bind(console, 'connection error:'));
 mainDb.once('open', function callback() {
     'use strict';
     var mainDBSchema;
