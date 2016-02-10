@@ -17,7 +17,7 @@ var Project = function (models) {
         var data = req.query;
         var inProgress = data && data.inProgress ? true : false;
         var id = data ? data._id : null;
-        var filter = inProgress ? {"workflow": CONSTANTS.PROJECTINPROGRESS} : {};
+        var filter = inProgress ? {"workflow": {$ne: CONSTANTS.PROJECTCLOSED}} : {};
 
         if (id){
             filter._id = objectId(id);

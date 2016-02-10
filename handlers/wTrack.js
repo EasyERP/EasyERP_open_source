@@ -124,9 +124,13 @@ var wTrack = function (event, models) {
                             if (err) {
                                 return cb(err);
                             }
-                            event.emit('recalculateKeys', {req: req, wTrack: wTrack});
-                            event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
-                            event.emit('recollectProjectInfo');
+
+                            if (wTrack){
+                                event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                                event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
+                                event.emit('recollectProjectInfo');
+                            }
+
                             cb(null, wTrack);
                         });
                     }, function (err) {

@@ -426,6 +426,7 @@ define([
             var editedCollectin = this.editCollection;
             var copiedCreated;
             var dataId;
+            var enable;
 
             async.each(edited, function (el, cb) {
                 var tr = $(el).closest('tr');
@@ -450,7 +451,8 @@ define([
                 model = collection.get(id);
                 model = model.toJSON();
                 model.startNumber = rowNumber;
-                tr.replaceWith(template({model: model}));
+                enable = model && model.workflow.name !== 'Closed' ? true : false;
+                tr.replaceWith(template({model: model, enable: enable}));
                 cb();
             }, function (err) {
                 if (!err) {
@@ -564,6 +566,7 @@ define([
         },
 
         checked: function (e) {
+            e.stopPropagation();
             var el = this.$el;
             var checkLength;
             var rawRows;
@@ -730,8 +733,15 @@ define([
             this.copyEl = this.$el.find('#top-bar-copyBtn');
             this.$saveBtn = this.$el.find('#saveBtn');
             this.$createBtn = this.$el.find('#createBtn');
+            this.$removeBtn = this.$el.find('#deletewTrack');
             this.genInvoiceEl.hide();
             this.copyEl.hide();
+
+            if (this.project.toJSON().workflow.name === 'Closed'){
+                this.$createBtn.remove();
+                this.copyEl.remove();
+                this.$removeBtn.remove();
+            }
 
             $('#savewTrack').hide();
             $('#deletewTrack').hide();
