@@ -2,6 +2,9 @@
  * Created by Liliya_Pikiner on 7/1/2015.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/bonusType/list/listHeader.html',
         'text!templates/bonusType/cancelEdit.html',
@@ -19,7 +22,9 @@ define([
         'helpers/keyCodeHelper'
     ],
 
-    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants, keyCodes) {
+    function (Backbone, $, _, paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants, keyCodes) {
+        'use strict';
+
         var bonusTypeListView = Backbone.View.extend({
             el                 : '#content-holder',
             defaultItemsNumber : null,
@@ -54,7 +59,7 @@ define([
             },
 
             events: {
-              //  "click .itemsNumber"                                              : "switchPageCounter",  // this method doesnt work
+                //  "click .itemsNumber"                                              : "switchPageCounter",  // this method doesnt work
                 "click .showPage"                                                 : "showPage",
                 "change #currentShowPage"                                         : "showPage",
                 "click #previousPage"                                             : "previousPage",
@@ -80,7 +85,6 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editModel;
 
                 if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(editedElement);
@@ -132,7 +136,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -182,12 +186,11 @@ define([
                 return !!edited.length;
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
                 $(".newSelectList").remove();
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var Ids = tr.data('id');
-                var colType = el.data('type');
                 var colContent = el.data('content');
                 var isType = (colContent === 'bonusType');
                 var isPercent = (colContent === 'isPercent' );
@@ -196,7 +199,7 @@ define([
                 var prevValue;
                 var width;
                 var ul;
-
+                var editedElement;
 
                 if (el.attr('data-content') === 'name') {
                     isName = true;
@@ -222,16 +225,16 @@ define([
                     prevValue = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + prevValue + '"   style="width:' + width + 'px">');
-                    if (!isName){
-                        el.find('input').attr('maxlength','6');
+                    if (!isName) {
+                        el.find('input').attr('maxlength', '6');
                     }
 
-                    el.find('.editing').keydown( function (e) {
+                    el.find('.editing').keydown(function (e) {
                         var code = e.keyCode;
 
                         if (keyCodes.isEnter(code)) {
                             self.setChangedValueToModel();
-                        } else if ( !isName && !keyCodes.isDigit(code) && !keyCodes.isBspaceAndDelete(code) ){
+                        } else if (!isName && !keyCodes.isDigit(code) && !keyCodes.isBspaceAndDelete(code)) {
                             e.preventDefault();
                         }
                     });
@@ -264,7 +267,7 @@ define([
                 changedAttr = this.changedModels[modelId];
                 targetElement.attr('data-id', id);
 
-                if (targetElement.attr('data-content') === 'bonusType' ){
+                if (targetElement.attr('data-content') === 'bonusType') {
                     datacontent = 'bonusType';
                 } else {
                     datacontent = 'isPercent';
@@ -284,11 +287,12 @@ define([
                 // validation for empty fields
                 var filled = true;
 
-                 $(".editable").each(function (index, elem){
-                     if (!$(elem).html()){
-                         return filled = false;
-                     }
-                 });
+                $(".editable").each(function (index, elem) {
+                    if (!$(elem).html()) {
+                        filled = false;
+                        return false;
+                    }
+                });
 
                 if (!filled) {
                     return App.render({type: 'error', message: 'Fill all fields please'});
@@ -303,7 +307,7 @@ define([
                 this.editCollection.save();
 
                 for (var id in this.changedModels) {
-                   delete this.changedModels[id];
+                    delete this.changedModels[id];
 
                 }
             },
@@ -404,10 +408,9 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                 }
-                if (editedElement.val()){
+                if (editedElement.val()) {
                     this.setChangedValueToModel();
                 }
-
 
             },
 
@@ -853,7 +856,7 @@ define([
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             App.render({
-                                                type: 'error',
+                                                type   : 'error',
                                                 message: "You do not have permission to perform this action"
                                             });
                                         }

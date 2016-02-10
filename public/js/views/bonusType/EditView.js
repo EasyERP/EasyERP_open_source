@@ -2,12 +2,13 @@
  * Created by Liliya_Pikiner on 7/1/2015.
  */
 define([
-    "common",
-    "custom",
-    "dataService",
+    'Backbone',
+    'jQuery',
+    'Underscore',
     "populate",
     'constants'
-], function (common, Custom, dataService, populate, CONSTANTS) {
+], function (Backbone, $, _, populate, CONSTANTS) {
+    'use strict';
 
     var EditView = Backbone.View.extend({
         contentType: CONSTANTS.BONUSTYPE,
@@ -20,7 +21,7 @@ define([
             _.bindAll(this, "render", "saveItem");
             _.bindAll(this, "render", "deleteItem");
 
-            this.currentModel = (options.model) ? options.model : options.collection.getElement();
+            this.currentModel = options.model || options.collection.getElement();
             this.currentModel.urlRoot = "/bonusType";
             this.responseObj = {};
             this.render(options);
@@ -36,34 +37,34 @@ define([
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect"
         },
 
-            saveItem: function () {
-                var self = this;
-                var mid = 72;
-                var thisEl = this.$el;
-                var name = thisEl.find('#name').val();
-                var value =  thisEl.find('#value').val();
-                var bonusType =  thisEl.find('#bonusType').val();
-                var isPercent = thisEl.find('#isPercent').val();
-                // added Validation for empty fields
-                var filled = true;
+        saveItem: function () {
+            var self = this;
+            var mid = 72;
+            var thisEl = this.$el;
+            var name = thisEl.find('#name').val();
+            var value = thisEl.find('#value').val();
+            var bonusType = thisEl.find('#bonusType').val();
+            var isPercent = thisEl.find('#isPercent').val();
+            // added Validation for empty fields
+            var filled = true;
 
-                $(".editable").each(function (index, elem){
-                    if (!$(elem).html()){
-                        return filled = false;
-                    }
-                });
-
-
-                if(!filled){
-                    return  App.render({type: 'error', message: 'Fill all fields please'});
+            $(".editable").each(function (index, elem) {
+                if (!$(elem).html()) {
+                    filled = false;
+                    return false;
                 }
-                //end
+            });
+
+            if (!filled) {
+                return App.render({type: 'error', message: 'Fill all fields please'});
+            }
+            //end
 
             this.model.save({
-                name      : name,
-                value     : value,
-                department: department,
-                isPercent : isPercent
+                name     : name,
+                value    : value,
+                bonusType: bonusType,
+                isPercent: isPercent
             }, {
                 headers: {
                     mid: mid
@@ -153,6 +154,7 @@ define([
         },
 
         render: function () {
+            var self = this;
             var formString = this.template({
                 model  : this.currentModel.toJSON(),
                 visible: this.visible
@@ -187,8 +189,6 @@ define([
             });
 
             this.delegateEvents(this.events);
-            model = this.currentModel.toJSON();
-
             return this;
         },
 

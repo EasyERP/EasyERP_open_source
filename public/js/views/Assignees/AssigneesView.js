@@ -10,7 +10,8 @@ define([
     "populate",
     'constants'
 
-], function (Backbone, $, _, assigneesTemplate, addGroupTemplate, addUserTemplate, selectView, common, populate, CONSTANTS) {
+], function (Backbone, $, _, assigneesTemplate, addGroupTemplate, addUserTemplate, SelectView, common, populate, CONSTANTS) {
+    'use strict';
     var AssigneesView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -44,7 +45,7 @@ define([
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
+            this.selectView = new SelectView({
                 e          : e,
                 responseObj: this.responseObj
             });
@@ -78,13 +79,13 @@ define([
                 groupsAndUser_holder.hide();
             }
         },
-        nextUserList: function (e, page) {
-            $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) + 1);
+        nextUserList: function (e) {
+            $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page"), 10) + 1);
             e.data.self.updateAssigneesPagination($(e.target).closest(".left"));
         },
 
-        prevUserList: function (e, page) {
-            $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) - 1);
+        prevUserList: function (e) {
+            $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page"), 10) - 1);
             e.data.self.updateAssigneesPagination($(e.target).closest(".left"));
         },
         addUsers    : function (e) {
@@ -124,6 +125,7 @@ define([
             $(".addUserDialog").remove();
         },
         updateAssigneesPagination: function (el) {
+            var i;
             var pag = el.find(".userPagination .text");
             el.find(".userPagination .nextUserList").remove();
             el.find(".userPagination .prevUserList").remove();
@@ -136,17 +138,17 @@ define([
             if (!list.attr("data-page")) {
                 list.attr("data-page", 1);
             }
-            var page = parseInt(list.attr("data-page"));
+            var page = parseInt(list.attr("data-page"), 10);
             if (page > 1) {
                 el.find(".userPagination").prepend("<a class='prevUserList' href='javascript:;'>« prev</a>");
             }
             if (count === 0) {
                 s += "0-0 of 0";
             } else {
-                if ((page) * 20 - 1 < count) {
-                    s += ((page - 1) * 20 + 1) + "-" + ((page) * 20) + " of " + count;
+                if (page * 20 - 1 < count) {
+                    s += ((page - 1) * 20 + 1) + "-" + (page * 20) + " of " + count;
                 } else {
-                    s += ((page - 1) * 20 + 1) + "-" + (count) + " of " + count;
+                    s += ((page - 1) * 20 + 1) + "-" + count + " of " + count;
                 }
             }
 
@@ -154,7 +156,7 @@ define([
                 el.find(".userPagination").append("<a class='nextUserList' href='javascript:;'>next »</a>");
             }
             el.find("ul li").hide();
-            for (var i = (page - 1) * 20; i < 20 * page; i++) {
+            for (i = (page - 1) * 20; i < 20 * page; i++) {
                 el.find("ul li").eq(i).show();
             }
 
@@ -184,7 +186,7 @@ define([
                         text : "Choose",
                         class: "btn",
 
-                        click: function (e) {
+                        click: function () {
                             self.addUserToTable("#targetUsers");
                             $(this).find(".temp").removeClass("temp");
                             $(this).dialog("close");
@@ -197,8 +199,6 @@ define([
                         click: function (e) {
                             $(this).dialog("close");
                             self.closeDialog(e);
-                            //$("#targetUsers").unbind("click");
-                            //$("#sourceUsers").unbind("click");
                         }
                     }
                 }
@@ -229,7 +229,7 @@ define([
             var groupsAndUserTr = $(".groupsAndUser tr");
             groupsAndUser.show();
             groupsAndUserTr.each(function () {
-                if ($(this).data("type") == id.replace("#", "")) {
+                if ($(this).data("type") === id.replace("#", "")) {
                     $(this).remove();
                 }
             });
@@ -268,7 +268,7 @@ define([
                     save  : {
                         text : "Choose",
                         class: "btn",
-                        click: function (e) {
+                        click: function () {
                             self.addUserToTable("#targetGroups");
                             $(this).find(".temp").removeClass("temp");
                             $(this).dialog("close");

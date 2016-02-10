@@ -2,16 +2,21 @@
  * Created by German on 30.06.2015.
  */
 define([
+    'Backbone',
+    'Underscore',
     'text!templates/Attendance/monthTemplate.html',
     'views/Attendance/StatisticsView',
     'moment'
-], function (ListTemplate, StatisticsView, moment) {
+], function (Backbone, _, ListTemplate, StatisticsView, moment) {
+    'use strict';
+
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
 
         generateMonthArray: function () {
             var number;
             var self = this;
+            var i;
             self.startMonth = 0;
 
             if (self.year === 'Line Year') {
@@ -22,7 +27,7 @@ define([
                 self.startMonth = 0;
             }
 
-            for (var i = 0; i < self.monthArray.length; i++) {
+            for (i = 0; i < self.monthArray.length; i++) {
                 if (self.startMonth + i > 11) {
                     number = self.startMonth + i - 12;
                 } else {
@@ -45,6 +50,12 @@ define([
             var startYear;
             var endYear;
             var keys;
+            var i;
+            var j;
+            var day;
+            var countVacation;
+            var vacArray;
+            var k;
 
             self.weekend = 0;
             self.vacationDays = 0;
@@ -52,7 +63,7 @@ define([
             self.sickDays = 0;
             self.educationDays = 0;
 
-            for (var i = 0; i < self.monthArray.length; i++) {
+            for (i = 0; i < self.monthArray.length; i++) {
                 dayNumber = 1;
 
                 if (currentInterval === 'Line Year') {
@@ -86,13 +97,13 @@ define([
 
                 //ToDo review
 
-                for (var j = 0; j < startOfMonth; j++) {
+                for (j = 0; j < startOfMonth; j++) {
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = '&nbsp';
                 }
 
-                for (var j = startOfMonth; j < startOfMonth + dayCount; j++) {
-                    var day = new Date(monthYear, i, j - startOfMonth);
+                for (j = startOfMonth; j < startOfMonth + dayCount; j++) {
+                    day = new Date(monthYear, i, j - startOfMonth);
                     day = day.getDay();
                     if (day === 0 || day === 6) {
                         self.weekend++;
@@ -102,17 +113,17 @@ define([
                     dayNumber++;
                 }
 
-                for (var j = startOfMonth + dayCount; j < 42; j++) {
+                for (j = startOfMonth + dayCount; j < 42; j++) {
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = '&nbsp';
                 }
 
                 if (self.monthCur) {
-                    var countVacation = self.monthCur[0].vacArray.length;
-                    var vacArray = self.monthCur[0].vacArray;
-                    for (var j = 0; j < countVacation; j++) {
-                        for (var k = j + startOfMonth - 1; k <= j + startOfMonth - 1; k++) {
-                            self.monthArray[i].daysData[k + 1].type = vacArray[j] ? vacArray[j] : '';
+                    countVacation = self.monthCur[0].vacArray.length;
+                    vacArray = self.monthCur[0].vacArray;
+                    for (j = 0; j < countVacation; j++) {
+                        for (k = j + startOfMonth - 1; k <= j + startOfMonth - 1; k++) {
+                            self.monthArray[i].daysData[k + 1].type = vacArray[j] || '';
                             switch (vacArray[j]) {
                                 case 'V':
                                     self.vacationDays++;

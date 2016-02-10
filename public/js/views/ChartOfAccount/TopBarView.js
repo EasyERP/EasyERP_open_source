@@ -1,11 +1,14 @@
 define([
+        'Underscore',
+        'views/topBarViewBase',
         'text!templates/ChartOfAccount/TopBarTemplate.html',
         'custom',
-        'common',
         'constants'
     ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
-        var TopBarView = Backbone.View.extend({
+    function (_, BaseView, ContentTopBarTemplate, Custom, CONSTANTS) {
+        'use strict';
+
+        var TopBarView = BaseView.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.CHARTOFACCOUNT,
             template   : _.template(ContentTopBarTemplate),
@@ -17,38 +20,16 @@ define([
             },
 
             initialize: function (options) {
+                this.actionType = options.actionType;
+                if (this.actionType !== "Content") {
+                    Custom.setCurrentVT("form");
+                }
                 if (options.collection) {
                     this.collection = options.collection;
+                    this.collection.bind('reset', _.bind(this.render, this));
                 }
                 this.render();
-            },
-
-            createEvent: function (event) {
-                event.preventDefault();
-
-                this.trigger('createEvent');
-            },
-
-            deleteEvent: function (event) {
-                event.preventDefault();
-                this.trigger('deleteEvent');
-            },
-
-            saveEvent: function (event) {
-                event.preventDefault();
-
-                this.trigger('saveEvent');
-            },
-
-            render: function () {
-                $('title').text(this.contentType);
-                var viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
-
-                Common.displayControlBtnsByActionType('Content', viewType);
-                return this;
             }
         });
-
         return TopBarView;
     });

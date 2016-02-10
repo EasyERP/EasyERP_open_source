@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Leads/list/ListHeader.html',
         'text!templates/stages.html',
@@ -7,16 +9,16 @@ define([
         'views/Leads/EditView',
         'models/LeadsModel',
         'collections/Leads/filterCollection',
-        'views/Filter/FilterView',
-        'common',
-        'dataService'
+        'common'
     ],
 
-    function (listViewBase, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
+    function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, EditView, CurrentModel, contentCollection, common) {
+        'use strict';
+
         var LeadsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             filterView              : null,
             totalCollectionLengthUrl: '/leads/totalCollectionLength',
@@ -27,7 +29,7 @@ define([
                 "click .list td:not(.notForm)": "goToEditDialog",
                 "click #convertToOpportunity" : "openDialog",
                 "click .stageSelect"          : "showNewSelect",
-                "click .newSelectList li"     : "chooseOption",
+                "click .newSelectList li"     : "chooseOption"
             },
 
             initialize: function (options) {
@@ -62,7 +64,7 @@ define([
                         mid: 39
                     },
                     patch  : true,
-                    success: function (model) {
+                    success: function () {
                         self.showFilteredPage({}, self);
                     }
                 });
@@ -90,7 +92,7 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                var itemView = new listItemView({
+                var itemView = new ListItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
@@ -103,7 +105,6 @@ define([
 
                 common.populateWorkflowsList("Leads", ".drop-down-filter", "", "/Workflows", null, function (stages) {
                     self.stages = stages;
-                    var stage = (self.filter) ? self.filter.workflow : null;
                     itemView.trigger('incomingStages', stages);
                 });
 
@@ -112,7 +113,7 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
 
@@ -120,22 +121,20 @@ define([
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-                    return false;
                 }
-
+                $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+                return false;
             },
 
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new currentModel({validate: false});
+                var model = new CurrentModel({validate: false});
                 model.urlRoot = '/Leads/form';
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {
-                        new editView({model: model});
+                        new EditView({model: model});
                     },
                     error  : function () {
                         App.render({

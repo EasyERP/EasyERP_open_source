@@ -1,11 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Invoice/form/FormTemplate.html',
-        'views/Invoice/EditView',
-        //'views/Notes/NoteView',
-        'common'
+        'views/Invoice/EditView'
     ],
 
-    function (invoiceFormTemplate, editView /*attachView,*/, common) {
+    function (Backbone, $, _, invoiceFormTemplate, EditView) {
+        'use strict';
+
         var invoiceTasksView = Backbone.View.extend({
             el: '#content-holder',
 
@@ -17,14 +20,10 @@ define([
                 this.pageCount = 4;
                 this.allMiniOpp = 0;
                 this.allPages = 2;
-                var self = this;
-                var formModel = this.formModel.toJSON();
-
             },
 
             events      : {
                 "click .checkbox"                                                         : "checked",
-                //"click .person-checkbox:not(.disabled)": "personsSalesChecked",
                 "click .details"                                                          : "toggle",
                 "click .company"                                                          : "gotoCompanyForm",
                 "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
@@ -32,8 +31,6 @@ define([
                 "click #editSpan"                                                         : "editClick",
                 "click #cancelSpan"                                                       : "cancelClick",
                 "click #saveSpan"                                                         : "saveClick",
-                //"click .btnHolder .add.opportunities": "addOpportunities",
-                //"change .sale-purchase input": "saveCheckboxChange",
                 "click .miniPagination .next:not(.not-active)"                            : "nextMiniPage",
                 "click .miniPagination .prev:not(.not-active)"                            : "prevMiniPage",
                 "click .miniPagination .first:not(.not-active)"                           : "firstMiniPage",
@@ -42,8 +39,8 @@ define([
             },
             nextMiniPage: function () {
                 this.pageMini += 1;
-                //this.renderMiniOpp();
             },
+
             prevMiniPage: function () {
                 this.pageMini -= 1;
                 this.renderMiniOpp();
@@ -69,29 +66,6 @@ define([
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
-            /*renderMiniOpp: function () {
-             var self = this;
-             var formModel = this.formModel.toJSON();
-             common.populateOpportunitiesForMiniView("/opportunities/OpportunitiesForMiniView", formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
-             var oppElem = self.$el.find('#opportunities');
-             oppElem.empty();
-             var isLast = self.pageMini == self.allPages ? true : false;
-             oppElem.append(
-             new opportunitiesCompactContentView({
-             collection: collection.data
-             }).render({ first: self.pageMini == 1 ? true : false, last: isLast, all: self.allPages }).el
-             );
-
-             });
-
-             },*/
-
-            /*addOpportunities: function (e) {
-             e.preventDefault();
-             var model = this.formModel.toJSON();
-             new createViewOpportunities({ model: model });
-             },*/
-
             quickEdit: function (e) {
                 var trId = $(e.target).closest("dd");
                 if ($("#" + trId.attr("id")).find("#editSpan").length === 0) {
@@ -102,7 +76,7 @@ define([
                 }
             },
 
-            removeEdit: function (e) {
+            removeEdit: function () {
                 $('#editSpan').remove();
                 $("dd .no-long").css({width: "auto"});
             },
@@ -126,11 +100,11 @@ define([
                         if ($('#' + this.prevQuickEdit.id).hasClass('with-checkbox')) {
                             $('#' + this.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($('#' + this.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
                             $('.quickEdit').removeClass('quickEdit');
-                        } else if (this.prevQuickEdit.id == 'email') {
+                        } else if (this.prevQuickEdit.id === 'email') {
                             $("#" + this.prevQuickEdit.id).append('<a href="mailto:' + this.text + '">' + this.text + '</a>');
                             $('.quickEdit').removeClass('quickEdit');
                         } else {
-                            $('.quickEdit').text(this.text ? this.text : "").removeClass('quickEdit');
+                            $('.quickEdit').text(this.text || "").removeClass('quickEdit');
                         }
                     }
                 }
@@ -144,7 +118,7 @@ define([
                     this.text = this.formModel.get(objIndex[0]);
                 }
 
-                if (parent[0].id == 'invoiceDate') {
+                if (parent[0].id === 'invoiceDate') {
                     $("#" + parent[0].id).text('');
                     $("#" + parent[0].id).append('<input id="editInput" maxlength="48" type="text" readonly class="left has-datepicker"/>');
                     $('.has-datepicker').datepicker({
@@ -170,7 +144,7 @@ define([
             saveCheckboxChange: function (e) {
                 var parent = $(e.target).parent();
                 var objIndex = parent[0].id.replace('_', '.');
-                currentModel = this.model;
+                var currentModel = this.model;
                 currentModel[objIndex] = ($("#" + parent[0].id + " input").prop("checked"));
                 this.formModel.save(currentModel, {
                     headers: {
@@ -182,14 +156,14 @@ define([
 
             saveClick: function (e) {
                 e.preventDefault();
-                var self = this;
+                var i;
                 var parent = $(e.target).parent().parent();
                 var objIndex = parent[0].id.split('_'); //replace change to split;
                 var currentModel = this.model;
                 var newModel = {};
                 var oldvalue = {};
                 if (objIndex.length > 1) {
-                    for (var i in this.formModel.toJSON()[objIndex[0]]) {
+                    for (i in this.formModel.toJSON()[objIndex[0]]) {
                         oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
 
                     }
@@ -213,7 +187,7 @@ define([
                     error  : function (model, response) {
                         if (response) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: response.error
                             });
                         }
@@ -276,7 +250,7 @@ define([
 
             editItem: function () {
                 //create editView in dialog here
-                new editView({model: this.formModel});
+                new EditView({model: this.formModel});
             },
 
             deleteItems: function () {
@@ -291,7 +265,7 @@ define([
                     error  : function (model, err) {
                         if (err.status === 403) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }

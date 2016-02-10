@@ -2,10 +2,13 @@
  * Created by lilya on 30/11/15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Payment/EditTemplate.html",
         "helpers"
     ],
-    function (EditTemplate, helpers) {
+    function (Backbone, $, _, EditTemplate, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -15,7 +18,7 @@ define([
             events: {},
 
             initialize: function (options) {
-                this.currentModel = (options.model) ? options.model : options.collection.getElement();
+                this.currentModel = options.model || options.collection.getElement();
                 this.currentModel.urlRoot = "/customerPayments";
 
                 this.render();

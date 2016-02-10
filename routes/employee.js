@@ -27,6 +27,7 @@ module.exports = function (event, models) {
     router.get('/nationality', authStackMiddleware, handler.getNationality);
     router.get('/languages', authStackMiddleware, handler.getLanguages);
     router.get('/sources', authStackMiddleware, handler.getSources);
+    router.get('/getByMonth', authStackMiddleware, handler.getSalaryByMonth);
 
     router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewTpe);
 

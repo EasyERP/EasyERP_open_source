@@ -1,18 +1,25 @@
 define([
-        'text!templates/Birthdays/TopBarTemplate.html'
+        'Underscore',
+        'views/topBarViewBase',
+        'text!templates/Birthdays/TopBarTemplate.html',
+        'custom'
     ],
-    function (ContentTopBarTemplate) {
-        var TopBarView = Backbone.View.extend({
+    function (_, BaseView, ContentTopBarTemplate, Custom) {
+        'use strict';
+
+        var TopBarView = BaseView.extend({
             el        : '#top-bar',
             template  : _.template(ContentTopBarTemplate),
             initialize: function (options) {
-                this.collection = options.collection;
+                this.actionType = options.actionType;
+                if (this.actionType !== "Content") {
+                    Custom.setCurrentVT("form");
+                }
+                if (options.collection) {
+                    this.collection = options.collection;
+                    this.collection.bind('reset', _.bind(this.render, this));
+                }
                 this.render();
-            },
-            render    : function () {
-                $('title').text('Birthdays');
-                this.$el.html(this.template());
-                return this;
             }
         });
         return TopBarView;

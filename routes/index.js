@@ -806,7 +806,7 @@ module.exports = function (app, mainDb) {
         requestHandler.getProjectType(req, res);
     });
 
-    app.get('/Projects/form/:_id', function (req, res) {
+    app.get('/Projects/:_id', function (req, res) {
         var data = {};
         data.id = req.params._id;
         requestHandler.getProjectsById(req, res, data);

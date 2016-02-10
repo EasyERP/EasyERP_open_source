@@ -1,9 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Leads/form/FormTemplate.html',
         'views/Leads/EditView'
     ],
 
-    function (FormTemplate, EditView) {
+    function (Backbone, $, _, FormTemplate, EditView) {
+        'use strict';
+
         var FormView = Backbone.View.extend({
             el        : '#content-holder',
             initialize: function (options) {
@@ -28,7 +33,6 @@ define([
                     buttons : {
                         "Create opportunity": function () {
                             var self = this;
-                            var id = $("form").data("id");
                             var createCustomer = ($("select#createCustomerOrNot option:selected").val()) ? true : false;
                             that.formModel.save({
                                 isOpportunitie : true,
@@ -44,7 +48,7 @@ define([
                                 headers: {
                                     mid: 39
                                 },
-                                success: function (model) {
+                                success: function () {
                                     $(self).dialog("close");
                                     //that.opportunitiesCollection.add(model);
                                     Backbone.history.navigate("easyErp/Opportunities", {trigger: true});
@@ -87,7 +91,7 @@ define([
                     error  : function (model, err) {
                         if (err.status === 403) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }

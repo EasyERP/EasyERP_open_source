@@ -2,18 +2,17 @@
  * Created by liliy on 20.01.2016.
  */
 define([
-        "Backbone",
-        "jQuery",
         "Underscore",
         'views/listViewBase',
         "text!templates/jobsDashboard/DashboardHeader.html",
-        "text!templates/jobsDashboard/DashboardTemplate.html",
         'collections/Jobs/filterCollection',
         'views/Filter/FilterView',
         'views/jobsDashboard/list/ListItemView',
         "constants"
     ],
-    function (Backbone, $, _, listViewBase, DashboardHeader, DashboardTemplate, JobsCollection, FilterView, ListItemView, CONSTANTS) {
+    function (_, listViewBase, DashboardHeader, JobsCollection, FilterView, ListItemView, CONSTANTS) {
+        'use strict';
+
         var ContentView = listViewBase.extend({
             page                    : null,
             sort                    : null,
@@ -29,8 +28,8 @@ define([
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
-                this.filter = options.filter ? options.filter : {};
-                this.sort = options.sort ? options.sort : {};
+                this.filter = options.filter || {};
+                this.sort = options.sort || {};
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;

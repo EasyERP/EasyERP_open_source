@@ -488,7 +488,10 @@ var Jobs = function (models, event) {
 
             async.each(products, function (product, cb) {
 
-                JobsModel.findByIdAndUpdate(product.jobs, {type: type, editedBy: editedBy}, {new: true}, function (err, result) {
+                JobsModel.findByIdAndUpdate(product.jobs, {
+                    type    : type,
+                    editedBy: editedBy
+                }, {new: true}, function (err, result) {
                     if (err) {
                         return next(err);
                     }

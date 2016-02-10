@@ -1,10 +1,11 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/journalEntry/list/ListTemplate.html',
-        'helpers',
-        'async'
+        'helpers'
     ],
 
-    function (listTemplate, helpers, async) {
+    function (Backbone, _, listTemplate, helpers) {
         "use strict";
 
         var ListItemView = Backbone.View.extend({

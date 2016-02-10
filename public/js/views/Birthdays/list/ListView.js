@@ -1,9 +1,13 @@
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/Birthdays/list/ListTemplate.html',
         'views/Birthdays/list/ListItemView',
         'common'
     ],
-    function (ListTemplate, ListItemView, common) {
+    function (Backbone, _, ListTemplate, ListItemView, common) {
+        'use strict';
+
         var ContentView = Backbone.View.extend({
             el        : '#content-holder',
             initialize: function (options) {
