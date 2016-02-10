@@ -11,13 +11,13 @@ define([
     });
 
     var MenuItems = Backbone.Collection.extend({
-        model           : MyModel,
-        currentModule   : "HR",
-        url             : function () {
+        model        : MyModel,
+        currentModule: "HR",
+        url          : function () {
             return CONSTANTS.URLS.MODULES;
         },
 
-        initialize      : function () {
+        initialize: function () {
             this.fetch({
                 type   : 'GET',
                 reset  : true,
@@ -67,7 +67,7 @@ define([
             });
         },
 
-        children       : function (model, self) {
+        children: function (model, self) {
             var modules = self || [];
 
             if (!this.relations) {

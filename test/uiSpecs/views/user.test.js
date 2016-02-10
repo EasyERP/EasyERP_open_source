@@ -547,16 +547,25 @@ define([
              });*/
             it('Should create main view', function () {
                 var $expectedMenuEl;
+                var $expectedSubMenuEl;
 
                 server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'Users'});
-                $expectedMenuEl = $('a[href="#easyErp/Users"]')/*.closest('li')*/;
+                $expectedMenuEl = view.$el.find('#mainmenu-holder');
+                $expectedSubMenuEl = view.$el.find('#submenu-holder');
 
                 server.respond();
 
-                console.log($expectedMenuEl.html());
-                expect(true).to.be.true;
+                expect($expectedMenuEl).to.exist;
+                expect($expectedSubMenuEl).to.exist;
+            });
+
+            it('Should render menu and subMenu', function () {
+                var $expectedMenuEl;
+
+                $expectedMenuEl = view.$el.find('a[href="#easyErp/Users"]').closest('li');
+                expect($expectedMenuEl).to.have.class('selected');
             });
         });
 

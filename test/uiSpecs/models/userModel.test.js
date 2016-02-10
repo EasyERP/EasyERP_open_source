@@ -14,6 +14,7 @@ define([
             mainSpy = sinon.spy(App, 'render');
             server = sinon.fakeServer.create();
         });
+
         after(function () {
             mainSpy.restore();
         });
