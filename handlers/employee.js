@@ -167,11 +167,11 @@ var Employee = function (event, models) {
     };
 
     this.getForProjectDetails = function (req, res, next) {
-        var ids = req.query.data || [];
+        var idsArray = req.query.data || [];
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
         Employee
-            .find({_id: {$in: ids}})
+            .find({_id: {$in: idsArray}})
             .populate('jobPosition', '_id name')
             .populate('department', '_id departmentName')
             .exec(function (err, result) {
@@ -537,36 +537,6 @@ var Employee = function (event, models) {
         });
     };
 
-    this.getByViewTpe = function (req, res, next) {
-        var query = req.query;
-        var viewType = query.viewType;
-        var id = req.params.id;
-
-        if (viewType === id) {
-            viewType = id;
-        }
-
-        if (id && id.length >= 24) {
-            getById(req, res, next);
-            return false;
-        }
-
-        switch (viewType) {
-            case "form":
-                getById(req, res, next);
-                break;
-            case "kanban":
-                getApplicationsForKanban(req, res, next);
-                break;
-            case "thumbnails":
-                getFilter(req, res, next);
-                break;
-            case "list":
-                getFilter(req, res, next);
-                break;
-        }
-    };
-
     function getFilter(req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
@@ -850,7 +820,7 @@ var Employee = function (event, models) {
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
             if (data.sequence === -1) {
-                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
+                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
                     event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
                         if (data.workflow === data.workflowStart) {
@@ -1237,6 +1207,36 @@ var Employee = function (event, models) {
         });
     };
 
+    this.getByViewTpe = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = req.params.id;
+
+        if (viewType === id) {
+            viewType = id;
+        }
+
+        if (id && id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case "form":
+                getById(req, res, next);
+                break;
+            case "kanban":
+                getApplicationsForKanban(req, res, next);
+                break;
+            case "thumbnails":
+                getFilter(req, res, next);
+                break;
+            case "list":
+                getFilter(req, res, next);
+                break;
+        }
+    };
+
     this.getSalesPerson = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var result = {};
@@ -1424,21 +1424,27 @@ var Employee = function (event, models) {
     };
 
     var getEmployeesInDateRange = function (req, res, next, callback) {
-
         var now = new Date();
+        var day = 0;
+        var _month = now.getMonth() + 1;
+        var NUMBER_OF_MONTH = 1;
+        var tempMonthLength = _month + NUMBER_OF_MONTH;
+        var realPart;
+        var query;
+        var Employee = models.get(req.session.lastDb, "Employees", EmployeeSchema);
 
-        function getAge(birthday) {
-            birthday = new Date(birthday);
-            var today = new Date();
-            var years = today.getFullYear() - birthday.getFullYear();
+        /*function getAge(birthday) {
+         birthday = new Date(birthday);
+         var today = new Date();
+         var years = today.getFullYear() - birthday.getFullYear();
 
-            birthday.setFullYear(today.getFullYear());
+         birthday.setFullYear(today.getFullYear());
 
-            if (today < birthday) {
-                years--;
-            }
-            return (years < 0) ? 0 : years;
-        }
+         if (today < birthday) {
+         years--;
+         }
+         return (years < 0) ? 0 : years;
+         }*/
 
         var separateWeklyAndMonthly = function (arrayOfEmployees) {
             var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -1531,14 +1537,6 @@ var Employee = function (event, models) {
             return currentEmployees;
         };
 
-        var day = 0;
-        var _month = now.getMonth() + 1;
-        var NUMBER_OF_MONTH = 1;
-        var tempMonthLength = _month + NUMBER_OF_MONTH;
-        var realPart;
-        var query;
-        var Employee = models.get(req.session.lastDb, "Employees", EmployeeSchema);
-
         if (tempMonthLength / 12 < 1) {
 
             query = {
@@ -1583,8 +1581,7 @@ var Employee = function (event, models) {
                     return next(err);
                 }
 
-                var query = Employee.find();
-                query.where('_id').in(result)
+                Employee.find().where('_id').in(result)
                     .select('_id name dateBirth age jobPosition workPhones.mobile department')
                     .populate('jobPosition', '_id name')
                     .populate('department', ' _id departmentName')
