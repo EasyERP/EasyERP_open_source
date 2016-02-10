@@ -25,7 +25,6 @@ module.exports = {
 
     DASH_VAC_WEEK_BEFORE: 2,
     DASH_VAC_WEEK_AFTER: 8,
-    DASH_VAC_WEEK_AFTER: 8,
 
     COUNT_PER_PAGE: 100,
 

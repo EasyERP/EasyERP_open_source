@@ -38,7 +38,7 @@ define([
         });
 
         it('should change password', function (done) {
-            server.respondWith('POST', '/users', [200, {"Content-Type": "application/json"}, JSON.stringify([{
+            server.respondWith('POST', '/users/', [200, {"Content-Type": "application/json"}, JSON.stringify([{
                 _id  : 123456,
                 login: 'pupkin'
             }])]);

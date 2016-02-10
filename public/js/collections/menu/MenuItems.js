@@ -12,14 +12,11 @@ define([
 
     var MenuItems = Backbone.Collection.extend({
         model           : MyModel,
+        currentModule   : "HR",
         url             : function () {
             return CONSTANTS.URLS.MODULES;
         },
-        setCurrentModule: function (moduleName) {
-            this.currentModule = moduleName;
-            this.trigger('change:currentModule', this.currentModule, this);
-        },
-        currentModule   : "HR",
+
         initialize      : function () {
             this.fetch({
                 type   : 'GET',
@@ -29,6 +26,11 @@ define([
                 },
                 error  : this.fetchError
             });
+        },
+
+        setCurrentModule: function (moduleName) {
+            this.currentModule = moduleName;
+            this.trigger('change:currentModule', this.currentModule, this);
         },
 
         parse: function (response) {
@@ -52,9 +54,11 @@ define([
 
         getRootElements: function () {
             var Model = Backbone.Model.extend({});
+
             if (!this.relations) {
                 this.relationships();
             }
+
             return $.map(this.relations[0], function (current) {
                 return new Model({
                     _id  : current.get('_id'),
@@ -62,13 +66,15 @@ define([
                 });
             });
         },
+
         children       : function (model, self) {
+            var modules = self || [];
 
             if (!this.relations) {
                 this.relationships();
             }
-            var modules = self || [];
-            if (typeof this.relations[model.id] !== 'undefined') {
+
+            if (this.relations[model.id] !== undefined) {
                 _.each(this.relations[model.id], function (module) {
                     if (module.get("link")) {
                         modules.push(module);
@@ -77,9 +83,11 @@ define([
                     }
                 }, this);
             }
+
             modules = _.sortBy(modules, function (model) {
                 return model.get("sequence");
             });
+
             return modules;
         },
 
