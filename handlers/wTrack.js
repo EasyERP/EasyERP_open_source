@@ -48,6 +48,7 @@ var wTrack = function (event, models) {
                         return next(err);
                     }
 
+                    event.emit('updateRevenue', {wTrack: wTrack, req: req});
                     event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
@@ -79,11 +80,12 @@ var wTrack = function (event, models) {
                         data.revenue *= 100;
                     }
 
-                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err) {
+                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                         if (err) {
                             return next(err);
                         }
 
+                        event.emit('updateRevenue', {wTrack: wTrack, req: req});
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -124,9 +126,14 @@ var wTrack = function (event, models) {
                             if (err) {
                                 return cb(err);
                             }
-                            event.emit('recalculateKeys', {req: req, wTrack: wTrack});
-                            event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
-                            event.emit('recollectProjectInfo');
+
+                            if (wTrack){
+                                event.emit('updateRevenue', {wTrack: wTrack, req: req});
+                                event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                                event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
+                                event.emit('recollectProjectInfo');
+                            }
+
                             cb(null, wTrack);
                         });
                     }, function (err) {
@@ -737,6 +744,7 @@ var wTrack = function (event, models) {
 
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
+                    event.emit('updateRevenue', {wTrack: wTrack, req: req});
 
                     if (projectId) {
                         event.emit('updateProjectDetails', {req: req, _id: projectId});
@@ -1459,6 +1467,7 @@ var wTrack = function (event, models) {
                 return next(err);
             }
 
+            event.emit('updateRevenue', {project: project, req: req});
             event.emit('updateProjectDetails', {req: req, _id: project, jobId: jobId});
             event.emit('dropHoursCashes', req);
             event.emit('recollectVacationDash');
