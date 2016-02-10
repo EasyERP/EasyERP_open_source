@@ -43,6 +43,7 @@ var requestHandler = function (app, event, mainDb) {
     var ProjectSchema = mongoose.Schemas['Project'];
     var jobsSchema = mongoose.Schemas['jobs'];
     var ObjectId = mongoose.Types.ObjectId;
+    var QuotationSchema = mongoose.Schemas.Quotation;
 
     var io = app.get('io');
     var redisStore = require('./helpers/redisClient');
@@ -321,6 +322,55 @@ var requestHandler = function (app, event, mainDb) {
             }
         }
     });
+
+    event.on('updateRevenue', function(options){
+        var wTrack = options.wTrack;
+        var project = options.project;
+        var req = options.req;
+        var jobsArray = [];
+        var ProjectModel = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+
+        var waterfallTasks;
+
+        function getData(cb){
+            if (wTrack){
+                jobsArray.push(wTrack.jobs);
+                cb(null, jobsArray);
+            } else if (project){
+                ProjectModel.findById(project, function (err, result) {
+                    if (err){
+                        return cb(err);
+                    }
+                    jobsArray.push(result.jobs);
+                    cb(null, jobsArray);
+                });
+            }
+        }
+
+        function recalculate(jobsArray, cb){
+            Quotation.find({_id: {$in: jobsArray}}, function (err, result) {
+                if (err){
+                    return cb(err);
+                }
+                async.each(result, function(quotation){
+                    event.emit('recalculateRevenue', {
+                        quotation  : quotation,
+                        req        : req
+                    });
+                });
+            });
+
+        }
+
+        waterfallTasks = [getData, recalculate];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            console.log('Synthetic revenue recalculated');
+        });
+
+    });
+
 
     event.on('updateProjectDetails', function (options) {
         var updateProject = _.debounce(updateProjectDet, 500);
@@ -796,6 +846,7 @@ var requestHandler = function (app, event, mainDb) {
                                 if (err) {
                                     return next(err);
                                 }
+                                event.emit('updateQuntity', {jobId: jobID, quontity: budget.budgetTotal.hoursSum, req: req});
 
                                 console.log(count++);
                             })
@@ -811,6 +862,8 @@ var requestHandler = function (app, event, mainDb) {
                             if (err) {
                                 return next(err);
                             }
+
+                            event.emit('updateQuntity', {jobId: jobID, quontity: budget.budgetTotal.hoursSum, req: req});
 
                             console.log(count++);
                         })
@@ -856,6 +909,47 @@ var requestHandler = function (app, event, mainDb) {
 
         });
 
+    });
+
+    event.on('updateQuntity', function (options) {
+        var req = options.req;
+        var jobId = options.jobId;
+        var quontity = options.quontity;
+        var newProducts;
+        var i;
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
+        var id;
+
+            Job.findById(jobId, function (err, job) {
+                if (err){
+                    console.log(err);
+                }
+                if (job && job.quotation){
+                    Quotation.findById(job.quotation, {products: 1}, function (err, result) {
+                        if (err){
+                            console.log(err);
+                        }
+
+                        var products = result.toJSON().products;
+                        var obj = _.find(products, function (obj) {
+                            return obj.jobs.toString() === jobId.toString();
+                        });
+                        var index = _.indexOf(products, obj);
+                        newProducts = _.clone(products);
+
+                        obj.quantity = job.toJSON().budget.budgetTotal.hoursSum;
+                        newProducts[index] = obj;
+
+                        Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
+                            if (err){
+                                console.log(err);
+                            }
+                        });
+                    });
+
+                }
+            });
     });
 
     //if name was updated, need update related wTrack, or other models
@@ -999,8 +1093,8 @@ var requestHandler = function (app, event, mainDb) {
 
     event.on('recalculateRevenue', function (options) {
         var quotation = options.quotation;
-        var wTrackModel = options.wTrackModel;
         var req = options.req;
+        var wTrackModel = options.wTrackModel ||  models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var totalAmount = 0;
 
         if (!quotation || !wTrackModel) {

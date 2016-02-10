@@ -107,7 +107,7 @@ define([
                 var tr = this.$listTable.find('.false');
                 var projectId = tr.find('[data-content="project"]').attr('data-id');
 
-                dataService.getData("/jobs/getForDD", {"projectId": projectId}, function (jobs) {
+                dataService.getData("/jobs/getForDD", {"projectId": projectId, 'all': true}, function (jobs) {
 
                     self.responseObj['#jobs'] = jobs;
 
@@ -414,7 +414,7 @@ define([
 
                 if (isSelect) {
                     if (content === 'jobs') {
-                        dataService.getData("/jobs/getForDD", {"projectId": tr.find('[data-content="project"]').attr('data-id')}, function (jobs) {
+                        dataService.getData("/jobs/getForDD", {"projectId": tr.find('[data-content="project"]').attr('data-id'), 'all': true}, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
 
@@ -654,7 +654,7 @@ define([
 
                         changedAttr.project = project;
 
-                        dataService.getData("/jobs/getForDD", {"projectId": project}, function (jobs) {
+                        dataService.getData("/jobs/getForDD", {"projectId": project, 'all': true}, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
 
@@ -1097,7 +1097,7 @@ define([
                             } else {
 
                                 model = that.collection.get(value);
-                                if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed'){
+                                if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') {
                                     model.destroy({
                                         headers: {
                                             mid: mid
