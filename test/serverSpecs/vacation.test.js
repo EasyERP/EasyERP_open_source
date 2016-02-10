@@ -36,9 +36,11 @@ describe("Vacation Specs", function () {
 
         it("should create vacation", function (done) {
             var body = {
-                month   : 2,
-                year    : 2016,
-                vacArray: [null, null, null, null, null, "V", null, null, "V", null, null, "V", null, null, null
+                department: "55b92ace21e4b7c40f000014",
+                employee  : "55b92ad221e4b7c40f00004f",
+                month     : 2,
+                year      : 2016,
+                vacArray  : [null, "V", "V", "V", null, "V", null, "V", "V", "V", null, null, null, null, null
                     , null, null, null, null, null, null, null, null, null, null, null, null, null, null]
             };
 
@@ -57,11 +59,29 @@ describe("Vacation Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('success');
-                    //expect(body.success)
-                    //    .to.have.property('_id');
-console.log(body.success._id);
+
                     id = body.success._id;
-console.log(id);
+
+                    done();
+                });
+        });
+
+        it("should get Years for vacation",function(done){
+            aggent
+                .get('vacation/getYears')
+                .expect(200)
+                .end(function(err, res){
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Array);
+                    expect(body[0])
+                        .to.have.property('_id');
+
                     done();
                 });
         });
@@ -116,14 +136,14 @@ console.log(id);
                 });
         });
 
-        it("should update vacation", function (done) {
-            var body = {
+        it("should update putchModel of vacation", function (done) {
+            var body = [{
                 _id     : id,
                 month   : 2,
                 year    : 2016,
                 vacArray: [null, null, null, null, null, "V", "V", null, "V", null, null, null, "P", null, null, null, "S", null, null
                     , null, null, null, null, null, null, null, null, null, null]
-            };
+            }];
 
             aggent
                 .patch('vacation')
@@ -148,21 +168,7 @@ console.log(id);
         it("should delete vacation", function (done) {
             aggent
                 .delete('vacation/' + id)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-                    if (err) {
-                        done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('success');
-                    console.log(body.success);
-
-                    done();
-                });
+                .expect(200, done);
         });
     });
 
@@ -189,34 +195,18 @@ console.log(id);
 
         it("should fail create vacation", function (done) {
             var body = {
-                month   : 2,
-                year    : 2016,
-                vacArray: [null, null, null, null, null, "V", null, null, "V", null, null, null, null, null, null
-                    , null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+                department: "55b92ace21e4b7c40f000014",
+                employee  : "55b92ad221e4b7c40f00004f",
+                month     : 2,
+                year      : 2016,
+                vacArray  : ["V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"
+                    , "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"]
             };
 
             aggent
                 .post('vacation')
                 .send(body)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('success');
-                    expect(body.success)
-                        .to.have.property('_id');
-
-                    id = body.success._id;
-
-                    done();
-                });
+                .expect(403, done);
         });
     });
 });
