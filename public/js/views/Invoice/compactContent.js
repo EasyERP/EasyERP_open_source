@@ -1,18 +1,18 @@
 ﻿define([
-        "text!templates/Persons/compactContentTemplate.html",
-        "common"
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        "text!templates/Persons/compactContentTemplate.html"
     ],
-    function (compactContentTemplate, common) {
+    function (Backbone, $, _, compactContentTemplate) {
+        'use strict';
+
         var compactContentView = Backbone.View.extend({
 
             className: "form",
 
             events: {
                 "click #persons p > a": "gotoPersonsForm"
-            },
-
-            initialize: function (options) {
-
             },
 
             template: _.template(compactContentTemplate),

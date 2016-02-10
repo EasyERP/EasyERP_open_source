@@ -2,14 +2,17 @@
  * Created by German on 03.07.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/hrDashboard/index.html',
     'collections/Dashboard/hrDashboard',
-    'dataService',
     'constants',
-    'async',
     'custom',
     'moment'
-], function (mainTemplate, hrDashboard, dataService, CONSTANTS, async, custom, moment) {
+], function (Backbone, $, _, mainTemplate, HrDashboard, CONSTANTS, custom, moment) {
+    'use strict';
+
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -25,7 +28,7 @@ define([
             this.startTime = options.startTime;
 
             if (!dashCollection) {
-                dashCollection = this.dashCollection = new hrDashboard();
+                dashCollection = this.dashCollection = new HrDashboard();
                 dashCollection.on('reset sort', this.render, this);
 
                 custom.cacheToApp('hrDashboard', dashCollection);
@@ -42,7 +45,7 @@ define([
             var start = moment().subtract(11, 'month').date(1);
             var startMonth = start.month() + 1;
             var startYear = start.isoWeekYear();
-
+            var i;
             var arrOfDates = custom.retriveFromCash('arrOfDates') || [];
             var month;
             var year;
@@ -50,7 +53,7 @@ define([
             var fired = this.dashCollection.get('fired');
 
             if (!arrOfDates || !arrOfDates.length) {
-                for (var i = 0; i < 12; i++) {
+                for (i = 0; i < 12; i++) {
                     month = startMonth + i;
 
                     if (month > 12) {
@@ -77,7 +80,7 @@ define([
                 var hiredContainer = self.$el.find('#hired_' + dateObject.dateByMonth);
                 var firedContainer = self.$el.find('#fired_' + dateObject.dateByMonth);
 
-                totalContainer.text(parseInt(hiredContainer.text()) - parseInt(firedContainer.text()));
+                totalContainer.text(parseInt(hiredContainer.text(), 10) - parseInt(firedContainer.text(), 10));
             });
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");

@@ -2,6 +2,9 @@
  * Created by Roman on 17.06.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Hours/index.html',
     'text!templates/Revenue/weeksArray.html',
     'text!templates/Revenue/monthsArray.html',
@@ -23,7 +26,9 @@ define([
     'custom',
     'constants',
     'helpers'
-], function (mainTemplate, weeksArray, monthsArray, perMonth, perMonthInt, hoursByDepItem, hoursByDepTotal, tableTotalHours, totalHours, perMonthForTotalHours, tableHoursSold, hoursSold, perMonthForHoursSold, tableSold, RevenueModel, moment, dataService, async, custom, CONSTANTS, helpers) {
+], function (Backbone, $, _, mainTemplate, weeksArray, monthsArray, perMonth, perMonthInt, hoursByDepItem, hoursByDepTotal, tableTotalHours, totalHours, perMonthForTotalHours, tableHoursSold, hoursSold, perMonthForHoursSold, tableSold, RevenueModel, moment, dataService, async, custom, CONSTANTS, helpers) {
+    'use strict';
+
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -58,7 +63,7 @@ define([
         initialize: function () {
             var self = this;
             var currentWeek = moment().week();
-            var nowMonth = parseInt(moment().week(currentWeek).format("MM"));
+            var nowMonth = parseInt(moment().week(currentWeek).format("MM"), 10);
 
             //this.hoursUnsold = _.after(2, self.changeHoursUnsold);
             this.model = new RevenueModel();
@@ -73,7 +78,7 @@ define([
 
             var currentStartWeek = currentWeek - 6;
             var currentYear = moment().weekYear();
-            var currentMonth = parseInt(moment().week(currentStartWeek).format("MM"));
+            var currentMonth = parseInt(moment().week(currentStartWeek).format("MM"), 10);
 
             self.model.set({
                 currentStartWeek: currentStartWeek,
@@ -105,7 +110,7 @@ define([
 
         updateWeek: function () {
             var modelData;
-            var currentStartWeek = parseInt(this.$currentStartWeek.val());
+            var currentStartWeek = parseInt(this.$currentStartWeek.val(), 10);
             var currentWeek = currentStartWeek + 6;
             var currentYear = this.model.get('currentYear');
             var newCurrMonth;
@@ -125,7 +130,7 @@ define([
                 currentYear = 2014;
             }
 
-            newCurrMonth = parseInt(moment().week(currentWeek).format("MM"));
+            newCurrMonth = parseInt(moment().week(currentWeek).format("MM"), 10);
 
             if (currentStartWeek === 1) {
                 yearOfMonth = currentYear - 1;
@@ -150,8 +155,9 @@ define([
         calculateCurrentMonthArr: function (nowMonth, currentYear) {
             this.monthArr = [];
             this.paidUnpaidDateRange.endDate = currentYear * 100 + nowMonth;
+            var i;
 
-            for (var i = 0; i < 12; i++) {
+            for (i = 0; i < 12; i++) {
                 if (nowMonth - i <= 0) {
                     this.paidUnpaidDateRange.startDate = (currentYear - 1) * 100 + (nowMonth - i + 12);
                     this.monthArr.push({
@@ -167,7 +173,7 @@ define([
             }
 
             this.monthArr = _.sortBy(this.monthArr, function (monthObject) {
-                return monthObject.year * 100 + monthObject.month
+                return monthObject.year * 100 + monthObject.month;
             });
 
             this.fetchHours();
@@ -210,12 +216,13 @@ define([
             var model = this.model.toJSON();
             var weeksArr = [];
             var week;
+            var i;
 
             if (model.currentMonth !== model.newCurrMonth) {
                 model.currentMonth = model.newCurrMonth;
             }
 
-            for (var i = 0; i <= 13; i++) {
+            for (i = 0; i <= 13; i++) {
                 if (model.currentStartWeek + i > 53) {
                     week = model.currentStartWeek + i - 53;
                     weeksArr.push({
@@ -262,13 +269,13 @@ define([
                 //self.model.set('hoursByDep', result['hoursByDep']);
                 //self.model.trigger('change:hoursByDep');
 
-                self.model.set('totalHours', result['totalHours']);
+                self.model.set('totalHours', result.totalHours);
                 self.model.trigger('change:totalHours');
 
-                self.model.set('hoursSold', result['hoursSold']);
+                self.model.set('hoursSold', result.hoursSold);
                 self.model.trigger('change:hoursSold');
 
-                self.model.set('hoursUnsold', result['hoursUnsold']);
+                self.model.set('hoursUnsold', result.hoursUnsold);
                 self.model.trigger('change:hoursUnsold');
             });
         },
@@ -277,7 +284,7 @@ define([
             var self = this;
             var weeksArr = this.model.get('weeksArr');
             var hoursByDep = this.model.get('hoursByDep');
-
+            var i;
             var target = self.$el.find('#tableHoursByDep');
             var targetTotal;
 
@@ -287,7 +294,7 @@ define([
 
             this.departments = [];
 
-            for (var i = hoursByDep.length - 1; i >= 0; i--) {
+            for (i = hoursByDep.length - 1; i >= 0; i--) {
                 this.departments.push(hoursByDep[i]._id);
 
                 tempPerWeek = hoursByDep[i].root;
@@ -334,7 +341,7 @@ define([
             }, function (err) {
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -360,13 +367,10 @@ define([
 
             var bonusCells = table.find("#" + id + " .divRow");
 
-            if (!target.hasClass('rowChecked')){
+            if (!target.hasClass('rowChecked')) {
                 target = target.prev();
             }
             targetText = target.text();
-
-
-
 
             bonusCells.toggle();
             bonusRows.toggle();
@@ -422,7 +426,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -512,7 +516,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -602,7 +606,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }

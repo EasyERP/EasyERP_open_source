@@ -1,18 +1,18 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Invoice/EditTemplate.html',
         'views/Assignees/AssigneesView',
         'views/Invoice/InvoiceProductItems',
-        'views/salesInvoice/wTrack/wTrackRows',
         'views/Payment/CreateView',
         'views/Payment/list/ListHeaderInvoice',
-        'common',
-        'custom',
         'dataService',
         'populate',
         'constants',
         'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function (Backbone, $, _, EditTemplate, AssigneesView, InvoiceItemView, PaymentCreateView, ListHederInvoice, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -45,7 +45,7 @@ define([
                 this.isWtrack = !!options.isWtrack;
                 this.filter = options.filter;
 
-                this.currentModel = (options.model) ? options.model : options.collection.getElement();
+                this.currentModel = options.model || options.collection.getElement();
                 this.currentModel.urlRoot = "/Invoice";
                 this.responseObj = {};
 
@@ -117,7 +117,7 @@ define([
                 }, function (workflow) {
                     if (workflow && workflow.error) {
                         return App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: workflow.error.statusText
                         });
                     }
@@ -154,8 +154,8 @@ define([
                     wId: wId
                 }, function (workflow) {
                     if (workflow && workflow.error) {
-                        return  App.render({
-                            type: 'error',
+                        return App.render({
+                            type   : 'error',
                             message: workflow.error.statusText
                         });
                     }
@@ -227,16 +227,16 @@ define([
                 var selectedLength = selectedProducts.length;
                 var targetEl;
                 var productId;
-                var journalId;
                 var quantity;
                 var price;
                 var description;
                 var taxes;
                 var amount;
                 var data;
-                var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
-                var salesPerson = this.currentModel.salesPerson ? this.currentModel.salesPerson : this.currentModel.get('salesPerson');
-                var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
+                var i;
+                var workflow = this.currentModel.workflow || this.currentModel.get('workflow');
+                var salesPerson = this.currentModel.salesPerson || this.currentModel.get('salesPerson');
+                //var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
                 var currency = {
                     _id : $thisEl.find('#currencyDd').attr('data-id'),
                     name: $thisEl.find('#currencyDd').text()
@@ -247,17 +247,17 @@ define([
 
                 var supplier = $thisEl.find('#supplier').attr("data-id");
 
-                var total = parseFloat($thisEl.find("#totalAmount").text());
-                var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text());
-                var balance = parseFloat($thisEl.find("#balance").text());
+                // var total = parseFloat($thisEl.find("#totalAmount").text());
+                //var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text());
+                //var balance = parseFloat($thisEl.find("#balance").text());
 
-                var payments = {
-                    total  : total,
-                    unTaxed: unTaxed,
-                    balance: balance
-                };
+                /*var payments = {
+                 total  : total,
+                 unTaxed: unTaxed,
+                 balance: balance
+                 };*/
 
-                var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
+                // var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
                 var paymentTermId = $thisEl.find("#payment_terms").attr("data-id") || null;
                 var journalId = this.$el.find('#journal').attr("data-id") || null;
 
@@ -271,7 +271,7 @@ define([
                 }
 
                 if (selectedLength) {
-                    for (var i = selectedLength - 1; i >= 0; i--) {
+                    for (i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
 
@@ -295,10 +295,10 @@ define([
                 }
 
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -370,7 +370,7 @@ define([
 
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.RESPONSES.CREATE_QUOTATION
                     });
                 }
@@ -398,7 +398,7 @@ define([
                 event.preventDefault();
 
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
@@ -408,7 +408,7 @@ define([
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -430,7 +430,6 @@ define([
                 var assigned;
                 var customer;
                 var total;
-                var wTracksDom;
                 var buttons;
                 var invoiceDate;
 
@@ -476,7 +475,7 @@ define([
                          text : "Delete",
                          click: self.deleteItem
                          }*/
-                    ]
+                    ];
                 } else {
                     buttons = [
                         {
@@ -494,7 +493,7 @@ define([
                             text : "Delete",
                             click: self.deleteItem
                         }
-                    ]
+                    ];
                 }
 
                 this.$el = $(formString).dialog({
@@ -518,7 +517,7 @@ define([
 
                 paymentContainer = this.$el.find('#payments-container');
                 paymentContainer.append(
-                    new listHederInvoice().render({model: this.currentModel.toJSON()}).el
+                    new ListHederInvoice().render({model: this.currentModel.toJSON()}).el
                 );
 
                 populate.get2name("#supplier", CONSTANTS.URLS.SUPPLIER, {}, this, false);

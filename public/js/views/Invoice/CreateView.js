@@ -1,23 +1,24 @@
 define([
         'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Invoice/CreateTemplate.html",
         "models/InvoiceModel",
-        "common",
         "populate",
         "views/Invoice/InvoiceProductItems",
         "views/Assignees/AssigneesView",
         "views/Payment/list/ListHeaderInvoice",
-        "dataService",
         'constants'
     ],
-    function (Backbone, CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS) {
+        'use strict';
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Invoice",
             template   : _.template(CreateTemplate),
 
-            initialize: function (options) {
+            initialize: function () {
                 _.bindAll(this, "saveItem", "render");
                 this.model = new InvoiceModel();
                 this.responseObj = {};
@@ -110,13 +111,11 @@ define([
                 var forSales = (this.forSales) ? true : false;
 
                 var supplier = $currentEl.find("#supplier").data("id");
-                var supplierName = $currentEl.find("#supplier").text();
                 var salesPersonId = $currentEl.find("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
-                var salesPersonName = $currentEl.find("#salesPerson").text() ? this.$("#salesPerson").text() : null;
                 var paymentTermId = $currentEl.find("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
                 var invoiceDate = $currentEl.find("#invoice_date").val();
                 var dueDate = $currentEl.find("#due_date").val();
-
+                var i;
                 var total = parseFloat($currentEl.find("#totalAmount").text());
                 var unTaxed = parseFloat($currentEl.find("#totalUntaxes").text());
                 var balance = parseFloat($currentEl.find("#balance").text());
@@ -133,7 +132,7 @@ define([
                 };
 
                 if (selectedLength) {
-                    for (var i = selectedLength - 1; i >= 0; i--) {
+                    for (i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         if (productId) {
@@ -158,10 +157,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -205,7 +204,7 @@ define([
                             mid: mid
                         },
                         wait   : true,
-                        success: function (res) {
+                        success: function () {
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             self.hideDialog();
@@ -279,7 +278,7 @@ define([
 
                 paymentContainer = this.$el.find('#payments-container');
                 paymentContainer.append(
-                    new listHederInvoice().render().el
+                    new ListHederInvoice().render().el
                 );
 
                 populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
@@ -302,7 +301,7 @@ define([
                 this.$el.find('#due_date').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
+                    changeYear : true
                 });
 
                 this.delegateEvents(this.events);

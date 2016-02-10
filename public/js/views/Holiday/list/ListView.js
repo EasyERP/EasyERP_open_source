@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Holiday/list/ListHeader.html',
         'text!templates/Holiday/list/cancelEdit.html',
@@ -7,20 +10,21 @@ define([
         'models/HolidayModel',
         'collections/Holiday/filterCollection',
         'collections/Holiday/editCollection',
-        'common',
         'dataService',
         'constants',
         'async',
         'moment'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
+    function (Backbone, $, _, listViewBase, listTemplate, cancelEdit, CreateView, ListItemView, HolidayModel, holidayCollection, EditCollection, dataService, CONSTANTS, async, moment) {
+        'use strict';
+
         var HolidayListView = listViewBase.extend({
             page                    : null,
             sort                    : null,
-            createView              : createView,
+            createView              : CreateView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentType             : CONSTANTS.HOLIDAY,//needs in view.prototype.changeLocationHash
             changedModels           : {},
             totalCollectionLengthUrl: '/holiday/totalCollectionLength',
@@ -31,8 +35,8 @@ define([
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
-                this.filter = options.filter ? options.filter : {};
-                this.sort = options.sort ? options.sort : {};
+                this.filter = options.filter || {};
+                this.sort = options.sort || {};
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
@@ -81,7 +85,7 @@ define([
 
             resetCollection: function (model) {
                 if (model && model._id) {
-                    model = new holidayModel(model);
+                    model = new HolidayModel(model);
                     this.collection.add(model);
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
@@ -118,8 +122,9 @@ define([
                 var model;
                 var modelJSON;
                 var date;
+                var id;
 
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     model = this.editCollection.get(id);
                     modelJSON = model.toJSON();
                     date = new Date(modelJSON.date);
@@ -136,7 +141,6 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editHolidayModel;
 
                 if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(editedElement);
@@ -148,16 +152,9 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                   // editHolidayModel = this.editCollection.get(editedElementRowId);
-
                     if (!this.changedModels[editedElementRowId]) {
-                        /*if (!editHolidayModel.id) {
-                            this.changedModels[editedElementRowId] = editHolidayModel.attributes;
-                        } else {*/
-                            this.changedModels[editedElementRowId] = {};
-                      /*  }*/
+                        this.changedModels[editedElementRowId] = {};
                     }
-
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     editedCol.text(editedElementValue);
@@ -166,8 +163,6 @@ define([
             },
 
             editRow: function (e) {
-                var self = this;
-
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var holidayId = tr.data('id');
@@ -210,7 +205,7 @@ define([
                 td.addClass('edited');
 
                 if (this.isEditRows()) {
-                   // this.setChangedValueToModel(); in case of recursion
+                    // this.setChangedValueToModel(); in case of recursion
                     this.setChangedValue();
                 }
 
@@ -220,7 +215,7 @@ define([
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
-                    this.showSaveCancelBtns()
+                    this.showSaveCancelBtns();
                 }
             },
 
@@ -253,14 +248,14 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                $currentEl.append(new listItemView({
+                $currentEl.append(new ListItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
                 setTimeout(function () {
-                    self.editCollection = new editCollection(self.collection.toJSON());
+                    self.editCollection = new EditCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
 
@@ -280,7 +275,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
-                var itemView = new listItemView({
+                var itemView = new ListItemView({
                     collection : this.collection,
                     page       : $currentEl.find("#currentShowPage").val(),
                     itemsNumber: $currentEl.find("span#itemsNumber").text()
@@ -301,7 +296,7 @@ define([
                     date: now
                 };
 
-                var model = new holidayModel(startData, {parse: true});
+                var model = new HolidayModel(startData, {parse: true});
 
                 startData._id = model.cid;
 
@@ -309,7 +304,7 @@ define([
                     //this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
-                    new createView(startData);
+                    new CreateView(startData);
                 }
             },
 
@@ -339,7 +334,7 @@ define([
 
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({
+                    created.before(new ListItemView({
                         collection : this.collection,
                         page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
@@ -364,7 +359,6 @@ define([
             },
 
             deleteItems: function () {
-                var $currentEl = this.$el;
                 var that = this,
                     mid = 39,
                     model;
@@ -380,7 +374,6 @@ define([
                         $.each($("#listTable input:checked"), function (index, checkbox) {
                             value = checkbox.value;
                             that.changedModels = {};
-                            ;
 
                             if (value.length < 24) {
                                 that.editCollection.remove(value);
@@ -412,13 +405,13 @@ define([
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             App.render({
-                                                type: 'error',
+                                                type   : 'error',
                                                 message: "You do not have permission to perform this action"
                                             });
                                         }
                                         that.listLength--;
                                         localCounter++;
-                                        if (index == count - 1) {
+                                        if (index === count - 1) {
                                             if (index === count - 1) {
                                                 that.triggerDeleteItemsRender(localCounter);
                                             }
@@ -437,7 +430,6 @@ define([
             cancelChanges: function () {
                 var self = this;
                 var edited = this.edited;
-                var collection = this.collection;
                 var editedCollectin = this.editCollection;
 
                 async.each(edited, function (el, cb) {
@@ -463,7 +455,7 @@ define([
                     cb();
                 }, function (err) {
                     if (!err) {
-                       // self.editCollection = new editCollection(collection.toJSON()); // took off in case of not hiding saveCancelButtons
+                        // self.editCollection = new editCollection(collection.toJSON()); // took off in case of not hiding saveCancelButtons
                         self.hideSaveCancelBtns();
                     }
                 });

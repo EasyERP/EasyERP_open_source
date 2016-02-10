@@ -1,7 +1,10 @@
 define([
-        "text!templates/Holiday/CreateTemplate.html",
+        'Backbone',
+        'Underscore',
+        "text!templates/Holiday/CreateTemplate.html"
     ],
-    function (CreateTemplate) {
+    function (Backbone, _, CreateTemplate) {
+        'use strict';
 
         var CreateView = Backbone.View.extend({
             el      : '#listTable',
