@@ -785,6 +785,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 .centerCell {
   text-align: center;
 }
+.list2 .cancelled a {
+  text-decoration: line-through;
+}
 .list2.enable_hover tbody tr:hover {
   background-color: #565658;
 }
@@ -863,6 +866,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 .centerCell {
   text-align: center;
+}
+.list2 .cancelled a {
+  text-decoration: line-through;
 }
 .list2.enable_hover tbody tr:hover {
   background-color: #565658;
@@ -1405,6 +1411,9 @@ textarea {
 }
 .errorContent {
   border: 1px solid red !important;
+}
+span.error {
+  color: #fd0001 !important;
 }
 .red {
   color: #ff0000;
@@ -5694,6 +5703,9 @@ ul.dialog-tabs li.right button {
 .list .centerCell {
   text-align: center;
 }
+.list .cancelled a {
+  text-decoration: line-through;
+}
 .list.enable_hover tbody tr:hover {
   background-color: #565658;
 }
@@ -8315,6 +8327,9 @@ textarea#editInput {
 }
 .grid tr td {
   border-top: 1px solid #7f7f80;
+}
+.grid tr td.createTd {
+  cursor: pointer;
 }
 .grid tr td,
 .grid tr th {

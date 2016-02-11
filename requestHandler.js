@@ -486,7 +486,7 @@ var requestHandler = function (app, event, mainDb) {
                             var key;
                             var employee = wTrack.employee;
 
-                            if (!( employee._id in employees)) {
+                            if (!(employee._id in employees)) {
                                 employees[employee._id] = employee.name.first + ' ' + employee.name.last;
                             }
 

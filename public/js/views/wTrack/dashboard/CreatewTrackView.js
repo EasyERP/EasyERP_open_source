@@ -1,17 +1,20 @@
+/**
+ * Created by liliy on 11.02.2016.
+ */
 define([
         'Backbone',
         'jQuery',
         'Underscore',
         'views/selectView/selectView',
         'views/wTrack/list/createJob',
-        "text!templates/wTrack/dashboard/vacationDashEdit.html",
+        "text!templates/wTrack/dashboard/CreatewTrackTemplate.html",
         'models/wTrackModel',
         'moment',
         'async',
         'common',
         'dataService'
     ],
-    function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService) {
+    function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService) {
         "use strict";
         var CreateView = Backbone.View.extend({
             template   : _.template(template),
@@ -33,7 +36,34 @@ define([
                 this.dateByWeek = options.dateByWeek;
                 this.tds = options.tds;
                 this.row = options.tr;
-                this.wTracks = options.wTracks;
+                var year = parseInt(this.dateByWeek.slice(0, 4), 10);
+                this.week = parseInt(this.dateByWeek.slice(4), 10);
+                var month = moment().year(year).isoWeek(this.week).day(1).month() + 1;
+                this.startMonth = month;
+                this.startYear = moment().year(year).isoWeek(this.week).day(1).year();
+                this.endMonth = moment().year(year).isoWeek(this.week).day(6).month() + 1;
+                this.endYear = moment().year(year).isoWeek(this.week).day(6).year();
+                var dateByMonth = year * 100 + month;
+                this.employee = options.employee;
+                this.department = options.department;
+                var body = {
+                    year       : year,
+                    month      : month,
+                    week       : this.week,
+                    department : {
+                        _id           : this.department,
+                        departmentName: options.departmentName
+                    },
+                    employee   : {
+                        _id : this.employee,
+                        name: options.employeeName
+                    },
+                    dateByWeek : parseInt(this.dateByWeek, 10),
+                    dateByMonth: dateByMonth
+                };
+
+                this.wTrack = new WTrackModel(body);
+                options.wTrack = this.wTrack;
                 this.render(options);
             },
 
@@ -76,18 +106,23 @@ define([
             },
 
             saveItem: function () {
-                var Model = wTrackModel.extend({
+                var Model = WTrackModel.extend({
                     //redefine defaults for proper putch backEnd model;
                     defaults: {}
                 });
+
+                if (this.$el.find('.error').length || this.$el.find('.errorContent').length){
+                    return App.render({
+                        type   : 'error',
+                        message: 'Please, select all information first.'
+                    });
+                }
                 var self = this;
                 var thisEl = this.$el;
-                var table = thisEl.find('#wTrackEditTable');
+                var table = thisEl.find('#wTrackCreateTable');
                 var inputEditing = table.find('input.editing');
-                var data = [];
-                var rows = table.find('tr');
-                var totalWorked = 0;
-                var project = thisEl.find('#project').text();
+                var row = table.find('tr');
+                var model;
 
                 if (inputEditing.length) {
                     this.autoCalc(null, inputEditing);
@@ -103,91 +138,71 @@ define([
                     return el.text() || 0;
                 }
 
-                rows.each(function () {
-                    var model;
-                    var target = $(this);
-                    var id = target.attr('data-id');
-                    var jobs = target.find('[data-content="jobs"]');
-                    var monEl = target.find('[data-content="1"]');
-                    var tueEl = target.find('[data-content="2"]');
-                    var wenEl = target.find('[data-content="3"]');
-                    var thuEl = target.find('[data-content="4"]');
-                    var friEl = target.find('[data-content="5"]');
-                    var satEl = target.find('[data-content="6"]');
-                    var sunEl = target.find('[data-content="7"]');
-                    var worked = target.find('[data-content="worked"]');
-                    var mo = retriveText(monEl);
-                    var tu = retriveText(tueEl);
-                    var we = retriveText(wenEl);
-                    var th = retriveText(thuEl);
-                    var fr = retriveText(friEl);
-                    var sa = retriveText(satEl);
-                    var su = retriveText(sunEl);
-                    var wTrack;
+                var target = row;
+                var id = target.attr('data-id');
+                var jobs = target.find('[data-content="jobs"]');
+                var monEl = target.find('[data-content="1"]');
+                var tueEl = target.find('[data-content="2"]');
+                var wenEl = target.find('[data-content="3"]');
+                var thuEl = target.find('[data-content="4"]');
+                var friEl = target.find('[data-content="5"]');
+                var satEl = target.find('[data-content="6"]');
+                var sunEl = target.find('[data-content="7"]');
+                var worked = target.find('[data-content="worked"]');
+                var month = target.find('[data-content="month"]');
+                var year = target.find('[data-content="year"]');
+                var mo = retriveText(monEl);
+                var tu = retriveText(tueEl);
+                var we = retriveText(wenEl);
+                var th = retriveText(thuEl);
+                var fr = retriveText(friEl);
+                var sa = retriveText(satEl);
+                var su = retriveText(sunEl);
+                var m = retriveText(month);
+                var y = retriveText(year);
+                var wTrack;
+                var project = self.$el.find('#project').attr('data-id');
 
-                    worked = retriveText(worked);
-                    totalWorked += parseInt(worked, 10);
-                    wTrack = {
-                        _id   : id,
-                        1     : mo,
-                        2     : tu,
-                        3     : we,
-                        4     : th,
-                        5     : fr,
-                        6     : sa,
-                        7     : su,
-                        jobs  : jobs.attr('data-id'),
-                        worked: worked
-                    };
+                worked = retriveText(worked);
+                wTrack = {
+                    _id        : id,
+                    1          : mo,
+                    2          : tu,
+                    3          : we,
+                    4          : th,
+                    5          : fr,
+                    6          : sa,
+                    7          : su,
+                    jobs       : jobs.attr('data-id'),
+                    worked     : worked,
+                    project    : project,
+                    month      : m,
+                    year       : y,
+                    dateByWeek : this.dateByWeek,
+                    dateByMonth: y * 100 + m,
+                    employee   : this.employee,
+                    department : this.department,
+                    week       : this.week
+                };
 
-                    model = new Model(wTrack);
-                    data.push(model);
-                });
+                model = new Model(wTrack);
 
-                async.each(data, function (model, eachCb) {
-                    model.save(null, {
-                        patch  : true,
-                        success: function (model) {
-                            eachCb(null, model);
-                        },
-                        error  : function (model, response) {
-                            eachCb(response);
-                        }
-                    });
-                }, function (err) {
-                    if (!err) {
-                        self.updateDashRow({
-                            totalWorked: totalWorked,
-                            project    : project
-                        });
-
+                model.save(null, {
+                    success: function () {
                         return self.hideDialog();
+                    },
+                    error  : function (err) {
+                        App.render({
+                            type   : 'error',
+                            message: err.text
+                        });
                     }
-
-                    App.render({
-                        type   : 'error',
-                        message: err.text
-                    });
                 });
-            },
-
-            updateDashRow: function (options) {
-                var totalHours = options.totalWorked;
-                var targetEmployeeContainer = this.row.find('td.wTrackInfo[data-date="' + this.dateByWeek + '"]');
-                var hoursContainer = targetEmployeeContainer.find('span.projectHours');
-                var targetTdIndex = this.row.find('td').index(targetEmployeeContainer);
-                var employeeId = this.row.attr('data-employee');
-
-                hoursContainer.text(totalHours);
-
-                this.getDataForCellClass(targetTdIndex, employeeId, totalHours);
             },
 
             autoCalc: function (e, targetEl) {
-                targetEl = targetEl || $(e.target);
-
-                var isInput = targetEl.prop("tagName") === 'INPUT';
-                var tr = targetEl.closest('tr');
+                this.removeInputs();
+                var tr = this.$el.find('tr');
                 var edited = tr.find('input.edited');
                 var days = tr.find('.autoCalc');
                 var editedCol = edited.closest('td');
@@ -209,14 +224,14 @@ define([
                     }
 
                     return value;
-                };
+                }
 
                 for (var i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
 
                     value = appplyDefaultValue(calcEl);
 
-                    if (value === undefined && isInput) {
+                    if (value === undefined) {
                         editedCol = targetEl.closest('td');
                         edited = targetEl;
                     }
@@ -274,7 +289,6 @@ define([
                 var tr = el.closest('tr');
                 var isHours = td.hasClass('hours');
                 var input = tr.find('input.editing');
-                var wTrackId = tr.data('id');
                 var content = el.data('content');
                 var tempContainer;
                 var width;
@@ -285,23 +299,44 @@ define([
 
                 if (isSelect) {
                     if (content === 'jobs') {
-                        dataService.getData("/jobs/getForDD", {
-                            "projectId": self.wTracks[0].project._id,
-                            "all"      : true
-                        }, function (jobs) {
+                        if (self.project) {
+                            dataService.getData("/jobs/getForDD", {
+                                "projectId": self.project,
+                                "all"      : true
+                            }, function (jobs) {
 
-                            self.responseObj['#jobs'] = jobs;
+                                self.responseObj['#jobs'] = jobs;
 
-                            tr.find('[data-content="jobs"]').addClass('editable');
-                            // populate.showSelect(e, prev, next, self);
-                            self.showNewSelect(e);
-                            return false;
-                        });
+                                tr.find('[data-content="jobs"]').addClass('editable');
+                                // populate.showSelect(e, prev, next, self);
+                                self.showNewSelect(e);
+                                return false;
+                            });
+                        } else {
+                            App.render({
+                                type   : 'error',
+                                message: 'Please, choose project first.'
+                            });
+                        }
+
                     } else {
                         //populate.showSelect(e, prev, next, this);
                         this.showNewSelect(e);
                         return false;
                     }
+                } else if (content === 'month') {
+                    if (this.startMonth === this.endMonth) {
+                        return false;
+                    }
+
+                    el.append('<ul class="newSelectList"><li>' + this.startMonth + '</li><li>' + this.endMonth + '</li></ul>');
+
+                } else if (content === 'year') {
+                    if (this.startYear === this.endYear) {
+                        return false;
+                    }
+
+                    el.append('<ul class="newSelectList"><li>' + this.startYear + '</li><li>' + this.endYear + '</li></ul>');
                 } else {
                     input.removeClass('editing');
                     input.addClass('edited');
@@ -323,14 +358,11 @@ define([
                     }
                 }
 
-                /*else if (isHours) {
-                 this.autoHoursPerDay(e);
-                 }*/
-
                 return false;
             },
 
-            removeInputs: function () {
+            removeInputs: function (e) {
+                var self = this;
                 if (this.selectView) {
                     this.selectView.remove();
                 }
@@ -338,19 +370,25 @@ define([
                 this.$el.find('.editing').each(function (el) {
                     var val = $(this).val();
                     $(this).closest('td').text(val);
+                    self.autoCalc();
                     $(this).remove();
                 });
+
             },
 
             chooseOption: function (e) {
                 var self = this;
                 var target = $(e.target);
                 var targetElement = target.parents("td");
+                if (!targetElement.length) {
+                    targetElement = target.parents("span");
+                }
                 var tr = target.parents("tr");
                 var id = target.attr("id");
-                var attr = targetElement.attr("id") || targetElement.data("content");
+                var attr = targetElement.data("content");
                 var elementType = '#' + attr;
                 var jobs = {};
+                var project;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
@@ -363,6 +401,14 @@ define([
 
                         targetElement.attr("data-id", jobs);
                         tr.find('[data-content="jobs"]').removeClass('errorContent');
+                    } else if (elementType === '#project') {
+                        project = element._id;
+                        this.project = project;
+
+                        targetElement.attr("data-id", project);
+                        targetElement.removeClass('error');
+
+                        this.asyncLoadImgs(element);
                     }
                     targetElement.removeClass('errorContent');
 
@@ -378,19 +424,17 @@ define([
             },
 
             generateJob: function (e) {
-                var model = this.wTracks[0].project;
+                var model = this.project;
 
                 new CreateJob({
                     model     : model,
-                    wTrackView: this
+                    createJob: true
                 });
 
                 return false;
             },
 
-            showNewSelect: function (e, prev, next) {
-                //populate.showSelect(e, prev, next, this);
-
+            showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
@@ -413,140 +457,25 @@ define([
             },
 
             hideNewSelect: function (e) {
-                // $(".newSelectList").remove();
-
                 if (this.selectView) {
                     this.selectView.remove();
                 }
             },
 
-            getDataForCellClass: function (updatedTdIndex, employeeId, totalHours) {
-                var table = $('#dashboardBody');
-                var targetRow = table.find('[data-id="' + employeeId + '"]');
-                var targetTd = targetRow.find('td').eq(updatedTdIndex);
-                var hoursSpan = targetTd.find('span.vacationHours');
-                var vacationSpan = targetTd.find('span.vacation');
-                var holidaysSpan = targetTd.find('span.viewCount');
-                var prevText = hoursSpan.text();
-                var slashPos = prevText.indexOf('/');
-                var text;
-                var vacationHours = vacationSpan.text();
-                var holidays = holidaysSpan.text();
-                var vacationSpanClass = 'vacation ';
-                var hoursSpanClass = 'vacationHours ';
-
-                var year = moment().isoWeekYear();
-                var week = moment().isoWeek();
-                var dateByWeek = year * 100 + week;
-
-                var classString;
-
-                var isInActiveClass = targetTd.hasClass('inactive');
-                var isVacationClass = targetTd.hasClass('withVacation');
-
-                var otherHours = this.tds.find('span.projectHours');
-
-                otherHours.each(function () {
-                    var el = $(this);
-
-                    totalHours += parseInt(el.text()) || 0;
-                });
-
-                if (vacationHours) {
-                    vacationHours = parseInt(vacationHours);
-
-                    if (isNaN(vacationHours)) {
-                        vacationHours = 0;
-                    }
-                }
-
-                if (holidays) {
-                    holidays = parseInt(holidays);
-                }
-
-                text = totalHours + ' ' + prevText.substring(slashPos);
-                hoursSpan.text(text);
-
-                classString = this.getCellClass(dateByWeek, vacationHours, holidays, totalHours, isInActiveClass, isVacationClass);
-                vacationSpanClass += this.getCellSize(totalHours, vacationHours, true);
-                hoursSpanClass += this.getCellSize(totalHours, vacationHours);
-
-                hoursSpan.removeClass();
-                vacationSpan.removeClass();
-                hoursSpan.addClass(hoursSpanClass);
-                vacationSpan.addClass(vacationSpanClass);
-
-                targetTd.removeClass();
-                targetTd.addClass(classString);
-            },
-
-            getCellClass: function (dateByWeek, vacations, holidays, hours, isInActiveClass, isVacationClass) {
-                var s = "dashboardWeek ";
-                var startHours;
-
-                if (isVacationClass) {
-                    s += 'withVacation ';
-                }
-
-                hours = hours || 0;
-                holidays = holidays || 0;
-                vacations = vacations || 0;
-
-                startHours = hours;
-                hours = hours + vacations + holidays * 8;
-
-                if (hours > 40) {
-                    s += "dgreen ";
-                } else if (hours > 35) {
-                    s += "green ";
-                } else if (hours > 19) {
-                    s += "yellow ";
-                } else if (hours > 8) {
-                    s += startHours ? "pink " : ((dateByWeek >= this.dateByWeek) ? "red" : "");
-                } else if (dateByWeek >= this.dateByWeek) {
-                    s += "red ";
-                }
-                if (dateByWeek === this.dateByWeek) {
-                    s += "active ";
-                }
-                if (isInActiveClass) {
-                    s += "inactive ";
-                }
-
-                return s;
-            },
-
-            getCellSize: function (workedHours, vacationHours, inVacation) {
-                var v = '';
-                var w = '';
-
-                vacationHours = vacationHours || 0;
-                workedHours = workedHours || 0;
-
-                if (vacationHours > 16) {
-                    v = workedHours ? "size40" : "sizeFull";
-                    w = workedHours ? "size40" : "size0";
-                } else if (vacationHours > 8) {
-                    v = workedHours ? "size16" : "size40";
-                    w = workedHours ? "size24" : "size40";
-                } else if (vacationHours > 0) {
-                    v = workedHours ? "size8" : "size8";
-                    w = "sizeFull";
-                } else {
-                    v = "size0";
-                    w = "sizeFull";
-                }
-
-                if (inVacation && vacationHours) {
-                    return v;
-                } else {
-                    return w;
-                }
-            },
-
             render: function (data) {
+                data.wTrack = data.wTrack.toJSON();
                 var formString = this.template(data);
                 var self = this;
+
+                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
