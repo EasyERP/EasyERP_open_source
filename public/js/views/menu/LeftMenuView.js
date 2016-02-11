@@ -1,6 +1,6 @@
 define([
         'Backbone',
-        'Undescore',
+        'Underscore',
         'jQuery',
         'views/menu/MenuItem',
         'collections/menu/MenuItems'

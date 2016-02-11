@@ -527,6 +527,10 @@ define([
                 server = sinon.fakeServer.create();
             });
 
+            after(function () {
+                //view.remove();
+            });
+
             /*after(function(){
              view.remove();
              $fixture.remove();
