@@ -756,6 +756,10 @@ var Project = function (models) {
                             return cb(err);
                         }
 
+                        if(project._id.toString() === '562bc32484deb7cb59d61b70'){
+                            console.log('dds');
+                        }
+
                         var wTrack = result ? result[0] : null;
                         var newDate;
                         if (wTrack) {
@@ -796,6 +800,7 @@ var Project = function (models) {
                             StartDate: startDate,
                             EndDate  : endDate
                         }
+                    }, function () {
 
                     });
                 });

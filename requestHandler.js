@@ -48,6 +48,7 @@ var requestHandler = function (app, event, mainDb) {
     var io = app.get('io');
     var redisStore = require('./helpers/redisClient');
     var logger = app.get('logger');
+    var moment = require('./public/js/libs/moment/moment');
 
     //binding for remove Workflow
     event.on('removeWorkflow', function (req, wId, id) {
@@ -669,7 +670,7 @@ var requestHandler = function (app, event, mainDb) {
             date: new Date()
         };
 
-        var query = Job.find({'project': pId}).lean();
+        var query = Job.find({/*'project': pId*/}).lean();
 
         query
             .populate('wTracks');
@@ -741,7 +742,9 @@ var requestHandler = function (app, event, mainDb) {
                             }
 
                             if (nextMaxDate > maxDate) {
-                                if (wTrack.month !== 1){
+                                if (wTrack.month === 1 && wTrack.week >= moment().year(wTrack.year - 1).isoWeeksInYear()){
+                                    console.log();
+                                } else {
                                     maxDate = nextMaxDate;
                                 }
                             }
