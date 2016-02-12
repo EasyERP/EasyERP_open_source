@@ -670,7 +670,7 @@ var requestHandler = function (app, event, mainDb) {
             date: new Date()
         };
 
-        var query = Job.find({/*'project': pId*/}).lean();
+        var query = Job.find({'project': pId}).lean();
 
         query
             .populate('wTracks');
