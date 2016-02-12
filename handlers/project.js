@@ -715,13 +715,15 @@ var Project = function (models) {
                 }
 
                 project.total = totalObj;
+                var min = totalObj.minDate;
+                var max = totalObj.maxDate;
 
                 var parallelTasks = [getMinWTrack, getMaxWTrack];
 
                 function getMinWTrack(cb) {
                     WTrack.find({
                         "project" : project._id,
-                        dateByWeek: minDate
+                        dateByWeek: min
                     }).sort({worked: -1}).exec(function (err, result) {
                         if (err) {
                             return cb(err);
@@ -730,7 +732,7 @@ var Project = function (models) {
                         var wTrack = result ? result[0] : null;
                         var newDate;
                         if (wTrack) {
-                            newDate = moment([wTrack.year, wTrack.month - 1]).isoWeek(wTrack.week);
+                            newDate = moment().year(wTrack.year).isoWeek(wTrack.week);
 
                             for (var i = 1; i <= 7; i++) {
                                 var day = wTrack[i];
@@ -748,7 +750,7 @@ var Project = function (models) {
                 function getMaxWTrack(cb) {
                     WTrack.find({
                         "project" : project._id,
-                        dateByWeek: maxDate
+                        dateByWeek: max
                     }).sort({worked: 1}).exec(function (err, result) {
                         if (err) {
                             return cb(err);
@@ -757,7 +759,7 @@ var Project = function (models) {
                         var wTrack = result ? result[0] : null;
                         var newDate;
                         if (wTrack) {
-                            newDate = moment([wTrack.year, wTrack.month - 1]).isoWeek(wTrack.week);
+                            newDate = moment().year(wTrack.year).isoWeek(wTrack.week);
 
                             if (wTrack['7']) {  //need refactor
                                 newDate = newDate.day(7);
@@ -794,7 +796,6 @@ var Project = function (models) {
                             StartDate: startDate,
                             EndDate  : endDate
                         }
-                    }, {new: true}, function (err, result) {
 
                     });
                 });

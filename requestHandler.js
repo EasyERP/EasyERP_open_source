@@ -741,7 +741,9 @@ var requestHandler = function (app, event, mainDb) {
                             }
 
                             if (nextMaxDate > maxDate) {
-                                maxDate = nextMaxDate;
+                                if (wTrack.month !== 1){
+                                    maxDate = nextMaxDate;
+                                }
                             }
 
                             if (empId === emp) {
