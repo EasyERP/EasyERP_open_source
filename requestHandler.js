@@ -743,7 +743,6 @@ var requestHandler = function (app, event, mainDb) {
 
                             if (nextMaxDate > maxDate) {
                                 if (wTrack.month === 1 && wTrack.week >= moment().year(wTrack.year - 1).isoWeeksInYear()){
-                                    console.log();
                                 } else {
                                     maxDate = nextMaxDate;
                                 }
