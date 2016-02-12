@@ -221,7 +221,7 @@ var Vacation = function (event, models) {
                             date.subtract(12, 'M');
                             startDate = new Date(date);
 
-                            date.subtract(12, 'M');
+                            //date.subtract(12, 'M');
 
                             condition1 = {month: {'$gte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
@@ -292,7 +292,7 @@ var Vacation = function (event, models) {
                                         result.forEach(function (element) {
                                             var date = moment([element.year, element.month]);
 
-                                            if (date >= startDate && date <= endDate) {
+                                            if (date >= startDate/* && date <= endDate*/) {
                                                 resultObj['curYear'].push(element);
                                             } else {
                                                 resultObj['preYear'].push(element);
@@ -350,8 +350,8 @@ var Vacation = function (event, models) {
         var vacArr = data.vacArray ? data.vacArray : [];
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var capData = {
-            db: req.session.lastDb,
-        }
+            db: req.session.lastDb
+        };
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 70, function (access) {

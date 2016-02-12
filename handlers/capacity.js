@@ -55,7 +55,7 @@ var Capacity = function (models) {
         }
 
         callback(null, {array: capacityArray, total: total});
-    };
+    }
 
     function getCapacityFilter(modelId, req, res, next) {
 
@@ -99,7 +99,7 @@ var Capacity = function (models) {
                     _.map(result, function (model) {
                         model = model.toJSON();
                         departmentsObject[model.department.name] = model.department;
-                    })
+                    });
 
                     result = _.groupBy(result, function (element) {
                         return element.department.name;
@@ -115,7 +115,7 @@ var Capacity = function (models) {
 
             next(error);
         }
-    };
+    }
 
     this.getForType = function (req, res, next) {
         var viewType = req.params.viewType;
@@ -149,7 +149,7 @@ var Capacity = function (models) {
             }
 
             callback(null);
-        })
+        });
 
         function getEmployees(callback) {
 
@@ -157,7 +157,7 @@ var Capacity = function (models) {
                 hire: {
                     $not: {$size: 0}
                 }
-            }
+            };
 
             var query = Employee.find(queryObject);
 
@@ -191,7 +191,7 @@ var Capacity = function (models) {
                 var modelObject = {
                     year : year,
                     month: month
-                }
+                };
 
                 var condition;
 
@@ -204,11 +204,11 @@ var Capacity = function (models) {
                 modelObject.employee = {
                     _id : employee._id,
                     name: employee.name.first + ' ' + employee.name.last
-                }
+                };
                 modelObject.department = {
                     _id : employee.department._id,
                     name: employee.department.name
-                }
+                };
 
                 modelObject.capacityArray = [];
                 modelObject.capacityMonthTotal = 0;
@@ -244,7 +244,7 @@ var Capacity = function (models) {
                                 if (!fire) {
                                     condition = (hire <= dateValue)
                                 } else {
-                                    (fire >= dateValue && hire <= dateValue)
+                                    (fire >= dateValue && hire <= dateValue) //?
                                 }
 
                                 if (condition) {
@@ -332,7 +332,7 @@ var Capacity = function (models) {
     };
 
     this.createNextMonth = function (req, res, next) {
-        var db = req.session.lastDb
+        var db = req.session.lastDb;
 
         var date = moment(new Date());
 
@@ -349,7 +349,7 @@ var Capacity = function (models) {
     };
 
     this.createAll = function (req, res, next) {
-        var db = req.session.lastDb
+        var db = req.session.lastDb;
 
         var date = moment(new Date());
 
@@ -389,7 +389,7 @@ var Capacity = function (models) {
 
             res.status(200).send("ok");
         })
-    }
+    };
 
     this.create = function (req, res, next) {
         var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
