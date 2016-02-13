@@ -7,9 +7,9 @@ var Vacation = function (event, models) {
     'use strict';
     var access = require("../Modules/additions/access.js")(models);
     var capacityHandler = new CapacityHandler(models);
-    var VacationSchema = mongoose.Schemas['Vacation'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
+    var VacationSchema = mongoose.Schemas.Vacation;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var EmployeeSchema = mongoose.Schemas.Employee;
     var async = require('async');
     var _ = require('lodash');
 
@@ -41,7 +41,7 @@ var Vacation = function (event, models) {
         }
 
         return resultObj;
-    };
+    }
 
     function calculate(data, year) {
         var leaveDays = 0;
@@ -134,7 +134,7 @@ var Vacation = function (event, models) {
             sick       : sick,
             education  : education
         }
-    };
+    }
 
     this.getYears = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
@@ -173,14 +173,15 @@ var Vacation = function (event, models) {
     };
 
     function getVacationFilter(modelId, req, res, next) {
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, modelId, function (access) {
+
                 if (access) {
                     var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
                     var options = req.query;
                     var queryObject = {};
                     var query;
-
                     var startDate;
                     var endDate;
 
@@ -292,20 +293,23 @@ var Vacation = function (event, models) {
                                         result.forEach(function (element) {
                                             var date = moment([element.year, element.month]);
 
-                                            if (date >= startDate/* && date <= endDate*/) {
+                                            if (date >= startDate && date <= endDate) {
                                                 resultObj['curYear'].push(element);
                                             } else {
-                                                resultObj['preYear'].push(element);
+                                                //resultObj['preYear'].push(element);
+                                                resultObj['curYear'].push(element);
                                             }
                                         });
 
                                         callback(null, resultObj);
                                     },
                                     function (result, callback) {
+                                        var stat;
+
                                         if (options.year !== 'Line Year') {
-                                            var stat = calculate(result['preYear'], options.year - 1);
+                                            stat = calculate(result['preYear'], options.year - 1);
                                         } else {
-                                            var stat = calculate(result['preYear'], options.year);
+                                            stat = calculate(result['preYear'], options.year);
                                         }
 
                                         callback(null, result, stat);
@@ -315,8 +319,8 @@ var Vacation = function (event, models) {
                                     if (err) {
                                         return next(err);
                                     }
-                                    res.status(200).send({data: object['curYear'], stat: stat});
 
+                                    res.status(200).send({data: object['curYear'], stat: stat});
                                 }
                             );
                         }
@@ -329,7 +333,7 @@ var Vacation = function (event, models) {
         } else {
             res.send(401);
         }
-    };
+    }
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;

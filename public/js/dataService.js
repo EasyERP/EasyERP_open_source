@@ -1,4 +1,5 @@
-define(function () {
+define(['jQuery'],function ($) {
+    'use strict';
     var getData = function (url, data, callback, context) {
         $.get(url, data, function (response) {
             if (context) {
@@ -9,6 +10,29 @@ define(function () {
         }).fail(function (err) {
             callback({error: err});
         });
+    };
+
+    var sendData = function (url, data, method, callback, contentType) {
+        var ajaxObject;
+        method = method.toUpperCase() || 'POST';
+
+        ajaxObject = {
+            url    : url,
+            data   : data,
+            type   : method,
+            success: function (response) {
+                callback(null, response);
+            },
+            error  : function (jxhr) {
+                callback(jxhr);
+            }
+        };
+
+        if (contentType) {
+            ajaxObject.contentType = contentType;
+        }
+
+        $.ajax(ajaxObject);
     };
 
     var postData = function (url, data, callback) {
@@ -27,33 +51,11 @@ define(function () {
         sendData(url, data, 'DELETE', callback, contentType);
     };
 
-    var sendData = function (url, data, method, callback, contentType) {
-        var ajaxObject;
-        method = method.toUpperCase() || 'POST';
-
-        ajaxObject = {
-            url    : url,
-            data   : data,
-            type   : method,
-            success: function (response) {
-                callback(null, response)
-            },
-            error  : function (jxhr) {
-                callback(jxhr)
-            }
-        };
-
-        if (contentType) {
-            ajaxObject.contentType = contentType;
-        }
-
-        $.ajax(ajaxObject);
-    };
     return {
         getData   : getData,
         postData  : postData,
         putData   : putData,
         patchData : patchData,
         deleteData: deleteData
-    }
+    };
 });

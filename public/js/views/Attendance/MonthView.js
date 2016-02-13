@@ -2,10 +2,13 @@
  * Created by German on 30.06.2015.
  */
 define([
+    'Backbone',
+    'Underscore',
     'text!templates/Attendance/monthTemplate.html',
     'views/Attendance/StatisticsView',
     'moment'
-], function (ListTemplate, StatisticsView, moment) {
+], function (Backbone, _,ListTemplate, StatisticsView, moment) {
+    'use strict';
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
 
@@ -81,6 +84,7 @@ define([
                 self.workingDays += dayCount;
 
                 keys = Object.keys(self.days);
+
                 if (keys.length) {
                     self.monthCur = self.days[monthYear] ? self.days[monthYear][monthNumber + 1] : 0;
                 }
@@ -94,7 +98,9 @@ define([
 
                 for (var j = startOfMonth; j < startOfMonth + dayCount; j++) {
                     var day = new Date(monthYear, i, j - startOfMonth +1);
+
                     day = day.getDay();
+
                     if (day === 0 || day === 6) {
                         self.weekend++;
                     }
@@ -111,6 +117,7 @@ define([
                 if (self.monthCur) {
                     var countVacation = self.monthCur[0].vacArray.length;
                     var vacArray = self.monthCur[0].vacArray;
+
                     for (var j = 0; j < countVacation; j++) {
                         for (var k = j + startOfMonth - 1; k <= j + startOfMonth - 1; k++) {
                             self.monthArray[i].daysData[k + 1].type = vacArray[j] ? vacArray[j] : '';

@@ -2,6 +2,9 @@
  * Created by German on 30.06.2015.
  */
 define([
+    'Backbone',
+    'Underscore',
+    'jQuery',
     'text!templates/Attendance/index.html',
     'models/AttendanceModel',
     'views/Attendance/MonthView',
@@ -11,7 +14,8 @@ define([
     'dataService',
     'views/selectView/selectView',
     'constants'// added view for employees dd list
-], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, selectView, CONSTANTS) {
+], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, SelectView, CONSTANTS) {
+    'use strict';
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -49,11 +53,12 @@ define([
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
                 var yearToday = moment().year();
+
                 employees = result;
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
-                    return employee
+                    return employee;
                 });   // changed for getting proper form of names
 
                 self.model.set({
@@ -97,7 +102,7 @@ define([
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
+            this.selectView = new SelectView({
                 e          : e,
                 responseObj: {'#employee' : this.model.get("employees")}
             });

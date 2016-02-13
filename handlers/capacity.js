@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var objectId = mongoose.Types.ObjectId;
+
 var Capacity = function (models) {
     var access = require("../Modules/additions/access.js")(models);
-    var CapacitySchema = mongoose.Schemas['Capacity'];
+    var CapacitySchema = mongoose.Schemas.Capacity;
     var async = require('async');
     var _ = require('lodash');
     var error;
