@@ -64,7 +64,7 @@
                     }
                 }
             });
-            
+
             currentEmployees.weekly = currentEmployees.monthly.filter(function (employee) {
                 if (employee.dateBirth) {
                     birthday = new Date(employee.dateBirth);
@@ -92,7 +92,7 @@
                     return -1;
                 return 0;
             });
-            
+
             currentEmployees.nextweek.sort(function (a, b) {
                 if (a.daysForBirth > b.daysForBirth)
                     return 1
@@ -102,7 +102,7 @@
             });
             return currentEmployees;
         };
-        
+
         var now = new Date();
         var day = 0;
         var _month = now.getMonth() + 1;

@@ -21,5 +21,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['birthday'] = birthdaysSchema;
+    mongoose.Schemas.birthday = birthdaysSchema;
 })();

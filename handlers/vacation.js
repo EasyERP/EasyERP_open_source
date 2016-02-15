@@ -19,7 +19,7 @@ var Vacation = function (event, models) {
         var weekKey;
         var dayNumber;
 
-        if (array.length){
+        if (array.length) {
             for (var day = array.length; day >= 0; day--) {
                 if (array[day]) {
                     dateValue = moment([year, month - 1, day + 1]);
@@ -197,8 +197,8 @@ var Vacation = function (event, models) {
                                 endDate = moment([options.year, 12]);
                                 startDate = moment([options.year, 1]);
 
-                               // queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
-                                queryObject.year = {'$in': [ parseInt(options.year), (options.year - 1)]}; // changed from String to Number
+                                // queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
+                                queryObject.year = {'$in': [parseInt(options.year), (options.year - 1)]}; // changed from String to Number
                             }
                         } else if (options.year) {
                             var date = new Date();
@@ -213,6 +213,7 @@ var Vacation = function (event, models) {
                             date = moment([date.getFullYear(), date.getMonth()]);
 
                             endDate = new Date(date);
+                            endDate.setMonth(endDate.getMonth() + 1);
 
                             condition1 = {month: {'$lte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
@@ -237,7 +238,7 @@ var Vacation = function (event, models) {
 
                     //query = Vacation.find(queryObject);
 
-                   // query.exec(function (err, result) {
+                    // query.exec(function (err, result) {
                     Vacation.aggregate([{
                         $lookup: {
                             from        : "Employees",
@@ -253,23 +254,23 @@ var Vacation = function (event, models) {
                     }, {
                         $project: {
                             department: {$arrayElemAt: ["$department", 0]},
-                            employee: {$arrayElemAt: ["$employee", 0]},
-                            month: 1,
-                            year: 1,
-                            vacations: 1,
-                            vacArray: 1,
+                            employee  : {$arrayElemAt: ["$employee", 0]},
+                            month     : 1,
+                            year      : 1,
+                            vacations : 1,
+                            vacArray  : 1,
                             monthTotal: 1
                         }
                     }, {
                         $project: {
                             'department.departmentName': 1,
-                            'employee.name': 1,
-                            'employee._id': 1,
-                            month: 1,
-                            year: 1,
-                            vacations: 1,
-                            vacArray: 1,
-                            monthTotal: 1
+                            'employee.name'            : 1,
+                            'employee._id'             : 1,
+                            month                      : 1,
+                            year                       : 1,
+                            vacations                  : 1,
+                            vacArray                   : 1,
+                            monthTotal                 : 1
                         }
                     }, {
                         $match: queryObject
@@ -296,8 +297,7 @@ var Vacation = function (event, models) {
                                             if (date >= startDate && date <= endDate) {
                                                 resultObj['curYear'].push(element);
                                             } else {
-                                                //resultObj['preYear'].push(element);
-                                                resultObj['curYear'].push(element);
+                                                resultObj['preYear'].push(element);
                                             }
                                         });
 
@@ -492,24 +492,24 @@ var Vacation = function (event, models) {
 
             parallelTasks = [populateEmployees, populateDeps];
 
-            function populateEmployees (cb) {
+            function populateEmployees(cb) {
                 Employee.populate(Vacation, {
-                    'path': 'employee',
+                    'path'  : 'employee',
                     'select': '_id name fullName',
-                    'lean': true
+                    'lean'  : true
                 }, cb);
             }
 
-            function populateDeps (cb) {
+            function populateDeps(cb) {
                 Department.populate(Vacation, {
-                    'path': 'department',
+                    'path'  : 'department',
                     'select': '_id departmentName',
-                    'lean': true
+                    'lean'  : true
                 }, cb);
             }
 
-            async.parallel(parallelTasks, function(err, result){
-                if (err){
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
                     return next(err);
                 }
 
