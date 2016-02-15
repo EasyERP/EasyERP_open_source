@@ -121,8 +121,8 @@ function getValidTaskBody(body) {
     //toDo not finished
     var hasSummary = body.hasOwnProperty('summary');
 
-    hasSummary = hasSummary ? !validator.isNotValidChars(body.summary) : false;
     hasSummary = hasSummary ? !!body.summary : false;
+    hasSummary = hasSummary ? !validator.isNotValidChars(body.summary) : false;
 
     return hasSummary ;
 }

@@ -99,7 +99,7 @@ describe("Tasks Specs", function () {
             aggent
                 .post('tasks')
                 .send(body)
-                .expect(400, done);
+                .expect(404, done);
         });
 
         it("should fail create task with empty project", function (done) {
@@ -123,7 +123,7 @@ describe("Tasks Specs", function () {
             aggent
                 .post('tasks')
                 .send(body)
-                .expect(400, done);
+                .expect(404, done);
         });
 
         it('should return all tasks with details', function (done) {

@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var RESPONSES = require('../constants/responses');
 var tasksSchema = mongoose.Schemas['Task'];
 var department = mongoose.Schemas['Department'];
 var projectSchema = mongoose.Schemas['Project'];
@@ -11,8 +12,6 @@ var Tasks = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var validator = require('../helpers/validator');
 
-    //ToDo move validation logic to validator and use it
-
     this.createTask = function (req, res, next) {
         var body = req.body;
         body.uId = req.session.uId;
@@ -20,7 +19,7 @@ var Tasks = function (models, event) {
         var TasksModel = models.get(req.session.lastDb, 'Tasks', tasksSchema);
 
         if (!validator.validTaskBody(body)) {
-            err = new Error();
+            var err = new Error();
             err.status = 404;
             err.message = RESPONSES.PAGE_NOT_FOUND;
 
