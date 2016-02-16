@@ -36,7 +36,7 @@ var Invoice = function (models, event) {
 
         journalEntryBody.date = invoice.invoiceDate;
         journalEntryBody.journal = invoice.journal;
-        journalEntryBody.currency = invoice.currency ? invoice.currency.name : 'USD';
+        journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
         journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
         journalEntryBody.sourceDocument = {};
         journalEntryBody.sourceDocument._id = invoice._id;

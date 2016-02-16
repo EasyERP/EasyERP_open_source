@@ -464,7 +464,8 @@ var PayRoll = function (models) {
         }
 
         function getResult(filter, callback) {
-            var matchObj; // = {isEmployee: true};
+            var matchObj;
+            var matchObjSecond;// = {isEmployee: true};
 
             matchObj = {
                 $and: [{
