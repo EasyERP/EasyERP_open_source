@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var journalSchema = mongoose.Schemas['journal'];
 var journalEntrySchema = mongoose.Schemas['journalEntry'];
+var CurrencySchema = mongoose.Schemas.Currency;
 
 var oxr = require('open-exchange-rates');
 var fx = require('money');
@@ -18,20 +19,33 @@ var Module = function (models) {
     this.create = function (body, dbIndex, cb, uId) {
         var Journal = models.get(dbIndex, 'journal', journalSchema);
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var Currency = models.get(dbIndex, 'currency', CurrencySchema);
         var journalId = body.journal;
         var now = moment();
         var date = body.date ? moment(body.date) : now;
-        var currency = {
-            name: body.currency
-        };
+        //var currency = {
+        //    name: body.currency
+        //};
+        var currency;
         var amount = body.amount;
         var rates;
 
-        var waterfallTasks = [journalFinder, journalEntrySave];
+        var waterfallTasks = [currencyNameFinder, journalFinder, journalEntrySave];
 
         date = date.format('YYYY-MM-DD');
 
-        function journalFinder(waterfallCb) {
+        function currencyNameFinder(waterfallCb) {
+
+            Currency.findById(body.currency, function (err, result) {
+                if (err) {
+                    waterfallCb(err);
+                }
+
+                waterfallCb(null, result.name);
+            });
+        }
+
+        function journalFinder(currencyName, waterfallCb) {
             var err;
 
             if (!journalId) {
@@ -40,6 +54,10 @@ var Module = function (models) {
 
                 return waterfallCb(err);
             }
+
+            currency = {
+                name: currencyName
+            };
 
             Journal.findById(journalId, waterfallCb);
 
@@ -99,7 +117,7 @@ var Module = function (models) {
                 }
 
                 rates = oxr.rates;
-                currency.rate = rates[body.currency];
+                currency.rate = rates[currency.name];
 
                 body.currency = currency;
                 body.journal = journal._id;
@@ -138,13 +156,59 @@ var Module = function (models) {
             if (access) {
                 Model
                     .aggregate([{
+                        $lookup: {
+                            from                   : "chartOfAccount",
+                            localField             : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "Invoice",
+                            localField             : "sourceDocument._id",
+                            foreignField: "_id", as: "sourceDocument"
+                        }
+                    }, {
                         $project: {
-                            debit   : {$divide: ['$debit', '$currency.rate']},
-                            credit  : {$divide: ['$credit', '$currency.rate']},
-                            currency: 1,
-                            name    : 1,
-                            journal : 1,
-                            date    : 1
+                            debit         : {$divide: ['$debit', '$currency.rate']},
+                            credit        : {$divide: ['$credit', '$currency.rate']},
+                            currency      : 1,
+                            name          : 1,
+                            journal       : 1,
+                            account       : {$arrayElemAt: ["$account", 0]},
+                            sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
+                            date          : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "Customers",
+                            localField             : "sourceDocument.supplier",
+                            foreignField: "_id", as: "sourceDocument.supplier"
+                        }
+                    }, {
+                        $project: {
+                            debit                    : 1,
+                            credit                   : 1,
+                            currency                 : 1,
+                            name                     : 1,
+                            journal                  : 1,
+                            date                     : 1,
+                            'sourceDocument._id'     : 1,
+                            'sourceDocument.name'    : 1,
+                            'sourceDocument.supplier': {$arrayElemAt: ["$sourceDocument.supplier", 0]},
+                            account                  : 1
+                        }
+                    }, {
+                        $project: {
+                            debit                    : 1,
+                            credit                   : 1,
+                            currency                 : 1,
+                            name                     : 1,
+                            journal                  : 1,
+                            date                     : 1,
+                            'sourceDocument._id'     : 1,
+                            'sourceDocument.name'    : 1,
+                            'sourceDocument.supplier': 1,
+                            account                  : 1
                         }
                     }], function (err, result) {
                         if (err) {

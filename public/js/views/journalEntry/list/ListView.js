@@ -2,7 +2,9 @@ define([
         'views/listViewBase',
         'text!templates/journalEntry/list/ListHeader.html',
         'views/journalEntry/list/ListItemView',
+        'views/salesInvoice/EditView',
         'models/journalEntry',
+        'models/InvoiceModel',
         'collections/journalEntry/filterCollection',
         'dataService',
         'custom',
@@ -10,7 +12,7 @@ define([
         'helpers'
     ],
 
-    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom, CONSTANTS, helpers) {
+    function (listViewBase, listTemplate, listItemView, EditView, currentModel, InvoiceModel, contentCollection, dataService, custom, CONSTANTS, helpers) {
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
             listItemView            : listItemView,
@@ -32,7 +34,33 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-            events: {},
+            events: {
+                "click .sourceDoc": "viewSourceDocument"
+            },
+
+            viewSourceDocument: function (e) {
+                var $target = $(e.target);
+                var id = $target.attr('data-id');
+
+                var model = new InvoiceModel({validate: false});
+
+                model.urlRoot = '/Invoice/form';
+                model.fetch({
+                    data   : {
+                        id       : id,
+                        currentDb: App.currentDb
+                    },
+                    success: function (model) {
+                        new EditView({model: model, redirect: true, collection: this.collection, notCreate: true});
+                    },
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            },
 
             calcTotal: function () {
                 var $curEl = this.$el;

@@ -190,8 +190,10 @@ define([
             var _week = week.dateByWeek.toString().slice(4);
 
             var _lastHiredObject = hiredArr[hiredArr.length - 1];
+            var _firstHiredObject = hiredArr[0];
             var _lastFiredObject = firedArr[firedArr.length - 1];
             var _lastHiredDate = _lastHiredObject ? moment(_lastHiredObject.date, 'YYYY-MM-DD') : null;
+            var _firstHiredDate = _firstHiredObject ? moment(_firstHiredObject.date, 'YYYY-MM-DD') : null;
             var _lastFiredDate = _lastFiredObject ? moment(_lastFiredObject.date, 'YYYY-MM-DD') : null;
             var _hiredDate;
             var _firedDate;
@@ -200,7 +202,7 @@ define([
             date = moment().set('year', year).set('week', _week);
 
             if (!firedLength) {
-                return date > _lastHiredDate;
+                return date > _firstHiredDate;
             }
 
             for (i = firedLength - 1; i >= 0; i--) {
@@ -209,7 +211,7 @@ define([
                 _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
                 _firedDate = moment(_firedDate).format('YYYY-MM-DD');
 
-                if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate > _lastFiredDate))) {
+                if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
                     return true;
                 }
             }
@@ -236,10 +238,8 @@ define([
                 s += "red ";
             }
 
-            if (!notActive) {
-                if (self.dateByWeek === week.dateByWeek) {
-                    s += "active ";
-                }
+            if (self.dateByWeek === week.dateByWeek) {
+                s += "active ";
             }
 
             if (!self.isWorking(employee, week)) {
