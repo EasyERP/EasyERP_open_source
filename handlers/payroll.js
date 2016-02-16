@@ -453,6 +453,9 @@ var PayRoll = function (models) {
                         filtrElement[keyCase] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
                         break;
+                    case 'onlyEmployees':
+                        resArray.push({isEmployee: true});
+                        break;
                 }
             }
 

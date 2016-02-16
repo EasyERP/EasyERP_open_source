@@ -414,6 +414,11 @@ var Filters = function (models) {
 
                 result = result[0];
 
+                result.onlyEmployees = {
+                    _id: 'true',
+                    name: 'true'
+                };
+
                 callback(null, result);
             });
         }
