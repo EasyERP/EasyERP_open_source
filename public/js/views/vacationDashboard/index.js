@@ -218,7 +218,7 @@ define([
             return false;
         },
 
-        getCellClass: function (week, self, employee, notActive) {
+        getCellClass: function (week, self, employee) {
             var s = "";
             var hours = week.hours || 0;
             var holidays = week.holidays || 0;
@@ -542,6 +542,7 @@ define([
                 getCellClass  : self.getCellClass,
                 getCellSize   : self.getCellSize,
                 getHeadClass  : self.getHeadClass,
+                isWorking     : self.isWorking,
                 self          : self
             }));
 
