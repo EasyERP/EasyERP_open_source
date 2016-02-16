@@ -41,6 +41,9 @@ define([
             var employees;
             var status;
             var years;
+            var relatedEmployeeId;
+            var employeeArray;
+            var relatedEmployee;
 
             this.currentEmployee = null;
             this.currentStatus = null;
@@ -67,7 +70,18 @@ define([
 
                 status = self.model.get('status');
                 years = self.model.get('years');
-                self.currentEmployee = employees[0];
+
+                relatedEmployeeId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+                if (relatedEmployeeId) {
+                    employeeArray = self.model.get('employees');
+                    relatedEmployee = _.find(employeeArray, function (el) {
+                        return el._id === relatedEmployeeId;
+                    });
+                    self.currentEmployee = relatedEmployee;
+                } else {
+                    self.currentEmployee = employees[0];
+                }
+
                 self.currentStatus = status[0];
                 self.currentTime = years[0];
 
@@ -87,8 +101,6 @@ define([
             });
         },
 
-
-
         showNewSelect: function (e, prev, next) {
             //populate.showSelect(e, prev, next, this);
 
@@ -104,7 +116,7 @@ define([
 
             this.selectView = new SelectView({
                 e          : e,
-                responseObj: {'#employee' : this.model.get("employees")}
+                responseObj: {'#employee': this.model.get("employees")}
             });
 
             $target.append(this.selectView.render().el);
@@ -125,10 +137,12 @@ define([
 
             targetElement.text(target.text());
 
-            this.currentEmployee = target.attr("id");  // changed for getting value from selectView dd
-
-            if (!self.currentEmployee) {
-                self.currentEmployee = self.model.get('employees')[0].id;
+            if (target.length) {
+                this.currentEmployee = target.attr("id");  // changed for getting value from selectView dd
+            } else {
+                this.$el.find('.editable').find('span').text(self.currentEmployee.name);
+                this.$el.find('.editable').attr('data-id', self.currentEmployee._id);
+                self.currentEmployee = self.currentEmployee._id;
             }
 
             dataService.getData("/vacation/attendance", {
