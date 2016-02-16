@@ -41,7 +41,7 @@
                                    value="<%=model.date%>" readonly/></dd>
                         <dt><label for="paymentRef">Invoice</label></dt>
                         <dd>
-                            <a id="paymentRef" href="javascript:;"><%=model.invoice.name%></a>
+                            <a id="paymentRef" data-id="<%=model.invoice._id%>" href="javascript:;"><%=model.invoice.name%></a>
                             <!--<input type="text" name="paymentRef" id="paymentRef" maxlength="20"-->
                                    <!--value="<%=model.invoice.name%>" readonly/>-->
                         </dd>
