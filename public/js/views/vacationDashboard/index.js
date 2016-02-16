@@ -236,10 +236,8 @@ define([
                 s += "red ";
             }
 
-            if (!notActive) {
-                if (self.dateByWeek === week.dateByWeek) {
-                    s += "active ";
-                }
+            if (self.dateByWeek === week.dateByWeek) {
+                s += "active ";
             }
 
             if (!self.isWorking(employee, week)) {

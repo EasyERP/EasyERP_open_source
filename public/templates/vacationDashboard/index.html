@@ -93,7 +93,7 @@
         <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee._id%> createWTrack" data-content="project" data-employee="<%=employee._id%>">
             <td colspan="3"><span>&nbsp;</span></td>
             <%employee.weekData.forEach(function(week){%>
-            <td class="createTd <%=getCellClass(week, self, employee, true)%>" data-date="<%=week.dateByWeek%>">
+            <td class="createTd" data-date="<%=week.dateByWeek%>">
             </td>
             <%})%>
         </tr>
