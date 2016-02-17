@@ -53,7 +53,7 @@ define([
                         currentDb: App.currentDb
                     },
                     success: function (model) {
-                        new EditView({model: model, redirect: true, collection: this.collection, notCreate: true});
+                        new EditView({model: model, redirect: true, notCreate: true});
                     },
                     error  : function () {
                         App.render({
