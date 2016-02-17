@@ -76,7 +76,7 @@ define(["text!templates/wTrack/createJob.html"
                     var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
                     var data = {};
 
-                    data.project = self.modelJSON._id;
+                    data.project = self.modelJSON._id || self.modelJSON;
                     data.name = jobName;
 
                     this.stopDefaultEvents(e);

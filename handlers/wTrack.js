@@ -76,16 +76,21 @@ var wTrack = function (event, models) {
                         date: new Date()
                     };
 
-                    if (data && data.revenue) {
-                        data.revenue *= 100;
-                    }
+                    //if (data && data.revenue) {
+                    //    data.revenue *= 100;
+                    //}
 
                     WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                         if (err) {
                             return next(err);
                         }
-
-                        event.emit('updateRevenue', {wTrack: wTrack, req: req});
+                        if (wTrack) {
+                            event.emit('updateRevenue', {wTrack: wTrack, req: req});
+                            event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                            event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
+                            event.emit('recollectProjectInfo');
+                            event.emit('dropHoursCashes', req);
+                        }
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -127,7 +132,7 @@ var wTrack = function (event, models) {
                                 return cb(err);
                             }
 
-                            if (wTrack){
+                            if (wTrack) {
                                 event.emit('updateRevenue', {wTrack: wTrack, req: req});
                                 event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
@@ -949,7 +954,10 @@ var wTrack = function (event, models) {
 
                     jobId = job.toJSON()._id;
 
-                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}, $set: {editedBy: editedBy}}, {new: true}, function (err) {
+                    Project.findByIdAndUpdate(objectId(project), {
+                        $push: {"budget.projectTeam": jobId},
+                        $set : {editedBy: editedBy}
+                    }, {new: true}, function (err) {
                         if (err) {
                             console.log(err);
                         }
@@ -974,12 +982,12 @@ var wTrack = function (event, models) {
                     var totalHolidays = 0;
                     var total = 0;
                     var employee = options.employee;
-                    var stDate =  new Date(options.startDate);
-                    var enDate =  new Date(options.endDate);
+                    var stDate = new Date(options.startDate);
+                    var enDate = new Date(options.endDate);
                     var startYear = moment(stDate).year();
                     var endYear = options.endDate ? moment(enDate).year() : startYear + 1;
 
-                    for (var j = 7; j >= 1; j--){
+                    for (var j = 7; j >= 1; j--) {
                         options[j] = parseInt(options[j]);
                     }
 
@@ -1142,16 +1150,16 @@ var wTrack = function (event, models) {
                             var arrayResult = [];
                             var weekObj = {};
                             var weekObjNext = {};
-                            var d =  moment().year(year).isoWeek(week);
+                            var d = moment().year(year).isoWeek(week);
                             var checkWeek = d.isoWeek();
-                            if (checkWeek > week){
+                            if (checkWeek > week) {
                                 week--;
                             }
                             var day = day || 1;
                             var checkDate = moment().year(year).isoWeek(checkWeek).day(day).isoWeek(week);
                             var month = checkDate.month();
                             var endOfMonth = moment().year(year).month(month).endOf('month').date();
-                            var date =  checkDate.day(day);
+                            var date = checkDate.day(day);
                             var dateForCheck = date.date();
                             var dayForEndOfMonth = checkDate.day(1).date(endOfMonth).day();
                             var key;
@@ -1301,7 +1309,7 @@ var wTrack = function (event, models) {
                             var date = moment().year(year).isoWeek(week);
                             var day = 1;
 
-                            if (week === startIsoWeek){
+                            if (week === startIsoWeek) {
                                 day = moment(startDate).day();
                             }
 
@@ -1314,24 +1322,22 @@ var wTrack = function (event, models) {
                             var keys = keyConst;
                             var i = 1;
 
-
-
-                            if (options.hours && options.hours - totalRendered <= totalForWeek){
+                            if (options.hours && options.hours - totalRendered <= totalForWeek) {
                                 diff = options.hours - totalRendered;
                                 worked = 0;
 
                                 while (diff - weekValues[keys[i]] >= 0 && i <= 7) {
                                     weekValues[keys[i]] = weekValues[keys[i]];
                                     diff -= weekValues[keys[i]];
-                                    worked +=  weekValues[keys[i]];
+                                    worked += weekValues[keys[i]];
                                     i++;
                                 }
 
-                                if (i <= 7){
+                                if (i <= 7) {
                                     weekValues[keys[i]] = Math.abs(diff);
-                                    worked +=  weekValues[keys[i]];
+                                    worked += weekValues[keys[i]];
 
-                                    for (var j = i + 1; j <= 7; j++){
+                                    for (var j = i + 1; j <= 7; j++) {
                                         weekValues[keys[j]] = 0;
                                     }
                                 }
@@ -1517,11 +1523,19 @@ var wTrack = function (event, models) {
                 department : 1,
                 employee   : 1,
                 project    : {$arrayElemAt: ["$project", 0]},
+                jobs       : 1,
                 revenue    : 1
             }
         }, {
             $match: {
                 'project.projectName': query.projectName
+            }
+        }, {
+            $lookup: {
+                from        : 'jobs',
+                localField  : 'jobs',
+                foreignField: '_id',
+                as          : 'jobs'
             }
         }, {
             $lookup: {
@@ -1573,6 +1587,7 @@ var wTrack = function (event, models) {
                 customer      : {$arrayElemAt: ["$customer", 0]},
                 projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
                 employee      : {$arrayElemAt: ["$employee", 0]},
+                jobs          : {$arrayElemAt: ["$jobs", 0]},
                 revenue       : 1
             }
         }], function (err, wTrack) {

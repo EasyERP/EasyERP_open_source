@@ -715,13 +715,16 @@ var Project = function (models) {
                 }
 
                 project.total = totalObj;
+                var min = totalObj.minDate;
+                var max = totalObj.maxDate;
 
                 var parallelTasks = [getMinWTrack, getMaxWTrack];
 
                 function getMinWTrack(cb) {
                     WTrack.find({
-                        "project" : project._id
-                    }).sort({dateByWeek: 1}).limit(1).exec(function (err, result) {
+                        "project" : project._id,
+                        dateByWeek: min
+                    }).sort({worked: -1}).exec(function (err, result) {
                         if (err) {
                             return cb(err);
                         }
@@ -746,8 +749,9 @@ var Project = function (models) {
 
                 function getMaxWTrack(cb) {
                     WTrack.find({
-                        "project" : project._id
-                    }).sort({dateByWeek: -1}).limit(1).exec(function (err, result) {
+                        "project" : project._id,
+                        dateByWeek: max
+                    }).sort({worked: 1}).exec(function (err, result) {
                         if (err) {
                             return cb(err);
                         }
@@ -792,7 +796,7 @@ var Project = function (models) {
                             StartDate: startDate,
                             EndDate  : endDate
                         }
-                    }, {new: true}, function (err, result) {
+                    }, function () {
 
                     });
                 });

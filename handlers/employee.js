@@ -15,6 +15,7 @@ var Employee = function (event, models) {
     var nationalitySchema = mongoose.Schemas.nationality;
     var LanguageSchema = mongoose.Schemas.language;
     var SourceSchema = mongoose.Schemas.source;
+    var birthdaysSchema = mongoose.Schemas.birthday;
     var _ = require('underscore');
     var fs = require('fs');
     var moment = require('../public/js/libs/moment/moment');
@@ -167,11 +168,11 @@ var Employee = function (event, models) {
     };
 
     this.getForProjectDetails = function (req, res, next) {
-        var ids = req.query.data || [];
+        var idsArray = req.query.data || [];
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
         Employee
-            .find({_id: {$in: ids}})
+            .find({_id: {$in: idsArray}})
             .populate('jobPosition', '_id name')
             .populate('department', '_id departmentName')
             .exec(function (err, result) {
@@ -245,7 +246,7 @@ var Employee = function (event, models) {
                 res.send(201, {success: 'A new Employees create success', result: employee, id: employee._id});
 
                 if (employee.isEmployee) {
-                    event.emit('recalculate', req);
+                    event.emit('recalculate', req, res, next);
                 }
 
                 event.emit('dropHoursCashes', req);
@@ -537,36 +538,6 @@ var Employee = function (event, models) {
         });
     };
 
-    this.getByViewTpe = function (req, res, next) {
-        var query = req.query;
-        var viewType = query.viewType;
-        var id = req.params.id;
-
-        if (viewType === id){
-            viewType = id;
-        }
-
-        if (id && id.length >= 24){
-            getById(req, res, next);
-            return false;
-        }
-
-        switch (viewType) {
-            case "form":
-                getById(req, res, next);
-                break;
-            case "kanban":
-                getApplicationsForKanban(req, res, next);
-                break;
-            case "thumbnails":
-                getFilter(req, res, next);
-                break;
-            case "list":
-                getFilter(req, res, next);
-                break;
-        }
-    };
-
     function getFilter(req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
@@ -850,7 +821,7 @@ var Employee = function (event, models) {
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
             if (data.sequence === -1) {
-                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
+                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
                     event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
                         if (data.workflow === data.workflowStart) {
@@ -932,7 +903,7 @@ var Employee = function (event, models) {
                 }
 
                 if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {
-                    event.emit('recalculate', req);
+                    event.emit('recalculate', req, res, next);
                 }
                 if (fileName) {
                     var os = require("os");
@@ -1092,7 +1063,7 @@ var Employee = function (event, models) {
                 event.emit('updateSequence', Employee, "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
             }
 
-            event.emit('recalculate', req);
+            event.emit('recalculate', req, res, next);
             event.emit('dropHoursCashes', req);
             event.emit('recollectVacationDash', req);
 
@@ -1235,6 +1206,36 @@ var Employee = function (event, models) {
             res.status(200).send(result);
 
         });
+    };
+
+    this.getByViewTpe = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = req.params.id;
+
+        if (viewType === id) {
+            viewType = id;
+        }
+
+        if (id && id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case "form":
+                getById(req, res, next);
+                break;
+            case "kanban":
+                getApplicationsForKanban(req, res, next);
+                break;
+            case "thumbnails":
+                getFilter(req, res, next);
+                break;
+            case "list":
+                getFilter(req, res, next);
+                break;
+        }
     };
 
     this.getSalesPerson = function (req, res, next) {
@@ -1428,6 +1429,261 @@ var Employee = function (event, models) {
 
         uploadFileArray(req, res, next, Employee);
     };
+
+    var check = function (req, callback) {
+        var now = new Date();
+        var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        var Birthdays = models.get(req.session.lastDb, "birthdays", birthdaysSchema);
+
+        Birthdays.find({}, function (err, birth) {
+            if (err) {
+                callback(-1);
+            } else {
+                if (birth.length === 0) {
+                    callback(0);
+                } else {
+                    if (birth[0].date < dateOnly) {
+                        callback(0);
+                    } else {
+                        callback(1, birth[0].currentEmployees);
+                    }
+                }
+            }
+        });
+    };
+
+    var getEmployeesInDateRange = function (req, res, next, callback) {
+        var now = new Date();
+        var day = 0;
+        var _month = now.getMonth() + 1;
+        var NUMBER_OF_MONTH = 1;
+        var tempMonthLength = _month + NUMBER_OF_MONTH;
+        var realPart;
+        var query;
+        var Employee = models.get(req.session.lastDb, "Employees", EmployeeSchema);
+
+        /*function getAge(birthday) {
+         birthday = new Date(birthday);
+         var today = new Date();
+         var years = today.getFullYear() - birthday.getFullYear();
+
+         birthday.setFullYear(today.getFullYear());
+
+         if (today < birthday) {
+         years--;
+         }
+         return (years < 0) ? 0 : years;
+         }*/
+
+        var separateWeklyAndMonthly = function (arrayOfEmployees) {
+            var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            var dayNumber = dateOnly.getDay();
+            var LeftOffset = dayNumber - 1;
+            var RightOffset = 7 - dayNumber;
+            var FirstDateWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - LeftOffset).valueOf();
+            var LastDateWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + RightOffset).valueOf();
+            var FirstDateNxtWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + RightOffset + 1).valueOf();
+            var LastDateNxtWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + RightOffset * 2 + 1).valueOf();
+
+            var currentEmployees = {};
+
+            function getDaysToBirthday(birthday) {
+                var today = new Date();
+                var days;
+                var firstDayOfYear = new Date(today.getFullYear() + 1, 0, 1);
+                var lastDayOfYear = new Date(today.getFullYear(), 11, 31);
+                if (birthday.getMonth() >= today.getMonth()) {
+                    birthday.setFullYear(today.getFullYear());
+                    days = Math.round((birthday - today) / 1000 / 60 / 60 / 24);
+                } else {
+                    days = Math.round((lastDayOfYear - today) / 1000 / 60 / 60 / 24);
+                    days += Math.round((birthday.setFullYear(today.getFullYear() + 1) - firstDayOfYear) / 1000 / 60 / 60 / 24);
+                }
+                return days;
+            }
+
+            currentEmployees.monthly = arrayOfEmployees.map(function (employee) {
+                if (employee.dateBirth) {
+                    employee.daysForBirth = getDaysToBirthday(employee.dateBirth);
+                }
+                return employee;
+            });
+
+            currentEmployees.nextweek = currentEmployees.monthly.filter(function (employee) {
+                if (employee.dateBirth) {
+                    var birthday = new Date(employee.dateBirth);
+                    birthday.setHours(0);
+                    var valueOfBirthday = birthday.valueOf();
+                    if (valueOfBirthday >= FirstDateNxtWeek) {
+                        if ((valueOfBirthday <= LastDateNxtWeek)) {
+                            return true;
+                        }
+                    }
+                }
+            });
+
+            currentEmployees.weekly = currentEmployees.monthly.filter(function (employee) {
+                if (employee.dateBirth) {
+                    var birthday = new Date(employee.dateBirth);
+                    birthday.setHours(0);
+                    var valueOfBirthday = birthday.valueOf();
+                    if (valueOfBirthday >= FirstDateWeek) {
+                        if ((valueOfBirthday <= LastDateWeek)) {
+                            return true;
+                        }
+                    }
+
+                }
+            });
+            currentEmployees.monthly.sort(function (a, b) {
+                if (a.daysForBirth > b.daysForBirth) {
+                    return 1;
+                }
+                if (a.daysForBirth < b.daysForBirth) {
+                    return -1;
+                }
+                return 0;
+            });
+            currentEmployees.weekly.sort(function (a, b) {
+                if (a.daysForBirth > b.daysForBirth) {
+                    return 1;
+                }
+                if (a.daysForBirth < b.daysForBirth) {
+                    return -1;
+                }
+                return 0;
+            });
+
+            currentEmployees.nextweek.sort(function (a, b) {
+                if (a.daysForBirth > b.daysForBirth) {
+                    return 1;
+                }
+                if (a.daysForBirth < b.daysForBirth) {
+                    return -1;
+                }
+                return 0;
+            });
+            return currentEmployees;
+        };
+
+        if (tempMonthLength / 12 < 1) {
+
+            query = {
+                $or: [
+                    {$and: [{month: _month}, {days: {$gte: day}}, {days: {$lte: 31}}]},
+                    {$and: [{month: {$gt: _month}}, {month: {$lt: tempMonthLength}}]},
+                    {$and: [{month: tempMonthLength}, {days: {$lte: day}}]}
+                ]
+            };
+        } else {
+            realPart = tempMonthLength % 12;
+            query = {
+                $or: [
+                    {$and: [{month: _month}, {days: {$gte: day}}, {days: {$lte: 31}}]},
+                    {$and: [{month: {$gte: 1}}, {month: {$lt: realPart}}]},
+                    {$and: [{month: realPart}, {days: {$lt: day}}]}
+                ]
+            };
+        }
+
+        Employee.aggregate(
+            {
+                $match: {
+                    $and: [
+                        {dateBirth: {$ne: null}},
+                        {isEmployee: true}
+                    ]
+                }
+            },
+            {
+                $project: {
+                    _id  : 1,
+                    month: {$month: '$dateBirth'},
+                    days : {$dayOfMonth: '$dateBirth'}
+                }
+            },
+            {
+                $match: query
+            },
+            function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                Employee.find().where('_id').in(result)
+                    .select('_id name dateBirth age jobPosition workPhones.mobile department')
+                    .populate('jobPosition', '_id name')
+                    .populate('department', ' _id departmentName')
+                    .lean()
+                    .exec(function (err, resArray) {
+                        if (err) {
+                            return callback(req, res, next, separateWeklyAndMonthly([]));
+                        }
+                        resArray.map(function (employee) {
+                            employee.age = getAge(employee.dateBirth);
+                            return employee;
+                        });
+                        callback(req, res, next, separateWeklyAndMonthly(resArray));
+                    });
+            });
+    };
+
+    var set = function (req, res, next, currentEmployees) {
+        var result = {};
+        var data = {};
+        var now = new Date();
+        var Birthdays = models.get(req.session.lastDb, "birthdays", birthdaysSchema);
+
+        data.date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        data.currentEmployees = currentEmployees;
+
+        Birthdays.findByIdAndUpdate({_id: 1}, data, {new: true, upsert: true}, function (err, birth) {
+            if (err) {
+                if (res) {
+                    return next(err);
+                }
+            }
+            result.data = birth.currentEmployees;
+            if (res) {
+                res.send(result);
+            }
+        });
+    };
+
+    this.getBirthdays = function (req, res, next) {
+
+        var err = new Error();
+        var result = {};
+        result.data = [];
+
+        check(req, function (status, employees) {
+            switch (status) {
+                case -1:
+                {
+                    err.status = 500;
+                    next(err);
+                }
+                    break;
+                case 0:
+                {
+                    getEmployeesInDateRange(req, res, next, set);
+                }
+                    break;
+                case 1:
+                {
+                    result.data = employees;
+                    res.status(200).send(result);
+                }
+                    break;
+            }
+        });
+    };
+
+    var recalculate = function (req, res, next) {
+        getEmployeesInDateRange(req, res, next, set);
+    };
+
+    event.on('recalculate', recalculate);
 };
 /**
  * __Type__ `GET`

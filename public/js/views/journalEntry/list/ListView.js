@@ -5,11 +5,14 @@ define([
         'text!templates/journalEntry/list/ListHeader.html',
         'views/journalEntry/list/ListItemView',
         'collections/journalEntry/filterCollection',
+        'views/salesInvoice/EditView',
+        'models/journalEntry',
+        'models/InvoiceModel',
         'constants',
         'helpers'
     ],
 
-    function ($, _, listViewBase, listTemplate, ListItemView, contentCollection, CONSTANTS, helpers) {
+    function ($, _, listViewBase, listTemplate, ListItemView, contentCollection, EditView, currentModel, InvoiceModel, CONSTANTS, helpers) {
         'use strict';
 
         var ListView = listViewBase.extend({
@@ -33,7 +36,33 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-            events: {},
+            events: {
+                "click .sourceDoc": "viewSourceDocument"
+            },
+
+            viewSourceDocument: function (e) {
+                var $target = $(e.target);
+                var id = $target.attr('data-id');
+
+                var model = new InvoiceModel({validate: false});
+
+                model.urlRoot = '/Invoice/form';
+                model.fetch({
+                    data   : {
+                        id       : id,
+                        currentDb: App.currentDb
+                    },
+                    success: function (model) {
+                        new EditView({model: model, redirect: true, notCreate: true});
+                    },
+                    error  : function () {
+                        App.render({
+                            type: 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            },
 
             calcTotal: function () {
                 var $curEl = this.$el;

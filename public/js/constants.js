@@ -393,6 +393,10 @@ define([], function () {
             "Department": {
                 view   : 'department',
                 backend: 'department._id'
+            },
+            "Only Employees": {
+                view   : 'onlyEmployees',
+                backend: 'onlyEmployees'
             }
         }
     };
@@ -507,7 +511,7 @@ define([], function () {
             TASKS                 : '/Tasks/',
             VACATION              : '/vacation/',
             WTRACK                : '/wTrack/',
-            BIRTHDAYS             : '/birthdays/',
+            BIRTHDAYS             : '/employees/birthdays/',
             BONUSTYPE             : '/bonusType/',
             CAPACITY              : '/capacity/',
             PAYMENTCUSTOMERS      : '/payment/customers/',

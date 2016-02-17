@@ -3,8 +3,8 @@
  */
 define([
     'Backbone',
-    'jQuery',
     'Underscore',
+    'jQuery',
     'text!templates/Attendance/index.html',
     'models/AttendanceModel',
     'views/Attendance/MonthView',
@@ -12,7 +12,7 @@ define([
     'dataService',
     'views/selectView/selectView',
     'constants'// added view for employees dd list
-], function (Backbone, $, _, mainTemplate, AttendanceModel, MonthView, moment, dataService, SelectView, CONSTANTS) {
+], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, moment, dataService, SelectView, CONSTANTS) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -40,6 +40,9 @@ define([
             var employees;
             var status;
             var years;
+            var relatedEmployeeId;
+            var employeeArray;
+            var relatedEmployee;
 
             this.currentEmployee = null;
             this.currentStatus = null;
@@ -52,6 +55,7 @@ define([
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
                 var yearToday = moment().year();
+
                 employees = result;
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
@@ -65,7 +69,18 @@ define([
 
                 status = self.model.get('status');
                 years = self.model.get('years');
-                self.currentEmployee = employees[0];
+
+                relatedEmployeeId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+                if (relatedEmployeeId) {
+                    employeeArray = self.model.get('employees');
+                    relatedEmployee = _.find(employeeArray, function (el) {
+                        return el._id === relatedEmployeeId;
+                    });
+                    self.currentEmployee = relatedEmployee;
+                } else {
+                    self.currentEmployee = employees[0];
+                }
+
                 self.currentStatus = status[0];
                 self.currentTime = years[0];
 
@@ -121,10 +136,12 @@ define([
 
             targetElement.text(target.text());
 
-            this.currentEmployee = target.attr("id");  // changed for getting value from selectView dd
-
-            if (!self.currentEmployee) {
-                self.currentEmployee = self.model.get('employees')[0].id;
+            if (target.length) {
+                this.currentEmployee = target.attr("id");  // changed for getting value from selectView dd
+            } else {
+                this.$el.find('.editable').find('span').text(self.currentEmployee.name);
+                this.$el.find('.editable').attr('data-id', self.currentEmployee._id);
+                self.currentEmployee = self.currentEmployee._id;
             }
 
             dataService.getData("/vacation/attendance", {

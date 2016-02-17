@@ -557,9 +557,6 @@ th {
 .alertSuccess:before {
   content: '\f05d';
 }
-.textUnderlineHover:hover {
-  text-decoration: underline !important;
-}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;

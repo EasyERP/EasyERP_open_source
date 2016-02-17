@@ -27,7 +27,7 @@
                 <span>&nbsp</span>
             </td>
             <td colspan="17">
-                    <span>
+                    <span class="departmentName">
                         <%= department.department ? department.department.departmentName: '&nbsp'%>
                     </span>
             </td>
@@ -44,9 +44,7 @@
             <td class="employee">
                             <span>
                                 <%= employee.name || '&nbsp' %>
-                                <%if (employee.maxProjects) {%>
                                 <a class="icon employeesRow">5</a>
-                                <%}%>
                             </span>
             </td>
             <td class="dashboardWeek isLead">
@@ -70,24 +68,35 @@
         <% for(var i = employee.maxProjects; i > 0; i-- ){%>
         <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee._id%>"
             data-content="project" data-employee="<%=employee._id%>">
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
+            <td colspan="3"><span>&nbsp;</span></td>
             <%employee.weekData.forEach(function(week){%>
             <% if(week.projectRoot) {%>
+            <%if (week.projectRoot[i-1] && week.projectRoot[i-1].project) {%>
             <td data-date="<%=week.dateByWeek%>"
                 data-project="<%=week.projectRoot[i-1] ? week.projectRoot[i-1].project : ''%>" class="wTrackInfo">
                 <span class="projectHours"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].hours : ''%></span>
                 <span class="projectItem"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].project: ''%></span>
             </td>
+            <%} else {%>
+            <td class='createTd' data-date="<%=week.dateByWeek%>">
+                &nbsp
+            </td>
+            <% } %>
             <% } else { %>
-            <td>
+            <td class='createTd' data-date="<%=week.dateByWeek%>">
                 &nbsp
             </td>
             <% } %>
             <%})%>
         </tr>
         <% } %>
+        <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee._id%> createWTrack" data-content="project" data-employee="<%=employee._id%>">
+            <td colspan="3"><span>&nbsp;</span></td>
+            <%employee.weekData.forEach(function(week){%>
+            <td class="createTd <%=isWorking(employee, week) ? '' : 'inactive'%>" data-date="<%=week.dateByWeek%>">
+            </td>
+            <%})%>
+        </tr>
         <% }) %>
         <% }) %>
         </tbody>

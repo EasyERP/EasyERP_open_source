@@ -230,7 +230,7 @@ define([
                             this.changedModels[cid] = model;
                         }
 
-                        this.$el.find('#listTable').prepend('<tr class="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                        this.$el.find('#listTable').prepend('<tr class="false enableEdit" data-id="' + cid + '">' + row.html() + '</tr>');
                         row = this.$el.find('.false');
 
                         tdsArr = row.find('td');

@@ -29,6 +29,8 @@ module.exports = function (event, models) {
     router.get('/sources', authStackMiddleware, handler.getSources);
     router.get('/getByMonth', authStackMiddleware, handler.getSalaryByMonth);
 
+    router.get('/birthdays', authStackMiddleware, handler.getBirthdays);
+
     router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewTpe);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);

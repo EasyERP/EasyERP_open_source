@@ -303,17 +303,25 @@ describe("Opportunity Specs", function () {
                     expect(body)
                         .to.have.property('success');
 
+                    id = body.id;
+
                     done();
                 });
         });
 
-        it('should fai create opportunity createLeadFromSite', function (done) {
+        it('should fail create opportunity createLeadFromSite', function (done) {
             var body = {};
 
             aggent
                 .post('opportunities/createLeadFromSite')
                 .send(body)
                 .expect(400, done);
+        });
+
+        it("should remove opportunity after createLeadFromSite", function (done) {
+            aggent
+                .delete('opportunities/' + id)
+                .expect(200, done);
         });
     });
 

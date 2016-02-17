@@ -6,13 +6,14 @@ define([
     'views/vacationDashboard/statisticsView',
     'collections/Dashboard/vacationDashboard',
     'views/wTrack/dashboard/vacationDashEdit',
+    'views/wTrack/dashboard/CreatewTrackView',
     'views/Filter/FilterView',
     'dataService',
     'async',
     'custom',
     'moment',
     'constants'
-], function (Backbone, $, _, mainTemplate, StatisticsView, VacationDashboard, VacationDashEdit, FilterView, dataService, async, custom, moment, CONSTANTS) {
+], function (Backbone, $, _, mainTemplate, StatisticsView, VacationDashboard, VacationDashEdit, CreatewTrackView, FilterView, dataService, async, custom, moment, CONSTANTS) {
     "use strict";
     var View = Backbone.View.extend({
         el: '#content-holder',
@@ -23,11 +24,12 @@ define([
         expandAll: false,
 
         events: {
-            "click .openAll"     : "openAll",
-            "click .employeesRow": "openEmployee",
-            "click .group"       : "openDepartment",
-            "click .wTrackInfo"  : "getWtrackInfo",
-            "click"              : "hideDateRange"
+            "click .openAll"                   : "openAll",
+            "click .employeesRow"              : "openEmployee",
+            "click .group"                     : "openDepartment",
+            "click .wTrackInfo :not(.createTd)": "getWtrackInfo",
+            "click td.createTd:not(.inactive)" : "createWTrack",
+            "click"                            : "hideDateRange"
         },
 
         initialize: function (options) {
@@ -44,7 +46,7 @@ define([
 
             this.dateByWeek = year * 100 + week;
 
-            if(filter && filter.startDate){
+            if (filter && filter.startDate) {
                 filter.startDate = new Date(filter.startDate);
                 this.momentDate = moment(filter.startDate);
             } else {
@@ -60,6 +62,44 @@ define([
             } else {
                 this.render();
             }
+        },
+
+        createWTrack: function (e) {
+            e.stopPropagation();
+            var table = this.$el.find('#dashboardBody');
+            var $target = $(e.target);
+
+            if ($target.hasClass('inactive')) {
+                return false;
+            }
+
+            var td = $target.closest('td');
+            var tr = td.closest('tr');
+            var dateByWeek = td.attr('data-date');
+            var employee = tr.attr('data-employee');
+            var allRows = table.find('[data-employee="' + employee + '"]');
+            var tds = allRows.find('[data-date="' + dateByWeek + '"]');
+            var parentTr = this.$el.find('[data-id="' + employee + '"]');
+            var employeeName = $.trim(parentTr.find('.employee').find('span').text());
+            var department = parentTr.attr('class');
+            var departmentName = $.trim(this.$el.find('[data-id="' + department + '"]').find('.departmentName').text());
+            var nameArray = employeeName.split(' ');
+            var nameFirst = nameArray[0];
+            var nameLast = $.trim(nameArray[1]);
+            var name = {
+                first: nameFirst,
+                last : nameLast
+            };
+
+            new CreatewTrackView({
+                tr            : tr,
+                tds           : tds,
+                dateByWeek    : dateByWeek,
+                employee      : employee,
+                employeeName  : name,
+                department    : department,
+                departmentName: departmentName
+            });
         },
 
         fetchData: function (options) {
@@ -150,8 +190,10 @@ define([
             var _week = week.dateByWeek.toString().slice(4);
 
             var _lastHiredObject = hiredArr[hiredArr.length - 1];
+            var _firstHiredObject = hiredArr[0];
             var _lastFiredObject = firedArr[firedArr.length - 1];
             var _lastHiredDate = _lastHiredObject ? moment(_lastHiredObject.date, 'YYYY-MM-DD') : null;
+            var _firstHiredDate = _firstHiredObject ? moment(_firstHiredObject.date, 'YYYY-MM-DD') : null;
             var _lastFiredDate = _lastFiredObject ? moment(_lastFiredObject.date, 'YYYY-MM-DD') : null;
             var _hiredDate;
             var _firedDate;
@@ -160,7 +202,7 @@ define([
             date = moment().set('year', year).set('week', _week);
 
             if (!firedLength) {
-                return date > _lastHiredDate;
+                return date > _firstHiredDate;
             }
 
             for (i = firedLength - 1; i >= 0; i--) {
@@ -169,7 +211,7 @@ define([
                 _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
                 _firedDate = moment(_firedDate).format('YYYY-MM-DD');
 
-                if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate > _lastFiredDate))) {
+                if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
                     return true;
                 }
             }
@@ -195,9 +237,11 @@ define([
             } else if (self.dateByWeek >= week.dateByWeek) {
                 s += "red ";
             }
+
             if (self.dateByWeek === week.dateByWeek) {
                 s += "active ";
             }
+
             if (!self.isWorking(employee, week)) {
                 s += "inactive ";
             }
@@ -297,6 +341,10 @@ define([
             var table = this.$el.find('#dashboardBody');
             var allRows = table.find('[data-employee="' + employee + '"]');
             var tds = allRows.find('[data-date="' + dateByWeek + '"]:not([data-project="' + projectName + '"])');
+
+            if (!projectName) {
+                return false;
+            }
 
             var queryData = {
                 projectName: projectName,
@@ -398,7 +446,7 @@ define([
 
             var i;
 
-            if(filter && filter.endDate){
+            if (filter && filter.endDate) {
                 endDate = new Date(filter.endDate);
                 endDate = moment(endDate);
             } else {
@@ -494,6 +542,7 @@ define([
                 getCellClass  : self.getCellClass,
                 getCellSize   : self.getCellSize,
                 getHeadClass  : self.getHeadClass,
+                isWorking     : self.isWorking,
                 self          : self
             }));
 
@@ -521,6 +570,10 @@ define([
 
                 this.filterView.render();
             }
+
+            //$('tr').on('click', 'td.createTd :not(.inactive)', function (e) {
+            //    self.createWTrack(e);
+            //});
 
             return this;
         }
