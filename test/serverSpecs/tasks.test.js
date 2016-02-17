@@ -3,7 +3,6 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
-//todo add test for rout /Tasks/getLengthByWorkflows
 
 describe("Tasks Specs", function () {
     'use strict';
