@@ -181,17 +181,9 @@ module.exports = (function () {
             LI: {type: String, default: ''},
             GP: {type: String, default: ''}
         },
-        hire: [{
-            _id: false,
-            date: Date,
-            department: {type: ObjectId, ref: 'Department', default: null},
-            jobPosition: {type: ObjectId, ref: 'JobPosition', default: null},
-            manager: {type: ObjectId, ref: 'Employees', default: null},
-            jobType: {type: String, default: ''},
-            salary: {type: Number, default: 0},
-            info: {type: String, default: ''}
-        }],
-        fire: [{
+        hire: [Date],
+        fire: [Date],
+        transfer: [{
             _id: false,
             date: Date,
             department: {type: ObjectId, ref: 'Department', default: null},
