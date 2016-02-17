@@ -1,16 +1,35 @@
 define([
+        'Backbone',
         'text!templates/journalEntry/TopBarTemplate.html',
         'custom',
         'common',
-        'constants'
+        'constants',
+        'dataService'
     ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    function (Backbone, ContentTopBarTemplate, Custom, Common, CONSTANTS, dataService) {
+        'use strict';
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.JOURNALENTRY,
             template   : _.template(ContentTopBarTemplate),
 
-            events: {},
+            events: {
+                "click #reconcileBtn": "reconcile"
+            },
+
+            reconcile: function (e) {
+                if ($(e.target).hasClass('greenBtn')) {
+                    return false;
+                }
+
+                var date = this.$el.find('#reconcileDate').text();
+
+                dataService.postData('journal/reconcile', {date: date}, function (result) {
+                    var location = window.location.hash;
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(location, {trigger: true});
+                });
+            },
 
             initialize: function (options) {
                 if (options.collection) {

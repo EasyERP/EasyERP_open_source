@@ -6,10 +6,13 @@ define([
         'models/InvoiceModel',
         'collections/journalEntry/filterCollection',
         'constants',
-        'helpers'
+        'helpers',
+        'dataService',
+    'common',
+    'moment'
     ],
 
-    function (listViewBase, listTemplate, listItemView, EditView, InvoiceModel, contentCollection, CONSTANTS, helpers) {
+    function (listViewBase, listTemplate, listItemView, EditView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment) {
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
             listItemView            : listItemView,
@@ -32,7 +35,8 @@ define([
             },
 
             events: {
-                "click .sourceDoc": "viewSourceDocument"
+                "click .Invoice": "viewSourceDocument",
+                "click .jobs": "viewSourceDocumentJOb"
             },
 
             viewSourceDocument: function (e) {
@@ -52,7 +56,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
@@ -99,7 +103,24 @@ define([
                     collection : this.collection,
                     itemsNumber: this.collection.namberToShow
                 });
-                itemView.bind('incomingStages', this.pushStages, this);
+
+                dataService.getData("journal/getReconcileDate", {}, function (result) {
+                    $('#reconcileDate').text(common.utcDateToLocaleDate(result.date));
+                    var newDate = moment(new Date());
+                    var date = moment(result.date);
+                    var same = false;
+
+                    if (newDate.isSame(date, 'month year date')){
+                        same = true;
+                    }
+
+                    if (same){
+                        $('#reconcileBth').addClass('greenBtn');
+                    } else {
+                        $('#reconcileBth').addClass('redBtn');
+                    }
+
+                });
 
                 $currentEl.prepend(itemView.render());//added two parameters page and items number
 

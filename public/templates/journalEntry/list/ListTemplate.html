@@ -4,8 +4,8 @@
     <td class="centerCell"><%=index + 1 %></td>
     <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
     <td><%=journalEntry.date%></td>
-    <td><%=journalEntry.sourceDocument.supplier.name.first + ' ' + journalEntry.sourceDocument.supplier.name.last%></td>
-    <td><a class="sourceDoc" data-id="<%=journalEntry.sourceDocument._id%>"><%=journalEntry.sourceDocument.name%></a></td>
+    <td><%=journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name.first + ' ' + journalEntry.sourceDocument.subject.name.last : journalEntry.sourceDocument.subject.projectName%></td>
+    <td><a class="<%=journalEntry.sourceDocument.model%>" data-id="<%=journalEntry.sourceDocument._id._id%>"><%=journalEntry.sourceDocument.name%></a></td>
 
     <td><%=(journalEntry.account && journalEntry.account[0].name) ? journalEntry.account[0].name : ''%></td>
     <td class="debit" data-amount="<%=journalEntry.debit%>"><%=journalEntry.debit ? currencySplitter(journalEntry.debit.toFixed(2)) : ''%></td>
