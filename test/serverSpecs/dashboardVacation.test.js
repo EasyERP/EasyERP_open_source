@@ -198,7 +198,7 @@ describe("Dashboard Vacation Specs", function () {
                 });
         });
 
-        it("should return dashboard using startDate == 01.01.2016, endDate == 03.03.2016", function (done) {
+        it("should return dashboard using startDate == 01.01.2016, endDate == 05.05.2016", function (done) {
 
             startTime = new Date(2016,1,1);
             endTime = new Date(2016,5,5);
@@ -369,6 +369,18 @@ describe("Dashboard Vacation Specs", function () {
 
                     done();
                 });
+        });
+
+        it("should fail return dashboard using startDate == 03.03.2016, endDate == 01.01.2016", function (done) {
+
+            startTime = new Date(2016,5,5);
+            endTime = new Date(2016,1,1);
+
+            aggent
+                .get('dashboard/vacation')
+                .query({"filter[startDate]": startTime.toString()})
+                .query({"filter[endDate]": endTime.toString()})
+                .expect(500, done);
         });
 
         it("should return dashboard using startDate == now and employee == 55b92ad221e4b7c40f000031", function (done) {
@@ -544,6 +556,33 @@ describe("Dashboard Vacation Specs", function () {
                 });
         });
 
+        it("should return empty response using startDate == now and employee == 55b92ad221e4b7c40faa0031", function (done) {
+
+            startTime = new Date();
+
+            aggent
+                .get('dashboard/vacation')
+                .query({"filter[startDate]": startTime.toString()})
+                .query({"filter[name][key]":"employee"})
+                .query({"filter[name][value][]":"55b92ad221e4b7c40faa0031"})
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    var body = res.body;
+                    var dateByWeekStart = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
+                    var dateByWeekEnd = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
+
+                    expect(body)
+                        .to.be.instanceOf(Array)
+                        .and.to.have.length(0);
+
+                    done();
+                });
+        });
+
         it("should return dashboard using startDate == now and department._id == 55b92ace21e4b7c40f00000f", function (done) {
 
             startTime = new Date();
@@ -712,6 +751,33 @@ describe("Dashboard Vacation Specs", function () {
                         .and.to.be.most(168);
 
 
+
+                    done();
+                });
+        });
+
+        it("should return empty response using startDate == now and department._id == 55b92ace21e4b7c40faa000f", function (done) {
+
+            startTime = new Date();
+
+            aggent
+                .get('dashboard/vacation')
+                .query({"filter[startDate]": startTime.toString()})
+                .query({"filter[department][key]":"department._id"})
+                .query({"filter[department][value][]":"55b92ace21e4b7c40faa000f"})
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    var body = res.body;
+                    var dateByWeekStart = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
+                    var dateByWeekEnd = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
+
+                    expect(body)
+                        .to.be.instanceOf(Array)
+                        .and.to.have.length(0);
 
                     done();
                 });

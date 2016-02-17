@@ -4,9 +4,15 @@ var WtrackHandler = require('../handlers/dashboard');
 var redisStore = require('../helpers/redisClient');
 var moment = require('../public/js/libs/moment/moment');
 var CONSTANTS = require('../constants/mainConstants');
+var MODULES = require('../constants/modules');
+var authStackMiddleware = require('../helpers/checkAuth');
 
 module.exports = function (models) {
     'use strict';
+    var moduleHRId = MODULES.DASHBOARD_HR;
+    var moduleVacationId = MODULES.DASHBOARD_VACATION;
+    var accessStackMiddlwareHR = require('../helpers/access')(moduleHRId, models);
+    var accessStackMiddlwareVacation = require('../helpers/access')(moduleVacationId, models);
     var handler = new WtrackHandler(models);
 
     function cacheRetriver(req, res, next) {
@@ -52,9 +58,9 @@ module.exports = function (models) {
         });
     }
 
-    router.get('/vacation', cacheRetriver, handler.composeForVacation);
+    router.get('/vacation', authStackMiddleware, accessStackMiddlwareVacation, /*cacheRetriver,*/ handler.composeForVacation);
     //router.get('/vacation', handler.getFromCache);
-    router.get('/hr', handler.composeForHr);
+    router.get('/hr', authStackMiddleware, accessStackMiddlwareHR, handler.composeForHr);
 
     return router;
 };
