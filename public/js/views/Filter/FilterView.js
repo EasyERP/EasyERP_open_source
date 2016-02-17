@@ -1,4 +1,7 @@
 define([
+        'jQuery',
+        'Underscore',
+        'Backbone',
         'text!templates/Filter/FilterTemplate.html',
         'text!templates/Filter/filterFavourites.html',
         'text!templates/Filter/searchGroupLiTemplate.html',
@@ -12,7 +15,7 @@ define([
         'dataService',
         "async"
     ],
-    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, usersModel, dataService, async) {
+    function ($, _, Backbone, ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, usersModel, dataService, async) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el                 : '#searchContainer',
@@ -520,7 +523,7 @@ define([
                         value          : dataItem.name,
                         data           : dataItem._id
                     };
-                })
+                });
 
                 this.searchRessult = this.searchRessult.concat(mapData);
 

@@ -1,4 +1,5 @@
 define([
+        'jQuery',
         'views/listViewBase',
         'text!templates/Order/list/ListHeader.html',
         'text!templates/stages.html',
@@ -13,7 +14,7 @@ define([
         'dataService'
     ],
 
-    function (listViewBase, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+    function ($, listViewBase, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
         var OrdersListView = listViewBase.extend({
             createView              : createView,
             filterView              : filterView,

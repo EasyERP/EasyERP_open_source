@@ -175,10 +175,23 @@ define([], function () {
                 backend: 'projectmanager._id'
             }
         },
-        Leads           : {},
+        Leads           : {
+            'Contact Name': {
+                view   : 'contactName',
+                backend: 'contactName'
+            },
+            'Source'      : {
+                view   : 'source',
+                backend: 'source'
+            },
+            'Stage'       : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
         Opportunities   : {},
         Tasks           : {
-            'Project'    : {
+            'Project'     : {
                 view   : 'project',
                 backend: 'project'
             },
@@ -186,15 +199,15 @@ define([], function () {
                 view   : 'summary',
                 backend: 'summary'
             },
-            'Status'     : {
+            'Status'      : {
                 view   : 'workflow',
                 backend: 'workflow'
             },
-            'Assigned To': {
+            'Assigned To' : {
                 view   : 'assignedTo',
                 backend: 'assignedTo'
             },
-            'Type'       : {
+            'Type'        : {
                 view   : 'type',
                 backend: 'type'
             }
@@ -293,12 +306,12 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
-        Invoice     : {
-            'Supplier'    : {
+        Invoice         : {
+            'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Status'      : {
+            'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
@@ -363,7 +376,7 @@ define([], function () {
                 backend: 'dataKey'
             }
         },
-        "jobsDashboard"     : {
+        "jobsDashboard" : {
             "Sales Manager": {
                 view   : 'projectManager',
                 backend: 'projectmanager._id'
@@ -385,12 +398,12 @@ define([], function () {
                 backend: 'payment.count'
             }
         },
-        "salaryReport": {
-            "Employee": {
+        "salaryReport"  : {
+            "Employee"      : {
                 view   : 'employee',
                 backend: '_id'
             },
-            "Department": {
+            "Department"    : {
                 view   : 'department',
                 backend: 'department._id'
             },
@@ -450,7 +463,7 @@ define([], function () {
         JOURNAL           : "journal",
         JOURNALENTRY      : "journalEntry",
         INVOICECHARTS     : "invoiceCharts",
-        SALARYREPORT: "salaryReport",
+        SALARYREPORT      : "salaryReport",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -478,6 +491,6 @@ define([], function () {
         IT_SERVICES: 'IT services',
 
         DASH_VAC_WEEK_BEFORE: 2,
-        DASH_VAC_WEEK_AFTER: 8
+        DASH_VAC_WEEK_AFTER : 8
     };
 });
