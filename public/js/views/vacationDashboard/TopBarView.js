@@ -83,7 +83,7 @@ define([
                             var endDatePicker = self.$endDate;
                             var endDate = moment(targetInput.datepicker('getDate'));
 
-                            endDate.add(6, 'week').day('Monday');
+                            endDate.add(CONSTANTS.DASH_VAC_RANGE_WEEKS_MIN, 'week').day('Monday');
                             endDate = endDate.toDate();
 
                             endDatePicker.datepicker('option', 'minDate', endDate);

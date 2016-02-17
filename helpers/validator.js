@@ -220,8 +220,23 @@ function parseTaskBody(body) {
         }
     } //unused
     if (body.notes) {
-        body.notes = validator.escape(body.notes);
-        body.notes = xssFilters.inHTMLData(body.notes);
+        if (body.notes.length != 0) {
+            var obj = body.notes[body.notes.length - 1];
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+            obj.date = new Date();
+            if (!obj.author) {
+                obj.author = req.session.uName;
+            }
+
+            obj.note = validator.escape(obj.note);
+            obj.title = validator.escape(obj.title);
+            obj.note = xssFilters.inHTMLData(obj.note);
+            obj.title = xssFilters.inHTMLData(obj.title);
+
+            body.notes[data.notes.length - 1] = obj;
+        }
     }       //unused
     if (body.estimated) {
         body.remaining = body.estimated - body.logged;
@@ -236,6 +251,7 @@ function parseTaskBody(body) {
         body.EndDate = dateCalculator.calculateTaskEndDate(StartDate, body.estimated);
         body.duration = dateCalculator.returnDuration(StartDate, body.EndDate);
     }
+
 
     return body;
 }
