@@ -672,9 +672,9 @@ var Project = function (models, event) {
                                 }
                             }, {
                                 $project: {
-                                    /*notRemovable : {
+                                    notRemovable : {
                                         $size: {"$ifNull": [ "$budget.projectTeam", [] ]} // added check on field value null
-                                    },*/
+                                    },
                                     projectmanager  : {$arrayElemAt: ["$projectmanager", 0]},
                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                                     customer        : {$arrayElemAt: ["$customer", 0]},
