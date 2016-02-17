@@ -434,10 +434,11 @@ var Jobs = function (models, event) {
                         cb();
                     });
                 }, function () {
-                    console.log('wTracks removed');
                     if (projectId) {
                         event.emit('updateProjectDetails', {req: req, _id: projectId});
                     }
+
+                    event.emit('recollectVacationDash');
                 });
 
             });
@@ -454,7 +455,6 @@ var Jobs = function (models, event) {
         var data = req.body;
         var id = data._id;
         var query;
-        var updatewTracks;
         var products;
         var type;
         var editedBy = {
@@ -480,6 +480,7 @@ var Jobs = function (models, event) {
                     return next(err);
                 }
 
+                event.emit('recollectVacationDash');
                 res.status(200).send(result)
             });
         } else if (data.products && data.products.length) {
@@ -488,7 +489,10 @@ var Jobs = function (models, event) {
 
             async.each(products, function (product, cb) {
 
-                JobsModel.findByIdAndUpdate(product.jobs, {type: type, editedBy: editedBy}, {new: true}, function (err, result) {
+                JobsModel.findByIdAndUpdate(product.jobs, {
+                    type    : type,
+                    editedBy: editedBy
+                }, {new: true}, function (err, result) {
                     if (err) {
                         return next(err);
                     }
@@ -502,6 +506,8 @@ var Jobs = function (models, event) {
                 if (project) {
                     event.emit('fetchJobsCollection', {project: project});
                 }
+
+                event.emit('recollectVacationDash');
             });
         }
     };

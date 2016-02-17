@@ -1616,7 +1616,10 @@ var Project = function (models, event) {
                 res.send(500, {error: "Can't remove Project"});
             } else {
                 event.emit('recollectProjectInfo');
+                event.emit('recollectVacationDash');
+
                 removeTasksByPorjectID(req, _id);
+
                 res.send(200, {success: 'Remove all tasks Starting...'});
             }
         });
