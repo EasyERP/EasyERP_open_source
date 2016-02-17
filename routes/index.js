@@ -1167,9 +1167,9 @@ module.exports = function (app, mainDb) {
 
 //------------------Employee---------------------------------------------------
 
-    app.get('/Birthdays', function (req, res) {
-        requestHandler.Birthdays(req, res);
-    });
+    //app.get('/Birthdays', function (req, res) {
+    //    requestHandler.Birthdays(req, res);
+    //});
 
     //app.get('/getForDdByRelatedUser', function (req, res) {
     //    requestHandler.getForDdByRelatedUser(req, res);

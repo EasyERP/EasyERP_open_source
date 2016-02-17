@@ -511,7 +511,7 @@ define([], function () {
             TASKS                 : '/Tasks/',
             VACATION              : '/vacation/',
             WTRACK                : '/wTrack/',
-            BIRTHDAYS             : '/birthdays/',
+            BIRTHDAYS             : '/employees/birthdays/',
             BONUSTYPE             : '/bonusType/',
             CAPACITY              : '/capacity/',
             PAYMENTCUSTOMERS      : '/payment/customers/',
