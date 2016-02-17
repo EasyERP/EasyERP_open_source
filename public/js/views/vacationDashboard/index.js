@@ -211,7 +211,7 @@ define([
                 _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
                 _firedDate = moment(_firedDate).format('YYYY-MM-DD');
 
-                if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
+                if (_hiredDate === _firedDate || date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
                     return true;
                 }
             }
