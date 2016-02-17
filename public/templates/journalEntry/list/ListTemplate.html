@@ -2,22 +2,14 @@
 <tr data-index="<%= index %>" data-id="<%=journalEntry._id%>">
     <!--<td class="notForm centerCell"><input type="checkbox" value="<%=journalEntry._id%>" class="checkbox"/></td>-->
     <td class="centerCell"><%=index + 1 %></td>
-    <td><%=(journalEntry.account && journalEntry.account.code) ? journalEntry.account.code : ''%></td>
     <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
     <td><%=journalEntry.date%></td>
     <td><%=journalEntry.sourceDocument.supplier.name.first + ' ' + journalEntry.sourceDocument.supplier.name.last%></td>
     <td><a class="sourceDoc" data-id="<%=journalEntry.sourceDocument._id%>"><%=journalEntry.sourceDocument.name%></a></td>
 
-    <%if (journalEntry.debit) {%>
-    <td class="debit" data-amount="<%=journalEntry.debit%>"><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>
-    <%} else {%>
-    <td class="debit" data-amount="0"></td>
-    <%}%>
-
-    <%if (journalEntry.credit) {%>
-    <td class="credit" data-amount="<%=journalEntry.credit%>"><%=currencySplitter(journalEntry.credit.toFixed(2))%></td>
-    <%} else {%>
-    <td class="credit" data-amount="0"></td>
-    <%}%>
+    <td><%=(journalEntry.account && journalEntry.account[0].name) ? journalEntry.account[0].name : ''%></td>
+    <td class="debit" data-amount="<%=journalEntry.debit%>"><%=journalEntry.debit ? currencySplitter(journalEntry.debit.toFixed(2)) : ''%></td>
+    <td><%=(journalEntry.account[1] && journalEntry.account[1].name) ? journalEntry.account[1].name : ''%></td>
+    <td class="credit" data-amount="<%=journalEntry.credit%>"><%=journalEntry.credit ? currencySplitter(journalEntry.credit.toFixed(2)): ''%></td>
 </tr>
 <% }) %>

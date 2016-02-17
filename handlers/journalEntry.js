@@ -172,7 +172,6 @@ var Module = function (models) {
                             debit         : {$divide: ['$debit', '$currency.rate']},
                             credit        : {$divide: ['$credit', '$currency.rate']},
                             currency      : 1,
-                            name          : 1,
                             journal       : 1,
                             account       : {$arrayElemAt: ["$account", 0]},
                             sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
@@ -189,7 +188,6 @@ var Module = function (models) {
                             debit                    : 1,
                             credit                   : 1,
                             currency                 : 1,
-                            name                     : 1,
                             journal                  : 1,
                             date                     : 1,
                             'sourceDocument._id'     : 1,
@@ -202,13 +200,34 @@ var Module = function (models) {
                             debit                    : 1,
                             credit                   : 1,
                             currency                 : 1,
-                            name                     : 1,
                             journal                  : 1,
                             date                     : 1,
                             'sourceDocument._id'     : 1,
                             'sourceDocument.name'    : 1,
                             'sourceDocument.supplier': 1,
                             account                  : 1
+                        }
+                    }, {
+                        $group: {
+                            _id           : '$sourceDocument._id',
+                            debit         : {$sum: "$debit"},
+                            credit        : {$sum: "$credit"},
+                            currency      : {$addToSet: '$currency'},
+                            journal       : {$addToSet: '$journal'},
+                            date          : {$addToSet: '$date'},
+                            sourceDocument: {$addToSet: '$sourceDocument'},
+                            account       : {$addToSet: '$account'}
+                        }
+                    }, {
+                        $project: {
+                            _id           : 1,
+                            debit         : 1,
+                            credit        : 1,
+                            account       : 1,
+                            currency      : {$arrayElemAt: ["$currency", 0]},
+                            date          : {$arrayElemAt: ["$date", 0]},
+                            sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
+                            journal       : {$arrayElemAt: ["$journal", 0]}
                         }
                     }], function (err, result) {
                         if (err) {
