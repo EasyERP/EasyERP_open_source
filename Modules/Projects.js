@@ -1640,7 +1640,10 @@ var Project = function (models, event) {
         });
     };
 
-    function createTask(req, data, res) {
+    function createTask(req, res) {
+        var data = {};
+        data = req.body;
+        data.uId = req.session.uId;
         try {
             if (!data.summary || !data.project) {
                 logWriter.log('Task.create Incorrect Incoming Data');
@@ -1747,6 +1750,9 @@ var Project = function (models, event) {
                         _task.EndDate = calculateTaskEndDate(StartDate, data.estimated);
                         _task.duration = returnDuration(StartDate, _task.EndDate);
                     }
+
+                    console.log(req.session.lastDb, 'Tasks', tasksSchema);
+
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", 0, 0, _task.workflow._id, _task.workflow._id, true, false, function (sequence) {
                         _task.sequence = sequence;
                         _task.save(function (err, _task) {

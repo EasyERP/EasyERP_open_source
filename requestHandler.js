@@ -906,6 +906,7 @@ var requestHandler = function (app, event, mainDb) {
         });
     });
 
+    //ToDo refactor and move this to helpers (and pull out from everywhere)
     //binding for Sequence
     event.on('updateSequence', function (model, sequenceField, start, end, workflowStart, workflowEnd, isCreate, isDelete, callback) {
         var query;
@@ -1713,26 +1714,26 @@ var requestHandler = function (app, event, mainDb) {
     };
 
     //---------------------Tasks-------------------------------
-    function createTask(req, res, data) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 40, function (access) {
-                if (access) {
-                    data.task.uId = req.session.uId;
-                    project.createTask(req, data.task, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
+    /*function createTask(req, res/!*, data*!/) {
+        //if (req.session && req.session.loggedIn && req.session.lastDb) {
+            //access.getEditWritAccess(req, req.session.uId, 40, function (access) {
+                //if (access) {
+                    //data.task.uId = req.session.uId;
+                    project.createTask(req, res);
+                //} else {
+                //    res.send(403);
+                //}
+            //});
+        /!*} else {
             res.send(401);
-        }
-    };
+        }*!/
+    };*/
 
-    function getTasksLengthByWorkflows(req, options, res) {
+    /*function getTasksLengthByWorkflows(req, options, res) {
         project.getCollectionLengthByWorkflows(req, options, res);
-    }
+    }*/
 
-    function getTaskById(req, res, data) {
+/*    function getTaskById(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 40, function (access) {
                 if (access) {
@@ -1778,9 +1779,9 @@ var requestHandler = function (app, event, mainDb) {
             res.send(401);
         }
 
-    };
+    };*/
 
-    function removeTask(req, res, id) {
+    /*function removeTask(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 40, function (access) {
                 if (access) {
@@ -1793,9 +1794,10 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    };
+    };*/
 
-    function updateTask(req, res, id, data, remove) {
+    //maybe unused
+    /*function updateTask(req, res, id, data, remove) {
         var date = Date.now();
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 40, function (access) {
@@ -1812,9 +1814,9 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    };
+    };*/
 
-    function taskUpdateOnlySelectedFields(req, res, id, data) {
+    /*function taskUpdateOnlySelectedFields(req, res, id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 40, function (access) {
                 if (access) {
@@ -1830,7 +1832,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
     function uploadTasksFiles(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1846,13 +1848,13 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    function getTasksPriority(req, res) {
+    /*function getTasksPriority(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             project.getTasksPriority(req, res);
         } else {
             res.send(401);
         }
-    };
+    };*/
 
     //------------------Workflow---------------------------------
 
@@ -2920,18 +2922,18 @@ var requestHandler = function (app, event, mainDb) {
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
         getProjectByEndDateForDashboard  : getProjectByEndDateForDashboard,
         updateOnlySelectedFields         : updateOnlySelectedFields,
-        taskUpdateOnlySelectedFields     : taskUpdateOnlySelectedFields,
+        /*taskUpdateOnlySelectedFields     : taskUpdateOnlySelectedFields,*/
         getProjectType                   : getProjectType,
 
-        createTask               : createTask,
-        getTasksLengthByWorkflows: getTasksLengthByWorkflows,
-        getTaskById              : getTaskById,
+        /*createTask               : createTask,*/
+        /*getTasksLengthByWorkflows: getTasksLengthByWorkflows,*/
+        /*getTaskById              : getTaskById,
         getTasksForList          : getTasksForList,
-        getTasksForKanban        : getTasksForKanban,
-        updateTask               : updateTask,
+        getTasksForKanban        : getTasksForKanban,*/
+        /*updateTask               : updateTask,*/
         uploadTasksFiles         : uploadTasksFiles,
-        removeTask               : removeTask,
-        getTasksPriority         : getTasksPriority,
+        /*removeTask               : removeTask,
+        getTasksPriority         : getTasksPriority,*/
 
         //getCompaniesForDd              : getCompaniesForDd,
         //getCompanyById                 : getCompanyById,

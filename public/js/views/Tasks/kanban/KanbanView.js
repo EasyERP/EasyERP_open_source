@@ -225,7 +225,7 @@
         },
 
         getCollectionLengthByWorkflows: function (context, parrentContentId) {
-            dataService.getData('/getTasksLengthByWorkflows', {parrentContentId: parrentContentId}, function (data) {
+            dataService.getData('/tasks/getLengthByWorkflows', {parrentContentId: parrentContentId}, function (data) {
                 data.arrayOfObjects.forEach(function (object) {
                     var column = context.$el.find("#" + object._id);
                     column.find('.totalCount').text(object.count);
