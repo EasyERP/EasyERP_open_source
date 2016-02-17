@@ -7,9 +7,11 @@ var url = 'http://localhost:8089/';
 var aggent;
 
 describe("Quotation Specs", function () {
+    'use strict';
     var id;
 
     describe('Quotation with admin', function () {
+
         before(function (done) {
             aggent = request.agent(url);
 
@@ -124,8 +126,8 @@ describe("Quotation Specs", function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'testUser',
-                    pass : 'qwerty',
+                    login: 'ArturMyhalko',
+                    pass : 'thinkmobiles2015',
                     dbId : 'production'
                 })
                 .expect(200, done);
@@ -137,8 +139,57 @@ describe("Quotation Specs", function () {
                 .expect(302, done);
         });
 
-        it('', function () {
+        it("should fail create quotation", function (done) {
+            var body = {
+                "supplier"         : "55b92ad621e4b7c40f00064f",
+                "project"          : "55b92ad621e4b7c40f00069c",
+                "workflow"         : "5555bf276a3f01acae0b5560",
+                "supplierReference": null,
+                "orderDate"        : "28 Dec, 2015",
+                "expectedDate"     : "Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))",
+                "name"             : "PO",
+                "invoiceControl"   : null,
+                "invoiceRecived"   : false,
+                "paymentTerm"      : null,
+                "fiscalPosition"   : null,
+                "destination"      : null,
+                "incoterm"         : null,
+                "products"         : [
+                    {
+                        "product"      : "5540d528dacb551c24000003",
+                        "unitPrice"    : "500",
+                        "quantity"     : "1",
+                        "scheduledDate": "28 Dec, 2015",
+                        "taxes"        : "0.00",
+                        "description"  : "",
+                        "subTotal"     : "500",
+                        "jobs"         : "564cfd8ba6e6390160c9edf7"
+                    }
+                ],
+                "currency"         : {
+                    _id : "565eab29aeb95fa9c0f9df2d",
+                    name: 'EUR'
+                },
+                "forSales"         : true,
+                "deliverTo"        : "55543831d51bdef79ea0d58c",
+                "populate"         : true,
+                "paymentInfo"      : {
+                    "total"  : "500.00",
+                    "unTaxed": "500.00",
+                    "taxes"  : "0.00"
+                },
+                "groups"           : {
+                    "owner": "55ba28c8d79a3a3439000016",
+                    "users": [],
+                    "group": []
+                },
+                "whoCanRW"         : "everyOne"
+            };
 
+            aggent
+                .post('quotation')
+                .send(body)
+                .expect(403,done);
         });
     });
 });

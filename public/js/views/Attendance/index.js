@@ -9,8 +9,9 @@ define([
     'populate',
     'moment',
     'dataService',
-    'views/selectView/selectView' // added view for employees dd list
-], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, selectView) {
+    'views/selectView/selectView',
+    'constants'// added view for employees dd list
+], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, selectView, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -46,7 +47,7 @@ define([
             //this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
             //this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
-            dataService.getData("/employees/getPersonsForDd", {}, function (result) {
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
                 var yearToday = moment().year();
                 employees = result;
                 employees = _.map(employees.data, function (employee) {
@@ -153,7 +154,7 @@ define([
             var self = this;
             self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
-            dataService.getData("/employees/getPersonsForDd", {}, function (result) {
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
                 //ToDo Hired and Not Hired
             });
         },

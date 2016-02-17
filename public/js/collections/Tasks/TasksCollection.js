@@ -1,15 +1,16 @@
 define([
+        'Backbone',
+        'Underscore',
         'models/TasksModel',
         'common'
     ],
-    function (TaskModel, common) {
-        var TasksCollection = Backbone.Collection.extend({
-            model     : TaskModel,
-            initialize: function () {
+    function (Backbone, _, TaskModel, common) {
+        'use strict';
 
-            },
-            parse     : true,
-            parse     : function (response) {
+        var TasksCollection = Backbone.Collection.extend({
+            model: TaskModel,
+
+            parse: function (response) {
                 if (response.data) {
                     _.map(response.data, function (task) {
                         if (task.StartDate) {

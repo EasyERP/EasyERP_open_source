@@ -1,13 +1,19 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Departments/EditTemplate.html",
         'views/selectView/selectView',
         "collections/Departments/DepartmentsCollection",
         "collections/Customers/AccountsDdCollection",
         "common",
         "custom",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (EditTemplate, selectView, DepartmentsCollection, AccountsDdCollection, common, Custom, populate) {
+    function (Backbone, $, _, EditTemplate, selectView, DepartmentsCollection, AccountsDdCollection, common, Custom, populate, CONSTANTS) {
+        'use strict';
+
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Departments",
@@ -20,31 +26,33 @@ define([
                     this.currentModel = options.myModel;
                 }
                 else {
-                    this.currentModel = (options.model) ? options.model : options.collection.getElement();
+                    this.currentModel = options.model || options.collection.getElement();
                 }
                 this.currentModel.urlRoot = '/Departments';
                 this.responseObj = {};
+
                 this.render();
             },
-            events     : {
-                'click .dialog-tabs a'                                            : 'changeTab',
-                'click #sourceUsers li'                                           : 'addUsers',
-                'click #targetUsers li'                                           : 'removeUsers',
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                "click .prevUserList"                                             : "prevUserList",
-                "click .nextUserList"                                             : "nextUserList",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+
+            events: {
+                'click .dialog-tabs a'                             : 'changeTab',
+                'click #sourceUsers li'                            : 'addUsers',
+                'click #targetUsers li'                            : 'removeUsers',
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect",
+                "click .prevUserList"                              : "prevUserList",
+                "click .nextUserList"                              : "nextUserList",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
-            nextUserList: function (e, page) {
-                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) + 1);
+            nextUserList: function (e) {
+                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page"), 10) + 1);
                 this.updateAssigneesPagination($(e.target).closest(".left"));
 
             },
 
-            prevUserList: function (e, page) {
-                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) - 1);
+            prevUserList: function (e) {
+                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page"), 10) - 1);
                 this.updateAssigneesPagination($(e.target).closest(".left"));
             },
 
@@ -61,7 +69,7 @@ define([
                 var list = el.find("ul");
                 var count = list.find("li").length;
                 var s = "";
-                var page = parseInt(list.attr("data-page"));
+                var page = parseInt(list.attr("data-page"), 10);
                 if (page > 1) {
                     el.find(".userPagination").prepend("<a class='prevUserList' href='javascript:;'>« prev</a>");
                 }
@@ -69,9 +77,9 @@ define([
                     s += "0-0 of 0";
                 } else {
                     if ((page) * 20 - 1 < count) {
-                        s += ((page - 1) * 20 + 1) + "-" + ((page) * 20) + " of " + count;
+                        s += ((page - 1) * 20 + 1) + "-" + (page * 20) + " of " + count;
                     } else {
-                        s += ((page - 1) * 20 + 1) + "-" + (count) + " of " + count;
+                        s += ((page - 1) * 20 + 1) + "-" + count + " of " + count;
                     }
                 }
                 if (page < count / 20) {
@@ -240,8 +248,8 @@ define([
                             click: self.deleteItem
                         }]
                 });
-                populate.get2name("#departmentManager", "/employees/getPersonsForDd", {}, this, false, true);
-                populate.getParrentDepartment("#parentDepartment", "/departments/getDepartmentsForEditDd", {id: this.currentModel.toJSON()._id}, this, false, true);
+                populate.get2name("#departmentManager", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false, true);
+                populate.getParrentDepartment("#parentDepartment", CONSTANTS.URLS.DEPARTMENTS_FOREDITDD, {id: this.currentModel.toJSON()._id}, this, false, true);
                 var k = this.currentModel.toJSON().users;
                 var b = $.map(this.currentModel.toJSON().users, function (item) {
                     return $('<li/>').text(item.login).attr("id", item._id);

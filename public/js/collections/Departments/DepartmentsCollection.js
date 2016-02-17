@@ -1,11 +1,16 @@
 ﻿define([
-        'models/DepartmentsModel'
+        'Backbone',
+        'jQuery',
+        'models/DepartmentsModel',
+        'constants'
     ],
-    function (DepartmentsModel) {
+    function (Backbone, $, DepartmentsModel, CONSTANTS) {
+        'use strict';
+
         var departmentsCollection = Backbone.Collection.extend({
             model     : DepartmentsModel,
             url       : function () {
-                return "/Departments";
+                return CONSTANTS.URLS.DEPARTMENTS;
             },
             initialize: function () {
                 var mid = 39;
@@ -20,10 +25,9 @@
                     error  : this.fetchError
                 });
             },
-            parse     : true,
             parse     : function (response) {
                 return response.data;
-            },
+            }
         });
         return departmentsCollection;
     });

@@ -1,13 +1,19 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/JobPositions/CreateTemplate.html",
         "collections/Departments/DepartmentsCollection",
         "collections/Workflows/WorkflowsCollection",
         "models/JobPositionsModel",
         'views/Assignees/AssigneesView',
         "common",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (CreateTemplate, DepartmentsCollection, WorkflowsCollection, JobPositionsModel, AssigneesView, common, populate) {
+    function (Backbone, $, _, CreateTemplate, DepartmentsCollection, WorkflowsCollection, JobPositionsModel, AssigneesView, common, populate, CONSTANTS) {
+        'use strict';
+
         var CreateView = Backbone.View.extend({
             el            : "#content-holder",
             contentType   : "JobPositions",
@@ -69,8 +75,9 @@ define([
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
             getWorkflowValue: function (value) {
+                var i;
                 var workflows = [];
-                for (var i = 0; i < value.length; i++) {
+                for (i = 0; i < value.length; i++) {
                     workflows.push({name: value[i].name, status: value[i].status});
                 }
                 return workflows;
@@ -92,18 +99,18 @@ define([
                 var self = this;
                 var mid = 39;
                 var name = $.trim($("#name").val());
-                var expectedRecruitment = parseInt($.trim($("#expectedRecruitment").val()));
+                var expectedRecruitment = parseInt($.trim($("#expectedRecruitment").val()), 10);
                 var description = $.trim($("#description").val());
                 var requirements = $.trim($("#requirements").val());
                 var workflow = this.$("#workflowsDd").data("id");
-                var department = this.$("#departmentDd").data("id") ? this.$("#departmentDd").data("id") : null;
+                var department = this.$("#departmentDd").data("id") || null;
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
                 });
@@ -179,8 +186,8 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
-                populate.get("#departmentDd", "/departments/getForDD", {}, "departmentName", this, true, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Job positions"}, "name", this, true);
+                populate.get("#departmentDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, true, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Job positions"}, "name", this, true);
                 this.delegateEvents(this.events);
                 return this;
             }

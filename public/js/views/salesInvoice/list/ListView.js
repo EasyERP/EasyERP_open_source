@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/salesInvoice/list/ListHeader.html',
         'text!templates/stages.html',
@@ -13,7 +15,9 @@ define([
         'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function ($, _, listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+        'use strict';
+
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -42,7 +46,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-                this.filterView;
             },
 
             events: {
@@ -63,8 +66,9 @@ define([
             saveItem: function () {
                 var model;
                 var self = this;
+                var id;
 
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     model = this.collection.get(id);
 
                     model.save({
@@ -183,7 +187,7 @@ define([
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-                dataService.getData("/workflows/fetch", {
+                dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                     wId         : 'Sales Invoice',
                     source      : 'purchase',
                     targetSource: 'invoice'
@@ -225,7 +229,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }

@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Departments/list/ListHeader.html',
         'views/Departments/CreateView',
         'models/DepartmentsModel',
@@ -6,7 +9,9 @@ define([
         'views/Departments/EditView'
     ],
 
-    function (ListTemplate, CreateView, currentModel, ListItemView, EditView) {
+    function (Backbone, $, _, ListTemplate, CreateView, currentModel, ListItemView, EditView) {
+        'use strict';
+
         var DepartmentsListView = Backbone.View.extend({
             el: '#content-holder',
 
@@ -25,11 +30,13 @@ define([
                 "click #groupList .edit" : "editItem",
                 "click #groupList .trash": "deleteItem"
             },
+
             createDepartmentListRow: function (department, index, className) {
                 return ('<li class="' + className + '" data-id="' + department._id + '" data-level="' + department.nestingLevel + '" data-sequence="' + department.sequence + '"><span class="content"><span class="dotted-line"></span><span class="text">' + department.departmentName + '<span title="Delete" class="trash icon">1</span><span title="Edit" class="edit icon">e</span></span></span></li>');
             },
+
             editItem               : function (e) {
-                var self = this;
+
                 var model = new currentModel({validate: false});
                 model.urlRoot = '/Departments/form/';
                 model.fetch({
@@ -39,20 +46,21 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Pleas refresh browser"
                         });
                     }
                 });
                 return false;
             },
+
             deleteItem             : function (e) {
                 var myModel = this.collection.get($(e.target).closest("li").data("id"));
                 var mid = 39;
                 e.preventDefault();
                 var self = this;
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     myModel.destroy({
                         headers: {
                             mid: mid
@@ -64,7 +72,7 @@ define([
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             } else {
@@ -75,6 +83,7 @@ define([
                 }
                 return false;
             },
+
             groupMove              : function () {
                 $("#groupList li").each(function () {
                     if ($(this).find("li").length > 0) {
@@ -85,6 +94,7 @@ define([
                     }
                 });
             },
+
             render                 : function () {
                 $('.ui-dialog ').remove();
 
@@ -113,15 +123,15 @@ define([
                         var sequence = 0;
                         var nestingLevel = 0;
                         if (ui.item.next().hasClass("parent") || ui.item.next().hasClass("child")) {
-                            sequence = parseInt(ui.item.next().attr("data-sequence")) + 1;
+                            sequence = parseInt(ui.item.next().attr("data-sequence"), 10) + 1;
                         }
                         if (ui.item.parents("li").length > 0) {
-                            nestingLevel = parseInt(ui.item.parents("li").attr("data-level")) + 1;
+                            nestingLevel = parseInt(ui.item.parents("li").attr("data-level"), 10) + 1;
                         }
                         model.set({
                             "parentDepartmentStart": model.toJSON().parentDepartment ? model.toJSON().parentDepartment._id : null,
                             "sequenceStart"        : parseInt(ui.item.attr("data-sequence")),
-                            "parentDepartment"     : ui.item.parents("li").attr("data-id") ? ui.item.parents("li").attr("data-id") : null,
+                            "parentDepartment"     : ui.item.parents("li").attr("data-id") || null,
                             "nestingLevel"         : nestingLevel,
                             departmentManager      : model.toJSON.departmentManager ? model.toJSON.departmentManager._id : null,
                             sequence               : sequence

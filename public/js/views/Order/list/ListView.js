@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Order/list/ListHeader.html',
         'text!templates/stages.html',
@@ -9,16 +11,18 @@ define([
         'models/QuotationModel',
         'collections/Order/filterCollection',
         'views/Filter/FilterView',
-        'common',
-        'dataService'
+        'dataService',
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+    function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, filterView, dataService, CONSTANTS) {
+        'use strict';
+
         var OrdersListView = listViewBase.extend({
             createView              : createView,
             filterView              : filterView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: '/order/totalCollectionLength',
             contentType             : 'Order',
@@ -32,7 +36,7 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                this.filter = options.filter ? options.filter : {};
+                this.filter = options.filter || {};
                 this.filter.forSales = {
                     key  : 'forSales',
                     value: ['false']
@@ -80,14 +84,14 @@ define([
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-                    return false;
                 }
+                $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+                return false;
+
             }
             ,
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").remove();
             }
             ,
@@ -102,12 +106,12 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                $currentEl.append(new listItemView({
+                $currentEl.append(new ListItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
+                $currentEl.append(new ListTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
@@ -115,7 +119,7 @@ define([
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-                dataService.getData("/workflows/fetch", {
+                dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                     wId         : 'Purchase Order',
                     source      : 'purchase',
                     targetSource: 'order'
@@ -131,7 +135,7 @@ define([
                 var tr = $(e.target).closest('tr');
                 var id = tr.data("id");
                 var notEditable = tr.hasClass('notEditable');
-                var model = new quotationModel({validate: false});
+                var model = new QuotationModel({validate: false});
 
                 if (notEditable) {
                     return false;
@@ -141,11 +145,11 @@ define([
                 model.fetch({
                     data   : {contentType: this.contentType},
                     success: function (model) {
-                        new editView({model: model});
+                        new EditView({model: model});
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Please refresh browser"
                         });
                     }

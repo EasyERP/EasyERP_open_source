@@ -24,6 +24,7 @@ define([
     ],
 
     function (listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
+        'use strict';
         var wTrackListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -65,8 +66,8 @@ define([
                 "click td.editable"                                : "editRow",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc"                                 : "autoCalc",
-                "change .editable"                                : "setEditable",
-                "keydown input.editing"                           : "keyDown",
+                "change .editable"                                 : "setEditable",
+                "keydown input.editing"                            : "keyDown",
                 "click"                                            : "removeInputs"
             },
 
@@ -256,7 +257,7 @@ define([
 
                     if (value === '') {
                         if (el.children('input').length) {
-                            value = input.val() || '0' ; // in case of empty input
+                            value = input.val() || '0'; // in case of empty input
 
                         } else {
                             value = '0';
@@ -756,7 +757,7 @@ define([
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                    if (model){
+                    if (model) {
                         model.changed = this.changedModels[id];
                     }
                 }
@@ -1247,7 +1248,7 @@ define([
                     self.responseObj['#project'] = projects;
                 });
 
-                dataService.getData("/employees/getForDD", null, function (employees) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -1257,7 +1258,7 @@ define([
                     self.responseObj['#employee'] = employees;
                 });
 
-                dataService.getData("/departments/getForDD", null, function (departments) {
+                dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, null, function (departments) {
                     departments = _.map(departments.data, function (department) {
                         department.name = department.departmentName;
 
@@ -1281,7 +1282,7 @@ define([
                 this.$saveBtn = $('#top-bar-saveBtn');
 
                 return this;
-            },
+            }
         });
 
         return wTrackListView;

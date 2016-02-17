@@ -6,9 +6,10 @@ define([
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
         "models/PersonsModel",
-        'populate'
+        'populate',
+        'constants'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, PersonsModel, populate) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, PersonsModel, populate, CONSTANTS) {
         var CreateProductItemTemplate = Backbone.View.extend({
             el         : '#createProductItemHolder',
             contentType: "ProductItem",
@@ -69,10 +70,10 @@ define([
                         }]
 
                 });
-                populate.get2name("#product", "/Customers", {}, this, true, true);
-                populate.get2name("#sourceLocation", "/Customers", {}, this, true, true);
-                populate.get2name("#destinationLocation", "/Customers", {}, this, true, true);
-                populate.get2name("#invoiceControl", "/Customers", {}, this, true, true);
+                populate.get2name("#product", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
+                populate.get2name("#sourceLocation", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
+                populate.get2name("#destinationLocation", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
+                populate.get2name("#invoiceControl", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
 
                 this.delegateEvents(this.events);
 

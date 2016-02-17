@@ -1,4 +1,6 @@
 define([
+        'Underscore',
+        'jQuery',
         'views/listViewBase',
         'text!templates/Invoice/list/ListHeader.html',
         'text!templates/stages.html',
@@ -9,15 +11,17 @@ define([
         'views/Order/list/ListTotalView',
         'collections/Invoice/filterCollection',
         'views/Filter/FilterView',
-        'common',
-        'dataService'
+        'dataService',
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, listTotalView, contentCollection, filterView, common, dataService) {
+    function (_, $, listViewBase, listTemplate, stagesTemplate, CreateView, EditView, InvoiceModel, ListItemView, ListTotalView, contentCollection, filterView, dataService, CONSTANTS) {
+        'use strict';
+
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             filterView              : filterView,
             totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
@@ -29,7 +33,7 @@ define([
                 this.collection.unbind();
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
-                this.filter = options.filter ? options.filter : {};
+                this.filter = options.filter || {};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -56,11 +60,10 @@ define([
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
                 var id = targetElement.attr("id");
-                var status = target$.attr("data-status");
                 var model = this.collection.get(id);
 
                 model.save({
-                    workflow: target$.attr("id"),
+                    workflow: target$.attr("id")
                 }, {
                     headers : {
                         mid: 55
@@ -81,15 +84,14 @@ define([
                     this.hideNewSelect();
 
                     return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {
-                        stagesCollection: this.stages
-                    }));
-                    return false;
                 }
+                $(e.target).parent().append(_.template(stagesTemplate, {
+                    stagesCollection: this.stages
+                }));
+                return false;
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").remove();
             },
 
@@ -105,7 +107,7 @@ define([
                 $currentEl.html('');
 
                 $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection : self.collection,
                     page       : self.page,
                     itemsNumber: self.collection.namberToShow
@@ -115,16 +117,16 @@ define([
 
                 $currentEl.append(itemView.render());
 
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+                $currentEl.append(new ListTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
                 this.renderCheckboxes();
 
                 this.renderPagination($currentEl, this);
-                this.renderFilter(self,  {name: 'forSales', value: {key: 'forSales', value: [false]}});
+                this.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-                dataService.getData("/workflows/fetch", {
+                dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                     wId         : 'Purchase Invoice',
                     source      : 'purchase',
                     targetSource: 'invoice'
@@ -132,8 +134,8 @@ define([
                     self.stages = stages;
 
                     /*dataService.getData('/invoice/getFilterValues', null, function (values) {
-                        self.renderFilter(self);
-                    })*/
+                     self.renderFilter(self);
+                     })*/
 
                 });
             },
@@ -143,7 +145,7 @@ define([
 
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new invoiceModel({validate: false});
+                var model = new InvoiceModel({validate: false});
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
                     data   : {
@@ -151,11 +153,11 @@ define([
                         forSales: self.forSales
                     },
                     success: function (model) {
-                        new editView({model: model});
+                        new EditView({model: model});
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
@@ -163,20 +165,20 @@ define([
             },
 
             /*renderFilter: function (self, stages, values) {
-                self.filterView = new this.filterView({collection: stages, customCollection: values});
+             self.filterView = new this.filterView({collection: stages, customCollection: values});
 
-                self.filterView.bind('filter', function (filter) {
-                    filter.forSales = {key: 'forSales', value: false};
-                    self.showFilteredPage(filter, self)
-                });
-                self.filterView.bind('defaultFilter', function () {
-                    filter.forSales = {key: 'forSales', value: false};
-                    self.showFilteredPage({}, self);
-                });
+             self.filterView.bind('filter', function (filter) {
+             filter.forSales = {key: 'forSales', value: false};
+             self.showFilteredPage(filter, self)
+             });
+             self.filterView.bind('defaultFilter', function () {
+             filter.forSales = {key: 'forSales', value: false};
+             self.showFilteredPage({}, self);
+             });
 
-                self.filterView.render();
+             self.filterView.render();
 
-            },*/
+             },*/
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 var holder = this.$el;
@@ -200,14 +202,14 @@ define([
                 if (deleteCounter !== this.collectionLength) {
 
                     created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({
+                    created.before(new ListItemView({
                         collection : this.collection,
                         page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
 
-                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 7}).render());
+                holder.append(new ListTotalView({element: holder.find("#listTable"), cellSpan: 7}).render());
 
                 //this.recalculateTotal();   //-----------------------------!
                 if (this.collection.length === 0) {

@@ -542,7 +542,7 @@ define([
                 }).render().el
             );
 
-            populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+            populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
             populate.get("#destination", "/destination", {}, 'name', this, false, true);
             populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
@@ -551,12 +551,12 @@ define([
             populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
             if (App.weTrack && this.forSales) {
-                populate.get("#supplierDd", "/Customers", {}, "fullName", this, false, false);
+                populate.get("#supplierDd", CONSTANTS.URLS.CUSTOMERS, {}, "fullName", this, false, false);
 
                 populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
 
             } else {
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             }
 
             this.$el.find('#orderDate').datepicker({

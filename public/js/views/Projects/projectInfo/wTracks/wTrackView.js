@@ -14,9 +14,10 @@ define([
     'collections/wTrack/filterCollection',
     'dataService',
     'populate',
-    'async'
+    'async',
+    'constants'
 
-], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async) {
+], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async, CONSTANTS) {
     var wTrackView = listView.extend({
 
         el                      : '#timesheet',
@@ -780,7 +781,7 @@ define([
                 self.responseObj['#project'] = projects;
             });
 
-            dataService.getData("/employees/getForDD", null, function (employees) {
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -790,7 +791,7 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData("/departments/getForDD", null, function (departments) {
+            dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, null, function (departments) {
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 

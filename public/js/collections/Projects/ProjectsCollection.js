@@ -1,11 +1,16 @@
 define([
-        'models/ProjectsModel'
+        'Backbone',
+        'jQuery',
+        'models/ProjectsModel',
+        'constants'
     ],
-    function (ProjectModel) {
+    function (Backbone, $, ProjectModel, CONSTANTS) {
+        'use strict';
+
         var ProjectsCollection = Backbone.Collection.extend({
             model     : ProjectModel,
             url       : function () {
-                return "/Projects";
+                return CONSTANTS.URLS.PROJECTS;
             },
             initialize: function () {
                 var mid = 39;
@@ -21,7 +26,6 @@ define([
                 });
             },
 
-            parse: true,
             parse: function (response) {
                 return response.data;
             }

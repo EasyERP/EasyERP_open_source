@@ -15,7 +15,7 @@ define([
     "models/PaymentModel",
     "common",
     "populate",
-    'constants'], function (Backbone, $, _, CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, /*invoiceView, */PaymentModel, common, populate, constants) {
+    'constants'], function (Backbone, $, _, CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, /*invoiceView, */PaymentModel, common, populate, CONSTANTS) {
     var CreateView = Backbone.View.extend({
         el         : "#paymentHolder",
         contentType: "Payment",
@@ -260,7 +260,7 @@ define([
                 ]
             });
 
-            populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+            populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             populate.get("#period", "/period", {}, 'name', this, true, true);
             populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true);
 

@@ -1,13 +1,18 @@
 define([
-        'models/EmployeesModel'
+        'Backbone',
+        'jQuery',
+        'models/EmployeesModel',
+        'constants'
     ],
-    function (EmployeeModel) {
+    function (Backbone, $, EmployeeModel, CONSTANTS) {
+        'use strict';
+
         var EmployeesCollection = Backbone.Collection.extend({
-            model         : EmployeeModel,
-            url           : function () {
-                return "/employees";
+            model     : EmployeeModel,
+            url       : function () {
+                return CONSTANTS.URLS.EMPLOYEES;
             },
-            initialize    : function () {
+            initialize: function () {
                 var mid = 39;
                 this.fetch({
                     data   : $.param({
@@ -18,6 +23,7 @@ define([
                     success: this.fetchSuccess
                 });
             },
+
             filterByLetter: function (letter) {
                 var filtered = this.filter(function (data) {
                     return data.get("name").last.toUpperCase().startsWith(letter);
@@ -25,11 +31,9 @@ define([
                 return new EmployeesCollection(filtered);
             },
 
-            parse: true,
-
             parse: function (response) {
                 return response.data;
-            },
+            }
         });
         return EmployeesCollection;
     });

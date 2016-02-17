@@ -6,8 +6,9 @@ define([
     "dataService",
     'common',
     "populate",
-    'moment'
-], function (bonusTemplate, selectView, createView, currentModel, dataService, common, populate, moment) {
+    'moment',
+    'constants'
+], function (bonusTemplate, selectView, createView, currentModel, dataService, common, populate, moment, CONSTANTS) {
     var BonusView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -274,7 +275,7 @@ define([
 
             self.$el.find('#removeBonus').hide();
 
-            dataService.getData("/employees/getForDD", null, function (employees) {
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 

@@ -1,32 +1,36 @@
 define([
-        "models/ProfilesModel"
+        'Backbone',
+        'jQuery',
+        "models/ProfilesModel",
+        'constants'
     ],
-    function (ProfilesModel) {
+    function (Backbone, $, ProfilesModel, CONSTANTS) {
+        'use strict';
+
         var ProfilesCollection = Backbone.Collection.extend({
             model     : ProfilesModel,
             url       : function () {
-                return "/Profiles";
+                return CONSTANTS.URLS.PROFILES;
             },
             initialize: function () {
                 this.startTime = new Date();
-                mid = 39;
+                var mid = 39;
                 this.fetch({
                     data   : $.param({
                         mid: mid
                     }),
                     reset  : true,
                     success: this.fetchSuccess,
-                    error  : function (models, xhr, options) {
+                    error  : function (models, xhr) {
                         if ((xhr.status === 401) || (xhr.status === 403)) {
                             Backbone.history.navigate('#login');
                         }
                     }
                 });
             },
-            parse     : true,
             parse     : function (response) {
                 return response.data;
-            },
+            }
         });
         return ProfilesCollection;
     });

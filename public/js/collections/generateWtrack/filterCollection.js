@@ -1,27 +1,24 @@
 define([
-        'models/GenerateWtrack'
+        'Backbone',
+        'models/GenerateWtrack',
+        'constants'
     ],
-    function (wTrackModel) {
+    function (Backbone, wTrackModel, CONSTANTS) {
+        'use strict';
+
         var wTrackCollection = Backbone.Collection.extend({
             model      : wTrackModel,
-            url        : "/wTrack/",
+            url        : CONSTANTS.URLS.WTRACK,
             viewType   : null,
             contentType: null,
-
-            initialize: function (options) {
-            },
 
             save: function () {
                 var self = this;
                 var model;
                 var newModel;
-                var dateByWeek;
-                var dateByMonth;
-                var year;
-                var month;
-                var week;
+                var i;
 
-                for (var i = this.models.length - 1; i >= 0; i--) {
+                for (i = this.models.length - 1; i >= 0; i--) {
                     model = this.models[i];
 
                     var saveObject = {

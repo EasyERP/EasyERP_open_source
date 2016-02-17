@@ -221,14 +221,14 @@ define([
             window.location.hash = "#easyErp/Employees/form/" + itemIndex;
         },
 
-        render: function () {
-            var self = this;
-            dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response, context) {
-                dataService.getData('/employees/getForDdByRelatedUser', null, function (relatedEmployee) {
-                    var date = new Date();
-                    var minutes = date.getTimezoneOffset();
-                    var timezone;
-                    var model;
+            render: function () {
+                var self = this;
+                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response, context) {
+                    dataService.getData(CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, null, function (relatedEmployee) {
+                        var date = new Date();
+                        var minutes = date.getTimezoneOffset();
+                        var timezone;
+                        var model;
 
                     if (minutes < 0) {
                         timezone = ("UTC +" + (minutes / 60) * (-1));

@@ -1,10 +1,14 @@
 ﻿define([
-        'models/ApplicationsModel'
+        'Backbone',
+        'models/ApplicationsModel',
+        'constants'
     ],
-    function (ApplicationModel) {
+    function (Backbone, ApplicationModel, CONSTANTS) {
+        'use strict';
+
         var TasksCollection = Backbone.Collection.extend({
             model       : ApplicationModel,
-            url         : "/applications/",
+            url         : CONSTANTS.URLS.APPLICATIONS,
             page        : null,
             namberToShow: null,
             contentType : null,
@@ -33,7 +37,7 @@
 
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
@@ -45,10 +49,10 @@
 
                 var filterObject = options || {};
 
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
                 this.fetch({
                     data   : filterObject,
                     waite  : true,
@@ -58,7 +62,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

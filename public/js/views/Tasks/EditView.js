@@ -5,16 +5,17 @@
         'views/Notes/AttachView',
         "common",
         "populate",
-        "custom"
+        "custom",
+        'constants'
     ],
-    function (EditTemplate, selectView, noteView, attachView, common, populate, custom) {
+    function (EditTemplate, selectView, noteView, attachView, common, populate, custom, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Tasks",
             template   : _.template(EditTemplate),
             responseObj: {},
 
-            initialize : function (options) {
+            initialize: function (options) {
                 _.bindAll(this, "render", "saveItem", "deleteItem");
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = '/Tasks';
@@ -197,7 +198,7 @@
                                 tr_holder.eq(8).text(logged);
                                 tr_holder.eq(9).find('a').text(editHolder.find("#type").text());
                                 tr_holder.eq(10).find('progress').val(progress);
-                                if (data.workflow || currentProject._id !== project ) { // added condition if changed project, taskId need refresh
+                                if (data.workflow || currentProject._id !== project) { // added condition if changed project, taskId need refresh
                                     Backbone.history.fragment = "";
                                     Backbone.history.navigate(window.location.hash.replace("#", ""), {trigger: true});
                                 }
@@ -262,7 +263,7 @@
                 return false;
             },
 
-            deleteItem   : function (event) {
+            deleteItem: function (event) {
                 var mid = 39;
                 event.preventDefault();
                 var self = this;
@@ -298,7 +299,7 @@
                     });
                 }
             },
-            render       : function () {
+            render    : function () {
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
@@ -338,8 +339,8 @@
                     }).render().el
                 );
                 populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Tasks"}, "name", this);
-                populate.get2name("#assignedToDd", "/employees/getPersonsForDd", {}, this);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Tasks"}, "name", this);
+                populate.get2name("#assignedToDd", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
                 populate.getPriority("#priorityDd", this);
                 this.delegateEvents(this.events);
                 $('#StartDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});

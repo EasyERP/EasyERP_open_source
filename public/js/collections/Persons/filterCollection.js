@@ -1,12 +1,14 @@
 ﻿define([
+        'Backbone',
         'models/PersonsModel',
-        'common',
-        'dataService'
+        'dataService',
+        'constants'
     ],
-    function (PersonModel, common, dataService) {
+    function (Backbone, PersonModel, dataService, CONSTANTS) {
+        'use strict';
         var PersonsCollection = Backbone.Collection.extend({
             model       : PersonModel,
-            url         : "/persons/",
+            url         : CONSTANTS.URLS.PERSONS,
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -30,7 +32,7 @@
                         that.page++;
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
@@ -41,11 +43,11 @@
                 var that = this;
                 var filterObject = options || {};
 
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['filter'] = (options) ? options.filter : {};
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.filter = options ? options.filter : {};
 
                 this.fetch({
                     data   : filterObject,
@@ -56,7 +58,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }
@@ -66,11 +68,11 @@
                 var that = this;
                 var filterObject = options || {};
                 that.page = 1;
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['filter'] = (options) ? options.filter : {};
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.filter = options ? options.filter : {};
                 this.fetch({
                     data   : filterObject,
                     waite  : true,
@@ -80,7 +82,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

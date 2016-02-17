@@ -8,9 +8,10 @@
         "common",
         "custom",
         "populate",
-        "dataService"
+        "dataService",
+        'constants'
     ],
-    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService) {
+    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, CONSTANTS) {
         "use strict";
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -27,14 +28,14 @@
                 this.render();
             },
 
-            events       : {
-                "click .breadcrumb a, #lost, #won"                                : "changeWorkflow",
-                "click #tabList a"                                                : "switchTab",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect"
+            events: {
+                "click .breadcrumb a, #lost, #won"                 : "changeWorkflow",
+                "click #tabList a"                                 : "switchTab",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect"
             },
 
             hideNewSelect: function () {
@@ -67,7 +68,7 @@
                 return false;
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 if (holder.attr("id") === 'customerDd') {
@@ -109,7 +110,7 @@
             },
 
             selectCustomer: function (id) {
-                dataService.getData('/Customers', {
+                dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                     id: id
                 }, function (response, context) {
                     var customer = response.data[0];
@@ -454,10 +455,10 @@
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 var model = this.currentModel.toJSON();
                 populate.getPriority("#priorityDd", this);
-                populate.get2name("#customerDd", "/Customers", {}, this, false, true);
-                populate.get2name("#salesPersonDd", "/employees/getForDdByRelatedUser", {}, this, false, true);
-                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Opportunities"}, "name", this);
-                populate.get("#salesTeamDd", "/departments/getForDD", {}, "departmentName", this, false, true);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, false, true);
+                populate.get2name("#salesPersonDd", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, false, true);
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Opportunities"}, "name", this);
+                populate.get("#salesTeamDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, false, true);
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();

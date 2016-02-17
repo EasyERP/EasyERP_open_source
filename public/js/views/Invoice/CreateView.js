@@ -282,11 +282,11 @@ define([
                     new listHederInvoice().render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+                populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
-                populate.get2name("#supplier", "/supplier", {}, this, false, true);
+                populate.get2name("#supplier", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
-                populate.get2name("#salesPerson", "/employees/getForDdByRelatedUser", {}, this, true, true);
+                populate.get2name("#salesPerson", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
                 populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                     if (!response.error) {
                         self.defaultWorkflow = response._id;

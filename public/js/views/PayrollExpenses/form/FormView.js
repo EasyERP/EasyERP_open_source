@@ -16,10 +16,11 @@ define([
         "moment",
         "populate",
         "dataService",
-        "async"
+        "async",
+        'constants'
     ],
 
-    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
+    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, CONSTANTS) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
@@ -33,18 +34,18 @@ define([
             },
 
             events: {
-                "click .checkbox"                                                 : "checked",
-                "click td.editable"                                               : "editRow",
-                "click .newSelectList li"                                         : "chooseOption",
-                "change .autoCalc"                                                : "autoCalc",
-                "change .editable"                                                : "setEditable",
-                "keydown input.editing"                                           : "keyDown",
-                "click #expandAll"                                                : "expandAll",
-                "click"                                                           : "removeNewSelect",
-                "click .diff"                                                     : "newPayment",
-               // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .checkbox"        : "checked",
+                "click td.editable"      : "editRow",
+                "click .newSelectList li": "chooseOption",
+                "change .autoCalc"       : "autoCalc",
+                "change .editable"       : "setEditable",
+                "keydown input.editing"  : "keyDown",
+                "click #expandAll"       : "expandAll",
+                "click"                  : "removeNewSelect",
+                "click .diff"            : "newPayment",
+                // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .oe_sortable"                                              : "goSort"
+                "click .oe_sortable"     : "goSort"
             },
 
             cancelChanges: function (e) {
@@ -190,7 +191,7 @@ define([
             hideNewSelect: function () {
                 $(".newSelectList").remove();
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove();
                 }
             },
@@ -261,7 +262,7 @@ define([
                     });
                 } else {
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Please, check at most one unpaid item."
                     });
                 }
@@ -373,7 +374,7 @@ define([
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -546,7 +547,7 @@ define([
             removeNewSelect: function () {
                 $('.newSelectList').remove();
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove()
                 }
             },
@@ -837,8 +838,8 @@ define([
                 } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
-                    tempContainer + '" value="' + tempContainer +
-                    '"  maxLength="4" style="display: block;" />';
+                        tempContainer + '" value="' + tempContainer +
+                        '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -1057,7 +1058,7 @@ define([
             },
 
             filterEmployeesForDD: function (content) {
-                dataService.getData("/employees/getForDD", null, function (employees) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 

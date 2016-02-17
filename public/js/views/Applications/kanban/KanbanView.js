@@ -1,28 +1,29 @@
 ﻿define([
-    'Backbone',
-    'jQuery',
-    'Underscore',
-    'text!templates/Applications/kanban/WorkflowsTemplate.html',
-    'text!templates/Applications/kanbanSettings.html',
-    'collections/Workflows/WorkflowsCollection',
-    'views/Applications/kanban/KanbanItemView',
-    'views/Applications/EditView',
-    'views/Applications/CreateView',
-    'collections/Applications/ApplicationsCollection',
-    'models/ApplicationsModel',
-    'dataService',
-    'constants'
-], function (Backbone, $, _, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, dataService, CONSTANTS) {
-    'use strict';
-    var collection = new ApplicationsCollection();
-    var ApplicationsKanbanView = Backbone.View.extend({
-        el    : '#content-holder',
-        events: {
-            "dblclick .item"    : "gotoEditForm",
-            "click .item"       : "selectItem",
-            "click .column.fold": "foldUnfoldKanban",
-            "click .fold-unfold": "foldUnfoldKanban"
-        },
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Applications/kanban/WorkflowsTemplate.html',
+        'text!templates/Applications/kanbanSettings.html',
+        'collections/Workflows/WorkflowsCollection',
+        'views/Applications/kanban/KanbanItemView',
+        'views/Applications/EditView',
+        'views/Applications/CreateView',
+        'collections/Applications/ApplicationsCollection',
+        'models/ApplicationsModel',
+        'dataService',
+        'constants'
+    ],
+    function (Backbone, $, _, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, dataService, CONSTANTS) {
+        'use strict';
+        var collection = new ApplicationsCollection();
+        var ApplicationsKanbanView = Backbone.View.extend({
+            el    : '#content-holder',
+            events: {
+                "dblclick .item"    : "gotoEditForm",
+                "click .item"       : "selectItem",
+                "click .column.fold": "foldUnfoldKanban",
+                "click .fold-unfold": "foldUnfoldKanban"
+            },
 
         columnTotalLength: null,
         initialize       : function (options) {
@@ -90,66 +91,66 @@
             return true;
         },
 
-        saveKanbanSettings: function () {
-            var countPerPage = $(this).find('#cPerPage').val();
-            if (countPerPage === 0) {
-                countPerPage = 5;
-            }
-            dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.applications.countPerPage': countPerPage}, function (error, success) {
-                if (success) {
-                    $(".edit-dialog").remove();
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate("easyErp/Applications", {trigger: true});
-                } else {
-                    Backbone.history.navigate("easyErp", {trigger: true});
+            saveKanbanSettings: function () {
+                var countPerPage = $(this).find('#cPerPage').val();
+                if (countPerPage === 0) {
+                    countPerPage = 5;
                 }
-            });
-        },
+                dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.applications.countPerPage': countPerPage}, function (error, success) {
+                    if (success) {
+                        $(".edit-dialog").remove();
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate("easyErp/Applications", {trigger: true});
+                    } else {
+                        Backbone.history.navigate("easyErp", {trigger: true});
+                    }
+                });
+            },
 
         hideDialog: function () {
             $(".edit-dialog").remove();
         },
 
-        editKanban: function () {
-            dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (user, context) {
-                var tempDom = _.template(kanbanSettingsTemplate, {applications: user.user.kanbanSettings.applications});
-                context.$el = $(tempDom).dialog({
-                    dialogClass: "edit-dialog",
-                    width      : "400",
-                    title      : "Edit Kanban Settings",
-                    buttons    : {
-                        save  : {
-                            text : "Save",
-                            class: "btn",
-                            click: context.saveKanbanSettings
-                        },
-                        cancel: {
-                            text : "Cancel",
-                            class: "btn",
-                            click: function () {
-                                context.hideDialog();
+            editKanban: function () {
+                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (user, context) {
+                    var tempDom = _.template(kanbanSettingsTemplate, {applications: user.user.kanbanSettings.applications});
+                    context.$el = $(tempDom).dialog({
+                        dialogClass: "edit-dialog",
+                        width      : "400",
+                        title      : "Edit Kanban Settings",
+                        buttons    : {
+                            save  : {
+                                text : "Save",
+                                class: "btn",
+                                click: context.saveKanbanSettings
+                            },
+                            cancel: {
+                                text : "Cancel",
+                                class: "btn",
+                                click: function () {
+                                    context.hideDialog();
+                                }
                             }
                         }
+                    });
+                    context.$el.find('#cPerPage').spinner({
+                        min: 5,
+                        max: 9999
+                    });
+                }, this);
+            },
+
+            getCollectionLengthByWorkflows: function (context) {
+                dataService.getData(CONSTANTS.URLS.APPLICATIONS_WFLENGTH, {}, function (data) {
+                    data.arrayOfObjects.forEach(function (object) {
+                        var column = context.$("[data-id='" + object._id + "']");
+                        column.find('.totalCount').text(object.count);
+                    });
+                    if (data.showMore) {
+                        context.$el.append('<div id="showMoreDiv" title="To show mor ellements per column, please change kanban settings">And More</div>');
                     }
                 });
-                context.$el.find('#cPerPage').spinner({
-                    min: 5,
-                    max: 9999
-                });
-            }, this);
-        },
-
-        getCollectionLengthByWorkflows: function (context) {
-            dataService.getData('/applications/getApplicationsLengthByWorkflows', {}, function (data) {
-                data.arrayOfObjects.forEach(function (object) {
-                    var column = context.$("[data-id='" + object._id + "']");
-                    column.find('.totalCount').text(object.count);
-                });
-                if (data.showMore) {
-                    context.$el.append('<div id="showMoreDiv" title="To show mor ellements per column, please change kanban settings">And More</div>');
-                }
-            });
-        },
+            },
 
         selectItem: function (e) {
             $(e.target).parents(".item").parents("table").find(".active").removeClass("active");
@@ -168,7 +169,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
@@ -177,7 +178,10 @@
 
             asyncFetc: function (workflows) {
                 _.each(workflows.toJSON(), function (wfModel) {
-                    dataService.getData('/applications/kanban', {workflowId: wfModel._id, viewType: 'kanban'}, this.asyncRender, this);
+                    dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
+                        workflowId: wfModel._id,
+                        viewType  : 'kanban'
+                    }, this.asyncRender, this);
                 }, this);
             },
 
@@ -300,13 +304,13 @@
                     }
                 });
 
-                _.each(workflows, function (wfModel) {
-                    $('.column').children('.item').remove();
-                    dataService.getData('/applications/kanban', {
-                        workflowId: wfModel._id,
-                        filter    : this.filter
-                    }, this.asyncRender, this);
-                }, this);
+                    _.each(workflows, function (wfModel) {
+                        $('.column').children('.item').remove();
+                        dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
+                            workflowId: wfModel._id,
+                            filter    : this.filter
+                        }, this.asyncRender, this);
+                    }, this);
 
                 return false;
             }
@@ -325,16 +329,16 @@
             if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || !chosen.length) {
                 self.filter = {};
 
-                _.each(workflows, function (wfModel) {
-                    $('.column').children('.item').remove();
-                    dataService.getData('/applications/kanban', {
-                        workflowId: wfModel._id,
-                        filter    : this.filter
-                    }, this.asyncRender, this);
-                }, this);
-                showList = _.pluck(workflows, '_id');
-                foldList = [];
-            }
+                    _.each(workflows, function (wfModel) {
+                        $('.column').children('.item').remove();
+                        dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
+                            workflowId: wfModel._id,
+                            filter    : this.filter
+                        }, this.asyncRender, this);
+                    }, this);
+                    showList = _.pluck(workflows, '_id');
+                    foldList = [];
+                }
 
             foldList.forEach(function (id) {
                 var w;

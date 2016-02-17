@@ -1,9 +1,13 @@
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/Departments/form/FormTemplate.html',
         'views/Departments/EditView'
     ],
 
-    function (FormTemplate, EditView) {
+    function (Backbone, _, FormTemplate, EditView) {
+        'use strict';
+
         var FormView = Backbone.View.extend({
             el        : '#content-holder',
             initialize: function (options) {

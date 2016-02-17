@@ -79,7 +79,7 @@ var User = function (event, models) {
 
         }
 
-        if(id && _id !== id){
+        if (id && _id !== id) {
             _id = id;
         }
 
@@ -179,8 +179,6 @@ var User = function (event, models) {
         var count;
         var page;
 
-
-
         query.populate('profile');
 
         if (sortObject) {
@@ -226,8 +224,6 @@ var User = function (event, models) {
         var err;
         var queryObject;
 
-        login = login.toLowerCase();
-
         if (login && data.pass) {
             queryObject = {
                 $or: [
@@ -238,6 +234,7 @@ var User = function (event, models) {
                     }
                 ]
             };
+
             UserModel.findOne(queryObject, {login: 1, pass: 1}, function (err, _user) {
                 var shaSum = crypto.createHash('sha256');
                 var lastAccess;
@@ -462,7 +459,7 @@ var User = function (event, models) {
 
         query = UserModel.findById(id, {__v: 0, pass: 0});
         query
-            .populate('profile')
+            .populate('profile', '_id profileName')
             .populate('relatedEmployee', 'imageSrc name fullName')
             .populate('savedFilters._id');
 
@@ -479,32 +476,7 @@ var User = function (event, models) {
             if (savedFilters) {
                 newUserResult = _.groupBy(savedFilters, '_id.contentView');
             }
-            newUserResult = _.groupBy(savedFilters, '_id.contentView');
-            res.status(200).send({user: result, savedFilters: newUserResult});
-        });
-    };
 
-    this.getCurrent = function (req, res, next) {
-        var id = req.session.uId;
-        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
-        var query;
-
-        query = UserModel.findById(id, {__v: 0, pass: 0});
-        query
-            .populate('profile', '_id profileName')
-            .populate('relatedEmployee', 'imageSrc name fullName')
-            .populate('savedFilters._id');
-
-        query.exec(function (err, result) {
-            var newUserResult;
-            var savedFilters;
-
-            if (err) {
-                return next(err);
-            }
-
-            savedFilters = result.toJSON().savedFilters;
-            newUserResult = _.groupBy(savedFilters, '_id.contentView');
             res.status(200).send({user: result, savedFilters: newUserResult});
         });
     };

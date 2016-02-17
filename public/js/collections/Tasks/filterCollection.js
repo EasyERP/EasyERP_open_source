@@ -1,16 +1,20 @@
 ﻿define([
-        'models/TasksModel'
+        'Backbone',
+        'models/TasksModel',
+        'constants'
     ],
-    function (TaskModel) {
+    function (Backbone, TaskModel, CONSTANTS) {
+        'use strict';
+
         var TasksCollection = Backbone.Collection.extend({
             model       : TaskModel,
-            url         : "/Tasks/",
+            url         : CONSTANTS.URLS.TASKS,
             page        : null,
             namberToShow: null,
             viewType    : null,
             initialize  : function (options) {
                 this.startTime = new Date();
-                this.parrentContentId = (options) ? options.parrentContentId : null;
+                this.parrentContentId = options ? options.parrentContentId : null;
                 if (options && options.count) {
                     this.namberToShow = options.count;
                     this.count = options.count;

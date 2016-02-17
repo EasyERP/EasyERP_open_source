@@ -5,9 +5,10 @@ define([
         "models/LeadsModel",
         "common",
         "populate",
-        "dataService"
+        "dataService",
+        'constants'
     ],
-    function (CreateTemplate, selectView, AssigneesView, LeadModel, common, populate, dataService) {
+    function (CreateTemplate, selectView, AssigneesView, LeadModel, common, populate, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -23,18 +24,18 @@ define([
             },
 
             events: {
-                "click #tabList a"                                                : "switchTab",
-                "change #workflowNames"                                           : "changeWorkflows",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click"                                                           : "hideNewSelect",
-                "click .current-selected"                                         : "showNewSelect"
+                "click #tabList a"                                 : "switchTab",
+                "change #workflowNames"                            : "changeWorkflows",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click"                                            : "hideNewSelect",
+                "click .current-selected"                          : "showNewSelect"
             },
 
             selectCustomer: function (id) {
                 if (id != "") {
-                    dataService.getData('/Customers', {
+                    dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                         id: id
                     }, function (response, context) {
                         var customer = response.data[0];
@@ -106,7 +107,7 @@ define([
                 return false;
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 if (holder.attr("id") == 'customerDd') {
@@ -296,11 +297,11 @@ define([
                 );
 
                 populate.getPriority("#priorityDd", this, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/workflows/getWorkflowsForDd", {id: "Leads"}, "name", this, true);
-                populate.get2name("#customerDd", "/Customers", {}, this, true, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Leads"}, "name", this, true);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
                 populate.get("#sourceDd", "/employees/sources", {}, "name", this, true, true);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this, true, true);
-                populate.get2name("#salesPerson", "/employees/getForDdByRelatedUser", {}, this, true, true);
+                populate.get2name("#salesPerson", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
                 this.delegateEvents(this.events);
 
                 return this;

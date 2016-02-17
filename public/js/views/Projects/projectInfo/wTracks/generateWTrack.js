@@ -6,9 +6,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         'populate',
         'dataService',
         'moment',
-        'common'
+        'common',
+    'constants'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common) {
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common, CONSTANTS) {
         "use strict";
         var CreateView = Backbone.View.extend({
                 template                 : _.template(generateTemplate),
@@ -727,7 +728,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         }
                     });
 
-                    dataService.getData("/employees/getForDD", {isEmployee: true}, function (employees) {
+                    dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {isEmployee: true}, function (employees) {
                         employees = _.map(employees.data, function (employee) {
                             employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -737,7 +738,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         self.responseObj['#employee'] = employees;
                     });
 
-                    dataService.getData("/departments/getForDD", null, function (departments) {
+                    dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, null, function (departments) {
                         departments = _.map(departments.data, function (department) {
                             department.name = department.departmentName;
 

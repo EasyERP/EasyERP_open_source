@@ -45,7 +45,7 @@ define([
             this.fetch({
                 data   : options,
                 reset  : true,
-                success: function (newCollection) {
+                success: function () {
 
                 },
                 error  : function (err, xhr) {

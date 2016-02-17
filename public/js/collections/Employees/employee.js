@@ -2,12 +2,16 @@
  * Created by soundstorm on 17.06.15.
  */
 define([
-        'models/EmployeesModel'
+        'Backbone',
+        'models/EmployeesModel',
+        'constants'
     ],
-    function (EmployeeModel) {
+    function (Backbone, EmployeeModel, CONSTANTS) {
+        'use strict';
+
         var EmployeeCollection = Backbone.Collection.extend({
             model: EmployeeModel,
-            url  : "/employees/getForDD",
+            url  : CONSTANTS.URLS.EMPLOYEES_GETFORDD,
 
             initialize: function (options) {
 
@@ -17,7 +21,7 @@ define([
                     success: function () {
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }

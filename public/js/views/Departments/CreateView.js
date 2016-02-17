@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Departments/CreateTemplate.html",
         'views/selectView/selectView',
         "collections/Departments/DepartmentsCollection",
@@ -6,32 +9,34 @@ define([
         "models/DepartmentsModel",
         "common",
         "custom",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (CreateTemplate, selectView, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate) {
+    function (Backbone, $, _, CreateTemplate, selectView, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate, CONSTANTS) {
+        'use strict';
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Departments",
             template   : _.template(CreateTemplate),
 
-            initialize    : function (options) {
+            initialize: function () {
                 _.bindAll(this, "saveItem", "render");
                 this.departmentsCollection = new DepartmentsCollection();
                 this.model = new DepartmentsModel();
                 this.responseObj = {};
+
                 this.render();
             },
-            events        : {
-                'click .dialog-tabs a'                                            : 'changeTab',
-                'click #sourceUsers li'                                           : 'addUsers',
-                'click #targetUsers li'                                           : 'removeUsers',
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                "click .prevUserList"                                             : "prevUserList",
-                "click .nextUserList"                                             : "nextUserList",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
-                // 'keydown': 'keydownHandler'
+            events    : {
+                'click .dialog-tabs a'                             : 'changeTab',
+                'click #sourceUsers li'                            : 'addUsers',
+                'click #targetUsers li'                            : 'removeUsers',
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect",
+                "click .prevUserList"                              : "prevUserList",
+                "click .nextUserList"                              : "nextUserList",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
             keydownHandler: function (e) {
@@ -53,17 +58,17 @@ define([
                 var list = el.find("ul");
                 var count = list.find("li").length;
                 var s = "";
-                var page = parseInt(list.attr("data-page"));
+                var page = parseInt(list.attr("data-page"), 10);
                 if (page > 1) {
                     el.find(".userPagination").prepend("<a class='prevUserList' href='javascript:;'>« prev</a>");
                 }
                 if (count === 0) {
                     s += "0-0 of 0";
                 } else {
-                    if ((page) * 20 - 1 < count) {
-                        s += ((page - 1) * 20 + 1) + "-" + ((page) * 20) + " of " + count;
+                    if (page * 20 - 1 < count) {
+                        s += ((page - 1) * 20 + 1) + "-" + (page * 20) + " of " + count;
                     } else {
-                        s += ((page - 1) * 20 + 1) + "-" + (count) + " of " + count;
+                        s += ((page - 1) * 20 + 1) + "-" + count + " of " + count;
                     }
                 }
 
@@ -143,7 +148,7 @@ define([
                             mid: mid
                         },
                         wait   : true,
-                        success: function (model) {
+                        success: function () {
                             Backbone.history.navigate("easyErp/Departments", {trigger: true});
                         },
                         error  : function (model, xhr) {
@@ -162,7 +167,7 @@ define([
                 }
             },
 
-            showNewSelect: function (e, prev, next) {
+            showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
@@ -212,7 +217,7 @@ define([
                         }]
 
                 });
-                populate.get2name("#departmentManager", "/employees/getPersonsForDd", {}, this, true, true);
+                populate.get2name("#departmentManager", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true, true);
                 populate.getParrentDepartment("#parentDepartment", "/departments/getSalesTeam", {}, this, true, true);
                 common.populateUsersForGroups('#sourceUsers', '#targetUsers', null, 1);
                 this.delegateEvents(this.events);

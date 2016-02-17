@@ -19,9 +19,10 @@ define([
         'async',
         'helpers/keyCodeHelper',
         'views/listViewBase',
-        'helpers'
+        'helpers',
+    'constants'
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase,helpers) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase,helpers, CONSTANTS) {
         var PaymentListView = ListViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -433,7 +434,7 @@ define([
 
                 self.renderPagination($currentEl, self);
 
-                dataService.getData("/employees/getForDD", null, function (employees) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 

@@ -1,12 +1,16 @@
 ﻿define([
+        'Backbone',
         'models/EmployeesModel',
-        'common'
+        'common',
+        'constants'
     ],
-    function (EmployeeModel, common) {
+    function (Backbone, EmployeeModel, common, CONSTANTS) {
+        'use strict';
+
         var EmployeesCollection = Backbone.Collection.extend({
             model     : EmployeeModel,
-            url       : "/Birthdays",
-            initialize: function (options) {
+            url       : CONSTANTS.URLS.BIRTHDAYS,
+            initialize: function () {
                 this.startTime = new Date();
                 this.fetch({
                     reset  : true,
@@ -15,7 +19,6 @@
                     error  : this.fetchError
                 });
             },
-            parse     : true,
             parse     : function (response) {
                 if (response.data) {
                     if (response.data.weekly) {

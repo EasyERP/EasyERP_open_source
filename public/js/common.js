@@ -2,8 +2,8 @@
     'Backbone',
     'jQuery',
     'dataService',
-    'dateFormat'
-], function (Backbone, $, dataService, dateFormat) {
+    'moment'
+], function (Backbone, $, dataService, moment) {
     'use strict';
     var checkBackboneFragment = function (url) {
 
@@ -15,22 +15,22 @@
     };
 
     var utcDateToLocaleDate = function (utcDateString) {
-        utcDateString = utcDateString ? dateFormat(utcDateString, "d mmm, yyyy", false) : null;
+        utcDateString = utcDateString ? moment(utcDateString).format("D mmm, YYYY") : null;
 
         return utcDateString;
     };
 
     var utcDateToLocaleFullDateTime = function (utcDateString) {
-        utcDateString = utcDateString ? dateFormat(utcDateString, "dddd, d mm yyyy HH:MM:s TT", false) : null;
+        utcDateString = utcDateString ? moment(utcDateString).format("dddd, D MM YYYY HH:mm:s") : null;
 
         return utcDateString;
     };
 
     var utcDateToLocaleDateTime = function (utcDateString, notHours) {
         if (!notHours) {
-            utcDateString = utcDateString ? dateFormat(utcDateString, "d/m/yyyy HH:MM", false) : null;
+            utcDateString = utcDateString ? moment(utcDateString).format('D/M/YYYY hh:mm') : null;
         } else {
-            utcDateString = utcDateString ? dateFormat(utcDateString, "d/m/yyyy", false) : null;
+            utcDateString = utcDateString ? moment(utcDateString).format('D/M/YYYY') : null;
         }
         return utcDateString;
     };

@@ -1,9 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Degrees/TopBarTemplate.html',
         'custom',
         'Common'
     ],
-    function (ContentTopBarTemplate, Custom, Common) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, Common) {
+        'use strict';
+
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Degrees",
@@ -46,7 +51,7 @@ define([
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     this.trigger('deleteEvent');
                 }
             },

@@ -1,7 +1,7 @@
 var allTestFiles = [];
 var TEST_REGEXP = /(spec|test)\.js$/i;
 var App = App || {
-        render: function(options){
+        render: function (options) {
             "use strict";
             return options;
         }
@@ -23,39 +23,41 @@ require.config({
     baseUrl: '/base',
     paths  : {
         models       : './public/js/models',
-        views       : './public/js/views',
+        collections  : './public/js/collections',
+        views        : './public/js/views',
         templates    : './public/templates',
         jQuery       : './public/js/libs/jquery-2.1.0.min.map',
         //jqueryPrivate       : './test/uiSpecs/jqueryPrivate',
         Underscore   : './public/js/libs/underscore-min.map.1.6.0',
         Backbone     : './public/js/libs/backbone-min.map.1.1.2',
         text         : './public/js/libs/text',
-        Validation: './public/js/Validation',
-        custom: './public/js/custom',
-        common: './public/js/common',
-        constants: './public/js/constants',
-        dataService: './public/js/dataService',
-        moment: './public/js/libs/moment/moment',
-        libs: './public/js/libs',
-        chai: './node_modules/chai/chai',
+        Validation   : './public/js/Validation',
+        custom       : './public/js/custom',
+        common       : './public/js/common',
+        populate       : './public/js/populate',
+        constants    : './public/js/constants',
+        dataService  : './public/js/dataService',
+        moment       : './public/js/libs/moment/moment',
+        libs         : './public/js/libs',
+        chai         : './node_modules/chai/chai',
         'chai-jquery': './node_modules/chai-jquery/chai-jquery',
-        'sinon-chai': './node_modules/sinon-chai/lib/sinon-chai',
-        fixtures: './test/uiSpecs/fixtures'
+        'sinon-chai' : './node_modules/sinon-chai/lib/sinon-chai',
+        fixtures     : './test/uiSpecs/fixtures'
     },
     shim   : {
-        'Underscore': {
+        'Underscore' : {
             exports: '_'
         },
-        'jQuery': {
+        'jQuery'     : {
             exports: '$'
         },
         'chai-jquery': ['jQuery', 'chai'],
-        'Backbone'  : ['Underscore', 'jQuery']
+        'Backbone'   : ['Underscore', 'jQuery']
     },
     /*map: {
-        '*': { 'jQuery': 'jqueryPrivate' },
-        'jqueryPrivate': { 'jQuery': 'jQuery' }
-    },*/
+     '*': { 'jQuery': 'jqueryPrivate' },
+     'jqueryPrivate': { 'jQuery': 'jQuery' }
+     },*/
     // dynamically load all test files
     deps   : allTestFiles,
 

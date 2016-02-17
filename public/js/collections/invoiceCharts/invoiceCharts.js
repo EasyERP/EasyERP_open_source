@@ -1,8 +1,10 @@
 ﻿define([
     'Backbone',
-    'moment'
-], function (Backbone, moment) {
+    'moment',
+    'constants'
+], function (Backbone, moment, CONSTANTS) {
     "use strict";
+
     var Model = Backbone.Model.extend({
         idAttribute: '_id',
 
@@ -51,7 +53,7 @@
     var Colection = Backbone.Collection.extend({
         model: Model,
 
-        url: 'revenue/synthetic',
+        url: CONSTANTS.URLS.REVENUE_SYNTHETIC,
 
         initialize: function (options) {
             options = options || {};

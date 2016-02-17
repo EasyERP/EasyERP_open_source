@@ -1,11 +1,17 @@
-define(function () {
+define([
+    'Backbone',
+    'jQuery',
+    'constants'
+], function (Backbone, $, CONSTANTS) {
+    'use strict';
+
     var CustomerModel = Backbone.Model.extend({
         idAttribute: '_id'
     });
     var CustomersCollection = Backbone.Collection.extend({
         model     : CustomerModel,
         url       : function () {
-            return "/customers";
+            return CONSTANTS.URLS.CUSTOMERS;
         },
         initialize: function () {
             var mid = 39;
@@ -19,8 +25,6 @@ define(function () {
                 error  : this.fetchError
             });
         },
-
-        parse: true,
 
         parse: function (response) {
             return response.data;

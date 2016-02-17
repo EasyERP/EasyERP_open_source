@@ -16,13 +16,15 @@ module.exports = function (config) {
             {pattern: 'test/uiSpecs/jqueryPrivate.js', included: false, watching: false},
             {pattern: 'public/js/libs/text.js', included: false, watching: false},
             {pattern: 'public/js/libs/moment/moment.js', included: false, watching: false},
-            {pattern: 'public/js/libs/date.format.js', included: false, watching: false},
+            {pattern: 'public/js/populate.js', included: false, watching: false},
+            {pattern: 'public/js/dataService.js', included: false, watching: false},
 
             {pattern: 'node_modules/chai/chai.js', included: false, watching: false},
             {pattern: 'node_modules/chai-jquery/chai-jquery.js', included: false, watching: false},
             {pattern: 'node_modules/sinon-chai/lib/sinon-chai.js', included: false, watching: false},
 
             {pattern: 'public/js/Validation.js', included: false, watching: false},
+            {pattern: 'public/js/collections/**/*.js', included: false, watching: false},
             {pattern: 'public/js/models/**/*.js', included: false, watching: false},
             {pattern: 'public/js/views/**/*.js', included: false, watching: false},
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
@@ -35,7 +37,8 @@ module.exports = function (config) {
 
         preprocessors: {
             'public/js/models/**/*.js': ['coverage'],
-            'public/js/views/**/*.js' : ['coverage']
+            'public/js/views/**/*.js' : ['coverage'],
+            'public/js/collections/**/*.js' : ['coverage']
         },
 
         coverageReporter: {

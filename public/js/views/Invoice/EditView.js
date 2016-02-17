@@ -521,10 +521,10 @@ define([
                     new listHederInvoice().render({model: this.currentModel.toJSON()}).el
                 );
 
-                populate.get2name("#supplier", "/supplier", {}, this, false);
-                populate.get2name("#salesPerson", "/employees/getForDdByRelatedUser", {}, this, true, true);
+                populate.get2name("#supplier", CONSTANTS.URLS.SUPPLIER, {}, this, false);
+                populate.get2name("#salesPerson", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+                populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
                 populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
                 this.$el.find('#invoice_date').datepicker({

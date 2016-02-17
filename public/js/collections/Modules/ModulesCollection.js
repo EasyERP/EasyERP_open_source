@@ -1,14 +1,19 @@
-define(function () {
+define([
+    'Backbone',
+    'constants'
+
+], function (Backbone, CONSTANTS) {
+    'use strict';
+
     var MenuItems = Backbone.Collection.extend({
         url       : function () {
-            return "/getModules"
+            return CONSTANTS.URLS.MODULES;
         },
         initialize: function () {
             this.fetch({
                 reset: true
             });
         },
-        parse     : true,
         parse     : function (response) {
             return response.data;
         }

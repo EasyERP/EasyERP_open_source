@@ -1,14 +1,14 @@
 define([
+        'Backbone',
         'models/OpportunitiesModel',
         'common'
     ],
-    function (OpportunityModel, common) {
+    function (Backbone, OpportunityModel, common) {
+        'use strict';
+
         var OpportunitiesCollection = Backbone.Collection.extend({
-            model     : OpportunityModel,
-            initialize: function () {
-            },
-            parse     : true,
-            parse     : function (response) {
+            model: OpportunityModel,
+            parse: function (response) {
                 if (response && response.data) {
                     _.map(response.data, function (opportunity) {
                         if (opportunity.nextAction) {
@@ -18,7 +18,7 @@ define([
                     });
                 }
                 return response.data;
-            },
+            }
         });
         return OpportunitiesCollection;
     });
