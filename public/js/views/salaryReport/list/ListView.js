@@ -186,7 +186,7 @@ define([
                     count: itemsNumber,
                     page: 1,
                     filter: filter,
-                    starDate: this.startDate,
+                    startDate: this.startDate,
                     endDate: this.endDate
                 });
             },

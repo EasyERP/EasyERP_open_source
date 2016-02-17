@@ -8,7 +8,8 @@
     <td class="notForm"><a href="skype:<%=lead.phones.phone%>?call"><%=lead.phones.phone%></a></td>
     <td><%=lead.campaign%></td>
     <td><%=lead.source%></td>
-    <td id='<%=lead._id%>' class="centerCell">
+
+    <td id='<%=lead._id%>' class="centerCell <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">
         <a href="javascript:;" class="stageSelect"><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></a>
     </td>
     <td><%=lead.createdBy.user?(lead.createdBy.date + ' (' + lead.createdBy.user.login +

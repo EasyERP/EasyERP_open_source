@@ -223,6 +223,10 @@ textarea {
   border: 1px solid red !important;
 }
 
+span.error {
+  color: @unpaid-wtrack !important;
+}
+
 .red {
   color: #ff0000;
 }
@@ -4943,6 +4947,9 @@ textarea#editInput {
 
     td {
       border-top: 1px solid @border-color-main;
+      &.createTd {
+        cursor: pointer;
+      }
     }
 
     td,

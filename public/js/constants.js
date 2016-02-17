@@ -393,6 +393,10 @@ define([], function () {
             "Department": {
                 view   : 'department',
                 backend: 'department._id'
+            },
+            "Only Employees": {
+                view   : 'onlyEmployees',
+                backend: 'onlyEmployees'
             }
         }
     };

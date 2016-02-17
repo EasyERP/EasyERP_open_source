@@ -85,8 +85,8 @@ var wTrack = function (models) {
             year = _dateStr.isoWeekYear();
             weeksArr.push({
                 dateByWeek: year * 100 + week,
-                week    : week,
-                year    : year
+                week      : week,
+                year      : year
             });
             weeks = weeks || 1;
         }
@@ -96,7 +96,6 @@ var wTrack = function (models) {
 
         delete filter.startDate;
         delete filter.endDate;
-
 
         key = startDate + '_' + endDate + '_' + JSON.stringify(filter);
 
@@ -387,12 +386,12 @@ var wTrack = function (models) {
                     hire      : 1,
                     name      : 1,
                     lastFire  : 1,
-                    lastHire: {
+                    lastHire  : {
                         $let: {
                             vars: {
                                 lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
                             },
-                            in: {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                            in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
                         }
                     }
                 }
@@ -403,12 +402,12 @@ var wTrack = function (models) {
                     _id      : "$department",
                     employees: {
                         $push: {
-                            isLead: '$isLead',
-                            fired : '$fire',
-                            hired : '$hire',
+                            isLead  : '$isLead',
+                            fired   : '$fire',
+                            hired   : '$hire',
                             lastHire: '$lastHire',
-                            name  : {$concat: ['$name.first', ' ', '$name.last']},
-                            _id   : '$_id'
+                            name    : {$concat: ['$name.first', ' ', '$name.last']},
+                            _id     : '$_id'
                         }
                     }
                 }
@@ -660,48 +659,39 @@ var wTrack = function (models) {
 
         function hiredEmployees(parallelCb) {
             Employee
-                .aggregate([
+                .aggregate([{
+                    $project: {
+                        isEmployee: 1,
+                        department: 1,
+                        isLead    : 1,
+                        hire      : 1,
+                        fire      : 1,
+                        name      : 1,
+                        firedCount: {$size: '$fire'},
+                        firstHired: {$arrayElemAt: ['$hire', 0]}
+                    }
+                }, {
+                    $project: {
+                        isEmployee    : 1,
+                        department    : 1,
+                        isLead        : 1,
+                        hire          : 1,
+                        fire          : 1,
+                        name          : 1,
+                        firedCount    : 1,
+                        firstHiredDate: '$firstHired.date'
+                    }
+                },
                     {
                         $match: {
-                            'hire.date': {$gte: startDate, $lte: endDate}
-                        }
-                    },
-                    {
-                        $project: {
-                            isEmployee: 1,
-                            department: 1,
-                            isLead    : 1,
-                            hire      : 1,
-                            name      : 1,
-                            firedCount: {$size: '$fire'}
-                        }
-                    },
-                    {
-                        $match: {
-                            $or: [
-                                {
-                                    isEmployee: true
-                                }, {
-                                    $and: [{
-                                        isEmployee: false
-                                    }, {
-                                        firedCount: {$gt: 0}
-                                    }]
-                                }
-                            ]
-                        }
-                    }, {
-                        $unwind: '$hire'
-                    }, {
-                        $match: {
-                            'hire.date': {$gte: startDate, $lte: endDate}
+                            'firstHiredDate': {$gte: startDate, $lte: endDate}
                         }
                     }, {
                         $project: {
                             isEmployee: 1,
                             department: 1,
                             isLead    : 1,
-                            hireDate  : {$add: [{$multiply: [{$year: '$hire.date'}, 100]}, {$month: '$hire.date'}]},
+                            hireDate  : {$add: [{$multiply: [{$year: '$firstHiredDate'}, 100]}, {$month: '$firstHiredDate'}]},
                             name      : 1
                         }
                     }, {
@@ -747,14 +737,19 @@ var wTrack = function (models) {
                             isLead    : 1,
                             fire      : 1,
                             name      : 1,
-                            firedCount: {$size: '$fire'}
+                            firedCount: {$size: '$fire'},
+                            hiredCount: {$size: '$hire'}
                         }
                     },
                     {
                         $match: {
                             $or: [
                                 {
-                                    isEmployee: true
+                                    $and: [{
+                                        isEmployee: true
+                                    }, {
+                                        firedCount: {$lt: '$hiredCount'}
+                                    }]
                                 }, {
                                     $and: [{
                                         isEmployee: false

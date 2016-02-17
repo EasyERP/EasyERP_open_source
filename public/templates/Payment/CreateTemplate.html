@@ -26,7 +26,7 @@
                             <span></span>
                         </dd>
                         <dt>
-                            <label for="paymentMethod">Payment Method
+                            <label for="paymentMethod">Bank account
                             </label>
                         </dt>
                         <dd>
@@ -42,10 +42,11 @@
                         <dd>
                             <a id="period" class="current-selected" href="javascript:;">Select</a>
                         </dd>-->
-                        <dt><label for="paymentRef">Payment Ref</label></dt>
+                        <dt><label for="paymentRef">Invoice</label></dt>
                         <dd>
-                            <input type="text" name="paymentRef" id="paymentRef" maxlength="20"
-                                   value="<%=invoice.name%>" readonly />
+                            <a id="paymentRef" data-id="<%=invoice._id%>" href="javascript:;"><%=invoice.name%></a>
+                            <!--<input type="text" name="paymentRef" id="paymentRef" maxlength="20"-->
+                                   <!--value="<%=invoice.name%>" readonly />-->
                         </dd>
                         <!--                        <dt><label for="memo">Memo</label></dt>
                                                 <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->

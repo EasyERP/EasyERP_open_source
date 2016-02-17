@@ -492,7 +492,7 @@ var requestHandler = function (app, event, mainDb) {
                             var key;
                             var employee = wTrack.employee;
 
-                            if (!( employee._id in employees)) {
+                            if (!(employee._id in employees)) {
                                 employees[employee._id] = employee.name.first + ' ' + employee.name.last;
                             }
 
@@ -747,7 +747,10 @@ var requestHandler = function (app, event, mainDb) {
                             }
 
                             if (nextMaxDate > maxDate) {
-                                maxDate = nextMaxDate;
+                                if (wTrack.month === 1 && wTrack.week >= moment().year(wTrack.year - 1).isoWeeksInYear()){
+                                } else {
+                                    maxDate = nextMaxDate;
+                                }
                             }
 
                             if (empId === emp) {
