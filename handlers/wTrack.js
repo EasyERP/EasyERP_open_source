@@ -30,6 +30,9 @@ var wTrack = function (event, models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').wTrack;
 
+    var JournalEntryHandler = require('./journalEntry');
+    var journalEntry = new JournalEntryHandler(models);
+
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
     }, exportMap, "wTrack");
@@ -47,6 +50,10 @@ var wTrack = function (event, models) {
                     if (err) {
                         return next(err);
                     }
+
+                    var stDate = moment().year(wTrack.year).isoWeek(wTrack.week).day(1);
+
+                    journalEntry.setReconcileDate(req, stDate);
 
                     event.emit('updateRevenue', {wTrack: wTrack, req: req});
                     event.emit('recalculateKeys', {req: req, wTrack: wTrack});
@@ -67,6 +74,8 @@ var wTrack = function (event, models) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var reconcile = false;
+        var stDate;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -80,10 +89,21 @@ var wTrack = function (event, models) {
                     //    data.revenue *= 100;
                     //}
 
+                    if (data.employee || data.worked){
+                        reconcile = true;
+                        data.reconcile = reconcile;
+                    }
+
                     WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                         if (err) {
                             return next(err);
                         }
+
+                        if (reconcile){
+                            stDate = moment().year(wTrack.year).isoWeek(wTrack.week).day(1);
+                            journalEntry.setReconcileDate(req, stDate);
+                        }
+
                         if (wTrack) {
                             event.emit('updateRevenue', {wTrack: wTrack, req: req});
                             event.emit('recalculateKeys', {req: req, wTrack: wTrack});
@@ -106,6 +126,8 @@ var wTrack = function (event, models) {
         var body = req.body;
         var uId;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var reconcile;
+        var stDate;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
@@ -126,10 +148,21 @@ var wTrack = function (event, models) {
                             user: uId,
                             date: new Date().toISOString()
                         };
+
+                        if (data.employee || data.worked){
+                            reconcile = true;
+                            data.reconcile = reconcile;
+                        }
+
                         delete data._id;
                         WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                             if (err) {
                                 return cb(err);
+                            }
+
+                            if (reconcile){
+                                stDate = moment().year(wTrack.year).isoWeek(wTrack.week).day(1);
+                                journalEntry.setReconcileDate(req, stDate);
                             }
 
                             if (wTrack) {
@@ -747,6 +780,8 @@ var wTrack = function (event, models) {
 
                     projectId = wTrack ? wTrack.project : null;
 
+                    journalEntry.removeBySourceDocument(req, wTrack._id);
+
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
                     event.emit('updateRevenue', {wTrack: wTrack, req: req});
@@ -986,6 +1021,8 @@ var wTrack = function (event, models) {
                     var enDate = new Date(options.endDate);
                     var startYear = moment(stDate).year();
                     var endYear = options.endDate ? moment(enDate).year() : startYear + 1;
+
+                    journalEntry.setReconcileDate(req, stDate);
 
                     for (var j = 7; j >= 1; j--) {
                         options[j] = parseInt(options[j]);

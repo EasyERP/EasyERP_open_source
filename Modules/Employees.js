@@ -1445,6 +1445,10 @@ var Employee = function (event, models) {
                 query = {$set: updateObject};
             }
 
+            if (updateObject.hire){
+                event.emit('setReconcileTimeCard', {req: req, employee: _id});
+            }
+
             models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                 if (!err) {
                     if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {

@@ -6,10 +6,15 @@
     <td><%=journalEntry.date%></td>
     <td><%=journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name.first + ' ' + journalEntry.sourceDocument.subject.name.last : journalEntry.sourceDocument.subject.projectName%></td>
     <td><a class="<%=journalEntry.sourceDocument.model%>" data-id="<%=journalEntry.sourceDocument._id._id%>"><%=journalEntry.sourceDocument.name%></a></td>
+    <td><%=journalEntry.journal.debitAccount.name%></td>
+    <td><%=journalEntry.journal.creditAccount.name%></td>
 
-    <td><%=(journalEntry.account && journalEntry.account[0].name) ? journalEntry.account[0].name : ''%></td>
-    <td class="debit" data-amount="<%=journalEntry.debit%>"><%=journalEntry.debit ? currencySplitter(journalEntry.debit.toFixed(2)) : ''%></td>
-    <td><%=(journalEntry.account[1] && journalEntry.account[1].name) ? journalEntry.account[1].name : ''%></td>
-    <td class="credit" data-amount="<%=journalEntry.credit%>"><%=journalEntry.credit ? currencySplitter(journalEntry.credit.toFixed(2)): ''%></td>
+    <%if (journalEntry.debit) {%>
+    <td class="value" data-amount="<%= journalEntry.debit%>"><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>
+    <%}%>
+
+    <%if (journalEntry.credit) {%>
+    <td class="value" data-amount="<%=journalEntry.credit%>"><%=currencySplitter(journalEntry.credit.toFixed(2))%></td>
+    <%}%>
 </tr>
 <% }) %>

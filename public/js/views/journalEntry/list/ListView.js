@@ -69,20 +69,16 @@ define([
 
                 var total = {
                     debit : 0,
-                    credit: 0
-                }
+                };
 
                 $rows.each(function (index, element) {
                     var $curElement = $(element);
-                    var $debit = $curElement.find('.debit');
-                    var $credit = $curElement.find('.credit');
+                    var $val = $curElement.find('.value');
 
-                    var debitVal = parseInt($debit.attr('data-amount'));
-                    var creditVal = parseInt($credit.attr('data-amount'));
+                    var debitVal = parseInt($val.attr('data-amount'));
 
                     total.debit += debitVal;
-                    total.credit += creditVal;
-                })
+                });
 
                 return total;
             },
@@ -115,9 +111,9 @@ define([
                     }
 
                     if (same){
-                        $('#reconcileBth').addClass('greenBtn');
+                        $('#reconcileBtn').addClass('btnSuccess');
                     } else {
-                        $('#reconcileBth').addClass('redBtn');
+                        $('#reconcileBtn').addClass('btnAttention');
                     }
 
                 });
@@ -133,7 +129,7 @@ define([
                 $footer = $currentEl.find('#listFooter');
 
                 $footer.find('#totalDebit').text(helpers.currencySplitter(total['debit'].toFixed(2)));
-                $footer.find('#totalCredit').text(helpers.currencySplitter(total['credit'].toFixed(2)));
+                //$footer.find('#totalCredit').text(helpers.currencySplitter(total['credit'].toFixed(2)));
             }
 
         });

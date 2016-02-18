@@ -5,6 +5,9 @@ var MonthHours = function (event, models) {
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     var access = require("../Modules/additions/access.js")(models);
 
+    var JournalEntryHandler = require('./journalEntry');
+    var journalEntry = new JournalEntryHandler(models);
+
     this.create = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var body = req.body;
@@ -17,6 +20,8 @@ var MonthHours = function (event, models) {
                     if (err) {
                         return next(err);
                     }
+
+                    event.emit('setReconcileTimeCard', {req: req, month: monthHours.month, year: monthHours.year});
 
                     event.emit('dropHoursCashes', req);
                     var params = {
@@ -61,6 +66,7 @@ var MonthHours = function (event, models) {
                                 hours             : result.hours
                             };
                             event.emit('updateCost', params);
+                            event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
                             cb(null, result);
                         });
 
@@ -171,6 +177,8 @@ var MonthHours = function (event, models) {
                     }
 
                     event.emit('dropHoursCashes', req);
+                    event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
+
                     res.status(200).send({success: result});
 
                 });

@@ -24,8 +24,7 @@ module.exports = (function () {
         createdBy  : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
-        },
-        reconcile: {type: Boolean, default: true}
+        }
     }, {collection: 'jobs'});
 
     mongoose.model('jobs', jobsSchema);

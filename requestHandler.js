@@ -50,6 +50,9 @@ var requestHandler = function (app, event, mainDb) {
     var logger = app.get('logger');
     var moment = require('./public/js/libs/moment/moment');
 
+    var JournalEntryHandler = require('./handlers/journalEntry');
+    var journalEntry = new JournalEntryHandler(models);
+
     //binding for remove Workflow
     event.on('removeWorkflow', function (req, wId, id) {
         var query;
@@ -364,6 +367,44 @@ var requestHandler = function (app, event, mainDb) {
             console.log('Synthetic revenue recalculated');
         });
 
+    });
+
+    event.on('setReconcileTimeCard', function (options) {
+        var req = options.req;
+        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+        var employee = options.employee;
+        var month = options.month;
+        var year = options.year;
+        var query;
+        var date;
+
+        if (employee){
+            query = {employee: employee};
+        } else if (month && year){
+            query = {month: month, year: year};
+            date = moment().year(year).month(month).date(1);
+        }
+
+        wTrackModel.update(query, {$set: {reconcile: true}}, {multi: true}, function (err, result) {
+            if (err){
+                console.log(err);
+            }
+        });
+
+        if (date){
+            journalEntry.setReconcileDate(req, date);
+        } else if (employee){
+            Employee.findById(employee, {hire: 1}, function (err, result) {
+                if (err){
+                    console.log(err);
+                }
+
+                var date = employee.hire[0].date;
+
+                journalEntry.setReconcileDate(req, date);
+            });
+        }
     });
 
 

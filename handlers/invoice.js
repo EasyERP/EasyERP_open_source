@@ -343,15 +343,21 @@ var Invoice = function (models, event) {
                                 }, req.session.uId);
                             });
                         } else {
-                            Customer.populate(invoice, {
-                                path  : 'supplier',
-                                select: '_id name fullName'
-                            }, function (err, resp) {
+                            Invoice.findByIdAndUpdate(id, {$set: {reconcile: true}}, {new: true}, function (err, invoice) {
                                 if (err) {
                                     return next(err);
                                 }
 
-                                res.status(200).send(invoice);
+                                Customer.populate(invoice, {
+                                    path  : 'supplier',
+                                    select: '_id name fullName'
+                                }, function (err, resp) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+
+                                    res.status(200).send(invoice);
+                                });
                             });
                         }
                     });

@@ -586,6 +586,26 @@ th {
 .btn:hover a {
   color: #000000;
 }
+.btnAttention {
+  border-color: #a22a2d;
+}
+.btnAttention:hover {
+  background: #a22a2d;
+}
+.btnAttention:hover span,
+.btnAttention:hover a {
+  color: #cdcdcd;
+}
+.btnSuccess {
+  border-color: #3e7f42;
+}
+.btnSuccess:hover {
+  background: #3e7f42;
+}
+.btnSuccess:hover span,
+.btnSuccess:hover a {
+  color: #cdcdcd;
+}
 /*== Begin Input type number =============*/
 .ui-spinner {
   position: relative;
@@ -701,6 +721,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Btn Color=====================================*/
 /*== VocationDashBoard =============================*/
 /*== Capacity =====================================*/
+/*== btn ===*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -5074,6 +5095,9 @@ table#workflows tr td.edit-status {
 #top-bar.banned {
   border-bottom: 0;
 }
+#top-bar #reconcileDate {
+  color: #cdcdcd;
+}
 #top-bar .vocationFilter {
   position: relative;
   float: left;
@@ -5136,6 +5160,9 @@ table#workflows tr td.edit-status {
 }
 .projectInfoTopBar.banned {
   border-bottom: 0;
+}
+.projectInfoTopBar #reconcileDate {
+  color: #cdcdcd;
 }
 .projectInfoTopBar .vocationFilter {
   position: relative;
