@@ -72,7 +72,7 @@ define([
 
                 this.setDbOnce = _.debounce(
                     function () {
-                        this.trigger('filter', App.filter)
+                        this.trigger('filter', App.filter);
                     }, 500);
             },
 

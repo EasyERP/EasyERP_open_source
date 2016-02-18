@@ -174,39 +174,33 @@ var Opportunity = function (models) {
         }
     }
 
-    function caseFilter(filter, content) {
+    function caseFilter(filter) {
         var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+        var filterName;
 
-        for (var key in filter) {
-            condition = filter[key];
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
 
-            switch (key) {
-                case 'Name':
-                    content.push({'name': {$in: condition}});
+            switch (filterName) {
+                case 'contactName':
+                    filtrElement.contactName = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
                 case 'workflow':
-                    content.push({'workflow': {$in: condition.objectID()}});
+                    filtrElement.workflow = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
-                case 'Creation date':
-                    content.push({
-                        'creationDate': {
-                            $gte: new Date(condition[0].start),
-                            $lte: new Date(condition[0].end)
-                        }
-                    });
-                    break;
-                case 'Next action':
-                    if (!condition.length) {
-                        condition = [''];
-                    }
-                    content.push({'nextAction.desc': {$in: condition}});
-                    break;
-                case 'Expected revenue':
-                    ConvertType(condition, 'integer');
-                    content.push({'expectedRevenue.value': {$in: condition}});
+                case 'source':
+                    filtrElement.source = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
             }
         }
+        return resArray;
     }
 
     this.getByViewType = function (req, res, next) {
@@ -381,7 +375,6 @@ var Opportunity = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        var or;
         var filterObj = {};
         var optionsObject = {};
         var data = req.query;
@@ -401,12 +394,9 @@ var Opportunity = function (models) {
         }
 
         optionsObject['$and'] = [];
-        filterObj['$or'] = [];
-        or = filterObj['$or'];
+        filterObj['$and'] = [];
 
-        caseFilter(filter, or);
-
-        console.dir(or[0]);
+        filterObj['$and'].push(caseFilter(filter));
 
         switch (data.contentType) {
             case ('Opportunities'):
@@ -425,14 +415,10 @@ var Opportunity = function (models) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
-                if (data && data.filter) {
+                if (filterObj['$and'].length) {
                     optionsObject['$and'].push(filterObj);
                 }
                 break;
-        }
-
-        if (!or.length) {
-            delete filterObj['$or']
         }
 
         departmentSearcher = function (waterfallCallback) {
