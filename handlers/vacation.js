@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var CapacityHandler = require('./capacity');
 var objectId = mongoose.Types.ObjectId;
+var CONSTANTS = require('../constants/mainConstants');
 
 var Vacation = function (event, models) {
     'use strict';
@@ -142,6 +143,9 @@ var Vacation = function (event, models) {
         var lastEl;
         var length;
         var curDate = new Date();
+        var curYear = curDate.getFullYear();
+        var yearFrom = curYear - CONSTANTS.HR_VAC_YEAR_BEFORE;
+        var yearTo = curYear + CONSTANTS.HR_VAC_YEAR_AFTER;
 
         query = Vacation.distinct('year');
 
@@ -157,16 +161,31 @@ var Vacation = function (event, models) {
                 element.name = el;
 
                 return element;
-            }).sort();
+            });
+
+
+            for (var year = yearFrom; year <= yearTo; year++) {
+                var newYear = {
+                    _id: year,
+                    name: year
+                };
+
+                if (result.indexOf(newYear) === -1) {
+                    result.push(newYear);
+                }
+            }
+
+            result.sort();
+
 
             length = result.length;
             lastEl = result[length - 1];
 
-            if (lastEl._id === curDate.getFullYear()) {
+            /*if (lastEl._id >= curDate.getFullYear() - 1) {
                 result[length] = {};
                 result[length]._id = lastEl._id + 1;
                 result[length].name = lastEl._id + 1;
-            }
+            }*/
 
             res.status(200).send(result);
         });
