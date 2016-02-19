@@ -39,7 +39,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.stages = [];
-                this.filter = options.filter;
+                this.filter = options.filter||{};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -90,25 +90,29 @@ define([
                 self = this;
                 $currentEl = this.$el;
 
+                var itemView;
+
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                var itemView = new listItemView({
+
+                itemView = new listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 });
+
+                itemView.bind('incomingStages', this.pushStages, this);
+
+                common.populateWorkflowsList("Leads", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    var stage = (self.filter) ? self.filter.workflow : null;
+                    itemView.trigger('incomingStages', stages);
+                });
+
                 $currentEl.append(itemView.render());
 
-                itemView.bind('incomingStages', itemView.pushStages, itemView);
-
                 this.renderCheckboxes();
-                this.renderFilter(self);
 
-                //common.populateWorkflowsList("Leads", ".drop-down-filter", "", "/Workflows", null, function (stages) {
-                //    self.stages = stages;
-                //    var stage = (self.filter) ? self.filter.workflow : null;
-                //    itemView.trigger('incomingStages', stages);
-                //});
+                this.renderFilter(self);
 
                 this.renderPagination($currentEl, this);
 

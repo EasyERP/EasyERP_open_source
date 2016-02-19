@@ -66,9 +66,7 @@ var Filters = function (models) {
             var year = moment().isoWeekYear();
             var week;
 
-            for (var i = 0;
-                i <= 11;
-                i++) {
+            for (var i = 0; i <= 11; i++) {
                 if (startWeek + i > 53) {
                     week = startWeek + i - 53;
                     weeksArr.push((year + 1) * 100 + week);
@@ -278,7 +276,6 @@ var Filters = function (models) {
                         }
                     ]
                 }
-                ;
 
                 callback(null, result);
             });
@@ -1734,7 +1731,7 @@ var Filters = function (models) {
                     $project: {
                         workflow   : {$arrayElemAt: ["$workflow", 0]},
                         source     : 1,
-                        contactName: {$concat:["$contactName.first", " ", "$contactName.last"]}
+                        contactName: {$concat: ["$contactName.first", " ", "$contactName.last"]}
                     }
                 }, {
                     $group: {
@@ -1774,7 +1771,7 @@ var Filters = function (models) {
             });
         }
 
-        function getOpportunitiesFiltersValues(callback){
+        function getOpportunitiesFiltersValues(callback) {
             Opportunities.aggregate([
                 {
                     $match: {
@@ -1786,13 +1783,13 @@ var Filters = function (models) {
                         localField  : "customer",
                         foreignField: "_id", as: "customer"
                     }
-                },{
+                }, {
                     $lookup: {
                         from        : "workflows",
                         localField  : "workflow",
                         foreignField: "_id", as: "workflow"
                     }
-                },{
+                }, {
                     $lookup: {
                         from        : "Employees",
                         localField  : "salesPerson",
@@ -1802,7 +1799,7 @@ var Filters = function (models) {
                     $project: {
                         customer   : {$arrayElemAt: ["$customer", 0]},
                         workflow   : {$arrayElemAt: ["$workflow", 0]},
-                        salesPerson   : {$arrayElemAt: ["$salesPerson", 0]}
+                        salesPerson: {$arrayElemAt: ["$salesPerson", 0]}
                     }
                 }, {
                     $group: {
@@ -1810,7 +1807,7 @@ var Filters = function (models) {
                         customer   : {
                             $addToSet: {
                                 _id : "$customer._id",
-                                name: {$concat:["$customer.name.first", " ", "$customer.name.last"]}
+                                name: {$concat: ["$customer.name.first", " ", "$customer.name.last"]}
                             }
                         },
                         workflow   : {
@@ -1819,10 +1816,10 @@ var Filters = function (models) {
                                 name: "$workflow.name"
                             }
                         },
-                        salesPerson   : {
+                        salesPerson: {
                             $addToSet: {
                                 _id : "$salesPerson._id",
-                                name: {$concat:["$salesPerson.name.first", " ", "$salesPerson.name.last"]}
+                                name: {$concat: ["$salesPerson.name.first", " ", "$salesPerson.name.last"]}
                             }
                         }
                     }

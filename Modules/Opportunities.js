@@ -2,10 +2,10 @@ var Opportunities = function (models, event) {
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var objectId = mongoose.Types.ObjectId;
-    var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
-    var departmentSchema = mongoose.Schemas['Department'];
-    var customerSchema = mongoose.Schemas['Customer'];
-    var workflowSchema = mongoose.Schemas['workflow'];
+    var opportunitiesSchema = mongoose.Schemas.Opportunitie;
+    var departmentSchema = mongoose.Schemas.Department;
+    var customerSchema = mongoose.Schemas.Customer;
+    var workflowSchema = mongoose.Schemas.workflow;
     var fs = require('fs');
 
     function getTotalCount(req, response) {
@@ -36,25 +36,21 @@ var Opportunities = function (models, event) {
 
         switch (contentType) {
             case ('Opportunities'):
-                optionsObject['$and'].push({'isOpportunitie': true});
+                optionsObject.$and.push({'isOpportunitie': true});
 
-                //if (data.filter && data.filter.isConverted) {
-                //    optionsObject['$and'].push({'isOpportunitie': false});
-                //    optionsObject['$and'].push({'isConverted': true});
-                //}
                 if (data && data.filter) {
-                    optionsObject['$and'].push(filterObj);
+                    optionsObject.$and.push(filterObj);
                 }
                 break;
             case ('Leads'):
-                optionsObject['$and'].push({'isOpportunitie': false});
+                optionsObject.$and.push({'isOpportunitie': false});
 
                 if (data.filter && data.filter.isConverted) {
-                    optionsObject['$and'].push({'isOpportunitie': true});
-                    optionsObject['$and'].push({'isConverted': true});
+                    optionsObject.$and.push({'isOpportunitie': true});
+                    optionsObject.$and.push({'isConverted': true});
                 }
                 if (data && data.filter) {
-                    optionsObject['$and'].push(filterObj);
+                    optionsObject.$and.push(filterObj);
                 }
                 break;
         }
@@ -130,9 +126,9 @@ var Opportunities = function (models, event) {
                         function (err, result) {
                             if (!err) {
                                 if (data.currentNumber && data.currentNumber < result.length) {
-                                    res['showMore'] = true;
+                                    res.showMore = true;
                                 }
-                                res['count'] = result.length;
+                                res.count = result.length;
                                 response.send(res);
                             } else {
                                 console.log(err);
@@ -146,7 +142,7 @@ var Opportunities = function (models, event) {
                     response.send(500, {error: 'Server Eroor'});
                 }
             });
-    };
+    }
 
     function create(req, data, res) {
         try {
@@ -154,14 +150,13 @@ var Opportunities = function (models, event) {
                 logWriter.log('Opprtunities.create Incorrect Incoming Data');
                 res.send(400, {error: 'Opprtunities.create Incorrect Incoming Data'});
                 return;
-            } else {
-                savetoDb(data);
             }
+            savetoDb(data);
 
             function savetoDb(data) {
                 try {
                     var _opportunitie = new models.get(req.session.lastDb, "Opportunities", opportunitiesSchema)();
-                    _opportunitie.isOpportunitie = (data.isOpportunitie) ? data.isOpportunitie : false;
+                    _opportunitie.isOpportunitie = data.isOpportunitie || false;
                     if (data.name) {
                         _opportunitie.name = data.name;
                     }
@@ -342,7 +337,7 @@ var Opportunities = function (models, event) {
             logWriter.log("Opportunities.js  " + exception);
             res.send(500, {error: 'opportunitie.save  error'});
         }
-    };
+    }
 
     function getLeadsForChart(req, response, data) {
         var res = {};
@@ -456,7 +451,7 @@ var Opportunities = function (models, event) {
                     logWriter.log('Opportunities.js chart' + err);
                     response.send(500, {error: "Can't get chart"});
                 } else {
-                    res['data'] = result;
+                    res.data = result;
                     response.send(res);
                 }
 
@@ -466,7 +461,7 @@ var Opportunities = function (models, event) {
 
     function get(req, response) {
         var res = {};
-        res['data'] = [];
+        res.data = [];
         var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).find({isOpportunitie: true});
         query.sort({name: 1});
         query.populate('company customer salesPerson salesTeam workflow').populate('createdBy.user').populate('editedBy.user');
@@ -477,11 +472,11 @@ var Opportunities = function (models, event) {
                 logWriter.log('Opportunities.js get job.find' + err);
                 response.send(500, {error: "Can't find Opportunities"});
             } else {
-                res['data'] = result;
+                res.data = result;
                 response.send(res);
             }
         });
-    };
+    }
 
     function getById(req, id, response) {
         var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(id);
@@ -496,7 +491,7 @@ var Opportunities = function (models, event) {
                 response.send(result);
             }
         });
-    };
+    }
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -545,16 +540,16 @@ var Opportunities = function (models, event) {
 
     function getFilter(req, response) {
         var res = {};
-        var condition;
+        //var condition;
         var filterObj = {};
 
         var optionsObject = {};
 
-        res['data'] = [];
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
+        res.data = [];
+        var data = req.query;
+        //for (var i in req.query) {
+        //    data[i] = req.query[i];
+        //}
 
         var filter = data.filter || {};
 
@@ -570,43 +565,43 @@ var Opportunities = function (models, event) {
                 if (data && data.filter) {
                     optionsObject['$and'].push(filterObj);
                 }
-              /*  if (data && data.filter) {
-                    optionsObject['$and'] = [];
-                    optionsObject['$and'].push({'isOpportunitie': false});
-                    //    if (data.filter.condition === 'or') {
-                    //        filterObj['$or'] = [];
-                    //        condition = filterObj['$or'];
-                    //    } else {
-                    //        filterObj['$and'] = [];
-                    //        condition = filterObj['$and'];
-                    //}
+                /*  if (data && data.filter) {
+                 optionsObject['$and'] = [];
+                 optionsObject['$and'].push({'isOpportunitie': false});
+                 //    if (data.filter.condition === 'or') {
+                 //        filterObj['$or'] = [];
+                 //        condition = filterObj['$or'];
+                 //    } else {
+                 //        filterObj['$and'] = [];
+                 //        condition = filterObj['$and'];
+                 //}
 
-                    //caseFilterOpp(data.filter, condition);
+                 //caseFilterOpp(data.filter, condition);
 
-                    /!*for (var key in data.filter) {
-                     condition = data.filter[key];
-                     switch (key) {
-                     case 'Name':
-                     or.push({ 'name': {$in: condition}});
-                     break;
-                     case 'Creation date':
-                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-                     break;
-                     case 'Next action':
-                     if (!condition.length) condition = [''];
-                     or.push({ 'nextAction.desc': {$in: condition}});
-                     break;
-                     case 'Expected revenue':
-                     ConvertType(condition, 'integer');
-                     or.push({ 'expectedRevenue.value': {$in: condition}});
-                     break;
-                     }
-                     }*!/
-                    // if (!condition.length) {
-                    //     delete filterObj['$or'];
-                    //     delete filterObj['$and']
-                    // }
-                }*/
+                 /!*for (var key in data.filter) {
+                 condition = data.filter[key];
+                 switch (key) {
+                 case 'Name':
+                 or.push({ 'name': {$in: condition}});
+                 break;
+                 case 'Creation date':
+                 or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                 break;
+                 case 'Next action':
+                 if (!condition.length) condition = [''];
+                 or.push({ 'nextAction.desc': {$in: condition}});
+                 break;
+                 case 'Expected revenue':
+                 ConvertType(condition, 'integer');
+                 or.push({ 'expectedRevenue.value': {$in: condition}});
+                 break;
+                 }
+                 }*!/
+                 // if (!condition.length) {
+                 //     delete filterObj['$or'];
+                 //     delete filterObj['$and']
+                 // }
+                 }*/
 
                 break;
             case ('Leads'):
@@ -793,7 +788,7 @@ var Opportunities = function (models, event) {
                     console.log(err);
                 }
             });
-    };
+    }
 
     function update(req, _id, data, res) {
         if (data.company && data.company._id) {
