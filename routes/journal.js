@@ -9,6 +9,7 @@ module.exports = function (models) {
 
     router.get('/getForDd', _journalHandler.getForDd);
     router.get('/getReconcileDate', _journalEntryHandler.getReconcileDate);
+    router.get('/journalEntry/totalCollectionLength', _journalEntryHandler.totalCollectionLength);
     router.get('/journalEntry/:viewType', _journalEntryHandler.getForView);
     router.get('/:viewType', _journalHandler.getForView);
     router.post('/', _journalHandler.create);

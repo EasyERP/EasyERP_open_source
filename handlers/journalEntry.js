@@ -438,6 +438,19 @@ var Module = function (models) {
         createReconciled(body, dbIndex, cb, uId);
     };
 
+    this.totalCollectionLength = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+
+        Model.find({}).count(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({count: result});
+        })
+
+    };
+
     /*this.create = function (body, dbIndex, cb, uId) {
      var Journal = models.get(dbIndex, 'journal', journalSchema);
      var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
@@ -575,6 +588,9 @@ var Module = function (models) {
         var sort = data.sort ? data.sort : {_id: 1};
         var findInvoice;
         var findSalary;
+        var count = parseInt(data.count, 10) || 100;
+        var page = parseInt(data.page, 10);
+        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         access.getReadAccess(req, req.session.uId, 86, function (access) {
             if (access) {
@@ -645,6 +661,10 @@ var Module = function (models) {
                                 'sourceDocument.subject': {$arrayElemAt: ["$sourceDocument.subject", 0]},
                                 account                 : 1
                             }
+                        }, {
+                            $skip: skip / 2
+                        }, {
+                            $limit: count / 2
                         }/*, {
                          $project: {
                          debit                   : 1,
@@ -689,7 +709,7 @@ var Module = function (models) {
                 };
 
                 findSalary = function (cb) {
-                    Model
+                    var query = Model
                         .aggregate([{
                             $match: {
                                 "sourceDocument.model": "wTrack",
@@ -763,8 +783,14 @@ var Module = function (models) {
                                 account                 : 1
                             }
                         }, {
-                            $limit: 100
-                        }], function (err, result) {
+                            $skip: skip / 2
+                        }, {
+                            $limit: count / 2
+                        }]);
+
+                    query.options = {allowDiskUse: true};
+
+                    query.exec(function (err, result) {
                             if (err) {
                                 return next(err);
                             }

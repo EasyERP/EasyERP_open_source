@@ -17,7 +17,7 @@ define([
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            totalCollectionLengthUrl: '/journalEntry/totalCollectionLength',
+            totalCollectionLengthUrl: 'journal/journalEntry/totalCollectionLength',
             contentType             : CONSTANTS.JOURNALENTRY,
 
             initialize: function (options) {
@@ -29,9 +29,11 @@ define([
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.page = options.collection.page;
+                this.filter = options.filter || {};
 
                 this.render();
                 this.contentCollection = contentCollection;
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
             events: {
@@ -121,6 +123,8 @@ define([
                 $currentEl.prepend(itemView.render());//added two parameters page and items number
 
                 this.renderCheckboxes();
+
+                this.renderPagination($currentEl, this);
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
