@@ -141,6 +141,18 @@ define([
                 }
             },
 
+            renderCheckboxes: function () {
+                this.$el.find('#check_all').click(function () {
+
+                    $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
+                    if ($("input.checkbox:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                    }
+                });
+            },
+
             pushStages: function (stages) {
                 this.stages = stages;
             },

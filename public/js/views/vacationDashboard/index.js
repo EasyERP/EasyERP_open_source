@@ -211,7 +211,7 @@ define([
                 _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
                 _firedDate = moment(_firedDate).format('YYYY-MM-DD');
 
-                if (date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
+                if (_hiredDate === _firedDate || date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
                     return true;
                 }
             }
@@ -287,9 +287,10 @@ define([
             return w;
         },
 
-        getDate: function (num, year) {
-            var _moment = moment().hours(12).isoWeek(num).isoWeekYear(year);
-            var date = _moment.isoWeekday(5).format("DD.MM", true);
+        getDate: function (/*num, year*/dateStr) {
+            /*var _moment = moment().hours(12).isoWeek(num).isoWeekYear(year);
+            var date = _moment.isoWeekday(5).format("DD.MM"/!*, true*!/);*/
+            var date = dateStr.isoWeekday(5).format("DD.MM"/*, true*/);
 
             return date;
         },
@@ -405,7 +406,7 @@ define([
                 week = _dateStr.isoWeek();
                 year = _dateStr.isoWeekYear();
                 weeksArr.push({
-                    lastDate: this.getDate(week, year),
+                    lastDate: this.getDate(/*week, year*/_dateStr),
                     week    : week,
                     year    : year
                 });
@@ -461,7 +462,7 @@ define([
                     week = _dateStr.isoWeek();
                     year = _dateStr.isoWeekYear();
                     weeksArr.push({
-                        lastDate: this.getDate(week, year),
+                        lastDate: this.getDate(/*week, year*/_dateStr),
                         week    : week,
                         year    : year
                     });

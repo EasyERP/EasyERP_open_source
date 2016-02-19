@@ -223,12 +223,10 @@ var requestHandler = function (app, event, mainDb) {
                                     result.forEach(function (element) {
                                         var id = element._id;
                                         var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
-                                        var revenue = (element.worked * element.rate).toFixed(2);
 
                                         wTrack.findByIdAndUpdate(id, {
                                             $set: {
-                                                cost   : parseFloat(calc) * 100,
-                                                revenue: parseFloat(revenue) * 100
+                                                cost   : parseFloat(calc) * 100
                                             }
                                         }, {
                                             new: true
@@ -244,12 +242,10 @@ var requestHandler = function (app, event, mainDb) {
                                 result.forEach(function (element) {
                                     var id = element._id;
                                     var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
-                                    var profit = parseFloat(element.revenue) - parseFloat(calc) * 100;
 
                                     wTrack.findByIdAndUpdate(id, {
                                         $set: {
-                                            cost  : parseFloat(calc) * 100,
-                                            profit: profit
+                                            cost  : parseFloat(calc) * 100
                                         }
                                     }, {
                                         new: true
@@ -289,26 +285,35 @@ var requestHandler = function (app, event, mainDb) {
             };
 
             function getBaseSalary(result, cb) {
-                var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
-                var query = Salary
+                var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+                var date = moment().year(year).month(month - 1).date(1);
+                var query = Employee
                     .find(
                         {
-                            'employee._id': {$in: result},
-                            month         : month,
-                            year          : year
+                            '_id': {$in: result}
                         }, {
-                            baseSalary    : 1,
-                            'employee._id': 1
+                            hire: 1
                         })
                     .lean();
                 query.exec(function (err, salary) {
                     if (err) {
                         return cb(err);
                     }
+                    var salary = 0;
+                    var i;
+
                     var result = _.map(salary, function (element) {
                         var obj = {};
+                        var hire = element.hire;
+                        var length = hire.length;
+                        for (i = length - 1; i >= 0; i--) {
+                            if (date >= hire[i].date) {
+                                salary = hire[i].salary;
+                                break;
+                            }
+                        }
 
-                        obj[element.employee._id] = element.baseSalary;
+                        obj[element._id] = salary;
                         return obj;
                     });
 
@@ -318,7 +323,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     });
 
-    event.on('updateRevenue', function(options){
+    event.on('updateRevenue', function (options) {
         var wTrack = options.wTrack;
         var project = options.project;
         var req = options.req;
@@ -328,13 +333,13 @@ var requestHandler = function (app, event, mainDb) {
 
         var waterfallTasks;
 
-        function getData(cb){
-            if (wTrack){
+        function getData(cb) {
+            if (wTrack) {
                 jobsArray.push(wTrack.jobs);
                 cb(null, jobsArray);
-            } else if (project){
+            } else if (project) {
                 ProjectModel.findById(project, function (err, result) {
-                    if (err){
+                    if (err) {
                         return cb(err);
                     }
                     jobsArray.push(result.jobs);
@@ -343,15 +348,15 @@ var requestHandler = function (app, event, mainDb) {
             }
         }
 
-        function recalculate(jobsArray, cb){
-            Quotation.find({_id: {$in: jobsArray}}, function (err, result) {
-                if (err){
+        function recalculate(jobsArray, cb) {
+            Quotation.find({'products.jobs': {$in: jobsArray}}, function (err, result) {
+                if (err) {
                     return cb(err);
                 }
-                async.each(result, function(quotation){
+                async.each(result, function (quotation) {
                     event.emit('recalculateRevenue', {
-                        quotation  : quotation,
-                        req        : req
+                        quotation: quotation,
+                        req      : req
                     });
                 });
             });
@@ -365,7 +370,6 @@ var requestHandler = function (app, event, mainDb) {
         });
 
     });
-
 
     event.on('updateProjectDetails', function (options) {
         var updateProject = _.debounce(updateProjectDet, 500);
@@ -642,7 +646,12 @@ var requestHandler = function (app, event, mainDb) {
                         return console.log(err);
                     }
                     async.each(result, function (el, cb) {
-                        Job.findByIdAndUpdate(el._id, {$set: {wTracks: el.ids, editedBy: editedBy}}, {new: true}, function (err) {
+                        Job.findByIdAndUpdate(el._id, {
+                            $set: {
+                                wTracks : el.ids,
+                                editedBy: editedBy
+                            }
+                        }, {new: true}, function (err) {
 
                             cb();
                         })
@@ -742,7 +751,7 @@ var requestHandler = function (app, event, mainDb) {
                             }
 
                             if (nextMaxDate > maxDate) {
-                                if (wTrack.month === 1 && wTrack.week >= moment().year(wTrack.year - 1).isoWeeksInYear()){
+                                if (wTrack.month === 1 && wTrack.week >= moment().year(wTrack.year - 1).isoWeeksInYear()) {
                                 } else {
                                     maxDate = nextMaxDate;
                                 }
@@ -845,7 +854,11 @@ var requestHandler = function (app, event, mainDb) {
                                     return next(err);
                                 }
 
-                                event.emit('updateQuntity', {jobId: jobID, quontity: budget.budgetTotal.hoursSum, req: req});
+                                event.emit('updateQuntity', {
+                                    jobId   : jobID,
+                                    quontity: budget.budgetTotal.hoursSum,
+                                    req     : req
+                                });
                                 console.log(count++);
                             })
                         });
@@ -861,7 +874,11 @@ var requestHandler = function (app, event, mainDb) {
                                 return next(err);
                             }
 
-                            event.emit('updateQuntity', {jobId: jobID, quontity: budget.budgetTotal.hoursSum, req: req});
+                            event.emit('updateQuntity', {
+                                jobId   : jobID,
+                                quontity: budget.budgetTotal.hoursSum,
+                                req     : req
+                            });
                             console.log(count++);
                         })
                     }
@@ -916,12 +933,12 @@ var requestHandler = function (app, event, mainDb) {
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
 
         Job.findById(jobId, function (err, job) {
-            if (err){
+            if (err) {
                 console.log(err);
             }
-            if (job && job.quotation){
+            if (job && job.quotation) {
                 Quotation.findById(job.quotation, {products: 1}, function (err, result) {
-                    if (err){
+                    if (err) {
                         console.log(err);
                     }
 
@@ -936,7 +953,7 @@ var requestHandler = function (app, event, mainDb) {
                     newProducts[index] = obj;
 
                     Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
-                        if (err){
+                        if (err) {
                             console.log(err);
                         }
                     });
@@ -945,7 +962,6 @@ var requestHandler = function (app, event, mainDb) {
             }
         });
     });
-
 
     //if name was updated, need update related wTrack, or other models
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
@@ -1088,8 +1104,8 @@ var requestHandler = function (app, event, mainDb) {
 
     event.on('recalculateRevenue', function (options) {
         var quotation = options.quotation;
-        var wTrackModel = options.wTrackModel;
         var req = options.req;
+        var wTrackModel = options.wTrackModel ||  models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var totalAmount = 0;
 
         if (!quotation || !wTrackModel) {
@@ -1149,7 +1165,7 @@ var requestHandler = function (app, event, mainDb) {
                         var revenue = (wTrack.worked / totalWorked) * totalAmount * 100;
 
                         console.log(revenue, wTrack._id);
-                        wTrackModel.findByIdAndUpdate(wTrack._id, {$set: {revenue: revenue}}, {new: true}, function(err, updated){
+                        wTrackModel.findByIdAndUpdate(wTrack._id, {$set: {revenue: revenue}}, {new: true}, function (err, updated) {
                             if (err) {
                                 return cb(err);
                             }

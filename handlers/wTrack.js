@@ -90,6 +90,7 @@ var wTrack = function (event, models) {
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                             event.emit('recollectProjectInfo');
                             event.emit('dropHoursCashes', req);
+                            event.emit('recollectVacationDash');
                         }
                         res.status(200).send({success: 'updated'});
                     });
@@ -137,6 +138,7 @@ var wTrack = function (event, models) {
                                 event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                                 event.emit('recollectProjectInfo');
+                                event.emit('recollectVacationDash');
                             }
 
                             cb(null, wTrack);
@@ -1480,7 +1482,6 @@ var wTrack = function (event, models) {
             event.emit('recollectProjectInfo');
 
             res.status(200).send('success');
-
         });
 
     };
