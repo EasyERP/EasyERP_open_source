@@ -140,8 +140,8 @@ var Vacation = function (event, models) {
     this.getYears = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var query;
-        var lastEl;
-        var length;
+       /* var lastEl;
+        var length;*/
         var curDate = new Date();
         var curYear = curDate.getFullYear();
         var yearFrom = curYear - CONSTANTS.HR_VAC_YEAR_BEFORE;
@@ -178,8 +178,8 @@ var Vacation = function (event, models) {
             result.sort();
 
 
-            length = result.length;
-            lastEl = result[length - 1];
+            /*length = result.length;
+            lastEl = result[length - 1];*/
 
             /*if (lastEl._id >= curDate.getFullYear() - 1) {
                 result[length] = {};
