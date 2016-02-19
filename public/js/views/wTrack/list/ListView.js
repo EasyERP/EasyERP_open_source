@@ -521,7 +521,7 @@ define([
                     editWtrackModel = this.collection.get(wTrackId);
                     this.editCollection.add(editWtrackModel);
 
-                    employeeId = editWtrackModel.attributes.employee;
+                    employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;;
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
                 }

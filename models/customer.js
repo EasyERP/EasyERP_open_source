@@ -180,5 +180,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Customer'] = customerSchema;
+    mongoose.Schemas.Customer = customerSchema;
 })();

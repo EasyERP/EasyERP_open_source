@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var Employee = function (event, models) {
+var Employee = function (models) {
     'use strict';
     /**
      * @module Employee
@@ -30,6 +30,8 @@ var Employee = function (event, models) {
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
     }, exportMap, 'Employees');
+
+    this.getNameAndDepartment = getNameAndDepartment;
 
     function getNameAndDepartment(db, isEmployee, callback) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);

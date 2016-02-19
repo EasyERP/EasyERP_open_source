@@ -232,7 +232,7 @@ var wTrack = function (models) {
                                 var _vacations;
 
                                 _vacations = _.find(vacations, function (vacationObject) {
-                                    return (vacationObject.employee.toString() === _employee._id.toString());
+                                    return (vacationObject.employee._id.toString() === _employee._id.toString());
                                 });
 
                                 if (_vacations) {
@@ -328,14 +328,25 @@ var wTrack = function (models) {
         }
 
         function vacationComposer(parallelCb) {
+            //ToDo optimize and refactor
             var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-            var startMonth = moment().weekYear(currentYear).week(currentStartWeek).month() + 1;
+            var startMonth = moment().weekYear(weeksArr[0].year).week(weeksArr[0].week).month() + 1;
             var endWeek = weeksArr[weeksArr.length - 1].week;
             var endYear = weeksArr[weeksArr.length - 1].year;
             var endMonth = moment().weekYear(currentYear).week(endWeek).month() + 1;
 
-            var startDate = currentYear * 100 + startMonth;
+            var startDate = weeksArr[0].year * 100 + startMonth;
             var endDate = endYear * 100 + endMonth;
+
+            var matchObject = {
+                $and: [{dateByMonth: {$gte: startDate, $lte: endDate}}]
+            };
+
+            if (employeesArray.length) {
+                matchObject.$and.unshift({
+                    employee: {$in: employeesArray}
+                });
+            }
 
             Vacation.aggregate([{
                 $project: {
@@ -349,10 +360,7 @@ var wTrack = function (models) {
                     dateByMonth: {$add: ['$month', {$multiply: ['$year', 100]}]}
                 }
             }, {
-                $match: {
-                    /*$and: [{year: {$gte: currentYear, $lte: endYear}}, {month: {$gte: startMonth, $lte: endMonth}}]*/
-                    $and: [{dateByMonth: {$gte: startDate, $lte: endDate}}]
-                }
+                $match: matchObject
             }, {
                 $group: {
                     _id      : '$employee',
