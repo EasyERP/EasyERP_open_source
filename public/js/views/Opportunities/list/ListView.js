@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Opportunities/list/ListHeader.html',
         'views/Opportunities/CreateView',
@@ -12,13 +14,13 @@ define([
         'text!templates/stages.html'
     ],
 
-    function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, stagesTamplate) {
+    function ($, _, listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, stagesTamplate) {
         var OpportunitiesListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : null,
+            filterView              : filterView,
             totalCollectionLengthUrl: '/totalCollectionLength/Opportunities',
             formUrl                 : "#easyErp/Opportunities/form/",
             contentType             : 'Opportunities',//needs in view.prototype.changeLocationHash
@@ -47,8 +49,7 @@ define([
 
                 "click .list td:not(.notForm)": "goToEditDialog",
                 "click .stageSelect"          : "showNewSelect",
-                "click .newSelectList li"     : "chooseOption",
-
+                "click .newSelectList li"     : "chooseOption"
             },
 
             chooseOption: function (e) {
@@ -66,8 +67,8 @@ define([
                         mid: 39
                     },
                     patch  : true,
-                    success: function (err, model) {
-                        self.showFilteredPage({}, self);
+                    success: function () {
+                        self.showFilteredPage(self.filter, self);
                     }
                 });
 
@@ -75,7 +76,7 @@ define([
                 return false;
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
 
@@ -115,12 +116,13 @@ define([
                 itemView.bind('incomingStages', itemView.pushStages, itemView);
 
                 this.renderCheckboxes();
+                this.renderFilter(self);
 
-                common.populateWorkflowsList("Opportunities", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                    self.stages = stages;
-                    var stage = (self.filter) ? self.filter.workflow : null;
-                    itemView.trigger('incomingStages', stages);
-                });
+                //common.populateWorkflowsList("Opportunities", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                //    self.stages = stages;
+                //    var stage = (self.filter) ? self.filter.workflow : null;
+                //    itemView.trigger('incomingStages', stages);
+                //});
 
                 this.renderPagination($currentEl, this);
 
@@ -139,12 +141,12 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Please refresh browser"
                         });
                     }
                 });
-            },
+            }
 
         });
 

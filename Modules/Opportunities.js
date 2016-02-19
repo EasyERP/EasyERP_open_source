@@ -37,10 +37,14 @@ var Opportunities = function (models, event) {
         switch (contentType) {
             case ('Opportunities'):
                 optionsObject['$and'].push({'isOpportunitie': true});
-                //
-                //if (data && data.filter) {
-                //    optionsObject['$and'].push(filterObj);
+
+                //if (data.filter && data.filter.isConverted) {
+                //    optionsObject['$and'].push({'isOpportunitie': false});
+                //    optionsObject['$and'].push({'isConverted': true});
                 //}
+                if (data && data.filter) {
+                    optionsObject['$and'].push(filterObj);
+                }
                 break;
             case ('Leads'):
                 optionsObject['$and'].push({'isOpportunitie': false});
@@ -79,7 +83,9 @@ var Opportunities = function (models, event) {
                                 workflow      : 1,
                                 whoCanRW      : 1,
                                 isConverted   : 1,
-                                isOpportunitie: 1
+                                isOpportunitie: 1,
+                                customer      : 1,
+                                salesPerson   : 1
                             }
                         },
                         {
@@ -524,6 +530,14 @@ var Opportunities = function (models, event) {
                     filtrElement.source = {$in: condition};
                     resArray.push(filtrElement);
                     break;
+                case 'customer':
+                    filtrElement.customer = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'salesPerson':
+                    filtrElement.salesPerson = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
             }
         }
         return resArray;
@@ -550,13 +564,15 @@ var Opportunities = function (models, event) {
 
         switch (data.contentType) {
             case ('Opportunities'):
-            {
+
                 optionsObject['$and'] = [];
                 optionsObject['$and'].push({'isOpportunitie': true});
-
                 if (data && data.filter) {
-                    filterObj = {};
                     optionsObject['$and'].push(filterObj);
+                }
+              /*  if (data && data.filter) {
+                    optionsObject['$and'] = [];
+                    optionsObject['$and'].push({'isOpportunitie': false});
                     //    if (data.filter.condition === 'or') {
                     //        filterObj['$or'] = [];
                     //        condition = filterObj['$or'];
@@ -565,9 +581,9 @@ var Opportunities = function (models, event) {
                     //        condition = filterObj['$and'];
                     //}
 
-                    caseFilterOpp(data.filter, condition);
+                    //caseFilterOpp(data.filter, condition);
 
-                    /*for (var key in data.filter) {
+                    /!*for (var key in data.filter) {
                      condition = data.filter[key];
                      switch (key) {
                      case 'Name':
@@ -585,13 +601,13 @@ var Opportunities = function (models, event) {
                      or.push({ 'expectedRevenue.value': {$in: condition}});
                      break;
                      }
-                     }*/
+                     }*!/
                     // if (!condition.length) {
                     //     delete filterObj['$or'];
                     //     delete filterObj['$and']
                     // }
-                }
-            }
+                }*/
+
                 break;
             case ('Leads'):
 
@@ -669,7 +685,9 @@ var Opportunities = function (models, event) {
                                 workflow      : 1,
                                 whoCanRW      : 1,
                                 isConverted   : 1,
-                                isOpportunitie: 1
+                                isOpportunitie: 1,
+                                customer      : 1,
+                                salesPerson   : 1
                             }
                         },
                         {
@@ -733,7 +751,11 @@ var Opportunities = function (models, event) {
                                         //} else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                         //    query.where('workflow').in([]);
                                         //}
-                                        query.populate('customer', 'name').populate('workflow', '_id name status').populate('salesPerson', 'name').populate('createdBy.user', 'login').populate('editedBy.user', 'login');
+                                        query.populate('customer', 'name')
+                                            .populate('workflow', '_id name status')
+                                            .populate('salesPerson', 'name')
+                                            .populate('createdBy.user', 'login')
+                                            .populate('editedBy.user', 'login');
                                     }
                                         break;
                                     case ('Leads'):
@@ -746,7 +768,11 @@ var Opportunities = function (models, event) {
                                         //    query.where('workflow').in([]);
                                         //}
 
-                                        query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName").populate('company', 'name').populate('workflow', "name status").populate('createdBy.user', 'login').populate('editedBy.user', 'login');
+                                        query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName")
+                                            .populate('company', 'name')
+                                            .populate('workflow', "name status")
+                                            .populate('createdBy.user', 'login')
+                                            .populate('editedBy.user', 'login');
                                     }
                                         break;
                                 }
