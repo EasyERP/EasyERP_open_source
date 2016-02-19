@@ -119,7 +119,7 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
 
@@ -127,11 +127,9 @@ define([
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
-                } else {
+                }
                     $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
                     return false;
-                }
-
             },
 
             goToEditDialog: function (e) {
