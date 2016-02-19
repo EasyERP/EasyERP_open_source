@@ -7,9 +7,9 @@ var Vacation = function (event, models) {
     'use strict';
     var access = require("../Modules/additions/access.js")(models);
     var capacityHandler = new CapacityHandler(models);
-    var VacationSchema = mongoose.Schemas['Vacation'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
+    var VacationSchema = mongoose.Schemas.Vacation;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var EmployeeSchema = mongoose.Schemas.Employee;
     var async = require('async');
     var _ = require('lodash');
 
@@ -212,6 +212,7 @@ var Vacation = function (event, models) {
                             date = moment([date.getFullYear(), date.getMonth()]);
 
                             endDate = new Date(date);
+                            endDate.setMonth(endDate.getMonth() + 1);
 
                             condition1 = {month: {'$lte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
@@ -221,7 +222,7 @@ var Vacation = function (event, models) {
                             date.subtract(12, 'M');
                             startDate = new Date(date);
 
-                            date.subtract(12, 'M');
+                            //date.subtract(12, 'M');
 
                             condition1 = {month: {'$gte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
