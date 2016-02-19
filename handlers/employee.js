@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var Employee = function (models) {
+var Employee = function (event, models) {
     'use strict';
     /**
      * @module Employee
