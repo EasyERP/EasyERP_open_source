@@ -29,15 +29,15 @@ var Module = function (models) {
             "sourceDocument._id": sourceId
         }, function (err, result) {
             if (err) {
-                return cb(err);
+                return console.log(err);
             }
 
-           var date = result.date;
+            var date = result.date;
             setDate(req, date);
         });
     };
 
-    function setDate(req, date){
+    function setDate(req, date) {
         this.setReconcileDate(req, date);
     }
 
@@ -49,7 +49,7 @@ var Module = function (models) {
             }
             var dateResult = result.date;
 
-            if (date < dateResult){
+            if (date < dateResult) {
                 db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: {date: date}}, function (err, result) {
                     if (err) {
                         return console.log(err);
@@ -74,6 +74,7 @@ var Module = function (models) {
         var dateKeyNext = 201520;
         var reconcileSalaryEntries;
         var reconcileInvoiceEntries;
+        var timeToSet = {hour: 18, minute: 1, second: 0};
 
         reconcileInvoiceEntries = function (parallelCb) {
             Invoice.find({reconcile: true}, function (err, result) {
@@ -167,11 +168,16 @@ var Module = function (models) {
                                 return asyncCb(err);
                             }
                             var counter = 0;
+                            var dataObject = {};
+                            for (var j = 7;  j>= 1; j--) {
+                                dataObject[j] = moment([wTrackResult.year, wTrackResult.month]).isoWeek(wTrackResult.week).day(j);
+                            }
 
-                            for (var i = 7; i >= 1; i--) {
-                                var day = i;
+                            var keys = Object.keys(dataObject);
+
+                            keys.forEach(function (i) {
                                 var hours = wTrackResult[i];
-                                var date = moment([wTrackResult.year, wTrackResult.month]).isoWeek(wTrackResult.week).day(day);
+                                var date = dataObject[i];
 
                                 var salaryFinder = function (pcb) {
                                     var query = Employee.findById(wTrackResult.employee, {hire: 1}).lean();
@@ -221,7 +227,6 @@ var Module = function (models) {
                                     var body = {
                                         currency      : '565eab29aeb95fa9c0f9df2d',
                                         journal       : '56c41876a2cb3024468a04db',
-                                        amount        : costHour * hours * 100,
                                         date          : date,
                                         sourceDocument: {
                                             model: 'wTrack',
@@ -229,17 +234,49 @@ var Module = function (models) {
                                         }
                                     };
 
+                                    var bodyIdle = {
+                                        currency      : '565eab29aeb95fa9c0f9df2d',
+                                        journal       : '56c6c9fc9d2119b805dbc657',
+                                        date          : moment(date).set(timeToSet),
+                                        sourceDocument: {
+                                            model: 'wTrack',
+                                            _id  : wTrackResult._id
+                                        }
+                                    };
+
+                                    var bodyOverHead = {
+                                        currency      : '565eab29aeb95fa9c0f9df2d',
+                                        journal       : '56c6d1e75455aec80b492563',
+                                        date          : moment(date).set(timeToSet),
+                                        sourceDocument: {
+                                            model: 'wTrack',
+                                            _id  : wTrackResult._id
+                                        }
+                                    };
+
+                                    if (hours - 8 >= 0) {
+                                        body.amount = costHour * 8 * 100;
+                                        bodyIdle.amount = 0;
+                                        bodyOverHead.amount = costHour * (hours - 8) * 100;
+                                    } else {
+                                        body.amount = costHour * hours * 100;
+                                        bodyIdle.amount = costHour * (8 - hours) * 100;
+                                        bodyOverHead.amount = 0;
+                                    }
+
                                     var superCb = function () {
                                         counter++;
 
-                                        if (counter === 7) {
+                                        if (counter === 21) {
                                             asyncCb();
                                         }
                                     };
 
-                                    createReconciled(body, req.session.lastDb, superCb, req.session.uId)
+                                    createReconciled(body, req.session.lastDb, superCb, req.session.uId);
+                                    createReconciled(bodyIdle, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    createReconciled(bodyOverHead, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                 });
-                            }
+                            });
                         });
                     }, function (err, result) {
                         cb();
@@ -286,7 +323,7 @@ var Module = function (models) {
         });
     };
 
-    function createReconciled(body, dbIndex, cb, uId) {
+    function createReconciled(body, dbIndex, cb, uId, timeToSet) {
         var Journal = models.get(dbIndex, 'journal', journalSchema);
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
         var Currency = models.get(dbIndex, 'currency', CurrencySchema);
@@ -296,6 +333,8 @@ var Module = function (models) {
         var currency;
         var amount = body.amount;
         var rates;
+        var hours = body.hours;
+        var timeToSet = timeToSet;
 
         var waterfallTasks = [currencyNameFinder, journalFinder, journalEntrySave];
 
@@ -328,7 +367,7 @@ var Module = function (models) {
 
             Journal.findById(journalId, waterfallCb);
 
-        };
+        }
 
         function journalEntrySave(journal, waterfallCb) {
             oxr.historical(date, function () {
@@ -352,7 +391,12 @@ var Module = function (models) {
                             date: new Date()
                         };
 
-                        if (amount) {
+                        if (timeToSet && hours && (8 - hours > 0)) {
+                            (debitObject.createdBy.date).set(timeToSet);
+                            (debitObject.editedBy.date).set(timeToSet);
+                        }
+
+                        if (amount && moment(debitObject.date).isBefore(now)) {
                             journalEntry = new Model(debitObject);
                             journalEntry.save(parallelCb);
                         } else {
@@ -376,7 +420,12 @@ var Module = function (models) {
                             date: new Date()
                         };
 
-                        if (amount) {
+                        if (timeToSet && hours && (8 - hours > 0)) {
+                            (debitObject.createdBy.date).set(timeToSet);
+                            (debitObject.editedBy.date).set(timeToSet);
+                        }
+
+                        if (amount && moment(debitObject.date).isBefore(now)) {
                             journalEntry = new Model(creditObject);
                             journalEntry.save(parallelCb);
                         } else {
@@ -713,6 +762,7 @@ var Module = function (models) {
                         .aggregate([{
                             $match: {
                                 "sourceDocument.model": "wTrack",
+                                "sourceDocument._id"  : objectId("56c6d5654a4805fc2c2149db"),
                                 "account"             : objectId("565eb53a6aa50532e5df0be4")
                             }
                         }, {
@@ -791,12 +841,12 @@ var Module = function (models) {
                     query.options = {allowDiskUse: true};
 
                     query.exec(function (err, result) {
-                            if (err) {
-                                return next(err);
-                            }
+                        if (err) {
+                            return next(err);
+                        }
 
-                            cb(null, result);
-                        });
+                        cb(null, result);
+                    });
                 };
 
                 var parallelTasks = [findInvoice, findSalary];
