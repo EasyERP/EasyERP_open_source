@@ -2,14 +2,15 @@
  * Created by liliya on 17.09.15.
  */
 define([
-    'Backbone',
-    'jQuery',
-    'Underscore',
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Projects/form/FormTemplate.html',
         'text!templates/Projects/projectInfo/DetailsTemplate.html',
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
         'text!templates/Projects/projectInfo/invoiceStats.html',
+        'views/Projects/projectInfo/journalEntriesForJob/dialogView',
         'views/selectView/selectView',
         'views/salesOrder/EditView',
         'views/salesQuotation/EditView',
@@ -41,7 +42,7 @@ define([
         'helpers'
     ],
 
-    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, ReportView, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -66,6 +67,7 @@ define([
                 "mouseleave #jobsItem"                                                                                    : "hideRemoveButton",
                 "click .fa.fa-trash"                                                                                      : "removeJobAndWTracks",
                 "dblclick td.editableJobs"                                                                                : "editRow",
+                "click td.editableJobs"                                                                                   : "showReport",
                 "click #saveName"                                                                                         : "saveNewJobName",
                 "keydown input.editing "                                                                                  : "keyDown",
                 'click'                                                                                                   : 'hideSelect',
@@ -174,6 +176,15 @@ define([
                 if (e.which === 13) {
                     this.saveNewJobName(e);
                 }
+            },
+
+            showReport: function (e) {
+                var el = $(e.target);
+                var tr = $(e.target).closest('tr');
+                var id = tr.attr('data-id');
+
+                new ReportView({_id: id});
+
             },
 
             editRow: function (e) {
@@ -673,7 +684,7 @@ define([
             hideSelect: function () {
                 $("#health").find("ul").hide(); // added for hiding list if element in isnt chosen
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove();
                 }
             },
@@ -791,17 +802,17 @@ define([
 
                     var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
                     var itemsNumber = parseInt($('.selectedItemsNumber').text()) || 'all';
-                    var defaultItemsNumber = itemsNumber  || self.wCollection.namberToShow;
+                    var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
 
                     this.wTrackView = new wTrackView({
-                        model      : self.wCollection,
-                        defaultItemsNumber : defaultItemsNumber,
-                        filter     : filter,
-                        startNumber: startNumber,
-                        project    : self.formModel
+                        model             : self.wCollection,
+                        defaultItemsNumber: defaultItemsNumber,
+                        filter            : filter,
+                        startNumber       : startNumber,
+                        project           : self.formModel
                     }).render();
                 };
 
@@ -1261,7 +1272,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                    minDate : $('#StartDate').datepicker('getDate'), //added minDate at start
+                    minDate    : $('#StartDate').datepicker('getDate'), //added minDate at start
                     onSelect   : function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());

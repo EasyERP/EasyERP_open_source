@@ -169,15 +169,17 @@ var Module = function (models) {
                             }
                             var counter = 0;
                             var dataObject = {};
-                            for (var j = 7;  j>= 1; j--) {
+                            for (var j = 7; j >= 1; j--) {
                                 dataObject[j] = moment([wTrackResult.year, wTrackResult.month]).isoWeek(wTrackResult.week).day(j);
                             }
+                            ;
 
                             var keys = Object.keys(dataObject);
 
                             keys.forEach(function (i) {
                                 var hours = wTrackResult[i];
                                 var date = dataObject[i];
+                                var day = i;
 
                                 var salaryFinder = function (pcb) {
                                     var query = Employee.findById(wTrackResult.employee, {hire: 1}).lean();
@@ -227,7 +229,7 @@ var Module = function (models) {
                                     var body = {
                                         currency      : '565eab29aeb95fa9c0f9df2d',
                                         journal       : '56c41876a2cb3024468a04db',
-                                        date          : date,
+                                        date          : date.set(timeToSet),
                                         sourceDocument: {
                                             model: 'wTrack',
                                             _id  : wTrackResult._id
@@ -254,14 +256,18 @@ var Module = function (models) {
                                         }
                                     };
 
-                                    if (hours - 8 >= 0) {
-                                        body.amount = costHour * 8 * 100;
-                                        bodyIdle.amount = 0;
-                                        bodyOverHead.amount = costHour * (hours - 8) * 100;
+                                    if (day <= 5) {
+                                        if (hours - 8 >= 0) {
+                                            body.amount = costHour * 8 * 100;
+                                            bodyIdle.amount = 0;
+                                            bodyOverHead.amount = costHour * (hours - 8) * 100;
+                                        } else {
+                                            body.amount = costHour * hours * 100;
+                                            bodyIdle.amount = costHour * (8 - hours) * 100;
+                                            bodyOverHead.amount = 0;
+                                        }
                                     } else {
-                                        body.amount = costHour * hours * 100;
-                                        bodyIdle.amount = costHour * (8 - hours) * 100;
-                                        bodyOverHead.amount = 0;
+                                        bodyOverHead.amount = costHour * hours * 100;
                                     }
 
                                     var superCb = function () {
@@ -272,7 +278,7 @@ var Module = function (models) {
                                         }
                                     };
 
-                                    createReconciled(body, req.session.lastDb, superCb, req.session.uId);
+                                    createReconciled(body, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                     createReconciled(bodyIdle, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                     createReconciled(bodyOverHead, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                 });
@@ -497,6 +503,157 @@ var Module = function (models) {
 
             res.status(200).send({count: result});
         })
+
+    };
+
+    this.getForReport = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var query = req.query;
+        var sourceDocument = query._id;
+        var debit;
+        var credit;
+        var wTrackFinder;
+        var resultFinder;
+
+        wTrackFinder = function (waterfallCb) {
+            wTrackModel.find({jobs: objectId(sourceDocument)}, {_id: 1}, function (err, result) {
+                if (err){
+                  return  waterfallCb(err);
+                }
+
+                var newArray = [];
+
+                result.forEach(function (el) {
+                    newArray.push(el._id);
+                });
+
+                waterfallCb(null, newArray);
+            });
+
+        };
+
+        resultFinder = function (sourceDocuments, waterfallCb) {
+            debit = function (cb) {
+                Model
+                    .aggregate([{
+                        $match: {
+                            "sourceDocument.model": "wTrack",
+                            "sourceDocument._id"  : {$in: sourceDocuments},
+                            debit                 : {$gt: 0}
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "wTrack",
+                            localField             : "sourceDocument._id",
+                            foreignField: "_id", as: "sourceDocument"
+                        }
+                    }, {
+                        $project: {
+                            date          : 1,
+                            debit         : {$divide: ['$debit', '$currency.rate']},
+                            sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]}
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "Employees",
+                            localField             : "sourceDocument.employee",
+                            foreignField: "_id", as: "employee"
+                        }
+                    }, {
+                        $project: {
+                            date    : 1,
+                            debit   : 1,
+                            employee: {$arrayElemAt: ["$employee", 0]}
+                        }
+                    }, {
+                        $project: {
+                            date    : 1,
+                            debit   : 1,
+                            employee: {$concat: ['$employee.name.first', ' ', '$employee.name.last']}
+                        }
+                    }, {
+                        $sort: {
+                            date    : 1,
+                            employee: 1
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+            };
+
+            credit = function (cb) {
+                Model
+                    .aggregate([{
+                        $match: {
+                            "sourceDocument.model": "wTrack",
+                            "sourceDocument._id"  : {$in: sourceDocuments},
+                            credit                : {$gt: 0}
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "wTrack",
+                            localField             : "sourceDocument._id",
+                            foreignField: "_id", as: "sourceDocument"
+                        }
+                    }, {
+                        $project: {
+                            date          : 1,
+                            credit        : {$divide: ['$credit', '$currency.rate']},
+                            sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]}
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "Employees",
+                            localField             : "sourceDocument.employee",
+                            foreignField: "_id", as: "employee"
+                        }
+                    }, {
+                        $project: {
+                            date    : 1,
+                            credit  : 1,
+                            employee: {$arrayElemAt: ["$employee", 0]}
+                        }
+                    }, {
+                        $project: {
+                            date    : 1,
+                            credit  : 1,
+                            employee: {$concat: ['$employee.name.first', ' ', '$employee.name.last']}
+                        }
+                    }, {
+                        $sort: {
+                            date    : 1,
+                            employee: 1
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+            };
+
+            async.parallel([debit, credit], function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, {wagesPayable: result[0] || [], jobInProgress: result[1] || []});
+            });
+        };
+
+        async.waterfall([wTrackFinder, resultFinder], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
 
     };
 
@@ -763,7 +920,6 @@ var Module = function (models) {
                             $match: {
                                 "sourceDocument.model": "wTrack",
                                 "sourceDocument._id"  : objectId("56c6d5654a4805fc2c2149db"),
-                                "account"             : objectId("565eb53a6aa50532e5df0be4")
                             }
                         }, {
                             $lookup: {
