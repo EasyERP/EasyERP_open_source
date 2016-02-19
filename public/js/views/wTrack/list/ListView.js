@@ -511,7 +511,7 @@ define([
                 month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
 
                 if (wTrackId.length < 24) {
-                    employeeId = this.changedModels[wTrackId].employee ? this.changedModels[wTrackId].employee._id : $(e.target).attr("data-id");
+                    employeeId = this.changedModels[wTrackId].employee || $(e.target).attr("data-id");
 
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
@@ -520,7 +520,7 @@ define([
                     editWtrackModel = this.collection.get(wTrackId);
                     this.editCollection.add(editWtrackModel);
 
-                    employeeId = editWtrackModel.attributes.employee._id;
+                    employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;;
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
                 }
@@ -534,11 +534,11 @@ define([
                         costElement.addClass('money');
                         costElement.text('0.00');
 
-                        profitVal = (parseFloat(revenueVal) - 0).toFixed(2);
-                        profit.text(profitVal);
+                        //profitVal = (parseFloat(revenueVal) - 0).toFixed(2);
+                        //profit.text(profitVal);
 
                         self.changedModels[wTrackId].cost = 0;
-                        self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
+                        //self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                         return 0;
                     }
@@ -554,19 +554,17 @@ define([
                     costElement.addClass('money');
                     costElement.text(calc);
 
-                    profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
-                    profit.text(profitVal);
+                    //profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
+                    //profit.text(profitVal);
 
                     self.changedModels[wTrackId].cost = parseFloat(calc);
-                    self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
+                    //self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;
                 });
 
                 function getBaseSalary(callback) {
-                    var employeeSalary;
-
-                    dataService.getData('/payroll/getByMonth',
+                    dataService.getData('/employee/getByMonth',
                         {
                             month: month,
                             year : year,

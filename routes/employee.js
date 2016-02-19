@@ -13,6 +13,7 @@ module.exports = function (models) {
     router.get('/exportToXlsx',handler.exportToXlsx);
     router.get('/exportToCsv',handler.exportToCsv);
     router.get('/getYears',handler.getYears);
+    router.get('/getByMonth', handler.getSalaryByMonth);
 
     return router;
 };

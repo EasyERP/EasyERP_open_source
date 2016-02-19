@@ -10,6 +10,7 @@ var Employee = function (models) {
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var _ = require('underscore');
+    var moment = require('../public/js/libs/moment/moment');
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
@@ -41,6 +42,34 @@ var Employee = function (models) {
 
                 callback(null, employees);
             });
+    };
+
+    this.getSalaryByMonth = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var query = req.query;
+        var _id = query._id;
+        var month = query.month;
+        var year = query.year;
+        var date = moment().year(year).month(month - 1).date(1);
+
+        Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
+            if (err){
+                return next(err);
+            }
+            var hire = result.hire;
+            var salary = 0;
+            var i;
+            var length = hire.length;
+
+            for (i = length - 1; i >= 0; i--){
+                if (date >= hire[i].date){
+                    salary = hire[i].salary;
+                    break;
+                }
+            }
+
+            res.status(200).send({data: salary});
+        });
     };
 
     this.getYears = function (req, res, next) {
