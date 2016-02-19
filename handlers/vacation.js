@@ -140,6 +140,8 @@ var Vacation = function (event, models) {
     this.getYears = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var query;
+        var newYear;
+        var year;
        /* var lastEl;
         var length;*/
         var curDate = new Date();
@@ -164,8 +166,8 @@ var Vacation = function (event, models) {
             });
 
 
-            for (var year = yearFrom; year <= yearTo; year++) {
-                var newYear = {
+            for (year = yearFrom; year <= yearTo; year++) {
+                newYear = {
                     _id: year,
                     name: year
                 };
