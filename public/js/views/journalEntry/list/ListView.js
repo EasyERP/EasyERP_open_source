@@ -3,16 +3,13 @@ define([
         'text!templates/journalEntry/list/ListHeader.html',
         'views/journalEntry/list/ListItemView',
         'views/salesInvoice/EditView',
-        'models/journalEntry',
         'models/InvoiceModel',
         'collections/journalEntry/filterCollection',
-        'dataService',
-        'custom',
         'constants',
         'helpers'
     ],
 
-    function (listViewBase, listTemplate, listItemView, EditView, currentModel, InvoiceModel, contentCollection, dataService, custom, CONSTANTS, helpers) {
+    function (listViewBase, listTemplate, listItemView, EditView, InvoiceModel, contentCollection, CONSTANTS, helpers) {
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
             listItemView            : listItemView,

@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var CapacityHandler = require('./capacity');
 var objectId = mongoose.Types.ObjectId;
+var CONSTANTS = require('../constants/mainConstants');
 
 var Vacation = function (event, models) {
     'use strict';
@@ -140,9 +141,14 @@ var Vacation = function (event, models) {
     this.getYears = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var query;
-        var lastEl;
-        var length;
+        var newYear;
+        var year;
+       /* var lastEl;
+        var length;*/
         var curDate = new Date();
+        var curYear = curDate.getFullYear();
+        var yearFrom = curYear - CONSTANTS.HR_VAC_YEAR_BEFORE;
+        var yearTo = curYear + CONSTANTS.HR_VAC_YEAR_AFTER;
 
         query = Vacation.distinct('year');
 
@@ -158,16 +164,31 @@ var Vacation = function (event, models) {
                 element.name = el;
 
                 return element;
-            }).sort();
+            });
 
-            length = result.length;
-            lastEl = result[length - 1];
 
-            if (lastEl._id === curDate.getFullYear()) {
+            for (year = yearFrom; year <= yearTo; year++) {
+                newYear = {
+                    _id: year,
+                    name: year
+                };
+
+                if (result.indexOf(newYear) === -1) {
+                    result.push(newYear);
+                }
+            }
+
+            result.sort();
+
+
+            /*length = result.length;
+            lastEl = result[length - 1];*/
+
+            /*if (lastEl._id >= curDate.getFullYear() - 1) {
                 result[length] = {};
                 result[length]._id = lastEl._id + 1;
                 result[length].name = lastEl._id + 1;
-            }
+            }*/
 
             res.status(200).send(result);
         });
@@ -213,6 +234,7 @@ var Vacation = function (event, models) {
                             date = moment([date.getFullYear(), date.getMonth()]);
 
                             endDate = new Date(date);
+                            endDate.setMonth(endDate.getMonth() + 1);
 
                             condition1 = {month: {'$lte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
@@ -222,7 +244,7 @@ var Vacation = function (event, models) {
                             date.subtract(12, 'M');
                             startDate = new Date(date);
 
-                            date.subtract(12, 'M');
+                            //date.subtract(12, 'M');
 
                             condition1 = {month: {'$gte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
