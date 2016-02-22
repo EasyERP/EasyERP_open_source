@@ -246,7 +246,7 @@ var Module = function (models) {
                                         }
                                     };
 
-                                    var bodyOverHead = {
+                                    var bodyOvertime = {
                                         currency      : '565eab29aeb95fa9c0f9df2d',
                                         journal       : '56c6d1e75455aec80b492563',
                                         date          : moment(date).set(timeToSet),
@@ -260,14 +260,14 @@ var Module = function (models) {
                                         if (hours - 8 >= 0) {
                                             body.amount = costHour * 8 * 100;
                                             bodyIdle.amount = 0;
-                                            bodyOverHead.amount = costHour * (hours - 8) * 100;
+                                            bodyOvertime.amount = costHour * (hours - 8) * 100;
                                         } else {
                                             body.amount = costHour * hours * 100;
                                             bodyIdle.amount = costHour * (8 - hours) * 100;
-                                            bodyOverHead.amount = 0;
+                                            bodyOvertime.amount = 0;
                                         }
                                     } else {
-                                        bodyOverHead.amount = costHour * hours * 100;
+                                        bodyOvertime.amount = costHour * hours * 100;
                                     }
 
                                     var superCb = function () {
@@ -280,7 +280,7 @@ var Module = function (models) {
 
                                     createReconciled(body, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                     createReconciled(bodyIdle, req.session.lastDb, superCb, req.session.uId, timeToSet);
-                                    createReconciled(bodyOverHead, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    createReconciled(bodyOvertime, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                 });
                             });
                         });

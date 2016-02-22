@@ -425,21 +425,21 @@ define([
                 var template = _.template(cancelEdit);
                 var model;
 
-                if (!id) {
-                    return cb('Empty id');
+                if (id.length < 24) {
+                   return cb('Empty id');
                 }
 
-                model = collection.get(id);
+                model = collection.get(id) || self.editCollection.get(id);
                 model = model.toJSON();
                 model.startNumber = rowNumber;
                 tr.replaceWith(template({model: model}));
                 cb();
             }, function (err) {
+                self.hideSaveCancelBtns();
                 if (!err) {
                     self.editCollection = new EditCollection(collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
-                    self.hideSaveCancelBtns();
                 }
             });
 

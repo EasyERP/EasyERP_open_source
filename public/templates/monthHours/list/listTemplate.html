@@ -4,10 +4,15 @@
 
     <td data-content="number" class="centerCell"><%=startNumber + index +1 %></td>
     <td data-content="month"><%=monthHours.month%></td>
-    <td data-content="hours"><%=monthHours.hours%></td>
     <td data-content="year"><%=monthHours.year%></td>
+    <td data-content="hours"  class="editable"><%=monthHours.hours%></td>
     <td data-type="input" data-content="expenseCoefficient" class="editable"><%=monthHours.expenseCoefficient%></td>
     <td data-type="input" data-content="fixedExpense" class="editable"><%=monthHours.fixedExpense%></td>
+    <td data-type="input" class="editable" data-content="idleTimeBudget"><%=monthHours.idleTimeBudget || 0%></td>
+    <td class="editable" data-content="vacationBudget"><%=monthHours.vacationBudget || 0%></td>
+    <td class="editable" data-content="adminBudget"><%=monthHours.adminBudget || 0%></td>
+    <td class="editable" data-content="totalWorked"><%=monthHours.totalWorked || 0%></td>
+    <td class="editable" data-content="overTimeHours"><%=monthHours.overTimeHours || 0%></td>
 </tr>
 <% }) %>
 
