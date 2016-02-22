@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-var chartOfAccountSchema = mongoose.Schemas['chartOfAccount'];
 var journalSchema = mongoose.Schemas['journal'];
+var async = require('async');
 
 var _ = require('underscore');
 
@@ -69,6 +69,37 @@ var Module = function (models) {
                 res.status(403).send();
             }
         });
+    };
+
+    this.putchBulk = function (req, res, next) {
+        var body = req.body;
+        var uId;
+        var Model = models.get(req.session.lastDb, 'journal', journalSchema);
+
+        async.each(body, function (data, cb) {
+            var id = data._id;
+
+            data.editedBy = {
+                user: uId,
+                date: new Date().toISOString()
+            };
+            delete data._id;
+
+            Model.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, model) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'updated'});
+        });
+
     };
 
     this.remove = function (req, res, next) {

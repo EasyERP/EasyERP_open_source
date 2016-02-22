@@ -1,8 +1,8 @@
 <% collection.forEach(function(journal, index){ %>
-<tr data-index="<%= index %>" data-id="<%=journal._id%>">
+<tr data-id="<%=journal._id%>">
     <td class="notForm centerCell"><input type="checkbox" value="<%=journal._id%>" class="checkbox"/></td>
-    <td class="centerCell"><%=index + 1 %></td>
-    <td><%=journal.name%></td>
+    <td data-content="number" class="centerCell"><%=index + 1 %></td>
+    <td class="editable" data-content="name"><%=journal.name%></td>
     <td><%=journal.transaction ? journal.transaction : ''%></td>
     <td><%=(journal.debitAccount && journal.debitAccount.name) ? journal.debitAccount.name : ''%></td>
     <td><%=(journal.creditAccount && journal.creditAccount.name) ? journal.creditAccount.name : ''%></td>
