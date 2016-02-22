@@ -24,11 +24,10 @@ var Vacation = function (event, models) {
             for (var day = array.length; day >= 0; day--) {
                 if (array[day]) {
                     dateValue = moment([year, month - 1, day + 1]);
-                    //dateValue.date(day + 1);
-                    // weekKey = year * 100 + moment(dateValue).isoWeek();
-                    weekKey = year * 100 + moment(dateValue).isoWeek();
+                    //weekKey = year * 100 + moment(dateValue).isoWeek();
+                    weekKey = dateValue.isoWeekYear() * 100 + dateValue.isoWeek();
 
-                    dayNumber = moment(dateValue).day();
+                    dayNumber = dateValue.day();
 
                     if (dayNumber !== 0 && dayNumber !== 6) {
                         resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
@@ -61,6 +60,7 @@ var Vacation = function (event, models) {
         var monthArray;
         var monthYear;
         var startMonth;
+        var day;
 
         data.forEach(function (attendance) {
             attendance.vacArray.forEach(function (day) {
@@ -88,8 +88,9 @@ var Vacation = function (event, models) {
                 dayMonthCount = moment().set('year', year).set('month', i).endOf('month').date();
 
                 for (var j = 1; j <= dayMonthCount; j++) {
-                    var day = new Date(year, i, j);
+                    day = new Date(year, i, j);
                     day = day.getDay();
+
                     if (day === 0 || day === 6) {
                         weekend++;
                     }
@@ -372,8 +373,8 @@ var Vacation = function (event, models) {
         var vacArr = data.vacArray ? data.vacArray : [];
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var capData = {
-            db: req.session.lastDb,
-        }
+            db: req.session.lastDb
+        };
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 70, function (access) {

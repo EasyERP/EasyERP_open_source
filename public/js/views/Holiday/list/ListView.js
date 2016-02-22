@@ -92,6 +92,7 @@ define([
                 var savedRow = this.$listTable.find('#false');
                 var editedEl = savedRow.find('.editing');
                 var editedCol = editedEl.closest('td');
+
                 this.hideSaveCancelBtns();
 
                 editedCol.text(editedEl.val());
@@ -124,7 +125,7 @@ define([
                     modelJSON = model.toJSON();
                     date = new Date(modelJSON.date);
                     model.changed = this.changedModels[id];
-                    model.changed.year = moment(date).year();
+                    model.changed.year = moment(date).isoWeekYear();
                     model.changed.week = moment(date).isoWeek();
                 }
                 this.editCollection.save();
@@ -380,7 +381,6 @@ define([
                         $.each($("#listTable input:checked"), function (index, checkbox) {
                             value = checkbox.value;
                             that.changedModels = {};
-                            ;
 
                             if (value.length < 24) {
                                 that.editCollection.remove(value);
@@ -394,7 +394,6 @@ define([
 
                                 }, that);
                             } else {
-
                                 model = that.collection.get(value);
                                 model.destroy({
                                     headers: {

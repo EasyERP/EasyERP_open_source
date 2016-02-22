@@ -19,11 +19,12 @@ define([
             changedModels: {},
 
             events: {
-                "click .oe_sortable"    : "goSort",
-                "click td.editable"     : "editRow",
-                "change .editable"      : "setEditable",
-                "click .checkbox"       : "checked",
-                "keydown input.editing ": "keyDown"
+                "click .oe_sortable"                               : "goSort",
+                "click td.editable"                                : "editRow",
+                "change .editable"                                 : "setEditable",
+                "click .checkbox"                                  : "checked",
+                "keydown input.editing "                           : "keyDown",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
             initialize: function (options) {
@@ -31,6 +32,42 @@ define([
                 this.collection = options.collection;
 
                 this.render();
+            },
+
+            chooseOption: function (e) {
+                var target = $(e.target);
+                var targetElement = target.parents("td");
+                var tr = target.parents("tr");
+                var modelId = tr.attr('data-id');
+                var attr = targetElement.data("content");
+                var changedAttr;
+
+                var editModel = this.editCollection.get(modelId) || this.collection.get(modelId);
+
+                if (!this.changedModels[modelId]) {
+                    if (!editModel.id) {
+                        this.changedModels[modelId] = editModel.attributes;
+                    } else {
+                        this.changedModels[modelId] = {};
+                    }
+                }
+
+                changedAttr = this.changedModels[modelId];
+                if (attr === 'accountType') {
+
+                    changedAttr.accountType = target.text();
+                }
+
+                targetElement.text(target.text());
+
+                this.hideNewSelect();
+                this.setEditable(targetElement);
+
+                return false;
+            },
+
+            hideNewSelect: function () {
+                this.$el.find('.newSelectList').hide();
             },
 
             keyDown: function (e) {
@@ -73,7 +110,7 @@ define([
                                 error  : function (model, res) {
                                     if (res.status === 403 && index === 0) {
                                         App.render({
-                                            type: 'error',
+                                            type   : 'error',
                                             message: "You do not have permission to perform this action"
                                         });
                                     }
@@ -250,7 +287,7 @@ define([
                 return false;
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
                 $(".newSelectList").hide();
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
@@ -265,9 +302,13 @@ define([
                     this.setChangedValueToModel();
                 }
 
-                tempContainer = el.text();
-                width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                if (isSelect) {
+                    el.append("<ul class='newSelectList'><li>Debit</li><li>Credit</li></ul>");
+                } else {
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                }
 
                 return false;
             },
@@ -423,12 +464,19 @@ define([
 
             saveItem: function () {
                 var model;
+                var code;
+                var account;
 
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                    model.changed = this.changedModels[id];
+                    if (model) {
+                        model.changed = this.changedModels[id];
+                        code = this.changedModels[id].code || model.get('code');
+                        account = this.changedModels[id].account || model.get('account');
+                        model.changed.name = code + ' ' + account;
+                    }
                 }
 
                 if (errors.length) {
@@ -438,9 +486,9 @@ define([
 
                 for (var id in this.changedModels) {
                     delete this.changedModels[id];
+                    this.editCollection.remove(id);
                 }
 
-                this.editCollection.remove(id);
             },
 
             savedNewModel: function (modelObject) {
@@ -463,7 +511,7 @@ define([
 
             errorFunction: function () {
                 App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: "Some error"
                 });
             },
