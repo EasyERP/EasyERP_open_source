@@ -7,6 +7,7 @@ var wTrackSchema = mongoose.Schemas.wTrack;
 var employeeSchema = mongoose.Schemas.Employee;
 var jobsSchema = mongoose.Schemas.jobs;
 var invoiceSchema = mongoose.Schemas.Invoice;
+var holidaysSchema = mongoose.Schemas.Holiday;
 var objectId = mongoose.Types.ObjectId;
 
 var oxr = require('open-exchange-rates');
@@ -66,6 +67,7 @@ var Module = function (models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
+        var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
         var body = req.body;
         var date = new Date(body.date);
         //var dateKey = moment(date).year() * 100 + moment(date).isoWeek();
@@ -213,16 +215,35 @@ var Module = function (models) {
                                             return cb(err);
                                         }
 
-                                        pcb(null, element[0] ? element[0].hours : 0);
+                                        pcb(null, element[0] || {});
                                     });
                                 };
 
-                                async.parallel([salaryFinder, monthHoursFinder], function (err, result) {
+                                var holidaysFinder = function (pcb) {
+                                    var query = Holidays.find({
+                                        date: date
+                                    }).lean();
+
+                                    query.exec(function (err, element) {
+                                        if (err) {
+                                            return cb(err);
+                                        }
+
+                                        pcb(null, element[0] || {});
+                                    });
+                                };
+
+                                async.parallel([salaryFinder, monthHoursFinder, holidaysFinder], function (err, result) {
                                     if (err) {
                                         return asyncCb(err);
                                     }
-                                    var hoursInMonth = result[1];
+                                    var holiday = result[2];
+                                    var monthHoursModel = result[1];
                                     var salary = result[0];
+                                    var hoursInMonth = monthHoursModel.hours;
+                                    var vacationCoefficient = monthHoursModel.vacationCoefficient;
+                                    var adminCoefficient = monthHoursModel.adminCoefficient;
+                                    var idleCoefficient = monthHoursModel.idleCoefficient;
 
                                     var costHour = isFinite(salary / hoursInMonth) ? salary / hoursInMonth : 0;
 
@@ -256,24 +277,62 @@ var Module = function (models) {
                                         }
                                     };
 
-                                    if (day <= 5) {
+                                    var bodyVacation = {
+                                        currency      : '565eab29aeb95fa9c0f9df2d',
+                                        journal       : '56c6d1e75455aec80b492563',
+                                        date          : moment(date).set(timeToSet),
+                                        sourceDocument: {
+                                            model: 'wTrack',
+                                            _id  : wTrackResult._id
+                                        }
+                                    };
+
+                                    var bodyAdminCosts = {
+                                        currency      : '565eab29aeb95fa9c0f9df2d',
+                                        journal       : '56c6d1e75455aec80b492563',
+                                        date          : moment(date).set(timeToSet),
+                                        sourceDocument: {
+                                            model: 'wTrack',
+                                            _id  : wTrackResult._id
+                                        }
+                                    };
+
+                                    var bodyHoliday = {
+                                        currency      : '565eab29aeb95fa9c0f9df2d',
+                                        journal       : '56c6d1e75455aec80b492563',
+                                        date          : moment(date).set(timeToSet),
+                                        sourceDocument: {
+                                            model: 'wTrack',
+                                            _id  : wTrackResult._id
+                                        }
+                                    };
+
+                                    if (day <= 5 && !holiday) {
                                         if (hours - 8 >= 0) {
                                             body.amount = costHour * 8 * 100;
                                             bodyIdle.amount = 0;
                                             bodyOvertime.amount = costHour * (hours - 8) * 100;
                                         } else {
                                             body.amount = costHour * hours * 100;
-                                            bodyIdle.amount = costHour * (8 - hours) * 100;
+                                            bodyIdle.amount = idleCoefficient * (8 - hours) * 100;
                                             bodyOvertime.amount = 0;
                                         }
+
+                                        bodyVacation.amount = vacationCoefficient * 8 * 100;
+                                        bodyAdminCosts.amount = adminCoefficient * hours * 100;
                                     } else {
                                         bodyOvertime.amount = costHour * hours * 100;
+                                        bodyAdminCosts.amount = adminCoefficient * hours * 100;
+
+                                        if (holiday) {
+                                            bodyHoliday.amount = costHour * 8 * 100;
+                                        }
                                     }
 
                                     var superCb = function () {
                                         counter++;
 
-                                        if (counter === 21) {
+                                        if (counter === 42) {
                                             asyncCb();
                                         }
                                     };
@@ -281,6 +340,9 @@ var Module = function (models) {
                                     createReconciled(body, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                     createReconciled(bodyIdle, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                     createReconciled(bodyOvertime, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    createReconciled(bodyVacation, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    createReconciled(bodyAdminCosts, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    createReconciled(bodyHoliday, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                 });
                             });
                         });
@@ -518,8 +580,8 @@ var Module = function (models) {
 
         wTrackFinder = function (waterfallCb) {
             wTrackModel.find({jobs: objectId(sourceDocument)}, {_id: 1}, function (err, result) {
-                if (err){
-                  return  waterfallCb(err);
+                if (err) {
+                    return waterfallCb(err);
                 }
 
                 var newArray = [];

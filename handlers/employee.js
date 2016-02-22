@@ -42,6 +42,17 @@ var Employee = function (models) {
 
                 callback(null, employees);
             });
+    }
+
+    this.getEmployeesCount = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        Employee.find({isEmployee: true}).count(function (err, result) {
+            if (err){
+                return next(err);
+            }
+
+            res.status(200).send({count: result});
+        });
     };
 
     this.getSalaryByMonth = function (req, res, next) {
