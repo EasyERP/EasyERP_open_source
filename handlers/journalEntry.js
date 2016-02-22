@@ -221,6 +221,8 @@ var Module = function (models) {
 
                                 var holidaysFinder = function (pcb) {
                                     var query = Holidays.find({
+                                        year: wTrackResult.year,
+                                        week: wTrackResult.week,
                                         date: date
                                     }).lean();
 
