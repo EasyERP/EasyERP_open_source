@@ -9,11 +9,12 @@ module.exports = (function () {
 
     var chartAccountSchema = mongoose.Schema({
 
-        code      : {type: Number},
+        code     : {type: Number},
         account  : {type: String, default: ""},
+        name     : {type: String, default: ""},
         type     : {type: String, default: ""},
         payMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
-        editedBy: {
+        editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date}
         },
