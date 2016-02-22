@@ -12,8 +12,9 @@ define([
     'populate',
     'async',
     'constants',
-    'text!templates/monthHours/list/cancelEdit.html'
-], function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit) {
+    'text!templates/monthHours/list/cancelEdit.html',
+    'helpers'
+], function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit, helpers) {
     var monthHoursListView = listViewBase.extend({
         createView              : createView,
         listTemplate            : listTemplate,
@@ -82,7 +83,11 @@ define([
                     this.changedModels[editedElementRowId] = {};
                 }
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                editedCol.text(editedElementValue);
+                if (editedElementContent !== 'year'){
+                    editedCol.text(helpers.currencySplitter(editedElementValue));
+                } else {
+                    editedCol.text(editedElementValue);
+                }
                 editedElement.remove();
             }
         },
@@ -126,6 +131,7 @@ define([
             var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
             var tempContainer;
             var width;
+            var insertedInput;
 
             if (mothHoursId && el.prop('tagName') !== 'INPUT') {
                 this.modelId = mothHoursId;
@@ -138,6 +144,10 @@ define([
                 tempContainer = el.text();
                 width = el.width() - 6;
                 el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+
+                insertedInput = el.find('input');
+                insertedInput.focus();
+                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
             }
 
             return false;
@@ -148,15 +158,15 @@ define([
             var model;
             var filled = true;
 
-            $(".editable").each(function (index, elem){
-                if (!$(elem).html()){
+            $(".editable").each(function (index, elem) {
+                if (!$(elem).html()) {
                     filled = false;
                     return false;
                 }
             });
 
             if (!filled) {
-                return  App.render({type: 'error', message: 'Fill all fields please'});
+                return App.render({type: 'error', message: 'Fill all fields please'});
             }
 
             this.setChangedValueToModel();
@@ -220,9 +230,9 @@ define([
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
             $currentEl.append(new listItemView({
-                collection : this.collection,
-                page       : this.page,
-                itemsNumber: this.collection.namberToShow
+                collection      : this.collection,
+                page            : this.page,
+                itemsNumber     : this.collection.namberToShow
             }).render());//added two parameters page and items number
 
             this.renderCheckboxes();
@@ -389,7 +399,7 @@ define([
                                 error  : function (model, res) {
                                     if (res.status === 403 && index === 0) {
                                         App.render({
-                                            type: 'error',
+                                            type   : 'error',
                                             message: "You do not have permission to perform this action"
                                         });
                                     }
@@ -426,7 +436,7 @@ define([
                 var model;
 
                 if (id.length < 24) {
-                   return cb('Empty id');
+                    return cb('Empty id');
                 }
 
                 model = collection.get(id) || self.editCollection.get(id);
