@@ -73,7 +73,7 @@ define([
                                 error  : function (model, res) {
                                     if (res.status === 403 && index === 0) {
                                         App.render({
-                                            type: 'error',
+                                            type   : 'error',
                                             message: "You do not have permission to perform this action"
                                         });
                                     }
@@ -428,7 +428,10 @@ define([
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                    model.changed = this.changedModels[id];
+                    if (model) {
+                        model.changed = this.changedModels[id];
+                        model.changed.name = this.changedModels[id].code + ' ' + this.changedModels[id].account;
+                    }
                 }
 
                 if (errors.length) {
@@ -438,9 +441,9 @@ define([
 
                 for (var id in this.changedModels) {
                     delete this.changedModels[id];
+                    this.editCollection.remove(id);
                 }
 
-                this.editCollection.remove(id);
             },
 
             savedNewModel: function (modelObject) {
@@ -463,7 +466,7 @@ define([
 
             errorFunction: function () {
                 App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: "Some error"
                 });
             },

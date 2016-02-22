@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Leads/list/ListHeader.html',
         'text!templates/stages.html',
@@ -12,13 +14,13 @@ define([
         'dataService'
     ],
 
-    function (listViewBase, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
+    function ($, _, listViewBase, listTemplate, stagesTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
         var LeadsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : null,
+            filterView              : filterView,
             totalCollectionLengthUrl: '/totalCollectionLength/Leads',
             formUrl                 : "#easyErp/Leads/form/",
             contentType             : 'Leads',//needs in view.prototype.changeLocationHash
@@ -27,7 +29,7 @@ define([
                 "click .list td:not(.notForm)": "goToEditDialog",
                 "click #convertToOpportunity" : "openDialog",
                 "click .stageSelect"          : "showNewSelect",
-                "click .newSelectList li"     : "chooseOption",
+                "click .newSelectList li"     : "chooseOption"
             },
 
             initialize: function (options) {
@@ -37,13 +39,13 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.stages = [];
-                this.filter = options.filter;
+                this.filter = options.filter||{};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
-                this.sartNumber = (this.page - 1) * this.defaultItemsNumber;
+                this.startNumber = (this.page - 1) * this.defaultItemsNumber;
 
                 this.render();
 
@@ -62,8 +64,8 @@ define([
                         mid: 39
                     },
                     patch  : true,
-                    success: function (model) {
-                        self.showFilteredPage({}, self);
+                    success: function () {
+                        self.showFilteredPage(self.filter, self);
                     }
                 });
 
@@ -88,31 +90,36 @@ define([
                 self = this;
                 $currentEl = this.$el;
 
+                var itemView;
+
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                var itemView = new listItemView({
+
+                itemView = new listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 });
-                $currentEl.append(itemView.render());
 
-                itemView.bind('incomingStages', itemView.pushStages, itemView);
+                itemView.bind('incomingStages', this.pushStages, this);
 
-                this.renderCheckboxes();
-
-                common.populateWorkflowsList("Leads", ".drop-down-filter", "", "/Workflows", null, function (stages) {
-                    self.stages = stages;
+                common.populateWorkflowsList("Leads", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow : null;
                     itemView.trigger('incomingStages', stages);
                 });
+
+                $currentEl.append(itemView.render());
+
+                this.renderCheckboxes();
+
+                this.renderFilter(self);
 
                 this.renderPagination($currentEl, this);
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
 
@@ -120,11 +127,9 @@ define([
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-                    return false;
                 }
-
+                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
+                    return false;
             },
 
             goToEditDialog: function (e) {

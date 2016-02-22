@@ -9,6 +9,7 @@ module.exports = (function () {
         date: Date,
         year: Number,
         week: Number,
+        day: Number,
         comment: String
 
     }, {collection: 'Holiday'});

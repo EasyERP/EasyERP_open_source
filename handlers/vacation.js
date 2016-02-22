@@ -2,14 +2,15 @@ var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var CapacityHandler = require('./capacity');
 var objectId = mongoose.Types.ObjectId;
+var CONSTANTS = require('../constants/mainConstants');
 
 var Vacation = function (event, models) {
     'use strict';
     var access = require("../Modules/additions/access.js")(models);
     var capacityHandler = new CapacityHandler(models);
-    var VacationSchema = mongoose.Schemas['Vacation'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
+    var VacationSchema = mongoose.Schemas.Vacation;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var EmployeeSchema = mongoose.Schemas.Employee;
     var async = require('async');
     var _ = require('lodash');
 
@@ -23,11 +24,10 @@ var Vacation = function (event, models) {
             for (var day = array.length; day >= 0; day--) {
                 if (array[day]) {
                     dateValue = moment([year, month - 1, day + 1]);
-                    //dateValue.date(day + 1);
-                    // weekKey = year * 100 + moment(dateValue).isoWeek();
-                    weekKey = year * 100 + moment(dateValue).isoWeek();
+                    //weekKey = year * 100 + moment(dateValue).isoWeek();
+                    weekKey = dateValue.isoWeekYear() * 100 + dateValue.isoWeek();
 
-                    dayNumber = moment(dateValue).day();
+                    dayNumber = dateValue.day();
 
                     if (dayNumber !== 0 && dayNumber !== 6) {
                         resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
@@ -60,6 +60,7 @@ var Vacation = function (event, models) {
         var monthArray;
         var monthYear;
         var startMonth;
+        var day;
 
         data.forEach(function (attendance) {
             attendance.vacArray.forEach(function (day) {
@@ -87,8 +88,9 @@ var Vacation = function (event, models) {
                 dayMonthCount = moment().set('year', year).set('month', i).endOf('month').date();
 
                 for (var j = 1; j <= dayMonthCount; j++) {
-                    var day = new Date(year, i, j);
+                    day = new Date(year, i, j);
                     day = day.getDay();
+
                     if (day === 0 || day === 6) {
                         weekend++;
                     }
@@ -139,9 +141,14 @@ var Vacation = function (event, models) {
     this.getYears = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var query;
-        var lastEl;
-        var length;
+        var newYear;
+        var year;
+       /* var lastEl;
+        var length;*/
         var curDate = new Date();
+        var curYear = curDate.getFullYear();
+        var yearFrom = curYear - CONSTANTS.HR_VAC_YEAR_BEFORE;
+        var yearTo = curYear + CONSTANTS.HR_VAC_YEAR_AFTER;
 
         query = Vacation.distinct('year');
 
@@ -157,16 +164,31 @@ var Vacation = function (event, models) {
                 element.name = el;
 
                 return element;
-            }).sort();
+            });
 
-            length = result.length;
-            lastEl = result[length - 1];
 
-            if (lastEl._id === curDate.getFullYear()) {
+            for (year = yearFrom; year <= yearTo; year++) {
+                newYear = {
+                    _id: year,
+                    name: year
+                };
+
+                if (result.indexOf(newYear) === -1) {
+                    result.push(newYear);
+                }
+            }
+
+            result.sort();
+
+
+            /*length = result.length;
+            lastEl = result[length - 1];*/
+
+            /*if (lastEl._id >= curDate.getFullYear() - 1) {
                 result[length] = {};
                 result[length]._id = lastEl._id + 1;
                 result[length].name = lastEl._id + 1;
-            }
+            }*/
 
             res.status(200).send(result);
         });
@@ -212,6 +234,7 @@ var Vacation = function (event, models) {
                             date = moment([date.getFullYear(), date.getMonth()]);
 
                             endDate = new Date(date);
+                            endDate.setMonth(endDate.getMonth() + 1);
 
                             condition1 = {month: {'$lte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
@@ -221,7 +244,7 @@ var Vacation = function (event, models) {
                             date.subtract(12, 'M');
                             startDate = new Date(date);
 
-                            date.subtract(12, 'M');
+                            //date.subtract(12, 'M');
 
                             condition1 = {month: {'$gte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
@@ -350,8 +373,8 @@ var Vacation = function (event, models) {
         var vacArr = data.vacArray ? data.vacArray : [];
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var capData = {
-            db: req.session.lastDb,
-        }
+            db: req.session.lastDb
+        };
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 70, function (access) {

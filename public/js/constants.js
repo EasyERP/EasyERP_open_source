@@ -175,10 +175,36 @@ define([], function () {
                 backend: 'projectmanager._id'
             }
         },
-        Leads           : {},
-        Opportunities   : {},
+        Leads           : {
+            'Contact Name': {
+                view   : 'contactName',
+                backend: 'contactName'
+            },
+            'Source'      : {
+                view   : 'source',
+                backend: 'source'
+            },
+            'Stage'       : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        Opportunities   : {
+            'Customer'    : {
+                view   : 'customer',
+                backend: 'customer._id'
+            },
+            'Stage'       : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            },
+            'Sales Person': {
+                view   : 'salesPerson',
+                backend: 'salesPerson._id'
+            }
+        },
         Tasks           : {
-            'Project'    : {
+            'Project'     : {
                 view   : 'project',
                 backend: 'project'
             },
@@ -186,15 +212,15 @@ define([], function () {
                 view   : 'summary',
                 backend: 'summary'
             },
-            'Status'     : {
+            'Status'      : {
                 view   : 'workflow',
                 backend: 'workflow'
             },
-            'Assigned To': {
+            'Assigned To' : {
                 view   : 'assignedTo',
                 backend: 'assignedTo'
             },
-            'Type'       : {
+            'Type'        : {
                 view   : 'type',
                 backend: 'type'
             }
@@ -293,12 +319,12 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
-        Invoice     : {
-            'Supplier'    : {
+        Invoice         : {
+            'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Status'      : {
+            'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
@@ -363,7 +389,7 @@ define([], function () {
                 backend: 'dataKey'
             }
         },
-        "jobsDashboard"     : {
+        "jobsDashboard" : {
             "Sales Manager": {
                 view   : 'projectManager',
                 backend: 'projectmanager._id'
@@ -385,12 +411,12 @@ define([], function () {
                 backend: 'payment.count'
             }
         },
-        "salaryReport": {
-            "Employee": {
+        "salaryReport"  : {
+            "Employee"      : {
                 view   : 'employee',
                 backend: '_id'
             },
-            "Department": {
+            "Department"    : {
                 view   : 'department',
                 backend: 'department._id'
             },
@@ -450,7 +476,7 @@ define([], function () {
         JOURNAL           : "journal",
         JOURNALENTRY      : "journalEntry",
         INVOICECHARTS     : "invoiceCharts",
-        SALARYREPORT: "salaryReport",
+        SALARYREPORT      : "salaryReport",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -478,6 +504,82 @@ define([], function () {
         IT_SERVICES: 'IT services',
 
         DASH_VAC_WEEK_BEFORE: 2,
-        DASH_VAC_WEEK_AFTER: 8
+        DASH_VAC_WEEK_AFTER : 8,
+
+        URLS: {
+            PROFILES_FOR_DD       : '/profiles/forDd',
+            CURRENT_USER          : '/users/current',
+            USERS                 : '/users/',
+            USERS_FOR_DD          : '/users/forDd',
+            APPLICATIONS          : '/applications/',
+            EMPLOYEES             : '/employees/',
+            CHARTOFACCOUNT        : '/ChartOfAccount/',
+            COMPANIES             : '/companies/',
+            DEGREES               : '/Degrees/',
+            DEPARTMENTS           : '/Departments/',
+            EVENTS                : '/Events/',
+            HOLIDAY               : '/Holiday/',
+            INVOICE               : '/Invoice/',
+            JOBPOSITIONS          : '/JobPositions/',
+            JOURNALENTRY          : '/journalEntry/',
+            JOURNAL               : '/journal/',
+            LEADS                 : '/leads/',
+            MONTHHOURS            : '/monthHours/',
+            OPPORTUNITIES         : '/Opportunities/',
+            PAYMENT               : '/payment/',
+            PAYROLL               : '/payroll/',
+            PERSONS               : '/persons/',
+            PRODUCT               : '/product/',
+            PROFILES              : '/profiles/',
+            PROJECTS              : '/Projects/',
+            QUOTATION             : '/quotation/',
+            SOURCESOFAPPLICANTS   : '/SourcesOfApplicants/',
+            TASKS                 : '/Tasks/',
+            VACATION              : '/vacation/',
+            WTRACK                : '/wTrack/',
+            BIRTHDAYS             : '/employees/birthdays/',
+            BONUSTYPE             : '/bonusType/',
+            CAPACITY              : '/capacity/',
+            PAYMENTCUSTOMERS      : '/payment/customers/',
+            EMPLOYEES_PERSONSFORDD: '/employees/getPersonsForDd',
+            CUSTOMERS             : '/customers/',
+            DASHBOARD_HR          : 'dashboard/hr',
+            DASHBOARD_VACATION    : 'dashboard/vacation',
+            EMPLOYEES_GETFORDD    : "/employees/getForDD",
+            EMPLOYEES_ALPHABET    : "/employees/getEmployeesAlphabet",
+            INVOICE_STATS         : "/invoice/stats/",
+            REVENUE_SYNTHETIC     : 'revenue/synthetic',
+            JOBS                  : '/jobs/',
+            JOURNAL_ENTRY         : "/journal/journalEntry/",
+            WORKFLOWS             : '/workflows/',
+            MODULES               : "/getModules",
+            PAYMENT_SALARY        : "/payment/salary/",
+            PRIORITY              : "/Priority",
+            PRODUCT_ALPHABET      : "/product/getProductsAlphabet",
+            CATEGORY              : "/category/",
+            PROJECT_DASHBOARD     : "project/getProjectPMForDashboard",
+            PAYMENT_SUPPLIER      : "/payment/supplier/",
+            APPLICATIONS_WFLENGTH : '/applications/getApplicationsLengthByWorkflows',
+            APPLICATIONS_KANBAN   : '/applications/kanban',
+            EMPLOYEES_NATIONALITY : "/employees/nationality",
+            JOBPOSITIONS_JOBTYPE  : "/jobPositions/jobType",
+            JOBPOSITIONS_FORDD    : "/jobPositions/getForDd",
+            DEPARTMENTS_FORDD     : "/departments/getForDD",
+            WORKFLOWS_FORDD       : "/workflows/getWorkflowsForDd",
+            EMPLOYEES_RELATEDUSER : "/employees/getForDdByRelatedUser",
+            PROJECT_TYPE          : '/projectType',
+            EMPLOYEES_LANGUAGES   : "/employees/languages",
+            DEPARTMENTS_FOREDITDD : "/departments/getDepartmentsForEditDd",
+            CURRENCY_FORDD        : "/currency/getForDd",
+            SUPPLIER              : '/supplier',
+            WORKFLOWS_FETCH       : '/workflows/fetch'
+        },
+
+        MID: {
+            'Employees'   : 42,
+            'Applications': 43,
+            'Persons'     : 49,
+            'Companies'   : 50
+        }
     };
 });

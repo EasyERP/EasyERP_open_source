@@ -226,12 +226,10 @@ var requestHandler = function (app, event, mainDb) {
                                     result.forEach(function (element) {
                                         var id = element._id;
                                         var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
-                                        var revenue = (element.worked * element.rate).toFixed(2);
 
                                         wTrack.findByIdAndUpdate(id, {
                                             $set: {
-                                                cost   : parseFloat(calc) * 100,
-                                                revenue: parseFloat(revenue) * 100
+                                                cost   : parseFloat(calc) * 100
                                             }
                                         }, {
                                             new: true
@@ -247,12 +245,10 @@ var requestHandler = function (app, event, mainDb) {
                                 result.forEach(function (element) {
                                     var id = element._id;
                                     var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
-                                    var profit = parseFloat(element.revenue) - parseFloat(calc) * 100;
 
                                     wTrack.findByIdAndUpdate(id, {
                                         $set: {
-                                            cost  : parseFloat(calc) * 100,
-                                            profit: profit
+                                            cost  : parseFloat(calc) * 100
                                         }
                                     }, {
                                         new: true
@@ -292,26 +288,35 @@ var requestHandler = function (app, event, mainDb) {
             };
 
             function getBaseSalary(result, cb) {
-                var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
-                var query = Salary
+                var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+                var date = moment().year(year).month(month - 1).date(1);
+                var query = Employee
                     .find(
                         {
-                            'employee._id': {$in: result},
-                            month         : month,
-                            year          : year
+                            '_id': {$in: result}
                         }, {
-                            baseSalary    : 1,
-                            'employee._id': 1
+                            hire: 1
                         })
                     .lean();
                 query.exec(function (err, salary) {
                     if (err) {
                         return cb(err);
                     }
+                    var salary = 0;
+                    var i;
+
                     var result = _.map(salary, function (element) {
                         var obj = {};
+                        var hire = element.hire;
+                        var length = hire.length;
+                        for (i = length - 1; i >= 0; i--) {
+                            if (date >= hire[i].date) {
+                                salary = hire[i].salary;
+                                break;
+                            }
+                        }
 
-                        obj[element.employee._id] = element.baseSalary;
+                        obj[element._id] = salary;
                         return obj;
                     });
 
@@ -347,7 +352,7 @@ var requestHandler = function (app, event, mainDb) {
         }
 
         function recalculate(jobsArray, cb) {
-            Quotation.find({_id: {$in: jobsArray}}, function (err, result) {
+            Quotation.find({'products.jobs': {$in: jobsArray}}, function (err, result) {
                 if (err) {
                     return cb(err);
                 }
@@ -1142,8 +1147,8 @@ var requestHandler = function (app, event, mainDb) {
 
     event.on('recalculateRevenue', function (options) {
         var quotation = options.quotation;
-        var wTrackModel = options.wTrackModel;
         var req = options.req;
+        var wTrackModel = options.wTrackModel ||  models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var totalAmount = 0;
 
         if (!quotation || !wTrackModel) {

@@ -2,56 +2,55 @@ var Opportunities = function (models, event) {
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var objectId = mongoose.Types.ObjectId;
-    var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
-    var departmentSchema = mongoose.Schemas['Department'];
-    var customerSchema = mongoose.Schemas['Customer'];
-    var workflowSchema = mongoose.Schemas['workflow'];
+    var opportunitiesSchema = mongoose.Schemas.Opportunitie;
+    var departmentSchema = mongoose.Schemas.Department;
+    var customerSchema = mongoose.Schemas.Customer;
+    var workflowSchema = mongoose.Schemas.workflow;
     var fs = require('fs');
 
     function getTotalCount(req, response) {
         var res = {};
         var data = req.query;
         var filterObj = {};
-        var or;
-        var filter = data.filter ? data.filter : {};
+        var filter = data.filter || {};
 
         var contentType = req.params.contentType;
         var optionsObject = {};
 
-        if (filter && typeof filter === 'object') {
-            optionsObject['$and'] = [];
-            //filterObj['$or'] = [];
-            //or = filterObj['$or'];
+        optionsObject.$and = [];
+        filterObj.$and = [];
 
-            caseFilterOpp(filter, or);
+        if (filter) {
+            filterObj.$and = caseFilterOpp(filter);
         }
 
-        if (data.filter && data.filter.workflow) {
-            data.filter.workflow = data.filter.workflow.map(function (item) {
-                return item === "null" ? null : item;
-            });
+        /*        if (data.filter && data.filter.workflow) {
+         data.filter.workflow = data.filter.workflow.map(function (item) {
+         return item === "null" ? null : item;
+         });
 
-            optionsObject['workflow'] = {$in: data.filter.workflow.objectID()};
-        } else if (data && !data.newCollection) {
-            optionsObject['workflow'] = {$in: []};
-        }
+         optionsObject['workflow'] = {$in: data.filter.workflow.objectID()};
+         } else if (data && !data.newCollection) {
+         optionsObject['workflow'] = {$in: []};
+         }*/
+
         switch (contentType) {
             case ('Opportunities'):
-                optionsObject['$and'].push({'isOpportunitie': true});
-                //
-                //if (data && data.filter) {
-                //    optionsObject['$and'].push(filterObj);
-                //}
+                optionsObject.$and.push({'isOpportunitie': true});
+
+                if (data && data.filter) {
+                    optionsObject.$and.push(filterObj);
+                }
                 break;
             case ('Leads'):
-                optionsObject['$and'].push({'isOpportunitie': false});
+                optionsObject.$and.push({'isOpportunitie': false});
 
                 if (data.filter && data.filter.isConverted) {
-                    optionsObject['$and'].push({'isOpportunitie': true});
-                    optionsObject['$and'].push({'isConverted': true});
+                    optionsObject.$and.push({'isOpportunitie': true});
+                    optionsObject.$and.push({'isConverted': true});
                 }
                 if (data && data.filter) {
-                    optionsObject['$and'].push(filterObj);
+                    optionsObject.$and.push(filterObj);
                 }
                 break;
         }
@@ -70,6 +69,21 @@ var Opportunities = function (models, event) {
                 if (!err) {
                     var arrOfObjectId = deps.objectID();
                     models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
+                        {
+                            $project: {
+                                'groups.users': 1,
+                                'groups.group': 1,
+                                'groups.owner': 1,
+                                contactName   : {$concat: ['$contactName.first', " ", '$contactName.last']},
+                                source        : 1,
+                                workflow      : 1,
+                                whoCanRW      : 1,
+                                isConverted   : 1,
+                                isOpportunitie: 1,
+                                customer      : 1,
+                                salesPerson   : 1
+                            }
+                        },
                         {
                             $match: {
                                 $and: [
@@ -112,9 +126,9 @@ var Opportunities = function (models, event) {
                         function (err, result) {
                             if (!err) {
                                 if (data.currentNumber && data.currentNumber < result.length) {
-                                    res['showMore'] = true;
+                                    res.showMore = true;
                                 }
-                                res['count'] = result.length;
+                                res.count = result.length;
                                 response.send(res);
                             } else {
                                 console.log(err);
@@ -128,7 +142,7 @@ var Opportunities = function (models, event) {
                     response.send(500, {error: 'Server Eroor'});
                 }
             });
-    };
+    }
 
     function create(req, data, res) {
         try {
@@ -136,14 +150,13 @@ var Opportunities = function (models, event) {
                 logWriter.log('Opprtunities.create Incorrect Incoming Data');
                 res.send(400, {error: 'Opprtunities.create Incorrect Incoming Data'});
                 return;
-            } else {
-                savetoDb(data);
             }
+            savetoDb(data);
 
             function savetoDb(data) {
                 try {
                     var _opportunitie = new models.get(req.session.lastDb, "Opportunities", opportunitiesSchema)();
-                    _opportunitie.isOpportunitie = (data.isOpportunitie) ? data.isOpportunitie : false;
+                    _opportunitie.isOpportunitie = data.isOpportunitie || false;
                     if (data.name) {
                         _opportunitie.name = data.name;
                     }
@@ -324,7 +337,7 @@ var Opportunities = function (models, event) {
             logWriter.log("Opportunities.js  " + exception);
             res.send(500, {error: 'opportunitie.save  error'});
         }
-    };
+    }
 
     function getLeadsForChart(req, response, data) {
         var res = {};
@@ -433,27 +446,25 @@ var Opportunities = function (models, event) {
                     $sort: {year: 1, source: 1}
                 }
             ).exec(function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        logWriter.log('Opportunities.js chart' + err);
-                        response.send(500, {error: "Can't get chart"});
-                    } else {
-                        res['data'] = result;
-                        response.send(res);
-                    }
+                if (err) {
+                    console.log(err);
+                    logWriter.log('Opportunities.js chart' + err);
+                    response.send(500, {error: "Can't get chart"});
+                } else {
+                    res.data = result;
+                    response.send(res);
+                }
 
-                });
+            });
         }
     }
 
     function get(req, response) {
         var res = {};
-        res['data'] = [];
+        res.data = [];
         var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).find({isOpportunitie: true});
         query.sort({name: 1});
-        query.populate('company customer salesPerson salesTeam workflow').
-            populate('createdBy.user').
-            populate('editedBy.user');
+        query.populate('company customer salesPerson salesTeam workflow').populate('createdBy.user').populate('editedBy.user');
 
         query.exec(function (err, result) {
             if (err) {
@@ -461,20 +472,15 @@ var Opportunities = function (models, event) {
                 logWriter.log('Opportunities.js get job.find' + err);
                 response.send(500, {error: "Can't find Opportunities"});
             } else {
-                res['data'] = result;
+                res.data = result;
                 response.send(res);
             }
         });
-    };
+    }
 
     function getById(req, id, response) {
         var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(id);
-        query.populate('company customer salesPerson salesTeam workflow').
-            populate('groups.users').
-            populate('groups.group').
-            populate('createdBy.user').
-            populate('editedBy.user').
-            populate('groups.owner', '_id login');
+        query.populate('company customer salesPerson salesTeam workflow').populate('groups.users').populate('groups.group').populate('createdBy.user').populate('editedBy.user').populate('groups.owner', '_id login');
 
         query.exec(function (err, result) {
             if (err) {
@@ -485,7 +491,7 @@ var Opportunities = function (models, event) {
                 response.send(result);
             }
         });
-    };
+    }
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -493,104 +499,118 @@ var Opportunities = function (models, event) {
                 array[i] = parseInt(array[i]);
             }
         }
-    };
+    }
 
-    function caseFilterOpp(filter, content) {
+    function caseFilterOpp(filter) {
         var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+        var filterName;
 
-        for (var key in filter) {
-            condition = filter[key];
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
 
-            switch (key) {
-                case 'Name':
-                    content.push({'name': {$in: condition}});
+            switch (filterName) {
+                case 'contactName':
+                    filtrElement.contactName = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
                 case 'workflow':
-                    content.push({'workflow': {$in: condition.objectID()}});
+                    filtrElement.workflow = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
-                case 'Creation date':
-                    content.push({
-                        'creationDate': {
-                            $gte: new Date(condition[0].start),
-                            $lte: new Date(condition[0].end)
-                        }
-                    });
+                case 'source':
+                    filtrElement.source = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
-                case 'Next action':
-                    if (!condition.length) {
-                        condition = [''];
-                    }
-                    content.push({'nextAction.desc': {$in: condition}});
+                case 'customer':
+                    filtrElement.customer = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
-                case 'Expected revenue':
-                    ConvertType(condition, 'integer');
-                    content.push({'expectedRevenue.value': {$in: condition}});
+                case 'salesPerson':
+                    filtrElement.salesPerson = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
             }
         }
-    };
+        return resArray;
+    }
 
     function getFilter(req, response) {
         var res = {};
-        var condition;
-        var filterObj;
+        //var condition;
+        var filterObj = {};
+
         var optionsObject = {};
 
-        res['data'] = [];
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
+        res.data = [];
+        var data = req.query;
+        //for (var i in req.query) {
+        //    data[i] = req.query[i];
+        //}
+
+        var filter = data.filter || {};
+
+        if (filter) {
+            filterObj.$and = caseFilterOpp(filter);
         }
 
         switch (data.contentType) {
             case ('Opportunities'):
-            {
+
                 optionsObject['$and'] = [];
                 optionsObject['$and'].push({'isOpportunitie': true});
-
                 if (data && data.filter) {
-                    filterObj = {};
                     optionsObject['$and'].push(filterObj);
-                    //    if (data.filter.condition === 'or') {
-                    //        filterObj['$or'] = [];
-                    //        condition = filterObj['$or'];
-                    //    } else {
-                    //        filterObj['$and'] = [];
-                    //        condition = filterObj['$and'];
-                    //}
-
-                    caseFilterOpp(data.filter, condition);
-
-                    /*for (var key in data.filter) {
-                     condition = data.filter[key];
-                     switch (key) {
-                     case 'Name':
-                     or.push({ 'name': {$in: condition}});
-                     break;
-                     case 'Creation date':
-                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-                     break;
-                     case 'Next action':
-                     if (!condition.length) condition = [''];
-                     or.push({ 'nextAction.desc': {$in: condition}});
-                     break;
-                     case 'Expected revenue':
-                     ConvertType(condition, 'integer');
-                     or.push({ 'expectedRevenue.value': {$in: condition}});
-                     break;
-                     }
-                     }*/
-                    // if (!condition.length) {
-                    //     delete filterObj['$or'];
-                    //     delete filterObj['$and']
-                    // }
                 }
-            }
+                /*  if (data && data.filter) {
+                 optionsObject['$and'] = [];
+                 optionsObject['$and'].push({'isOpportunitie': false});
+                 //    if (data.filter.condition === 'or') {
+                 //        filterObj['$or'] = [];
+                 //        condition = filterObj['$or'];
+                 //    } else {
+                 //        filterObj['$and'] = [];
+                 //        condition = filterObj['$and'];
+                 //}
+
+                 //caseFilterOpp(data.filter, condition);
+
+                 /!*for (var key in data.filter) {
+                 condition = data.filter[key];
+                 switch (key) {
+                 case 'Name':
+                 or.push({ 'name': {$in: condition}});
+                 break;
+                 case 'Creation date':
+                 or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                 break;
+                 case 'Next action':
+                 if (!condition.length) condition = [''];
+                 or.push({ 'nextAction.desc': {$in: condition}});
+                 break;
+                 case 'Expected revenue':
+                 ConvertType(condition, 'integer');
+                 or.push({ 'expectedRevenue.value': {$in: condition}});
+                 break;
+                 }
+                 }*!/
+                 // if (!condition.length) {
+                 //     delete filterObj['$or'];
+                 //     delete filterObj['$and']
+                 // }
+                 }*/
+
                 break;
             case ('Leads'):
-            {
+
                 optionsObject['$and'] = [];
                 optionsObject['$and'].push({'isOpportunitie': false});
+                if (data && data.filter) {
+                    optionsObject['$and'].push(filterObj);
+                }
                 //if (data.filter.isConverted) {
                 //   // optionsObject['$and'].push({'isConverted' : true});
                 //  //  optionsObject['isOpportunitie'] = true;
@@ -631,7 +651,7 @@ var Opportunities = function (models, event) {
                 //    //    delete filterObj['$and']
                 //    //}
                 //}
-            }
+
                 break;
         }
 
@@ -650,6 +670,21 @@ var Opportunities = function (models, event) {
                     var arrOfObjectId = deps.objectID();
 
                     models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
+                        {
+                            $project: {
+                                'groups.users': 1,
+                                'groups.group': 1,
+                                'groups.owner': 1,
+                                contactName   : {$concat: ['$contactName.first', " ", '$contactName.last']},
+                                source        : 1,
+                                workflow      : 1,
+                                whoCanRW      : 1,
+                                isConverted   : 1,
+                                isOpportunitie: 1,
+                                customer      : 1,
+                                salesPerson   : 1
+                            }
+                        },
                         {
                             $match: {
                                 $and: [
@@ -711,11 +746,11 @@ var Opportunities = function (models, event) {
                                         //} else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                         //    query.where('workflow').in([]);
                                         //}
-                                        query.populate('customer', 'name').
-                                            populate('workflow', '_id name status').
-                                            populate('salesPerson', 'name').
-                                            populate('createdBy.user', 'login').
-                                            populate('editedBy.user', 'login');
+                                        query.populate('customer', 'name')
+                                            .populate('workflow', '_id name status')
+                                            .populate('salesPerson', 'name')
+                                            .populate('createdBy.user', 'login')
+                                            .populate('editedBy.user', 'login');
                                     }
                                         break;
                                     case ('Leads'):
@@ -728,24 +763,22 @@ var Opportunities = function (models, event) {
                                         //    query.where('workflow').in([]);
                                         //}
 
-                                        query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName").
-                                            populate('company', 'name').
-                                            populate('workflow', "name status").
-                                            populate('createdBy.user', 'login').
-                                            populate('editedBy.user', 'login');
+                                        query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName")
+                                            .populate('company', 'name')
+                                            .populate('workflow', "name status")
+                                            .populate('createdBy.user', 'login')
+                                            .populate('editedBy.user', 'login');
                                     }
                                         break;
                                 }
-                                query.skip((data.page - 1) * data.count).
-                                    limit(data.count).
-                                    exec(function (error, _res) {
-                                        if (!error) {
-                                            res['data'] = _res;
-                                            response.send(res);
-                                        } else {
-                                            console.log(error);
-                                        }
-                                    });
+                                query.skip((data.page - 1) * data.count).limit(data.count).exec(function (error, _res) {
+                                    if (!error) {
+                                        res['data'] = _res;
+                                        response.send(res);
+                                    } else {
+                                        console.log(error);
+                                    }
+                                });
                             } else {
                                 console.log(err);
                             }
@@ -755,7 +788,7 @@ var Opportunities = function (models, event) {
                     console.log(err);
                 }
             });
-    };
+    }
 
     function update(req, _id, data, res) {
         if (data.company && data.company._id) {
@@ -1179,9 +1212,7 @@ var Opportunities = function (models, event) {
                                     }
                                     query.select("_id name expectedRevenue.currency expectedRevenue.value nextAction.date workflow");
 
-                                    query.populate('workflow', 'name').
-                                        skip((data.page - 1) * data.count).
-                                        limit(data.count);
+                                    query.populate('workflow', 'name').skip((data.page - 1) * data.count).limit(data.count);
 
                                     query.exec(function (error, _res) {
                                         if (!error) {
@@ -1332,25 +1363,17 @@ var Opportunities = function (models, event) {
                         },
                         function (err, responseOpportunities) {
                             if (!err) {
-                                var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).
-                                    where('_id').in(responseOpportunities).
-                                    select("_id customer salesPerson workflow editedBy.date name nextAction expectedRevenue sequence").
-                                    populate('customer', 'name').
-                                    populate('salesPerson', 'name').
-                                    populate('workflow', '_id').
-                                    sort({'sequence': -1}).
-                                    limit(req.session.kanbanSettings.opportunities.countPerPage).
-                                    exec(function (err, result) {
-                                        if (!err) {
-                                            res['data'] = result;
-                                            res['workflowId'] = data.workflowId;
-                                            res['fold'] = (req.session.kanbanSettings.opportunities.foldWorkflows && req.session.kanbanSettings.opportunities.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
-                                            response.send(res);
-                                        } else {
-                                            logWriter.log("Opportunitie.js getFilterOpportunitiesForKanban opportunitie.find" + err);
-                                            response.send(500, {error: "Can't find Opportunitie"});
-                                        }
-                                    });
+                                var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).where('_id').in(responseOpportunities).select("_id customer salesPerson workflow editedBy.date name nextAction expectedRevenue sequence").populate('customer', 'name').populate('salesPerson', 'name').populate('workflow', '_id').sort({'sequence': -1}).limit(req.session.kanbanSettings.opportunities.countPerPage).exec(function (err, result) {
+                                    if (!err) {
+                                        res['data'] = result;
+                                        res['workflowId'] = data.workflowId;
+                                        res['fold'] = (req.session.kanbanSettings.opportunities.foldWorkflows && req.session.kanbanSettings.opportunities.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
+                                        response.send(res);
+                                    } else {
+                                        logWriter.log("Opportunitie.js getFilterOpportunitiesForKanban opportunitie.find" + err);
+                                        response.send(500, {error: "Can't find Opportunitie"});
+                                    }
+                                });
                             } else {
                                 logWriter.log("Opportunitie.js getFilterOpportunitiesForKanban task.find " + err);
                                 response.send(500, {error: "Can't group Opportunitie"});

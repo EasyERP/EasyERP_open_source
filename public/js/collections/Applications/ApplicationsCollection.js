@@ -1,18 +1,21 @@
 define([
+        'Backbone',
         'models/ApplicationsModel',
-        'common'
+        'common',
+        'constants'
     ],
-    function (ApplicationModel, common) {
+    function (Backbone, ApplicationModel, common, CONSTANTS) {
+        'use strict';
         var ApplicationsCollection = Backbone.Collection.extend({
             model: ApplicationModel,
             url  : function () {
-                return "/Applications";
+                return CONSTANTS.URLS.APPLICATIONS;
             },
 
             initialize: function () {
             },
 
-            parse: true,
+            //parse: true,
             parse: function (response) {
                 if (response.data) {
                     _.map(response.data, function (application) {
