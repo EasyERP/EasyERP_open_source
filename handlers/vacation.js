@@ -392,11 +392,12 @@ var Vacation = function (event, models) {
                         }
 
                         capacityHandler.vacationChanged(capData, next);
-                        capData.id = response.employee._id;
+                        capData.id = response.employee;
                         capData.year = response.year;
                         capData.month = response.month;
 
                         res.status(200).send({success: 'updated'});
+                        event.emit('setReconcileTimeCard', {req: req, employee: response.employee, month: response.month, year: response.year});
                         event.emit('recollectVacationDash');
                     });
                 } else {
@@ -441,7 +442,7 @@ var Vacation = function (event, models) {
                             capData.vacation = result.toJSON();
 
                             capacityHandler.vacationChanged(capData, next);
-
+                            event.emit('setReconcileTimeCard', {req: req, employee: result.employee, month: result.month, year: result.year});
                             cb(null, result);
                         });
                     }, function (err) {
@@ -468,11 +469,13 @@ var Vacation = function (event, models) {
         access.getDeleteAccess(req, req.session.uId, 72, function (access) {
             if (access) {
 
-                Vacation.remove({_id: id}, function (err, vacation) {
+                Vacation.findByIdAndRemove({_id: id}, function (err, vacation) {
                     if (err) {
                         return next(err);
                     }
+
                     res.status(200).send({success: vacation});
+                    event.emit('setReconcileTimeCard', {req: req, employee: vacation.employee, month: vacation.month, year: vacation.year});
                     event.emit('recollectVacationDash');
                 });
             } else {
@@ -508,6 +511,8 @@ var Vacation = function (event, models) {
             if (err) {
                 return next(err);
             }
+
+            event.emit('setReconcileTimeCard', {req: req, employee: Vacation.employee, month: Vacation.month, year: Vacation.year});
 
             parallelTasks = [populateEmployees, populateDeps];
 

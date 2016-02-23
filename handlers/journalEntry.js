@@ -8,6 +8,7 @@ var employeeSchema = mongoose.Schemas.Employee;
 var jobsSchema = mongoose.Schemas.jobs;
 var invoiceSchema = mongoose.Schemas.Invoice;
 var holidaysSchema = mongoose.Schemas.Holiday;
+var vacationSchema = mongoose.Schemas.Vacation;
 var objectId = mongoose.Types.ObjectId;
 var redisStore = require('../helpers/redisClient');
 
@@ -78,6 +79,7 @@ var Module = function (models) {
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
         var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
+        var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
         var body = req.body;
         var date = new Date(body.date);
         //var dateKey = moment(date).year() * 100 + moment(date).isoWeek();
@@ -182,7 +184,7 @@ var Module = function (models) {
                             var counter = 0;
                             var dataObject = {};
                             for (var j = 7; j >= 1; j--) {
-                                dataObject[j] = moment([wTrackResult.year, wTrackResult.month]).isoWeek(wTrackResult.week).day(j);
+                                dataObject[j] = moment([wTrackResult.year, wTrackResult.month - 1]).isoWeek(wTrackResult.week).day(j);
                             }
 
                             var keys = Object.keys(dataObject);
@@ -240,13 +242,49 @@ var Module = function (models) {
                                     });
                                 };
 
-                                async.parallel([salaryFinder, monthHoursFinder, holidaysFinder], function (err, result) {
+                                var vacationFinder = function (pcb) {
+                                    var query = Vacation.find({
+                                        year: wTrackResult.year,
+                                        month: wTrackResult.month,
+                                        employee: wTrackResult.employee
+                                    }).lean();
+
+                                    query.exec(function (err, element) {
+                                        if (err) {
+                                            return cb(err);
+                                        }
+
+                                        var vacation = element[0] || {};
+                                        var vacArray;
+                                        var resultObject = {};
+                                        var newDate;
+
+                                        if (vacation && vacation.vacations && vacation.vacations[wTrackResult.dateByWeek]){
+                                            vacArray = vacation.vacArray;
+                                            newDate = moment().isoWeekYear(vacation.year).month(vacation.month - 1).date(1);
+
+                                            for(var i = vacArray.length - 1; i >= 0; i--){
+                                                if (vacArray[i]){
+                                                    var key = (newDate.date(i + 1).year() * 100 + newDate.date(i + 1).month() + 1) * 100 + i + 1;
+                                                    resultObject[key] = vacArray[i];
+                                                }
+                                            }
+                                        }
+
+                                        pcb(null, resultObject);
+                                    });
+                                };
+
+                                async.parallel([salaryFinder, monthHoursFinder, holidaysFinder, vacationFinder], function (err, result) {
                                     if (err) {
                                         return asyncCb(err);
                                     }
+                                    var vacation = result[3];
                                     var holiday = result[2];
                                     var holidayDate = holiday.date;
                                     var sameDate = moment(holidayDate).isSame(date);
+                                    var dateKey = (date.year() * 100 + date.month() + 1) * 100 + date.date();
+                                    var vacationSameDate = vacation[dateKey] ? true : false;
                                     var monthHoursModel = result[1];
                                     var salary = result[0];
                                     var hoursInMonth = monthHoursModel.hours;
@@ -325,6 +363,12 @@ var Module = function (models) {
                                             body.amount = costHour * hours * 100;
                                             bodyIdle.amount = idleCoefficient * (8 - hours) * 100;
                                             bodyOvertime.amount = 0;
+                                        }
+
+                                        if (vacationSameDate){
+                                            if (vacation[dateKey] === "V" || "S"){
+                                                bodyOvertime.amount = costHour * hours * 100;
+                                            }
                                         }
 
                                         bodyVacation.amount = vacationCoefficient * 8 * 100;

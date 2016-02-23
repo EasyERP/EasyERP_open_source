@@ -383,16 +383,22 @@ var requestHandler = function (app, event, mainDb) {
         var employee = options.employee;
         var month = options.month;
         var year = options.year;
+        var week = options.week;
         var dateNow = new Date();
-        var dateKey = moment(dateNow).year() * 100 + moment(dateNow).isoWeek();
+        var dateKey = moment(dateNow).isoWeekYear() * 100 + moment(dateNow).isoWeek();
         var query;
         var date;
 
-        if (employee) {
-            query = {employee: employee, dateByWeek: {$lte: dateKey}};
-        } else if (month && year) {
+         if (month && year) {
             query = {month: month, year: year,  dateByWeek: {$lte: dateKey}};
             date = moment().year(year).month(month).date(1);
+        } else if (year && week){
+            query = {week: week, year: year,  dateByWeek: {$lte: dateKey}};
+            date = moment().year(year).isoWeek(week).day(1);
+        }
+
+        if (employee){
+            query.employee = employee;
         }
 
         wTrackModel.update(query, {$set: {reconcile: true}}, {multi: true}, function (err, result) {
