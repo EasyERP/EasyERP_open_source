@@ -39,8 +39,6 @@ var wTrack = function (models) {
         var query = req.query;
         var employeesArray = [];
         var filter = query.filter || {};
-        var currentWeek = moment().isoWeek();
-        var currentStartWeek = currentWeek - 1;
         var currentYear = moment().weekYear();
         var departmentsArray = [objectId(CONSTANTS.HR_DEPARTMENT_ID),
             objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID),
@@ -55,6 +53,8 @@ var wTrack = function (models) {
         var year;
         var startDate;
         var endDate;
+        var _startDate;
+        var _endDate;
         var _dateStr;
         var duration;
         var weeks = 0;
@@ -76,6 +76,9 @@ var wTrack = function (models) {
             startDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
             endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
         }
+
+        _startDate = moment(startDate);
+        _endDate = moment(endDate);
 
         duration = endDate.diff(startDate, 'weeks');
 
