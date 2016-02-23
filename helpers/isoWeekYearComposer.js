@@ -1,4 +1,4 @@
-var moment = require('moment');
+var moment = require('../public/js/libs/moment/moment');
 
 module.exports = function (wTrackObject) {
     "use strict";

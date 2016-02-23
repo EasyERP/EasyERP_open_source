@@ -1,11 +1,13 @@
 define([
     'Backbone',
+    'Underscore',
+    'jQuery',
     'libs/date.format',
     'common',
     'constants',
     'dataService',
     'moment'
-], function (Backbone, dateformat, common, CONTENT_TYPES, dataService, moment) {
+], function (Backbone, _, $, dateformat, common, CONTENT_TYPES, dataService, moment) {
     'use strict';
 
     var Store = function () {
@@ -54,7 +56,7 @@ define([
             this.contentType = contentType;
         }
 
-        if (typeof windowLocHash != "undefined" && windowLocHash.length == 24) {
+        if (windowLocHash !== undefined && windowLocHash.length === 24) {
             id = windowLocHash;
         }
 
@@ -62,7 +64,7 @@ define([
         url = "#easyErp/" + this.contentType + "/" + viewtype + (browserFilter ? '/filter=' + browserFilter : '');
 
         if (id) {
-            if (viewtype != "list" && (viewtype != "thumbnails")) {
+            if (viewtype !== "list" && (viewtype !== "thumbnails")) {
                 url += "/" + id;
             }
             if (collection) {
@@ -70,7 +72,7 @@ define([
             }
         } else {
 
-            if (viewtype == "form" && collection) {
+            if (viewtype === "form" && collection) {
                 var model = collection.getElement();
                 url += "/" + model.attributes._id;
             }
@@ -84,11 +86,12 @@ define([
     var getCurrentVT = function (option) {
         var viewType;
         var savedFilter;
+        var viewVariants;
 
-        if (option && (option.contentType != App.contentType)) {
+        if (option && (option.contentType !== App.contentType)) {
             App.ownContentType = false;
         }
-        if (App.currentViewType == null) {
+        if (App.currentViewType === null) {
             if (option) {
                 switch (option.contentType) {
                     case CONTENT_TYPES.DASHBOARD:
@@ -139,57 +142,58 @@ define([
                 App.currentViewType = "thumbnails";
             }
             return App.currentViewType;
-        } else {
-            if (option && !App.ownContentType) {
-                switch (option.contentType) {
-                    case CONTENT_TYPES.DASHBOARD:
-                    case CONTENT_TYPES.TASKS:
-                    case CONTENT_TYPES.PROFILES:
-                    case CONTENT_TYPES.DEPARTMENTS:
-                    case CONTENT_TYPES.USERS:
-                    case CONTENT_TYPES.JOBPOSITIONS:
-                    case CONTENT_TYPES.DEGREES:
-                    case CONTENT_TYPES.SOURCEOFAPPLICANTS:
-                    case CONTENT_TYPES.LEADS:
-                    case CONTENT_TYPES.BIRTHDAYS:
-                    case CONTENT_TYPES.LEADSWORKFLOW:
-                    case CONTENT_TYPES.MYPROFILE:
-                    case CONTENT_TYPES.QUOTATION:
-                    case CONTENT_TYPES.ORDER:
-                    case CONTENT_TYPES.INVOICE:
-                    case CONTENT_TYPES.SUPPLIERPAYMENTS:
-                    case CONTENT_TYPES.CUSTOMERPAYMENTS:
-                    case CONTENT_TYPES.SALESQUOTATION:
-                    case CONTENT_TYPES.SALESORDER:
-                    case CONTENT_TYPES.SALESINVOICE:
-                    case CONTENT_TYPES.WTRACK:
-                    case CONTENT_TYPES.PAYROLLEXPENSES:
-                    case CONTENT_TYPES.MONTHHOURS:
-                    case CONTENT_TYPES.BONUSTYPE:
-                    case CONTENT_TYPES.HOLIDAY:
-                    case CONTENT_TYPES.VACATION:
-                    case CONTENT_TYPES.CAPACITY:
-                    case CONTENT_TYPES.JOBSDASHBOARD:
-                    case CONTENT_TYPES.PAYROLLPAYMENTS:
-                    case CONTENT_TYPES.INVOICEAGING:
-                    case CONTENT_TYPES.CHARTOFACCOUNT:
-                    case CONTENT_TYPES.JOURNAL:
-                    case CONTENT_TYPES.JOURNALENTRY:
-                    case CONTENT_TYPES.SALARYREPORT:
-                        App.currentViewType = 'list';
-                        break;
-                    case CONTENT_TYPES.APPLICATIONS:
-                    case CONTENT_TYPES.OPPORTUNITIES:
-                        App.currentViewType = "kanban";
-                        break;
-                    default:
-                        App.currentViewType = "thumbnails";
-                        break;
-                }
+        }
+
+        if (option && !App.ownContentType) {
+            switch (option.contentType) {
+                case CONTENT_TYPES.DASHBOARD:
+                case CONTENT_TYPES.TASKS:
+                case CONTENT_TYPES.PROFILES:
+                case CONTENT_TYPES.DEPARTMENTS:
+                case CONTENT_TYPES.USERS:
+                case CONTENT_TYPES.JOBPOSITIONS:
+                case CONTENT_TYPES.DEGREES:
+                case CONTENT_TYPES.SOURCEOFAPPLICANTS:
+                case CONTENT_TYPES.LEADS:
+                case CONTENT_TYPES.BIRTHDAYS:
+                case CONTENT_TYPES.LEADSWORKFLOW:
+                case CONTENT_TYPES.MYPROFILE:
+                case CONTENT_TYPES.QUOTATION:
+                case CONTENT_TYPES.ORDER:
+                case CONTENT_TYPES.INVOICE:
+                case CONTENT_TYPES.SUPPLIERPAYMENTS:
+                case CONTENT_TYPES.CUSTOMERPAYMENTS:
+                case CONTENT_TYPES.SALESQUOTATION:
+                case CONTENT_TYPES.SALESORDER:
+                case CONTENT_TYPES.SALESINVOICE:
+                case CONTENT_TYPES.WTRACK:
+                case CONTENT_TYPES.PAYROLLEXPENSES:
+                case CONTENT_TYPES.MONTHHOURS:
+                case CONTENT_TYPES.BONUSTYPE:
+                case CONTENT_TYPES.HOLIDAY:
+                case CONTENT_TYPES.VACATION:
+                case CONTENT_TYPES.CAPACITY:
+                case CONTENT_TYPES.JOBSDASHBOARD:
+                case CONTENT_TYPES.PAYROLLPAYMENTS:
+                case CONTENT_TYPES.INVOICEAGING:
+                case CONTENT_TYPES.CHARTOFACCOUNT:
+                case CONTENT_TYPES.JOURNAL:
+                case CONTENT_TYPES.JOURNALENTRY:
+                case CONTENT_TYPES.SALARYREPORT:
+                    App.currentViewType = 'list';
+                    break;
+                case CONTENT_TYPES.APPLICATIONS:
+                case CONTENT_TYPES.OPPORTUNITIES:
+                    App.currentViewType = "kanban";
+                    break;
+                default:
+                    App.currentViewType = "thumbnails";
+                    break;
             }
         }
 
-        var viewVariants = ["kanban", "list", "form", "thumbnails"];
+        viewVariants = ["kanban", "list", "form", "thumbnails"];
+
         if ($.inArray(App.currentViewType, viewVariants) === -1) {
             App.currentViewType = "thumbnails";
             viewType = "thumbnails";
@@ -280,6 +284,7 @@ define([
         return App.cashedData[key] || App.storage.find(key);
     }
 
+    //ToDo refactor It
     var savedFilters = function (contentType, uIFilter) {
         var savedFilter;
         var length;
@@ -427,20 +432,18 @@ define([
     App.storage = new Store();
 
     return {
-        runApplication          : runApplication,
-        changeContentViewType   : changeContentViewType,
-        //getCurrentII: getCurrentII,
-        //setCurrentII: setCurrentII,
-        getCurrentVT            : getCurrentVT,
-        setCurrentVT            : setCurrentVT,
-        getCurrentCL            : getCurrentCL,
-        setCurrentCL            : setCurrentCL,
-        cacheToApp              : cacheToApp,
-        retriveFromCash         : retriveFromCash,
-        savedFilters            : savedFilters,
+        runApplication: runApplication,
+        changeContentViewType: changeContentViewType,
+        getCurrentVT: getCurrentVT,
+        setCurrentVT: setCurrentVT,
+        getCurrentCL: getCurrentCL,
+        setCurrentCL: setCurrentCL,
+        cacheToApp: cacheToApp,
+        retriveFromCash: retriveFromCash,
+        savedFilters: savedFilters,
         getFiltersForContentType: getFiltersForContentType,
-        getFilterById           : getFilterById,
-        getWeeks                : getWeeks,
-        getFiltersValues        : getFiltersValues
+        getFilterById: getFilterById,
+        getWeeks: getWeeks,
+        getFiltersValues: getFiltersValues
     };
 });
