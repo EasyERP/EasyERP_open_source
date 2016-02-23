@@ -153,6 +153,9 @@ define([
                     model = model.toJSON();
                     model.startNumber = rowNumber;
                     tr.replaceWith(template({journal: model}));
+
+                    delete self.changedModels[id];
+
                     cb();
                 }, function (err) {
                     if (!err) {
