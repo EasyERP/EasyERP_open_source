@@ -84,11 +84,11 @@ var wTrack = function (event, models) {
                     //}
 
                     WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
+                        var isoYear;
                         if (err) {
                             return next(err);
                         }
                         if (wTrack) {
-                            var isoYear;
                             event.emit('updateRevenue', {wTrack: wTrack, req: req});
                             event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
@@ -143,12 +143,12 @@ var wTrack = function (event, models) {
                         delete data._id;
 
                         WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
+                            var isoYear;
                             if (err) {
                                 return cb(err);
                             }
 
                             if (wTrack) {
-                                var isoYear;
                                 event.emit('updateRevenue', {wTrack: wTrack, req: req});
                                 event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
