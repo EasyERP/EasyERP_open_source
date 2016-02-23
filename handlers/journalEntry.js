@@ -924,7 +924,8 @@ var Module = function (models) {
                     Model
                         .aggregate([{
                             $match: {
-                                "sourceDocument.model": "Invoice"
+                                "sourceDocument.model": "Invoice",
+                                debit                 : {$gt: 0}
                             }
                         }, {
                             $lookup: {
@@ -1041,7 +1042,8 @@ var Module = function (models) {
                     var query = Model
                         .aggregate([{
                             $match: {
-                                "sourceDocument.model": "wTrack"
+                                "sourceDocument.model": "wTrack",
+                                debit                 : {$gt: 0}
                               //  "sourceDocument._id"  : objectId("56c6d5654a4805fc2c2149db"),
                             }
                         }, {
