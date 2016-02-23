@@ -84,26 +84,17 @@ var wTrack = function (event, models) {
                     //}
 
                     WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
-                        var isoYear;
                         if (err) {
                             return next(err);
                         }
                         if (wTrack) {
                             event.emit('updateRevenue', {wTrack: wTrack, req: req});
                             event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                            event.emit('recalculateIsoYear', {req: req, wTrack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                             event.emit('recollectProjectInfo');
                             event.emit('dropHoursCashes', req);
                             event.emit('recollectVacationDash');
-
-                            isoYear = isoWeekYearComposer(wTrack);
-
-                            WTrack.findByIdAndUpdate(wTrack._id, {$set: {isoYear: isoYear}}, {new: true}, function (err, result) {
-                                if (err) {
-                                    return console.log(err);
-                                }
-                                console.log('wTrack updated');
-                            });
                         }
                         res.status(200).send({success: 'updated'});
                     });
@@ -143,7 +134,6 @@ var wTrack = function (event, models) {
                         delete data._id;
 
                         WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
-                            var isoYear;
                             if (err) {
                                 return cb(err);
                             }
@@ -151,18 +141,10 @@ var wTrack = function (event, models) {
                             if (wTrack) {
                                 event.emit('updateRevenue', {wTrack: wTrack, req: req});
                                 event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                                event.emit('recalculateIsoYear', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                                 event.emit('recollectProjectInfo');
                                 event.emit('recollectVacationDash');
-
-                                isoYear = isoWeekYearComposer(wTrack);
-
-                                WTrack.findByIdAndUpdate(wTrack._id, {$set: {isoYear: isoYear}}, {new: true}, function (err, result) {
-                                    if (err) {
-                                        return console.log(err);
-                                    }
-                                    console.log('wTrack updated');
-                                });
                             }
 
                             cb(null, wTrack);

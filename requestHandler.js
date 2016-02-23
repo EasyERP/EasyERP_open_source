@@ -47,6 +47,7 @@ var requestHandler = function (app, event, mainDb) {
 
     var io = app.get('io');
     var redisStore = require('./helpers/redisClient');
+    var isoWeekYearComposer = require('./helpers/isoWeekYearComposer');
     var logger = app.get('logger');
     var moment = require('./public/js/libs/moment/moment');
 
@@ -93,6 +94,28 @@ var requestHandler = function (app, event, mainDb) {
             console.log('HoursCashes removed');
         });
 
+    });
+
+    event.on('recalculateIsoYear', function (options) {
+        var req = options.req;
+
+        var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+
+        if (options.wTrack) {
+            var wTrackModel = options.wTrack.toJSON();
+            var _id = wTrackModel._id;
+            var isoYear = isoWeekYearComposer(wTrackModel);
+
+            var query = {isoYear: isoYear};
+
+            wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                if (err) {
+                    return console.log(err);
+                }
+
+                console.log('wTrack updated');
+            });
+        }
     });
 
     event.on('recalculateKeys', function (options) {
