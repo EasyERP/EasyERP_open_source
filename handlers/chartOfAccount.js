@@ -114,16 +114,11 @@ var Chart = function (models) {
 
     this.getForDd = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            var data = req.query;
-            var accountType = data.accountType;
             var query;
             var Model = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
 
-            if (accountType) {
-                query = Model.find({accountType: accountType});
-            } else {
-                query = Model.find();
-            }
+
+            query = Model.find();
 
             query.exec(function (err, result) {
                 if (err) {

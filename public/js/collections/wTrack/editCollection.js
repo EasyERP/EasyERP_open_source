@@ -2,6 +2,8 @@
         './filterCollection'
     ],
     function (ParrantCollection) {
+        'use strict';
+
         var EditableColection = ParrantCollection.extend({
 
             initialize: function () {
