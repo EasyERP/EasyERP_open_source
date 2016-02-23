@@ -17,7 +17,7 @@ dbObject.once('open', function callback() {
     wTrackSchema = mongoose.Schemas.wTrack;
     wTrack = dbObject.model("wTrack", wTrackSchema);
 
-    query = wTrack.find({$or:[{month:12, week:1},{month:1, week: 53}]});
+    query = wTrack.find({$or: [{month: 12, week: 1}, {month: 1, week: 53}]});
 
     query.exec(function (error, res) {
         if (error) {
@@ -25,10 +25,10 @@ dbObject.once('open', function callback() {
         }
         var isoYear;
 
-        res.forEach(function(wt){
+        res.forEach(function (wt) {
             isoYear = isoWeekYearComposer(wt);
-            wTrack.findByIdAndUpdate(wt._id, {$set: {'isoYear': isoYear}}, function(err, response){
-                if (err){
+            wTrack.findByIdAndUpdate(wt._id, {$set: {'isoYear': isoYear}}, function (err, response) {
+                if (err) {
                     console.log(err);
                 }
 
