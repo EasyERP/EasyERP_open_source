@@ -85,6 +85,7 @@ var wTrack = function (event, models) {
 
                     WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                         var isoYear;
+
                         if (err) {
                             return next(err);
                         }
