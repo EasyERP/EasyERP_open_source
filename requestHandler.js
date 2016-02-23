@@ -98,15 +98,19 @@ var requestHandler = function (app, event, mainDb) {
 
     event.on('recalculateIsoYear', function (options) {
         var req = options.req;
+        var wTrackModel;
+        var _id;
+        var isoYear;
+        var query;
 
         var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
 
         if (options.wTrack) {
-            var wTrackModel = options.wTrack.toJSON();
-            var _id = wTrackModel._id;
-            var isoYear = isoWeekYearComposer(wTrackModel);
+            wTrackModel = options.wTrack;
+            _id = wTrackModel._id;
+            isoYear = isoWeekYearComposer(wTrackModel);
 
-            var query = {isoYear: isoYear};
+            query = {isoYear: isoYear};
 
             wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                 if (err) {
