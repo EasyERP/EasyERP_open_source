@@ -2,6 +2,8 @@
  * Created by lilya on 27/11/15.
  */
 define([
+        'jQuery',
+        'Underscore',
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
         'text!templates/ChartOfAccount/list/cancelEdit.html',
@@ -12,7 +14,7 @@ define([
         "populate",
         "async"
     ],
-    function (listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
+    function ($, _, listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
         var ProjectsListView = Backbone.View.extend({
             el           : '#content-holder',
             contentType  : "ChartOfAccount",
@@ -278,7 +280,7 @@ define([
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
-                if (!this.changed) {
+                if (this.changed) {
                     createBtnEl.hide();
                 }
                 saveBtnEl.show();
