@@ -60,9 +60,12 @@ var Module = function (models) {
                 return console.log(err);
             }
             var dateResult = result.date;
+            var newDae = moment(date);
+            var newReconcileDate = moment(dateResult);
+            var lessDate = newDae.isBefore(newReconcileDate) ? true : false;
 
-            if (date < dateResult) {
-                db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: {date: date}}, function (err, result) {
+            if (lessDate) {
+                db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: {date: new Date(newDae)}}, function (err, result) {
                     if (err) {
                         return console.log(err);
                     }
