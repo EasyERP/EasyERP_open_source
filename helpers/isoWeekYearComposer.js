@@ -8,25 +8,25 @@ module.exports = function (wTrackObject) {
     var firstNotZeroDay;
     var isoYear;
 
-    if (month !== 1 && month !== 12){
+    if (month !== "1" && month !== "12"){
         return year;
-    } else if (week !== 1 && week !== 53) {
+    } else if (week !== "1" && week !== "53") {
         return year;
     } else {
         for (var i = 1; i <= 7; i++) {
-            if (wTrackObject[i]) {
+            if (wTrackObject[i.toString()] !== '0') {
                 firstNotZeroDay = i;
                 break;
             }
         }
 
-        if (month === 1 && week === 53) {
+        if (month === "1" && week === "53") {
             year--;
-        } else if (month === 12 && week === 1) {
+        } else if (month === "12" && week === "1") {
             year++;
         }
 
-        momentObject = moment(year);
+        momentObject = moment({y: year});
         momentObject.isoWeek(week);
         momentObject.isoWeekday(firstNotZeroDay);
 
