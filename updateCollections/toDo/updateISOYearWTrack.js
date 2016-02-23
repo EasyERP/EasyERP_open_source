@@ -20,14 +20,20 @@ dbObject.once('open', function callback() {
     query = wTrack.find({$or: [{month: 12, week: 1}, {month: 1, week: 53}]});
 
     query.exec(function (error, res) {
+        var isoYear;
+        var query;
+        var dateByWeek;
+
         if (error) {
             return console.dir(error);
         }
-        var isoYear;
 
         res.forEach(function (wt) {
             isoYear = isoWeekYearComposer(wt);
-            wTrack.findByIdAndUpdate(wt._id, {$set: {'isoYear': isoYear}}, function (err, response) {
+            dateByWeek = wt.week + isoYear * 100;
+            query = {'isoYear': isoYear, 'dateByWeek': dateByWeek};
+
+            wTrack.findByIdAndUpdate(wt._id, query, function (err, response) {
                 if (err) {
                     console.log(err);
                 }
