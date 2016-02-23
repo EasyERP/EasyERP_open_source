@@ -43,6 +43,7 @@ var wTrack = function (event, models) {
                 var body = mapObject(req.body);
 
                 body.isoYear = isoWeekYearComposer(body);
+                body.dateByWeek = body.week + body.isoYear * 100;
 
                 wTrack = new WTrack(body);
 
