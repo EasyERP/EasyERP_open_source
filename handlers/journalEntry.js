@@ -9,6 +9,7 @@ var jobsSchema = mongoose.Schemas.jobs;
 var invoiceSchema = mongoose.Schemas.Invoice;
 var holidaysSchema = mongoose.Schemas.Holiday;
 var objectId = mongoose.Types.ObjectId;
+var redisStore = require('../helpers/redisClient');
 
 var oxr = require('open-exchange-rates');
 var fx = require('money');
@@ -26,23 +27,32 @@ var Module = function (models) {
     this.removeBySourceDocument = function (req, sourceId) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
 
-        Model.findByIdAndRemove({
-            "sourceDocument._id": sourceId
-        }, function (err, result) {
+        Model.find({"sourceDocument._id": sourceId}, function (err, result) {
             if (err) {
                 return console.log(err);
             }
 
-            var date = result.date;
-            setDate(req, date);
+            var ids = [];
+
+            result.forEach(function (el) {
+                setReconcileDate(req, el.date);
+                ids.push(el._id);
+            });
+
+
+            Model.remove({_id: {$in: ids}}, function (err, result) {
+                if (err) {
+                    return console.log(err);
+                }
+            });
         });
     };
 
-    function setDate(req, date) {
-        this.setReconcileDate(req, date);
-    }
-
     this.setReconcileDate = function (req, date) {
+        setReconcileDate(req, date);
+    };
+
+    function setReconcileDate(req, date) {
         var db = models.connection(req.session.lastDb);
         db.collection('settings').findOne({name: 'reconcileDate'}, function (err, result) {
             if (err) {
@@ -59,7 +69,7 @@ var Module = function (models) {
                 });
             }
         });
-    };
+    }
 
     this.reconcile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
@@ -174,7 +184,6 @@ var Module = function (models) {
                             for (var j = 7; j >= 1; j--) {
                                 dataObject[j] = moment([wTrackResult.year, wTrackResult.month]).isoWeek(wTrackResult.week).day(j);
                             }
-                            ;
 
                             var keys = Object.keys(dataObject);
 
@@ -205,25 +214,21 @@ var Module = function (models) {
                                 };
 
                                 var monthHoursFinder = function (pcb) {
-                                    var query = monthHours.find({
-                                        month: wTrackResult.month,
-                                        year : wTrackResult.year
-                                    }).lean();
-
-                                    query.exec(function (err, element) {
+                                    var key = wTrackResult.dateByMonth;
+                                    redisStore.readFromStorage('monthHours', key, function(err, result){
                                         if (err) {
                                             return cb(err);
                                         }
 
-                                        pcb(null, element[0] || {});
+                                        result = JSON.parse(result);
+                                        pcb(null, result[0] || {});
                                     });
                                 };
 
                                 var holidaysFinder = function (pcb) {
                                     var query = Holidays.find({
                                         year: wTrackResult.year,
-                                        week: wTrackResult.week,
-                                        date: date
+                                        week: wTrackResult.week
                                     }).lean();
 
                                     query.exec(function (err, element) {
@@ -240,12 +245,14 @@ var Module = function (models) {
                                         return asyncCb(err);
                                     }
                                     var holiday = result[2];
+                                    var holidayDate = holiday.date;
+                                    var sameDate = moment(holidayDate).isSame(date);
                                     var monthHoursModel = result[1];
                                     var salary = result[0];
                                     var hoursInMonth = monthHoursModel.hours;
-                                    var vacationCoefficient = monthHoursModel.vacationCoefficient;
-                                    var adminCoefficient = monthHoursModel.adminCoefficient;
-                                    var idleCoefficient = monthHoursModel.idleCoefficient;
+                                    var vacationCoefficient = monthHoursModel.vacationCoefficient || 0;
+                                    var adminCoefficient = monthHoursModel.adminCoefficient || 0;
+                                    var idleCoefficient = monthHoursModel.idleCoefficient || 0;
 
                                     var costHour = isFinite(salary / hoursInMonth) ? salary / hoursInMonth : 0;
 
@@ -309,7 +316,7 @@ var Module = function (models) {
                                         }
                                     };
 
-                                    if (day <= 5 && !holiday) {
+                                    if (day <= 5 && !sameDate) {
                                         if (hours - 8 >= 0) {
                                             body.amount = costHour * 8 * 100;
                                             bodyIdle.amount = 0;
@@ -322,11 +329,13 @@ var Module = function (models) {
 
                                         bodyVacation.amount = vacationCoefficient * 8 * 100;
                                         bodyAdminCosts.amount = adminCoefficient * hours * 100;
+                                        bodyHoliday.amount = 0;
                                     } else {
                                         bodyOvertime.amount = costHour * hours * 100;
                                         bodyAdminCosts.amount = adminCoefficient * hours * 100;
+                                        bodyHoliday.amount = 0;
 
-                                        if (holiday) {
+                                        if (sameDate) {
                                             bodyHoliday.amount = costHour * 8 * 100;
                                         }
                                     }
@@ -360,7 +369,7 @@ var Module = function (models) {
                         return parallelCb(err);
                     }
 
-                    WTrack.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function () {
+                    WTrack.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
 
                     });
                     parallelCb();
@@ -855,7 +864,7 @@ var Module = function (models) {
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
 
         var data = req.query;
-        var sort = data.sort ? data.sort : {_id: 1};
+        var sort = data.sort ? data.sort : {date: 1};
         var findInvoice;
         var findSalary;
         var count = parseInt(data.count, 10) || 100;
@@ -868,8 +877,7 @@ var Module = function (models) {
                     Model
                         .aggregate([{
                             $match: {
-                                "sourceDocument.model": "Invoice",
-                                'account'             : objectId("565eb53a6aa50532e5df0bc9")
+                                "sourceDocument.model": "Invoice"
                             }
                         }, {
                             $lookup: {
@@ -899,7 +907,11 @@ var Module = function (models) {
                                 'sourceDocument.model': 1,
                                 date                  : 1
                             }
-                        }, {
+                        },/* {
+                            $match: {
+                                'account.accountType': "Credit"
+                            }
+                        },*/ {
                             $lookup: {
                                 from                   : "chartOfAccount",
                                 localField             : "journal.debitAccount",
@@ -932,9 +944,9 @@ var Module = function (models) {
                                 account                 : 1
                             }
                         }, {
-                            $skip: skip / 2
+                            $skip: skip
                         }, {
-                            $limit: count / 2
+                            $limit: count
                         }/*, {
                          $project: {
                          debit                   : 1,
@@ -982,8 +994,8 @@ var Module = function (models) {
                     var query = Model
                         .aggregate([{
                             $match: {
-                                "sourceDocument.model": "wTrack",
-                                "sourceDocument._id"  : objectId("56c6d5654a4805fc2c2149db"),
+                                "sourceDocument.model": "wTrack"
+                              //  "sourceDocument._id"  : objectId("56c6d5654a4805fc2c2149db"),
                             }
                         }, {
                             $lookup: {
@@ -1012,6 +1024,10 @@ var Module = function (models) {
                                 'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]},
                                 'sourceDocument.model': 1,
                                 date                  : 1
+                            }
+                        }, {
+                            $match: {
+                                'account.accountType': "Debit"
                             }
                         }, {
                             $lookup: {
@@ -1053,9 +1069,11 @@ var Module = function (models) {
                                 account                 : 1
                             }
                         }, {
-                            $skip: skip / 2
+                            $sort: sort
                         }, {
-                            $limit: count / 2
+                            $skip: skip
+                        }, {
+                            $limit: count
                         }]);
 
                     query.options = {allowDiskUse: true};

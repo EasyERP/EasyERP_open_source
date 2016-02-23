@@ -211,7 +211,7 @@ define([
                     hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
                     $(selectedWtrack).attr('checked', false);
 
-                    if (model.toJSON().workflow.name !== 'Closed') {
+                    if (!model.toJSON().workflow || model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') {
                         model.set({"isPaid": false});
                         model.set({"amount": 0});
                         model.set({"cost": 0});
@@ -1095,7 +1095,7 @@ define([
                             } else {
 
                                 model = that.collection.get(value);
-                                if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed'){
+                                if (!model.toJSON().workflow || model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed'){
                                     model.destroy({
                                         headers: {
                                             mid: mid

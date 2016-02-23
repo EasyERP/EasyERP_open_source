@@ -173,10 +173,12 @@ var requestHandler = function (app, event, mainDb) {
             var waterfallTasks = [getWTracks, getBaseSalary];
             var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
             var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+            var keyForRetrive;
 
             if (monthFromSalary && yearFromSalary) {
                 year = parseInt(yearFromSalary);
                 month = parseInt(monthFromSalary);
+                keyForRetrive = year * 100 + month;
             }
 
             async.waterfall(waterfallTasks, function (err, result) {
@@ -207,12 +209,12 @@ var requestHandler = function (app, event, mainDb) {
                             }
 
                             if (monthFromSalary && yearFromSalary) {
-                                var query = monthHours.find({month: month, year: year}).lean();
-
-                                query.exec(function (err, monthHour) {
+                                redisStore.readFromStorage('monthHours', keyForRetrive, function(err, monthHour){
                                     if (err) {
                                         return console.log(err);
                                     }
+
+                                    monthHour = JSON.parse(monthHour);
                                     if (monthHour[0]) {
                                         fixedExpense = parseInt(monthHour[0].fixedExpense);
                                         expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
