@@ -48,7 +48,15 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .editable"                                 : "setEditable",
                 "click .checkbox"                                  : "checked",
-                "keydown input.editing "                           : "keyDown"
+                "keydown input.editing "                           : "keyDown",
+                "click"                                            : "removeInputs"
+            },
+
+            removeInputs: function () {
+                //this.setChangedValueToModel();
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
 
             keyDown: function (e) {
@@ -277,7 +285,6 @@ define([
                 startData.cid = model.cid;
 
                 if (!this.isNewRow()) {
-                    this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
                     new createView(startData);

@@ -4,6 +4,7 @@
 define([
         'jQuery',
         'Underscore',
+        'Backbone',
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
         'text!templates/ChartOfAccount/list/cancelEdit.html',
@@ -14,7 +15,7 @@ define([
         "populate",
         "async"
     ],
-    function ($, _, listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
+    function ($, _, Backbone, listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
         var ProjectsListView = Backbone.View.extend({
             el           : '#content-holder',
             contentType  : "ChartOfAccount",
@@ -79,7 +80,7 @@ define([
             },
 
             deleteItems: function () {
-                var that = this;
+                var self = this;
                 var mid = 82;
                 var model;
                 var localCounter = 0;
@@ -95,18 +96,20 @@ define([
                         $.each($("#chartOfAccount input:checked"), function (index, checkbox) {
                             value = checkbox.value;
 
-                            model = that.collection.get(value) ? that.collection.get(value) : that.editCollection.get(value);
+                            model = self.collection.get(value) || self.editCollection.get(value);
                             model.destroy({
                                 headers: {
                                     mid: mid
                                 },
                                 wait   : true,
                                 success: function () {
-                                    that.listLength--;
+                                    self.listLength--;
                                     localCounter++;
 
+                                    delete self.changedModels[value];
+
                                     if (index === count - 1) {
-                                        that.deleteItemsRender(localCounter);
+                                        self.deleteItemsRender(localCounter);
                                     }
                                 },
                                 error  : function (model, res) {
@@ -116,11 +119,11 @@ define([
                                             message: "You do not have permission to perform this action"
                                         });
                                     }
-                                    that.listLength--;
+                                    self.listLength--;
                                     localCounter++;
                                     if (index == count - 1) {
                                         if (index === count - 1) {
-                                            that.deleteItemsRender(localCounter);
+                                            self.deleteItemsRender(localCounter);
                                         }
                                     }
 
@@ -164,7 +167,7 @@ define([
                     var template = _.template(cancelEdit);
                     var model;
 
-                    if (!id) {
+                    if (!id || id.length < 24) {
                         return cb('Empty id');
                     }
 
@@ -172,12 +175,15 @@ define([
                     model = model.toJSON();
                     model.startNumber = rowNumber;
                     tr.replaceWith(template({chart: model}));
+
+                    delete self.changedModels[id];
+
                     cb();
                 }, function (err) {
                     if (!err) {
                         self.bindingEventsToEditedCollection(self);
-                        self.hideSaveCancelBtns();
                     }
+                    self.hideSaveCancelBtns();
                 });
 
                 if (this.createdItem) {
@@ -246,13 +252,19 @@ define([
                     checkLength = $("input.listCB:checked").length;
 
                     if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
+                        if (!this.changed) {
+                            $("#top-bar-deleteBtn").show();
+                            $("#top-bar-createBtn").hide();
+                        }
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
                     } else {
-                        $("#top-bar-deleteBtn").hide();
+                        if (!this.changed) {
+                            $("#top-bar-deleteBtn").hide();
+                            $("#top-bar-createBtn").show();
+                        }
                         $('#check_all').prop('checked', false);
                     }
                 }
@@ -280,9 +292,9 @@ define([
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
-                if (this.changed) {
-                    createBtnEl.hide();
-                }
+                //if (this.changed) {
+                createBtnEl.hide();
+                //}
                 saveBtnEl.show();
                 cancelBtnEl.show();
 
@@ -333,7 +345,7 @@ define([
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
-                    this.showSaveCancelBtns()
+                    this.showSaveCancelBtns();
                 }
             },
 
