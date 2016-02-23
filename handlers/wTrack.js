@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 
 var wTrack = function (event, models) {
     'use strict';
+    var isoWeekYearComposer = require('../helpers/isoWeekYearComposer');
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var _ = require('underscore');
@@ -40,6 +41,8 @@ var wTrack = function (event, models) {
 
                 var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
                 var body = mapObject(req.body);
+
+                body.isoYear = isoWeekYearComposer(body);
 
                 wTrack = new WTrack(body);
 
