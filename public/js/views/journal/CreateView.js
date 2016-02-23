@@ -132,6 +132,9 @@ define([
                 }, {
                     _id : 'Payment',
                     name: 'Payment'
+                }, {
+                    _id : 'Accrual',
+                    name: 'Accrual'
                 }];
 
                 this.delegateEvents(this.events);
