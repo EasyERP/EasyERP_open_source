@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var isoWeekYearComposer = require('../../helpers/isoWeekYearComposer');
 require('../../models/index.js');
 
 var dbObject = mongoose.createConnection('localhost', 'production');
@@ -11,17 +12,17 @@ dbObject.once('open', function callback() {
     var wTrackSchema = mongoose.Schemas.wTrack;
     var wTrack = dbObject.model("wTrack", wTrackSchema);
 
-    var query = wTrack.find({month:12, week:1});
+    var query = wTrack.find({$or:[{month:12, week:1},{month:1, week: 53}]});
 
     query.exec(function (error, _res) {
         if (error) {
             return console.dir(error);
         }
-        var nextYear;
+        var isoYear;
 
         _res.forEach(function(wt){
-            nextYear = wt.year + 1;
-            wTrack.findByIdAndUpdate(wt._id, {$set: {'isoYear': nextYear}}, function(err, response){
+            isoYear = isoWeekYearComposer(wt);
+            wTrack.findByIdAndUpdate(wt._id, {$set: {'isoYear': isoYear}}, function(err, response){
                 if (err){
                     console.log(err);
                 }
@@ -31,24 +32,5 @@ dbObject.once('open', function callback() {
         });
     });
 
-    query = wTrack.find({month:1, week: {$gte:10}});
-
-    query.exec(function (error, _res) {
-        if (error) {
-            return console.dir(error);
-        }
-        var prevYear;
-
-        _res.forEach(function(wt){
-            prevYear = wt.year - 1;
-            wTrack.findByIdAndUpdate(wt._id, {$set: {'isoYear': prevYear}}, function(err, response){
-                if (err){
-                    console.log(err);
-                }
-
-                console.log(response);
-            });
-        });
-    });
 });
 
