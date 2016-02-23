@@ -324,6 +324,7 @@ define([
                 var editedElementContent;
                 var editedElementValue;
                 var self = this;
+                var editedModel;
 
                 if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(editedElement);
@@ -335,6 +336,8 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
+                    editedModel = this.editCollection.get(editedElementRowId) || this.collection.get(editedElementRowId);
+
                     //editWtrackModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
@@ -342,18 +345,20 @@ define([
                     }
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                    if (editedElementContent === 'month') {
+                    if (editedElementContent === 'month' && editedModel && parseInt(editedModel.get('month'), 10) !== parseInt(editedElementValue, 10)) {
                         async.parallel([funcForWeek], function (err, result) {
                             if (err) {
                                 console.log(err);
                             }
 
                             var weeks = result[0];
-                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
-                            editedCol.text(editedElementValue);
-                            editedElement.remove();
+                            if (weeks.length){
+                                editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
+                                editedCol.text(editedElementValue);
+                                editedElement.remove();
 
-                            self.changedModels[editedElementRowId]['week'] = weeks[0].week;
+                                self.changedModels[editedElementRowId]['week'] = weeks[0].week;
+                            }
                         });
                     } else {
                         editedCol.text(editedElementValue);
@@ -397,6 +402,8 @@ define([
                 var currentYear;
                 var previousYear;
                 var nextYear;
+
+                year = year.slice(0, 4);
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
