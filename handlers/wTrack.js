@@ -131,6 +131,7 @@ var wTrack = function (event, models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
+
                         WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                             if (err) {
                                 return cb(err);
