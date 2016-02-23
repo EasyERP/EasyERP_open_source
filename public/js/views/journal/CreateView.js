@@ -123,8 +123,8 @@ define([
 
                 });
 
-                populate.get("#debitDd", "/chartOfAccount/getForDd", {accountType: "Debit"}, 'name', this, true, true);
-                populate.get("#creditDd", "/chartOfAccount/getForDd", {accountType: "Credit"}, 'name', this, true, true);
+                populate.get("#debitDd", "/chartOfAccount/getForDd", {}, 'name', this, true, true);
+                populate.get("#creditDd", "/chartOfAccount/getForDd", {}, 'name', this, true, true);
 
                 this.responseObj['#typeDd'] = [{
                     _id : 'Invoice',

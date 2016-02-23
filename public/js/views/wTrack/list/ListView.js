@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'Underscore',
+        'jQuery',
         'views/listViewBase',
         'views/selectView/selectView',
         'text!templates/wTrack/list/ListHeader.html',
@@ -23,25 +26,27 @@ define([
         'helpers/keyCodeHelper'
     ],
 
-    function (listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
+    function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
+        "use strict";
+
         var wTrackListView = listViewBase.extend({
-            createView              : createView,
-            listTemplate            : listTemplate,
-            listItemView            : listItemView,
-            contentCollection       : contentCollection,
-            filterView              : filterView,
-            contentType             : 'wTrack',
-            viewType                : 'list',
-            responseObj             : {},
-            wTrackId                : null, //need for edit rows in listView
+            createView: createView,
+            listTemplate: listTemplate,
+            listItemView: listItemView,
+            contentCollection: contentCollection,
+            filterView: filterView,
+            contentType: 'wTrack',
+            viewType: 'list',
+            responseObj: {},
+            wTrackId: null, //need for edit rows in listView
             totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable              : null, //cashedJqueryEllemnt
-            editCollection          : null,
-            selectedProjectId       : [],
-            genInvoiceEl            : null,
-            changedModels           : {},
-            exportToCsvUrl          : '/wTrack/exportToCsv',
-            exportToXlsxUrl         : '/wTrack/exportToXlsx',
+            $listTable: null, //cashedJqueryEllemnt
+            editCollection: null,
+            selectedProjectId: [],
+            genInvoiceEl: null,
+            changedModels: {},
+            exportToCsvUrl: '/wTrack/exportToCsv',
+            exportToXlsxUrl: '/wTrack/exportToXlsx',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -61,13 +66,13 @@ define([
             },
 
             events: {
-                "click .stageSelect"                               : "showNewSelect",
-                "click tr.enableEdit"                              : "editRow",
+                "click .stageSelect": "showNewSelect",
+                "click tr.enableEdit": "editRow",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "change .autoCalc"                                 : "autoCalc",
-                "change .editable"                                 : "setEditable",
-                "keydown input.editing"                            : "keyDown",
-                "click"                                            : "removeInputs"
+                "change .autoCalc": "autoCalc",
+                "change .editable": "setEditable",
+                "keydown input.editing": "keyDown",
+                "click": "removeInputs"
             },
 
             removeInputs: function () {
@@ -80,21 +85,21 @@ define([
             generateJob: function (e) {
                 var target = $(e.target);
                 var id = target.closest('tr').attr('data-id');
-                var wTrackModel = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                var model = this.projectModel ? this.projectModel : wTrackModel.get('project');
+                var wTrackModel = this.editCollection.get(id) || this.collection.get(id);
+                var model = this.projectModel || wTrackModel.get('project');
                 var projectsDdContainer = $('#projectDd');
 
                 if (!model) {
                     projectsDdContainer.css('color', 'red');
 
                     return App.render({
-                        type   : 'error',
+                        type: 'error',
                         message: CONSTANTS.SELECTP_ROJECT
                     });
                 }
 
                 new CreateJob({
-                    model     : model,
+                    model: model,
                     wTrackView: this
                 });
 
@@ -144,14 +149,14 @@ define([
                     var model = self.collection.get(id);
                     var reven = model.get('revenue');
 
-                    if (typeof(reven) != 'number') {
+                    if (typeof reven !== 'number') {
                         model.set({revenue: parseFloat(reven) * 100});
                     }
 
                     revenue = reven.toString().replace('$', '');
                     revenue = parseFloat(revenue);
 
-                    if (typeof(reven) === 'number') {
+                    if (typeof reven === 'number') {
                         revenue = revenue / 100;
                     }
 
@@ -168,11 +173,11 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks : wTracks,
-                            project : project,
+                            wTracks: wTracks,
+                            project: project,
                             assigned: assigned,
                             customer: customer,
-                            total   : total
+                            total: total
                         });
                     }
                 });
@@ -238,7 +243,7 @@ define([
                     } else {
                         message = "You can't copy tCard with closed project.";
                         App.render({
-                            type   : 'error',
+                            type: 'error',
                             message: message
                         });
                     }
@@ -324,6 +329,7 @@ define([
                 var editedElementContent;
                 var editedElementValue;
                 var self = this;
+                var weeks;
                 var editedModel;
 
                 if (navigator.userAgent.indexOf("Firefox") > -1) {
@@ -345,6 +351,7 @@ define([
                     }
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
                     if (editedElementContent === 'month' && editedModel && parseInt(editedModel.get('month'), 10) !== parseInt(editedElementValue, 10)) {
                         async.parallel([funcForWeek], function (err, result) {
                             if (err) {
@@ -419,7 +426,10 @@ define([
 
                 if (isSelect) {
                     if (content === 'jobs') {
-                        dataService.getData("/jobs/getForDD", {"projectId": tr.find('[data-content="project"]').attr('data-id'), "all": true}, function (jobs) {
+                        dataService.getData("/jobs/getForDD", {
+                            "projectId": tr.find('[data-content="project"]').attr('data-id'),
+                            "all": true
+                        }, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
 
@@ -527,7 +537,8 @@ define([
                     editWtrackModel = this.collection.get(wTrackId);
                     this.editCollection.add(editWtrackModel);
 
-                    employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;;
+                    employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;
+                    ;
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
                 }
@@ -574,8 +585,8 @@ define([
                     dataService.getData('/employee/getByMonth',
                         {
                             month: month,
-                            year : year,
-                            _id  : employeeId
+                            year: year,
+                            _id: employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -842,7 +853,7 @@ define([
                 }
 
                 this.selectView = new selectView({
-                    e          : e,
+                    e: e,
                     responseObj: this.responseObj
                 });
 
@@ -888,9 +899,9 @@ define([
                 var week = now.getWeek();
                 // var rate = 3;
                 var startData = {
-                    year        : year,
-                    month       : month,
-                    week        : week,
+                    year: year,
+                    month: month,
+                    week: week,
                     //rate        : rate,
                     projectModel: null
                 };
@@ -906,7 +917,7 @@ define([
                     new createView(startData);
                 } else {
                     App.render({
-                        type   : 'notify',
+                        type: 'notify',
                         message: 'Please confirm or discard changes befor create a new item'
                     });
                 }
@@ -1025,7 +1036,7 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter       : this.filter,
+                    filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -1044,8 +1055,8 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection : this.collection,
-                        page       : holder.find("#currentShowPage").val(),
+                        collection: this.collection,
+                        page: holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1107,7 +1118,7 @@ define([
                                         headers: {
                                             mid: mid
                                         },
-                                        wait   : true,
+                                        wait: true,
                                         success: function () {
                                             that.listLength--;
                                             localCounter++;
@@ -1116,10 +1127,10 @@ define([
                                                 that.triggerDeleteItemsRender(localCounter);
                                             }
                                         },
-                                        error  : function (model, res) {
+                                        error: function (model, res) {
                                             if (res.status === 403 && index === 0) {
                                                 App.render({
-                                                    type   : 'error',
+                                                    type: 'error',
                                                     message: "You do not have permission to perform this action"
                                                 });
                                             }
@@ -1136,7 +1147,7 @@ define([
                                 } else {
                                     message = "You can't delete tCard with closed project.";
                                     App.render({
-                                        type   : 'error',
+                                        type: 'error',
                                         message: message
                                     });
                                 }
@@ -1219,8 +1230,8 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
                 $currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
+                    collection: this.collection,
+                    page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
