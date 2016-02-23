@@ -21,7 +21,8 @@ module.exports = (function () {
         createdBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
-        }
+        },
+        accountType: {type: String, enum: ['Debit', 'Credit'], default: "Debit"}
 
     }, {collection: 'chartOfAccount'});
 
