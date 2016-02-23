@@ -13,7 +13,7 @@ module.exports = function (models) {
     router.post('/', _journalHandler.create);
     router.post('/journalEntry', _journalEntryHandler.create);
     router.delete('/:id', _journalHandler.remove);
-    //router.patch('/', handler.putchBulk);
+    router.patch('/', _journalHandler.putchBulk);
 
     return router;
 };

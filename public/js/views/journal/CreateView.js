@@ -1,9 +1,12 @@
 define([
+        'jQuery',
+        'Underscore',
+        'Backbone',
         "text!templates/journal/CreateTemplate.html",
         'models/JournalModel',
         'populate'
     ],
-    function (CreateTemplate, JournalModel, populate) {
+    function ($, _, Backbone, CreateTemplate, JournalModel, populate) {
         "use strict";
 
         var CreateView = Backbone.View.extend({
@@ -80,7 +83,7 @@ define([
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
                     }
-                })
+                });
             },
 
             redirectAfterSave: function (content, model) {

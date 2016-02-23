@@ -2,6 +2,9 @@
  * Created by lilya on 27/11/15.
  */
 define([
+        'jQuery',
+        'Underscore',
+        'Backbone',
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
         'text!templates/ChartOfAccount/list/cancelEdit.html',
@@ -12,7 +15,8 @@ define([
         "populate",
         "async"
     ],
-    function (listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
+    function ($, _, Backbone, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, populate, async) {
+        'use strict';
         var ProjectsListView = Backbone.View.extend({
             el           : '#content-holder',
             contentType  : "ChartOfAccount",
@@ -77,7 +81,7 @@ define([
             },
 
             deleteItems: function () {
-                var that = this;
+                var self = this;
                 var mid = 82;
                 var model;
                 var localCounter = 0;
@@ -93,18 +97,20 @@ define([
                         $.each($("#chartOfAccount input:checked"), function (index, checkbox) {
                             value = checkbox.value;
 
-                            model = that.collection.get(value) ? that.collection.get(value) : that.editCollection.get(value);
+                            model = self.collection.get(value) || self.editCollection.get(value);
                             model.destroy({
                                 headers: {
                                     mid: mid
                                 },
                                 wait   : true,
                                 success: function () {
-                                    that.listLength--;
+                                    self.listLength--;
                                     localCounter++;
 
+                                    delete self.changedModels[value];
+
                                     if (index === count - 1) {
-                                        that.deleteItemsRender(localCounter);
+                                        self.deleteItemsRender(localCounter);
                                     }
                                 },
                                 error  : function (model, res) {
@@ -114,14 +120,11 @@ define([
                                             message: "You do not have permission to perform this action"
                                         });
                                     }
-                                    that.listLength--;
+                                    self.listLength--;
                                     localCounter++;
-                                    if (index == count - 1) {
-                                        if (index === count - 1) {
-                                            that.deleteItemsRender(localCounter);
-                                        }
+                                    if (index === count - 1) {
+                                        self.deleteItemsRender(localCounter);
                                     }
-
                                 }
                             });
                         });
@@ -162,7 +165,7 @@ define([
                     var template = _.template(cancelEdit);
                     var model;
 
-                    if (!id) {
+                    if (!id || id.length < 24) {
                         return cb('Empty id');
                     }
 
@@ -170,12 +173,15 @@ define([
                     model = model.toJSON();
                     model.startNumber = rowNumber;
                     tr.replaceWith(template({chart: model}));
+
+                    delete self.changedModels[id];
+
                     cb();
                 }, function (err) {
                     if (!err) {
                         self.bindingEventsToEditedCollection(self);
-                        self.hideSaveCancelBtns();
                     }
+                    self.hideSaveCancelBtns();
                 });
 
                 if (this.createdItem) {
@@ -220,7 +226,7 @@ define([
 
             resetCollection: function (model) {
                 if (model && model._id) {
-                    model = new currentModel(model);
+                    model = new CurrentModel(model);
                     this.collection.add(model);
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
@@ -244,13 +250,19 @@ define([
                     checkLength = $("input.listCB:checked").length;
 
                     if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
+                        if (!this.changed) {
+                            $("#top-bar-deleteBtn").show();
+                            $("#top-bar-createBtn").hide();
+                        }
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
                     } else {
-                        $("#top-bar-deleteBtn").hide();
+                        if (!this.changed) {
+                            $("#top-bar-deleteBtn").hide();
+                            $("#top-bar-createBtn").show();
+                        }
                         $('#check_all').prop('checked', false);
                     }
                 }
@@ -258,7 +270,7 @@ define([
 
             createItem: function () {
                 var startData = {};
-                var model = new currentModel(startData);
+                var model = new CurrentModel(startData);
 
                 startData.cid = model.cid;
 
@@ -266,7 +278,7 @@ define([
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
-                    new createView(startData);
+                    new CreateView(startData);
                 }
 
                 this.changed = true;
@@ -278,9 +290,9 @@ define([
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
-                if (!this.changed) {
-                    createBtnEl.hide();
-                }
+                //if (this.changed) {
+                createBtnEl.hide();
+                //}
                 saveBtnEl.show();
                 cancelBtnEl.show();
 
@@ -331,7 +343,7 @@ define([
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
-                    this.showSaveCancelBtns()
+                    this.showSaveCancelBtns();
                 }
             },
 
@@ -363,7 +375,7 @@ define([
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                     if (editedElementContent === 'code') {
-                        editedElementValue = parseInt(editedElementValue);
+                        editedElementValue = parseInt(editedElementValue, 10);
 
                         if (isNaN(editedElementValue)) {
                             editedCol.addClass('errorContent');
@@ -426,7 +438,7 @@ define([
 
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
-                this.collection = new contentCollection({
+                this.collection = new ContentCollection({
                     viewType        : 'list',
                     sort            : sortObject,
                     page            : this.page,
@@ -466,11 +478,11 @@ define([
                 var model;
                 var code;
                 var account;
-
+                var id;
                 var errors = this.$el.find('.errorContent');
 
-                for (var id in this.changedModels) {
-                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                for (id in this.changedModels) {
+                    model = this.editCollection.get(id) || this.collection.get(id);
                     if (model) {
                         model.changed = this.changedModels[id];
                         code = this.changedModels[id].code || model.get('code');
@@ -480,11 +492,11 @@ define([
                 }
 
                 if (errors.length) {
-                    return
+                    return;
                 }
                 this.editCollection.save();
 
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     delete this.changedModels[id];
                     this.editCollection.remove(id);
                 }
