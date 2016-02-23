@@ -133,8 +133,8 @@ define([
                     _id : 'Payment',
                     name: 'Payment'
                 }, {
-                    _id : 'Salary',
-                    name: 'Salary'
+                    _id : 'Accrual',
+                    name: 'Accrual'
                 }];
 
                 this.delegateEvents(this.events);
