@@ -15,7 +15,8 @@ define([
         "populate",
         "async"
     ],
-    function ($, _, Backbone, listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
+    function ($, _, Backbone, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, populate, async) {
+        'use strict';
         var ProjectsListView = Backbone.View.extend({
             el           : '#content-holder',
             contentType  : "ChartOfAccount",
@@ -121,12 +122,9 @@ define([
                                     }
                                     self.listLength--;
                                     localCounter++;
-                                    if (index == count - 1) {
-                                        if (index === count - 1) {
-                                            self.deleteItemsRender(localCounter);
-                                        }
+                                    if (index === count - 1) {
+                                        self.deleteItemsRender(localCounter);
                                     }
-
                                 }
                             });
                         });
@@ -228,7 +226,7 @@ define([
 
             resetCollection: function (model) {
                 if (model && model._id) {
-                    model = new currentModel(model);
+                    model = new CurrentModel(model);
                     this.collection.add(model);
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
@@ -272,7 +270,7 @@ define([
 
             createItem: function () {
                 var startData = {};
-                var model = new currentModel(startData);
+                var model = new CurrentModel(startData);
 
                 startData.cid = model.cid;
 
@@ -280,7 +278,7 @@ define([
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
-                    new createView(startData);
+                    new CreateView(startData);
                 }
 
                 this.changed = true;
@@ -377,7 +375,7 @@ define([
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                     if (editedElementContent === 'code') {
-                        editedElementValue = parseInt(editedElementValue);
+                        editedElementValue = parseInt(editedElementValue, 10);
 
                         if (isNaN(editedElementValue)) {
                             editedCol.addClass('errorContent');
@@ -440,7 +438,7 @@ define([
 
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
-                this.collection = new contentCollection({
+                this.collection = new ContentCollection({
                     viewType        : 'list',
                     sort            : sortObject,
                     page            : this.page,
@@ -480,11 +478,11 @@ define([
                 var model;
                 var code;
                 var account;
-
+                var id;
                 var errors = this.$el.find('.errorContent');
 
-                for (var id in this.changedModels) {
-                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                for (id in this.changedModels) {
+                    model = this.editCollection.get(id) || this.collection.get(id);
                     if (model) {
                         model.changed = this.changedModels[id];
                         code = this.changedModels[id].code || model.get('code');
@@ -494,11 +492,11 @@ define([
                 }
 
                 if (errors.length) {
-                    return
+                    return;
                 }
                 this.editCollection.save();
 
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     delete this.changedModels[id];
                     this.editCollection.remove(id);
                 }

@@ -12,17 +12,16 @@ define([
         'collections/journal/filterCollection',
         'collections/journal/editCollection',
         'dataService',
-        'async',
-        'custom'
+        'async'
     ],
 
-    function ($, _, listViewBase, selectView, cancelEdit, listHeaderTemplate, listTemplate, listItemView, createView, currentModel, contentCollection, EditCollection, dataService, async, custom) {
+    function ($, _, listViewBase, SelectView, cancelEdit, listHeaderTemplate, listTemplate, ListItemView, CreateView, CurrentModel, contentCollection, EditCollection, dataService, async) {
         "use strict";
 
         var ListView = listViewBase.extend({
-            createView              : createView,
+            createView              : CreateView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: '/journal/totalCollectionLength',
             contentType             : 'journal',
@@ -107,10 +106,8 @@ define([
                                     }
                                     self.listLength--;
                                     localCounter++;
-                                    if (index == count - 1) {
-                                        if (index === count - 1) {
-                                            self.deleteItemsRender(localCounter);
-                                        }
+                                    if (index === count - 1) {
+                                        self.deleteItemsRender(localCounter);
                                     }
 
                                 }
@@ -236,7 +233,7 @@ define([
 
             resetCollection: function (model) {
                 if (model && model._id) {
-                    model = new currentModel(model);
+                    model = new CurrentModel(model);
                     this.collection.add(model);
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
@@ -280,14 +277,14 @@ define([
 
             createItem: function () {
                 var startData = {};
-                var model = new currentModel(startData);
+                var model = new CurrentModel(startData);
 
                 startData.cid = model.cid;
 
                 if (!this.isNewRow()) {
                     this.editCollection.add(model);
 
-                    new createView(startData);
+                    new CreateView(startData);
                 }
 
                 this.changed = true;
@@ -370,7 +367,7 @@ define([
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                     if (editedElementContent === 'code') {
-                        editedElementValue = parseInt(editedElementValue);
+                        editedElementValue = parseInt(editedElementValue, 10);
 
                         if (isNaN(editedElementValue)) {
                             editedCol.addClass('errorContent');
@@ -403,20 +400,20 @@ define([
 
             saveItem: function () {
                 var model;
-
+                var id;
                 var errors = this.$el.find('.errorContent');
 
-                for (var id in this.changedModels) {
-                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                for (id in this.changedModels) {
+                    model = this.editCollection.get(id) || this.collection.get(id);
                     model.changed = this.changedModels[id];
                 }
 
                 if (errors.length) {
-                    return
+                    return;
                 }
                 this.editCollection.save();
 
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     delete this.changedModels[id];
                 }
 
@@ -490,7 +487,7 @@ define([
                 return false;
             },
 
-            showNewSelect: function (e, prev, next) {
+            showNewSelect: function (e) {
                 //populate.showSelect(e, prev, next, this);
 
                 var $target = $(e.target);
@@ -504,7 +501,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -538,7 +535,7 @@ define([
 
                 this.hideSaveCancelButtons();
 
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection : this.collection,
                     itemsNumber: this.collection.namberToShow
                 });
@@ -550,22 +547,14 @@ define([
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-                dataService.getData("/chartOfAccount/getForDd", {accountType: "Debit"}, function (debitAccount) {
+                dataService.getData("/chartOfAccount/getForDd", {}, function (debitAccount) {
                     debitAccount = _.map(debitAccount.data, function (debit) {
                         debit.name = debit.name;
                         debit._id = debit._id;
                         return debit;
                     });
                     self.responseObj['#debitAccount'] = debitAccount;
-                });
-
-                dataService.getData("/chartOfAccount/getForDd", {accountType: "Credit"}, function (creditAccount) {
-                    creditAccount = _.map(creditAccount.data, function (debit) {
-                        debit.name = debit.name;
-                        debit._id = debit._id;
-                        return debit;
-                    });
-                    self.responseObj['#creditAccount'] = creditAccount;
+                    self.responseObj['#creditAccount'] = debitAccount;
                 });
 
                 this.responseObj['#transaction'] = [{
@@ -574,6 +563,9 @@ define([
                 }, {
                     _id : 'Payment',
                     name: 'Payment'
+                }, {
+                    _id : 'Accrual',
+                    name: 'Accrual'
                 }];
 
                 setTimeout(function () {
