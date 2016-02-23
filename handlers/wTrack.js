@@ -42,9 +42,6 @@ var wTrack = function (event, models) {
                 var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
                 var body = mapObject(req.body);
 
-                body.isoYear = isoWeekYearComposer(body);
-                body.dateByWeek = body.week + body.isoYear * 100;
-
                 wTrack = new WTrack(body);
 
                 wTrack.save(function (err, wTrack) {
