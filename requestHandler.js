@@ -88,38 +88,12 @@ var requestHandler = function (app, event, mainDb) {
 
         HoursCashes.remove({}, function (err, result) {
             if (err) {
-                return next(err);
+                return logger.error(err);
             }
 
             console.log('HoursCashes removed');
         });
 
-    });
-
-    event.on('recalculateIsoYear', function (options) {
-        var req = options.req;
-        var wTrackModel;
-        var _id;
-        var isoYear;
-        var query;
-
-        var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
-
-        if (options.wTrack) {
-            wTrackModel = options.wTrack;
-            _id = wTrackModel._id;
-            isoYear = isoWeekYearComposer(wTrackModel);
-
-            query = {isoYear: isoYear};
-
-            wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
-                if (err) {
-                    return console.log(err);
-                }
-
-                console.log('wTrack updated');
-            });
-        }
     });
 
     event.on('recalculateKeys', function (options) {
@@ -134,46 +108,16 @@ var requestHandler = function (app, event, mainDb) {
             var year = wTrackModel.year;
             var _id = wTrackModel._id;
 
-            var dateByWeek = year * 100 + week;
+            var isoYear = isoWeekYearComposer(wTrackModel);
+            var dateByWeek = isoYear * 100 + week;
             var dateByMonth = year * 100 + month;
 
-            var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth};
+            var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth, isoYear: isoYear};
 
             wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                 if (err) {
-                    return console.log(err);
+                    return logger.error(err);
                 }
-
-                console.log('wTrack updated');
-            });
-        } else {
-            wTrack.find({}, {_id: 1, month: 1, week: 1, year: 1}, function (err, result) {
-                if (err) {
-                    return console.log(err);
-                }
-
-                result.forEach(function (wTrackEl, count) {
-
-                    var wTrackModel = wTrackEl.toJSON();
-                    var month = wTrackModel.month;
-                    var week = wTrackModel.week;
-                    var year = wTrackModel.year;
-                    var _id = wTrackModel._id;
-
-                    var dateByWeek = year * 100 + week;
-                    var dateByMonth = year * 100 + month;
-
-                    var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth}
-
-                    wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
-                        if (err) {
-                            return console.log(err);
-                        }
-
-                        // console.log(count);
-                    });
-                });
-
             });
         }
 
@@ -585,6 +529,7 @@ var requestHandler = function (app, event, mainDb) {
                             projectValues.revenue = budgetTotal.revenueSum;
                             projectValues.profit = budgetTotal.profitSum;
                             projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+
                             if (!isFinite(projectValues.markUp)) {
                                 projectValues.markUp = 0;
                             }

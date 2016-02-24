@@ -68,6 +68,7 @@ var wTrack = function (event, models) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -87,12 +88,15 @@ var wTrack = function (event, models) {
                         }
                         if (wTrack) {
                             event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                            event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                             event.emit('recalculateIsoYear', {req: req, wTrack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                             event.emit('recollectProjectInfo');
                             event.emit('dropHoursCashes', req);
                             event.emit('recollectVacationDash');
+
+                            if (needUpdateKeys) {
+                                event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                            }
                         }
                         res.status(200).send({success: 'updated'});
                     });
@@ -107,8 +111,9 @@ var wTrack = function (event, models) {
 
     this.putchBulk = function (req, res, next) {
         var body = req.body;
-        var uId;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var needUpdateKeys = body.month || body.week || body.year || body.isoYear;
+        var uId;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
@@ -138,11 +143,14 @@ var wTrack = function (event, models) {
 
                             if (wTrack) {
                                 event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                                event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                                 event.emit('recalculateIsoYear', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                                 event.emit('recollectProjectInfo');
                                 event.emit('recollectVacationDash');
+
+                                if (needUpdateKeys) {
+                                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                                }
                             }
 
                             cb(null, wTrack);
