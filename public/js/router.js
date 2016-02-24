@@ -751,7 +751,7 @@ define([
                         };
 
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
@@ -760,7 +760,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -1038,7 +1038,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)));
+                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
@@ -1047,7 +1047,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)));
+                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);

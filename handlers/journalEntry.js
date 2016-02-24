@@ -451,6 +451,135 @@ var Module = function (models) {
     function createReconciled(body, dbIndex, cb, uId, timeToSet) {
         var Journal = models.get(dbIndex, 'journal', journalSchema);
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var journalId = body.journal;
+        var now = moment();
+        var date = body.date ? moment(body.date) : now;
+        var currency;
+        var amount = body.amount;
+        var timeToSet = timeToSet;
+
+        var waterfallTasks = [journalFinder, journalEntrySave];
+
+        function journalFinder(waterfallCb) {
+            var err;
+
+            if (!journalId) {
+                err = new Error('Journal id is required field');
+                err.status = 400;
+
+                return waterfallCb(err);
+            }
+
+            Journal.findById(journalId, waterfallCb);
+        }
+
+        function journalEntrySave(journal, waterfallCb) {
+            var err;
+            var debitObject;
+            var creditObject;
+            var parallelTasks = {
+                debitSaver : function (parallelCb) {
+                    var journalEntry;
+
+                    debitObject.debit = amount;
+                    debitObject.account = journal.debitAccount;
+
+                    debitObject.editedBy = {
+                        user: uId,
+                        date: new Date(date)
+                    };
+
+                    debitObject.createdBy = {
+                        user: uId,
+                        date: new Date(date)
+                    };
+
+                    if (amount && moment(debitObject.date).isBefore(now)) {
+                        journalEntry = new Model(debitObject);
+                        journalEntry.save(parallelCb);
+                    } else {
+                        parallelCb();
+                    }
+
+                },
+                creditSaver: function (parallelCb) {
+                    var journalEntry;
+
+                    creditObject.credit = amount;
+                    creditObject.account = journal.creditAccount;
+
+                    creditObject.editedBy = {
+                        user: uId,
+                        date: new Date(date)
+                    };
+
+                    creditObject.createdBy = {
+                        user: uId,
+                        date: new Date(date)
+                    };
+
+                    if (amount && moment(debitObject.date).isBefore(now)) {
+                        journalEntry = new Model(creditObject);
+                        journalEntry.save(parallelCb);
+                    } else {
+                        parallelCb();
+                    }
+                }
+            };
+
+            if (!journal || !journal._id) {
+                err = new Error('Invalid Journal');
+                err.status = 400;
+
+                return waterfallCb(err);
+            }
+
+            currency = {
+                name: 'USD',
+                rate: 1
+            };
+
+            body.currency = currency;
+            body.journal = journal._id;
+
+            debitObject = _.extend({}, body);
+            creditObject = _.extend({}, body);
+
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, result);
+            });
+        };
+
+        async.waterfall(waterfallTasks, function (err, response) {
+            if (err) {
+                return cb(err);
+            }
+
+            if (cb) {
+                cb(null, response);
+            }
+        });
+    };
+
+    this.getReconcileDate = function (req, res, next) {
+        var db = models.connection(req.session.lastDb);
+
+        db.collection('settings').findOne({name: 'reconcileDate'}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({date: result.date});
+        });
+    };
+
+    this.create = function (body, dbIndex, cb, uId) {
+        var Journal = models.get(dbIndex, 'journal', journalSchema);
+        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
         var Currency = models.get(dbIndex, 'currency', CurrencySchema);
         var journalId = body.journal;
         var now = moment();
@@ -458,8 +587,6 @@ var Module = function (models) {
         var currency;
         var amount = body.amount;
         var rates;
-        var hours = body.hours;
-        var timeToSet = timeToSet;
 
         var waterfallTasks = [currencyNameFinder, journalFinder, journalEntrySave];
 
@@ -516,11 +643,6 @@ var Module = function (models) {
                             date: new Date()
                         };
 
-                        if (timeToSet && hours && (8 - hours > 0)) {
-                            (debitObject.createdBy.date).set(timeToSet);
-                            (debitObject.editedBy.date).set(timeToSet);
-                        }
-
                         if (amount && moment(debitObject.date).isBefore(now)) {
                             journalEntry = new Model(debitObject);
                             journalEntry.save(parallelCb);
@@ -544,11 +666,6 @@ var Module = function (models) {
                             user: uId,
                             date: new Date()
                         };
-
-                        if (timeToSet && hours && (8 - hours > 0)) {
-                            (debitObject.createdBy.date).set(timeToSet);
-                            (debitObject.editedBy.date).set(timeToSet);
-                        }
 
                         if (amount && moment(debitObject.date).isBefore(now)) {
                             journalEntry = new Model(creditObject);
@@ -594,22 +711,6 @@ var Module = function (models) {
                 cb(null, response);
             }
         });
-    };
-
-    this.getReconcileDate = function (req, res, next) {
-        var db = models.connection(req.session.lastDb);
-
-        db.collection('settings').findOne({name: 'reconcileDate'}, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({date: result.date});
-        });
-    };
-
-    this.create = function (body, dbIndex, cb, uId) {
-        createReconciled(body, dbIndex, cb, uId);
     };
 
     this.totalCollectionLength = function (req, res, next) {
