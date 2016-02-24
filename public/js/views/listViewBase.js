@@ -1,4 +1,7 @@
 define([
+        'jQuery',
+        'Underscore',
+        'Backbone',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'text!templates/Notes/importTemplate.html',
@@ -7,7 +10,8 @@ define([
         'dataService'
     ],
 
-    function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
+    function ($, _, Backbone, paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
+        'use strict';
         var ListViewBase = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -160,7 +164,7 @@ define([
                         checkAll$ = $('#check_all');
                         checkAll$.prop('checked', false);
 
-                        if (checkLength == this.collection.length) {
+                        if (checkLength === this.collection.length) {
                             checkAll$.prop('checked', true);
                         }
                     }
@@ -592,7 +596,7 @@ define([
                     if (baseFilter) {
                         filter[baseFilter.name] = baseFilter.value;
                     }
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self);
                 });
                 self.filterView.bind('defaultFilter', function () {
                     if (baseFilter) {
@@ -616,7 +620,7 @@ define([
 
                 this.deleteRender(deleteCounter, deletePage, {
                     filter       : this.filter,
-                    newCollection: this.newCollection,
+                    newCollection: this.newCollection
                 });
 
                 var pagenation = this.$el.find('.pagination');

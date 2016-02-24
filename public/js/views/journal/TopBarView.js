@@ -16,7 +16,7 @@ define([
 
             events: {
                 "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-editBtn"  : "editEvent",
+                "click #top-bar-saveBtn"  : "saveEvent",
                 "click #top-bar-createBtn": "createEvent"
             },
 
@@ -24,35 +24,32 @@ define([
                 if (options.collection) {
                     this.collection = options.collection;
                 }
-
                 this.render();
             },
 
             createEvent: function (event) {
                 event.preventDefault();
-                this.trigger('createEvent');
-            },
 
-            editEvent: function (event) {
-                event.preventDefault();
-                this.trigger('editEvent');
+                this.trigger('createEvent');
             },
 
             deleteEvent: function (event) {
                 event.preventDefault();
-                var answer = confirm("Really DELETE items ?!");
-                if (answer === true) {
-                    this.trigger('deleteEvent');
-                }
+                this.trigger('deleteEvent');
+            },
+
+            saveEvent: function (event) {
+                event.preventDefault();
+
+                this.trigger('saveEvent');
             },
 
             render: function () {
-                var viewType = Custom.getCurrentVT();
-
                 $('title').text(this.contentType);
-
+                var viewType = Custom.getCurrentVT();
                 this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 
+                Common.displayControlBtnsByActionType('Content', viewType);
                 return this;
             }
         });

@@ -18,7 +18,7 @@ module.exports = function (models) {
     router.post('/journalEntry', _journalEntryHandler.create);
     router.post('/reconcile', _journalEntryHandler.reconcile);
     router.delete('/:id', _journalHandler.remove);
-    //router.patch('/', handler.putchBulk);
+    router.patch('/', _journalHandler.putchBulk);
 
     return router;
 };

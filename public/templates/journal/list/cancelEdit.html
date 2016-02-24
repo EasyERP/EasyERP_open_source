@@ -1,10 +1,8 @@
-<% collection.forEach(function(journal, index){ %>
 <tr data-id="<%=journal._id%>">
     <td class="notForm centerCell"><input type="checkbox" value="<%=journal._id%>" class="checkbox listCB"/></td>
-    <td data-content="number" class="centerCell"><%=index + 1 %></td>
+    <td class="centerCell" data-content="number"><%=journal.startNumber%></td>
     <td class="editable" data-content="name" data-type="input"><%=journal.name%></td>
     <td class="editable" data-content="transaction"><%=journal.transaction ? journal.transaction : ''%></td>
     <td class="editable" data-content="debitAccount"><%=(journal.debitAccount && journal.debitAccount.name) ? journal.debitAccount.name : ''%></td>
     <td class="editable" data-content="creditAccount"><%=(journal.creditAccount && journal.creditAccount.name) ? journal.creditAccount.name : ''%></td>
 </tr>
-<% }) %>
