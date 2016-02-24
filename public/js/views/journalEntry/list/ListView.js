@@ -70,7 +70,7 @@ define([
                 var $rows = $curEl.find('#listTable tr').not('#listFooter');
 
                 var total = {
-                    debit : 0,
+                    debit : 0
                 };
 
                 $rows.each(function (index, element) {
