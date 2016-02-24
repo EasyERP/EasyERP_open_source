@@ -3,11 +3,11 @@
         <colgroup class="borders" span="7">
             <col span="1" width="5%">
             <col span="1" width="25%">
-            <col span="1" width="20%">
             <col span="1" width="15%">
+            <col span="1" width="22%">
+            <col span="1" width="23%">
             <col span="1" width="15%">
-            <col span="1" width="15%">
-            <col span="1" width="15%">
+            <col span="1" width="5%">
         </colgroup>
         <thead>
         <th>#</th>
@@ -26,11 +26,11 @@
                         <colgroup class="borders" span="5">
                             <col span="1" width="5%">
                             <col span="1" width="25%">
-                            <col span="1" width="20%">
                             <col span="1" width="15%">
+                            <col span="1" width="22%">
+                            <col span="1" width="23%">
                             <col span="1" width="15%">
-                            <col span="1" width="15%">
-                            <col span="1" width="15%">
+                            <col span="1" width="5%">
                         </colgroup>
 
                         <tbody id="report-TableBody">
@@ -39,10 +39,7 @@
                         <tr data-id="<%=journalEntry._id%>" class="mainTr">
                             <td class="expand">+</td>
                             <td><%=dateFormat(journalEntry._id)%></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td colspan='4'></td>
                             <td><%=currencySplitter((journalEntry.totalSum / 100).toFixed(2))%></td>
                             <%total += journalEntry.totalSum%>
                         </tr>
