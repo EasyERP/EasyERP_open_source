@@ -175,8 +175,34 @@ define([], function () {
                 backend: 'projectmanager._id'
             }
         },
-        Leads           : {},
-        Opportunities   : {},
+        Leads           : {
+            'Contact Name': {
+                view   : 'contactName',
+                backend: 'contactName'
+            },
+            'Source'      : {
+                view   : 'source',
+                backend: 'source'
+            },
+            'Stage'       : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        Opportunities   : {
+            'Customer'    : {
+                view   : 'customer',
+                backend: 'customer._id'
+            },
+            'Stage'       : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            },
+            'Sales Person': {
+                view   : 'salesPerson',
+                backend: 'salesPerson._id'
+            }
+        },
         Tasks           : {
             'Project'     : {
                 view   : 'project',
@@ -386,11 +412,11 @@ define([], function () {
             }
         },
         "salaryReport"  : {
-            "Employee"  : {
+            "Employee"      : {
                 view   : 'employee',
                 backend: '_id'
             },
-            "Department": {
+            "Department"    : {
                 view   : 'department',
                 backend: 'department._id'
             },

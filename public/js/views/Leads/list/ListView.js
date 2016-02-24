@@ -39,13 +39,13 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.stages = [];
-                this.filter = options.filter;
+                this.filter = options.filter||{};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
-                this.sartNumber = (this.page - 1) * this.defaultItemsNumber;
+                this.startNumber = (this.page - 1) * this.defaultItemsNumber;
 
                 this.render();
 
@@ -65,7 +65,7 @@ define([
                     },
                     patch  : true,
                     success: function () {
-                        self.showFilteredPage({}, self);
+                        self.showFilteredPage(self.filter, self);
                     }
                 });
 
@@ -90,16 +90,18 @@ define([
                 self = this;
                 $currentEl = this.$el;
 
+                var itemView;
+
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                var itemView = new ListItemView({
+
+                var itemView = new listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 });
-                $currentEl.append(itemView.render());
 
-                itemView.bind('incomingStages', itemView.pushStages, itemView);
+                itemView.bind('incomingStages', this.pushStages, this);
 
                 this.renderCheckboxes();
 
@@ -107,6 +109,12 @@ define([
                     self.stages = stages;
                     itemView.trigger('incomingStages', stages);
                 });
+
+                $currentEl.append(itemView.render());
+
+                this.renderCheckboxes();
+
+                this.renderFilter(self);
 
                 this.renderPagination($currentEl, this);
 

@@ -5,7 +5,7 @@
     <td><%=(journalEntry.account && journalEntry.account.code) ? journalEntry.account.code : ''%></td>
     <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
     <td><%=journalEntry.date%></td>
-    <td><%=journalEntry.sourceDocument.supplier.name.first + ' ' + journalEntry.sourceDocument.supplier.name.last%></td>
+    <td><%=journalEntry.sourceDocument.supplier ? journalEntry.sourceDocument.supplier.name.first + ' ' + journalEntry.sourceDocument.supplier.name.last : ''%></td>
     <td><a class="sourceDoc" data-id="<%=journalEntry.sourceDocument._id%>"><%=journalEntry.sourceDocument.name%></a></td>
 
     <%if (journalEntry.debit) {%>

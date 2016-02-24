@@ -68,7 +68,7 @@ var Chart = function (models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
-                        data.name = data.code + ' ' + data.account;
+                        //data.name = data.code + ' ' + data.account;
 
                         Model.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, model) {
                             if (err) {
@@ -114,17 +114,19 @@ var Chart = function (models) {
 
     this.getForDd = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            var query = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
+            var query;
+            var Model = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
 
-            query
-                .find()
-                .exec(function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
 
-                    res.status(200).send({data: result});
-                });
+            query = Model.find();
+
+            query.exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: result});
+            });
 
         } else {
             res.status(401).send();
