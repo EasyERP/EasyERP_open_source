@@ -1,11 +1,13 @@
 define([
+    'Backbone',
+    'Underscore',
     'socketio',
     'collections/Dashboard/vacationDashboard',
     'collections/Projects/projectInfoCollection',
     'collections/Jobs/filterCollection',
     'collections/Invoice/filterCollection',
     'custom'
-], function (io, VacationDashboard, ProjectCollection, JobsCollection, InvoiceCollection, custom) {
+], function (Backbone, _, io, VacationDashboard, ProjectCollection, JobsCollection, InvoiceCollection, custom) {
     'use strict';
     var socket = io.connect();
     var fetch = _.debounce(fetchData, 500);
@@ -13,10 +15,14 @@ define([
     var fetchJobs = _.debounce(fetchJobs, 500);
     var fetchInvoice = _.debounce(fetchInvoice, 500);
 
-    socket.on('recollectVacationDash', fetch);
+    socket.on('recollectVacationDash', /*fetch*/function(){
+        console.log('----- recollectVacationDash -----');
+    });
     socket.on('recollectProjectInfo', fetchProjects);
     socket.on('fetchJobsCollection', fetchJobs);
     socket.on('fetchInvoiceCollection', fetchInvoice);
+
+    socket.emit('custom');
 
     function fetchProjects() {
         var projectCollection;

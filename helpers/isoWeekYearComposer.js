@@ -4,15 +4,12 @@ module.exports = function (wTrackObject) {
     "use strict";
 
     var dateByMonth = wTrackObject.dateByMonth;
-    var dateByWeek = wTrackObject.dateByWeek;
+    var dateByWeek = wTrackObject.dateByWeek.toString();
     var year = Math.floor(dateByMonth / 100);
     var month = dateByMonth - year * 100;
-    var week = dateByWeek - year * 100;
-    var momentObject;
-    var firstNotZeroDay;
-    var isoYear;
-    var compare;
-    var i;
+    var week = dateByWeek.slice(4);//it's isoWeek
+
+    week = parseInt(week, 10);
 
     if (month !== 1 && month !== 12) {
         return year;
@@ -22,26 +19,11 @@ module.exports = function (wTrackObject) {
         return year;
     }
 
-    for (i = 1; i <= 7; i++) {
-        compare = wTrackObject[i.toString()] && wTrackObject[i.toString()].toString() !== '0';
-
-        if (compare) {
-            firstNotZeroDay = i;
-            break;
-        }
+    if (month === 12 && week === 1) {
+        return ++year;
     }
 
     if (month === 1 && week === 53) {
-        year--;
-    } else if (month === 12 && week === 1) {
-        year++;
+        return --year;
     }
-
-    momentObject = moment({y: year});
-    momentObject.isoWeek(week);
-    momentObject.isoWeekday(firstNotZeroDay);
-
-    isoYear = momentObject.year();
-
-    return isoYear;
 };
