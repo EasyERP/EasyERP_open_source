@@ -1,12 +1,13 @@
 define([
         'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/journalEntry/TopBarTemplate.html',
         'custom',
-        'common',
         'constants',
         'dataService'
     ],
-    function (Backbone, ContentTopBarTemplate, Custom, Common, CONSTANTS, dataService) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS, dataService) {
         'use strict';
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
@@ -24,7 +25,7 @@ define([
 
                 var date = this.$el.find('#reconcileDate').text();
 
-                dataService.postData('journal/reconcile', {date: date}, function (result) {
+                dataService.postData('journal/reconcile', {date: date}, function () {
                     var location = window.location.hash;
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(location, {trigger: true});
@@ -51,4 +52,6 @@ define([
         });
 
         return TopBarView;
-    });
+    }
+)
+;

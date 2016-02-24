@@ -1,4 +1,6 @@
 define([
+        'Underscore',
+        'jQuery',
         'views/listViewBase',
         'text!templates/journalEntry/list/ListHeader.html',
         'views/journalEntry/list/ListItemView',
@@ -8,14 +10,15 @@ define([
         'constants',
         'helpers',
         'dataService',
-    'common',
-    'moment'
+        'common',
+        'moment'
     ],
 
-    function (listViewBase, listTemplate, listItemView, EditView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment) {
+    function (_, $, listViewBase, listTemplate, ListItemView, EditView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment) {
+        'use strict';
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: 'journal/journalEntry/totalCollectionLength',
             contentType             : CONSTANTS.JOURNALENTRY,
@@ -38,7 +41,7 @@ define([
 
             events: {
                 "click .Invoice": "viewSourceDocument",
-                "click .jobs": "viewSourceDocumentJOb"
+                "click .jobs"   : "viewSourceDocumentJOb"
             },
 
             viewSourceDocument: function (e) {
@@ -65,31 +68,60 @@ define([
                 });
             },
 
+            showMoreContent: function (newModels) {
+                var holder = this.$el;
+                var itemView;
+                var page = holder.find("#currentShowPage").val();
+
+                holder.find("#listTable").empty();
+
+                itemView = new this.listItemView({
+                    collection : newModels,
+                    page       : page,
+                    itemsNumber: this.defaultItemsNumber
+                });
+
+                holder.append(itemView.render());
+
+                itemView.undelegateEvents();
+
+                var pagination = holder.find('.pagination');
+                if (newModels.length !== 0) {
+                    pagination.show();
+                } else {
+                    pagination.hide();
+                }
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                this.calcTotal();
+
+                holder.find('#timeRecivingDataFromServer').remove();
+                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            },
+
             calcTotal: function () {
                 var $curEl = this.$el;
                 var $rows = $curEl.find('#listTable tr').not('#listFooter');
 
-                var total = {
-                    debit : 0
-                };
+                var total = 0;
 
                 $rows.each(function (index, element) {
                     var $curElement = $(element);
                     var $val = $curElement.find('.value');
 
-                    var debitVal = parseInt($val.attr('data-amount'));
+                    var debitVal = parseInt($val.attr('data-amount'), 10);
 
-                    total.debit += debitVal;
+                    total += debitVal;
                 });
 
+                $curEl.find('#listFooter').find('#totalDebit').text(helpers.currencySplitter(total.toFixed(2)));
                 return total;
             },
 
             render: function () {
                 var $currentEl;
                 var itemView;
-                var total;
-                var $footer;
 
                 $('.ui-dialog ').remove();
 
@@ -97,7 +129,7 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection : this.collection,
                     itemsNumber: this.collection.namberToShow
                 });
@@ -108,11 +140,11 @@ define([
                     var date = moment(result.date);
                     var same = false;
 
-                    if (newDate.isSame(date, 'month year date')){
+                    if (newDate.isSame(date, 'month year date')) {
                         same = true;
                     }
 
-                    if (same){
+                    if (same) {
                         $('#reconcileBtn').addClass('btnSuccess');
                     } else {
                         $('#reconcileBtn').addClass('btnAttention');
@@ -120,7 +152,7 @@ define([
 
                 });
 
-                $currentEl.prepend(itemView.render());//added two parameters page and items number
+                $currentEl.prepend(itemView.render());
 
                 this.renderCheckboxes();
 
@@ -128,12 +160,7 @@ define([
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-                total = this.calcTotal();
-
-                $footer = $currentEl.find('#listFooter');
-
-                $footer.find('#totalDebit').text(helpers.currencySplitter(total['debit'].toFixed(2)));
-                //$footer.find('#totalCredit').text(helpers.currencySplitter(total['credit'].toFixed(2)));
+                this.calcTotal();
             }
 
         });

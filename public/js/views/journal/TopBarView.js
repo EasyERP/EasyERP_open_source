@@ -1,10 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/journal/TopBarTemplate.html',
         'custom',
-        'common',
         'constants'
     ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS) {
+        'use strict';
+
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.JOURNAL,
@@ -37,7 +41,7 @@ define([
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     this.trigger('deleteEvent');
                 }
             },
