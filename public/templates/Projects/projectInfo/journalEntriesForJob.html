@@ -1,13 +1,60 @@
 <div>
-    <table id="wagesPayable">
+    <table id="wagesPayable" class="list report-list tableFixed">
+        <colgroup class="borders" span="7">
+            <col span="1" width="5%">
+            <col span="1" width="25%">
+            <col span="1" width="20%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+        </colgroup>
         <thead>
-        <th></th>
+        <th>#</th>
         <th>Date</th>
+        <th>Journal</th>
+        <th>Debit Account</th>
+        <th>Credit Account</th>
         <th>Employee</th>
         <th>Sum</th>
         </thead>
-        <tbody>
 
-        </tbody>
+        <tr>
+            <td id="report-Table" colspan="7">
+                <div class="scrollit">
+                    <table class="list enable_hover tableFixed" id="report-listTable">
+                        <colgroup class="borders" span="5">
+                            <col span="1" width="5%">
+                            <col span="1" width="25%">
+                            <col span="1" width="20%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                        </colgroup>
+
+                        <tbody id="report-TableBody">
+                        <%var total = 0;%>
+                        <%wagesPayable.forEach(function (journalEntry) {%>
+                        <tr data-id="<%=journalEntry._id%>" class="mainTr">
+                            <td class="expand">+</td>
+                            <td><%=dateFormat(journalEntry._id)%></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><%=currencySplitter((journalEntry.totalSum / 100).toFixed(2))%></td>
+                            <%total += journalEntry.totalSum%>
+                        </tr>
+                        <%})%>
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <tfoor>
+            <td colspan="6"></td>
+            <td><%=currencySplitter((total / 100).toFixed(2))%></td>
+        </tfoor>
     </table>
 </div>

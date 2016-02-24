@@ -386,7 +386,7 @@ var requestHandler = function (app, event, mainDb) {
         var week = options.week;
         var dateNow = new Date();
         var dateKey = moment(dateNow).isoWeekYear() * 100 + moment(dateNow).isoWeek();
-        var query;
+        var query = {};
         var date;
 
          if (month && year) {

@@ -40,7 +40,6 @@ var Module = function (models) {
                 ids.push(el._id);
             });
 
-
             Model.remove({_id: {$in: ids}}, function (err, result) {
                 if (err) {
                     return console.log(err);
@@ -220,7 +219,7 @@ var Module = function (models) {
 
                                 var monthHoursFinder = function (pcb) {
                                     var key = wTrackResult.dateByMonth;
-                                    redisStore.readFromStorage('monthHours', key, function(err, result){
+                                    redisStore.readFromStorage('monthHours', key, function (err, result) {
                                         if (err) {
                                             return cb(err);
                                         }
@@ -247,8 +246,8 @@ var Module = function (models) {
 
                                 var vacationFinder = function (pcb) {
                                     var query = Vacation.find({
-                                        year: wTrackResult.year,
-                                        month: wTrackResult.month,
+                                        year    : wTrackResult.year,
+                                        month   : wTrackResult.month,
                                         employee: wTrackResult.employee
                                     }).lean();
 
@@ -262,12 +261,12 @@ var Module = function (models) {
                                         var resultObject = {};
                                         var newDate;
 
-                                        if (vacation && vacation.vacations && vacation.vacations[wTrackResult.dateByWeek]){
+                                        if (vacation && vacation.vacations && vacation.vacations[wTrackResult.dateByWeek]) {
                                             vacArray = vacation.vacArray;
                                             newDate = moment().isoWeekYear(vacation.year).month(vacation.month - 1).date(1);
 
-                                            for(var i = vacArray.length - 1; i >= 0; i--){
-                                                if (vacArray[i]){
+                                            for (var i = vacArray.length - 1; i >= 0; i--) {
+                                                if (vacArray[i]) {
                                                     var key = (newDate.date(i + 1).year() * 100 + newDate.date(i + 1).month() + 1) * 100 + i + 1;
                                                     resultObject[key] = vacArray[i];
                                                 }
@@ -368,8 +367,8 @@ var Module = function (models) {
                                             bodyOvertime.amount = 0;
                                         }
 
-                                        if (vacationSameDate){
-                                            if (vacation[dateKey] === "V" || "S"){
+                                        if (vacationSameDate) {
+                                            if (vacation[dateKey] === "V" || "S") {
                                                 bodyOvertime.amount = costHour * hours * 100;
                                             }
                                         }
@@ -626,9 +625,212 @@ var Module = function (models) {
 
     };
 
+    this.getAsyncData = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
+        var query = req.query;
+        var sourceDocument = query._id;
+        var date = query.date;
+        var debit;
+        var credit;
+        var wTrackFinder;
+        var resultFinder;
+
+        wTrackFinder = function (waterfallCb) {
+            wTrackModel.find({jobs: objectId(sourceDocument)}, {_id: 1}, function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                var newArray = [];
+
+                result.forEach(function (el) {
+                    newArray.push(el._id);
+                });
+
+                waterfallCb(null, newArray);
+            });
+
+        };
+
+        resultFinder = function (sourceDocuments, waterfallCb) {
+            debit = function (cb) {
+                Model
+                    .aggregate([{
+                        $match: {
+                            "sourceDocument.model": "wTrack",
+                            "sourceDocument._id"  : {$in: sourceDocuments},
+                            date                  : new Date(date),
+                            debit                 : {$gt: 0}
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "wTrack",
+                            localField             : "sourceDocument._id",
+                            foreignField: "_id", as: "sourceDocument"
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "journals",
+                            localField             : "journal",
+                            foreignField: "_id", as: "journal"
+                        }
+                    }, {
+                        $project: {
+                            date          : 1,
+                            debit         : {$divide: ['$debit', '$currency.rate']},
+                            sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
+                            journal       : {$arrayElemAt: ["$journal", 0]}
+                        }
+                    }, {
+                        $project: {
+                            date          : 1,
+                            debit         : 1,
+                            sourceDocument: 1,
+                            journal       : 1,
+                            journalName   : "$journal.name"
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "chartOfAccount",
+                            localField             : "journal.debitAccount",
+                            foreignField: "_id", as: "journal.debitAccount"
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "chartOfAccount",
+                            localField             : "journal.creditAccount",
+                            foreignField: "_id", as: "journal.creditAccount"
+                        }
+                    }, {
+                        $lookup: {
+                            from                   : "Employees",
+                            localField             : "sourceDocument.employee",
+                            foreignField: "_id", as: "employee"
+                        }
+                    }, {
+                        $project: {
+                            date                   : 1,
+                            debit                  : 1,
+                            'journal.creditAccount': {$arrayElemAt: ["$journal.creditAccount", 0]},
+                            'journal.debitAccount' : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                            employee               : {$arrayElemAt: ["$employee", 0]},
+                            journalName            : 1
+                        }
+                    }, {
+                        $project: {
+                            date                   : 1,
+                            debit                  : 1,
+                            'journal.creditAccount': "$journal.creditAccount.name",
+                            'journal.debitAccount' : "$journal.debitAccount.name",
+                            'journalName'          : 1,
+                            employee               : {$concat: ['$employee.name.first', ' ', '$employee.name.last']}
+                        }
+                    }, {
+                        $sort: {
+                            date    : 1,
+                            employee: 1,
+                            journal : 1
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            cb(err);
+                        }
+                        cb(null, result);
+                        //Journal.populate(result, {
+                        //    path: 'journal'
+                        //}, function (err, result) {
+                        //    cb(null, result);
+                        //
+                        //});
+                    });
+            };
+
+            /*credit = function (cb) {
+             Model
+             .aggregate([{
+             $match: {
+             "sourceDocument.model": "wTrack",
+             "sourceDocument._id"  : {$in: sourceDocuments},
+             date                  : new Date(date),
+             credit                : {$gt: 0}
+             }
+             }, {
+             $lookup: {
+             from                   : "wTrack",
+             localField             : "sourceDocument._id",
+             foreignField: "_id", as: "sourceDocument"
+             }
+             }, {
+             $project: {
+             date          : 1,
+             credit        : {$divide: ['$credit', '$currency.rate']},
+             sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
+             journal       : 1
+             }
+             }, {
+             $lookup: {
+             from                   : "Employees",
+             localField             : "sourceDocument.employee",
+             foreignField: "_id", as: "employee"
+             }
+             }, {
+             $project: {
+             date    : 1,
+             credit  : 1,
+             journal : 1,
+             employee: {$arrayElemAt: ["$employee", 0]}
+             }
+             }, {
+             $project: {
+             date    : 1,
+             credit  : 1,
+             journal : 1,
+             employee: {$concat: ['$employee.name.first', ' ', '$employee.name.last']}
+             }
+             }, {
+             $sort: {
+             date    : 1,
+             employee: 1,
+             journal : 1
+             }
+             }], function (err, result) {
+             if (err) {
+             cb(err);
+             }
+
+             Journal.populate(result, {
+             path: 'journal'
+             }, function (err, result) {
+             cb(null, result);
+
+             });
+             });
+             };*/
+
+            async.parallel([debit/*, credit*/], function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, result[0]);
+            });
+        };
+
+        async.waterfall([wTrackFinder, resultFinder], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({journalEntries: result});
+        });
+    };
+
     this.getForReport = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
         var query = req.query;
         var sourceDocument = query._id;
         var debit;
@@ -663,107 +865,106 @@ var Module = function (models) {
                             debit                 : {$gt: 0}
                         }
                     }, {
-                        $lookup: {
-                            from                   : "wTrack",
-                            localField             : "sourceDocument._id",
-                            foreignField: "_id", as: "sourceDocument"
-                        }
-                    }, {
                         $project: {
-                            date          : 1,
-                            debit         : {$divide: ['$debit', '$currency.rate']},
-                            sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]}
-                        }
-                    }, {
-                        $lookup: {
-                            from                   : "Employees",
-                            localField             : "sourceDocument.employee",
-                            foreignField: "_id", as: "employee"
-                        }
-                    }, {
-                        $project: {
-                            date    : 1,
-                            debit   : 1,
-                            employee: {$arrayElemAt: ["$employee", 0]}
-                        }
-                    }, {
-                        $project: {
-                            date    : 1,
-                            debit   : 1,
-                            employee: {$concat: ['$employee.name.first', ' ', '$employee.name.last']}
+                            date : 1,
+                            debit: {$divide: ['$debit', '$currency.rate']}
                         }
                     }, {
                         $sort: {
-                            date    : 1,
-                            employee: 1
+                            date: 1
+                        }
+                    }, {
+                        $group: {
+                            _id     : '$date',
+                            totalSum: {$sum: '$debit'}
                         }
                     }], function (err, result) {
                         if (err) {
                             cb(err);
                         }
 
-                        cb(null, result);
+                        Journal.populate(result, {
+                            path: 'journal'
+                        }, function (err, result) {
+                            cb(null, result);
+
+                        });
                     });
             };
 
-            credit = function (cb) {
-                Model
-                    .aggregate([{
-                        $match: {
-                            "sourceDocument.model": "wTrack",
-                            "sourceDocument._id"  : {$in: sourceDocuments},
-                            credit                : {$gt: 0}
-                        }
-                    }, {
-                        $lookup: {
-                            from                   : "wTrack",
-                            localField             : "sourceDocument._id",
-                            foreignField: "_id", as: "sourceDocument"
-                        }
-                    }, {
-                        $project: {
-                            date          : 1,
-                            credit        : {$divide: ['$credit', '$currency.rate']},
-                            sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]}
-                        }
-                    }, {
-                        $lookup: {
-                            from                   : "Employees",
-                            localField             : "sourceDocument.employee",
-                            foreignField: "_id", as: "employee"
-                        }
-                    }, {
-                        $project: {
-                            date    : 1,
-                            credit  : 1,
-                            employee: {$arrayElemAt: ["$employee", 0]}
-                        }
-                    }, {
-                        $project: {
-                            date    : 1,
-                            credit  : 1,
-                            employee: {$concat: ['$employee.name.first', ' ', '$employee.name.last']}
-                        }
-                    }, {
-                        $sort: {
-                            date    : 1,
-                            employee: 1
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            cb(err);
-                        }
+            /*credit = function (cb) {
+             Model
+             .aggregate([{
+             $match: {
+             "sourceDocument.model": "wTrack",
+             "sourceDocument._id"  : {$in: sourceDocuments},
+             credit                : {$gt: 0}
+             }
+             }, {
+             $lookup: {
+             from                   : "wTrack",
+             localField             : "sourceDocument._id",
+             foreignField: "_id", as: "sourceDocument"
+             }
+             }, {
+             $project: {
+             date          : 1,
+             credit        : {$divide: ['$credit', '$currency.rate']},
+             sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
+             journal       : 1
+             }
+             }, {
+             $lookup: {
+             from                   : "Employees",
+             localField             : "sourceDocument.employee",
+             foreignField: "_id", as: "employee"
+             }
+             }, {
+             $project: {
+             date    : 1,
+             credit  : 1,
+             journal : 1,
+             employee: {$arrayElemAt: ["$employee", 0]}
+             }
+             }, {
+             $project: {
+             date    : 1,
+             credit  : 1,
+             journal : 1,
+             employee: {$concat: ['$employee.name.first', ' ', '$employee.name.last']}
+             }
+             }, {
+             $sort: {
+             date    : 1,
+             employee: 1,
+             journal : 1
+             }
+             }, {
+             $group: {
+             _id     : '$date',
+             //entries: {$push: '$$ROOT'},
+             totalSum: {$sum: '$credit'}
+             }
+             }], function (err, result) {
+             if (err) {
+             cb(err);
+             }
 
-                        cb(null, result);
-                    });
-            };
+             Journal.populate(result, {
+             path: 'journal'
+             }, function (err, result) {
+             cb(null, result);
 
-            async.parallel([debit, credit], function (err, result) {
+             });
+             });
+             };*/
+
+            async.parallel([debit/*, credit*/], function (err, result) {
                 if (err) {
                     return waterfallCb(err);
                 }
 
-                waterfallCb(null, {wagesPayable: result[0] || [], jobInProgress: result[1] || []});
+                waterfallCb(null, {wagesPayable: result[0]/* || [], jobInProgress: result[1] || []*/});
             });
         };
 
@@ -955,11 +1156,11 @@ var Module = function (models) {
                                 'sourceDocument.model': 1,
                                 date                  : 1
                             }
-                        },/* {
-                            $match: {
-                                'account.accountType': "Credit"
-                            }
-                        },*/ {
+                        }, /* {
+                         $match: {
+                         'account.accountType': "Credit"
+                         }
+                         },*/ {
                             $lookup: {
                                 from                   : "chartOfAccount",
                                 localField             : "journal.debitAccount",
@@ -1044,7 +1245,7 @@ var Module = function (models) {
                             $match: {
                                 "sourceDocument.model": "wTrack",
                                 debit                 : {$gt: 0}
-                              //  "sourceDocument._id"  : objectId("56c6d5654a4805fc2c2149db"),
+                                //  "sourceDocument._id"  : objectId("56c6d5654a4805fc2c2149db"),
                             }
                         }, {
                             $lookup: {
