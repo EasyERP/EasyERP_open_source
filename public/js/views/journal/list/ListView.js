@@ -154,12 +154,12 @@ define([
                         return cb('Empty id');
                     }
 
-                    model = collection.get(id);
+                    model = self.editCollection.get(id) || collection.get(id);
                     model = model.toJSON();
                     model.startNumber = rowNumber;
                     tr.replaceWith(template({journal: model}));
 
-                    delete self.changedModels[id];
+                    //delete self.changedModels[id];
 
                     cb();
                 }, function (err) {
@@ -292,7 +292,9 @@ define([
             },
 
             editRow: function (e) {
-                $(".newSelectList").hide();
+                //$(".newSelectList").hide();
+                e.stopPropagation();
+
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var trId = tr.data('id');
@@ -300,6 +302,10 @@ define([
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
+
+                if(el.attr('id') === 'selectInput'){
+                    return false;
+                }
 
                 if (trId && el.prop('tagName') !== 'INPUT') {
                     this.modelId = trId;
@@ -413,11 +419,16 @@ define([
                 }
                 this.editCollection.save();
 
-                for (id in this.changedModels) {
-                    delete this.changedModels[id];
-                }
+                //for (id in this.changedModels) {
+                //    delete this.changedModels[id];
+                //    this.editCollection.remove(id);
+                //}
 
-                this.editCollection.remove(id);
+                this.deleteEditable();
+            },
+
+            deleteEditable: function(){
+                this.$el.find('.edited').removeClass('edited');
             },
 
             savedNewModel: function (modelObject) {

@@ -12,10 +12,9 @@ define([
         'collections/ChartOfAccount/filterCollection',
         'collections/ChartOfAccount/editCollection',
         'models/chartOfAccount',
-        "populate",
         "async"
     ],
-    function ($, _, Backbone, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, populate, async) {
+    function ($, _, Backbone, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, async) {
         'use strict';
         var ProjectsListView = Backbone.View.extend({
             el           : '#content-holder',
@@ -300,7 +299,8 @@ define([
             },
 
             editRow: function (e) {
-                $(".newSelectList").hide();
+                //$(".newSelectList").hide();
+
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var trId = tr.data('id');
@@ -308,6 +308,10 @@ define([
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
+
+                if(el.attr('id') === 'selectInput'){
+                    return false;
+                }
 
                 if (trId && el.prop('tagName') !== 'INPUT') {
                     this.modelId = trId;
@@ -501,6 +505,11 @@ define([
                     this.editCollection.remove(id);
                 }
 
+                this.deleteEditable();
+            },
+
+            deleteEditable: function(){
+                this.$el.find('.edited').removeClass('edited');
             },
 
             savedNewModel: function (modelObject) {
