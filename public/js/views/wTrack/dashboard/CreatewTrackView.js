@@ -9,8 +9,9 @@ define([
     'moment',
     'async',
     'common',
-    'dataService'
-], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService) {
+    'dataService',
+    'helpers/employeeHelper'
+], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService, employeeHelper) {
     "use strict";
     var CreateView = Backbone.View.extend({
         template   : _.template(template),
@@ -27,45 +28,50 @@ define([
         },
 
         initialize: function (options) {
+            var self = this;
             var month;
             var year;
             var dateByMonth;
             var body;
 
-            _.bindAll(this, "saveItem");
+            _.bindAll(self, "saveItem");
 
-            this.dateByWeek = options.dateByWeek;
-            this.tds = options.tds;
-            this.row = options.tr;
-            year = parseInt(this.dateByWeek.slice(0, 4), 10);
-            this.week = parseInt(this.dateByWeek.slice(4), 10);
-            month = moment().isoWeekYear(year).isoWeek(this.week).day(1).month() + 1;
-            this.startMonth = month;
-            this.startYear = moment().isoWeekYear(year).isoWeek(this.week).day(1).year();
-            this.endMonth = moment().isoWeekYear(year).isoWeek(this.week).day(6).month() + 1;
-            this.endYear = moment().isoWeekYear(year).isoWeek(this.week).day(6).year();
+            self.dateByWeek = options.dateByWeek;
+            self.tds = options.tds;
+            self.row = options.tr;
+            year = parseInt(self.dateByWeek.slice(0, 4), 10);
+            self.week = parseInt(self.dateByWeek.slice(4), 10);
+            month = moment().isoWeekYear(year).isoWeek(self.week).day(1).month() + 1;
+            self.startMonth = month;
+            self.startYear = moment().isoWeekYear(year).isoWeek(self.week).day(1).year();
+            self.endMonth = moment().isoWeekYear(year).isoWeek(self.week).day(6).month() + 1;
+            self.endYear = moment().isoWeekYear(year).isoWeek(self.week).day(6).year();
             dateByMonth = year * 100 + month;
-            this.employee = options.employee;
-            this.department = options.department;
+            self.employee = options.employee;
+            self.department = options.department;
             body = {
                 year       : year,
                 month      : month,
-                week       : this.week,
+                week       : self.week,
                 department : {
-                    _id           : this.department,
+                    _id           : self.department,
                     departmentName: options.departmentName
                 },
                 employee   : {
-                    _id : this.employee,
+                    _id : self.employee,
                     name: options.employeeName
                 },
-                dateByWeek : parseInt(this.dateByWeek, 10),
+                dateByWeek : parseInt(self.dateByWeek, 10),
                 dateByMonth: dateByMonth
             };
 
-            this.wTrack = new WTrackModel(body);
-            options.wTrack = this.wTrack;
-            this.render(options);
+            self.wTrack = new WTrackModel(body);
+            options.wTrack = self.wTrack;
+            employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack, function(nonWorkingDays) {
+                options.nonWorkingDays = nonWorkingDays;
+                self.render(options);
+            }, self);
+
         },
 
         keyDown: function (e) {

@@ -100,7 +100,7 @@ var Holiday = function (models, event) {
                 result.forEach(function(holiday) {
                     date = moment(holiday.date);
                     day = date.isoWeekday();
-                    holidaysWeek[day] = holiday.comment;
+                    holidaysWeek[day] = 'H';
                 });
 
                 res.status(200).send(holidaysWeek);
