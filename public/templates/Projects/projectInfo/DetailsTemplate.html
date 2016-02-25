@@ -32,6 +32,7 @@
         <tr>
             <th></th>
             <th>Expand</th>
+            <th></th>
             <th>Sprint</th>
             <th>Status</th>
             <th>Type</th>
@@ -62,6 +63,7 @@
                     class="fa fa-trash hidden <%=((element.quotation && element.quotation._id) || (element.invoice && element.invoice._id)) ? 'notRemovable' : ''%>"
                     id="<%=element._id%>"></a></td>
             <td class="expand">+</td>
+            <td class="report"><a class="centerCell fa fa-university"></a></td>
             <td class="editableJobs" id="jobsName"><%=element.name%></td>
             <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
             </td>

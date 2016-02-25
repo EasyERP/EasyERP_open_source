@@ -918,6 +918,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .invisible_border {
   border: 1px solid transparent !important;
 }
+.report-list tr td:first-child {
+  padding: 0;
+}
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
@@ -1184,11 +1187,19 @@ tr.redBorder {
   min-width: 10px;
   border-left: 1px solid #7f7f80;
   border-right-width: 0;
+  cursor: pointer;
+}
+#forInfo .tableProjects .report {
+  min-width: 10px;
+  border-left: 1px solid #7f7f80;
+  border-right-width: 0;
+  cursor: pointer;
 }
 #forInfo .tableProjects .expand {
   border-left-width: 0;
   text-align: center;
   font-size: 14px;
+  cursor: pointer;
 }
 #forInfo .tableProjects .procent {
   position: relative;
@@ -1355,7 +1366,6 @@ figcaption,
 figure,
 footer,
 header,
-hgroup,
 nav,
 section {
   display: block;
@@ -3698,11 +3708,7 @@ dl dd span.ui-spinner {
   font-size: 11px;
   color: #777;
 }
-.noteWrapper #noteBody .noteContainer .noteTitle {
-  word-break: break-word;
-}
 .noteWrapper #noteBody .noteContainer .noteText {
-  word-break: break-word;
   color: #cdcdcd;
   margin-bottom: 10px;
 }
@@ -3738,7 +3744,7 @@ dl dd span.ui-spinner {
   width: 100%;
   height: 100%;
   min-width: 100%;
-  height: 100 hv;
+  height: 100vh;
   position: absolute;
   clear: both;
   box-sizing: border-box;

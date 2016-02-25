@@ -971,13 +971,13 @@ var Module = function (models) {
                             debit: {$divide: ['$debit', '$currency.rate']}
                         }
                     }, {
-                        $sort: {
-                            date: 1
-                        }
-                    }, {
                         $group: {
                             _id     : '$date',
                             totalSum: {$sum: '$debit'}
+                        }
+                    }, {
+                        $sort: {
+                            _id: 1
                         }
                     }], function (err, result) {
                         if (err) {
