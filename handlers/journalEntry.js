@@ -11,6 +11,7 @@ var holidaysSchema = mongoose.Schemas.Holiday;
 var vacationSchema = mongoose.Schemas.Vacation;
 var objectId = mongoose.Types.ObjectId;
 var redisStore = require('../helpers/redisClient');
+var HOURSCONSTANT = 8;
 
 var oxr = require('open-exchange-rates');
 var fx = require('money');
@@ -91,6 +92,7 @@ var Module = function (models) {
         var reconcileSalaryEntries;
         var reconcileInvoiceEntries;
         var timeToSet = {hour: 18, minute: 1, second: 0};
+        var createdDateObject = {};
 
         reconcileInvoiceEntries = function (parallelCb) {
             Invoice.find({reconcile: true}, function (err, result) {
@@ -296,6 +298,22 @@ var Module = function (models) {
 
                                     var costHour = isFinite(salary / hoursInMonth) ? salary / hoursInMonth : 0;
 
+                                    if (!createdDateObject[dateKey]){
+                                        createdDateObject[dateKey] = {};
+                                        createdDateObject[dateKey].employees = {};
+                                        createdDateObject[dateKey].total = 0;
+                                        createdDateObject[dateKey].totalVacationHours = 0;
+                                        createdDateObject[dateKey].totalVacationCost = 0;
+                                    }
+
+                                    if (!createdDateObject[dateKey].employees[wTrackResult.employee]){
+                                        createdDateObject[dateKey].employees[wTrackResult.employee] = {
+                                            vacation: 0,
+                                            hours: 0
+                                        }
+                                    }
+
+
                                     var body = {
                                         currency      : '565eab29aeb95fa9c0f9df2d',
                                         journal       : '56cc727e541812c07197356c',
@@ -348,58 +366,79 @@ var Module = function (models) {
 
                                     var bodyHoliday = {
                                         currency      : '565eab29aeb95fa9c0f9df2d',
-                                        journal       : '56cc72a8541812c07197356e',
+                                        journal       : 'TODO',
                                         date          : moment(date).set(timeToSet),
                                         sourceDocument: {
-                                            model: 'wTrack',
-                                            _id  : wTrackResult._id
+                                            model: 'Employees',
+                                            _id  : wTrackResult.employee
+                                        }
+                                    };
+
+                                    var bodyJournalVacation = {
+                                        currency      : '565eab29aeb95fa9c0f9df2d',
+                                        journal       : 'TODO',
+                                        date          : moment(date).set(timeToSet),
+                                        sourceDocument: {
+                                            model: 'Employees',
+                                            _id  : wTrackResult.employee
                                         }
                                     };
 
                                     if (day <= 5 && !sameDate) {
-                                        if (hours - 8 >= 0) {
-                                            body.amount = costHour * 8 * 100;
-                                            bodyIdle.amount = 0;
-                                            bodyOvertime.amount = costHour * (hours - 8) * 100;
+                                        if (hours - HOURSCONSTANT >= 0) {
+                                            body.amount = costHour * HOURSCONSTANT * 100;
+                                            bodyIdle.amount = idleCoefficient * HOURSCONSTANT * 100;
+                                            bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
                                         } else {
                                             body.amount = costHour * hours * 100;
-                                            bodyIdle.amount = idleCoefficient * (8 - hours) * 100;
+                                            bodyIdle.amount = idleCoefficient * hours * 100;
                                             bodyOvertime.amount = 0;
                                         }
 
                                         if (vacationSameDate) {
                                             if (vacation[dateKey] === "V" || "S") {
                                                 bodyOvertime.amount = costHour * hours * 100;
+                                                bodyJournalVacation.amount = costHour * HOURSCONSTANT * 100;
+                                                createdDateObject[dateKey].employees[wTrackResult.employee].vacation = HOURSCONSTANT;
+                                                createdDateObject[dateKey].totalVacationHours += HOURSCONSTANT;
+                                                createdDateObject[dateKey].totalVacationCost += costHour * HOURSCONSTANT * 100;
                                             }
                                         }
 
-                                        bodyVacation.amount = vacationCoefficient * 8 * 100;
+                                        //bodyVacation.amount = vacationCoefficient * HOURSCONSTANT * 100;
                                         bodyAdminCosts.amount = adminCoefficient * hours * 100;
-                                        bodyHoliday.amount = 0;
+
+                                        createdDateObject[dateKey].total += hours;
+                                        createdDateObject[dateKey].employees[wTrackResult.employee].hours += hours;
+                                        //bodyHoliday.amount = 0;
                                     } else {
                                         bodyOvertime.amount = costHour * hours * 100;
                                         bodyAdminCosts.amount = adminCoefficient * hours * 100;
-                                        bodyHoliday.amount = 0;
+                                        //bodyHoliday.amount = 0;
 
                                         if (sameDate) {
-                                            bodyHoliday.amount = costHour * 8 * 100;
+                                            bodyOvertime.amount = costHour * hours * 100;
                                         }
                                     }
+
+
 
                                     var superCb = function () {
                                         counter++;
 
-                                        if (counter === 42) {
+                                        if (counter === 28) {
+
                                             asyncCb();
                                         }
                                     };
 
                                     createReconciled(body, req.session.lastDb, superCb, req.session.uId, timeToSet);
-                                    createReconciled(bodyIdle, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    //createReconciled(bodyIdle, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                     createReconciled(bodyOvertime, req.session.lastDb, superCb, req.session.uId, timeToSet);
-                                    createReconciled(bodyVacation, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    //createReconciled(bodyVacation, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                     createReconciled(bodyAdminCosts, req.session.lastDb, superCb, req.session.uId, timeToSet);
-                                    createReconciled(bodyHoliday, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    //createReconciled(bodyHoliday, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                                    createReconciled(bodyJournalVacation, req.session.lastDb, superCb, req.session.uId, timeToSet);
                                 });
                             });
                         });
@@ -414,6 +453,50 @@ var Module = function (models) {
                     if (err) {
                         return parallelCb(err);
                     }
+
+                    var dateKeys = Object.keys(createdDateObject);
+                    var bodyIdle = {
+                        currency      : '565eab29aeb95fa9c0f9df2d',
+                        journal       : '56cc72c4541812c071973570',
+                        date          : moment(date).set(timeToSet),
+                        sourceDocument: {
+                            model: 'Employees'
+                        }
+                    };
+
+                    var bodyOvertime = {
+                        currency      : '565eab29aeb95fa9c0f9df2d',
+                        journal       : '56cc7383541812c071973574',
+                        date          : moment(date).set(timeToSet),
+                        sourceDocument: {
+                            model: 'Employees'
+                        }
+                    };
+
+                    dateKeys.forEach(function (date) {
+                        var dateObject = createdDateObject[date];
+                        var employees = Object.keys(dateObject.employees);
+                        var total = dateObject.total;
+                        var totalVacationHours = dateObject.totalVacationHours;
+                        var totalVacationCost = dateObject.totalVacationCost;
+
+                        var vacationRate = isFinite(totalVacationCost / totalVacationHours) ? totalVacationCost / totalVacationHours : 0;
+
+                        employees.forEach(function (employee) {
+                            var hours = employees[employee];
+
+                            if (hours > HOURSCONSTANT){
+                                bodyOvertime.amount = (hours - HOURSCONSTANT)
+                            }
+
+                            bodyIdle.sourceDocument._id = employee;
+                            bodyOvertime.sourceDocument._id = employee;
+
+                            createReconciled(bodyIdle, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                            createReconciled(bodyOvertime, req.session.lastDb, superCb, req.session.uId, timeToSet);
+                        });
+
+                    });
 
                     WTrack.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
 
