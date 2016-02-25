@@ -69,9 +69,9 @@ define([
             var editedElementRowId;
             var editedElementContent;
             var editedElementValue;
-            var editModel;
+           /* var editModel;
             var estimatedHours;
-            var actualHours;
+            var actualHours;*/
 
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
@@ -81,20 +81,20 @@ define([
 
                 editedElementValue = editedElementValue.replace(/\s+/g, '');
 
-                editModel = this.editCollection.get(editedElementRowId);
+                //editModel = this.editCollection.get(editedElementRowId);
 
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
                 }
 
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
+                /*estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
                 actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
 
                 if (actualHours){
                     this.changedModels[editedElementRowId].idleHours = estimatedHours - actualHours;
                     editedElement.closest('tr').find('[data-content="idleHours"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].idleHours.toFixed()));
-                }
+                }*/
 
                 if (editedElementContent !== 'year'){
                     editedCol.text(helpers.currencySplitter(editedElementValue));
@@ -166,7 +166,7 @@ define([
             var id;
             var model;
             var filled = true;
-            var vacationBudget;
+            /*var vacationBudget;
             var estimatedHours;
             var adminBudget;
             var actualHours;
@@ -174,7 +174,7 @@ define([
             var hoursForAdminCosts;
             var hoursForVacationCosts;
             var idleBudget;
-            var hoursForIdleCosts;
+            var hoursForIdleCosts;*/
 
             $(".editable").each(function (index, elem) {
                 if (!$(elem).html()) {
@@ -192,7 +192,7 @@ define([
                 model = this.editCollection.get(id);
                 if (model){
                     model.changed = this.changedModels[id];
-                    vacationBudget = model.changed.vacationBudget || model.get('vacationBudget');
+                    /*vacationBudget = model.changed.vacationBudget || model.get('vacationBudget');
                     adminBudget = model.changed.adminBudget || model.get('adminBudget');
                     idleBudget = model.changed.idleBudget || model.get('idleBudget');
                     vacationBudget = parseFloat(vacationBudget);
@@ -206,7 +206,7 @@ define([
                     hoursForIdleCosts = actualHours || estimatedHours;
                     model.changed.vacationCoefficient = isFinite(vacationBudget / hoursForVacationCosts) ? vacationBudget / hoursForVacationCosts : 0;
                     model.changed.adminCoefficient = isFinite(adminBudget / hoursForAdminCosts) ? adminBudget / hoursForAdminCosts : 0;
-                    model.changed.idleCoefficient = isFinite(idleBudget / hoursForIdleCosts) ? idleBudget / hoursForIdleCosts : 0;
+                    model.changed.idleCoefficient = isFinite(idleBudget / hoursForIdleCosts) ? idleBudget / hoursForIdleCosts : 0;*/
                 }
             }
             this.editCollection.save();
@@ -477,7 +477,7 @@ define([
                 model = collection.get(id) || self.editCollection.get(id);
                 model = model.toJSON();
                 model.startNumber = rowNumber;
-                tr.replaceWith(template({model: model}));
+                tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
                 cb();
             }, function (err) {
                 self.hideSaveCancelBtns();

@@ -2,10 +2,13 @@
  * Created by Liliya on 23.06.2015.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/monthHours/createTemplate.html"
 
     ],
-    function (CreateTemplate) {
+    function (Backbone, $, _, CreateTemplate) {
         var CreateView = Backbone.View.extend({
             el      : "#listTable",
             template: _.template(CreateTemplate),
@@ -15,7 +18,30 @@ define([
             },
 
             render: function (options) {
-                this.$el.prepend(this.template(options));
+                var row = this.$el.find('tr').first();
+                var $newRow;
+                var tds;
+
+                if (row) {
+                    this.$el.prepend('<tr id="false" data-id="' + options.cid + '">' + row.html() + '</tr>');
+                    $newRow = this.$el.find('#false');
+                    tds = $newRow.find('td');
+
+                    $(tds[0]).find('input').attr('value', options.cid);
+                    $(tds[1]).text('New');
+                    $(tds[2]).text('');
+                    $(tds[3]).text('');
+                    $(tds[4]).text('');
+                    $(tds[7]).text('0');
+                    $(tds[8]).text('0');
+                    $(tds[9]).text('0');
+                    $(tds[10]).text('0');
+                    $(tds[14]).text('0');
+                    $(tds[15]).text('0');
+                    $(tds[16]).text('0');
+                } else {
+                    this.$el.prepend(this.template(options));
+                }
                 return this;
             }
         });
