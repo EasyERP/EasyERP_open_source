@@ -175,7 +175,7 @@ define([
                 var totalHours = options.totalWorked;
                 var targetEmployeeContainer = this.row.find('td.wTrackInfo[data-date="' + this.dateByWeek + '"]');
                 var hoursContainer = targetEmployeeContainer.find('span.projectHours');
-                var targetTdIndex = this.row.find('td').index(targetEmployeeContainer);
+                var targetTdIndex = this.row.find('td').index(targetEmployeeContainer) - 1;
                 var employeeId = this.row.attr('data-employee');
 
                 hoursContainer.text(totalHours);
@@ -424,7 +424,7 @@ define([
             getDataForCellClass: function (updatedTdIndex, employeeId, totalHours) {
                 var table = $('#dashboardBody');
                 var targetRow = table.find('[data-id="' + employeeId + '"]');
-                var targetTd = targetRow.find('td').eq(updatedTdIndex);
+                var targetTd = targetRow.find('td.dashboardWeek').eq(updatedTdIndex);
                 var hoursSpan = targetTd.find('span.vacationHours');
                 var vacationSpan = targetTd.find('span.vacation');
                 var holidaysSpan = targetTd.find('span.viewCount');
@@ -571,6 +571,7 @@ define([
                 });
 
                 this.asyncLoadImgs(data);
+                this.delegateEvents(this.events);
 
                 return this;
             }

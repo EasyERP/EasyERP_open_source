@@ -9,9 +9,6 @@
             <th>
                 <span>Employee</span>
             </th>
-            <th>
-                <span>IsLead</span>
-            </th>
             <% weeks.forEach(function(week){ %>
             <th id="<%= week.number %>" class="<%=getHeadClass(week, self)%>">
                 <span><%= week.lastDate %> (<%= week.week %>)</span>
@@ -47,9 +44,6 @@
                                 <a class="icon employeesRow">5</a>
                             </span>
             </td>
-            <td class="dashboardWeek isLead">
-                <%= leadComparator(employee.isLead)%>
-            </td>
             <%employee.weekData.forEach(function(week){%>
             <td class="dashboardWeek <%= week.vacations ? 'withVacation' : ''%> <%=getCellClass(week, self, employee)%>">
                 <%if(week.holidays){%>
@@ -68,7 +62,7 @@
         <% for(var i = employee.maxProjects; i > 0; i-- ){%>
         <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee._id%>"
             data-content="project" data-employee="<%=employee._id%>">
-            <td colspan="3"><span>&nbsp;</span></td>
+            <td colspan="2"><span>&nbsp;</span></td>
             <%employee.weekData.forEach(function(week){%>
             <% if(week.projectRoot) {%>
             <%if (week.projectRoot[i-1] && week.projectRoot[i-1].project) {%>
@@ -91,7 +85,7 @@
         </tr>
         <% } %>
         <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee._id%> createWTrack" data-content="project" data-employee="<%=employee._id%>">
-            <td colspan="3"><span>&nbsp;</span></td>
+            <td colspan="2"><span>&nbsp;</span></td>
             <%employee.weekData.forEach(function(week){%>
             <td class="createTd <%=isWorking(employee, week) ? '' : 'inactive'%>" data-date="<%=week.dateByWeek%>">
             </td>
