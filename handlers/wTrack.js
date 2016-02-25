@@ -88,7 +88,6 @@ var wTrack = function (event, models) {
                         }
                         if (wTrack) {
                             event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                            event.emit('recalculateIsoYear', {req: req, wTrack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                             event.emit('recollectProjectInfo');
                             event.emit('dropHoursCashes', req);
@@ -143,7 +142,6 @@ var wTrack = function (event, models) {
 
                             if (wTrack) {
                                 event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                                event.emit('recalculateIsoYear', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                                 event.emit('recollectProjectInfo');
                                 event.emit('recollectVacationDash');

@@ -15,9 +15,7 @@ define([
     var fetchJobs = _.debounce(fetchJobs, 500);
     var fetchInvoice = _.debounce(fetchInvoice, 500);
 
-    socket.on('recollectVacationDash', /*fetch*/function(){
-        console.log('----- recollectVacationDash -----');
-    });
+    socket.on('recollectVacationDash', fetch);
     socket.on('recollectProjectInfo', fetchProjects);
     socket.on('fetchJobsCollection', fetchJobs);
     socket.on('fetchInvoiceCollection', fetchInvoice);
@@ -84,12 +82,9 @@ define([
     }
 
     function fetchData() {
-        var dashCollection;
         var fragment = Backbone.history.fragment;
-        var filter = fragment.split('/filter=');
-
-        filter = filter[1] ? decodeURIComponent(filter[1]) : '';
-        filter = filter ? JSON.parse(filter) : {};
+        var filter = custom.retriveFromCash('DashVacation.filter') || {};
+        var dashCollection;
 
         function notifyAndCache() {
             if (fragment && fragment.indexOf('DashBoardVacation') !== -1) {

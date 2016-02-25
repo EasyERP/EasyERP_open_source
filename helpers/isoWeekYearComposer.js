@@ -3,13 +3,9 @@ var moment = require('../public/js/libs/moment/moment');
 module.exports = function (wTrackObject) {
     "use strict";
 
-    var dateByMonth = wTrackObject.dateByMonth;
-    var dateByWeek = wTrackObject.dateByWeek.toString();
-    var year = Math.floor(dateByMonth / 100);
-    var month = dateByMonth - year * 100;
-    var week = dateByWeek.slice(4);//it's isoWeek
-
-    week = parseInt(week, 10);
+    var year = wTrackObject.year;
+    var month = wTrackObject.month;
+    var week = wTrackObject.week;//it's isoWeek
 
     if (month !== 1 && month !== 12) {
         return year;

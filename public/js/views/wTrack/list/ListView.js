@@ -780,13 +780,13 @@ define([
                 if (errors.length) {
                     return
                 }
+
                 this.editCollection.save();
 
                 //for (var id in this.changedModels) {
                 //    delete this.changedModels[id];
                 //    this.editCollection.remove(id);
                 //}
-
                 this.$el.find('.edited').removeClass('edited');
             },
 
