@@ -67,10 +67,11 @@ define([
 
             self.wTrack = new WTrackModel(body);
             options.wTrack = self.wTrack;
-            employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack, function(nonWorkingDays) {
+            employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack,
+                function(nonWorkingDays) {
                 options.nonWorkingDays = nonWorkingDays;
                 self.render(options);
-            }, self);
+            });
 
         },
 
