@@ -209,7 +209,7 @@ define([
                     }
 
                     return value;
-                };
+                }
 
                 for (var i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
@@ -406,6 +406,7 @@ define([
                     e          : e,
                     responseObj: this.responseObj
                 });
+
 
                 $target.append(this.selectView.render().el);
 
