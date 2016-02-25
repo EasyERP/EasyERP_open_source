@@ -37,7 +37,7 @@
                         <%var total = 0;%>
                         <%wagesPayable.forEach(function (journalEntry) {%>
                         <tr data-id="<%=journalEntry._id%>" class="mainTr">
-                            <td class="expand">+</td>
+                            <td class="centerCell expand">+</td>
                             <td><%=dateFormat(journalEntry._id)%></td>
                             <td colspan='4'></td>
                             <td><%=currencySplitter((journalEntry.totalSum / 100).toFixed(2))%></td>
