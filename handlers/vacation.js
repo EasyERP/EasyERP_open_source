@@ -348,18 +348,18 @@ var Vacation = function (event, models) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var options = req.query;
         var year = parseInt(options.year);
-        var month;
         var week = parseInt(options.week);
-        var day;
-        var monthDay;
         var employee = options.employee;
         var dateByWeek = week + year * 100;
         var dateByWeekField = 'vacations.' + dateByWeek;
-        var daysOfMonth = {};
-        var aggregateQuery = [];
-        var query = {};
-        var vacationsWeek = {};
         var date = moment([year, 2]);
+        var aggregateQuery = [];
+        var vacationsWeek = {};
+        var daysOfMonth = {};
+        var query = {};
+        var monthDay;
+        var month;
+        var day;
 
         date.isoWeek(week);
 
