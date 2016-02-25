@@ -1,24 +1,25 @@
 ﻿define([
-        'text!templates/wTrack/list/ListTemplate.html'
-    ],
+    'Backbone',
+    'text!templates/wTrack/list/ListTemplate.html'
+], function (Backbone, listTemplate) {
+    "use strict";
 
-    function (listTemplate) {
-        var QuotationListItemView = Backbone.View.extend({
-            el: '#listTable',
+    var QuotationListItemView = Backbone.View.extend({
+        el: '#listTable',
 
-            initialize: function (options) {
-                this.collection = options.collection;
-                this.page = options.page ? parseInt(options.page) : 1;
+        initialize: function (options) {
+            this.collection = options.collection;
+            this.page = options.page ? parseInt(options.page) : 1;
 
-                this.startNumber = (this.page - 1 ) * options.itemsNumber;
-            },
-            render    : function () {
-                this.$el.append(_.template(listTemplate, {
-                    wTracks    : this.collection.toJSON(),
-                    startNumber: this.startNumber
-                }));
-            }
-        });
-
-        return QuotationListItemView;
+            this.startNumber = (this.page - 1 ) * options.itemsNumber;
+        },
+        render    : function () {
+            this.$el.append(_.template(listTemplate, {
+                wTracks    : this.collection.toJSON(),
+                startNumber: this.startNumber
+            }));
+        }
     });
+
+    return QuotationListItemView;
+});

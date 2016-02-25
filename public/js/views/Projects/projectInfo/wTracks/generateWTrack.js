@@ -570,7 +570,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             });
                         } else {
                             App.render({
-                                type   : 'notify',
+                                type   : 'error',
                                 message: 'Please, enter correct Job name!'
                             });
                         }

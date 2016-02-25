@@ -1,11 +1,13 @@
 define([
+    'Backbone',
+    'Underscore',
     'socketio',
     'collections/Dashboard/vacationDashboard',
     'collections/Projects/projectInfoCollection',
     'collections/Jobs/filterCollection',
     'collections/Invoice/filterCollection',
     'custom'
-], function (io, VacationDashboard, ProjectCollection, JobsCollection, InvoiceCollection, custom) {
+], function (Backbone, _, io, VacationDashboard, ProjectCollection, JobsCollection, InvoiceCollection, custom) {
     'use strict';
     var socket = io.connect();
     var fetch = _.debounce(fetchData, 500);
@@ -17,6 +19,8 @@ define([
     socket.on('recollectProjectInfo', fetchProjects);
     socket.on('fetchJobsCollection', fetchJobs);
     socket.on('fetchInvoiceCollection', fetchInvoice);
+
+    socket.emit('custom');
 
     function fetchProjects() {
         var projectCollection;
@@ -78,12 +82,9 @@ define([
     }
 
     function fetchData() {
-        var dashCollection;
         var fragment = Backbone.history.fragment;
-        var filter = fragment.split('/filter=');
-
-        filter = filter[1] ? decodeURIComponent(filter[1]) : '';
-        filter = filter ? JSON.parse(filter) : {};
+        var filter = custom.retriveFromCash('DashVacation.filter') || {};
+        var dashCollection;
 
         function notifyAndCache() {
             if (fragment && fragment.indexOf('DashBoardVacation') !== -1) {

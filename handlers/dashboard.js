@@ -70,7 +70,9 @@ var wTrack = function (models) {
         weeksArr = [];
 
         if (filter && filter.startDate && filter.endDate) {
+            startDate = new Date(filter.startDate);
             startDate = moment(filter.startDate);
+            endDate = new Date(filter.endDate);
             endDate = moment(filter.endDate);
         } else {
             startDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
@@ -78,7 +80,9 @@ var wTrack = function (models) {
         }
 
         _startDate = moment(startDate);
+        _startDate = _startDate.isoWeekYear() * 100 + _startDate.isoWeek();
         _endDate = moment(endDate);
+        _endDate = _endDate.isoWeekYear() * 100 + _endDate.isoWeek();
 
         duration = endDate.diff(startDate, 'weeks');
 
@@ -100,7 +104,7 @@ var wTrack = function (models) {
         delete filter.startDate;
         delete filter.endDate;
 
-        key = startDate + '_' + endDate + '_' + JSON.stringify(filter);
+        key = _startDate + '_' + _endDate + '_' + JSON.stringify(filter);
 
         employeeQueryForEmployeeByDep = {
             $and: [{
