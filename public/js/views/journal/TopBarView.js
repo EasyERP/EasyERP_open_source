@@ -4,9 +4,10 @@ define([
         'Underscore',
         'text!templates/journal/TopBarTemplate.html',
         'custom',
+        'common',
         'constants'
     ],
-    function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         'use strict';
 
         var TopBarView = Backbone.View.extend({
