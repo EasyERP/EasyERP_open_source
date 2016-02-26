@@ -43,6 +43,7 @@ define([
 
                 employeeHelper.getNonWorkingDaysByWeek(year, week, employee, null,
                     function (nonWorkingDays, self) {
+                        "use strict";
                         options.nonWorkingDays = nonWorkingDays;
                         self.render(options);
                     }, this);

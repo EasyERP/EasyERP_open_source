@@ -74,6 +74,8 @@ define([
 
             employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack,
                 function (nonWorkingDays, self) {
+                    "use strict";
+
                     options.nonWorkingDays = nonWorkingDays;
                     self.render(options);
                 }, self);
@@ -496,6 +498,8 @@ define([
 
             dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
                 projects = _.map(projects.data, function (project) {
+                    "use strict";
+
                     project.name = project.projectName;
 
                     return project
