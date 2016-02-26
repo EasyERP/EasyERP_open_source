@@ -17,7 +17,7 @@ dbObject.once('open', function callback() {
     wTrackSchema = mongoose.Schemas.wTrack;
     wTrack = dbObject.model("wTrack", wTrackSchema);
 
-    query = wTrack.find({$or: [{month: 12, week: 1}, {month: 1, week: 53}]});
+    query = wTrack.find({$or: [/*{month: 12, week: 1},*/ {month: 1, week: 53}]});
 
     query.exec(function (error, res) {
         var isoYear;
