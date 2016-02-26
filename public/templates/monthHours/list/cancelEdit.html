@@ -11,10 +11,6 @@
     <td data-content="actualHours"><%=model.actualHours%></td>
     <td data-content="idleHours"><%=model.idleHours%></td>
     <td data-content="overtimeHours"><%=model.overtimeHours%></td>
-    <td data-type="input" class="editable" data-content="vacationCoefficient"><%=currencySplitter(model.vacationCoefficient ? model.vacationCoefficient.toFixed(2) : '0') || 0%></td>
-    <td data-type="input" class="editable" data-content="idleCoefficient"><%=currencySplitter(model.idleCoefficient ? model.idleCoefficient.toFixed(2) : '0') || 0%></td>
     <td data-type="input" class="editable" data-content="adminCoefficient"><%=currencySplitter(model.adminCoefficient ? model.adminCoefficient.toFixed(2) : '0') || 0%></td>
-    <td data-content="idleBudget"><%=model.idleBudget%></td>
-    <td data-content="vacationBudget"><%=model.vacationBudget%></td>
-    <td data-content="adminBudget"><%=model.adminBudget%></td>
+    <td data-type="input" class="editable" data-content="adminBudget"><%=model.adminBudget%></td>
 </tr>

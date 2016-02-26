@@ -12,12 +12,8 @@
     <td data-type="input" class="" data-content="actualHours"><%=currencySplitter(monthHours.actualHours ? monthHours.actualHours.toFixed() : '0') || 0%></td>
     <td data-type="input" data-content="idleHours"><%=currencySplitter(monthHours.idleHours ? monthHours.idleHours.toFixed() : '0') || 0%></td>
     <td data-type="input" class="" data-content="overtimeHours"><%=currencySplitter(monthHours.overtimeHours ? monthHours.overtimeHours.toFixed() : '0') || 0%></td>
-    <td data-type="input" class="editable" data-content="vacationCoefficient"><%=currencySplitter(monthHours.vacationCoefficient ? monthHours.vacationCoefficient.toFixed(2) : '0') || 0%></td>
-    <td data-type="input" class="editable" data-content="idleCoefficient"><%=currencySplitter(monthHours.idleCoefficient ? monthHours.idleCoefficient.toFixed(2) : '0') || 0%></td>
     <td data-type="input" class="editable" data-content="adminCoefficient"><%=currencySplitter(monthHours.adminCoefficient ? monthHours.adminCoefficient.toFixed(2) : '0') || 0%></td>
-    <td data-type="input" class="money" data-content="idleBudget"><%=currencySplitter(monthHours.idleBudget ? monthHours.idleBudget.toFixed() : '0') || 0%></td>
-    <td data-type="input" class="money" data-content="vacationBudget"><%=currencySplitter(monthHours.vacationBudget ? monthHours.vacationBudget.toFixed() : '0') || 0%></td>
-    <td data-type="input" class="money" data-content="adminBudget"><%=currencySplitter(monthHours.adminBudget ? monthHours.adminBudget.toFixed() : '0') || 0%></td>
+    <td data-type="input" class="money editable" data-content="adminBudget"><%=currencySplitter(monthHours.adminBudget ? monthHours.adminBudget.toFixed() : '0') || 0%></td>
 </tr>
 <% }) %>
 

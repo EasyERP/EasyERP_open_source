@@ -69,9 +69,12 @@ define([
             var editedElementRowId;
             var editedElementContent;
             var editedElementValue;
-           /* var editModel;
+            var editModel;
             var estimatedHours;
-            var actualHours;*/
+            var adminCoefficient;
+            var actualHours;
+            var adminBudget;
+            var hours;
 
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
@@ -81,22 +84,36 @@ define([
 
                 editedElementValue = editedElementValue.replace(/\s+/g, '');
 
-                //editModel = this.editCollection.get(editedElementRowId);
+                editModel = this.editCollection.get(editedElementRowId);
 
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
                 }
 
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                /*estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
-                actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
 
-                if (actualHours){
-                    this.changedModels[editedElementRowId].idleHours = estimatedHours - actualHours;
-                    editedElement.closest('tr').find('[data-content="idleHours"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].idleHours.toFixed()));
-                }*/
+                if (editedElementContent === 'adminCoefficient') {
+                    estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
+                    adminCoefficient = this.changedModels[editedElementRowId].adminCoefficient || editModel.get('adminCoefficient');
+                    actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
+                    hours = actualHours || estimatedHours;
 
-                if (editedElementContent !== 'year'){
+                    this.changedModels[editedElementRowId].adminBudget = hours * adminCoefficient;
+                    editedElement.closest('tr').find('[data-content="adminBudget"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].adminBudget.toFixed()));
+
+                } else if (editedElementContent === 'adminBudget') {
+                    estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
+                    adminBudget = this.changedModels[editedElementRowId].adminBudget || editModel.get('adminBudget');
+                    actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
+                    hours = actualHours || estimatedHours;
+
+                    if (isFinite(adminBudget / hours)) {
+                        this.changedModels[editedElementRowId].adminCoefficient = adminBudget / hours;
+                        editedElement.closest('tr').find('[data-content="adminCoefficient"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].adminCoefficient.toFixed(2)));
+                    }
+                }
+
+                if (editedElementContent !== 'year') {
                     editedCol.text(helpers.currencySplitter(editedElementValue));
                 } else {
                     editedCol.text(editedElementValue);
@@ -167,14 +184,14 @@ define([
             var model;
             var filled = true;
             /*var vacationBudget;
-            var estimatedHours;
-            var adminBudget;
-            var actualHours;
-            var overtimeHours;
-            var hoursForAdminCosts;
-            var hoursForVacationCosts;
-            var idleBudget;
-            var hoursForIdleCosts;*/
+             var estimatedHours;
+             var adminBudget;
+             var actualHours;
+             var overtimeHours;
+             var hoursForAdminCosts;
+             var hoursForVacationCosts;
+             var idleBudget;
+             var hoursForIdleCosts;*/
 
             $(".editable").each(function (index, elem) {
                 if (!$(elem).html()) {
@@ -190,23 +207,23 @@ define([
             this.setChangedValueToModel();
             for (id in this.changedModels) {
                 model = this.editCollection.get(id);
-                if (model){
+                if (model) {
                     model.changed = this.changedModels[id];
                     /*vacationBudget = model.changed.vacationBudget || model.get('vacationBudget');
-                    adminBudget = model.changed.adminBudget || model.get('adminBudget');
-                    idleBudget = model.changed.idleBudget || model.get('idleBudget');
-                    vacationBudget = parseFloat(vacationBudget);
-                    adminBudget = parseFloat(adminBudget);
-                    idleBudget = parseFloat(idleBudget);
-                    estimatedHours = parseFloat(model.changed.estimatedHours || model.get('estimatedHours'));
-                    actualHours = parseFloat(model.changed.actualHours || model.get('actualHours'));
-                    overtimeHours = parseFloat(model.changed.overtimeHours || model.get('overtimeHours'));
-                    hoursForVacationCosts = actualHours || estimatedHours;
-                    hoursForAdminCosts = (actualHours + overtimeHours) || estimatedHours;
-                    hoursForIdleCosts = actualHours || estimatedHours;
-                    model.changed.vacationCoefficient = isFinite(vacationBudget / hoursForVacationCosts) ? vacationBudget / hoursForVacationCosts : 0;
-                    model.changed.adminCoefficient = isFinite(adminBudget / hoursForAdminCosts) ? adminBudget / hoursForAdminCosts : 0;
-                    model.changed.idleCoefficient = isFinite(idleBudget / hoursForIdleCosts) ? idleBudget / hoursForIdleCosts : 0;*/
+                     adminBudget = model.changed.adminBudget || model.get('adminBudget');
+                     idleBudget = model.changed.idleBudget || model.get('idleBudget');
+                     vacationBudget = parseFloat(vacationBudget);
+                     adminBudget = parseFloat(adminBudget);
+                     idleBudget = parseFloat(idleBudget);
+                     estimatedHours = parseFloat(model.changed.estimatedHours || model.get('estimatedHours'));
+                     actualHours = parseFloat(model.changed.actualHours || model.get('actualHours'));
+                     overtimeHours = parseFloat(model.changed.overtimeHours || model.get('overtimeHours'));
+                     hoursForVacationCosts = actualHours || estimatedHours;
+                     hoursForAdminCosts = (actualHours + overtimeHours) || estimatedHours;
+                     hoursForIdleCosts = actualHours || estimatedHours;
+                     model.changed.vacationCoefficient = isFinite(vacationBudget / hoursForVacationCosts) ? vacationBudget / hoursForVacationCosts : 0;
+                     model.changed.adminCoefficient = isFinite(adminBudget / hoursForAdminCosts) ? adminBudget / hoursForAdminCosts : 0;
+                     model.changed.idleCoefficient = isFinite(idleBudget / hoursForIdleCosts) ? idleBudget / hoursForIdleCosts : 0;*/
                 }
             }
             this.editCollection.save();
@@ -265,9 +282,9 @@ define([
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
             $currentEl.append(new listItemView({
-                collection      : this.collection,
-                page            : this.page,
-                itemsNumber     : this.collection.namberToShow
+                collection : this.collection,
+                page       : this.page,
+                itemsNumber: this.collection.namberToShow
             }).render());//added two parameters page and items number
 
             this.renderCheckboxes();

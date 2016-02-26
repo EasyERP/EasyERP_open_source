@@ -36,9 +36,6 @@ define([
                     $(tds[8]).text('0');
                     $(tds[9]).text('0');
                     $(tds[10]).text('0');
-                    $(tds[14]).text('0');
-                    $(tds[15]).text('0');
-                    $(tds[16]).text('0');
                 } else {
                     this.$el.prepend(this.template(options));
                 }
