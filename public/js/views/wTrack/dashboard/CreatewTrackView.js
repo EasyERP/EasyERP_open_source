@@ -72,8 +72,6 @@ define([
             self.wTrack = new WTrackModel(body);
             options.wTrack = self.wTrack;
 
-            //self.render(options);
-
             employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack,
                 function (nonWorkingDays, self) {
                     options.nonWorkingDays = nonWorkingDays;

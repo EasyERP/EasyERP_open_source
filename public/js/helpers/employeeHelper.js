@@ -21,12 +21,16 @@ define(['helpers/getVacationHelper', 'helpers/getHolidayHelper'],
 
                             nonWorkingDays[i.toString()] = holidays[i.toString()];
 
-                        } else {
+                        } else if (wtrack) {
 
                             workingHours = wtrack.get([i.toString()])
                             nonWorkingDays.workingHours += workingHours;
 
                             nonWorkingDays[i.toString()] = workingHours;
+
+                        } else {
+
+                            nonWorkingDays[i.toString()] = '';
 
                         }
 
