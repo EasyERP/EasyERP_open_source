@@ -25,6 +25,7 @@ var Module = function (models) {
     oxr.set({app_id: 'b81387a200c2463e9ae3d31cc60eda62'});
 
     var access = require("../Modules/additions/access.js")(models);
+    var CONSTANTS = require("../constants/mainConstants.js");
 
     this.removeBySourceDocument = function (req, sourceId) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
@@ -409,9 +410,15 @@ var Module = function (models) {
                                         if (hours - HOURSCONSTANT >= 0) {
                                             bodySalary.amount = costHour * HOURSCONSTANT * 100;
                                             bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
+                                            bodyOverheadAdmin.amount = adminCoefficient * HOURSCONSTANT * 100;
+
+                                            createdDateObject[dateKey].total += HOURSCONSTANT;
                                         } else {
                                             bodySalary.amount = costHour * hours * 100;
                                             bodyOvertime.amount = 0;
+                                            bodyOverheadAdmin.amount = adminCoefficient * hours * 100;
+
+                                            createdDateObject[dateKey].total += hours;
                                         }
 
                                         if (vacationSameDate) {
@@ -423,14 +430,13 @@ var Module = function (models) {
                                             }
                                         }
 
-                                        bodyOverheadAdmin.amount = adminCoefficient * hours * 100;
+                                       // bodyOverheadAdmin.amount = adminCoefficient * hours * 100;
 
-                                        createdDateObject[dateKey].total += hours;
-                                        createdDateObject[dateKey].costHour = costHour;
+                                        createdDateObject[dateKey].employees[employeeSubject].costHour = costHour;
                                         createdDateObject[dateKey].employees[employeeSubject].hours += hours;
                                     } else {
                                         bodyOvertime.amount = costHour * hours * 100;
-                                        bodyOverheadAdmin.amount = adminCoefficient * hours * 100;
+                                        //bodyOverheadAdmin.amount = adminCoefficient * hours * 100;
 
                                         if (sameDayHoliday) {
                                             bodyOvertime.amount = costHour * hours * 100;
