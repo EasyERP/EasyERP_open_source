@@ -30,7 +30,7 @@ define(['helpers/getVacationHelper', 'helpers/getHolidayHelper'],
                             workingHours = wtrack.get([i.toString()]);
                             nonWorkingDays.workingHours += workingHours;
 
-                            nonWorkingDays[i.toString()] = workingHours;
+                            nonWorkingDays[i.toString()] = workingHours || '';
 
                         } else {
 

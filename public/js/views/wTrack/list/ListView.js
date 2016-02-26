@@ -23,10 +23,11 @@ define([
         'custom',
         'moment',
         'constants',
-        'helpers/keyCodeHelper'
+        'helpers/keyCodeHelper',
+        'helpers/employeeHelper'
     ],
 
-    function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
+    function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes, employeeHelper) {
         "use strict";
 
         var wTrackListView = listViewBase.extend({
@@ -294,7 +295,68 @@ define([
                 this.changedModels[wTrackId].worked = worked;
             },
 
+            showVacataions: function(td) {
+                "use strict";
+
+                var self = this;
+                var employee;
+                var year;
+                var week;
+                var $day;
+                var cls;
+                var tr;
+                var wTrack = new currentModel();
+                var vacationSensitiveFields = [
+                    'employee',
+                    'year',
+                    'week',
+                    'month'
+                ];
+
+                if (!td.parents) {
+                    td = $(td.target).closest('td');
+                }
+
+                tr = td.parents('tr');
+
+                if(vacationSensitiveFields.indexOf(td.attr('data-content')) !== -1) {
+                    
+                    this.setChangedValueToModel();
+                    
+                    employee = tr.find('[data-content="employee"]').attr('data-id');
+                    year = tr.find('[data-content="year"]').text();
+                    week = tr.find('[data-content="week"]').text();
+                    
+                    employeeHelper.getNonWorkingDaysByWeek(year, week, employee, wTrack,
+                        function (nonWorkingDays) {
+                            "use strict";
+
+                            for (var i = 1; i <= 7; i++) {
+
+                                $day = tr.find('[data-content=' + i + ']');
+                                    
+                                cls = "editable autoCalc ";
+                                if (isNaN(parseInt(nonWorkingDays[i.toString()]))) {
+                                    
+                                    cls += nonWorkingDays[i.toString()];
+                                    $day.text('');
+                                } else {
+                                    
+                                    $day.text(nonWorkingDays[i.toString()]);
+                                }
+                                
+                                $day.removeClass();
+                                $day.addClass(cls);
+
+                                tr.find('[data-content="worked"]').text(nonWorkingDays.workingHours);
+                            }
+                        });
+                }
+
+            },
+
             setEditable: function (td) {
+                "use strict";
                 var tr;
 
                 if (!td.parents) {
@@ -305,6 +367,8 @@ define([
 
                 tr.addClass('edited');
                 // td.addClass('edited');
+
+                this.showVacataions(td);
 
                 if (this.isEditRows()) {
                     this.setChangedValue();
@@ -367,6 +431,9 @@ define([
                     }
 
                 }
+
+
+
                 function funcForWeek(cb) {
                     var weeks;
                     var month = editedElementValue;
@@ -686,7 +753,7 @@ define([
                         changedAttr.employee = employee;
                         changedAttr.department = department;
 
-                        targetElement.attr("data-id", employee._id);
+                        targetElement.attr("data-id", employee);
 
                         this.calculateCost(e, wTrackId);
 
