@@ -298,7 +298,6 @@ define([
             showVacataions: function(td) {
                 "use strict";
 
-                var self = this;
                 var employee;
                 var year;
                 var week;
@@ -834,6 +833,9 @@ define([
 
             saveItem: function () {
                 var model;
+                var $day;
+                var cls;
+                var tr;
 
                 var errors = this.$el.find('.errorContent');
 
@@ -853,8 +855,19 @@ define([
                 //    delete this.changedModels[id];
                 //    this.editCollection.remove(id);
                 //}
+                tr = this.$el.find('.edited');
+                cls = "editable autoCalc";
 
-                this.$el.find('.edited').removeClass('edited');
+                for (var i = 1; i <= 7; i++) {
+
+                    $day = tr.find('[data-content=' + i + ']');
+
+                    $day.removeClass();
+                    $day.addClass(cls);
+
+                }
+
+                tr.removeClass('edited');
             },
 
             savedNewModel: function (modelObject) {
