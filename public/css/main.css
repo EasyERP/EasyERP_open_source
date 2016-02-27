@@ -1199,6 +1199,9 @@ tr.redBorder {
 #forInfo .innerTableProject .innerTableProject-footer td {
   border-width: 0;
 }
+li.fired {
+  background-color: rgba(235, 0, 4, 0.73);
+}
 /*------------------------Constants-----------------------------*/
 .spinner {
   background-color: yellow;
