@@ -53,8 +53,8 @@ var wTrack = function (event, models) {
 
                     var stDate = moment().year(wTrack.year).isoWeek(wTrack.week).day(1);
 
-                    journalEntry.setReconcileDate(req, stDate);
-
+                    //journalEntry.setReconcileDate(req, stDate);
+                    event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
                     event.emit('updateRevenue', {wTrack: wTrack, req: req});
                     event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                     event.emit('dropHoursCashes', req);
@@ -74,8 +74,6 @@ var wTrack = function (event, models) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var reconcile = false;
-        var stDate;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -89,22 +87,13 @@ var wTrack = function (event, models) {
                     //    data.revenue *= 100;
                     //}
 
-                    if (data.employee || data.worked){
-                        reconcile = true;
-                        data.reconcile = reconcile;
-                    }
-
                     WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                         if (err) {
                             return next(err);
                         }
 
-                        if (reconcile){
-                            stDate = moment().year(wTrack.year).isoWeek(wTrack.week).day(1);
-                            journalEntry.setReconcileDate(req, stDate);
-                        }
-
                         if (wTrack) {
+                            event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
                             event.emit('updateRevenue', {wTrack: wTrack, req: req});
                             event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
@@ -127,8 +116,6 @@ var wTrack = function (event, models) {
         var body = req.body;
         var uId;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var reconcile;
-        var stDate;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
@@ -136,10 +123,6 @@ var wTrack = function (event, models) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
-
-                        if (data && data.revenue) {
-                            data.revenue *= 100;
-                        }
 
                         if (data && data.cost) {
                             data.cost *= 100;
@@ -150,10 +133,6 @@ var wTrack = function (event, models) {
                             date: new Date().toISOString()
                         };
 
-                        if (data.employee || data.worked){
-                            reconcile = true;
-                            data.reconcile = reconcile;
-                        }
 
                         delete data._id;
                         WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
@@ -161,12 +140,8 @@ var wTrack = function (event, models) {
                                 return cb(err);
                             }
 
-                            if (reconcile){
-                                stDate = moment().year(wTrack.year).isoWeek(wTrack.week).day(1);
-                                journalEntry.setReconcileDate(req, stDate);
-                            }
-
                             if (wTrack) {
+                                event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
                                 event.emit('updateRevenue', {wTrack: wTrack, req: req});
                                 event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
@@ -659,6 +634,7 @@ var wTrack = function (event, models) {
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
                     event.emit('updateRevenue', {wTrack: wTrack, req: req});
+                    event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
 
                     if (projectId) {
                         event.emit('updateProjectDetails', {req: req, _id: projectId});

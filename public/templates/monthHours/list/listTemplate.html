@@ -3,11 +3,11 @@
     <td class="notForm centerCell"><input type="checkbox" value="<%=monthHours._id%>" class="checkbox"/></td>
 
     <td data-content="number" class="centerCell"><%=startNumber + index +1 %></td>
-    <td data-content="month"><%=monthHours.month%></td>
-    <td data-content="year"><%=monthHours.year%></td>
+    <td data-type="input"  data-content="month"><%=monthHours.month%></td>
+    <td data-type="input"  data-content="year"><%=monthHours.year%></td>
     <td data-content="hours"  data-type="input" class="editable"><%=monthHours.hours%></td>
     <td data-type="input" data-content="expenseCoefficient" class="editable"><%=monthHours.expenseCoefficient%></td>
-    <td data-type="input" data-type="input" data-content="fixedExpense" class="editable"><%=monthHours.fixedExpense%></td>
+    <td data-type="input" data-content="fixedExpense" class="editable"><%=monthHours.fixedExpense%></td>
     <td data-type="input" class="" data-content="estimatedHours"><%=currencySplitter(monthHours.estimatedHours ? monthHours.estimatedHours.toFixed() : '0') || 0%></td>
     <td data-type="input" class="" data-content="actualHours"><%=currencySplitter(monthHours.actualHours ? monthHours.actualHours.toFixed() : '0') || 0%></td>
     <td data-type="input" data-content="idleHours"><%=currencySplitter(monthHours.idleHours ? monthHours.idleHours.toFixed() : '0') || 0%></td>

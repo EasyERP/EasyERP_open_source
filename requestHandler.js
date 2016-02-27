@@ -395,11 +395,21 @@ var requestHandler = function (app, event, mainDb) {
         } else if (year && week){
             query = {week: week, year: year,  dateByWeek: {$lte: dateKey}};
             date = moment().year(year).isoWeek(week).day(1);
-        }
+        } else if (employee){
 
-        if (employee){
-            query.employee = employee;
-        }
+             query.employee = employee;
+
+             if (month && year) {
+                 query = {month: month, year: year,  dateByWeek: {$lte: dateKey}};
+                 date = moment().year(year).month(month).date(1);
+             }
+
+             if (year && week){
+                 query = {week: week, year: year,  dateByWeek: {$lte: dateKey}};
+                 date = moment().year(year).isoWeek(week).day(1);
+             }
+         }
+
 
         wTrackModel.update(query, {$set: {reconcile: true}}, {multi: true}, function (err, result) {
             if (err) {

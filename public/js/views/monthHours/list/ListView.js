@@ -98,8 +98,10 @@ define([
                     actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
                     hours = actualHours || estimatedHours;
 
-                    this.changedModels[editedElementRowId].adminBudget = hours * adminCoefficient;
-                    editedElement.closest('tr').find('[data-content="adminBudget"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].adminBudget.toFixed()));
+                    if (hours){
+                        this.changedModels[editedElementRowId].adminBudget = hours * adminCoefficient;
+                        editedElement.closest('tr').find('[data-content="adminBudget"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].adminBudget.toFixed()));
+                    }
 
                 } else if (editedElementContent === 'adminBudget') {
                     estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');

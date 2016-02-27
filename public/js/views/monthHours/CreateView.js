@@ -30,8 +30,11 @@ define([
                     $(tds[0]).find('input').attr('value', options.cid);
                     $(tds[1]).text('New');
                     $(tds[2]).text('');
+                    $(tds[2]).addClass('editable');
                     $(tds[3]).text('');
+                    $(tds[3]).addClass('editable');
                     $(tds[4]).text('');
+                    $(tds[4]).addClass('editable');
                     $(tds[7]).text('0');
                     $(tds[8]).text('0');
                     $(tds[9]).text('0');
