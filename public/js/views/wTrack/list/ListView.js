@@ -868,6 +868,7 @@ define([
                 }
 
                 tr.removeClass('edited');
+                $('.vacation-legend').hide();
             },
 
             savedNewModel: function (modelObject) {
@@ -969,6 +970,7 @@ define([
                 var year = now.getFullYear();
                 var month = now.getMonth() + 1;
                 var week = now.getWeek();
+                var $vacationLegend = $('.vacation-legend');
                 // var rate = 3;
                 var startData = {
                     year        : year,
@@ -996,6 +998,9 @@ define([
 
                 this.createdCopied = true;
                 this.changed = true;
+
+                $vacationLegend.removeClass('hidden');
+                $vacationLegend.show();
             },
 
             showSaveCancelBtns: function () {
@@ -1290,6 +1295,8 @@ define([
 
                 self.changedModels = {};
                 self.responseObj['#jobs'] = [];
+
+                $('.vacation-legend').hide();
             },
 
             render: function () {
