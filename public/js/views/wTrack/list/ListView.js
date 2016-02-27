@@ -298,13 +298,14 @@ define([
             showVacataions: function(td) {
                 "use strict";
 
+                var dayData = {};
                 var employee;
                 var year;
                 var week;
                 var $day;
                 var cls;
                 var tr;
-                var wTrack = new currentModel();
+                var wTrack;
                 var vacationSensitiveFields = [
                     'employee',
                     'year',
@@ -317,6 +318,8 @@ define([
                 }
 
                 tr = td.parents('tr');
+                wTrack = tr.attr('data-id');
+                wTrack = this.editCollection.get(wTrack);
 
                 if(vacationSensitiveFields.indexOf(td.attr('data-content')) !== -1) {
                     
@@ -339,9 +342,12 @@ define([
                                     
                                     cls += nonWorkingDays[i.toString()];
                                     $day.text('');
+                                    dayData[i.toString()] = '';
+
                                 } else {
                                     
                                     $day.text(nonWorkingDays[i.toString()]);
+                                    dayData[i.toString()] = nonWorkingDays[i.toString()];
                                 }
                                 
                                 $day.removeClass();
@@ -349,6 +355,7 @@ define([
 
                                 tr.find('[data-content="worked"]').text(nonWorkingDays.workingHours);
                             }
+                            wTrack.set(dayData);
                         });
                 }
 
