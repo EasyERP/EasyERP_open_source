@@ -2,23 +2,17 @@ var mongoose = require('mongoose');
 
 var wTrack = function (event, models) {
     'use strict';
-    var isoWeekYearComposer = require('../helpers/isoWeekYearComposer');
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var _ = require('underscore');
     var wTrackSchema = mongoose.Schemas.wTrack;
     var DepartmentSchema = mongoose.Schemas.Department;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
-    var SalarySchema = mongoose.Schemas.Salary;
     var HolidaySchema = mongoose.Schemas.Holiday;
     var VacationSchema = mongoose.Schemas.Vacation;
-    var WorkflowSchema = mongoose.Schemas.workflow;
     var jobsSchema = mongoose.Schemas.jobs;
     var ProjectSchema = mongoose.Schemas.Project;
     var EmployeeSchema = mongoose.Schemas.Employee;
-    /*var CustomerSchema = mongoose.Schemas['Customer'];
-     var EmployeeSchema = mongoose.Schemas['Employee'];
-     var WorkflowSchema = mongoose.Schemas['workflow'];*/
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
@@ -260,12 +254,11 @@ var wTrack = function (event, models) {
         var query = req.query;
         var filter = query.filter;
         var filterObj = {};
-        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+        var waterfallTasks;
+
         if (filter) {
             filterObj.$and = caseFilter(filter);
         }
-
-        var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -432,7 +425,6 @@ var wTrack = function (event, models) {
                 sort = query.sort;
             }
         } else {
-            // sort = {"year": -1, "month": -1, "week": -1};
             sort = {"createdBy.date": -1};
         }
 
@@ -803,15 +795,15 @@ var wTrack = function (event, models) {
         var data = req.body;
         var jobId = req.headers.jobid;
 
+        var createJob = req.headers.createjob === 'true';
+        var jobName = req.headers.jobname;
+        var project = req.headers.project;
+
         var tasks;
 
         if (jobId.length >= 24) {
             jobId = objectId(jobId);
         }
-
-        var createJob = req.headers.createjob === 'true';
-        var jobName = req.headers.jobname;
-        var project = req.headers.project;
 
         function createJobFunc(mainCb) {
             var job = {
@@ -922,10 +914,9 @@ var wTrack = function (event, models) {
                     }
 
                     function getVacations(parallelCb) {
-
                         var query = Vacation.find({
-                            year      : {$gte: startYear, $lte: endYear},
-                            "employee": employee
+                            year    : {$gte: startYear, $lte: endYear},
+                            employee: employee
                         }, {month: 1, year: 1, vacArray: 1}).lean();
 
                         query.exec(function (err, result) {
@@ -981,11 +972,10 @@ var wTrack = function (event, models) {
                 function calculateWeeks(vacationsHolidays, generateCb) {
                     var holidays = vacationsHolidays[0] ? vacationsHolidays[0].holidays : {};
                     var vacations = vacationsHolidays[1] ? vacationsHolidays[1].vacations : {};
-                    var employeeModel = vacationsHolidays[2] ? vacationsHolidays[2].vacations : {};
                     var startDate = new Date(options.startDate);
                     var endDate = new Date(options.endDate);
                     var startIsoWeek = moment(startDate).isoWeek();
-                    var startYear = moment(startDate).year();
+                    var startYear = moment(startDate).isoWeekYear();
                     var hours = parseInt(options.hours, 10);
                     var project = options.project;
                     var employee = options.employee;
@@ -1003,19 +993,18 @@ var wTrack = function (event, models) {
                     function calcWeeks(weeks, startD, endD) {
                         var result = [];
                         var startWeek = moment(startD).isoWeek();
-                        var startYear = moment(startD).year();
-                        var endYear = moment(endD).year();
+                        var startYear = moment(startD).isoWeekYear();
                         var startDay = moment(startD).day();
                         var endWeek = moment(endD).isoWeek();
                         var resArr;
                         var endDay = moment(endD).day();
 
-                        if (startWeek >= isoWeeksInYear) {
+                        if (startWeek >= isoWeeksInYear && weeks) { //added &&weeks because double calc data for 53 week
                             resArr = checkWeekToDivide(startWeek, startYear, startDay);
                             result = resArr;
                             startWeek = 0;
                             weeks -= 1;
-                        } else {
+                        } else if (weeks) {//added &&weeks because double calc data for 53 week
                             resArr = checkWeekToDivide(startWeek, startYear, startDay);
                             result = resArr;
                         }
@@ -1036,21 +1025,29 @@ var wTrack = function (event, models) {
                             var arrayResult = [];
                             var weekObj = {};
                             var weekObjNext = {};
-                            var d = moment().year(year).isoWeek(week);
+                            var d = moment().isoWeekYear(year).isoWeek(week);
                             var checkWeek = d.isoWeek();
+                            var checkToDivide = true;
+                            var checkDate;
+                            var month;
+                            var endOfMonth;
+                            var date;
+                            var dateForCheck;
+                            var dayForEndOfMonth;
+                            var key;
+                            var dateByWeek;
+
                             if (checkWeek > week) {
                                 week--;
                             }
-                            var day = day || 1;
-                            var checkDate = moment().year(year).isoWeek(checkWeek).day(day).isoWeek(week);
-                            var month = checkDate.month();
-                            var endOfMonth = moment().year(year).month(month).endOf('month').date();
-                            var date = checkDate.day(day);
-                            var dateForCheck = date.date();
-                            var dayForEndOfMonth = checkDate.day(1).date(endOfMonth).day();
-                            var key;
-                            var checkToDivide = true;
-                            var dateByWeek;
+
+                            day = day || 1;
+                            checkDate = moment().isoWeekYear(year).isoWeek(checkWeek).day(day).hours(0).minutes(0).isoWeek(week);
+                            month = checkDate.month();
+                            endOfMonth = moment().isoWeekYear(year).month(month).hours(0).minutes(0).endOf('month').date();
+                            date = checkDate.day(day);
+                            dateForCheck = date.date();
+                            dayForEndOfMonth = checkDate.day(1).date(endOfMonth).day();
 
                             if (endDay === 0 || endDay === 6) {
                                 endDay = 5;
@@ -1312,7 +1309,7 @@ var wTrack = function (event, models) {
                     }
 
                     endIsoWeek = moment(endDate).isoWeek();
-                    endYear = moment(endDate).year();
+                    endYear = moment(endDate).isoWeekYear();
 
                     yearDiff = endYear - startYear;
 
@@ -1327,7 +1324,6 @@ var wTrack = function (event, models) {
                         generateItems(result);
                         generateCb();
                     } else if (yearDiff > 0) {
-
                         async.parallel([firstPart, secondPart], function (err, result) {
                             var firstPart = result[0];
                             var secondPart = result[1];
@@ -1354,6 +1350,7 @@ var wTrack = function (event, models) {
         };
 
         tasks = [createJobFunc, generatewTracks];
+
         async.waterfall(tasks, function (err, result) {
             if (err) {
                 return next(err);
