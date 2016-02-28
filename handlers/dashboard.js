@@ -39,7 +39,6 @@ var wTrack = function (models) {
         var query = req.query;
         var employeesArray = [];
         var filter = query.filter || {};
-        var currentYear = moment().weekYear();
         var departmentsArray = [objectId(CONSTANTS.HR_DEPARTMENT_ID),
             objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID),
             objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)];

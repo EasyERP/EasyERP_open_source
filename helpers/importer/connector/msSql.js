@@ -6,8 +6,7 @@ var sql = require('mssql');
 module.exports = function (configOptions) {
     sql.connect(configOptions, function (err) {
         if (err) {
-            console.log(configOptions);
-            console.log(err);
+            console.error(err);
         } else {
             console.log('Connected to DB');
         }
@@ -40,5 +39,5 @@ module.exports = function (configOptions) {
 
     return {
         importData: importData
-    }
+    };
 };

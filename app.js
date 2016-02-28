@@ -20,7 +20,6 @@ module.exports = function (mainDb, dbsNames) {
     var dbsObject = mainDb.dbsObject;
     var httpServer;
     var io;
-    var mongoose = require('mongoose');
 
     var MemoryStore = require('connect-mongo')(session);
 

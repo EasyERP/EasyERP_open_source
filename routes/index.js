@@ -29,7 +29,7 @@ module.exports = function (app, mainDb) {
     var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
-    var importDataRouter = require('./importData')(models);
+    //var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models);
     var employeeRouter = require('./employee')(models);
     var departmentRouter = require('./department')(models);
@@ -169,7 +169,7 @@ module.exports = function (app, mainDb) {
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
-    app.use('/importData', importDataRouter);
+    //app.use('/importData', importDataRouter);
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);

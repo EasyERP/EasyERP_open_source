@@ -287,12 +287,8 @@ define([
             return w;
         },
 
-        getDate: function (/*num, year*/dateStr) {
-            /*var _moment = moment().hours(12).isoWeek(num).isoWeekYear(year);
-            var date = _moment.isoWeekday(5).format("DD.MM"/!*, true*!/);*/
-            var date = dateStr.isoWeekday(5).format("DD.MM"/*, true*/);
-
-            return date;
+        getDate: function (dateStr) {
+            return dateStr.isoWeekday(5).format("DD.MM");
         },
 
         calculateStatistics: function () {

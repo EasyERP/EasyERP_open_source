@@ -18,7 +18,7 @@
                     <div class="miniAvatarInfo">
                         <dt><label for="customer">Customer</label></dt>
                         <dd>
-                            <span id="customer"><%= customer.name ? customer.name.first + ' ' + customer.name.last : ''%></span>
+                            <span id="customer"><%= customer && customer.name ? customer.name.first + ' ' + customer.name.last : ''%></span>
                         </dd>
                     </div>
                 </dl>
