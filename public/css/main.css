@@ -1006,6 +1006,13 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list tbody .employee {
   text-align: right !important;
 }
+.vacation-list tbody .employee .fa {
+  display: none;
+  font-size: 12px;
+}
+.vacation-list tbody .employee:hover .fa {
+  display: inline;
+}
 .vacation-list #caption,
 .vacation-list .borders,
 .vacation-list thead,
@@ -1201,6 +1208,21 @@ tr.redBorder {
 }
 li.fired {
   background-color: rgba(235, 0, 4, 0.73);
+}
+.V {
+  background-color: #a22a2d;
+}
+.P {
+  background-color: #f9a203;
+}
+.S {
+  background-color: #3c86e0;
+}
+.E {
+  background-color: #3e7f42;
+}
+.H {
+  background-color: #696969;
 }
 /*------------------------Constants-----------------------------*/
 .spinner {

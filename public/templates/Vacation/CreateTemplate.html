@@ -1,11 +1,12 @@
 <tr id="false" data-id="<%=cid%>">
     <td class="editable employee" data-content="employee" data-type="employeeSelect">
-        <span title="Delete" class="trash icon" style="display: inline">1</span>
+        <span title="Delete" class="fa fa-trash-o"></span>
         Select
     </td>
     <td class="department"></td>
     <% for (var i=0; i<=daysCount - 1; i++) { %>
-    <td data-dayID="<%=i%>" class="editable" data-content="vacType"><input type="text" readonly value=""></td>
+    <td data-dayID="<%=i%>" class="editable" data-content="vacType">
+        <input type="text" readonly value=""></td>
     <% } %>
     <td class="totalDays"></td>
 </tr>
