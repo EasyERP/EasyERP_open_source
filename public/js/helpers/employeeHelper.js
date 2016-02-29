@@ -3,46 +3,38 @@ define(['helpers/getVacationHelper', 'helpers/getHolidayHelper'],
         "use strict";
 
         var getNonWorkingDaysByWeek = function (year, week, employee, wtrack, callback, context) {
-            "use strict";
 
             getVacation.forEmployeeByWeek(year, week, employee, function (vacations) {
-                "use strict";
 
                 getHoliday.byWeek(year, week, function (holidays) {
-
                     var nonWorkingDays = {};
                     var workingHours = 0;
+                    var vacation;
+                    var holiday;
+                    var i;
 
                     nonWorkingDays.workingHours = 0;
 
-                    for (var i = 1; i <= 7; i++) {
+                    for (i = 1; i <= 7; i++) {
+                        vacation = vacations[i.toString()];
+                        holiday = holidays[i.toString()];
 
-                        if (vacations[i.toString()]) {
+                        vacation = vacation || holiday;
 
-                            nonWorkingDays[i.toString()] = vacations[i.toString()];
-
-                        } else if (holidays[i.toString()]) {
-
-                            nonWorkingDays[i.toString()] = holidays[i.toString()];
-
+                        if (vacation) {
+                            nonWorkingDays[i.toString()] = vacation;
                         } else if (wtrack) {
-
                             workingHours = wtrack.get([i.toString()]);
                             nonWorkingDays.workingHours += workingHours;
 
                             nonWorkingDays[i.toString()] = workingHours || '';
-
                         } else {
-
                             nonWorkingDays[i.toString()] = '';
-
                         }
-
                     }
 
                     callback(nonWorkingDays, context);
-
-                })
+                });
             });
         };
 
