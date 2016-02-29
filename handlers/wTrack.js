@@ -894,8 +894,9 @@ var wTrack = function (event, models) {
 
                             result.forEach(function (element) {
                                 var date = element.date;
-                                var year = element.year;
-                                var week = element.week;
+                                var d = moment(date);
+                                var year = d.isoWeekYear();
+                                var week = d.isoWeek();
                                 var key = year * 100 + week;
                                 var dayOfWeek = moment(date).day();
 
@@ -999,9 +1000,10 @@ var wTrack = function (event, models) {
                         var resArr;
                         var endDay = moment(endD).day();
 
-                        if (startWeek >= isoWeeksInYear && weeks) { //added &&weeks because double calc data for 53 week
+                        if (startWeek === isoWeeksInYear && weeks) { //added &&weeks because double calc data for 53 week
                             resArr = checkWeekToDivide(startWeek, startYear, startDay);
                             result = resArr;
+                            startYear++;
                             startWeek = 0;
                             weeks -= 1;
                         } else if (weeks) {//added &&weeks because double calc data for 53 week
@@ -1043,11 +1045,11 @@ var wTrack = function (event, models) {
                             }
 
                             day = day || 1;
-                            checkDate = moment().day(day).hours(0).minutes(0).isoWeekYear(year).isoWeek(checkWeek);
+                            checkDate = moment().isoWeekYear(year).isoWeek(checkWeek).isoWeekday(day).hours(0).minutes(0);
                             month = checkDate.month();
                             endOfMonth = moment().isoWeekYear(year).month(month).hours(0).minutes(0).endOf('month').date();
-                            date = checkDate.day(day);
-                            dateForCheck = date.date();
+                            //date = checkDate.day(day);
+                            dateForCheck = checkDate.date();
                             dayForEndOfMonth = checkDate.day(1).date(endOfMonth).day();
 
                             if (endDay === 0 || endDay === 6) {
@@ -1190,7 +1192,7 @@ var wTrack = function (event, models) {
                             var year = arrayEl.year;
                             var weekValues = arrayEl;
                             var wTrackToSave;
-                            var date = moment().year(year).isoWeek(week);
+                            var date = moment().isoWeekYear(year).isoWeek(week);
                             var day = 1;
 
                             if (week === startIsoWeek) {
@@ -1316,11 +1318,13 @@ var wTrack = function (event, models) {
 
                     if (yearDiff === 0) {
 
-                        if (endIsoWeek - startIsoWeek < 0) {
+                        /*if (endIsoWeek - startIsoWeek < 0) {
                             result = calcWeeks(endIsoWeek + 1, startDate, endDate);
                         } else {
                             result = calcWeeks(endIsoWeek - startIsoWeek, startDate, endDate);
-                        }
+                        }*/
+
+                        result = calcWeeks(endIsoWeek - startIsoWeek, startDate, endDate);
 
                         generateItems(result);
                         generateCb();
