@@ -9,9 +9,10 @@ define([
         'moment',
         'async',
         'common',
-        'dataService'
+        'dataService',
+        'helpers/employeeHelper'
     ],
-    function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService) {
+    function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService, employeeHelper) {
         "use strict";
         var CreateView = Backbone.View.extend({
             template   : _.template(template),
@@ -30,11 +31,23 @@ define([
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
 
+                var wTrack = options.wTracks[0];
+                var year = wTrack.year;
+                var employee = wTrack.employee._id;
+                var week = wTrack.week;
+
                 this.dateByWeek = options.dateByWeek;
                 this.tds = options.tds;
                 this.row = options.tr;
                 this.wTracks = options.wTracks;
-                this.render(options);
+
+                employeeHelper.getNonWorkingDaysByWeek(year, week, employee, null,
+                    function (nonWorkingDays, self) {
+                        "use strict";
+                        options.nonWorkingDays = nonWorkingDays;
+                        self.render(options);
+                    }, this);
+
             },
 
             keyDown: function (e) {
@@ -569,6 +582,8 @@ define([
                         }
                     }
                 });
+
+                this.delegateEvents(this.events);
 
                 this.asyncLoadImgs(data);
                 this.delegateEvents(this.events);

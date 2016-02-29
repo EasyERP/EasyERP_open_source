@@ -1199,6 +1199,21 @@ tr.redBorder {
 #forInfo .innerTableProject .innerTableProject-footer td {
   border-width: 0;
 }
+.V {
+  background-color: #a22a2d;
+}
+.P {
+  background-color: #f9a203;
+}
+.S {
+  background-color: #3c86e0;
+}
+.E {
+  background-color: #3e7f42;
+}
+.H {
+  background-color: #696969;
+}
 /*------------------------Constants-----------------------------*/
 .spinner {
   background-color: yellow;

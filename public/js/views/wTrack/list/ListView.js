@@ -1,31 +1,32 @@
 define([
-    'Backbone',
-    'Underscore',
-    'jQuery',
-    'views/listViewBase',
-    'views/selectView/selectView',
-    'text!templates/wTrack/list/ListHeader.html',
-    'text!templates/wTrack/list/cancelEdit.html',
-    'text!templates/wTrack/list/forWeek.html',
-    'views/wTrack/CreateView',
-    'views/wTrack/list/ListItemView',
-    'views/wTrack/EditView',
-    'views/salesInvoice/wTrack/CreateView',
-    'models/wTrackModel',
-    'collections/wTrack/filterCollection',
-    'collections/wTrack/editCollection',
-    'views/Filter/FilterView',
-    'views/wTrack/list/createJob',
-    'common',
-    'dataService',
-    'populate',
-    'async',
-    'custom',
-    'moment',
-    'constants',
-    'helpers/keyCodeHelper'
-], function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
-    "use strict";
+        'Backbone',
+        'Underscore',
+        'jQuery',
+        'views/listViewBase',
+        'views/selectView/selectView',
+        'text!templates/wTrack/list/ListHeader.html',
+        'text!templates/wTrack/list/cancelEdit.html',
+        'text!templates/wTrack/list/forWeek.html',
+        'views/wTrack/CreateView',
+        'views/wTrack/list/ListItemView',
+        'views/wTrack/EditView',
+        'views/salesInvoice/wTrack/CreateView',
+        'models/wTrackModel',
+        'collections/wTrack/filterCollection',
+        'collections/wTrack/editCollection',
+        'views/Filter/FilterView',
+        'views/wTrack/list/createJob',
+        'common',
+        'dataService',
+        'populate',
+        'async',
+        'custom',
+        'moment',
+        'constants',
+        'helpers/keyCodeHelper',
+        'helpers/employeeHelper'
+    ], function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes, employeeHelper) {
+        "use strict";
 
     var wTrackListView = listViewBase.extend({
         createView              : createView,
@@ -293,8 +294,8 @@ define([
             this.changedModels[wTrackId].worked = worked;
         },
 
-        setEditable: function (td) {
-            var tr;
+            setEditable: function (td) {
+                var tr;
 
             if (!td.parents) {
                 td = $(td.target).closest('td');
@@ -305,9 +306,9 @@ define([
             tr.addClass('edited');
             // td.addClass('edited');
 
-            if (this.isEditRows()) {
-                this.setChangedValue();
-            }
+                if (this.isEditRows()) {
+                    this.setChangedValue();
+                }
 
             return false;
         },
@@ -365,11 +366,11 @@ define([
                     editedElement.remove();
                 }
 
-            }
-            function funcForWeek(cb) {
-                var weeks;
-                var month = editedElementValue;
-                var year = editedElement.closest('tr').find('[data-content="year"]').text();
+                }
+                function funcForWeek(cb) {
+                    var weeks;
+                    var month = editedElementValue;
+                    var year = editedElement.closest('tr').find('[data-content="year"]').text();
 
                 weeks = custom.getWeeks(month, year);
 
@@ -685,7 +686,7 @@ define([
                     changedAttr.employee = employee;
                     changedAttr.department = department;
 
-                    targetElement.attr("data-id", employee._id);
+                        targetElement.attr("data-id", employee._id);
 
                     this.calculateCost(e, wTrackId);
 
@@ -764,8 +765,8 @@ define([
             this.setAllTotalVals();
         },
 
-        saveItem: function () {
-            var model;
+            saveItem: function () {
+                var model;
 
             var errors = this.$el.find('.errorContent');
 
@@ -782,12 +783,13 @@ define([
 
             this.editCollection.save();
 
-            //for (var id in this.changedModels) {
-            //    delete this.changedModels[id];
-            //    this.editCollection.remove(id);
-            //}
-            this.$el.find('.edited').removeClass('edited');
-        },
+                //for (var id in this.changedModels) {
+                //    delete this.changedModels[id];
+                //    this.editCollection.remove(id);
+                //}
+
+                this.$el.find('.edited').removeClass('edited');
+            },
 
         savedNewModel: function (modelObject) {
             var savedRow = this.$listTable.find('.false');
@@ -883,19 +885,19 @@ define([
             return !!newRow.length;
         },
 
-        createItem: function () {
-            var now = new Date();
-            var year = now.getFullYear();
-            var month = now.getMonth() + 1;
-            var week = now.getWeek();
-            // var rate = 3;
-            var startData = {
-                year        : year,
-                month       : month,
-                week        : week,
-                //rate        : rate,
-                projectModel: null
-            };
+            createItem: function () {
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = now.getMonth() + 1;
+                var week = now.getWeek();
+                // var rate = 3;
+                var startData = {
+                    year        : year,
+                    month       : month,
+                    week        : week,
+                    //rate        : rate,
+                    projectModel: null
+                };
 
             var model = new currentModel(startData);
 
@@ -913,9 +915,9 @@ define([
                 });
             }
 
-            this.createdCopied = true;
-            this.changed = true;
-        },
+                this.createdCopied = true;
+                this.changed = true;
+            },
 
         showSaveCancelBtns: function () {
             var saveBtnEl = $('#top-bar-saveBtn');
@@ -1207,9 +1209,9 @@ define([
                 this.createdCopied = false;
             }
 
-            self.changedModels = {};
-            self.responseObj['#jobs'] = [];
-        },
+                self.changedModels = {};
+                self.responseObj['#jobs'] = [];
+            },
 
         render: function () {
             var self = this;

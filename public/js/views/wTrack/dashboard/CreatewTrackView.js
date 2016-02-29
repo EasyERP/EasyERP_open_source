@@ -9,63 +9,77 @@ define([
     'moment',
     'async',
     'common',
-    'dataService'
-], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService) {
+    'dataService',
+    'helpers/employeeHelper'
+], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService, employeeHelper) {
     "use strict";
     var CreateView = Backbone.View.extend({
-        template   : _.template(template),
+        template: _.template(template),
         responseObj: {},
-        dateByWeek : null,
-        row        : null,
+        dateByWeek: null,
+        row: null,
 
         events: {
-            "click .stageSelect"                               : "showNewSelect",
-            "click td.editable"                                : "editRow",
-            "keydown input.editing "                           : "keyDown",
+            "click .stageSelect": "showNewSelect",
+            "click td.editable": "editRow",
+            "keydown input.editing ": "keyDown",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click"                                            : "removeInputs"
+            "click": "removeInputs"
         },
 
         initialize: function (options) {
+            var self = this;
             var month;
             var year;
             var dateByMonth;
             var body;
 
-            _.bindAll(this, "saveItem");
+            _.bindAll(self, "saveItem");
 
-            this.dateByWeek = options.dateByWeek;
-            this.tds = options.tds;
-            this.row = options.tr;
-            year = parseInt(this.dateByWeek.slice(0, 4), 10);
-            this.week = parseInt(this.dateByWeek.slice(4), 10);
-            month = moment().isoWeekYear(year).isoWeek(this.week).day(1).month() + 1;
-            this.startMonth = month;
-            this.startYear = moment().isoWeekYear(year).isoWeek(this.week).day(1).year();
-            this.endMonth = moment().isoWeekYear(year).isoWeek(this.week).day(6).month() + 1;
-            this.endYear = moment().isoWeekYear(year).isoWeek(this.week).day(6).year();
+            self.dateByWeek = options.dateByWeek;
+            self.tds = options.tds;
+            self.row = options.tr;
+            year = parseInt(self.dateByWeek.slice(0, 4), 10);
+            self.week = parseInt(self.dateByWeek.slice(4), 10);
+            month = moment().isoWeekYear(year).isoWeek(self.week).day(1).month() + 1;
+            self.startMonth = month;
+            self.startYear = moment().isoWeekYear(year).isoWeek(self.week).day(1).year();
+            self.endMonth = moment().isoWeekYear(year).isoWeek(self.week).day(6).month() + 1;
+            self.endYear = moment().isoWeekYear(year).isoWeek(self.week).day(6).year();
             dateByMonth = year * 100 + month;
-            this.employee = options.employee;
-            this.department = options.department;
+            self.employee = options.employee;
+            self.department = options.department;
             body = {
-                year       : year,
-                month      : month,
-                week       : this.week,
-                department : {
-                    _id           : this.department,
+                year: year,
+                month: month,
+                week: self.week,
+                department: {
+                    _id: self.department,
                     departmentName: options.departmentName
                 },
-                employee   : {
-                    _id : this.employee,
+                employee: {
+                    _id: self.employee,
                     name: options.employeeName
                 },
-                dateByWeek : parseInt(this.dateByWeek, 10),
+                dateByWeek: parseInt(self.dateByWeek, 10),
                 dateByMonth: dateByMonth
             };
 
-            this.wTrack = new WTrackModel(body);
-            options.wTrack = this.wTrack;
-            this.render(options);
+            options.nonWorkingDays = {
+                workingHours: 0
+            };
+
+            self.wTrack = new WTrackModel(body);
+            options.wTrack = self.wTrack;
+
+            employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack,
+                function (nonWorkingDays, self) {
+                    "use strict";
+
+                    options.nonWorkingDays = nonWorkingDays;
+                    self.render(options);
+                }, self);
+
         },
 
         keyDown: function (e) {
@@ -167,7 +181,7 @@ define([
 
             if (this.$el.find('.error').length || this.$el.find('.errorContent').length) {
                 return App.render({
-                    type   : 'error',
+                    type: 'error',
                     message: 'Please, select all information first.'
                 });
             }
@@ -178,24 +192,24 @@ define([
 
             worked = retriveText(worked);
             wTrack = {
-                _id        : id,
-                1          : mo,
-                2          : tu,
-                3          : we,
-                4          : th,
-                5          : fr,
-                6          : sa,
-                7          : su,
-                jobs       : jobs.attr('data-id'),
-                worked     : worked,
-                project    : project,
-                month      : m,
-                year       : y,
-                dateByWeek : this.dateByWeek,
+                _id: id,
+                1: mo,
+                2: tu,
+                3: we,
+                4: th,
+                5: fr,
+                6: sa,
+                7: su,
+                jobs: jobs.attr('data-id'),
+                worked: worked,
+                project: project,
+                month: m,
+                year: y,
+                dateByWeek: this.dateByWeek,
                 dateByMonth: dateByMonth,
-                employee   : this.employee,
-                department : this.department,
-                week       : this.week
+                employee: this.employee,
+                department: this.department,
+                week: this.week
             };
 
             model = new Model(wTrack);
@@ -204,9 +218,9 @@ define([
                 success: function () {
                     return self.hideDialog();
                 },
-                error  : function (err) {
+                error: function (err) {
                     App.render({
-                        type   : 'error',
+                        type: 'error',
                         message: err.text
                     });
                 }
@@ -315,7 +329,7 @@ define([
                     if (self.project) {
                         dataService.getData("/jobs/getForDD", {
                             "projectId": self.project,
-                            "all"      : true
+                            "all": true
                         }, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
@@ -327,7 +341,7 @@ define([
                         });
                     } else {
                         App.render({
-                            type   : 'error',
+                            type: 'error',
                             message: 'Please, choose project first.'
                         });
                     }
@@ -440,7 +454,7 @@ define([
             var model = this.project;
 
             new CreateJob({
-                model    : model,
+                model: model,
                 createJob: true
             });
 
@@ -460,7 +474,7 @@ define([
             }
 
             this.selectView = new selectView({
-                e          : e,
+                e: e,
                 responseObj: this.responseObj
             });
 
@@ -484,6 +498,8 @@ define([
 
             dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
                 projects = _.map(projects.data, function (project) {
+                    "use strict";
+
                     project.name = project.projectName;
 
                     return project
@@ -494,24 +510,26 @@ define([
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : false,
-                title        : "Edit Project",
-                dialogClass  : "edit-dialog",
-                width        : "900px",
-                buttons      : {
-                    save  : {
-                        text : "Save",
+                autoOpen: true,
+                resizable: false,
+                title: "Edit Project",
+                dialogClass: "edit-dialog",
+                width: "900px",
+                buttons: {
+                    save: {
+                        text: "Save",
                         class: "btn",
                         click: self.saveItem
                     },
                     cancel: {
-                        text : "Cancel",
+                        text: "Cancel",
                         class: "btn",
                         click: self.hideDialog
                     }
                 }
             });
+
+            this.delegateEvents(this.events);
 
             this.asyncLoadImgs(data);
 
