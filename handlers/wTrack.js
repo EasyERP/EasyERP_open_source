@@ -1022,6 +1022,7 @@ var wTrack = function (event, models) {
                         result = result.concat(resArr);
 
                         function checkWeekToDivide(week, year, day, endDay) {
+                            //todo set real year for week = 1 ???
                             var arrayResult = [];
                             var weekObj = {};
                             var weekObjNext = {};
@@ -1042,7 +1043,7 @@ var wTrack = function (event, models) {
                             }
 
                             day = day || 1;
-                            checkDate = moment().isoWeekYear(year).isoWeek(checkWeek).day(day).hours(0).minutes(0).isoWeek(week);
+                            checkDate = moment().day(day).hours(0).minutes(0).isoWeekYear(year).isoWeek(checkWeek);
                             month = checkDate.month();
                             endOfMonth = moment().isoWeekYear(year).month(month).hours(0).minutes(0).endOf('month').date();
                             date = checkDate.day(day);
