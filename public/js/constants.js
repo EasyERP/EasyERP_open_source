@@ -506,6 +506,8 @@ define([], function () {
         DASH_VAC_WEEK_BEFORE: 2,
         DASH_VAC_WEEK_AFTER : 8,
 
+        DEFAULT_ELEMENTS_PER_PAGE: 100,
+
         URLS: {
             PROFILES_FOR_DD       : '/profiles/forDd',
             CURRENT_USER          : '/users/current',
