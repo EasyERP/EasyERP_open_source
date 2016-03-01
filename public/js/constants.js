@@ -424,6 +424,20 @@ define([], function () {
                 view   : 'onlyEmployees',
                 backend: 'onlyEmployees'
             }
+        },
+        "journalEntry"  : {
+            "Journal"      : {
+                view   : 'journalName',
+                backend: 'journal.name'
+            },
+            "Subject"    : {
+                view   : 'sourceDocument',
+                backend: 'sourceDocument.subject._id'
+            },
+            "Credit Account": {
+                view   : 'creditAccount',
+                backend: 'journal.creditAccount._id'
+            }
         }
     };
 

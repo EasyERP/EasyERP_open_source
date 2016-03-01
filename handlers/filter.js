@@ -12,6 +12,7 @@ var Filters = function (models) {
     var PayRollSchema = mongoose.Schemas.PayRoll;
     var JobsSchema = mongoose.Schemas.jobs;
     var OpportunitiesSchema = mongoose.Schemas.Opportunitie;
+    var journalEntrySchema = mongoose.Schemas.journalEntry;
     var _ = require('../node_modules/underscore');
     var async = require('async');
     var moment = require('../public/js/libs/moment/moment');
@@ -33,6 +34,7 @@ var Filters = function (models) {
         var PayRoll = models.get(lastDB, 'PayRoll', PayRollSchema);
         var Jobs = models.get(lastDB, 'jobs', JobsSchema);
         var Opportunities = models.get(lastDB, 'Opportunities', OpportunitiesSchema);
+        var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var startDate;
         var endDate;
         var dateRangeObject;
@@ -125,7 +127,8 @@ var Filters = function (models) {
                 jobsDashboard   : getDashJobsFiltersValues,
                 salaryReport    : getsalaryReportFiltersValues,
                 Leads           : getLeadsFiltersValues,
-                Opportunities   : getOpportunitiesFiltersValues
+                Opportunities   : getOpportunitiesFiltersValues,
+                journalEntry    : getJournalEntryFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -1837,6 +1840,199 @@ var Filters = function (models) {
                 }
 
             });
+        }
+
+        function getJournalEntryFiltersValues(callback){
+            var getForInvoices = function (pCb) {
+                JournalEntry.aggregate([{
+                    $match: {
+                        "sourceDocument.model": "wTrack",
+                        debit                 : {$gt: 0}
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "wTrack",
+                        localField             : "sourceDocument._id",
+                        foreignField: "_id", as: "sourceDocument._id"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "journals",
+                        localField             : "journal",
+                        foreignField: "_id", as: "journal"
+                    }
+                }, {
+                    $project: {
+                        journal               : {$arrayElemAt: ["$journal", 0]},
+                        'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]},
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "jobs",
+                        localField             : "sourceDocument._id.jobs",
+                        foreignField: "_id", as: "sourceDocument._id.jobs"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "chartOfAccount",
+                        localField             : "journal.debitAccount",
+                        foreignField: "_id", as: "journal.debitAccount"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "chartOfAccount",
+                        localField             : "journal.creditAccount",
+                        foreignField: "_id", as: "journal.creditAccount"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "Employees",
+                        localField             : "sourceDocument._id.employee",
+                        foreignField: "_id", as: "sourceDocument._id.employee"
+                    }
+                }, {
+                    $project: {
+                        'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                        'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
+                        'journal.name'          : 1,
+                        'sourceDocument._id'    : 1,
+                        'sourceDocument.jobs'   : {$arrayElemAt: ["$sourceDocument._id.jobs", 0]},
+                        'sourceDocument.subject': {$arrayElemAt: ["$sourceDocument._id.employee", 0]},
+                        'sourceDocument.name'   : '$sourceDocument._id.jobs.name'
+                    }
+                }, {
+                    $group: {
+                        _id        : null,
+                        journalName   : {
+                            $addToSet: {
+                                _id : "$journal.name",
+                                name: "$journal.name"
+                            }
+                        },
+                        sourceDocument   : {
+                            $addToSet: {
+                                _id : "$sourceDocument.subject._id",
+                                name: {$concat: ["$sourceDocument.subject.name.first", " ", "$sourceDocument.subject.name.last"]}
+                            }
+                        },
+                        creditAccount: {
+                            $addToSet: {
+                                _id : "$journal.creditAccount._id",
+                                name: "$journal.creditAccount.name"
+                            }
+                        }
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        callback(err);
+                    }
+
+                    if (result && result.length) {
+                        result = result[0];
+                        pCb(null, result);
+                    } else {
+                        pCb(null, {});
+                    }
+
+                });
+            };
+
+            var getForEmployees = function (pCb) {
+                JournalEntry.aggregate([{
+                    $match: {
+                        "sourceDocument.model": "Invoice",
+                        debit                 : {$gt: 0}
+                    }
+                },{
+                    $lookup: {
+                        from                   : "Invoice",
+                        localField             : "sourceDocument._id",
+                        foreignField: "_id", as: "sourceDocument._id"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "journals",
+                        localField             : "journal",
+                        foreignField: "_id", as: "journal"
+                    }
+                }, {
+                    $project: {
+                        journal               : {$arrayElemAt: ["$journal", 0]},
+                        'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]}
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "chartOfAccount",
+                        localField             : "journal.debitAccount",
+                        foreignField: "_id", as: "journal.debitAccount"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "chartOfAccount",
+                        localField             : "journal.creditAccount",
+                        foreignField: "_id", as: "journal.creditAccount"
+                    }
+                }, {
+                    $lookup: {
+                        from                   : "Customers",
+                        localField             : "sourceDocument._id.supplier",
+                        foreignField: "_id", as: "sourceDocument.subject"
+                    }
+                }, {
+                    $project: {
+                        'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                        'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
+                        'journal.name'          : 1,
+                        'sourceDocument._id'    : 1,
+                        'sourceDocument.name'   : '$sourceDocument._id.name',
+                        'sourceDocument.subject': {$arrayElemAt: ["$sourceDocument.subject", 0]},
+                    }
+                }, {
+                    $group: {
+                        _id        : null,
+                        journalName   : {
+                            $addToSet: {
+                                _id : "$journal.name",
+                                name: "$journal.name"
+                            }
+                        },
+                        sourceDocument   : {
+                            $addToSet: {
+                                _id : "$sourceDocument.subject._id",
+                                name: {$concat: ["$sourceDocument.subject.name.first", " ", "$sourceDocument.subject.name.last"]}
+                            }
+                        },
+                        creditAccount: {
+                            $addToSet: {
+                                _id : "$journal.creditAccount._id",
+                                name: "$journal.creditAccount.name"
+                            }
+                        }
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        callback(err);
+                    }
+
+                    if (result && result.length) {
+                        result = result[0];
+                        pCb(null, result);
+                    } else {
+                        pCb(null, {});
+                    }
+
+                });
+            };
+
+            var parallelTasks = [getForInvoices, getForEmployees];
+
+            async.parallel(parallelTasks, function (err, result) {
+                var empResult = result[0];
+               // var invResult = {sourceDocument: [{_id: 'hfjdaj', name: 'fdsfds'}]};
+               // var ersultObj = .extend(empResult, invResult);
+                callback(null, empResult );
+            });
+
         }
     };
 };

@@ -5,6 +5,7 @@ define([
         'text!templates/journalEntry/list/ListHeader.html',
         'views/journalEntry/list/ListItemView',
         'views/salesInvoice/EditView',
+        'views/Filter/FilterView',
         'models/InvoiceModel',
         'collections/journalEntry/filterCollection',
         'constants',
@@ -14,11 +15,12 @@ define([
         'moment'
     ],
 
-    function (_, $, listViewBase, listTemplate, ListItemView, EditView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment) {
+    function (_, $, listViewBase, listTemplate, ListItemView, EditView, filterView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment) {
         'use strict';
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
             listItemView            : ListItemView,
+            filterView              : filterView,
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: 'journal/journalEntry/totalCollectionLength',
             contentType             : CONSTANTS.JOURNALENTRY,
@@ -155,6 +157,8 @@ define([
                 $currentEl.prepend(itemView.render());
 
                 this.renderCheckboxes();
+
+                this.renderFilter(this);
 
                 this.renderPagination($currentEl, this);
 
