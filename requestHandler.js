@@ -391,23 +391,12 @@ var requestHandler = function (app, event, mainDb) {
 
          if (month && year) {
             query = {month: month, year: year,  dateByWeek: {$lte: dateKey}};
-            date = moment().year(year).month(month).date(1);
+            date = moment().isoWeekYear(year).month(month).date(1);
         } else if (year && week){
             query = {week: week, year: year,  dateByWeek: {$lte: dateKey}};
-            date = moment().year(year).isoWeek(week).day(1);
+            date = moment().isoWeekYear(year).isoWeek(week).day(1);
         } else if (employee){
-
              query.employee = employee;
-
-             if (month && year) {
-                 query = {month: month, year: year,  dateByWeek: {$lte: dateKey}};
-                 date = moment().year(year).month(month).date(1);
-             }
-
-             if (year && week){
-                 query = {week: week, year: year,  dateByWeek: {$lte: dateKey}};
-                 date = moment().year(year).isoWeek(week).day(1);
-             }
          }
 
 

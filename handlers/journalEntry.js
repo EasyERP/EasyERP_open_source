@@ -450,7 +450,7 @@ var Module = function (models) {
                                             }
 
                                             if (vacationSameDate) {
-                                                if (vacationForEmployee[dateKey] === "V" || "S") {
+                                                if ((vacationForEmployee[dateKey] === "V") || (vacationForEmployee[dateKey] === "S")) {
                                                     bodyOvertime.amount = costHour * hours * 100;
                                                     bodySalary.amount = 0;
                                                     bodyOverheadAdmin.amount = adminCoefficient * hours * 100;
@@ -498,7 +498,7 @@ var Module = function (models) {
                     createIdleOvertime = function (totalObject, createWaterfallCb) {
                         var dates = Object.keys(totalObject);
                         var totalIdleObject = {};
-                        var notUsedVacationCost = mainVacationCost + 0;
+                        var notUsedVacationCost = 0;
 
                         async.each(dates, function (dateKey, asyncCb) {
                             var vacationRateForDay;
@@ -649,6 +649,7 @@ var Module = function (models) {
                                 var totalWorked;
                                 var wTracks = empObject.wTracks;
                                 var sourceDocuments = Object.keys(wTracks);
+                                var vacation = empObject.vacation;
 
                                 async.each(sourceDocuments, function (sourceDoc, asyncCb) {
                                     var bodyOverheadIdle = {
@@ -663,7 +664,11 @@ var Module = function (models) {
 
                                     totalWorked = wTracks[sourceDoc];
 
-                                    bodyOverheadIdle.amount = idleRateForDay * totalWorked;
+                                    if (!vacation){
+                                        bodyOverheadIdle.amount = idleRateForDay * totalWorked;
+                                    } else {
+                                        bodyOverheadIdle.amount = 0;
+                                    }
 
                                     createReconciled(bodyOverheadIdle, req.session.lastDb, asyncCb, req.session.uId);
 
@@ -1962,7 +1967,7 @@ var Module = function (models) {
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
 
         var data = req.query;
-        var sort = data.sort ? data.sort : {date: 1};
+        var sort = data.sort ? data.sort : {date: 1, 'journal.name': 1};
         var findInvoice;
         var findSalary;
         var findByEmployee;

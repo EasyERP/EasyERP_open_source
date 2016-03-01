@@ -397,7 +397,7 @@ var Vacation = function (event, models) {
                         capData.month = response.month;
 
                         res.status(200).send({success: 'updated'});
-                        event.emit('setReconcileTimeCard', {req: req, employee: response.employee, month: response.month, year: response.year});
+                        event.emit('setReconcileTimeCard', {req: req, month: response.month, year: response.year});
                         event.emit('recollectVacationDash');
                     });
                 } else {
@@ -442,7 +442,7 @@ var Vacation = function (event, models) {
                             capData.vacation = result.toJSON();
 
                             capacityHandler.vacationChanged(capData, next);
-                            event.emit('setReconcileTimeCard', {req: req, employee: result.employee, month: result.month, year: result.year});
+                            event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
                             cb(null, result);
                         });
                     }, function (err) {
@@ -475,7 +475,7 @@ var Vacation = function (event, models) {
                     }
 
                     res.status(200).send({success: vacation});
-                    event.emit('setReconcileTimeCard', {req: req, employee: vacation.employee, month: vacation.month, year: vacation.year});
+                    event.emit('setReconcileTimeCard', {req: req, month: vacation.month, year: vacation.year});
                     event.emit('recollectVacationDash');
                 });
             } else {
@@ -512,7 +512,7 @@ var Vacation = function (event, models) {
                 return next(err);
             }
 
-            event.emit('setReconcileTimeCard', {req: req, employee: Vacation.employee, month: Vacation.month, year: Vacation.year});
+            event.emit('setReconcileTimeCard', {req: req, month: Vacation.month, year: Vacation.year});
 
             parallelTasks = [populateEmployees, populateDeps];
 
