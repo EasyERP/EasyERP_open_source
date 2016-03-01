@@ -314,7 +314,19 @@ var Module = function (models) {
                             });
                         };
 
-                        async.parallel([salaryFinder, monthHoursFinder, holidaysFinder, vacationFinder], function (err, result) {
+                        var previousVacationCostFinder = function (parallelCb) {
+                            var db = models.connection(req.session.lastDb);
+
+                            db.collection('settings').findOne({name: 'reconcileDate'}, function (err, result) {
+                                if (err) {
+                                    return parallelCb(err);
+                                }
+
+                                parallelCb(null, result);
+                            });
+                        };
+
+                        async.parallel([salaryFinder, monthHoursFinder, holidaysFinder, vacationFinder, previousVacationCostFinder], function (err, result) {
                             async.each(wTracks, function (wTrackModel, asyncCb) {
                                 var j;
                                 var dataObject = {};
@@ -322,6 +334,9 @@ var Module = function (models) {
                                 var employeeSubject = wTrackModel.employee;
                                 var sourceDocumentId = wTrackModel._id;
                                 var methodCb;
+
+                                mainVacationCost = result[4].vacationCost || 0;
+
                                 for (j = 7; j >= 1; j--) {
                                     dataObject[j] = moment([wTrackModel.year, wTrackModel.month - 1]).isoWeek(wTrackModel.week).day(j);
                                 }
@@ -443,7 +458,6 @@ var Module = function (models) {
                                                     if (!createdDateObject[dateKey].employees[employeeSubject].vacation) {
                                                         createdDateObject[dateKey].employees[employeeSubject].vacation = HOURSCONSTANT;
                                                         createdDateObject[dateKey].totalVacationCost += costHour * HOURSCONSTANT * 100;
-                                                        mainVacationCost += costHour * HOURSCONSTANT * 100;
                                                         bodyVacation.amount = costHour * HOURSCONSTANT * 100;
 
                                                         createdDateObject[dateKey].total -= hours;
@@ -484,9 +498,7 @@ var Module = function (models) {
                     createIdleOvertime = function (totalObject, createWaterfallCb) {
                         var dates = Object.keys(totalObject);
                         var totalIdleObject = {};
-                        var notUsedVacationCost = 0;
-
-                        console.dir(totalObject);
+                        var notUsedVacationCost = mainVacationCost + 0;
 
                         async.each(dates, function (dateKey, asyncCb) {
                             var vacationRateForDay;
@@ -602,6 +614,8 @@ var Module = function (models) {
                         }, function (err, result) {
                             if (notUsedVacationCost){
                                 mainVacationCost += notUsedVacationCost;
+                            } else {
+                                mainVacationCost = 0;
                             }
                             createWaterfallCb(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
                         });
@@ -711,6 +725,8 @@ var Module = function (models) {
 
             if (mainVacationCost){
                 setObj.vacationCost = mainVacationCost;
+            } else {
+                setObj.vacationCost = 0;
             }
 
             WTrack.update({_id: {$in: wTracks}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
