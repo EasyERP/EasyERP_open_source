@@ -2303,7 +2303,7 @@ var Module = function (models) {
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
 
         var data = req.query;
-        var sort = data.sort ? data.sort : {date: 1, 'journal.name': 1};
+        var sort = data.sort;
         var findInvoice;
         var findSalary;
         var findByEmployee;
@@ -2312,6 +2312,15 @@ var Module = function (models) {
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var filter = data.filter;
         var filterObj = {};
+        var key;
+
+        if (sort) {
+            key = Object.keys(data.sort)[0].toString();
+            data.sort[key] = parseInt(data.sort[key], 10);
+            sort = data.sort;
+        } else {
+            sort = {date: 1, 'journal.name': 1};
+        }
 
         if (filter) {
             filterObj.$and = caseFilter(filter);

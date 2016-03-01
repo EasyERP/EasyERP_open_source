@@ -5,13 +5,20 @@
         <tr>
             <!--<th class="centerCell"><input type="checkbox" id="check_all"/></th>-->
             <th class="centerCell">N</th>
-            <th>Journal</th>
-            <th>Accounting date</th>
-            <th>Subject</th>
-            <th>Source document</th>
-            <th>Debit Account</th>
-            <th>Credit Account</th>
-            <th>Sum</th>
+            <th class="oe_sortable" data-sort="journal.name">Journal</th><span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="date">Accounting date</th><span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="sourceDocument.subject.name.first">Subject</th><span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="sourceDocument.name">Source document</th><span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="journal.debitAccount.name">Debit Account</th><span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="journal.creditAccount.name">Credit Account</th><span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="debit">Sum</th><span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
         </tr>
         </thead>
         <tbody id="listTable" class="enableTableOdd"></tbody>
