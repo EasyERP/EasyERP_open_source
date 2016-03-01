@@ -102,6 +102,7 @@ var Module = function (models) {
         var parallelRemoveCreate;
         var waterfallCreateEntries;
         var wTracks;
+        var mainVacationCost = 0;
 
         reconcileInvoiceEntries = function (mainCallback) {
             Invoice.find({reconcile: true}, function (err, result) {
@@ -442,6 +443,7 @@ var Module = function (models) {
                                                     if (!createdDateObject[dateKey].employees[employeeSubject].vacation) {
                                                         createdDateObject[dateKey].employees[employeeSubject].vacation = HOURSCONSTANT;
                                                         createdDateObject[dateKey].totalVacationCost += costHour * HOURSCONSTANT * 100;
+                                                        mainVacationCost += costHour * HOURSCONSTANT * 100;
                                                         bodyVacation.amount = costHour * HOURSCONSTANT * 100;
 
                                                         createdDateObject[dateKey].total -= hours;
@@ -482,13 +484,16 @@ var Module = function (models) {
                     createIdleOvertime = function (totalObject, createWaterfallCb) {
                         var dates = Object.keys(totalObject);
                         var totalIdleObject = {};
+                        var notUsedVacationCost = 0;
+
+                        console.dir(totalObject);
 
                         async.each(dates, function (dateKey, asyncCb) {
                             var vacationRateForDay;
                             var year = dateKey.slice(0, 4);
                             var month = dateKey.slice(4, 6);
                             var dateOfMonth = dateKey.slice(6);
-                            var date = moment().isoWeekYear(year).month(month).date(dateOfMonth);
+                            var date = moment().isoWeekYear(year).month(month - 1).date(dateOfMonth);
                             var objectForDay = totalObject[dateKey];
                             var totalHours = objectForDay.total;
                             var totalVacationCost = objectForDay.totalVacationCost;
@@ -502,7 +507,8 @@ var Module = function (models) {
                                 totalIdleObject[dateKey] = 0;
                             }
 
-                            vacationRateForDay = isFinite(totalVacationCost / totalHours) ? totalVacationCost / totalHours : 0;
+
+                            vacationRateForDay = isFinite((notUsedVacationCost + totalVacationCost) / totalHours) ? (notUsedVacationCost + totalVacationCost) / totalHours : 0;
 
                             for (i = employeesCount - 1; i >= 0; i--) {
                                 var employee = employeesIds[i];
@@ -551,7 +557,7 @@ var Module = function (models) {
                                     bodySalaryIdle.sourceDocument._id = sourceDoc;
                                     bodySalaryOvertime.sourceDocument._id = sourceDoc;
 
-                                    if (totalWorkedForDay - HOURSCONSTANT < 0 && !vacation) {
+                                    if (totalWorkedForDay - HOURSCONSTANT < 0) {
                                         if (!vacation) {
                                             if (totalWorked - HOURSCONSTANT >= 0) {
                                                 bodySalaryOvertime.amount = costHour * (totalWorked - HOURSCONSTANT) * 100;
@@ -563,6 +569,7 @@ var Module = function (models) {
                                             }
 
                                             bodyOverheadVacation.amount = vacationRateForDay * totalWorked;
+                                            notUsedVacationCost -= vacationRateForDay * totalWorked;
                                         } else {
                                             bodySalaryOvertime.amount = 0;
                                             bodySalaryIdle.amount = 0;
@@ -572,6 +579,11 @@ var Module = function (models) {
                                         bodySalaryOvertime.amount = 0;
                                         bodySalaryIdle.amount = 0;
                                         bodyOverheadVacation.amount = 0;
+
+                                        if (!vacation && vacationRateForDay && totalWorked){
+                                            bodyOverheadVacation.amount = vacationRateForDay * totalWorked;
+                                            notUsedVacationCost -= vacationRateForDay * totalWorked;
+                                        }
                                     }
 
                                     createReconciled(bodyOverheadVacation, req.session.lastDb, callB, req.session.uId);
@@ -583,7 +595,14 @@ var Module = function (models) {
 
                             }
 
+                            if (totalVacationCost && !totalHours){
+                                notUsedVacationCost += totalVacationCost;
+                            }
+
                         }, function (err, result) {
+                            if (notUsedVacationCost){
+                                mainVacationCost += notUsedVacationCost;
+                            }
                             createWaterfallCb(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
                         });
 
@@ -605,7 +624,7 @@ var Module = function (models) {
                             var year = dateKey.slice(0, 4);
                             var month = dateKey.slice(4, 6);
                             var dateOfMonth = dateKey.slice(6);
-                            var date = moment().isoWeekYear(year).month(month).date(dateOfMonth);
+                            var date = moment().isoWeekYear(year).month(month - 1).date(dateOfMonth);
                             var i;
                             var ourCb = _.after(employeesCount, cb);
 
@@ -688,12 +707,17 @@ var Module = function (models) {
 
             res.status(200).send({success: true});
             var db = models.connection(req.session.lastDb);
+            var setObj = {date: date};
+
+            if (mainVacationCost){
+                setObj.vacationCost = mainVacationCost;
+            }
 
             WTrack.update({_id: {$in: wTracks}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
 
             });
 
-            db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: {date: date}}, function (err, result) {
+            db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: setObj}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
