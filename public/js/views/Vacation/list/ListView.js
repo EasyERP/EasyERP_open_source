@@ -53,7 +53,7 @@ define([
             },
 
             events: {
-                "click .trash"                                                    : "deleteItemPressed",
+                "click .fa-trash-o"                                               : "deleteItemPressed",
                 //"blur td.editable input"                                          : "hideInput",
                 "click td.editable, .current-selected"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
@@ -530,7 +530,7 @@ define([
                     return el._id === id;
                 });
                 //ToDo refactor
-                var delHTML = '<span title="Delete" class="trash icon" style="display: inline">1</span>';
+                var delHTML = '<span title="Delete" class="fa fa-trash-o"></span>';
 
                 var editVacationModel;
                 var employee;
