@@ -3,7 +3,6 @@
 /.ntvs_analysis.dat.tmp
 /EasyErp.sln
 /EasyErp.njsproj
-/public/css/main.css
 /doc
 /Test Results - Unnamed.html
 # Created by .ignore support plugin (hsz.mobi)
@@ -36,8 +35,6 @@ build/Release
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
-
-
 
 .idea
 log.txt

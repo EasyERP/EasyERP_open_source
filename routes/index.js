@@ -153,11 +153,11 @@ module.exports = function (app, mainDb) {
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
     });
-
+/*
     app.get('/kill', function (req, res, next) {
         res.status(200).send('skjdgfjsdgfj');
         process.exit(1);
-    });
+    });*/
 
     app.use('/filter', filterRouter);
     app.use('/product', productRouter);
