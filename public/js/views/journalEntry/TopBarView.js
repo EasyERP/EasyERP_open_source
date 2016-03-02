@@ -15,7 +15,9 @@ define([
             template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click #reconcileBtn": "reconcile"
+                "click #reconcileBtn": "reconcile",
+                "click #top-bar-exportToCsvBtn" : "exportToCsv",
+                "click #top-bar-exportToXlsxBtn": "exportToXlsx"
             },
 
             reconcile: function (e) {
@@ -38,6 +40,16 @@ define([
                 }
 
                 this.render();
+            },
+
+            exportToCsv: function (event) {
+                event.preventDefault();
+                this.trigger('exportToCsv');
+            },
+
+            exportToXlsx: function (event) {
+                event.preventDefault();
+                this.trigger('exportToXlsx');
             },
 
             render: function () {

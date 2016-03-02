@@ -26,6 +26,367 @@ var Module = function (models) {
 
     var access = require("../Modules/additions/access.js")(models);
     var CONSTANTS = require("../constants/mainConstants.js");
+    var lookupWTrackArray = [
+        {
+            $match: {
+                "sourceDocument.model": "wTrack",
+                debit                 : {$gt: 0}
+            }
+        }, {
+            $lookup: {
+                from        : "chartOfAccount",
+                localField  : "account",
+                foreignField: "_id", as: "account"
+            }
+        }, {
+            $lookup: {
+                from        : "wTrack",
+                localField  : "sourceDocument._id",
+                foreignField: "_id", as: "sourceDocument._id"
+            }
+        }, {
+            $lookup: {
+                from        : "journals",
+                localField  : "journal",
+                foreignField: "_id", as: "journal"
+            }
+        }, {
+            $project: {
+                debit               : {$divide: ['$debit', '$currency.rate']},
+                journal             : {$arrayElemAt: ["$journal", 0]},
+                account             : {$arrayElemAt: ["$account", 0]},
+                'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]},
+                date                : 1
+            }
+        }, {
+            $lookup: {
+                from        : "chartOfAccount",
+                localField  : "journal.debitAccount",
+                foreignField: "_id", as: "journal.debitAccount"
+            }
+        }, {
+            $lookup: {
+                from        : "jobs",
+                localField  : "sourceDocument._id.jobs",
+                foreignField: "_id", as: "sourceDocument._id.jobs"
+            }
+        }, {
+            $lookup: {
+                from        : "chartOfAccount",
+                localField  : "journal.creditAccount",
+                foreignField: "_id", as: "journal.creditAccount"
+            }
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "sourceDocument._id.employee",
+                foreignField: "_id", as: "sourceDocument._id.employee"
+            }
+        }, {
+            $project: {
+                debit                   : 1,
+                'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
+                'journal.name'          : 1,
+                date                    : 1,
+                'sourceDocument._id'    : 1,
+                'sourceDocument.subject': {$arrayElemAt: ["$sourceDocument._id.employee", 0]},
+                'sourceDocument.name'   : '$sourceDocument._id.jobs.name'
+            }
+        }, {
+            $project: {
+                debit                        : {$divide: ['$debit', 100]},
+                'journal.debitAccount'       : 1,
+                'journal.creditAccount'      : 1,
+                'journal.name'               : 1,
+                date                         : 1,
+                'sourceDocument._id'         : 1,
+                'sourceDocument.subject.name': {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']},
+                'sourceDocument.subject._id' : 1,
+                'sourceDocument.name'        : 1
+            }
+        }
+    ];
+
+    var lookupEmployeesArray = [{
+        $match: {
+            "sourceDocument.model": "Employees",
+            debit                 : {$gt: 0}
+        }
+    }, {
+        $lookup: {
+            from        : "chartOfAccount",
+            localField  : "account",
+            foreignField: "_id", as: "account"
+        }
+    }, {
+        $lookup: {
+            from        : "Employees",
+            localField  : "sourceDocument._id",
+            foreignField: "_id", as: "sourceDocument._id"
+        }
+    }, {
+        $lookup: {
+            from        : "journals",
+            localField  : "journal",
+            foreignField: "_id", as: "journal"
+        }
+    }, {
+        $project: {
+            debit               : {$divide: ['$debit', '$currency.rate']},
+            journal             : {$arrayElemAt: ["$journal", 0]},
+            account             : {$arrayElemAt: ["$account", 0]},
+            'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]},
+            date                : 1
+        }
+    }, {
+        $lookup: {
+            from        : "chartOfAccount",
+            localField  : "journal.debitAccount",
+            foreignField: "_id", as: "journal.debitAccount"
+        }
+    }, {
+        $lookup: {
+            from        : "chartOfAccount",
+            localField  : "journal.creditAccount",
+            foreignField: "_id", as: "journal.creditAccount"
+        }
+    }, {
+        $lookup: {
+            from        : "Department",
+            localField  : "sourceDocument._id.department",
+            foreignField: "_id", as: "sourceDocument._id.department"
+        }
+    }, {
+        $project: {
+            debit                          : 1,
+            'journal.debitAccount'         : {$arrayElemAt: ["$journal.debitAccount", 0]},
+            'journal.creditAccount'        : {$arrayElemAt: ["$journal.creditAccount", 0]},
+            'sourceDocument._id.department': {$arrayElemAt: ["$sourceDocument._id.department", 0]},
+            'journal.name'                 : 1,
+            date                           : 1,
+            'sourceDocument.subject'       : '$sourceDocument._id'
+        }
+    }, {
+        $project: {
+            debit                        : {$divide: ['$debit', 100]},
+            'journal.debitAccount'       : 1,
+            'journal.creditAccount'      : 1,
+            'sourceDocument._id'         : 1,
+            'journal.name'               : 1,
+            date                         : 1,
+            'sourceDocument.subject.name': {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']},
+            'sourceDocument.name'        : '$sourceDocument._id.department.departmentName',
+            'sourceDocument.subject._id' : 1
+        }
+    }];
+
+    var lookupInvoiceArray = [{
+        $match: {
+            "sourceDocument.model": "Invoice",
+            debit                 : {$gt: 0}
+        }
+    }, {
+        $lookup: {
+            from        : "chartOfAccount",
+            localField  : "account",
+            foreignField: "_id", as: "account"
+        }
+    }, {
+        $lookup: {
+            from        : "Invoice",
+            localField  : "sourceDocument._id",
+            foreignField: "_id", as: "sourceDocument._id"
+        }
+    }, {
+        $lookup: {
+            from        : "journals",
+            localField  : "journal",
+            foreignField: "_id", as: "journal"
+        }
+    }, {
+        $project: {
+            debit                 : {$divide: ['$debit', '$currency.rate']},
+            currency              : 1,
+            journal               : {$arrayElemAt: ["$journal", 0]},
+            account               : {$arrayElemAt: ["$account", 0]},
+            'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]},
+            'sourceDocument.model': 1,
+            date                  : 1
+        }
+    }, {
+        $lookup: {
+            from        : "chartOfAccount",
+            localField  : "journal.debitAccount",
+            foreignField: "_id", as: "journal.debitAccount"
+        }
+    }, {
+        $lookup: {
+            from        : "chartOfAccount",
+            localField  : "journal.creditAccount",
+            foreignField: "_id", as: "journal.creditAccount"
+        }
+    }, {
+        $lookup: {
+            from        : "Customers",
+            localField  : "sourceDocument._id.supplier",
+            foreignField: "_id", as: "sourceDocument.subject"
+        }
+    }, {
+        $project: {
+            debit                   : 1,
+            'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
+            'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
+            'journal.name'          : 1,
+            date                    : 1,
+            'sourceDocument._id'    : 1,
+            'sourceDocument.name'   : '$sourceDocument._id.name',
+            'sourceDocument.subject': {$arrayElemAt: ["$sourceDocument.subject", 0]},
+        }
+    }, {
+        $project: {
+            debit                        : 1,
+            'journal.debitAccount'       : 1,
+            'journal.creditAccount'      : 1,
+            'journal.name'               : 1,
+            date                         : 1,
+            'sourceDocument._id'         : 1,
+            'sourceDocument.name'        : 1,
+            'sourceDocument.subject._id' : 1,
+            'sourceDocument.subject.name': {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']},
+        }
+    }];
+
+    var exporter = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').journalEntry;
+
+    this.exportToXlsx = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var filter = req.params.filter;
+        var filterObj = {};
+        var type = req.query.type;
+        var options;
+        var query = [];
+
+        filter = JSON.parse(filter);
+
+        if (filter) {
+            filterObj.$and = caseFilter(filter);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : 'journalEntry'
+        };
+
+        function lookupForWTrack(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+
+            for (var i = 0; i < lookupWTrackArray.length; i++) {
+                query.push(lookupWTrackArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        function lookupForEmployees(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+
+            for (var i = 0; i < lookupEmployeesArray.length; i++) {
+                query.push(lookupEmployeesArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        function lookupForInvoice(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+
+            for (var i = 0; i < lookupInvoiceArray.length; i++) {
+                query.push(lookupInvoiceArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        async.parallel([lookupForWTrack, lookupForEmployees, lookupForInvoice], function (err, result) {
+            var wTrackResult = result[0];
+            var employeesResult = result[1];
+            var invoiceResult = result[2];
+            var resultArray;
+
+            resultArray = (wTrackResult.concat(employeesResult)).concat(invoiceResult);
+
+            exporter.exportToXlsx({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : 'journalEntry'
+            });
+        });
+
+    };
+
+    this.exportToCsv = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var filter = req.params.filter;
+        var filterObj = {};
+        var type = req.query.type;
+        var query = [{$match: type ? {type: type} : {}}];
+        var options;
+
+        filter = JSON.parse(filter);
+
+        if (filter) {
+            filterObj.$and = caseFilter(filter);
+        }
+
+        for (var i = 0; i < lookupWTrackArray.length; i++) {
+            query.push(lookupWTrackArray[i]);
+        }
+
+        if (filterObj && filterObj.$and && filterObj.$and.length) {
+            query.push({$match: filterObj});
+        }
+
+        options = {
+            res     : res,
+            next    : next,
+            Model   : Model,
+            query   : query,
+            map     : exportMap,
+            fileName: 'journalEntry'
+        };
+
+        exporter.exportToCsv(options);
+    };
 
     this.removeBySourceDocument = function (req, sourceId) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);

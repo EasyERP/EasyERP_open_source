@@ -3,6 +3,21 @@ module.exports = (function () {
     var moment = require('../public/js/libs/moment/moment');
     var dateFormat = 'MMMM Do YYYY';
 
+    var journalEntry = {
+        collection: 'journalentries',
+        schema    : 'journalEntry',
+        aliases   : {
+            'journal.name'               : 'Journal',
+            date                         : 'Accounting date',
+            'sourceDocument.subject.name': 'Subject',
+            'sourceDocument.name'        : 'Source Document',
+            'journal.debitAccount.name'  : 'Debit Account',
+            'journal.creditAccount.name' : 'Credit Account',
+            'debit'                      : 'Summ'
+
+        }
+    };
+
     var department = {
         collection: 'Department',
         schema    : 'Department',
@@ -630,7 +645,8 @@ module.exports = (function () {
         Project     : project,
         Industry    : industry,
         Tasks       : task,
-        Products    : product
+        Products    : product,
+        journalEntry: journalEntry
     };
 
 })();

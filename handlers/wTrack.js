@@ -32,10 +32,10 @@ var wTrack = function (event, models) {
 
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
-
-    exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-    }, exportMap, "wTrack");
+    //
+    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    //    return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+    //}, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
         access.getEditWritAccess(req, req.session.uId, 75, function (access) {

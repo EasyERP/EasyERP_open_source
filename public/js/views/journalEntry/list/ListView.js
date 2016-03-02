@@ -24,6 +24,8 @@ define([
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: 'journal/journalEntry/totalCollectionLength',
             contentType             : CONSTANTS.JOURNALENTRY,
+            exportToXlsxUrl         : '/journal/journalEntry/exportToXlsx',
+            exportToCsvUrl          : '/journal/journalEntry/exportToCsv',
 
             initialize: function (options) {
                 $(document).off("click");

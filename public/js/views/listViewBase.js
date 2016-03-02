@@ -645,6 +645,9 @@ define([
             exportToXlsx        : function () {
                 //todo change after routes refactoring
                 if (this.exportToXlsxUrl) {
+                    if (this.filter){
+                        this.exportToXlsxUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
                     window.location = this.exportToXlsxUrl;
                 } else {
                     if (this.collection) {
