@@ -51,5 +51,4 @@ EasyErp-Desktop.njsproj
 EasyErp-Desktop.sln
 .vs
 EasyErp-Desktop.iml
-config/development.js
 helpers\redisClient.js
