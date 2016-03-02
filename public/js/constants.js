@@ -187,6 +187,10 @@ define([], function () {
             'Stage'       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
+            },
+            'Sales Person': {
+                view   : 'salesPerson',
+                backend: 'salesPerson._id'
             }
         },
         Opportunities   : {
