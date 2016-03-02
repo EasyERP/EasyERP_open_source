@@ -144,16 +144,29 @@ query.exec(function (error, _res) {
     async.eachLimit(_res, 50, function (emp, callback) {
         var objectToSave;
         var hire;
+        var event;
         var fire = [];
         var transfer;
         var fired = (emp.hire.length === emp.fire.length);
 
-        if (fired) {
-            fire = [emp.fire.pop().date];
-        }
+        emp.hire = emp.hire.map(function(hireObj) {
+            "use strict";
+            hireObj.info = "updated";
+            return hireObj;
+        });
 
-        hire = [emp.hire.shift().date];
+        hire = [emp.hire[0].date];
         transfer = emp.hire;
+
+        transfer[0].info = "hired";
+
+        if (fired) {
+            event = emp.fire.pop();
+            event.info = "fired";
+            fire = [event.date];
+            transfer.push(event);
+
+        }
 
         objectToSave = {
             hire    : hire,
@@ -169,6 +182,6 @@ query.exec(function (error, _res) {
             return console.dir(err);
         }
 
-        console.dir('Good 50');
+        console.dir('Good');
     })
 });
