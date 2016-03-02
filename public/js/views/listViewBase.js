@@ -7,10 +7,11 @@ define([
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
         'common',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
 
-    function ($, _, Backbone, paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
+    function ($, _, Backbone, paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService, helpers) {
         'use strict';
         var ListViewBase = Backbone.View.extend({
             el                : '#content-holder',
@@ -131,6 +132,10 @@ define([
                         context.page = page = Math.ceil(length / itemsNumber);
                         context.fetchSortCollection(context.sort);
                         context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                    }
+
+                    if (response.totalValue) {
+                        context.$el.find('#totalDebit').text(helpers.currencySplitter(response.totalValue.toFixed(2)));
                     }
 
                     context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js

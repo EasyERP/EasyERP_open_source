@@ -1833,13 +1833,9 @@ var Module = function (models) {
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
 
         var data = req.query;
-        var sort = data.sort ? data.sort : {date: 1, 'journal.name': 1};
         var findInvoice;
         var findSalary;
         var findByEmployee;
-        var count = parseInt(data.count, 10) || 100;
-        var page = parseInt(data.page, 10);
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var filter = data.filter;
         var filterObj = {};
 
@@ -1918,12 +1914,6 @@ var Module = function (models) {
                             }
                         }, {
                             $match: filterObj
-                        }, {
-                            $sort: sort
-                        }, {
-                            $skip: skip
-                        }, {
-                            $limit: count
                         }], function (err, result) {
                             if (err) {
                                 return next(err);
@@ -2009,12 +1999,6 @@ var Module = function (models) {
                             }
                         }, {
                             $match: filterObj
-                        }, {
-                            $sort: sort
-                        }, {
-                            $skip: skip
-                        }, {
-                            $limit: count
                         }]);
 
                     query.options = {allowDiskUse: true};
@@ -2110,12 +2094,6 @@ var Module = function (models) {
                             }
                         }, {
                             $match: filterObj
-                        }, {
-                            $sort: sort
-                        }, {
-                            $skip: skip
-                        }, {
-                            $limit: count
                         }]);
 
                     query.options = {allowDiskUse: true};
@@ -2139,8 +2117,13 @@ var Module = function (models) {
                     var salary = result[1];
                     var salaryEmployee = result[2];
                     var models = (invoices.concat(salary)).concat(salaryEmployee);
+                    var totalValue = 0;
 
-                    res.status(200).send({count: models.length});
+                    models.forEach(function (model) {
+                        totalValue += model.debit / 100;
+                    });
+
+                    res.status(200).send({count: models.length, totalValue: totalValue});
                 });
             } else {
                 res.status(403).send();
