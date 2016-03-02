@@ -19,16 +19,14 @@ module.exports = function (server) {
         }
     );
     var sub = redis.createClient(
-        parseInt(process.env.SOCKET_DB_PORT),
+        parseInt(process.env.SOCKET_DB_PORT, 10),
         process.env.SOCKET_DB_HOST,
         {
             return_buffers: true
         }
     );
 
-    io = require('socket.io')(
-        server
-    );
+    io = require('socket.io')(server);
 
     io.set('transports', [
         'websocket',
@@ -36,12 +34,12 @@ module.exports = function (server) {
         'xhr-polling'
     ]);
 
-    pub.select(parseInt(process.env.SOCKET_DB));
-    sub.select(parseInt(process.env.SOCKET_DB));
+    pub.select(parseInt(process.env.SOCKET_DB, 10));
+    sub.select(parseInt(process.env.SOCKET_DB, 10));
 
     io.adapter(adapter({
         host     : process.env.SOCKET_DB_HOST,
-        port     : parseInt(process.env.SOCKET_DB_PORT),
+        port     : parseInt(process.env.SOCKET_DB_PORT, 10),
         pubClient: pub,
         subClient: sub
     }));

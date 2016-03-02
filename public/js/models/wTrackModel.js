@@ -1,7 +1,11 @@
-/**
- * Created by Roman on 04.05.2015.
- */
-define(['Validation', 'common', 'moment'], function (Validation, common, moment) {
+define([
+    'Backbone',
+    'Validation',
+    'common',
+    'moment'
+], function (Backbone, Validation, common, moment) {
+    "use strict";
+
     var wTrackModel = Backbone.Model.extend({
         idAttribute: "_id",
 

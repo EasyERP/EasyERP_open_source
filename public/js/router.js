@@ -397,16 +397,16 @@ define([
                     function createViews() {
                         collection.unbind('reset');
                         var contentview = new contentView({collection: collection, startTime: startTime});
+                        var url = '#easyErp/Profiles';
                         var topbarView = new topBarView({actionType: "Content"});
 
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editProfileDetails, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
-                        topbarView.bind('saveEvent', contentview.saveProfile, contentview);
 
+                        topbarView.bind('saveEvent', contentview.saveProfile, contentview);
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);
-                        var url = '#easyErp/Profiles';
                         Backbone.history.navigate(url, {replace: true});
                     }
                 });
@@ -490,13 +490,13 @@ define([
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
 
                     custom.setCurrentVT('list');
-
+                    var url = '#easyErp/myProfile';
                     var contentview = new contentView({startTime: startTime});
                     var topbarView = new topBarView({actionType: "Content"});
 
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
-                    var url = '#easyErp/myProfile';
+
                     Backbone.history.navigate(url, {replace: true});
                 });
             }
@@ -651,6 +651,7 @@ define([
                         collection.unbind('reset');
                         var contentview = new contentView({collection: collection, startTime: startTime});
                         var topbarView = new topBarView({actionType: "Content"});
+                        var url = '#easyErp/Workflows';
 
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editWorkflowsDetails, contentview);
@@ -659,7 +660,7 @@ define([
 
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);
-                        var url = '#easyErp/Workflows';
+
                         Backbone.history.navigate(url, {replace: true});
                     }
                 });

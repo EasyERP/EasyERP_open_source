@@ -39,7 +39,6 @@ var wTrack = function (models) {
         var query = req.query;
         var employeesArray = [];
         var filter = query.filter || {};
-        var currentYear = moment().weekYear();
         var departmentsArray = [objectId(CONSTANTS.HR_DEPARTMENT_ID),
             objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID),
             objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)];
@@ -55,6 +54,8 @@ var wTrack = function (models) {
         var endDate;
         var _startDate;
         var _endDate;
+        var _startDateByMonth;
+        var _endDateByMonth;
         var _dateStr;
         var duration;
         var weeks = 0;
@@ -70,7 +71,9 @@ var wTrack = function (models) {
         weeksArr = [];
 
         if (filter && filter.startDate && filter.endDate) {
+            startDate = new Date(filter.startDate);
             startDate = moment(filter.startDate);
+            endDate = new Date(filter.endDate);
             endDate = moment(filter.endDate);
         } else {
             startDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
@@ -78,7 +81,11 @@ var wTrack = function (models) {
         }
 
         _startDate = moment(startDate);
+        _startDateByMonth = _startDate.year() * 100 + _startDate.month() + 1;
+        _startDate = _startDate.isoWeekYear() * 100 + _startDate.isoWeek();
         _endDate = moment(endDate);
+        _endDateByMonth = _endDate.year() * 100 + _endDate.month() + 1;
+        _endDate = _endDate.isoWeekYear() * 100 + _endDate.isoWeek();
 
         duration = endDate.diff(startDate, 'weeks');
 
@@ -100,7 +107,7 @@ var wTrack = function (models) {
         delete filter.startDate;
         delete filter.endDate;
 
-        key = startDate + '_' + endDate + '_' + JSON.stringify(filter);
+        key = _startDate + '_' + _endDate + '_' + JSON.stringify(filter);
 
         employeeQueryForEmployeeByDep = {
             $and: [{
@@ -322,16 +329,8 @@ var wTrack = function (models) {
         function vacationComposer(parallelCb) {
             //ToDo optimize and refactor
             var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-            var startMonth = moment().weekYear(weeksArr[0].year).week(weeksArr[0].week).month() + 1;
-            var endWeek = weeksArr[weeksArr.length - 1].week;
-            var endYear = weeksArr[weeksArr.length - 1].year;
-            var endMonth = moment().weekYear(currentYear).week(endWeek).month() + 1;
-
-            var startDate = weeksArr[0].year * 100 + startMonth;
-            var endDate = endYear * 100 + endMonth;
-
             var matchObject = {
-                $and: [{dateByMonth: {$gte: startDate, $lte: endDate}}]
+                $and: [{dateByMonth: {$gte: _startDateByMonth, $lte: _endDateByMonth}}]
             };
 
             if (employeesArray.length) {

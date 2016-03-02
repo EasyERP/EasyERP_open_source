@@ -9,9 +9,10 @@ define([
         'moment',
         'async',
         'common',
-        'dataService'
+        'dataService',
+        'helpers/employeeHelper'
     ],
-    function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService) {
+    function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService, employeeHelper) {
         "use strict";
         var CreateView = Backbone.View.extend({
             template   : _.template(template),
@@ -30,11 +31,23 @@ define([
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
 
+                var wTrack = options.wTracks[0];
+                var year = wTrack.year;
+                var employee = wTrack.employee._id;
+                var week = wTrack.week;
+
                 this.dateByWeek = options.dateByWeek;
                 this.tds = options.tds;
                 this.row = options.tr;
                 this.wTracks = options.wTracks;
-                this.render(options);
+
+                employeeHelper.getNonWorkingDaysByWeek(year, week, employee, null,
+                    function (nonWorkingDays, self) {
+                        "use strict";
+                        options.nonWorkingDays = nonWorkingDays;
+                        self.render(options);
+                    }, this);
+
             },
 
             keyDown: function (e) {
@@ -175,7 +188,7 @@ define([
                 var totalHours = options.totalWorked;
                 var targetEmployeeContainer = this.row.find('td.wTrackInfo[data-date="' + this.dateByWeek + '"]');
                 var hoursContainer = targetEmployeeContainer.find('span.projectHours');
-                var targetTdIndex = this.row.find('td').index(targetEmployeeContainer);
+                var targetTdIndex = this.row.find('td').index(targetEmployeeContainer) - 1;
                 var employeeId = this.row.attr('data-employee');
 
                 hoursContainer.text(totalHours);
@@ -209,7 +222,7 @@ define([
                     }
 
                     return value;
-                };
+                }
 
                 for (var i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
@@ -407,6 +420,7 @@ define([
                     responseObj: this.responseObj
                 });
 
+
                 $target.append(this.selectView.render().el);
 
                 return false;
@@ -423,7 +437,7 @@ define([
             getDataForCellClass: function (updatedTdIndex, employeeId, totalHours) {
                 var table = $('#dashboardBody');
                 var targetRow = table.find('[data-id="' + employeeId + '"]');
-                var targetTd = targetRow.find('td').eq(updatedTdIndex);
+                var targetTd = targetRow.find('td.dashboardWeek').eq(updatedTdIndex);
                 var hoursSpan = targetTd.find('span.vacationHours');
                 var vacationSpan = targetTd.find('span.vacation');
                 var holidaysSpan = targetTd.find('span.viewCount');
@@ -569,7 +583,10 @@ define([
                     }
                 });
 
+                this.delegateEvents(this.events);
+
                 this.asyncLoadImgs(data);
+                this.delegateEvents(this.events);
 
                 return this;
             }

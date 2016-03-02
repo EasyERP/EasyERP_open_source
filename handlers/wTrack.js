@@ -8,16 +8,11 @@ var wTrack = function (event, models) {
     var wTrackSchema = mongoose.Schemas.wTrack;
     var DepartmentSchema = mongoose.Schemas.Department;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
-    var SalarySchema = mongoose.Schemas.Salary;
     var HolidaySchema = mongoose.Schemas.Holiday;
     var VacationSchema = mongoose.Schemas.Vacation;
-    var WorkflowSchema = mongoose.Schemas.workflow;
     var jobsSchema = mongoose.Schemas.jobs;
     var ProjectSchema = mongoose.Schemas.Project;
     var EmployeeSchema = mongoose.Schemas.Employee;
-    /*var CustomerSchema = mongoose.Schemas['Customer'];
-     var EmployeeSchema = mongoose.Schemas['Employee'];
-     var WorkflowSchema = mongoose.Schemas['workflow'];*/
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
@@ -67,6 +62,7 @@ var wTrack = function (event, models) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -86,11 +82,14 @@ var wTrack = function (event, models) {
                         }
                         if (wTrack) {
                             event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                            event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                             event.emit('recollectProjectInfo');
                             event.emit('dropHoursCashes', req);
                             event.emit('recollectVacationDash');
+
+                            if (needUpdateKeys) {
+                                event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                            }
                         }
                         res.status(200).send({success: 'updated'});
                     });
@@ -105,8 +104,9 @@ var wTrack = function (event, models) {
 
     this.putchBulk = function (req, res, next) {
         var body = req.body;
-        var uId;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var needUpdateKeys = body.month || body.week || body.year || body.isoYear;
+        var uId;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
@@ -128,6 +128,7 @@ var wTrack = function (event, models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
+
                         WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                             if (err) {
                                 return cb(err);
@@ -135,10 +136,13 @@ var wTrack = function (event, models) {
 
                             if (wTrack) {
                                 event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                                event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                                 event.emit('recollectProjectInfo');
                                 event.emit('recollectVacationDash');
+
+                                if (needUpdateKeys) {
+                                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                                }
                             }
 
                             cb(null, wTrack);
@@ -250,12 +254,11 @@ var wTrack = function (event, models) {
         var query = req.query;
         var filter = query.filter;
         var filterObj = {};
-        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+        var waterfallTasks;
+
         if (filter) {
             filterObj.$and = caseFilter(filter);
         }
-
-        var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -422,7 +425,6 @@ var wTrack = function (event, models) {
                 sort = query.sort;
             }
         } else {
-            // sort = {"year": -1, "month": -1, "week": -1};
             sort = {"createdBy.date": -1};
         }
 
@@ -862,6 +864,8 @@ var wTrack = function (event, models) {
                     var enDate = new Date(options.endDate);
                     var startYear = moment(stDate).year();
                     var endYear = options.endDate ? moment(enDate).year() : startYear + 1;
+
+                    journalEntry.setReconcileDate(req, stDate);
 
                     for (var j = 7; j >= 1; j--) {
                         options[j] = parseInt(options[j]);
@@ -1359,6 +1363,7 @@ var wTrack = function (event, models) {
         });
 
     };
+
 
     this.getForDashVacation = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);

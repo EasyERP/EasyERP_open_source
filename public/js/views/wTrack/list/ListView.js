@@ -23,349 +23,348 @@ define([
         'custom',
         'moment',
         'constants',
-        'helpers/keyCodeHelper'
-    ],
-
-    function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes) {
+        'helpers/keyCodeHelper',
+        'helpers/employeeHelper'
+    ], function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes, employeeHelper) {
         "use strict";
 
-        var wTrackListView = listViewBase.extend({
-            createView: createView,
-            listTemplate: listTemplate,
-            listItemView: listItemView,
-            contentCollection: contentCollection,
-            filterView: filterView,
-            contentType: 'wTrack',
-            viewType: 'list',
-            responseObj: {},
-            wTrackId: null, //need for edit rows in listView
-            totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable: null, //cashedJqueryEllemnt
-            editCollection: null,
-            selectedProjectId: [],
-            genInvoiceEl: null,
-            changedModels: {},
-            exportToCsvUrl: '/wTrack/exportToCsv',
-            exportToXlsxUrl: '/wTrack/exportToXlsx',
+    var wTrackListView = listViewBase.extend({
+        createView              : createView,
+        listTemplate            : listTemplate,
+        listItemView            : listItemView,
+        contentCollection       : contentCollection,
+        filterView              : filterView,
+        contentType             : 'wTrack',
+        viewType                : 'list',
+        responseObj             : {},
+        wTrackId                : null, //need for edit rows in listView
+        totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
+        $listTable              : null, //cashedJqueryEllemnt
+        editCollection          : null,
+        selectedProjectId       : [],
+        genInvoiceEl            : null,
+        changedModels           : {},
+        exportToCsvUrl          : '/wTrack/exportToCsv',
+        exportToXlsxUrl         : '/wTrack/exportToXlsx',
 
-            initialize: function (options) {
-                this.startTime = options.startTime;
-                this.collection = options.collection;
-                this.filter = options.filter;
-                this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 100;
-                this.newCollection = options.newCollection;
-                this.deleteCounter = 0;
-                this.page = options.collection.page;
+        initialize: function (options) {
+            this.startTime = options.startTime;
+            this.collection = options.collection;
+            this.filter = options.filter;
+            this.sort = options.sort;
+            this.defaultItemsNumber = this.collection.namberToShow || 100;
+            this.newCollection = options.newCollection;
+            this.deleteCounter = 0;
+            this.page = options.collection.page;
 
-                this.render();
+            this.render();
 
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                this.contentCollection = contentCollection;
-                this.stages = [];
-            },
+            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            this.contentCollection = contentCollection;
+            this.stages = [];
+        },
 
-            events: {
-                "click .stageSelect": "showNewSelect",
-                "click tr.enableEdit": "editRow",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "change .autoCalc": "autoCalc",
-                "change .editable": "setEditable",
-                "keydown input.editing": "keyDown",
-                "click": "removeInputs"
-            },
+        events: {
+            "click .stageSelect"                               : "showNewSelect",
+            "click tr.enableEdit"                              : "editRow",
+            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            "change .autoCalc"                                 : "autoCalc",
+            "change .editable"                                 : "setEditable",
+            "keydown input.editing"                            : "keyDown",
+            "click"                                            : "removeInputs"
+        },
 
-            removeInputs: function () {
-                // this.setChangedValueToModel();
-                if (this.selectView) {
-                    this.selectView.remove();
+        removeInputs: function () {
+            // this.setChangedValueToModel();
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+        },
+
+        generateJob: function (e) {
+            var target = $(e.target);
+            var id = target.closest('tr').attr('data-id');
+            var wTrackModel = this.editCollection.get(id) || this.collection.get(id);
+            var model = this.projectModel || wTrackModel.get('project');
+            var projectsDdContainer = $('#projectDd');
+
+            if (!model) {
+                projectsDdContainer.css('color', 'red');
+
+                return App.render({
+                    type   : 'error',
+                    message: CONSTANTS.SELECTP_ROJECT
+                });
+            }
+
+            new CreateJob({
+                model     : model,
+                wTrackView: this
+            });
+
+            return false;
+        },
+
+        generatedWtracks: function () {
+            var self = this;
+            var tr = this.$listTable.find('.false');
+            var projectId = tr.find('[data-content="project"]').attr('data-id');
+
+            dataService.getData("/jobs/getForDD", {"projectId": projectId, "all": true}, function (jobs) {
+
+                self.responseObj['#jobs'] = jobs;
+
+                tr.find('[data-content="jobs"]').addClass('editable');
+            });
+        },
+
+        keyDown: function (e) {
+            var code = e.keyCode;
+
+            if (keyCodes.isEnter(code)) {
+                this.autoCalc(e);
+                this.calculateCost(e, this.wTrackId);
+                this.setChangedValueToModel();
+                this.showSaveCancelBtns();
+
+                e.stopPropagation();
+            } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
+                e.preventDefault();
+            }
+        },
+
+        generateInvoice: function () {
+            var selectedWtracks = this.$el.find('input.listCB:checked');
+            var wTracks = [];
+            var self = this;
+            var project;
+            var assigned;
+            var customer;
+            var total = 0;
+            var revenue;
+
+            async.each(selectedWtracks, function (el, cb) {
+                var id = $(el).val();
+                var model = self.collection.get(id);
+                var reven = model.get('revenue');
+
+                if (typeof reven !== 'number') {
+                    model.set({revenue: parseFloat(reven) * 100});
                 }
-            },
 
-            generateJob: function (e) {
-                var target = $(e.target);
-                var id = target.closest('tr').attr('data-id');
-                var wTrackModel = this.editCollection.get(id) || this.collection.get(id);
-                var model = this.projectModel || wTrackModel.get('project');
-                var projectsDdContainer = $('#projectDd');
+                revenue = reven.toString().replace('$', '');
+                revenue = parseFloat(revenue);
 
-                if (!model) {
-                    projectsDdContainer.css('color', 'red');
+                if (typeof reven === 'number') {
+                    revenue = revenue / 100;
+                }
 
-                    return App.render({
-                        type: 'error',
-                        message: CONSTANTS.SELECTP_ROJECT
+                total += revenue;
+
+                if (!project) {
+                    project = model.get('project');
+                    assigned = project.projectmanager;
+                    customer = project.customer;
+                }
+
+                wTracks.push(model.toJSON());
+                cb();
+            }, function (err) {
+                if (!err) {
+                    new wTrackCreateView({
+                        wTracks : wTracks,
+                        project : project,
+                        assigned: assigned,
+                        customer: customer,
+                        total   : total
                     });
                 }
+            });
+        },
 
-                new CreateJob({
-                    model: model,
-                    wTrackView: this
-                });
+        hideGenerateCopy: function () {
+            //$('#top-bar-generateBtn').hide();
+            $('#top-bar-copyBtn').hide();
+            $('#top-bar-createBtn').show();
+        },
 
-                return false;
-            },
+        copyRow: function (e) {
+            var self = this;
+            var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
+            var length = checkedRows.length;
+            var selectedWtrack;
+            var target;
+            var id;
+            var row;
+            var model;
+            var _model;
+            var tdsArr;
+            var cid;
+            var hours;
+            var message;
 
-            generatedWtracks: function () {
-                var self = this;
-                var tr = this.$listTable.find('.false');
-                var projectId = tr.find('[data-content="project"]').attr('data-id');
+            this.hideGenerateCopy();
+            this.changed = true;
+            this.createdCopied = true;
 
-                dataService.getData("/jobs/getForDD", {"projectId": projectId, "all": true}, function (jobs) {
+            for (var i = length - 1; i >= 0; i--) {
+                selectedWtrack = checkedRows[i];
+                target = $(selectedWtrack);
+                id = target.val();
+                row = target.closest('tr');
+                model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
+                hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                $(selectedWtrack).attr('checked', false);
 
-                    self.responseObj['#jobs'] = jobs;
+                if (model.toJSON().workflow.name !== 'Closed') {
+                    model.set({"isPaid": false});
+                    model.set({"amount": 0});
+                    model.set({"cost": 0});
+                    model.set({"revenue": 0});
+                    model = model.toJSON();
+                    delete model._id;
+                    _model = new currentModel(model);
 
-                    tr.find('[data-content="jobs"]').addClass('editable');
-                });
-            },
-
-            keyDown: function (e) {
-                var code = e.keyCode;
-
-                if (keyCodes.isEnter(code)) {
-
-                    this.autoCalc(e);
-                    this.calculateCost(e, this.wTrackId);
-                    this.setChangedValueToModel();
                     this.showSaveCancelBtns();
-                    e.stopPropagation();
-                } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
-                    e.preventDefault();
+                    this.editCollection.add(_model);
+
+                    cid = _model.cid;
+
+                    if (!this.changedModels[cid]) {
+                        this.changedModels[cid] = model;
+                    }
+
+                    this.$el.find('#listTable').prepend('<tr class="false enableEdit" data-id="' + cid + '">' + row.html() + '</tr>');
+                    row = this.$el.find('.false');
+
+                    tdsArr = row.find('td');
+                    $(tdsArr[0]).find('input').val(cid);
+                    $(tdsArr[1]).text("New");
+                } else {
+                    message = "You can't copy tCard with closed project.";
+                    App.render({
+                        type   : 'error',
+                        message: message
+                    });
                 }
-            },
+            }
+        },
 
-            generateInvoice: function (e) {
-                var selectedWtracks = this.$el.find('input.listCB:checked');
-                var wTracks = [];
-                var self = this;
-                var project;
-                var assigned;
-                var customer;
-                var total = 0;
-                var revenue;
+        autoCalc: function (e) {
+            var el = $(e.target);
+            var tr = $(e.target).closest('tr');
+            var input = tr.find('input.editing');
+            var days = tr.find('.autoCalc');
+            var wTrackId = tr.attr('data-id');
+            var worked = 0;
+            var value;
+            var calcEl;
+            var editWtrackModel;
+            var workedEl = tr.find('[data-content="worked"]');
 
-                async.each(selectedWtracks, function (el, cb) {
-                    var id = $(el).val();
-                    var model = self.collection.get(id);
-                    var reven = model.get('revenue');
+            function eplyDefaultValue(el) {
+                var value = el.text();
 
-                    if (typeof reven !== 'number') {
-                        model.set({revenue: parseFloat(reven) * 100});
-                    }
+                if (value === '') {
+                    if (el.children('input').length) {
+                        value = input.val() || '0'; // in case of empty input
 
-                    revenue = reven.toString().replace('$', '');
-                    revenue = parseFloat(revenue);
-
-                    if (typeof reven === 'number') {
-                        revenue = revenue / 100;
-                    }
-
-                    total += revenue;
-
-                    if (!project) {
-                        project = model.get('project');
-                        assigned = project.projectmanager;
-                        customer = project.customer;
-                    }
-
-                    wTracks.push(model.toJSON());
-                    cb();
-                }, function (err) {
-                    if (!err) {
-                        new wTrackCreateView({
-                            wTracks: wTracks,
-                            project: project,
-                            assigned: assigned,
-                            customer: customer,
-                            total: total
-                        });
-                    }
-                });
-            },
-
-            hideGenerateCopy: function () {
-                //$('#top-bar-generateBtn').hide();
-                $('#top-bar-copyBtn').hide();
-                $('#top-bar-createBtn').show();
-            },
-
-            copyRow: function (e) {
-                var self = this;
-                var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
-                var length = checkedRows.length;
-                var selectedWtrack;
-                var target;
-                var id;
-                var row;
-                var model;
-                var _model;
-                var tdsArr;
-                var cid;
-                var hours;
-
-                this.hideGenerateCopy();
-                this.changed = true;
-                this.createdCopied = true;
-
-                for (var i = length - 1; i >= 0; i--) {
-                    selectedWtrack = checkedRows[i];
-                    target = $(selectedWtrack);
-                    id = target.val();
-                    row = target.closest('tr');
-                    model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                    hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
-                    $(selectedWtrack).attr('checked', false);
-
-                    if (model.toJSON().workflow.name !== 'Closed') {
-                        model.set({"isPaid": false});
-                        model.set({"amount": 0});
-                        model.set({"cost": 0});
-                        model.set({"revenue": 0});
-                        model = model.toJSON();
-                        delete model._id;
-                        _model = new currentModel(model);
-
-                        this.showSaveCancelBtns();
-                        this.editCollection.add(_model);
-
-                        cid = _model.cid;
-
-                        if (!this.changedModels[cid]) {
-                            this.changedModels[cid] = model;
-                        }
-
-                        this.$el.find('#listTable').prepend('<tr class="false enableEdit" data-id="' + cid + '">' + row.html() + '</tr>');
-                        row = this.$el.find('.false');
-
-                        tdsArr = row.find('td');
-                        $(tdsArr[0]).find('input').val(cid);
-                        $(tdsArr[1]).text("New");
                     } else {
-                        message = "You can't copy tCard with closed project.";
-                        App.render({
-                            type: 'error',
-                            message: message
-                        });
+                        value = '0';
                     }
                 }
-            },
 
-            autoCalc: function (e) {
-                var el = $(e.target);
-                var tr = $(e.target).closest('tr');
-                var input = tr.find('input.editing');
-                var days = tr.find('.autoCalc');
-                var wTrackId = tr.attr('data-id');
-                var worked = 0;
-                var value;
-                var calcEl;
-                var editWtrackModel;
-                var workedEl = tr.find('[data-content="worked"]');
+                return value;
+            };
 
-                function eplyDefaultValue(el) {
-                    var value = el.text();
+            for (var i = days.length - 1; i >= 0; i--) {
+                calcEl = $(days[i]);
 
-                    if (value === '') {
-                        if (el.children('input').length) {
-                            value = input.val() || '0'; // in case of empty input
+                value = eplyDefaultValue(calcEl);
 
-                        } else {
-                            value = '0';
-                        }
-                    }
+                worked += parseInt(value);
+            }
 
-                    return value;
-                };
+            workedEl.text(worked);
 
-                for (var i = days.length - 1; i >= 0; i--) {
-                    calcEl = $(days[i]);
+            if (!this.changedModels[wTrackId]) {
+                this.changedModels[wTrackId] = {};
+            }
 
-                    value = eplyDefaultValue(calcEl);
-
-                    worked += parseInt(value);
-                }
-
-                workedEl.text(worked);
-
-                if (!this.changedModels[wTrackId]) {
-                    this.changedModels[wTrackId] = {};
-                }
-
-                this.changedModels[wTrackId].worked = worked;
-
-            },
+            this.changedModels[wTrackId].worked = worked;
+        },
 
             setEditable: function (td) {
                 var tr;
 
-                if (!td.parents) {
-                    td = $(td.target).closest('td');
-                }
+            if (!td.parents) {
+                td = $(td.target).closest('td');
+            }
 
-                tr = td.parents('tr');
+            tr = td.parents('tr');
 
-                tr.addClass('edited');
-                // td.addClass('edited');
+            tr.addClass('edited');
+            // td.addClass('edited');
 
                 if (this.isEditRows()) {
                     this.setChangedValue();
                 }
 
-                return false;
-            },
+            return false;
+        },
 
-            isEditRows: function () {
-                var edited = this.$listTable.find('.edited');
+        isEditRows: function () {
+            var edited = this.$listTable.find('.edited');
 
-                this.edited = edited;
+            this.edited = edited;
 
-                return !!edited.length;
-            },
+            return !!edited.length;
+        },
 
-            setChangedValueToModel: function () {
-                var editedElement = this.$listTable.find('.editing');
-                var editedCol;
-                var editedElementRowId;
-                var editedElementContent;
-                var editedElementValue;
-                var self = this;
-                var weeks;
+        setChangedValueToModel: function () {
+            var editedElement = this.$listTable.find('.editing');
+            var editedCol;
+            var editedElementRowId;
+            var editedElementContent;
+            var editedElementValue;
+            var self = this;
+            var weeks;
 
-                if (navigator.userAgent.indexOf("Firefox") > -1) {
-                    this.setEditable(editedElement);
+            if (navigator.userAgent.indexOf("Firefox") > -1) {
+                this.setEditable(editedElement);
+            }
+
+            if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
+                editedCol = editedElement.closest('td');
+                editedElementRowId = editedElement.closest('tr').attr('data-id');
+                editedElementContent = editedCol.data('content');
+                editedElementValue = editedElement.val();
+
+                //editWtrackModel = this.editCollection.get(editedElementRowId);
+
+                if (!this.changedModels[editedElementRowId]) {
+                    this.changedModels[editedElementRowId] = {};
                 }
 
-                if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
-                    editedCol = editedElement.closest('td');
-                    editedElementRowId = editedElement.closest('tr').attr('data-id');
-                    editedElementContent = editedCol.data('content');
-                    editedElementValue = editedElement.val();
+                this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                    //editWtrackModel = this.editCollection.get(editedElementRowId);
+                if (editedElementContent === 'month') {
+                    async.parallel([funcForWeek], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        }
 
-                    if (!this.changedModels[editedElementRowId]) {
-                        this.changedModels[editedElementRowId] = {};
-                    }
-
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-
-                    if (editedElementContent === 'month') {
-                        async.parallel([funcForWeek], function (err, result) {
-                            if (err) {
-                                console.log(err);
-                            }
-
-                            weeks = result[0];
-                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
-                            editedCol.text(editedElementValue);
-                            editedElement.remove();
-
-                            self.changedModels[editedElementRowId]['week'] = weeks[0].week;
-                        });
-                    } else {
+                        weeks = result[0];
+                        editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
                         editedCol.text(editedElementValue);
                         editedElement.remove();
-                    }
+
+                        self.changedModels[editedElementRowId]['week'] = weeks[0].week;
+                    });
+                } else {
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
 
                 }
                 function funcForWeek(cb) {
@@ -373,415 +372,416 @@ define([
                     var month = editedElementValue;
                     var year = editedElement.closest('tr').find('[data-content="year"]').text();
 
-                    weeks = custom.getWeeks(month, year);
+                weeks = custom.getWeeks(month, year);
 
-                    cb(null, weeks);
-                }
-            },
+                cb(null, weeks);
+            }
+        },
 
-            editRow: function (e) {
-                e.stopPropagation();
-                var el = $(e.target);
-                var self = this;
-                var tr = $(e.target).closest('tr');
-                var wTrackId = tr.attr('data-id');
-                var colType = el.data('type');
-                var content = el.data('content');
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-                var isWeek = el.attr("data-content") === 'week';
-                var isYear = el.attr("data-content") === 'year';
-                var isMonth = el.attr("data-content") === 'month';
-                var isDay = el.hasClass("autoCalc");
-                var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
-                var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
-                var maxValue = 100;
-                var tempContainer;
-                var width;
-                var value;
-                var insertedInput;
-                var weeks;
-                var template;
-                var currentYear;
-                var previousYear;
-                var nextYear;
+        editRow: function (e) {
+            e.stopPropagation();
+            var el = $(e.target);
+            var self = this;
+            var tr = $(e.target).closest('tr');
+            var wTrackId = tr.attr('data-id');
+            var colType = el.data('type');
+            var content = el.data('content');
+            var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+            var isWeek = el.attr("data-content") === 'week';
+            var isYear = el.attr("data-content") === 'year';
+            var isMonth = el.attr("data-content") === 'month';
+            var isDay = el.hasClass("autoCalc");
+            var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+            var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
+            var maxValue = 100;
+            var tempContainer;
+            var width;
+            var value;
+            var insertedInput;
+            var weeks;
+            var template;
+            var currentYear;
+            var previousYear;
+            var nextYear;
 
-                if (wTrackId && el.prop('tagName') !== 'INPUT') {
-                    if (this.wTrackId) {
-                        this.setChangedValueToModel();
-                    }
-                    this.wTrackId = wTrackId;
+            if (wTrackId && el.prop('tagName') !== 'INPUT') {
+                if (this.wTrackId) {
                     this.setChangedValueToModel();
                 }
+                this.wTrackId = wTrackId;
+                this.setChangedValueToModel();
+            }
 
-                if (el.hasClass('editing')) {  // added in case of double click on el
-                    return false;
-                }
-
-                if (isSelect) {
-                    if (content === 'jobs') {
-                        dataService.getData("/jobs/getForDD", {
-                            "projectId": tr.find('[data-content="project"]').attr('data-id'),
-                            "all": true
-                        }, function (jobs) {
-
-                            self.responseObj['#jobs'] = jobs;
-
-                            tr.find('[data-content="jobs"]').addClass('editable');
-                            // populate.showSelect(e, prev, next, self);
-                            self.showNewSelect(e);
-                            return false;
-                        });
-                    } else {
-                        //populate.showSelect(e, prev, next, this);
-                        this.showNewSelect(e);
-                        return false;
-                    }
-                } else if (isWeek) {
-                    weeks = custom.getWeeks(month, year);
-
-                    template = _.template(forWeek);
-
-                    el.append(template({
-                        weeks: weeks
-                    }));
-
-                    this.calculateCost(e, wTrackId);
-                } else if (isYear) {
-                    currentYear = parseInt(moment().year());
-                    previousYear = currentYear - 1;
-                    nextYear = currentYear + 1;
-
-                    width = el.width() - 6;
-                    el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
-
-                    this.calculateCost(e, wTrackId);
-                } else if (el.attr('id') === 'selectInput') {
-                    return false;
-                } else {
-                    tempContainer = el.text();
-                    width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
-
-                    insertedInput = el.find('input');
-                    insertedInput.focus();
-
-                    // validation for month and days of week
-                    if (isMonth || isDay) {
-                        insertedInput.attr("maxLength", "2");
-                        if (isMonth) {
-                            maxValue = 12;
-                        }
-                        if (isDay) {
-                            maxValue = 24;
-                        }
-                    }
-
-                    insertedInput.keyup(function (e) {
-                        if (insertedInput.val() > maxValue) {
-                            e.preventDefault();
-                            insertedInput.val("" + maxValue);
-                        }
-                    });
-
-                    // end
-                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
-
-                    this.autoCalc(e);
-                    if (wTrackId) {
-                        this.calculateCost(e, wTrackId);
-                    }
-                }
-
+            if (el.hasClass('editing')) {  // added in case of double click on el
                 return false;
-            },
+            }
 
-            calculateCost: function (e, wTrackId) {
-                var self = this;
-                var tr = $(e.target).closest('tr');
-                var profit = tr.find('[data-content="profit"]');
-                var revenueVal = tr.find('[data-content="revenue"]').text();
-                var profitVal = tr.find('[data-content="profit"]').text();
-                var expenseCoefficient;
-                var baseSalaryValue;
-                var editWtrackModel;
-                var fixedExpense;
-                var costElement;
-                var employeeId;
-                var trackWeek;
-                var month;
-                var hours;
-                var calc;
-                var year;
+            if (isSelect) {
+                if (content === 'jobs') {
+                    dataService.getData("/jobs/getForDD", {
+                        "projectId": tr.find('[data-content="project"]').attr('data-id'),
+                        "all"      : true
+                    }, function (jobs) {
 
-                if (!this.changedModels[wTrackId]) {
-                    this.changedModels[wTrackId] = {};
-                }
+                        self.responseObj['#jobs'] = jobs;
 
-                costElement = $(e.target).closest('tr').find('[data-content="cost"]');
-                month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
-
-                if (wTrackId.length < 24) {
-                    employeeId = this.changedModels[wTrackId].employee || $(e.target).attr("data-id");
-
-                    year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
-                    trackWeek = tr.find('[data-content="worked"]').text();
-
+                        tr.find('[data-content="jobs"]').addClass('editable');
+                        // populate.showSelect(e, prev, next, self);
+                        self.showNewSelect(e);
+                        return false;
+                    });
                 } else {
-                    editWtrackModel = this.collection.get(wTrackId);
-                    this.editCollection.add(editWtrackModel);
+                    //populate.showSelect(e, prev, next, this);
+                    this.showNewSelect(e);
+                    return false;
+                }
+            } else if (isWeek) {
+                weeks = custom.getWeeks(month, year);
 
-                    employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;
-                    ;
-                    year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
-                    trackWeek = tr.find('[data-content="worked"]').text();
+                template = _.template(forWeek);
+
+                el.append(template({
+                    weeks: weeks
+                }));
+
+                this.calculateCost(e, wTrackId);
+            } else if (isYear) {
+                currentYear = parseInt(moment().year());
+                previousYear = currentYear - 1;
+                nextYear = currentYear + 1;
+
+                width = el.width() - 6;
+                el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
+
+                this.calculateCost(e, wTrackId);
+            } else if (el.attr('id') === 'selectInput') {
+                return false;
+            } else {
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+
+                insertedInput = el.find('input');
+                insertedInput.focus();
+
+                // validation for month and days of week
+                if (isMonth || isDay) {
+                    insertedInput.attr("maxLength", "2");
+                    if (isMonth) {
+                        maxValue = 12;
+                    }
+                    if (isDay) {
+                        maxValue = 24;
+                    }
                 }
 
-                async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
-                    var baseSalary = results[0];
-                    var coefficients = results[1][0];
-
-                    if (err || !baseSalary || !coefficients) {
-                        costElement.text('');
-                        costElement.addClass('money');
-                        costElement.text('0.00');
-
-                        //profitVal = (parseFloat(revenueVal) - 0).toFixed(2);
-                        //profit.text(profitVal);
-
-                        self.changedModels[wTrackId].cost = 0;
-                        //self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
-
-                        return 0;
+                insertedInput.keyup(function (e) {
+                    if (insertedInput.val() > maxValue) {
+                        e.preventDefault();
+                        insertedInput.val("" + maxValue);
                     }
-
-                    baseSalaryValue = parseFloat(baseSalary);
-                    expenseCoefficient = parseFloat(coefficients.expenseCoefficient);
-                    fixedExpense = parseInt(coefficients.fixedExpense);
-                    hours = parseInt(coefficients.hours);
-
-                    calc = ((((baseSalaryValue * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
-
-                    costElement.text('');
-                    costElement.addClass('money');
-                    costElement.text(calc);
-
-                    //profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
-                    //profit.text(profitVal);
-
-                    self.changedModels[wTrackId].cost = parseFloat(calc);
-                    //self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
-
-                    return calc;
                 });
 
-                function getBaseSalary(callback) {
-                    dataService.getData('/employee/getByMonth',
-                        {
-                            month: month,
-                            year: year,
-                            _id: employeeId
-                        }, function (response, context) {
+                // end
+                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
-                            if (response.error) {
-                                return callback(response.error);
-                            }
+                this.autoCalc(e);
+                if (wTrackId) {
+                    this.calculateCost(e, wTrackId);
+                }
+            }
 
-                            callback(null, response.data);
+            return false;
+        },
 
-                        }, this);
+        calculateCost: function (e, wTrackId) {
+            var self = this;
+            var tr = $(e.target).closest('tr');
+            var profit = tr.find('[data-content="profit"]');
+            var revenueVal = tr.find('[data-content="revenue"]').text();
+            var profitVal = tr.find('[data-content="profit"]').text();
+            var expenseCoefficient;
+            var baseSalaryValue;
+            var editWtrackModel;
+            var fixedExpense;
+            var costElement;
+            var employeeId;
+            var trackWeek;
+            var month;
+            var hours;
+            var calc;
+            var year;
 
+            if (!this.changedModels[wTrackId]) {
+                this.changedModels[wTrackId] = {};
+            }
+
+            costElement = $(e.target).closest('tr').find('[data-content="cost"]');
+            month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+
+            if (wTrackId.length < 24) {
+                employeeId = this.changedModels[wTrackId].employee || $(e.target).attr("data-id");
+
+                year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
+                trackWeek = tr.find('[data-content="worked"]').text();
+
+            } else {
+                editWtrackModel = this.collection.get(wTrackId);
+                this.editCollection.add(editWtrackModel);
+
+                employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;
+                ;
+                year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
+                trackWeek = tr.find('[data-content="worked"]').text();
+            }
+
+            async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
+                var baseSalary = results[0];
+                var coefficients = results[1][0];
+
+                if (err || !baseSalary || !coefficients) {
+                    costElement.text('');
+                    costElement.addClass('money');
+                    costElement.text('0.00');
+
+                    //profitVal = (parseFloat(revenueVal) - 0).toFixed(2);
+                    //profit.text(profitVal);
+
+                    self.changedModels[wTrackId].cost = 0;
+                    //self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
+
+                    return 0;
                 }
 
-                function getMonthData(callback) {
+                baseSalaryValue = parseFloat(baseSalary);
+                expenseCoefficient = parseFloat(coefficients.expenseCoefficient);
+                fixedExpense = parseInt(coefficients.fixedExpense);
+                hours = parseInt(coefficients.hours);
 
-                    dataService.getData('/monthHours/list', {month: month, year: year}, function (response, context) {
+                calc = ((((baseSalaryValue * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
+
+                costElement.text('');
+                costElement.addClass('money');
+                costElement.text(calc);
+
+                //profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
+                //profit.text(profitVal);
+
+                self.changedModels[wTrackId].cost = parseFloat(calc);
+                //self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
+
+                return calc;
+            });
+
+            function getBaseSalary(callback) {
+                dataService.getData('/employee/getByMonth',
+                    {
+                        month: month,
+                        year : year,
+                        _id  : employeeId
+                    }, function (response, context) {
 
                         if (response.error) {
                             return callback(response.error);
                         }
 
-                        callback(null, response);
+                        callback(null, response.data);
 
                     }, this);
-                }
 
-                return false;
-            },
+            }
 
-            chooseOption: function (e) {
-                var self = this;
-                var target = $(e.target);
-                var targetElement = target.parents("td");
-                var tr = target.parents("tr");
-                var modelId = tr.attr('data-id');
-                var id = target.attr("id");
-                var attr = targetElement.attr("id") || targetElement.data("content");
-                var elementType = '#' + attr;
-                var projectManager;
-                var assignedContainer;
-                var project;
-                var employee;
-                var department;
-                var changedAttr;
-                var wTrackId = tr.attr('data-id');
-                var week;
-                var year;
-                var jobs = {};
+            function getMonthData(callback) {
 
-                var element = _.find(this.responseObj[elementType], function (el) {
-                    return el._id === id;
-                });
+                dataService.getData('/monthHours/list', {month: month, year: year}, function (response, context) {
 
-                var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
-
-                if (!this.changedModels[modelId]) {
-                    if (!editWtrackModel.id) {
-                        this.changedModels[modelId] = editWtrackModel.attributes;
-                    } else {
-                        this.changedModels[modelId] = {};
+                    if (response.error) {
+                        return callback(response.error);
                     }
+
+                    callback(null, response);
+
+                }, this);
+            }
+
+            return false;
+        },
+
+        chooseOption: function (e) {
+            var self = this;
+            var target = $(e.target);
+            var targetElement = target.parents("td");
+            var tr = target.parents("tr");
+            var modelId = tr.attr('data-id');
+            var id = target.attr("id");
+            var attr = targetElement.attr("id") || targetElement.data("content");
+            var elementType = '#' + attr;
+            var projectManager;
+            var assignedContainer;
+            var project;
+            var employee;
+            var department;
+            var changedAttr;
+            var wTrackId = tr.attr('data-id');
+            var week;
+            var year;
+            var jobs = {};
+
+            var element = _.find(this.responseObj[elementType], function (el) {
+                return el._id === id;
+            });
+
+            var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
+
+            if (!this.changedModels[modelId]) {
+                if (!editWtrackModel.id) {
+                    this.changedModels[modelId] = editWtrackModel.attributes;
+                } else {
+                    this.changedModels[modelId] = {};
                 }
+            }
 
-                changedAttr = this.changedModels[modelId];
+            changedAttr = this.changedModels[modelId];
 
-                if (id !== 'createJob') {
+            if (id !== 'createJob') {
 
-                    if (elementType === '#project') {
-                        this.projectModel = element;
+                if (elementType === '#project') {
+                    this.projectModel = element;
 
-                        projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
-                        assignedContainer = tr.find('[data-content="assigned"]');
-                        assignedContainer.text(projectManager);
-                        targetElement.attr('data-id', id);
+                    projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
+                    assignedContainer = tr.find('[data-content="assigned"]');
+                    assignedContainer.text(projectManager);
+                    targetElement.attr('data-id', id);
 
-                        tr.find('[data-content="jobs"]').text("");
+                    tr.find('[data-content="jobs"]').text("");
 
-                        tr.find('[data-content="workflow"]').text(element.workflow.name);
-                        tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
+                    tr.find('[data-content="workflow"]').text(element.workflow.name);
+                    tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
 
-                        project = element._id;
+                    project = element._id;
 
-                        changedAttr.project = project;
+                    changedAttr.project = project;
 
-                        dataService.getData("/jobs/getForDD", {"projectId": project, "all": true}, function (jobs) {
+                    dataService.getData("/jobs/getForDD", {"projectId": project, "all": true}, function (jobs) {
 
-                            self.responseObj['#jobs'] = jobs;
+                        self.responseObj['#jobs'] = jobs;
 
-                            tr.find('[data-content="jobs"]').addClass('editable');
-                        });
+                        tr.find('[data-content="jobs"]').addClass('editable');
+                    });
 
-                    } else if (elementType === '#jobs') {
+                } else if (elementType === '#jobs') {
 
-                        jobs = element._id;
+                    jobs = element._id;
 
-                        changedAttr.jobs = jobs;
+                    changedAttr.jobs = jobs;
 
-                        tr.find('[data-content="jobs"]').removeClass('errorContent');
-                    } else if (elementType === '#employee') {
-                        tr.find('[data-content="department"]').text(element.department.departmentName);
+                    tr.find('[data-content="jobs"]').removeClass('errorContent');
+                } else if (elementType === '#employee') {
+                    tr.find('[data-content="department"]').text(element.department.departmentName);
 
-                        employee = element._id;
+                    employee = element._id;
 
-                        department = element.department._id;
+                    department = element.department._id;
 
-                        changedAttr.employee = employee;
-                        changedAttr.department = department;
+                    changedAttr.employee = employee;
+                    changedAttr.department = department;
 
                         targetElement.attr("data-id", employee._id);
 
-                        this.calculateCost(e, wTrackId);
+                    this.calculateCost(e, wTrackId);
 
-                        tr.find('[data-content="department"]').removeClass('errorContent');
-                    } else if (elementType === '#department') {
-                        department = element._id;
+                    tr.find('[data-content="department"]').removeClass('errorContent');
+                } else if (elementType === '#department') {
+                    department = element._id;
 
-                        changedAttr.department = department;
-                    } else if (elementType === '#week') {
-                        week = $(e.target).text();
+                    changedAttr.department = department;
+                } else if (elementType === '#week') {
+                    week = $(e.target).text();
 
-                        changedAttr.week = week;
-                    } else if (elementType === '#year') {
-                        year = $(e.target).text();
+                    changedAttr.week = week;
+                } else if (elementType === '#year') {
+                    year = $(e.target).text();
 
-                        changedAttr.year = year;
-                    }
-
-                    targetElement.removeClass('errorContent');
-
-                    targetElement.text(target.text());
-
-                } else if (id === 'createJob') {
-                    self.generateJob(e);
+                    changedAttr.year = year;
                 }
 
-                this.hideNewSelect();
-                this.setEditable(targetElement);
+                targetElement.removeClass('errorContent');
 
-                return false;
-            },
+                targetElement.text(target.text());
 
-            checked: function (e) {
-                e.stopPropagation();
-                var $thisEl = this.$el;
-                var rawRows;
-                var $checkedEls;
-                var checkLength;
-                var changedRows = Object.keys(this.changedModels);
+            } else if (id === 'createJob') {
+                self.generateJob(e);
+            }
 
-                if (this.collection.length > 0) {
-                    $checkedEls = $thisEl.find("input.listCB:checked");
+            this.hideNewSelect();
+            this.setEditable(targetElement);
 
-                    checkLength = $checkedEls.length;
-                    rawRows = $checkedEls.closest('.false');
+            return false;
+        },
 
-                    this.checkProjectId(e, checkLength);
+        checked: function (e) {
+            e.stopPropagation();
+            var $thisEl = this.$el;
+            var rawRows;
+            var $checkedEls;
+            var checkLength;
+            var changedRows = Object.keys(this.changedModels);
 
-                    if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
-                        $("#top-bar-createBtn").hide();
+            if (this.collection.length > 0) {
+                $checkedEls = $thisEl.find("input.listCB:checked");
 
-                        $('#check_all').prop('checked', false);
-                        if (checkLength === this.collection.length) {
-                            $('#check_all').prop('checked', true);
-                        }
-                    } else {
-                        $("#top-bar-deleteBtn").hide();
-                        $("#top-bar-createBtn").show();
-                        $('#check_all').prop('checked', false);
+                checkLength = $checkedEls.length;
+                rawRows = $checkedEls.closest('.false');
+
+                this.checkProjectId(e, checkLength);
+
+                if (checkLength > 0) {
+                    $("#top-bar-deleteBtn").show();
+                    $("#top-bar-createBtn").hide();
+
+                    $('#check_all').prop('checked', false);
+                    if (checkLength === this.collection.length) {
+                        $('#check_all').prop('checked', true);
                     }
-
-                    if (rawRows.length !== 0 && rawRows.length !== checkLength) {
-                        this.$saveBtn.hide();
-                    } else {
-                        this.$saveBtn.show();
-                    }
-
-                    if (changedRows.length) {
-                        this.$saveBtn.show();
-                    } else {
-                        this.$saveBtn.hide();
-                    }
+                } else {
+                    $("#top-bar-deleteBtn").hide();
+                    $("#top-bar-createBtn").show();
+                    $('#check_all').prop('checked', false);
                 }
 
-                this.setAllTotalVals();
-            },
+                if (rawRows.length !== 0 && rawRows.length !== checkLength) {
+                    this.$saveBtn.hide();
+                } else {
+                    this.$saveBtn.show();
+                }
+
+                if (changedRows.length) {
+                    this.$saveBtn.show();
+                } else {
+                    this.$saveBtn.hide();
+                }
+            }
+
+            this.setAllTotalVals();
+        },
 
             saveItem: function () {
                 var model;
 
-                var errors = this.$el.find('.errorContent');
+            var errors = this.$el.find('.errorContent');
 
-                for (var id in this.changedModels) {
-                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                    if (model) {
-                        model.changed = this.changedModels[id];
-                    }
+            for (var id in this.changedModels) {
+                model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                if (model) {
+                    model.changed = this.changedModels[id];
                 }
+            }
 
-                if (errors.length) {
-                    return
-                }
-                this.editCollection.save();
+            if (errors.length) {
+                return
+            }
+
+            this.editCollection.save();
 
                 //for (var id in this.changedModels) {
                 //    delete this.changedModels[id];
@@ -791,99 +791,99 @@ define([
                 this.$el.find('.edited').removeClass('edited');
             },
 
-            savedNewModel: function (modelObject) {
-                var savedRow = this.$listTable.find('.false');
-                var modelId;
-                var checkbox = savedRow.find('input[type=checkbox]');
+        savedNewModel: function (modelObject) {
+            var savedRow = this.$listTable.find('.false');
+            var modelId;
+            var checkbox = savedRow.find('input[type=checkbox]');
 
-                modelObject = modelObject.success;
+            modelObject = modelObject.success;
 
-                if (modelObject) {
-                    modelId = modelObject._id;
-                    savedRow.attr("data-id", modelId);
-                    checkbox.val(modelId);
-                    savedRow.removeAttr('id');
-                    savedRow.removeClass('false');
-                }
+            if (modelObject) {
+                modelId = modelObject._id;
+                savedRow.attr("data-id", modelId);
+                checkbox.val(modelId);
+                savedRow.removeAttr('id');
+                savedRow.removeClass('false');
+            }
 
-                this.hideSaveCancelBtns();
-                this.resetCollection(modelObject);
-            },
+            this.hideSaveCancelBtns();
+            this.resetCollection(modelObject);
+        },
 
-            resetCollection: function (model) {
-                if (model && model._id) {
-                    model = new currentModel(model);
-                    this.collection.add(model);
-                } else {
-                    this.collection.set(this.editCollection.models, {remove: false});
-                }
+        resetCollection: function (model) {
+            if (model && model._id) {
+                model = new currentModel(model);
+                this.collection.add(model);
+            } else {
+                this.collection.set(this.editCollection.models, {remove: false});
+            }
 
-                for (var id in this.changedModels) {
-                    delete this.changedModels[id];
-                    this.editCollection.remove(id);
-                }
+            for (var id in this.changedModels) {
+                delete this.changedModels[id];
+                this.editCollection.remove(id);
+            }
 
-                this.editCollection.add(this.collection.models);
-            },
+            this.editCollection.add(this.collection.models);
+        },
 
-            updatedOptions: function () {
-                this.hideSaveCancelBtns();
-                this.resetCollection();
-            },
+        updatedOptions: function () {
+            this.hideSaveCancelBtns();
+            this.resetCollection();
+        },
 
-            showNewSelect: function (e, prev, next) {
-                //populate.showSelect(e, prev, next, this);
+        showNewSelect: function (e, prev, next) {
+            //populate.showSelect(e, prev, next, this);
 
-                var $target = $(e.target);
-                e.stopPropagation();
+            var $target = $(e.target);
+            e.stopPropagation();
 
-                if ($target.attr('id') === 'selectInput') {
-                    return false;
-                }
-
-                if (this.selectView) {
-                    this.selectView.remove();
-                }
-
-                this.selectView = new selectView({
-                    e: e,
-                    responseObj: this.responseObj
-                });
-
-                $target.append(this.selectView.render().el);
-
+            if ($target.attr('id') === 'selectInput') {
                 return false;
-            },
+            }
 
-            hideNewSelect: function (e) {
-                // $(".newSelectList").remove();
+            if (this.selectView) {
+                this.selectView.remove();
+            }
 
-                if (this.selectView) {
-                    this.selectView.remove();
-                }
-            },
+            this.selectView = new selectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
 
-            bindingEventsToEditedCollection: function (context) {
-                if (context.editCollection) {
-                    context.editCollection.unbind();
-                }
-                context.editCollection = new EditCollection(context.collection.toJSON());
-                context.editCollection.on('saved', context.savedNewModel, context);
-                context.editCollection.on('updated', context.updatedOptions, context);
-            },
+            $target.append(this.selectView.render().el);
 
-            setChangedValue: function () {
-                if (!this.changed) {
-                    this.changed = true;
-                    this.showSaveCancelBtns()
-                }
-            },
+            return false;
+        },
 
-            isNewRow: function () {
-                var newRow = $('.false');
+        hideNewSelect: function (e) {
+            // $(".newSelectList").remove();
 
-                return !!newRow.length;
-            },
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+        },
+
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+            context.editCollection = new EditCollection(context.collection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
+        },
+
+        setChangedValue: function () {
+            if (!this.changed) {
+                this.changed = true;
+                this.showSaveCancelBtns()
+            }
+        },
+
+        isNewRow: function () {
+            var newRow = $('.false');
+
+            return !!newRow.length;
+        },
 
             createItem: function () {
                 var now = new Date();
@@ -892,426 +892,426 @@ define([
                 var week = now.getWeek();
                 // var rate = 3;
                 var startData = {
-                    year: year,
-                    month: month,
-                    week: week,
+                    year        : year,
+                    month       : month,
+                    week        : week,
                     //rate        : rate,
                     projectModel: null
                 };
 
-                var model = new currentModel(startData);
+            var model = new currentModel(startData);
 
-                startData.cid = model.cid;
+            startData.cid = model.cid;
 
-                if (!this.isNewRow()) {
-                    this.showSaveCancelBtns();
-                    this.editCollection.add(model);
+            if (!this.isNewRow()) {
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
 
-                    new createView(startData);
-                } else {
-                    App.render({
-                        type: 'notify',
-                        message: 'Please confirm or discard changes befor create a new item'
-                    });
-                }
+                new createView(startData);
+            } else {
+                App.render({
+                    type   : 'notify',
+                    message: 'Please confirm or discard changes befor create a new item'
+                });
+            }
 
                 this.createdCopied = true;
                 this.changed = true;
             },
 
-            showSaveCancelBtns: function () {
-                var saveBtnEl = $('#top-bar-saveBtn');
-                var cancelBtnEl = $('#top-bar-deleteBtn');
-                var createBtnEl = $('#top-bar-createBtn');
+        showSaveCancelBtns: function () {
+            var saveBtnEl = $('#top-bar-saveBtn');
+            var cancelBtnEl = $('#top-bar-deleteBtn');
+            var createBtnEl = $('#top-bar-createBtn');
 
-                if (!this.changed) {
-                    createBtnEl.hide();
-                }
-                saveBtnEl.show();
-                cancelBtnEl.show();
+            if (!this.changed) {
                 createBtnEl.hide();
+            }
+            saveBtnEl.show();
+            cancelBtnEl.show();
+            createBtnEl.hide();
+
+            return false;
+        },
+
+        hideSaveCancelBtns: function () {
+            var createBtnEl = $('#top-bar-createBtn');
+            var saveBtnEl = $('#top-bar-saveBtn');
+            var cancelBtnEl = $('#top-bar-deleteBtn');
+
+            this.changed = false;
+
+            saveBtnEl.hide();
+            cancelBtnEl.hide();
+            createBtnEl.show();
+
+            return false;
+        },
+
+        checkProjectId: function (e, checkLength) {
+            var totalCheckLength = $("input.checkbox:checked").length;
+            var element = e.target ? e.target : e;
+            var checked = element ? element.checked : true;
+            var targetEl = $(element);
+            var tr = targetEl.closest('tr');
+            var wTrackId = tr.attr('data-id');
+            var model = this.collection.get(wTrackId);
+            var projectContainer = tr.find('td[data-content="project"]');
+            var projectId = projectContainer.attr('data-id');
+
+            if (checkLength >= 1) {
+                this.copyEl.show();
+            } else {
+                this.copyEl.hide();
+            }
+
+            if (!checkLength || !model || model.get('isPaid')) {
+                this.selectedProjectId = [];
+                //this.genInvoiceEl.hide();
 
                 return false;
-            },
+            }
 
-            hideSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn');
-                var saveBtnEl = $('#top-bar-saveBtn');
-                var cancelBtnEl = $('#top-bar-deleteBtn');
+            if (checked) {
+                this.selectedProjectId.push(projectId);
+            } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
+                this.selectedProjectId = _.without(this.selectedProjectId, projectId);
+            }
 
-                this.changed = false;
+            this.selectedProjectId = _.uniq(this.selectedProjectId);
 
-                saveBtnEl.hide();
-                cancelBtnEl.hide();
-                createBtnEl.show();
+            //if (this.selectedProjectId.length !== 1) {
+            //    this.genInvoiceEl.hide();
+            //} else {
+            //    this.genInvoiceEl.show();
+            //}
+        },
 
-                return false;
-            },
+        getAutoCalcField: function (idTotal, dataRow, money) {
+            var footerRow = this.$el.find('#listFooter');
 
-            checkProjectId: function (e, checkLength) {
-                var totalCheckLength = $("input.checkbox:checked").length;
-                var element = e.target ? e.target : e;
-                var checked = element ? element.checked : true;
-                var targetEl = $(element);
-                var tr = targetEl.closest('tr');
-                var wTrackId = tr.attr('data-id');
-                var model = this.collection.get(wTrackId);
-                var projectContainer = tr.find('td[data-content="project"]');
-                var projectId = projectContainer.attr('data-id');
+            var checkboxes = this.$el.find('#listTable .listCB:checked');
 
-                if (checkLength >= 1) {
-                    this.copyEl.show();
-                } else {
-                    this.copyEl.hide();
-                }
+            var totalTd = $(footerRow).find('#' + idTotal);
+            var rowTdVal = 0;
+            var row;
+            var rowTd;
 
-                if (!checkLength || !model || model.get('isPaid')) {
-                    this.selectedProjectId = [];
-                    //this.genInvoiceEl.hide();
+            $(checkboxes).each(function (index, element) {
+                row = $(element).closest('tr');
+                rowTd = row.find('[data-content="' + dataRow + '"]');
 
-                    return false;
-                }
+                rowTdVal += parseFloat(rowTd.html() || 0) * 100;
+            });
 
-                if (checked) {
-                    this.selectedProjectId.push(projectId);
-                } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
-                    this.selectedProjectId = _.without(this.selectedProjectId, projectId);
-                }
+            if (money) {
+                totalTd.text((rowTdVal / 100).toFixed(2));
+            } else {
+                totalTd.text(rowTdVal / 100);
+            }
+        },
 
-                this.selectedProjectId = _.uniq(this.selectedProjectId);
+        setAllTotalVals: function (e) {
+            //e.stopPropagation();
 
-                //if (this.selectedProjectId.length !== 1) {
-                //    this.genInvoiceEl.hide();
-                //} else {
-                //    this.genInvoiceEl.show();
-                //}
-            },
+            this.getAutoCalcField('hours', 'worked');
+            this.getAutoCalcField('monHours', '1');
+            this.getAutoCalcField('tueHours', '2');
+            this.getAutoCalcField('wedHours', '3');
+            this.getAutoCalcField('thuHours', '4');
+            this.getAutoCalcField('friHours', '5');
+            this.getAutoCalcField('satHours', '6');
+            this.getAutoCalcField('sunHours', '7');
+        },
 
-            getAutoCalcField: function (idTotal, dataRow, money) {
-                var footerRow = this.$el.find('#listFooter');
+        deleteItemsRender: function (deleteCounter, deletePage) {
+            var pagenation;
+            var holder;
 
-                var checkboxes = this.$el.find('#listTable .listCB:checked');
+            dataService.getData(this.collectionLengthUrl, {
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+                context.getTotalLength(null, context.defaultItemsNumber, context.filter);
+                context.fetchSortCollection({});
 
-                var totalTd = $(footerRow).find('#' + idTotal);
-                var rowTdVal = 0;
-                var row;
-                var rowTd;
+            }, this);
+            //this.deleteRender(deleteCounter, deletePage, {
+            //    filter: this.filter,
+            //    newCollection: this.newCollection,
+            //    parrentContentId: this.parrentContentId
+            //});
 
-                $(checkboxes).each(function (index, element) {
-                    row = $(element).closest('tr');
-                    rowTd = row.find('[data-content="' + dataRow + '"]');
+            holder = this.$el;
 
-                    rowTdVal += parseFloat(rowTd.html() || 0) * 100;
-                });
+            if (deleteCounter !== this.collectionLength) {
+                var created = holder.find('#timeRecivingDataFromServer');
+                created.before(new listItemView({
+                    collection : this.collection,
+                    page       : holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                }).render());//added two parameters page and items number
+            }
 
-                if (money) {
-                    totalTd.text((rowTdVal / 100).toFixed(2));
-                } else {
-                    totalTd.text(rowTdVal / 100);
-                }
-            },
+            pagenation = this.$el.find('.pagination');
 
-            setAllTotalVals: function (e) {
-                //e.stopPropagation();
+            if (this.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
 
-                this.getAutoCalcField('hours', 'worked');
-                this.getAutoCalcField('monHours', '1');
-                this.getAutoCalcField('tueHours', '2');
-                this.getAutoCalcField('wedHours', '3');
-                this.getAutoCalcField('thuHours', '4');
-                this.getAutoCalcField('friHours', '5');
-                this.getAutoCalcField('satHours', '6');
-                this.getAutoCalcField('sunHours', '7');
-            },
+            this.editCollection.reset(this.collection.models);
 
-            deleteItemsRender: function (deleteCounter, deletePage) {
-                var pagenation;
-                var holder;
+            this.hideGenerateCopy();
+        },
 
-                dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                    context.getTotalLength(null, context.defaultItemsNumber, context.filter);
-                    context.fetchSortCollection({});
+        triggerDeleteItemsRender: function (deleteCounter) {
+            this.deleteCounter = deleteCounter;
+            this.deletePage = $("#currentShowPage").val();
 
-                }, this);
-                //this.deleteRender(deleteCounter, deletePage, {
-                //    filter: this.filter,
-                //    newCollection: this.newCollection,
-                //    parrentContentId: this.parrentContentId
-                //});
+            this.deleteItemsRender(deleteCounter, this.deletePage);
+        },
 
-                holder = this.$el;
+        deleteItems: function () {
+            var $currentEl = this.$el;
+            var that = this,
+                mid = 39,
+                model;
+            var localCounter = 0;
+            var count = $("#listTable input:checked").length;
+            var message;
+            this.collectionLength = this.collection.length;
 
-                if (deleteCounter !== this.collectionLength) {
-                    var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
-                        itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());//added two parameters page and items number
-                }
+            if (!this.changed) {
+                var answer = confirm("Really DELETE items ?!");
+                var value;
 
-                pagenation = this.$el.find('.pagination');
+                if (answer === true) {
+                    $.each($("#listTable input:checked"), function (index, checkbox) {
+                        value = checkbox.value;
 
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
+                        if (value.length < 24) {
+                            that.editCollection.remove(value);
+                            that.editCollection.on('remove', function () {
+                                this.listLength--;
+                                localCounter++;
 
-                this.editCollection.reset(this.collection.models);
+                                if (index === count - 1) {
+                                    that.triggerDeleteItemsRender(localCounter);
+                                }
 
-                this.hideGenerateCopy();
-            },
+                            }, that);
+                        } else {
 
-            triggerDeleteItemsRender: function (deleteCounter) {
-                this.deleteCounter = deleteCounter;
-                this.deletePage = $("#currentShowPage").val();
+                            model = that.collection.get(value);
+                            if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') {
+                                model.destroy({
+                                    headers: {
+                                        mid: mid
+                                    },
+                                    wait   : true,
+                                    success: function () {
+                                        that.listLength--;
+                                        localCounter++;
 
-                this.deleteItemsRender(deleteCounter, this.deletePage);
-            },
-
-            deleteItems: function () {
-                var $currentEl = this.$el;
-                var that = this,
-                    mid = 39,
-                    model;
-                var localCounter = 0;
-                var count = $("#listTable input:checked").length;
-                var message;
-                this.collectionLength = this.collection.length;
-
-                if (!this.changed) {
-                    var answer = confirm("Really DELETE items ?!");
-                    var value;
-
-                    if (answer === true) {
-                        $.each($("#listTable input:checked"), function (index, checkbox) {
-                            value = checkbox.value;
-
-                            if (value.length < 24) {
-                                that.editCollection.remove(value);
-                                that.editCollection.on('remove', function () {
-                                    this.listLength--;
-                                    localCounter++;
-
-                                    if (index === count - 1) {
-                                        that.triggerDeleteItemsRender(localCounter);
-                                    }
-
-                                }, that);
-                            } else {
-
-                                model = that.collection.get(value);
-                                if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') {
-                                    model.destroy({
-                                        headers: {
-                                            mid: mid
-                                        },
-                                        wait: true,
-                                        success: function () {
-                                            that.listLength--;
-                                            localCounter++;
-
+                                        if (index === count - 1) {
+                                            that.triggerDeleteItemsRender(localCounter);
+                                        }
+                                    },
+                                    error  : function (model, res) {
+                                        if (res.status === 403 && index === 0) {
+                                            App.render({
+                                                type   : 'error',
+                                                message: "You do not have permission to perform this action"
+                                            });
+                                        }
+                                        that.listLength--;
+                                        localCounter++;
+                                        if (index == count - 1) {
                                             if (index === count - 1) {
                                                 that.triggerDeleteItemsRender(localCounter);
                                             }
-                                        },
-                                        error: function (model, res) {
-                                            if (res.status === 403 && index === 0) {
-                                                App.render({
-                                                    type: 'error',
-                                                    message: "You do not have permission to perform this action"
-                                                });
-                                            }
-                                            that.listLength--;
-                                            localCounter++;
-                                            if (index == count - 1) {
-                                                if (index === count - 1) {
-                                                    that.triggerDeleteItemsRender(localCounter);
-                                                }
-                                            }
-
                                         }
-                                    });
-                                } else {
-                                    message = "You can't delete tCard with closed project.";
-                                    App.render({
-                                        type: 'error',
-                                        message: message
-                                    });
-                                }
 
+                                    }
+                                });
+                            } else {
+                                message = "You can't delete tCard with closed project.";
+                                App.render({
+                                    type   : 'error',
+                                    message: message
+                                });
                             }
-                        });
-                    }
-                } else {
-                    this.cancelChanges();
-                }
-            },
 
-            cancelChanges: function () {
-                var self = this;
-                var edited = this.edited;
-                var collection = this.collection;
-                var editedCollectin = this.editCollection;
-                var copiedCreated;
-                var dataId;
-                var enable;
-
-                async.each(edited, function (el, cb) {
-                    var tr = $(el).closest('tr');
-                    var rowNumber = tr.find('[data-content="number"]').text();
-                    var id = tr.attr('data-id');
-                    var template = _.template(cancelEdit);
-                    var model;
-
-                    if (!id) {
-                        return cb('Empty id');
-                    } else if (id.length < 24) {
-                        tr.remove();
-                        model = self.changedModels;
-
-                        if (model) {
-                            delete model[id];
                         }
+                    });
+                }
+            } else {
+                this.cancelChanges();
+            }
+        },
 
-                        return cb();
+        cancelChanges: function () {
+            var self = this;
+            var edited = this.edited;
+            var collection = this.collection;
+            var editedCollectin = this.editCollection;
+            var copiedCreated;
+            var dataId;
+            var enable;
+
+            async.each(edited, function (el, cb) {
+                var tr = $(el).closest('tr');
+                var rowNumber = tr.find('[data-content="number"]').text();
+                var id = tr.attr('data-id');
+                var template = _.template(cancelEdit);
+                var model;
+
+                if (!id) {
+                    return cb('Empty id');
+                } else if (id.length < 24) {
+                    tr.remove();
+                    model = self.changedModels;
+
+                    if (model) {
+                        delete model[id];
                     }
 
-                    model = collection.get(id);
-                    model = model.toJSON();
-                    model.startNumber = rowNumber;
-                    enable = model && model.workflow.name !== 'Closed' ? true : false;
-                    tr.replaceWith(template({model: model, enable: enable}));
-                    cb();
-                }, function (err) {
-                    if (!err) {
-                        /*self.editCollection = new EditCollection(collection.toJSON());*/
-                        self.bindingEventsToEditedCollection(self);
-                        self.hideSaveCancelBtns();
-                        self.copyEl.hide();
-                    }
+                    return cb();
+                }
+
+                model = collection.get(id);
+                model = model.toJSON();
+                model.startNumber = rowNumber;
+                enable = model && model.workflow.name !== 'Closed' ? true : false;
+                tr.replaceWith(template({model: model, enable: enable}));
+                cb();
+            }, function (err) {
+                if (!err) {
+                    /*self.editCollection = new EditCollection(collection.toJSON());*/
+                    self.bindingEventsToEditedCollection(self);
+                    self.hideSaveCancelBtns();
+                    self.copyEl.hide();
+                }
+            });
+
+            if (this.createdCopied) {
+                copiedCreated = this.$el.find('.false');
+                copiedCreated.each(function () {
+                    dataId = $(this).attr('data-id');
+                    self.editCollection.remove(dataId);
+                    delete self.changedModels[dataId];
+                    $(this).remove();
                 });
 
-                if (this.createdCopied) {
-                    copiedCreated = this.$el.find('.false');
-                    copiedCreated.each(function () {
-                        dataId = $(this).attr('data-id');
-                        self.editCollection.remove(dataId);
-                        delete self.changedModels[dataId];
-                        $(this).remove();
-                    });
-
-                    this.createdCopied = false;
-                }
+                this.createdCopied = false;
+            }
 
                 self.changedModels = {};
                 self.responseObj['#jobs'] = [];
             },
 
-            render: function () {
-                var self = this;
-                var $currentEl = this.$el;
-                var pagenation;
-                var checkedInputs;
-                var allInputs;
+        render: function () {
+            var self = this;
+            var $currentEl = this.$el;
+            var pagenation;
+            var checkedInputs;
+            var allInputs;
 
-                $currentEl.html('');
-                $currentEl.append(_.template(listTemplate));
-                $currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
+            $currentEl.html('');
+            $currentEl.append(_.template(listTemplate));
+            $currentEl.append(new listItemView({
+                collection : this.collection,
+                page       : this.page,
+                itemsNumber: this.collection.namberToShow
+            }).render());//added two parameters page and items number
 
-                this.renderPagination($currentEl, this);
+            this.renderPagination($currentEl, this);
 
-                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-                $('#check_all').click(function () {
-                    var checkLength;
+            $('#check_all').click(function () {
+                var checkLength;
 
-                    allInputs = $('.listCB');
-                    allInputs.prop('checked', this.checked);
-                    checkedInputs = $("input.listCB:checked");
+                allInputs = $('.listCB');
+                allInputs.prop('checked', this.checked);
+                checkedInputs = $("input.listCB:checked");
 
-                    if (self.collection.length > 0) {
-                        checkLength = checkedInputs.length;
+                if (self.collection.length > 0) {
+                    checkLength = checkedInputs.length;
 
-                        if (checkLength > 0) {
-                            $("#top-bar-deleteBtn").show();
-                            $("#top-bar-copyBtn").show();
-                            $("#top-bar-createBtn").hide();
+                    if (checkLength > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        $("#top-bar-copyBtn").show();
+                        $("#top-bar-createBtn").hide();
 
-                            if (checkLength === self.collection.length) {
-                                checkedInputs.each(function (index, element) {
-                                    self.checkProjectId(element, checkLength);
-                                });
+                        if (checkLength === self.collection.length) {
+                            checkedInputs.each(function (index, element) {
+                                self.checkProjectId(element, checkLength);
+                            });
 
-                                $('#check_all').prop('checked', true);
-                            }
-                        } else {
-                            $("#top-bar-deleteBtn").hide();
-                            $("#top-bar-createBtn").show();
-                            // self.genInvoiceEl.hide();
-                            self.copyEl.hide();
-                            $('#check_all').prop('checked', false);
+                            $('#check_all').prop('checked', true);
                         }
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                        $("#top-bar-createBtn").show();
+                        // self.genInvoiceEl.hide();
+                        self.copyEl.hide();
+                        $('#check_all').prop('checked', false);
                     }
+                }
 
-                    self.setAllTotalVals();
+                self.setAllTotalVals();
+            });
+
+            dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
+                projects = _.map(projects.data, function (project) {
+                    project.name = project.projectName;
+
+                    return project
                 });
 
-                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
-                    projects = _.map(projects.data, function (project) {
-                        project.name = project.projectName;
+                self.responseObj['#project'] = projects;
+            });
 
-                        return project
-                    });
+            dataService.getData("/employee/getForDD", null, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
 
-                    self.responseObj['#project'] = projects;
+                    return employee
                 });
 
-                dataService.getData("/employee/getForDD", null, function (employees) {
-                    employees = _.map(employees.data, function (employee) {
-                        employee.name = employee.name.first + ' ' + employee.name.last;
+                self.responseObj['#employee'] = employees;
+            });
 
-                        return employee
-                    });
+            dataService.getData("/department/getForDD", null, function (departments) {
+                departments = _.map(departments.data, function (department) {
+                    department.name = department.departmentName;
 
-                    self.responseObj['#employee'] = employees;
+                    return department
                 });
 
-                dataService.getData("/department/getForDD", null, function (departments) {
-                    departments = _.map(departments.data, function (department) {
-                        department.name = department.departmentName;
+                self.responseObj['#department'] = departments;
+            });
 
-                        return department
-                    });
+            this.renderFilter(self);
 
-                    self.responseObj['#department'] = departments;
-                });
+            setTimeout(function () {
+                /*self.editCollection = new EditCollection(self.collection.toJSON());
+                 self.editCollection.on('saved', self.savedNewModel, self);
+                 self.editCollection.on('updated', self.updatedOptions, self);*/
+                self.bindingEventsToEditedCollection(self);
+                self.$listTable = $('#listTable');
+            }, 10);
 
-                this.renderFilter(self);
+            this.copyEl = $('#top-bar-copyBtn');
+            this.$saveBtn = $('#top-bar-saveBtn');
 
-                setTimeout(function () {
-                    /*self.editCollection = new EditCollection(self.collection.toJSON());
-                     self.editCollection.on('saved', self.savedNewModel, self);
-                     self.editCollection.on('updated', self.updatedOptions, self);*/
-                    self.bindingEventsToEditedCollection(self);
-                    self.$listTable = $('#listTable');
-                }, 10);
-
-                this.copyEl = $('#top-bar-copyBtn');
-                this.$saveBtn = $('#top-bar-saveBtn');
-
-                return this;
-            },
-        });
-
-        return wTrackListView;
+            return this;
+        },
     });
+
+    return wTrackListView;
+});

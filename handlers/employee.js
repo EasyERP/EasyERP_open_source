@@ -31,7 +31,7 @@ var Employee = function (models) {
         }
 
         query
-            .select('_id name department')
+            .select('_id name department isEmployee')
             .populate('department', 'departmentName _id')
             .sort({'name.first': 1})
             .lean()

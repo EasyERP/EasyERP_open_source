@@ -13,7 +13,7 @@ module.exports = (function () {
         employee   : {type: ObjectId, ref: 'Employees', default: null},
         department : {type: ObjectId, ref: 'Department', default: null},
         year       : Number,
-        isoYear       : Number,
+        isoYear    : Number,
         month      : Number,
         week       : Number,
         1          : {type: Number, default: 0},
@@ -68,5 +68,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas.wTrack = wTrackSchema;
+    mongoose.Schemas['wTrack'] = wTrackSchema;
 })();

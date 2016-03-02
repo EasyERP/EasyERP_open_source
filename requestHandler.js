@@ -47,6 +47,7 @@ var requestHandler = function (app, event, mainDb) {
 
     var io = app.get('io');
     var redisStore = require('./helpers/redisClient');
+    var isoWeekYearComposer = require('./helpers/isoWeekYearComposer');
     var logger = app.get('logger');
     var moment = require('./public/js/libs/moment/moment');
 
@@ -87,7 +88,7 @@ var requestHandler = function (app, event, mainDb) {
 
         HoursCashes.remove({}, function (err, result) {
             if (err) {
-                return next(err);
+                return logger.error(err);
             }
 
             console.log('HoursCashes removed');
@@ -107,46 +108,16 @@ var requestHandler = function (app, event, mainDb) {
             var year = wTrackModel.year;
             var _id = wTrackModel._id;
 
-            var dateByWeek = year * 100 + week;
+            var isoYear = isoWeekYearComposer(wTrackModel);
+            var dateByWeek = isoYear * 100 + week;
             var dateByMonth = year * 100 + month;
 
-            var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth}
+            var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth, isoYear: isoYear};
 
             wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                 if (err) {
-                    return console.log(err);
+                    return logger.error(err);
                 }
-
-                console.log('wTrack updated');
-            });
-        } else {
-            wTrack.find({}, {_id: 1, month: 1, week: 1, year: 1}, function (err, result) {
-                if (err) {
-                    return console.log(err);
-                }
-
-                result.forEach(function (wTrackEl, count) {
-
-                    var wTrackModel = wTrackEl.toJSON();
-                    var month = wTrackModel.month;
-                    var week = wTrackModel.week;
-                    var year = wTrackModel.year;
-                    var _id = wTrackModel._id;
-
-                    var dateByWeek = year * 100 + week;
-                    var dateByMonth = year * 100 + month;
-
-                    var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth}
-
-                    wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
-                        if (err) {
-                            return console.log(err);
-                        }
-
-                        // console.log(count);
-                    });
-                });
-
             });
         }
 
@@ -558,6 +529,7 @@ var requestHandler = function (app, event, mainDb) {
                             projectValues.revenue = budgetTotal.revenueSum;
                             projectValues.profit = budgetTotal.profitSum;
                             projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+
                             if (!isFinite(projectValues.markUp)) {
                                 projectValues.markUp = 0;
                             }
