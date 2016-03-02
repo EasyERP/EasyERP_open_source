@@ -11,8 +11,7 @@ var moment = require('../public/js/libs/moment/moment');
 
 var Module = function (models) {
     "use strict";
-    //ToDo set it to process.env
-    oxr.set({app_id: 'b81387a200c2463e9ae3d31cc60eda62'});
+    oxr.set({app_id: process.env.OXR_APP_ID});
 
     var access = require("../Modules/additions/access.js")(models);
 
