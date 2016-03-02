@@ -18,6 +18,30 @@ var Employee = function (models) {
     //    return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
     //}, exportMap, 'Employees');
 
+    this.exportToXlsx = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var filter = req.params.filter;
+        var filterObj = {};
+        var type = req.query.type;
+        var options;
+        var query = [];
+
+        filter = JSON.parse(filter);
+
+        if (filter) {
+            filterObj.$and = caseFilter(filter);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : 'journalEntry'
+        };
+    };
+
     this.getNameAndDepartment = getNameAndDepartment;
 
     function getNameAndDepartment(db, isEmployee, callback) {
