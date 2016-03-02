@@ -633,28 +633,39 @@ define([
 
             exportToCsv: function () {
                 //todo change after routes refactoring
+                var filterString = '';
+
                 if (this.exportToCsvUrl) {
+                    if (this.filter) {
+                        this.exportToCsvUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
                     window.location = this.exportToCsvUrl;
                 } else {
                     if (this.collection) {
-                        window.location = this.collection.url + '/exportToCsv';
+                        filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
                     }
+                    window.location = this.collection.url + '/exportToCsv' + filterString;
                 }
             },
 
-            exportToXlsx        : function () {
+            exportToXlsx: function () {
+                var filterString = '';
                 //todo change after routes refactoring
                 if (this.exportToXlsxUrl) {
-                    if (this.filter){
+                    if (this.filter) {
                         this.exportToXlsxUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
                     }
                     window.location = this.exportToXlsxUrl;
                 } else {
                     if (this.collection) {
-                        window.location = this.collection.url + '/exportToXlsx';
+                        if (this.filter) {
+                            filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                        }
+                        window.location = this.collection.url + '/exportToXlsx' + filterString;
                     }
                 }
             },
+
             fileSizeIsAcceptable: function (file) {
                 if (!file) {
                     return false;
