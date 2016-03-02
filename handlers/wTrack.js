@@ -865,7 +865,7 @@ var wTrack = function (event, models) {
                     var startYear = moment(stDate).year();
                     var endYear = options.endDate ? moment(enDate).year() : startYear + 1;
 
-                    journalEntry.setReconcileDate(req, stDate);
+                    //journalEntry.setReconcileDate(req, stDate);
 
                     for (var j = 7; j >= 1; j--) {
                         options[j] = parseInt(options[j]);
