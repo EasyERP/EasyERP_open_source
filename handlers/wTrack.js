@@ -14,6 +14,7 @@ var wTrack = function (event, models) {
     var ProjectSchema = mongoose.Schemas.Project;
     var EmployeeSchema = mongoose.Schemas.Employee;
     var objectId = mongoose.Types.ObjectId;
+
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var moment = require('../public/js/libs/moment/moment');
@@ -788,7 +789,6 @@ var wTrack = function (event, models) {
     };
 
     this.generateWTrack = function (req, res, next) {
-        var keyConst = ['', 'Mo', 'Tu', 'Wd', 'Th', 'Fr', 'Sa', 'Su'];
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -850,9 +850,22 @@ var wTrack = function (event, models) {
 
         function generatewTracks(job, mainCb) {
             var jobForwTrack = job;
-            var totalHours = 0;
+
 
             async.each(data, function (options, asyncCb) {
+                var startDate = moment(options.startDate);
+                var startIsoYear = startDate.isoWeekYear();
+                var startYear = startDate.year();
+
+                var endDate = moment(options.endDate);
+                var endIsoYear = options.endDate ? endDate.isoWeekYear() : startIsoYear + 1;
+                var endYear = endDate.year();
+
+                //we have two different years and need to divide tCard into 2 parts
+                var needDivide = endYear !== startYear;
+                //need to proper calculate endDate generate
+                var totalHours = 0;
+
                 function getVacationsHolidays(generateCb) {
                     var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
                     var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
@@ -860,10 +873,6 @@ var wTrack = function (event, models) {
                     var totalHolidays = 0;
                     var total = 0;
                     var employee = options.employee;
-                    var stDate = new Date(options.startDate);
-                    var enDate = new Date(options.endDate);
-                    var startYear = moment(stDate).isoWeekYear();
-                    var endYear = options.endDate ? moment(enDate).isoWeekYear() : startYear + 1;
 
                     for (var j = 7; j >= 1; j--) {
                         options[j] = parseInt(options[j]);
@@ -884,7 +893,7 @@ var wTrack = function (event, models) {
 
                     function getHolidays(parallelCb) {
                         var newResultHolidays = {};
-                        var queryHolidays = Holiday.find({year: {$gte: startYear, $lte: endYear}}).lean();
+                        var queryHolidays = Holiday.find({year: {$gte: startIsoYear, $lte: endIsoYear}}).lean();
 
                         queryHolidays.exec(function (err, result) {
 
@@ -916,7 +925,7 @@ var wTrack = function (event, models) {
 
                     function getVacations(parallelCb) {
                         var query = Vacation.find({
-                            year    : {$gte: startYear, $lte: endYear},
+                            year    : {$gte: startIsoYear, $lte: endIsoYear},
                             employee: employee
                         }, {month: 1, year: 1, vacArray: 1}).lean();
 
@@ -973,26 +982,6 @@ var wTrack = function (event, models) {
                 function calculateWeeks(vacationsHolidays, generateCb) {
                     var holidays = vacationsHolidays[0] ? vacationsHolidays[0].holidays : {};
                     var vacations = vacationsHolidays[1] ? vacationsHolidays[1].vacations : {};
-                    var startDate = new Date(options.startDate);
-                    var _startDate = moment(startDate);
-                    var _startYear = _startDate.year();
-                    var endDate = new Date(options.endDate);
-                    var _endDate = moment(endDate);
-                    var startIsoWeek = _startDate.isoWeek();
-                    var startYear = _startDate.isoWeekYear();
-                    var hours = parseInt(options.hours, 10);
-                    var project = options.project;
-                    var employee = options.employee;
-                    var department = options.department;
-                    var weekCounter;
-                    var totalForWeek = 0;
-                    var totalRendered = 0;
-                    var isoWeeksInYear = _startDate.isoWeeksInYear();
-                    var endIsoWeek;
-                    var endYear;
-                    var yearDiff;
-                    var result;
-                    var i;
 
                     function calcWeeks(weeks, startD, endD) {
                         var result = [];
@@ -1003,7 +992,7 @@ var wTrack = function (event, models) {
                         var resArr;
                         var endDay = moment(endD).day();
 
-                        if (startWeek >= isoWeeksInYear && weeks) { //added &&weeks because double calc data for 53 week
+                        /*if (startWeek >= isoWeeksInYear && weeks) { //added &&weeks because double calc data for 53 week
                             resArr = checkWeekToDivide(startWeek, startYear, startDay, endDay);
                             result = resArr;
                             startYear++;
@@ -1021,166 +1010,13 @@ var wTrack = function (event, models) {
 
                         if (options.hours && (options.hours - totalHours >= totalForWeek)) {
                             return result;
-                        }
+                        }*/
 
                         //resArr = checkWeekToDivide(endWeek, startYear, null, endDay);
                         //result = result.concat(resArr);
 
                         function checkWeekToDivide(week, year, day, endDay) {
-                            //todo set real year for week = 1 ???
                             var arrayResult = [];
-                            var weekObj = {};
-                            var weekObjNext = {};
-                            var d = moment().isoWeekYear(year).isoWeek(week);
-                            var checkWeek = d.isoWeek();
-                            var checkToDivide = true;
-                            var checkDate;
-                            var month;
-                            var endOfMonth;
-                            var date;
-                            var dateForCheck;
-                            var dayForEndOfMonth;
-                            var key;
-                            var dateByWeek;
-
-                            if (checkWeek > week) {
-                                week--;
-                            }
-
-                            day = isFinite(day) ? day : 1;
-                            checkDate = moment().day(day).hours(0).minutes(0).isoWeekYear(year).isoWeek(checkWeek);
-                            month = checkDate.month();
-                            endOfMonth = moment().isoWeekYear(year).month(month).hours(0).minutes(0).endOf('month').date();
-                            //date = checkDate.day(day);
-                            dateForCheck = checkDate.date();
-                            dayForEndOfMonth = checkDate.day(1).date(endOfMonth).day();
-
-                            if (endDay === 0 || endDay === 6) {
-                                endDay = 5;
-                            }
-
-                            if (week === endWeek && dateForCheck <= moment(endD).date()) {
-                                checkToDivide = false;
-                            }
-
-                            if (dateForCheck + 7 > endOfMonth && checkToDivide) {
-                                weekObj.week = week;
-                                weekObj.year = year;
-                                weekObj.total = 0;
-
-                                dateByWeek = weekObj.year * 100 + weekObj.week;
-                                dateByWeek = dateByWeek.toString();
-
-                                for (var k = 7; k >= 1; k--) {
-                                    key = keyConst[k];
-
-                                    if (k <= dayForEndOfMonth) {
-                                        weekObj[key] = options[k];
-                                        totalHours += options[k];
-                                        weekObj.total += weekObj[key];
-
-                                        if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][k.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][k.toString()]))) {
-                                            totalHours -= weekObj[key];
-                                            weekObj.total -= weekObj[key];
-                                            weekObj[key] = 0;
-                                        }
-                                    } else {
-                                        weekObj[key] = 0;
-                                    }
-                                }
-
-                                weekObjNext.week = week;
-                                weekObjNext.nextMonth = weekObj.total ? true : false;
-                                weekObjNext.year = year;
-                                weekObjNext.total = 0;
-
-                                dateByWeek = weekObjNext.year * 100 + weekObjNext.week;
-                                dateByWeek = dateByWeek.toString();
-
-                                for (var j = 7; j >= 1; j--) {
-                                    key = keyConst[j];
-
-                                    if (j > dayForEndOfMonth) {
-
-                                        if (endDay) {
-
-                                            if (j <= endDay) {
-                                                weekObjNext[key] = options[j];
-                                                totalHours += options[j];
-                                                weekObjNext.total += weekObjNext[key];
-
-                                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][j.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][j.toString()]))) {
-                                                    totalHours -= weekObjNext[key];
-                                                    weekObjNext.total -= weekObjNext[key];
-                                                    weekObjNext[key] = 0;
-                                                }
-                                            } else {
-                                                weekObjNext[key] = 0;
-                                            }
-                                        } else {
-                                            weekObjNext[key] = options[j];
-                                            totalHours += options[j];
-                                            weekObjNext.total += weekObjNext[key];
-
-                                            if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][j.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][j.toString()]))) {
-                                                totalHours -= weekObjNext[key];
-                                                weekObjNext.total -= weekObjNext[key];
-                                                weekObjNext[key] = 0;
-                                            }
-                                        }
-                                    } else {
-                                        weekObjNext[key] = 0;
-                                    }
-                                }
-
-                                arrayResult.push(weekObj);
-                                arrayResult.push(weekObjNext);
-                            } else {
-                                weekObj.week = week;
-                                weekObj.year = year;
-                                weekObj.total = 0;
-
-                                dateByWeek = weekObj.year * 100 + weekObj.week;
-                                dateByWeek = dateByWeek.toString();
-
-                                for (var l = 7; l >= 1; l--) {
-                                    key = keyConst[l];
-
-                                    if (l >= day) {
-
-                                        if (endDay) {
-
-                                            if (l < endDay + 1) {
-                                                weekObj[key] = options[l];
-                                                totalHours += options[l];
-                                                weekObj.total += weekObj[key];
-
-                                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][l.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][l.toString()]))) {
-                                                    totalHours -= weekObj[key];
-                                                    weekObj.total -= weekObj[key];
-                                                    weekObj[key] = 0;
-                                                }
-                                            } else {
-                                                weekObj[key] = 0;
-                                            }
-                                        } else {
-                                            weekObj[key] = options[l];
-                                            totalHours += options[l];
-                                            weekObj.total += weekObj[key];
-
-                                            if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][l.toString()]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][l.toString()]))) {
-                                                totalHours -= weekObj[key];
-                                                weekObj.total -= weekObj[key];
-                                                weekObj[key] = 0;
-                                            }
-                                        }
-                                    } else {
-                                        weekObj[key] = 0;
-                                    }
-                                }
-
-                                arrayResult.push(weekObj);
-                            }
 
                             return arrayResult;
                         }
@@ -1333,7 +1169,8 @@ var wTrack = function (event, models) {
                         generateItems(result);
                         generateCb();
                     } else if (yearDiff > 0) {
-                        async.parallel([firstPart/*, secondPart*/], function (err, result) {
+                        //todo add ability to divide by more then 1 year
+                        async.parallel([/*firstPart,*/ secondPart], function (err, result) {
                             var firstPart = result[0];
                             /*var secondPart = result[1];
 
