@@ -124,6 +124,7 @@ define([
                     case CONTENT_TYPES.CHARTOFACCOUNT:
                     case CONTENT_TYPES.JOURNAL:
                     case CONTENT_TYPES.JOURNALENTRY:
+                    case CONTENT_TYPES.GLREPORT:
                     case CONTENT_TYPES.SALARYREPORT:
                         App.currentViewType = 'list';
                         break;
@@ -175,6 +176,7 @@ define([
                     case CONTENT_TYPES.CHARTOFACCOUNT:
                     case CONTENT_TYPES.JOURNAL:
                     case CONTENT_TYPES.JOURNALENTRY:
+                    case CONTENT_TYPES.GLREPORT:
                     case CONTENT_TYPES.SALARYREPORT:
                         App.currentViewType = 'list';
                         break;

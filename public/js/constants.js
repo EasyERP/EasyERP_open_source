@@ -426,11 +426,11 @@ define([], function () {
             }
         },
         "journalEntry"  : {
-            "Journal"      : {
+            "Journal"       : {
                 view   : 'journalName',
                 backend: 'journal.name'
             },
-            "Subject"    : {
+            "Subject"       : {
                 view   : 'sourceDocument',
                 backend: 'sourceDocument.subject._id'
             },
@@ -491,6 +491,7 @@ define([], function () {
         JOURNALENTRY      : "journalEntry",
         INVOICECHARTS     : "invoiceCharts",
         SALARYREPORT      : "salaryReport",
+        GLREPORT          : "gLReport",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
