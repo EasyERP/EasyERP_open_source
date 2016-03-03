@@ -207,7 +207,7 @@ define([
 
                 $currentEl.append(itemView.render());
 
-                newModels.forEach(function (el) {
+                collection.forEach(function (el) {
                     asyncKeys.push(el._id);
                 });
 

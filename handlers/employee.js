@@ -13,7 +13,7 @@ var Employee = function (models) {
     var moment = require('../public/js/libs/moment/moment');
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
-    //var exportMap = require('../helpers/csvMap').Employees;
+    var exportMap = require('../helpers/csvMap').Employees;
     //exportDecorator.addExportFunctionsToHandler(this, function (req) {
     //    return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
     //}, exportMap, 'Employees');
@@ -26,19 +26,18 @@ var Employee = function (models) {
         var options;
         var query = [];
 
-        filter = JSON.parse(filter);
-
-        if (filter) {
-            filterObj.$and = caseFilter(filter);
-        }
+        //filter = JSON.parse(filter); //ToDo uncomment when Modules move to handler
+        //
+        //if (filter) {
+        //    filterObj.$and = caseFilter(filter);
+        //}
 
         options = {
             res         : res,
             next        : next,
             Model       : Model,
             map         : exportMap,
-            returnResult: true,
-            fileName    : 'journalEntry'
+            fileName    : 'Employees'
         };
     };
 
