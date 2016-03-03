@@ -3812,7 +3812,7 @@ table#workflows {
 
 .createBtnHolder, #createBtnHolder {
   float: left;
-  margin-top: 6px;
+  //margin-top: 6px;
   margin-left: 5px;
   /*.add {
         font-size: 22px !important;
@@ -3822,14 +3822,14 @@ table#workflows {
   a {
     float: left;
     display: block;
-    width: 18px;
-    height: 18px;
+    //width: 18px;
+    //height: 18px;
     overflow: hidden;
     margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
     color: @creatBtn-color;
-    line-height: 18px;
+    line-height: 29px; //it was 18px
 
     &:hover {
       color: @creatBtn-color + #333;
@@ -3851,7 +3851,7 @@ table#workflows {
       float: left;
       margin-right: 10px;
       .btn {
-        padding: .2em 1em;
+        //padding: .2em 1em;
       }
       a {
         display: inline-block;
@@ -3862,6 +3862,9 @@ table#workflows {
         &:hover {
           text-decoration: none;
         }
+      }
+      .dateReconcileDate {
+        line-height: 29px;
       }
     }
   }
@@ -4665,7 +4668,7 @@ h3.dashboard {
           padding-right: 5px;
         }
       }
-      div.status, {
+      div.status {
         width: 90px;
       }
     }

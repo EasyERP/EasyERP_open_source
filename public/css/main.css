@@ -5114,6 +5114,8 @@ table#workflows tr td.edit-status {
   position: relative;
   float: left;
   margin-left: 15px;
+  height: 100%;
+  width: 210px;
 }
 #top-bar .vocationFilter .dateFilter {
   width: 200px;
@@ -5180,6 +5182,8 @@ table#workflows tr td.edit-status {
   position: relative;
   float: left;
   margin-left: 15px;
+  height: 100%;
+  width: 210px;
 }
 .projectInfoTopBar .vocationFilter .dateFilter {
   width: 200px;
@@ -5222,7 +5226,6 @@ table#workflows tr td.edit-status {
 .createBtnHolder,
 #createBtnHolder {
   float: left;
-  margin-top: 6px;
   margin-left: 5px;
   /*.add {
         font-size: 22px !important;
@@ -5234,14 +5237,12 @@ table#workflows tr td.edit-status {
 #createBtnHolder a {
   float: left;
   display: block;
-  width: 18px;
-  height: 18px;
   overflow: hidden;
   margin-right: 3px;
   cursor: pointer;
   vertical-align: baseline;
   color: #cdcdcd;
-  line-height: 18px;
+  line-height: 29px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
@@ -5268,10 +5269,6 @@ table#workflows tr td.edit-status {
   float: left;
   margin-right: 10px;
 }
-.createBtnHolder ul li .btn,
-#createBtnHolder ul li .btn {
-  padding: .2em 1em;
-}
 .createBtnHolder ul li a,
 #createBtnHolder ul li a {
   display: inline-block;
@@ -5283,6 +5280,10 @@ table#workflows tr td.edit-status {
 .createBtnHolder ul li a:hover,
 #createBtnHolder ul li a:hover {
   text-decoration: none;
+}
+.createBtnHolder ul li .dateReconcileDate,
+#createBtnHolder ul li .dateReconcileDate {
+  line-height: 29px;
 }
 /*----------------------------- Login Form --------------------------------*/
 #loginForm {

@@ -1,6 +1,4 @@
 <h3>Journal Entry</h3>
-<div id="createBtnHolder">
-</div>
 <div class="vocationFilter">
     <ul class="dateFilter">
         <li class="dateRange">
@@ -27,22 +25,23 @@
         </li>
     </ul>
 </div>
-<button id="reconcileBtn" class="btn">
-    <span>Reconcile</span>
-</button>
-<span id="reconcileDate"></span>
-<ul>
-    <li>
-        <button class="btn">
-            <span title="Export to csv" id="top-bar-exportToCsvBtn">Export to Csv</span>
-        </button>
-    </li>
-    <li>
-        <button class="btn">
-            <span href="javascript;" title="Export to xlsx" id="top-bar-exportToXlsxBtn">Export to Xlsx</span>
-        </button>
-    </li>
-</ul>
-<div id="template-switcher" class="right">
-
+<div id="createBtnHolder">
+    <ul>
+        <li>
+            <button id="reconcileBtn" class="btn">
+                <span>Reconcile</span>
+            </button>
+        </li>
+        <li><span id="reconcileDate" class="dateReconcileDate"></span></li>
+        <li>
+            <button class="btn">
+                <span title="Export to csv" id="top-bar-exportToCsvBtn">Export to Csv</span>
+            </button>
+        </li>
+        <li>
+            <button class="btn">
+                <span href="javascript;" title="Export to xlsx" id="top-bar-exportToXlsxBtn">Export to Xlsx</span>
+            </button>
+        </li>
+    </ul>
 </div>
