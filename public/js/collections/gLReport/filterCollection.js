@@ -10,7 +10,7 @@ define([
     var salatyCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
-        url         : '/journal/journalEntry/glReport',
+        url         : 'journal/journalEntry/getForGL',
         contentType : null,
         page        : null,
         numberToShow: null,
@@ -22,10 +22,10 @@ define([
             this.filter = options.filter || Custom.retriveFromCash('glReport.filter');
             var startDate = new Date();
             var endDate = new Date();
-            startDate.setMonth(0);
             startDate.setDate(1);
-            endDate.setMonth(11);
+            startDate.setMonth(startDate.getMonth() - 1);
             endDate.setDate(31);
+            endDate.setMonth(startDate.getMonth() - 1);
             var dateRange = Custom.retriveFromCash('glReportDateRange') || {};
             this.startDate = dateRange.startDate;
             this.endDate = dateRange.endDate;

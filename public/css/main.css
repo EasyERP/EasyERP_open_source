@@ -806,6 +806,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 .centerCell {
   text-align: center;
 }
+.list2 .leftBorderNone {
+  border-left: none;
+}
 .list2 .cancelled a {
   text-decoration: line-through;
 }
@@ -887,6 +890,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 .centerCell {
   text-align: center;
+}
+.list2 .leftBorderNone {
+  border-left: none;
 }
 .list2 .cancelled a {
   text-decoration: line-through;
@@ -5735,6 +5741,9 @@ ul.dialog-tabs li.right button {
 }
 .list .centerCell {
   text-align: center;
+}
+.list .leftBorderNone {
+  border-left: none;
 }
 .list .cancelled a {
   text-decoration: line-through;

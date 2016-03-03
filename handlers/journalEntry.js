@@ -2131,6 +2131,56 @@ var Module = function (models) {
         });
     };
 
+    this.getAsyncDataForGL = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = req.query;
+        var account = query._id;
+        var startDate = query.startDate;
+        var endDate = query.endDate;
+
+        Model.aggregate([{
+            $match: {
+                date   : {
+                    $gte: new Date(startDate),
+                    $lte: new Date(endDate)
+                },
+                account: objectId(account)
+            }
+        }, {
+            $project: {
+                date   : 1,
+                debit  : {$divide: ['$debit', '$currency.rate']},
+                credit : {$divide: ['$credit', '$currency.rate']},
+                account: 1
+            }
+        }, {
+            $group: {
+                _id    : '$date',
+                debit  : {$sum: '$debit'},
+                credit : {$sum: '$credit'},
+                account: {$addToSet: '$account'}
+            }
+        }, {
+            $project: {
+                _id    : 1,
+                debit  : 1,
+                credit : 1,
+                account: {$arrayElemAt: ["$account", 0]}
+            }
+        }, {
+            $sort: {
+                _id: -1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({journalEntries: result});
+        });
+
+    };
+
     this.getAsyncData = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -2333,6 +2383,61 @@ var Module = function (models) {
         });
     };
 
+    this.getForGL = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = req.query;
+        var startDate = query.startDate;
+        var endDate = query.endDate;
+        // var filter = query.filter;
+
+        Model.aggregate([{
+            $match: {
+                date: {
+                    $gte: new Date(startDate),
+                    $lte: new Date(endDate)
+                }
+            }
+        }, {
+            $lookup: {
+                from        : "chartOfAccount",
+                localField  : "account",
+                foreignField: "_id", as: "account"
+            }
+        }, {
+            $project: {
+                date   : 1,
+                debit  : {$divide: ['$debit', '$currency.rate']},
+                credit : {$divide: ['$credit', '$currency.rate']},
+                account: {$arrayElemAt: ["$account", 0]}
+            }
+        }, {
+            $group: {
+                _id   : '$account._id',
+                name  : {$addToSet: '$account.name'},
+                debit : {$sum: '$debit'},
+                credit: {$sum: '$credit'}
+            }
+        }, {
+            $project: {
+                _id   : 1,
+                debit : 1,
+                credit: 1,
+                name  : {$arrayElemAt: ["$name", 0]}
+            }
+        }, {
+            $sort: {
+                name: 1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+
+    };
+
     this.getForReport = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -2340,7 +2445,6 @@ var Module = function (models) {
         var query = req.query;
         var sourceDocument = query._id;
         var debit;
-        var credit;
         var wTrackFinder;
         var resultFinder;
 
