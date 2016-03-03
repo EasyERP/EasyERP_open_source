@@ -4,7 +4,8 @@
 
 var mongoose = require('mongoose');
 var PaymentTerm = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
+    'use strict';
+
     var PaymentTypeSchema = mongoose.Schemas['PaymentType'];
 
     this.getForDd = function (req, res, next) {

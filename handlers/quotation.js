@@ -19,6 +19,7 @@ var Quotation = function (models, event) {
     var mapObject = require('../helpers/bodyMaper');
     var _ = require('../node_modules/underscore');
     var currencyHalper = require('../helpers/currency');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     function convertType(array, type) {
         var i;
@@ -499,11 +500,14 @@ var Quotation = function (models, event) {
         var contentType = query.contentType;
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
-        var count = parseInt(query.count, 10) || 100;
+        var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(query.page, 10);
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
         var filter = query.filter || {};
         var key;
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (isOrder) {
             filter.isOrder = {

@@ -410,9 +410,12 @@ var wTrack = function (event, models) {
 
         var sort = {};
         var filterObj = filter ? filterMapper.mapFilter(filter) : null;
-        var count = parseInt(query.count, 10) || 100;
+        var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(query.page, 10);
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
             key = Object.keys(query.sort)[0].toString();
@@ -669,10 +672,13 @@ var wTrack = function (event, models) {
         };
 
         var sort = {};
-        var count = query.count || 100;
+        var count = query.count || CONSTANTS.DEF_LIST_COUNT;
         var page = query.page || 1;
 
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
             key = Object.keys(query.sort)[0];

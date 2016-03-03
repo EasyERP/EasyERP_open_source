@@ -154,18 +154,23 @@ var Payment = function (models, event) {
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
+                var optionsObject = {}; //{forSale: forSale};
+                var sort = {};
+                var count;
+                var page;
+                var skip;
+                var departmentSearcher;
+                var contentIdsSearcher;
+                var contentSearcher;
+                var waterfallTasks;
+
                 if (access) {
 
-                    var optionsObject = {}; //{forSale: forSale};
-                    var sort = {};
-                    var count = parseInt(req.query.count) ? parseInt(req.query.count) : 100;
-                    var page = parseInt(req.query.page);
-                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+                    count = parseInt(req.query.count) ||  CONSTANTS.DEF_LIST_COUNT;
+                    page = parseInt(req.query.page);
 
-                    var departmentSearcher;
-                    var contentIdsSearcher;
-                    var contentSearcher;
-                    var waterfallTasks;
+                    count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+                    skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (req.query.sort) {
                         var key = Object.keys(req.query.sort)[0];
