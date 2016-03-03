@@ -97,10 +97,10 @@ define([
 
                 tr.remove();
 
-                this.removeIcon.show();
-
                 this.$el.find('#update').show();
                 this.$el.find('.withEndContract').show();
+
+                this.renderRemoveBtn();
             },
 
             validateNumbers: function (e) {
@@ -115,80 +115,44 @@ define([
             },
 
             addNewRow: function (e, contractEndReason) {
-                var $target = e ? $(e.target) : null;
-                var targetId = $target ? $target.attr('id') : null;
                 var table = this.$el.find('#hireFireTable');
-                var tr = table.find('tr').last();
-                var dataContent = tr.attr('data-content');
-                var dataId = parseInt(tr.attr('data-id'));
-                var newId;
-                var row;
-                var tds;
-                var newDate = new Date();
-                var selects;
-                var enable = this.currentModel.get('enableView');
-                var number = 7;
+                var lastTr = table.find('tr').last();
+                var newTr = lastTr.clone();
+                var trId = newTr.attr('data-id');
+                var now = moment();
 
-                if (enable) {
-                    number = 8;
+                now = common.utcDateToLocaleDate(now);
+
+                newTr.attr('data-id', ++trId);
+                newTr.find('td').eq(2).text(now);
+
+                if (contractEndReason) {
+                    newTr.attr('data-content', 'fired');
+                    newTr.find('td').eq(1).text('fired');
+                    newTr.find('td').last().text(contractEndReason);
+                } else {
+                    newTr.attr('data-content', 'updated');
+                    newTr.find('td').eq(1).text('updated');
                 }
 
-                this.removeIcon.hide();
+                table.append(newTr);
 
                 this.$el.find('#update').hide();
                 this.$el.find('.withEndContract').hide();
 
-                if (contractEndReason) {
-                    dataContent = 'fire';
-                    dataId = table.find('[data-content="fire"]').length ? parseInt(table.find('[data-content="fire"]').last().attr('data-id')) : parseInt(table.find('[data-content="hire"]').last().attr('data-id')) - 1;
-                }
-
-                newId = dataContent + (dataId + 1).toString();
-
-                table.append('<tr id="' + newId + '">' + tr.html() + '</tr>');
-
-                row = table.find('tr').last();
-                row.attr('data-id', dataId + 1);
-                row.attr('data-content', dataContent);
-
-                tds = row.find('td');
-
-                if (targetId === 'update') {
-                    $(tds[0]).html('<a class="fa fa-trash" id="' + (dataId + 1) + '"></a>');
-                    $(tds[1]).text('Hired');
-                    $(tds[2]).addClass('changeContent');
-                    $(tds[2]).text(common.utcDateToLocaleDate(newDate));
-                    $(tds[number]).find('input').val('Update');
-                } else if (contractEndReason) {
-                    row.addClass('fired');
-                    $(tds[0]).html('<a class="fa fa-trash" id="' + (dataId + 1) + '"></a>');
-                    $(tds[1]).text('Fired');
-                    $(tds[2]).addClass('changeContent');
-                    $(tds[2]).text(common.utcDateToLocaleDate(newDate));
-                    $(tds[2]).removeClass('hireDate');
-                    $(tds[2]).addClass('fireDate');
-                    $(tds[2]).attr('data-id', 'fireDate');
-                    if (enable) {
-                        $(tds[7]).removeClass('editable');
-                    }
-                    $(tds[number]).find('input').val(contractEndReason);
-
-                    selects = row.find('.current-selected');
-                    selects.removeClass('current-selected');
-                }
+                this.renderRemoveBtn();
             },
 
-            showSelect: function (e) {
-                var $target = $(e.target);
 
-                e.stopPropagation();
+            renderRemoveBtn: function() {
+                var table = this.$el.find('#hireFireTable');
+                var trs = table.find('tr');
+                var removeBtn = '<a class="fa fa-trash"></a>';
 
-                if ($target.children()) {
-                    $target.children().show();
-                }
-
-                return false;
+                trs.find('td:first-child').text('');
+                trs.last().find('td').first().html(removeBtn);
             },
+
 
             editJob: function (e) {
                 var self = this;
@@ -207,7 +171,7 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                    minDate    : self.hireDate,
+                    minDate    : self.hiredDate,
                     onSelect   : function () {
                         var editingDates = self.$el.find('.editing');
 
@@ -306,8 +270,6 @@ define([
                 this.activeTab();
 
                 this.addNewRow(null, contractEndReason);
-
-                this.$el.find('.withEndContract').hide();
             },
 
             changeTab: function (e) {
@@ -371,8 +333,7 @@ define([
             },
 
             saveItem  : function () {
-
-                this.hideNewSelect();
+               /* this.hideNewSelect();
 
                 var jobType;
                 var department;
@@ -383,7 +344,7 @@ define([
                 var redirect = false;
                 var $tableFire = this.$el.find('#hireFireTable');
                 var lastRow = $tableFire.find('tr').last();
-                var fireDate;
+                var firedDate;
                 var fireReason;
                 var gender = $("#genderDd").data("id") || null;
 
@@ -398,17 +359,18 @@ define([
                 });
 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-                var hireArray = $tableFire.find('[data-content="hire"]');
+                var transferArray = $tableFire.find('[data-content="transfer"]');
                 var newHireArray = [];
-                var lengthHire = hireArray.length - 1;
+                var newTransferArray = [];
+                var lengthHire = transferArray.length - 1;
                 var fireArray = this.currentModel.get('fire');
                 var hireModelArray = this.currentModel.get('hire');
                 var newFire = _.clone(fireArray);
                 var newFireArray = [];
 
-                _.each(hireArray, function (hire, key) {
+                _.each(transferArray, function (hire, key) {
                     var tr = self.$el.find("#hire" + key);
-                    var date = new Date($.trim(tr.find("[data-id='hireDate']").text()));
+                    var date = new Date($.trim(tr.find("[data-id='hiredDate']").text()));
                     var jobPosition = tr.find('#jobPositionDd').attr('data-id');
                     var department = tr.find('#departmentsDd').attr('data-id');
                     var manager = tr.find('#projectManagerDD').attr('data-id') || null;
@@ -418,7 +380,7 @@ define([
 
                     var trFire = $(self.$el.find("#fire" + key));
 
-                    newHireArray.push({
+                    newTransferArray.push({
                         date       : date,
                         department : department,
                         jobPosition: jobPosition,
@@ -429,13 +391,14 @@ define([
                     });
 
                     if (lengthHire === key && !lastRow.hasClass('fired')) {
+                        newHireArray.push(date);
                         return newHireArray;
                     }
 
                     if (trFire && trFire.length) {
                         newFire[key] = _.clone(newHireArray[key]);
 
-                        newFire[key].date = new Date($.trim(trFire.find("[data-id='fireDate']").text()));
+                        newFire[key].date = new Date($.trim(trFire.find("[data-id='firedDate']").text()));
                         newFire[key].info = trFire.find('#statusInfoDd').val();
 
                         newFireArray.push(newFire[key]);
@@ -458,11 +421,10 @@ define([
 
                 if (lastRow.hasClass('fired')) {
                     redirect = true;
-                    fireDate = newFireArray[newFireArray.length - 1].date;
+                    firedDate = newFireArray[newFireArray.length - 1].date;
                     fireReason = newFireArray[newFireArray.length - 1].info;
                 }
 
-                var active = (this.$el.find("#active").is(":checked")) ? true : false;
                 var sourceId = $("#sourceDd").data("id");
 
                 var usersId = [];
@@ -518,7 +480,6 @@ define([
                     otherId       : $.trim(this.$el.find("#otherId").val()),
                     homeAddress   : homeAddress,
                     dateBirth     : dateBirthSt,
-                    active        : active,
                     source        : sourceId,
                     imageSrc      : this.imageSrc,
                     nationality   : nationality,
@@ -534,9 +495,9 @@ define([
 
                 if (redirect) {
                     data.isEmployee = false;
-                    data.lastFire = moment(fireDate).year() * 100 + moment(fireDate).isoWeek();
+                    data.lastFire = moment(firedDate).year() * 100 + moment(firedDate).isoWeek();
                     data.contractEnd = {
-                        "date"  : new Date(fireDate),
+                        "date"  : new Date(firedDate),
                         "reason": fireReason
                     };
                 }
@@ -588,8 +549,11 @@ define([
                     }
 
                 });
+*/
+
 
             },
+
             deleteItem: function (event) {
                 event.preventDefault();
                 var mid = 39;
@@ -627,6 +591,8 @@ define([
                         silent: true
                     });
                 }
+
+
 
                 var formString = this.template({
                     model: this.currentModel.toJSON()
@@ -693,7 +659,7 @@ define([
                 });
 
                 this.removeIcon = this.$el.find('.fa-trash');
-                this.hireDate = this.currentModel.get('hire')[0].date;
+                this.hiredDate = this.currentModel.get('hire')[0].date;
 
                 var model = this.currentModel.toJSON();
                 if (model.groups) {

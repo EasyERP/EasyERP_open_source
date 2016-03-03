@@ -1236,12 +1236,19 @@ var Employee = function (event, models) {
 
     function getById(req, response) {
         var data = {};
+        var project = {};
         for (var i in
             req.query) {
             data[i] = req.query[i];
         }
         ;
-        var query = models.get(req.session.lastDb, "Employees", employeeSchema).findById(data.id);
+
+        if (ids.indexOf(req.session.uId) === -1) {
+            project = {'transfer.salary': 0};
+        }
+
+        var query = models.get(req.session.lastDb, "Employees", employeeSchema)
+            .findById(data.id, project);
 
         query.populate('coach', 'name _id')
             .populate('relatedUser', 'login _id')
@@ -1253,12 +1260,9 @@ var Employee = function (event, models) {
             .populate('jobPosition', '_id name fullName')
             .populate('department', '_id departmentName')
             .populate('groups.group')
-            .populate('hire.department', '_id departmentName')
-            .populate('hire.jobPosition', '_id name')
-            .populate('hire.manager', '_id name')
-            .populate('fire.department', '_id departmentName')
-            .populate('fire.jobPosition', '_id name')
-            .populate('fire.manager', '_id name')
+            .populate('transfer.department', '_id departmentName')
+            .populate('transfer.jobPosition', '_id name')
+            .populate('transfer.manager', '_id name')
             .populate('groups.owner', '_id login');
 
         query.exec(function (err, findedEmployee) {
@@ -1266,9 +1270,7 @@ var Employee = function (event, models) {
                 logWriter.log("Employees.js getById employee.find " + err);
                 response.send(500, {error: "Can't find Employee"});
             } else {
-                if (ids.indexOf(req.session.uId) !== -1) {
-                    findedEmployee._doc.enableView = true;
-                }
+
 
                 response.send(findedEmployee);
             }

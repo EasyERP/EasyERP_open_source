@@ -144,7 +144,6 @@ module.exports = (function () {
         nextAction: Date,
         source: {type: String, default: ''},
         referredBy: {type: String, default: ''},
-        active: {type: Boolean, default: true},
         workflow: {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups: {
@@ -186,6 +185,7 @@ module.exports = (function () {
         transfer: [{
             _id: false,
             date: Date,
+            status: {type: String, enum: ['hired', 'fired', 'updated'], default: 'updated'},
             department: {type: ObjectId, ref: 'Department', default: null},
             jobPosition: {type: ObjectId, ref: 'JobPosition', default: null},
             manager: {type: ObjectId, ref: 'Employees', default: null},

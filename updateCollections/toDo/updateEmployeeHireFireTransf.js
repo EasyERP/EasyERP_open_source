@@ -104,6 +104,7 @@ var employeeSchema = new mongoose.Schema({
         department: {type: ObjectId, ref: 'Department', default: null},
         jobPosition: {type: ObjectId, ref: 'JobPosition', default: null}
     }],
+    status: {type: String, default: 'updated'},
     lastFire: {type: Number, default: null},
     transferred: [JSON]
 }, {collection: 'Employees'});
@@ -151,18 +152,18 @@ query.exec(function (error, _res) {
 
         emp.hire = emp.hire.map(function(hireObj) {
             "use strict";
-            hireObj.info = "updated";
+            hireObj.status = "updated";
             return hireObj;
         });
 
         hire = [emp.hire[0].date];
         transfer = emp.hire;
 
-        transfer[0].info = "hired";
+        transfer[0].status = "hired";
 
         if (fired) {
             event = emp.fire.pop();
-            event.info = "fired";
+            event.status = "fired";
             fire = [event.date];
             transfer.push(event);
 
