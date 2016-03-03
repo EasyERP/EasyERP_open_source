@@ -763,9 +763,10 @@ var Opportunities = function (models, event) {
                                         //    query.where('workflow').in([]);
                                         //}
 
-                                        query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName")
+                                        query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName salesPerson")
                                             .populate('company', 'name')
                                             .populate('workflow', "name status")
+                                            .populate('salesPerson', 'name')
                                             .populate('createdBy.user', 'login')
                                             .populate('editedBy.user', 'login');
                                     }

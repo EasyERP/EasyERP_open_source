@@ -1727,11 +1727,18 @@ var Filters = function (models) {
                         localField  : "workflow",
                         foreignField: "_id", as: "workflow"
                     }
+                },{
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "salesPerson",
+                        foreignField: "_id", as: "salesPerson"
+                    }
                 }, {
                     $project: {
                         workflow   : {$arrayElemAt: ["$workflow", 0]},
                         source     : 1,
-                        contactName: {$concat: ["$contactName.first", " ", "$contactName.last"]}
+                        contactName: {$concat: ["$contactName.first", " ", "$contactName.last"]},
+                        salesPerson: {$arrayElemAt: ["$salesPerson", 0]}
                     }
                 }, {
                     $group: {
@@ -1752,6 +1759,12 @@ var Filters = function (models) {
                             $addToSet: {
                                 _id : "$workflow._id",
                                 name: "$workflow.name"
+                            }
+                        },
+                        salesPerson: {
+                            $addToSet: {
+                                _id : "$salesPerson._id",
+                                name: {$concat: ["$salesPerson.name.first", " ", "$salesPerson.name.last"]}
                             }
                         }
                     }

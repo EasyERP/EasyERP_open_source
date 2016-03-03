@@ -12,6 +12,7 @@
     <td id='<%=lead._id%>' class="centerCell <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">
         <a href="javascript:;" class="stageSelect"><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></a>
     </td>
+    <td><%=lead.salesPerson ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></td>
     <td><%=lead.createdBy.user?(lead.createdBy.date + ' (' + lead.createdBy.user.login +
         ')'):(lead.createdBy.date?lead.createdBy.date:'')%>
     </td>
