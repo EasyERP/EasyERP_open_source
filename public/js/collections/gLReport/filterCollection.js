@@ -5,9 +5,10 @@
 define([
     'Backbone',
     'models/journalEntry',
-    'custom'
-], function (Backbone, journalEntryModel, Custom) {
-    var salatyCollection = Backbone.Collection.extend({
+    'custom',
+    'moment'
+], function (Backbone, journalEntryModel, Custom, moment) {
+    var gLReportCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
         url         : 'journal/journalEntry/getForGL',
@@ -20,18 +21,20 @@ define([
             options = options || {};
             this.startTime = new Date();
             this.filter = options.filter || Custom.retriveFromCash('glReport.filter');
-            var startDate = new Date();
-            var endDate = new Date();
-            startDate.setDate(1);
-            startDate.setMonth(startDate.getMonth() - 1);
-            endDate.setDate(31);
-            endDate.setMonth(startDate.getMonth() - 1);
+            var startDate = moment(new Date());
+            var endDate = moment(new Date());
+
+            startDate.month(startDate.month() - 1);
+            startDate.date(1);
+            endDate.month(startDate.month());
+            endDate.endOf('month');
+
             var dateRange = Custom.retriveFromCash('glReportDateRange') || {};
             this.startDate = dateRange.startDate;
             this.endDate = dateRange.endDate;
 
-            this.startDate = dateRange.startDate ||  startDate;
-            this.endDate = dateRange.endDate || endDate;
+            this.startDate = dateRange.startDate ||  new Date(startDate);
+            this.endDate = dateRange.endDate || new Date(endDate);
 
             options.startDate = this.startDate;
             options.endDate = this.endDate;
@@ -106,6 +109,6 @@ define([
         }
     });
 
-    return salatyCollection;
+    return gLReportCollection;
 });
 

@@ -12,10 +12,11 @@ define([
         'helpers',
         'dataService',
         'common',
-        'moment'
+        'moment',
+        'custom'
     ],
 
-    function (_, $, listViewBase, listTemplate, ListItemView, EditView, filterView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment) {
+    function (_, $, listViewBase, listTemplate, ListItemView, EditView, filterView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
         'use strict';
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
@@ -36,9 +37,32 @@ define([
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.page = options.collection.page;
-                this.filter = options.filter || {};
+                var dateRange = custom.retriveFromCash('journalEntryDateRange');
+
+                this.filter = options.filter || custom.retriveFromCash('journalEntry.filter');
+
+                if (!this.filter) {
+                    this.filter = {};
+                }
+
+                if (!this.filter.startDate) {
+                    this.filter.startDate = {
+                        key  : 'startDate',
+                        value: new Date(dateRange.startDate)
+                    };
+                    this.filter.endDate = {
+                        key  : 'endDate',
+                        value: new Date(dateRange.endDate)
+                    };
+                }
+
+                this.startDate = new Date(this.filter.startDate.value);
+                this.endDate = new Date(this.filter.endDate.value);
 
                 this.render();
+
+                custom.cacheToApp('journalEntry.filter', this.filter);
+
                 this.contentCollection = contentCollection;
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
@@ -46,6 +70,64 @@ define([
             events: {
                 "click .Invoice": "viewSourceDocument",
                 "click .jobs"   : "viewSourceDocumentJOb"
+            },
+
+            changeDateRange: function () {
+                var itemsNumber = $("#itemsNumber").text();
+                var stDate = $('#startDate').val();
+                var enDate = $('#endDate').val();
+
+                this.startDate = new Date(stDate);
+                this.endDate = new Date(enDate);
+
+                if (!this.filter) {
+                    this.filter = {};
+                }
+
+                this.filter.startDate = {
+                    key  : 'startDate',
+                    value: stDate
+                };
+
+                this.filter.endDate = {
+                    key  : 'endDate',
+                    value: enDate
+                };
+
+                var searchObject = {
+                    page     : 1,
+                    startDate: this.startDate,
+                    endDate  : this.endDate,
+                    filter   : this.filter
+                };
+
+                this.collection.showMore(searchObject);
+                this.changeLocationHash(1, itemsNumber, this.filter);
+
+                App.filter = this.filter;
+
+                custom.cacheToApp('journalEntry.filter', this.filter);
+            },
+
+            showFilteredPage: function (filter) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                this.startTime = new Date();
+                this.newCollection = false;
+
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
+
+                custom.cacheToApp('journalEntry.filter', this.filter);
+
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({
+                    count    : itemsNumber,
+                    page     : 1,
+                    filter   : filter,
+                    startDate: this.startDate,
+                    endDate  : this.endDate
+                });
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
             viewSourceDocument: function (e) {
@@ -89,6 +171,8 @@ define([
 
                 itemView.undelegateEvents();
 
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+
                 var pagination = holder.find('.pagination');
                 if (newModels.length !== 0) {
                     pagination.show();
@@ -97,8 +181,6 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-
-               // this.calcTotal();
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -164,9 +246,9 @@ define([
 
                 this.renderPagination($currentEl, this);
 
-                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+                App.filter = this.filter;
 
-              //  this.calcTotal();
+                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             }
 
         });

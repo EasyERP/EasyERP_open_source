@@ -90,14 +90,9 @@ define([
                         changeYear : true,
                         defaultDate: startDate,
                         onSelect   : function () {
-                            var targetInput = $(this);
                             var endDatePicker = self.$endDate;
-                            var endD = moment(targetInput.datepicker('getDate'));
 
-                            endD.add(1, 'month').day('Monday');
-                            endD = endD.toDate();
-
-                            endDatePicker.datepicker('option', 'minDate', endD);
+                            endDatePicker.datepicker('option', 'minDate', $(this).val());
 
                             return false;
                         }

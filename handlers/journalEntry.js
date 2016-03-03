@@ -267,6 +267,14 @@ var Module = function (models) {
         var type = req.query.type;
         var options;
         var query = [];
+        var startDate = filter.startDate.value;
+        var endDate = filter.endDate.value;
+        var matchObject = {
+            date: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        };
 
         filter = JSON.parse(filter);
 
@@ -286,6 +294,8 @@ var Module = function (models) {
         function lookupForWTrack(cb) {
             var query = [{$match: type ? {type: type} : {}}];
 
+            query.push({$match: matchObject});
+
             for (var i = 0; i < lookupWTrackArray.length; i++) {
                 query.push(lookupWTrackArray[i]);
             }
@@ -303,6 +313,8 @@ var Module = function (models) {
         function lookupForEmployees(cb) {
             var query = [{$match: type ? {type: type} : {}}];
 
+            query.push({$match: matchObject});
+
             for (var i = 0; i < lookupEmployeesArray.length; i++) {
                 query.push(lookupEmployeesArray[i]);
             }
@@ -319,6 +331,8 @@ var Module = function (models) {
 
         function lookupForInvoice(cb) {
             var query = [{$match: type ? {type: type} : {}}];
+
+            query.push({$match: matchObject});
 
             for (var i = 0; i < lookupInvoiceArray.length; i++) {
                 query.push(lookupInvoiceArray[i]);
@@ -1838,9 +1852,21 @@ var Module = function (models) {
         var findByEmployee;
         var filter = data.filter;
         var filterObj = {};
+        var startDate = data.startDate || filter.startDate.value;
+        var endDate = data.endDate || filter.endDate.value;
+        var matchObject = {
+            date: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        };
 
         if (filter) {
-            filterObj.$and = caseFilter(filter);
+            var filterArray = caseFilter(filter);
+
+            if (filterArray.length){
+                filterObj.$and = filterArray
+            }
         }
 
         access.getReadAccess(req, req.session.uId, 86, function (access) {
@@ -1848,6 +1874,8 @@ var Module = function (models) {
                 findInvoice = function (cb) {
                     Model
                         .aggregate([{
+                            $match: matchObject
+                        }, {
                             $match: {
                                 "sourceDocument.model": "Invoice",
                                 debit                 : {$gt: 0}
@@ -1924,8 +1952,10 @@ var Module = function (models) {
                 };
 
                 findSalary = function (cb) {
-                    var query = Model
-                        .aggregate([{
+                    var aggregate;
+                    var query = [{
+                            $match: matchObject
+                        },{
                             $match: {
                                 "sourceDocument.model": "wTrack",
                                 debit                 : {$gt: 0}
@@ -1997,13 +2027,17 @@ var Module = function (models) {
                                 'sourceDocument.name'   : '$sourceDocument._id.jobs.name',
                                 account                 : 1
                             }
-                        }, {
-                            $match: filterObj
-                        }]);
+                        }];
 
-                    query.options = {allowDiskUse: true};
+                    if (filterObj.$and && filterObj.$and.length){
+                        query.push({$match: filterObj});
+                    }
 
-                    query.exec(function (err, result) {
+                    aggregate = Model.aggregate(query);
+
+                    aggregate.options = {allowDiskUse: true};
+
+                    aggregate.exec(function (err, result) {
                         if (err) {
                             return next(err);
                         }
@@ -2013,8 +2047,10 @@ var Module = function (models) {
                 };
 
                 findByEmployee = function (cb) {
-                    var query = Model
-                        .aggregate([{
+                    var aggregate;
+                    var query = [{
+                            $match: matchObject
+                        },{
                             $match: {
                                 "sourceDocument.model": "Employees",
                                 debit                 : {$gt: 0}
@@ -2092,13 +2128,17 @@ var Module = function (models) {
                                 'sourceDocument.name'          : '$sourceDocument._id.department.departmentName',
                                 account                        : 1
                             }
-                        }, {
-                            $match: filterObj
-                        }]);
+                        }];
 
-                    query.options = {allowDiskUse: true};
+                    if (filterObj.$and && filterObj.$and.length){
+                        query.push({$match: filterObj});
+                    }
 
-                    query.exec(function (err, result) {
+                    aggregate = Model.aggregate(query);
+
+                    aggregate.options = {allowDiskUse: true};
+
+                    aggregate.exec(function (err, result) {
                         if (err) {
                             return next(err);
                         }
@@ -2184,12 +2224,10 @@ var Module = function (models) {
     this.getAsyncData = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
         var query = req.query;
         var sourceDocument = query._id;
         var date = query.date;
         var debit;
-        var credit;
         var wTrackFinder;
         var resultFinder;
 
@@ -2749,7 +2787,6 @@ var Module = function (models) {
     this.getForView = function (req, res, next) {
         var dbIndex = req.session.lastDb;
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
-
         var data = req.query;
         var sort = data.sort;
         var findInvoice;
@@ -2761,6 +2798,14 @@ var Module = function (models) {
         var filter = data.filter;
         var filterObj = {};
         var key;
+        var startDate = data.startDate;
+        var endDate = data.endDate;
+        var matchObject = {
+            date: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        };
 
         if (sort) {
             key = Object.keys(data.sort)[0].toString();
@@ -2771,7 +2816,11 @@ var Module = function (models) {
         }
 
         if (filter) {
-            filterObj.$and = caseFilter(filter);
+            var filterArray = caseFilter(filter);
+
+            if (filterArray.length){
+                filterObj.$and = filterArray
+            }
         }
 
         access.getReadAccess(req, req.session.uId, 86, function (access) {
@@ -2779,6 +2828,8 @@ var Module = function (models) {
                 findInvoice = function (cb) {
                     Model
                         .aggregate([{
+                            $match: matchObject
+                        }, {
                             $match: {
                                 "sourceDocument.model": "Invoice",
                                 debit                 : {$gt: 0}
@@ -2863,6 +2914,8 @@ var Module = function (models) {
                 findSalary = function (cb) {
                     var query = Model
                         .aggregate([{
+                            $match: matchObject
+                        },{
                             $match: {
                                 "sourceDocument.model": "wTrack",
                                 debit                 : {$gt: 0}
@@ -2958,6 +3011,8 @@ var Module = function (models) {
                 findByEmployee = function (cb) {
                     var query = Model
                         .aggregate([{
+                            $match: matchObject
+                        },{
                             $match: {
                                 "sourceDocument.model": "Employees",
                                 debit                 : {$gt: 0}
