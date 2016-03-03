@@ -68,5 +68,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['wTrack'] = wTrackSchema;
+    mongoose.Schemas.wTrack = wTrackSchema;
 })();
