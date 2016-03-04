@@ -26,6 +26,8 @@ define([
             responseObj: {},
 
             initialize: function (options) {
+                var isSalary;
+
                 _.bindAll(this, "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 
@@ -36,6 +38,11 @@ define([
                     this.currentModel = options.model;
                 }
                 this.currentModel.urlRoot = '/Employees';
+
+                isSalary = this.currentModel.get('transfer')[0];
+                isSalary = isSalary.salary;
+                isSalary = !!(isSalary || isSalary === 0);
+                this.isSalary = isSalary;
 
                 this.responseObj['#sourceDd'] = [
                     {
@@ -333,7 +340,7 @@ define([
             },
 
             saveItem  : function () {
-               /* this.hideNewSelect();
+                /*this.hideNewSelect();
 
                 var jobType;
                 var department;
@@ -347,7 +354,6 @@ define([
                 var firedDate;
                 var fireReason;
                 var gender = $("#genderDd").data("id") || null;
-
                 var marital = $("#maritalDd").data("id") || null;
                 var relatedUser = this.$el.find("#relatedUsersDd").data("id") || null;
                 var coach = $.trim(this.$el.find("#coachDd").data("id")) || null;
@@ -548,8 +554,193 @@ define([
                         self.errorNotification(xhr);
                     }
 
+                });*/
+                this.hideNewSelect();
+
+                var date;
+                var info;
+                var event;
+                var salary;
+                var jobType;
+                var manager;
+                var lastFire;
+                var empThumb;
+                var department;
+                var jobPosition;
+                var self = this;
+                var hireArray = [];
+                var fireArray = [];
+                var homeAddress = {};
+                var redirect = false;
+                var isEmployee = true;
+                var transferArray = [];
+                var gender = $("#genderDd").data("id") || null;
+                var marital = $("#maritalDd").data("id") || null;
+                var $tableFire = this.$el.find('#hireFireTable');
+                var $trs = $tableFire.find('tr.transfer');
+                var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
+                var coach = $.trim(this.$el.find("#coachDd").data("id")) || null;
+                var relatedUser = this.$el.find("#relatedUsersDd").data("id") || null;
+
+                $("dd").find(".homeAddress").each(function () {
+                    var el = $(this);
+                    homeAddress[el.attr("name")] = $.trim(el.val());
                 });
-*/
+
+                $.each($trs, function (i, $tr) {
+                    $tr = $($tr);
+                    event = $tr.attr('data-content');
+                    date = new Date($.trim($tr.find("td").eq(2).text()));
+                    jobPosition = $tr.find('#jobPositionDd').attr('data-id');
+                    department = $tr.find('#departmentsDd').attr('data-id');
+                    manager = $tr.find('#projectManagerDD').attr('data-id') || null;
+                    info = $tr.find('#statusInfoDd').val();
+                    jobType = $.trim($tr.find('#jobTypeDd').text());
+                    salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
+
+                    transferArray.push({
+                        date       : date,
+                        department : department,
+                        jobPosition: jobPosition,
+                        manager    : manager,
+                        jobType    : jobType,
+                        salary     : salary,
+                        info       : info
+                    });
+
+                    if (event === 'fired') {
+                        fireArray.push(date);
+                        lastFire = moment(date).year() * 100 + moment(date).isoWeek();
+                    }
+
+                    if (event === 'hired') {
+                        hireArray.push(date);
+                    }
+                });
+
+                if (event === 'fired') {
+                    isEmployee = false;
+                }
+
+
+                var sourceId = $("#sourceDd").data("id");
+
+                var usersId = [];
+                var groupsId = [];
+
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") === "targetUsers") {
+                        usersId.push($(this).data("id"));
+                    }
+                    if ($(this).data("type") === "targetGroups") {
+                        groupsId.push($(this).data("id"));
+                    }
+
+                });
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                var nationality = $("#nationality").data("id");
+                var data = {
+                    name          : {
+                        first: $.trim(this.$el.find("#first").val()),
+                        last : $.trim(this.$el.find("#last").val())
+                    },
+                    gender        : gender,
+                    jobType       : jobType,
+                    marital       : marital,
+                    workAddress   : {
+                        street : $.trim(this.$el.find('#street').val()),
+                        city   : $.trim(this.$el.find('#city').val()),
+                        state  : $.trim(this.$el.find('#state').val()),
+                        zip    : $.trim(this.$el.find('#zip').val()),
+                        country: $.trim(this.$el.find('#country').val())
+                    },
+                    social        : {
+                        LI: $.trim(this.$el.find('#LI').val()),
+                        FB: $.trim(this.$el.find('#FB').val())
+                    },
+                    tags          : $.trim(this.$el.find("#tags").val()).split(','),
+                    workEmail     : $.trim(this.$el.find("#workEmail").val()),
+                    personalEmail : $.trim(this.$el.find("#personalEmail").val()),
+                    skype         : $.trim(this.$el.find("#skype").val()),
+                    workPhones    : {
+                        phone : $.trim(this.$el.find("#phone").val()),
+                        mobile: $.trim(this.$el.find("#mobile").val())
+                    },
+                    officeLocation: $.trim(this.$el.find("#officeLocation").val()),
+                    bankAccountNo : $.trim($("#bankAccountNo").val()),
+                    relatedUser   : relatedUser,
+                    department    : department,
+                    jobPosition   : jobPosition,
+                    manager       : manager,
+                    coach         : coach,
+                    identNo       : $.trim($("#identNo").val()),
+                    passportNo    : $.trim(this.$el.find("#passportNo").val()),
+                    otherId       : $.trim(this.$el.find("#otherId").val()),
+                    homeAddress   : homeAddress,
+                    dateBirth     : dateBirthSt,
+                    source        : sourceId,
+                    imageSrc      : this.imageSrc,
+                    nationality   : nationality,
+                    isEmployee    : isEmployee,
+                    lastFire      : lastFire,
+
+                    groups        : {
+                        owner: $("#allUsersSelect").data("id"),
+                        users: usersId,
+                        group: groupsId
+                    },
+                    whoCanRW      : whoCanRW,
+                    hire          : hireArray,
+                    fire          : fireArray
+                };
+
+                this.currentModel.set(data);
+                this.currentModel.save(this.currentModel.changed, {
+                    headers: {
+                        mid: 39
+                    },
+                    patch  : true,
+                    success: function (model) {
+                        if (redirect) {
+                            return Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
+                        }
+
+                        if (model.get('relatedUser') === App.currentUser._id) {
+                            App.currentUser.imageSrc = self.imageSrc;
+
+                            $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                            $("#loginPanel #userName").text(model.toJSON().fullName);
+                        }
+
+                        if (self.firstData === data.name.first &&
+                            self.lastData === data.name.last &&
+                            self.departmentData === department &&
+                            self.jobPositionData === jobPosition &&
+                            self.projectManagerData === manager) {
+
+                            model = model.toJSON();
+                            empThumb = $('#' + model._id);
+
+                            empThumb.find('.age').html(model.result.age);
+                            empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
+                            empThumb.find('.telephone a').html(model.workPhones.mobile);
+                            empThumb.find('.telephone a').attr('href', "skype:" + model.workPhones.mobile + "?call");
+
+                            if (model.relatedUser) {
+                                empThumb.find('.relUser').html(model.relatedUser.login);
+                            }
+
+                        } else {
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
+                        }
+                        self.hideDialog();
+                    },
+                    error  : function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
+
+                });
 
 
             },
@@ -659,7 +850,7 @@ define([
                 });
 
                 this.removeIcon = this.$el.find('.fa-trash');
-                this.hiredDate = this.currentModel.get('hire')[0].date;
+                this.hiredDate = this.currentModel.get('hire')[0];
 
                 var model = this.currentModel.toJSON();
                 if (model.groups) {

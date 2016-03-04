@@ -1449,7 +1449,7 @@ var Employee = function (event, models) {
 
             models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                 if (!err) {
-                    if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {
+                    if (updateObject.dateBirth || updateObject.hired) {
                         event.emit('recalculate', req);
                     }
                     if (fileName) {

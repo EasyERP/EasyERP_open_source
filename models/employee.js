@@ -71,10 +71,6 @@ module.exports = (function () {
          *
          * @property {Array} attachments - Some files
          *
-         * @property {Object} contractEnd
-         * @property {String} contractEnd.reason - Reason of the end of contract
-         * @property {Date} contractEnd.date - Date of the end of contract
-         *
          * @property {String} marital - Marital can be `married` or `unmarried`
          *
          * @property {String} gender - Gender can be `male` or `female`
