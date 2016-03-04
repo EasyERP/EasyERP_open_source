@@ -1683,14 +1683,14 @@ module.exports = function (app, mainDb) {
 
         if (process.env.NODE_ENV === 'production') {
             if (status === 401) {
-                logWriter.log('', err.message + '\n' + err.message);
-                logger.error(err.message);
+                logWriter.log('', err.message + '\n' + err.message)
             }
             res.status(status).send({error: err.message});
         } else {
             res.status(status).send({error: err.message + '\n' + err.stack});
-            logger.error(err.message + '\n' + err.stack);
         }
+
+        logger.error(err.message + '\n' + err.stack);
     };
 
     requestHandler.initScheduler();

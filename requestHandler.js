@@ -76,7 +76,6 @@ var requestHandler = function (app, event, mainDb) {
         if (query) {
             query.update({workflow: id}, {workflow: null}, {multi: true}).exec(function (err, result) {
                 if (err) {
-                    console.log(err);
                     logWriter.log("Removed workflow update " + err);
                 }
             });
