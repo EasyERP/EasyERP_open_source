@@ -197,7 +197,7 @@ var requestHandler = function (app, event, mainDb) {
 
                                         wTrack.findByIdAndUpdate(id, {
                                             $set: {
-                                                cost   : parseFloat(calc) * 100
+                                                cost: parseFloat(calc) * 100
                                             }
                                         }, {
                                             new: true
@@ -216,7 +216,7 @@ var requestHandler = function (app, event, mainDb) {
 
                                     wTrack.findByIdAndUpdate(id, {
                                         $set: {
-                                            cost  : parseFloat(calc) * 100
+                                            cost: parseFloat(calc) * 100
                                         }
                                     }, {
                                         new: true
@@ -1077,7 +1077,7 @@ var requestHandler = function (app, event, mainDb) {
     event.on('recalculateRevenue', function (options) {
         var quotation = options.quotation;
         var req = options.req;
-        var wTrackModel = options.wTrackModel ||  models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var wTrackModel = options.wTrackModel || models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var totalAmount = 0;
 
         if (!quotation || !wTrackModel) {
@@ -1136,12 +1136,18 @@ var requestHandler = function (app, event, mainDb) {
                     async.each(wTracks, function (wTrack, cb) {
                         var revenue = (wTrack.worked / totalWorked) * totalAmount * 100;
 
-                        console.log(revenue, wTrack._id);
                         wTrackModel.findByIdAndUpdate(wTrack._id, {$set: {revenue: revenue}}, {new: true}, function (err, updated) {
                             if (err) {
                                 return cb(err);
                             }
-                            event.emit('updateProjectDetails', {req: req, _id: updated.project, jobId: updated.jobs});
+                            if (updated && updated.project && updated.jobs) {
+                                event.emit('updateProjectDetails', {
+                                    req  : req,
+                                    _id  : updated.project,
+                                    jobId: updated.jobs
+                                });
+                            }
+                            //event.emit('updateProjectDetails', {req: req, _id: updated.project, jobId: updated.jobs});
                             cb();
                         });
                     }, function (err) {
