@@ -202,7 +202,7 @@ define([
                             localCounter++;
                             count--;
                             if (count === 0) {
-                                if (this.hasAlphabet) {
+                                if (that.hasAlphabet) {
                                     common.buildAphabeticArray(that.collection, function (arr) {
                                         $("#startLetter").remove();
                                         that.alphabeticArray = arr;
