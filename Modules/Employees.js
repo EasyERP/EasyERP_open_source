@@ -1328,33 +1328,10 @@ var Employee = function (event, models) {
         var dbName = req.session.lastDb;
         var UsersSchema = mongoose.Schemas['User'];
         var UsersModel = models.get(dbName, 'Users', UsersSchema);
-
         var fileName = data.fileName;
-        var dataObj = {};
-        var query = {};
-        var date = new Date();
-        var depForTransfer = data.depForTransfer;
-        var department = data.department;
-        var jobPosition = data.jobPosition;
 
         delete data.depForTransfer;
         delete data.fileName;
-
-        var updateObject = {};
-
-        for (var i in data) {
-            updateObject[i] = data[i];
-            /*if (i === 'contractEndReason') {
-             updateObject['isEmployee'] = false;
-             updateObject.lastFire = moment(date).year() * 100 + moment(date).isoWeek();
-             updateObject['contractEnd'] = {
-             reason: data[i],
-             date  : date
-             };
-             } else {
-             updateObject[i] = data[i];
-             }*/
-        }
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
             if (data.sequence == -1) {
@@ -1364,24 +1341,7 @@ var Employee = function (event, models) {
                         if (data.workflow == data.workflowStart) {
                             data.sequence -= 1;
                         }
-
-                        if (data.fired) {
-                            dataObj = {
-                                'fire': data.fired
-                            };
-                        } else if (data.hired) {
-                            dataObj = {
-                                'hire': data.hired
-                            };
-                        }
-
-                        if (dataObj.hire || dataObj.fire) {
-                            query = {$set: updateObject, $push: dataObj};
-                        } else {
-                            query = {$set: updateObject};
-                        }
-
-                        models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                        models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                             if (!err) {
                                 res.send(200, {success: 'Employees updated', sequence: result.sequence});
 
@@ -1409,47 +1369,17 @@ var Employee = function (event, models) {
                 });
             }
         } else {
-            if (updateObject.dateBirth) {
-                updateObject['age'] = getAge(updateObject.dateBirth);
+            if (data.dateBirth) {
+                data['age'] = getAge(data.dateBirth);
             }
 
-            if (data.fired) {
-                dataObj = {
-                    'fire': data.fired
-                };
-
-            } else if (data.hired) {
-                dataObj = {
-                    'hire': data.hired
-                };
-            } else if (depForTransfer) {
-                dataObj = {
-                    'transferred': {
-                        department: depForTransfer,
-                        date      : new Date()
-                    }
-                };
-            }
-
-            if (dataObj.hire || dataObj.fire) {
-                query = {$set: updateObject, $push: dataObj};
-            } else if (depForTransfer) {
-                delete updateObject.transferred;
-                query = {$set: updateObject, $push: dataObj};
-            } else if (data.relatedUser) {
-                query = {$set: updateObject};
+            if (data.relatedUser) {
                 event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
-            } else if (data.currentUser) {
-                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
-                delete data.currentUser;
-                query = {$set: updateObject};
-            } else {
-                query = {$set: updateObject};
             }
 
-            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                 if (!err) {
-                    if (updateObject.dateBirth || updateObject.hired) {
+                    if (data.dateBirth || data.hired) {
                         event.emit('recalculate', req);
                     }
                     if (fileName) {

@@ -557,33 +557,41 @@ define([
                 });*/
                 this.hideNewSelect();
 
+                var relatedUser = this.$el.find("#relatedUsersDd").data("id") || null;
+                var coach = $.trim(this.$el.find("#coachDd").data("id")) || null;
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
+                var $tableFire = this.$el.find('#hireFireTable');
+                var marital = $("#maritalDd").data("id") || null;
+                var gender = $("#genderDd").data("id") || null;
+                var nationality = $("#nationality").data("id");
+                var $trs = $tableFire.find('tr.transfer');
+                var sourceId = $("#sourceDd").data("id");
+                var transferArray = [];
+                var redirect = false;
+                var homeAddress = {};
+                var fireArray = [];
+                var hireArray = [];
+                var groupsId = [];
+                var usersId = [];
+                var self = this;
+                var jobPosition;
+                var isEmployee;
+                var department;
+                var empThumb;
+                var lastFire;
+                var manager;
+                var jobType;
+                var salary;
+                var event;
+                var data;
                 var date;
                 var info;
-                var event;
-                var salary;
-                var jobType;
-                var manager;
-                var lastFire;
-                var empThumb;
-                var department;
-                var jobPosition;
-                var self = this;
-                var hireArray = [];
-                var fireArray = [];
-                var homeAddress = {};
-                var redirect = false;
-                var isEmployee = true;
-                var transferArray = [];
-                var gender = $("#genderDd").data("id") || null;
-                var marital = $("#maritalDd").data("id") || null;
-                var $tableFire = this.$el.find('#hireFireTable');
-                var $trs = $tableFire.find('tr.transfer');
-                var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-                var coach = $.trim(this.$el.find("#coachDd").data("id")) || null;
-                var relatedUser = this.$el.find("#relatedUsersDd").data("id") || null;
+                var el;
+
 
                 $("dd").find(".homeAddress").each(function () {
-                    var el = $(this);
+                    el = $(this);
                     homeAddress[el.attr("name")] = $.trim(el.val());
                 });
 
@@ -599,6 +607,7 @@ define([
                     salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
 
                     transferArray.push({
+                        status     : event,
                         date       : date,
                         department : department,
                         jobPosition: jobPosition,
@@ -618,15 +627,7 @@ define([
                     }
                 });
 
-                if (event === 'fired') {
-                    isEmployee = false;
-                }
-
-
-                var sourceId = $("#sourceDd").data("id");
-
-                var usersId = [];
-                var groupsId = [];
+                isEmployee = event !== 'fired';
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") === "targetUsers") {
@@ -637,9 +638,8 @@ define([
                     }
 
                 });
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-                var nationality = $("#nationality").data("id");
-                var data = {
+
+                data = {
                     name          : {
                         first: $.trim(this.$el.find("#first").val()),
                         last : $.trim(this.$el.find("#last").val())
@@ -691,7 +691,8 @@ define([
                     },
                     whoCanRW      : whoCanRW,
                     hire          : hireArray,
-                    fire          : fireArray
+                    fire          : fireArray,
+                    transfer      : transferArray
                 };
 
                 this.currentModel.set(data);
