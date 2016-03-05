@@ -29,8 +29,8 @@
             this.responseObj = {};
             this.refuseId = 0;
 
-            isSalary = this.currentModel.get('transfer')[0];
-            isSalary = isSalary.salary;
+            isSalary = this.currentModel.get('transfer')[0] || null;
+            isSalary = isSalary && isSalary.salary;
             isSalary = !!(isSalary || isSalary === 0);
             this.isSalary = isSalary;
 
@@ -110,10 +110,12 @@
 
             now = common.utcDateToLocaleDate(now);
 
+
             newTr.attr('data-id', ++trId);
             newTr.find('td').eq(2).text(now);
             newTr.attr('data-content', 'hired');
             newTr.find('td').eq(1).text('hired');
+            newTr.find('td').last().text('');
 
             table.append(newTr);
 
@@ -216,29 +218,29 @@
             e.preventDefault();
             /*
              var hired = {};
-            transfer.date = new Date();
-            hired.department = this.$el.find("#department").attr("data-id") || null;
-            hired.jobPosition = this.$el.find("#jobPosition").attr("data-id") || null;
-            hired.manager = this.$el.find("#manager").attr("data-id") || null;
-            hired.jobType = this.$el.find("#jobType").attr("data-id") || null;
+             transfer.date = new Date();
+             hired.department = this.$el.find("#department").attr("data-id") || null;
+             hired.jobPosition = this.$el.find("#jobPosition").attr("data-id") || null;
+             hired.manager = this.$el.find("#manager").attr("data-id") || null;
+             hired.jobType = this.$el.find("#jobType").attr("data-id") || null;
 
-            if (this.isSalary) {
-                hired.salary = this.$el.find('[data-id="salary"]').text();
-            }
+             if (this.isSalary) {
+             hired.salary = this.$el.find('[data-id="salary"]').text();
+             }
 
-            this.currentModel.save({
-                isEmployee: true,
-                transfer: transfer
-            }, {
-                headers: {
-                    mid: 39
-                },
-                patch: true,
-                success: function () {
-                    Backbone.history.navigate("easyErp/Employees", {trigger: true});
-                }
-            });
-            */
+             this.currentModel.save({
+             isEmployee: true,
+             transfer: transfer
+             }, {
+             headers: {
+             mid: 39
+             },
+             patch: true,
+             success: function () {
+             Backbone.history.navigate("easyErp/Employees", {trigger: true});
+             }
+             });
+             */
 
             this.addNewRow();
             this.saveItem(null, true);
@@ -629,14 +631,14 @@
                 salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
 
                 transferArray.push({
-                    status     : event,
-                    date       : date,
-                    department : department,
+                    status: event,
+                    date: date,
+                    department: department,
                     jobPosition: jobPosition,
-                    manager    : manager,
-                    jobType    : jobType,
-                    salary     : salary,
-                    info       : info
+                    manager: manager,
+                    jobType: jobType,
+                    salary: salary,
+                    info: info
                 });
 
                 if (event === 'fired') {
@@ -648,6 +650,28 @@
                     hireArray.push(date);
                 }
             });
+
+            if (!transferArray.length) {
+                el = $('.edit-employee-info');
+                jobType = $.trim(el.find('#jobType').text());
+                jobPosition = el.find('#jobPosition').attr('data-id');
+                department = el.find('#department').attr('data-id');
+                manager = el.find('#manager').attr('data-id') || null;
+                salary = el.find('#proposedSalary').val() || null;
+
+                if (toEmployyes) {
+                    transferArray.push({
+                        status: 'hired',
+                        date: moment(),
+                        department: department,
+                        jobPosition: jobPosition,
+                        manager: manager,
+                        jobType: jobType,
+                        salary: salary,
+                        info: ''
+                    });
+                }
+            }
 
             isEmployee = (event === 'hired') || (event === 'updated');
 
@@ -662,59 +686,59 @@
             });
 
             data = {
-                name          : {
+                name: {
                     first: $.trim(this.$el.find("#first").val()),
-                    last : $.trim(this.$el.find("#last").val())
+                    last: $.trim(this.$el.find("#last").val())
                 },
-                gender        : gender,
-                jobType       : jobType,
-                marital       : marital,
-                workAddress   : {
-                    street : $.trim(this.$el.find('#street').val()),
-                    city   : $.trim(this.$el.find('#city').val()),
-                    state  : $.trim(this.$el.find('#state').val()),
-                    zip    : $.trim(this.$el.find('#zip').val()),
+                gender: gender,
+                jobType: jobType,
+                marital: marital,
+                workAddress: {
+                    street: $.trim(this.$el.find('#street').val()),
+                    city: $.trim(this.$el.find('#city').val()),
+                    state: $.trim(this.$el.find('#state').val()),
+                    zip: $.trim(this.$el.find('#zip').val()),
                     country: $.trim(this.$el.find('#country').val())
                 },
-                social        : {
+                social: {
                     LI: $.trim(this.$el.find('#LI').val()),
                     FB: $.trim(this.$el.find('#FB').val())
                 },
-                tags          : $.trim(this.$el.find("#tags").val()).split(','),
-                workEmail     : $.trim(this.$el.find("#workEmail").val()),
-                personalEmail : $.trim(this.$el.find("#personalEmail").val()),
-                skype         : $.trim(this.$el.find("#skype").val()),
-                workPhones    : {
-                    phone : $.trim(this.$el.find("#phone").val()),
+                tags: $.trim(this.$el.find("#tags").val()).split(','),
+                workEmail: $.trim(this.$el.find("#workEmail").val()),
+                personalEmail: $.trim(this.$el.find("#personalEmail").val()),
+                skype: $.trim(this.$el.find("#skype").val()),
+                workPhones: {
+                    phone: $.trim(this.$el.find("#phone").val()),
                     mobile: $.trim(this.$el.find("#mobile").val())
                 },
                 officeLocation: $.trim(this.$el.find("#officeLocation").val()),
-                bankAccountNo : $.trim($("#bankAccountNo").val()),
-                relatedUser   : relatedUser,
-                department    : department,
-                jobPosition   : jobPosition,
-                manager       : manager,
-                coach         : coach,
-                identNo       : $.trim($("#identNo").val()),
-                passportNo    : $.trim(this.$el.find("#passportNo").val()),
-                otherId       : $.trim(this.$el.find("#otherId").val()),
-                homeAddress   : homeAddress,
-                dateBirth     : dateBirthSt,
-                source        : sourceId,
-                imageSrc      : this.imageSrc,
-                nationality   : nationality,
-                isEmployee    : isEmployee,
-                lastFire      : lastFire,
+                bankAccountNo: $.trim($("#bankAccountNo").val()),
+                relatedUser: relatedUser,
+                department: department,
+                jobPosition: jobPosition,
+                manager: manager,
+                coach: coach,
+                identNo: $.trim($("#identNo").val()),
+                passportNo: $.trim(this.$el.find("#passportNo").val()),
+                otherId: $.trim(this.$el.find("#otherId").val()),
+                homeAddress: homeAddress,
+                dateBirth: dateBirthSt,
+                source: sourceId,
+                imageSrc: this.imageSrc,
+                nationality: nationality,
+                isEmployee: isEmployee,
+                lastFire: lastFire,
 
-                groups        : {
+                groups: {
                     owner: $("#allUsersSelect").data("id"),
                     users: usersId,
                     group: groupsId
                 },
-                whoCanRW      : whoCanRW,
-                hire          : hireArray,
-                fire          : fireArray,
-                transfer      : transferArray
+                whoCanRW: whoCanRW,
+                hire: hireArray,
+                fire: fireArray,
+                transfer: transferArray
             };
 
             el = this.$el;
@@ -726,6 +750,11 @@
                 data['sequence'] = -1;
                 data['sequenceStart'] = this.currentModel.toJSON().sequence;
                 data['workflowStart'] = currentWorkflow._id;
+            }
+
+            if (!currentWorkflow && workflow) {
+                data['workflow'] = workflow;
+                data['sequence'] = -1;
             }
 
             this.currentModel.save(data, {
@@ -760,7 +789,8 @@
                             if (parseInt(data.proposedSalary)) {
                                 kanban_holder.find(".application-header .right").text(data.proposedSalary + "$");
                             }
-                            position = $.trim(self.$el.find("#jobPositionDd").text());
+                            el = $('.edit-employee-info');
+                            position = $.trim(el.find('#jobPosition').text());
                             kanban_holder.find(".application-content p.center").text(position);
                             kanban_holder.find(".application-content p.right").text(nextAction);
                             if (new Date() > new Date(nextAction)) {
@@ -986,6 +1016,8 @@
             this.removeIcon = this.$el.find('.fa-trash');
             this.hireDate = this.currentModel.get('hire')[0];
             this.fireDate = this.$el.find("[data-content='fire']").last().find('.fireDate').text();
+
+            this.renderRemoveBtn();
 
             var model = this.currentModel.toJSON();
             if (model.groups) {

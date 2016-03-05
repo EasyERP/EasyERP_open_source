@@ -136,7 +136,7 @@ define([
                 if (contractEndReason) {
                     newTr.attr('data-content', 'fired');
                     newTr.find('td').eq(1).text('fired');
-                    newTr.find('td').last().text(contractEndReason);
+                    newTr.find('td').last().find('input').val(contractEndReason);
                 } else {
                     newTr.attr('data-content', 'updated');
                     newTr.find('td').eq(1).text('updated');
@@ -695,6 +695,10 @@ define([
                     transfer      : transferArray
                 };
 
+                if (!isEmployee) {
+                    data.workflow = "52d2c1369b57890814000005";
+                }
+
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                     headers: {
@@ -702,7 +706,7 @@ define([
                     },
                     patch  : true,
                     success: function (model) {
-                        if (redirect) {
+                        if (!isEmployee) {
                             return Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
                         }
 

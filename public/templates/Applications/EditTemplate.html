@@ -441,7 +441,7 @@
                                 <th>Department</th>
                                 <th>Manager</th>
                                 <th>Job Type</th>
-                                <%if (model.transfer[0].salary || model.transfer[0].salary === 0) {%>
+                                <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
                                 <th>Salary</th>
                                 <% } %>
                                 <th>Status info</th>
@@ -487,7 +487,7 @@
                                         <%=transfer.jobType ? transfer.jobType : "Select"%>
                                     </a>
                                 </td>
-                                <%if (transfer.salary || transfer.salary === 0) {%>
+                                <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
                                 <td class="editable" data-id="salary"><%= transfer.salary %></td>
                                 <% } %>
                                 <td>
