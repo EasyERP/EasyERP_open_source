@@ -378,7 +378,7 @@ var wTrack = function (models) {
 
             Employee.aggregate([{
                 $match: {
-                    hire: {$ne: []} //add by Liliya for new Application ToDO rewiew
+                    hire: {$ne: []} //add by Liliya for new Application ToDO review
                 }
             }, {
                 $project: {
