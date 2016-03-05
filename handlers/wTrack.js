@@ -851,26 +851,77 @@ var wTrack = function (event, models) {
 
         function generatewTracks(job, mainCb) {
             var jobForwTrack = job;
-
+            var userId = req.session.uId;
 
             async.each(data, function (options, asyncCb) {
                 var startDate = moment(new Date(options.startDate));
                 var startIsoYear = startDate.isoWeekYear();
-                var startYear = startDate.year();
-                var startMonth = startDate.month();
-                var startIsoWeek = startDate.isoWeek();
-                var firstMondeyDate = moment(startDate).day(1);//can be > then startDate, when startDateDay=0
-
+                //todo add logic based on hours
                 var endDate = moment(new Date(options.endDate));
                 var endIsoYear = options.endDate ? endDate.isoWeekYear() : startIsoYear + 1;
-                var endYear = endDate.year();
-                var endMonth = endDate.month();
-                var endIsoWeek = endDate.isoWeek();
 
-                //we have two different years and need to divide tCard into 2 parts
-                var needDivide = endYear !== startYear;
-                //need to proper calculate endDate generate
-                var totalHours = 0;
+                var hours = parseInt(options.hours, 10);
+                var project = options.project;
+                var employee = options.employee;
+                var department = options.department;
+
+                function dateSplitter(startDate, endDate) {
+                    var datesArray = [];
+                    var lastDateInStartWeek = moment(startDate).endOf('isoWeek');
+
+                    var _dateObject;
+
+                    function dateHelper(date) {
+                        var startDate;
+                        var endDate;
+
+                        date = moment(date);
+                        startDate = date.add(1, 'day').hours(0).minutes(0);
+                        endDate = moment(startDate).endOf('isoWeek');
+
+                        return {
+                            startDate: startDate,
+                            endDate  : endDate
+                        };
+                    }
+
+                    if (lastDateInStartWeek > endDate) {
+                        datesArray.push({
+                            startDate: startDate,
+                            endDate  : endDate
+                        });
+
+                        return datesArray;
+                    }
+
+                    startDate = moment(startDate);
+                    endDate = moment(endDate);
+
+                    datesArray.push({
+                        startDate: moment(startDate),
+                        endDate  : moment(lastDateInStartWeek)
+                    });
+
+                    while (lastDateInStartWeek < endDate) {
+                        _dateObject = dateHelper(lastDateInStartWeek);
+
+                        lastDateInStartWeek = _dateObject.endDate;
+
+                        if (lastDateInStartWeek > endDate) {
+                            datesArray.push({
+                                startDate: _dateObject.startDate,
+                                endDate  : endDate
+                            });
+                        } else {
+                            datesArray.push({
+                                startDate: _dateObject.startDate,
+                                endDate  : _dateObject.endDate
+                            });
+                        }
+                    }
+
+                    return datesArray;
+                }
 
                 function comparator(holidaysArray, vacationsArray, dateByWeek, day) {
                     return !!((vacationsArray && vacationsArray[dateByWeek] && !vacationsArray[dateByWeek][day]) || (holidaysArray && holidaysArray[dateByWeek] && holidaysArray[dateByWeek][day]));
@@ -894,29 +945,59 @@ var wTrack = function (event, models) {
                         5          : 0,
                         6          : 0,
                         7          : 0,
+                        worked     : 0,
                         dateByWeek : dateByWeek,
                         dateByMonth: dateByMonth,
                         isoYear    : isoYear,
                         year       : year,
                         week       : week,
-                        month      : month
+                        month      : month,
+                        employee   : employee,
+                        department : department,
+                        project    : project,
+                        cost       : 0,
+                        isPaid     : false,
+                        jobs       : jobForwTrack,
+                        whoCanRW   : "everyOne",
+                        createdBy  : {
+                            date: new Date(),
+                            user: userId
+                        },
+                        groups     : {
+                            "group": [],
+                            "users": [],
+                            "owner": null
+                        }
                     };
                     var hasHolidayOrVacation;
+                    var isData;
                     var day;
+                    var worked;
 
 
                     startDay = startDay || 1;
-                    endDay = (!endDay && endDay === 0) ? 7 : 5;
+
+                    if (!endDay && endDay === 0) {
+                        endDay = 7;
+                    }
 
                     for (day = endDay; day >= startDay; day--) {
                         hasHolidayOrVacation = comparator(holidaysArray, vacationsArray, dateByWeek, day);
 
-                        if (!hasHolidayOrVacation) {
-                            weekObject[day] = weekData[day];
+                        if (!hasHolidayOrVacation && weekData[day]) {
+                            isData = true;
+                            worked = parseInt(weekData[day], 10);
+
+                            if (isNaN(worked)) {
+                                worked = 0;
+                            }
+
+                            weekObject[day] = worked;
+                            weekObject.worked += worked;
                         }
                     }
 
-                    return weekObject;
+                    return isData ? weekObject : null;
                 }
 
                 function divider(startDate, endDate, holidaysArray, vacationsArray, optionsData) {
@@ -928,7 +1009,7 @@ var wTrack = function (event, models) {
                     var endMonth = endDate.month() + 1;
                     var endDay = endDate.day();
                     /* var endIsoYear = endDate.isoWeekYear();*/
-                    var endYear = startDate.year();
+                    var endYear = endDate.year();
 
                     var week = startDate.isoWeek();
                     var dateByWeek = startIsoYear * 100 + week;
@@ -946,16 +1027,18 @@ var wTrack = function (event, models) {
                         month         : startMonth
                     };
 
+                    var result = [];
+
                     var lastDayInMonth;
                     var firstDayInMonth;
                     var clonedOptions;
 
-                    if (endMonth > startMonth) {
+                    if ((endYear * 100 + endMonth) > dateByMonth) {
                         clonedOptions = _.clone(options);
-                        lastDayInMonth = startDate.endOf('month').day();
-                        firstDayInMonth = endDate.startOf('month').day();
+                        lastDayInMonth = moment(startDate).endOf('month').day();
+                        firstDayInMonth = moment(endDate).startOf('month').day();
 
-                        filler(startDay, lastDayInMonth, options);
+                        result.push(filler(startDay, lastDayInMonth, options));
 
                         if (startYear < endYear) {
                             dateByMonth = endYear * 100 + endMonth;
@@ -965,10 +1048,12 @@ var wTrack = function (event, models) {
 
                         clonedOptions.month = endMonth;
 
-                        filler(firstDayInMonth, endDay, clonedOptions);
+                        result.push(filler(firstDayInMonth, endDay, clonedOptions));
                     } else {
-                        filler(startDay, endDay, options);
+                        result.push(filler(startDay, endDay, options));
                     }
+
+                    return result;
                 }
 
                 function getVacationsHolidays(generateCb) {
@@ -1087,200 +1172,28 @@ var wTrack = function (event, models) {
                 function calculateWeeks(vacationsHolidays, generateCb) {
                     var holidays = vacationsHolidays[0] ? vacationsHolidays[0].holidays : {};
                     var vacations = vacationsHolidays[1] ? vacationsHolidays[1].vacations : {};
-                    var weeksArr;
 
-                    function calcWeeks(weeks, startD, endD) {
-                        var result = [];
-                        var startWeek = moment(startD).isoWeek();
-                        var startYear = moment(startD).isoWeekYear();
-                        var startDay = moment(startD).day();
-                        var endWeek = moment(endD).isoWeek();
-                        var resArr;
-                        var endDay = moment(endD).day();
+                    var datesArr = dateSplitter(startDate, endDate);
+                    var result = [];
 
-                        /*if (startWeek >= isoWeeksInYear && weeks) { //added &&weeks because double calc data for 53 week
-                         resArr = checkWeekToDivide(startWeek, startYear, startDay, endDay);
-                         result = resArr;
-                         startYear++;
-                         startWeek = 0;
-                         weeks -= 1;
-                         } else if (weeks > 0) {//added &&weeks because double calc data for 53 week
-                         resArr = checkWeekToDivide(startWeek, startYear, startDay);
-                         result = resArr;
-                         }
+                    datesArr.forEach(function (dateObject) {
+                        result.push(divider(dateObject.startDate, dateObject.endDate, holidays, vacations, options))
+                    });
 
-                         for (var i = weeks - 1; i > 0; i--) {
-                         resArr = checkWeekToDivide(startWeek + i, startYear);
-                         result = result.concat(resArr)
-                         }
+                    result = _.flatten(result);
+                    result = _.compact(result);
 
-                         if (options.hours && (options.hours - totalHours >= totalForWeek)) {
-                         return result;
-                         }*/
-
-                        //resArr = checkWeekToDivide(endWeek, startYear, null, endDay);
-                        //result = result.concat(resArr);
-
-                        function checkWeekToDivide(week, year, day, endDay) {
-                            var arrayResult = [];
-
-                            return arrayResult;
+                    WTrack.create(result, function (err, _tCards) {
+                        if (err) {
+                            return generateCb(err);
                         }
 
-                        return /*result*/resArr;
-                    }
-
-                    function generateItems(weeksArray) {
-
-                        weeksArray.forEach(function (arrayEl) {
-                            var week = arrayEl.week;
-                            var year = arrayEl.year;
-                            var weekValues = arrayEl;
-                            var wTrackToSave;
-                            var date = moment().isoWeekYear(year).isoWeek(week);
-                            var day = 1;
-
-                            if (week === startIsoWeek) {
-                                day = moment(startDate).day();
-                            }
-
-                            var month = date.day(day).month() + 1;
-                            var dateByWeek = year * 100 + week;
-                            var dateByMonth = year * 100 + month;
-                            var worked = arrayEl.total;
-                            var cost = 0;
-                            var diff;
-                            var keys = keyConst;
-                            var i = 1;
-
-                            if (options.hours && options.hours - totalRendered <= totalForWeek) {
-                                diff = options.hours - totalRendered;
-                                worked = 0;
-
-                                while (diff - weekValues[keys[i]] >= 0 && i <= 7) {
-                                    weekValues[keys[i]] = weekValues[keys[i]];
-                                    diff -= weekValues[keys[i]];
-                                    worked += weekValues[keys[i]];
-                                    i++;
-                                }
-
-                                if (i <= 7) {
-                                    weekValues[keys[i]] = Math.abs(diff);
-                                    worked += weekValues[keys[i]];
-
-                                    for (var j = i + 1; j <= 7; j++) {
-                                        weekValues[keys[j]] = 0;
-                                    }
-                                }
-                            }
-
-                            totalRendered += worked;
-
-                            if (arrayEl.nextMonth) {
-                                month += 1;
-
-                                if (month > 12) {
-                                    month = 1;
-                                    year += 1;
-                                }
-                            }
-
-                            var newwTrack = {
-                                employee   : employee,
-                                department : department,
-                                project    : project,
-                                cost       : cost,
-                                isPaid     : false,
-                                jobs       : jobForwTrack,
-                                dateByWeek : dateByWeek,
-                                dateByMonth: dateByMonth,
-                                month      : month,
-                                year       : year,
-                                week       : week,
-                                worked     : worked,
-                                whoCanRW   : "everyOne",
-                                createdBy  : {
-                                    date: new Date(),
-                                    user: req.session.uId
-                                },
-                                groups     : {
-                                    "group": [],
-                                    "users": [],
-                                    "owner": null
-                                },
-                                "1"        : weekValues['Mo'],
-                                "2"        : weekValues['Tu'],
-                                "3"        : weekValues['Wd'],
-                                "4"        : weekValues['Th'],
-                                "5"        : weekValues['Fr'],
-                                "6"        : weekValues['Sa'],
-                                "7"        : weekValues['Su']
-                            };
-
-                            if (worked > 0) {
-                                wTrackToSave = new WTrack(newwTrack);
-
-                                wTrackToSave.save(function (err, result) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-
-                    /*for (i = 7; i > 0; i--) {
-                     totalForWeek += parseInt(options[i]);
-                     }
-
-                     if (hours) {
-                     weekCounter = Math.ceil(hours / totalForWeek);
-
-                     endDate = moment(startDate).isoWeek(startIsoWeek + weekCounter + 1).day(5);
-                     }
-
-                     endIsoWeek = moment(endDate).isoWeek();
-                     endYear = moment(endDate).isoWeekYear();
-
-                     yearDiff = endYear - startYear;
-
-                     if (yearDiff === 0) {
-
-                     /!*if (endIsoWeek - startIsoWeek < 0) {
-                     result = calcWeeks(endIsoWeek + 1, startDate, endDate);
-                     } else {
-                     result = calcWeeks(endIsoWeek - startIsoWeek, startDate, endDate);
-                     }*!/
-
-                     result = calcWeeks(endIsoWeek - startIsoWeek, startDate, endDate);
-
-                     generateItems(result);
-                     generateCb();
-                     } else if (yearDiff > 0) {
-                     //todo add ability to divide by more then 1 year
-                     async.parallel([/!*firstPart,*!/ secondPart], function (err, result) {
-                     var firstPart = result[0];
-                     /!*var secondPart = result[1];
-
-                     result = firstPart.concat(secondPart);*!/
-
-                     generateItems(result[0]);
-                     generateCb();
-                     });
-                     }*/
+                        generateCb();
+                    });
                 }
 
-                async.waterfall([getVacationsHolidays, calculateWeeks], function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    asyncCb();
-                });
-            }, function () {
-                mainCb();
-            });
+                async.waterfall([getVacationsHolidays, calculateWeeks], asyncCb);
+            }, mainCb);
 
         };
 
