@@ -456,7 +456,7 @@ define([
                 cb();
             }, function (err) {
                 if (!err) {
-
+                    self.copyEl.hide();
                     self.hideSaveCancelBtns();
                 }
             });
