@@ -865,7 +865,7 @@ var wTrack = function (event, models) {
                 var department = options.department;
                 var hoursInWeek = 0;
 
-                function canFillIt(hours){
+                function canFillIt(hours) {
                     return (isFinite(hours) && hours > 0) || isNaN(hours);
 
                 }
@@ -942,7 +942,7 @@ var wTrack = function (event, models) {
                 }
 
                 function comparator(holidaysArray, vacationsArray, dateByWeek, day) {
-                    return !!((vacationsArray && vacationsArray[dateByWeek] && !vacationsArray[dateByWeek][day]) || (holidaysArray && holidaysArray[dateByWeek] && holidaysArray[dateByWeek][day]));
+                    return !!((vacationsArray && vacationsArray[dateByWeek] && vacationsArray[dateByWeek][day]) || (holidaysArray && holidaysArray[dateByWeek] && holidaysArray[dateByWeek][day]));
                 }
 
                 function filler(startDay, endDay, options) {
@@ -991,6 +991,7 @@ var wTrack = function (event, models) {
                     var hasHolidayOrVacation;
                     var isData;
                     var day;
+                    var diffHours;
                     var worked;
 
 
@@ -1000,7 +1001,7 @@ var wTrack = function (event, models) {
                         endDay = 7;
                     }
 
-                    for (day = endDay; day >= startDay; day--) {
+                    for (day = startDay; day <= endDay; day++) {
                         hasHolidayOrVacation = comparator(holidaysArray, vacationsArray, dateByWeek, day);
 
                         if (!hasHolidayOrVacation && weekData[day] && canFillIt) {
@@ -1011,14 +1012,24 @@ var wTrack = function (event, models) {
                                 worked = 0;
                             }
 
-                            if (hours && hours > 0) {
-                                if(hours - worked < 0){
+                            if (hours > 0) {
+                                diffHours = hours - worked;
+
+                                if (diffHours < 0) {
                                     worked = hours;
                                 }
+
+                                hours -= worked;
                             }
 
-                            weekObject[day] = worked;
-                            weekObject.worked += worked;
+                            if (isNaN(hours) || diffHours) {
+                                weekObject[day] = worked;
+                                weekObject.worked += worked;
+
+                                if (diffHours < 0) {
+                                    diffHours = 0;
+                                }
+                            }
                         }
                     }
 
@@ -1169,7 +1180,7 @@ var wTrack = function (event, models) {
 
                                         if (vacArr[day]) {
                                             dateValue = moment([year, month - 1, day + 1]);
-                                            weekKey = year * 100 + moment(dateValue).isoWeek();
+                                            weekKey = /*year*/moment(dateValue).isoWeekYear() * 100 + moment(dateValue).isoWeek();
                                             key = weekKey.toString();
 
                                             dayNumber = dateValue.day();
