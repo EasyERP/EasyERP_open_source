@@ -4,13 +4,13 @@
     <td class="notForm centerCell"><input type="checkbox" value="<%=opportunity._id%>" class="checkbox"/></td>
     <td class="centerCell"><%=startNumber + index + 1 %></td>
     <td><%=opportunity.creationDate%></td>
-    <td><%=opportunity.name%></td>
+    <td><span class="blue"><%=opportunity.name%></span></td>
     <td><%=opportunity.expectedRevenue.value%></td>
     <td><%=(opportunity.customer) ? opportunity.customer.name.first + ' ' + opportunity.customer.name.last : ''%></td>
     <td><%=(opportunity.nextAction) ? opportunity.nextAction.date : ''%></td>
     <td><%=(opportunity.nextAction) ? opportunity.nextAction.desc : ''%></td>
     <td id='<%=opportunity._id%>' data-sequence='<%=opportunity.sequence%>'>
-        <a href="javascript:;" class="stageSelect"
+        <a href="javascript:;" class="stageSelect blue"
            data-id="<%=(opportunity.workflow) ? opportunity.workflow._id : ''%>"><%=(opportunity.workflow) ?
             opportunity.workflow.name : 'Undefinded'%></a>
     </td>

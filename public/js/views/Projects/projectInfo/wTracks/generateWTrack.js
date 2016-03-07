@@ -16,18 +16,18 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 responseObj              : {},
 
                 events: {
-                    "click .newSelectList li:not(.miniStylePagination)"       : "chooseOption",
-                    "click .current-selected"                                 : "showNewSelect",
-                    "click #addNewEmployeeRow"                                : "addNewEmployeeRow",
-                    "click a.generateType"                                    : "generateType",
-                    "click td.editable"                                       : "editRow",
-                    "change .editable "                                       : "setEditable",
-                    'mouseover tbody tr:not("#addNewItem")'                   : 'showRemove',
-                    'mouseleave tbody tr:not("#addNewItem")'                  : 'hideRemove',
-                    'click .remove'                                           : 'deleteRow',
-                    "keydown input:not(#jobName, #selectInput)"               : "onKeyDownInput",
-                    "keyup input:not(#jobName, #selectInput, .hasDatepicker)" : "onKeyUpInput",
-                    "click div:not(input.endDateInput)"                       : "hideSelects"
+                    "click .newSelectList li:not(.miniStylePagination)"        : "chooseOption",
+                    "click .current-selected"                                  : "showNewSelect",
+                    "click #addNewEmployeeRow"                                 : "addNewEmployeeRow",
+                    "click a.generateType"                                     : "generateType",
+                    "click td.editable"                                        : "editRow",
+                    "change .editable "                                        : "setEditable",
+                    'mouseover tbody tr:not("#addNewItem")'                    : 'showRemove',
+                    'mouseleave tbody tr:not("#addNewItem")'                   : 'hideRemove',
+                    'click .remove'                                            : 'deleteRow',
+                    "keydown input:not(#jobName, #selectInput)"                : "onKeyDownInput",
+                    "keyup input:not(#jobName, #selectInput, .hasDatepicker)"  : "onKeyUpInput",
+                    "click div:not(input.endDateInput) input:not(#selectInput)": "hideSelects"
                 },
 
                 hideSelects: function (e) {
@@ -60,7 +60,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (element.maxLength && element.value.length > element.maxLength) {
                         element.value = element.value.slice(0, element.maxLength);
-                    } else if ($(element).hasClass('editing') && ($(element).attr('id') !== 'inputHours') ){  // added validation for hours fields
+                    } else if ($(element).hasClass('editing') && ($(element).attr('id') !== 'inputHours')) {  // added validation for hours fields
                         if ($(element).val() > 24) {
                             $(element).val(24);
                         }

@@ -202,6 +202,7 @@ define([
             var cid;
             var hours;
             var message;
+            var projectWorkflow;
 
             this.hideGenerateCopy();
             this.changed = true;
@@ -215,8 +216,9 @@ define([
                 model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
                 hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
                 $(selectedWtrack).attr('checked', false);
+                projectWorkflow = $.trim(row.find('[data-content="workflow"]').text());
 
-                if (model.toJSON().workflow.name !== 'Closed') {
+                if ((model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') || (projectWorkflow !== 'Closed')) {
                     model.set({"isPaid": false});
                     model.set({"amount": 0});
                     model.set({"cost": 0});
