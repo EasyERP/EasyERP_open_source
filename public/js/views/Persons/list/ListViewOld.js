@@ -79,7 +79,7 @@ define([
             goSort: function (e) {
                 this.collection.unbind('reset');
                 this.collection.unbind('showmore');
-                var target$ = $(e.target);
+                var target$ = $(e.target).closest('th');
                 var currentParrentSortClass = target$.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
                 var sortConst = 1;
