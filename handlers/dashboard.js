@@ -377,6 +377,10 @@ var wTrack = function (models) {
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
             Employee.aggregate([{
+                $match: {
+                    hire: {$ne: []} //add by Liliya for new Application ToDO review
+                }
+            }, {
                 $project: {
                     isEmployee: 1,
                     department: 1,
@@ -385,6 +389,7 @@ var wTrack = function (models) {
                     hire      : 1,
                     name      : 1,
                     lastFire  : 1,
+                    hireCount : {$size: '$hire'},
                     lastHire  : {
                         $let: {
                             vars: {

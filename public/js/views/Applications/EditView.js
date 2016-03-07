@@ -103,7 +103,7 @@
             var row;
             var tds;
             var hire = this.currentModel.get('hire');
-            var newDate = hire[0].date;
+            var newDate = hire[0] ? hire[0].date : new Date();
             var enable = this.currentModel.get('enableView');
             var number = 7;
 
@@ -427,10 +427,10 @@
             });
 
             lengthHire = hireArray.length;
-            jobPosition = hireArray[lengthHire - 1].jobPosition;
-            department = hireArray[lengthHire - 1].department;
-            manager = hireArray[lengthHire - 1].manager;
-            jobType = hireArray[lengthHire - 1].jobType;
+            jobPosition = hireArray[lengthHire - 1] ? hireArray[lengthHire - 1].jobPosition : null;
+            department =  hireArray[lengthHire - 1] ? hireArray[lengthHire - 1].department : null;
+            manager =  hireArray[lengthHire - 1] ? hireArray[lengthHire - 1].manager : null;
+            jobType =  hireArray[lengthHire - 1] ? hireArray[lengthHire - 1].jobType : null;
 
             var referredBy = $.trim(el.find("#referredBy").val());
             var expectedSalary = $.trim(el.find("#expectedSalary").val());
@@ -446,11 +446,14 @@
                 return new Date(a.date) - new Date(b.date);
             });
 
-            newFireArray[newFireArray.length - 1].salary = newHireArray[newHireArray.length - 1].salary;
-            newFireArray[newFireArray.length - 1].department = newHireArray[newHireArray.length - 1].department;
-            newFireArray[newFireArray.length - 1].jobPosition = newHireArray[newHireArray.length - 1].jobPosition;
-            newFireArray[newFireArray.length - 1].manager = newHireArray[newHireArray.length - 1].manager;
-            newFireArray[newFireArray.length - 1].jobType = newHireArray[newHireArray.length - 1].jobType;
+            if (newFireArray[newFireArray.length - 1]){
+                newFireArray[newFireArray.length - 1].salary = newHireArray[newHireArray.length - 1] ? newHireArray[newHireArray.length - 1].salary : 0;
+                newFireArray[newFireArray.length - 1].department = newHireArray[newHireArray.length - 1] ? newHireArray[newHireArray.length - 1].department : null;
+                newFireArray[newFireArray.length - 1].jobPosition = newHireArray[newHireArray.length - 1] ? newHireArray[newHireArray.length - 1].jobPosition : null;
+                newFireArray[newFireArray.length - 1].manager = newHireArray[newHireArray.length - 1] ? newHireArray[newHireArray.length - 1].manager : null;
+                newFireArray[newFireArray.length - 1].jobType = newHireArray[newHireArray.length - 1] ? newHireArray[newHireArray.length - 1].jobType : null;
+            }
+
 
             var data = {
 
@@ -747,7 +750,7 @@
             });
 
             this.removeIcon = this.$el.find('.fa-trash');
-            this.hireDate = this.currentModel.get('hire')[0].date;
+            this.hireDate = this.currentModel.get('hire')[0] ? this.currentModel.get('hire')[0].date : '';
             this.fireDate = this.$el.find("[data-content='fire']").last().find('.fireDate').text();
 
             var model = this.currentModel.toJSON();

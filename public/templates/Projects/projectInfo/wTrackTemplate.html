@@ -17,7 +17,7 @@
         data-id="<%=wTrack.customer? wTrack.customer.name.first + ' ' + wTrack.customer.name.last : ''%>">
         <%=wTrack.customer? wTrack.customer.name.first + ' ' + wTrack.customer.name.last : ''%>
     </td>
-    <td class="editable <%= enable ? 'textUnderlineHover' : ''%>" data-content="employee"><%=wTrack.employee ? wTrack.employee.name.first + ' ' +
+    <td class="editable <%= enable ? 'textUnderlineHover' : ''%>" data-content="employee"><%=wTrack.employee && wTrack.employee.name ? wTrack.employee.name.first + ' ' +
         wTrack.employee.name.last: ''%>
     </td>
     <td class="editable <%= enable ? 'textUnderlineHover' : ''%>" data-content="department"><%=wTrack.department ? wTrack.department.departmentName : ''%></td>

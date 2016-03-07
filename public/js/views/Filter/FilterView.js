@@ -48,8 +48,8 @@ define([
                 }
             },
 
-            showManyFilters : function (){
-                this.$el.find('.forFilterIcons').slice(0,3).toggle();
+            showManyFilters: function () {
+                this.$el.find('.forFilterIcons').slice(0, 3).toggle();
             },
 
             initialize: function (options) {
@@ -147,7 +147,6 @@ define([
                 var filterName = this.$el.find('#forFilterName').val();
                 var byDefault = this.$el.find('.defaultFilter').prop('checked') ? this.parentContentType : "";
                 var viewType = this.viewType ? this.viewType : "";
-                var bool = true;
                 var self = this;
                 var filters;
                 var favouritesContent = this.$el.find('#favoritesContent');
@@ -156,18 +155,15 @@ define([
                 var allFilterNames = this.$el.find('.filters');
                 var allowName = true;
 
-                /*_.forEach(allFilterNames, function (filter) {
-                 if (filter.innerHTML === filterName) {
-                 return allowName = false;
-                 }
-                 });*/
-                // changed to easier method
+                if (!filterName.length) {
+                    return App.render({type: 'error', message: 'Please, enter filter name'});
+                }
+
                 allFilterNames.each(function (index, elem) {
                     if (elem.innerHTML === filterName) {
                         return allowName = false;
                     }
                 });
-                // end
 
                 key = this.parentContentType;
 
@@ -184,68 +180,64 @@ define([
                 }
 
                 if (!allowName) {
-                    App.render({
+                    return App.render({
                         type   : 'error',
                         message: 'Filter with same name already exists! Please, change filter name.'
                     });
-                    bool = false;
                 }
 
                 if ((Object.keys(App.filter)).length === 0) {
-                    App.render({type: 'error', message: 'Please, use some filter!'});
-                    bool = false;
+                    return App.render({type: 'error', message: 'Please, use some filter!'});
                 }
 
-                if (bool && filterName.length > 0) {
-                    filterObj['filter'] = {};
-                    filterObj['filter'][filterName] = {};
-                    filterObj['filter'][filterName] = App.filter;
-                    filterObj['key'] = key;
-                    filterObj['useByDefault'] = byDefault;
-                    filterObj['viewType'] = viewType;
+                filterObj['filter'] = {};
+                filterObj['filter'][filterName] = {};
+                filterObj['filter'][filterName] = App.filter;
+                filterObj['key'] = key;
+                filterObj['useByDefault'] = byDefault;
+                filterObj['viewType'] = viewType;
 
-                    currentUser.changed = filterObj;
+                currentUser.changed = filterObj;
 
-                    currentUser.save(
-                        filterObj,
-                        {
-                            headers : {
-                                mid: mid
-                            },
-                            wait    : true,
-                            patch   : true,
-                            validate: false,
-                            success : function (model) {
-                                updatedInfo = model.get('success');
-                                filters = updatedInfo['savedFilters'];
-                                length = filters.length;
-                                id = filters[length - 1]['_id'];
-                                App.savedFilters[self.parentContentType].push(
-                                    {
-                                        _id      : {
-                                            _id        : id,
-                                            contentView: key,
-                                            filter     : filterForSave
-                                        },
-                                        byDefault: byDefault,
-                                        viewType : viewType
-                                    }
-                                );
-                                favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
-                                self.$el.find('.defaultFilter').attr('checked', false);
-                                // added for changing name after saving favourite filter
-                                self.showFilterName(filterName);
-                                //self.$el.find('.forFilterIcons').html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
-                                self.selectedFilter(id);
-                            },
-                            error   : function (model, xhr) {
-                                console.error(xhr);
-                            },
-                            editMode: false
-                        });
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers : {
+                            mid: mid
+                        },
+                        wait    : true,
+                        patch   : true,
+                        validate: false,
+                        success : function (model) {
+                            updatedInfo = model.get('success');
+                            filters = updatedInfo['savedFilters'];
+                            length = filters.length;
+                            id = filters[length - 1]['_id'];
+                            App.savedFilters[self.parentContentType].push(
+                                {
+                                    _id      : {
+                                        _id        : id,
+                                        contentView: key,
+                                        filter     : filterForSave
+                                    },
+                                    byDefault: byDefault,
+                                    viewType : viewType
+                                }
+                            );
+                            favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
+                            self.$el.find('.defaultFilter').attr('checked', false);
+                            // added for changing name after saving favourite filter
+                            self.showFilterName(filterName);
+                            //self.$el.find('.forFilterIcons').html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
+                            self.selectedFilter(id);
+                        },
+                        error   : function (model, xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    });
 
-                    this.$el.find('#forFilterName').val('');
-                }
+                this.$el.find('#forFilterName').val('');
             },
 
             removeFilterFromDB: function (e) {
@@ -352,10 +344,9 @@ define([
                 var self = this;
                 var groupName;
 
-
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
-                    if ( filterValues.find('.forFilterIcons').length > 2 && !self.$el.find(".showLast").length) {  // toDO  overflow for many filters
+                    if (filterValues.find('.forFilterIcons').length > 2 && !self.$el.find(".showLast").length) {  // toDO  overflow for many filters
                         filterValues.append('<span class="showLast"> ...&nbsp </span>');
                     }
 
@@ -548,7 +539,7 @@ define([
                 container.html('');
                 container.html(itemView.render());
 
-                if (cb){
+                if (cb) {
                     cb();
                 }
 

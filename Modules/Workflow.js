@@ -104,7 +104,7 @@ var Workflow = function (models, event) {
                 ProjectSchema = mongoose.Schemas['Project'];
                 ProjectModel = models.get(dbName, 'Project', ProjectSchema);
 
-                event.emit('updateName', _id, ProjectModel, 'workflow._id', 'workflow.name', result.name);
+                /*event.emit('updateName', _id, ProjectModel, 'workflow._id', 'workflow.name', result.name);*/
             }
         },
 

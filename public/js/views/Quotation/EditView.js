@@ -95,8 +95,8 @@ define([
 
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
-            if (type === 'emptyProject') {
-                this.$el.find('#supplierDd').text(element.customer.name);
+            if (type !== $.trim(this.$el.find('#supplierDd').text()) && element && element.customer && element.customer.name) {
+                this.$el.find('#supplierDd').text(element.customer.name && element.customer.name.first ? element.customer.name.first + ' ' + element.customer.name.last : element.customer.name);
                 this.$el.find('#supplierDd').attr('data-id', element.customer._id);
             }
 

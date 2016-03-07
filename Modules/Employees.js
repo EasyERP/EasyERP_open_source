@@ -1313,12 +1313,12 @@ var Employee = function (event, models) {
 
             fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
-            event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
+            /*event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
             event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
             event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
             event.emit('updateName', _id, Salary, 'employee._id', 'employee.name', fullName);
             event.emit('updateName', _id, SalaryCash, 'employeesArray.employee._id', 'employeesArray.$.employee.name', fullName, true);
-            event.emit('updateName', _id, Vacation, 'employee._id', 'employee.name', fullName);
+            event.emit('updateName', _id, Vacation, 'employee._id', 'employee.name', fullName);*/
         }
     };
 
@@ -1436,9 +1436,9 @@ var Employee = function (event, models) {
                 query = {$set: updateObject, $push: dataObj};
             } else if (data.relatedUser) {
                 query = {$set: updateObject};
-                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
+               /* event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);*/
             } else if (data.currentUser) {
-                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
+               /* event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);*/
                 delete data.currentUser;
                 query = {$set: updateObject};
             } else {

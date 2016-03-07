@@ -165,13 +165,13 @@
                                         <label>Job Position</label>
                                     </dt>
                                     <dd>
-                                        <span id="jobPosition" data-id="<%=model.jobPosition ? model.jobPosition._id: ''%>"><%=model.jobPosition.name%></span>
+                                        <span id="jobPosition" data-id="<%=model.jobPosition ? model.jobPosition._id: ''%>"><%=model.jobPosition ? model.jobPosition.name: ''%></span>
                                     </dd>
                                     <dt>
                                         <label>Department</label>
                                     </dt>
                                     <dd>
-                                        <span id="department"  data-id="<%=model.department ? model.department._id: ''%>"><%=model.department.departmentName%></span>
+                                        <span id="department"  data-id="<%=model.department ? model.department._id: ''%>"><%=model.department ? model.department.departmentName: ''%></span>
                                     </dd>
                                     <dt>
                                         <label>Manager</label>

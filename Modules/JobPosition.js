@@ -537,7 +537,7 @@ var JobPosition = function (event, models) {
             EmployeeSchema = mongoose.Schemas['Employee'];
             EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 
-            event.emit('updateName', _id, EmployeeModel, 'jobPosition._id', 'jobPosition.name', result.name);
+            /*event.emit('updateName', _id, EmployeeModel, 'jobPosition._id', 'jobPosition.name', result.name);*/
         }
     };
 

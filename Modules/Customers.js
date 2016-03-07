@@ -943,11 +943,11 @@ var Customers = function (event, models) {
 
                 fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
-                event.emit('updateName', _id, Invoice, 'supplier._id', 'supplier.name', fullName);
+                /*event.emit('updateName', _id, Invoice, 'supplier._id', 'supplier.name', fullName);
                 event.emit('updateName', _id, Payment, 'supplier._id', 'supplier.fullName', fullName);
                 event.emit('updateName', _id, Project, 'customer._id', 'customer.name', fullName);
                 event.emit('updateName', _id, Quotation, 'supplier._id', 'supplier.name', fullName);
-                event.emit('updateName', _id, wTrack, 'customer._id', 'customer.name', fullName);
+                event.emit('updateName', _id, wTrack, 'customer._id', 'customer.name', fullName);*/
             }
         },
 
