@@ -95,7 +95,21 @@ define([
                 "click td.editable"                                              : "editJob",
                 "click #update"                                                  : "addNewRow",
                 "keyup .editing"                                                 : "validateNumbers",
-                "click .fa-trash"                                                : "deleteRow"
+                "click .fa-trash"                                                : "deleteRow",
+                "click #jobPosition,#department,#manager,#jobType"               : "showNotification",
+            },
+
+            showNotification: function (e) {
+                var msg = 'You can edit ';
+
+                e.preventDefault();
+                msg += e.currentTarget.id;
+                msg += ' at "Job" tab';
+
+                App.render({
+                    type   : 'notify',
+                    message: msg
+                });
             },
 
             deleteRow: function (e) {

@@ -87,7 +87,21 @@
             "click .refuseEmployee": "refuseEmployee",
             "click td.editable": "editJob",
             "click #update": "addNewRow",
+            "click #jobPosition,#department,#manager,#jobType": "showNotification",
             "click .fa-trash": "deleteRow"
+        },
+
+        showNotification: function (e) {
+            var msg = 'You can edit ';
+
+            e.preventDefault();
+            msg += e.currentTarget.id;
+            msg += ' at "Job" tab';
+
+            App.render({
+                type   : 'notify',
+                message: msg
+            });
         },
 
         deleteRow: function (e) {
@@ -653,13 +667,15 @@
 
             if (!transferArray.length) {
                 el = $('.edit-employee-info');
-                jobType = $.trim(el.find('#jobType').text());
-                jobPosition = el.find('#jobPosition').attr('data-id');
-                department = el.find('#department').attr('data-id');
-                manager = el.find('#manager').attr('data-id') || null;
+                position = $.trim(el.find('#jobPositionDd').text());
+                jobType = $.trim(el.find('#jobTypeDd').text());
+                jobPosition = el.find('#jobPositionDd').attr('data-id');
+                department = el.find('#departmentsDd').attr('data-id');
+                manager = el.find('#projectManagerDD').attr('data-id') || null;
                 salary = el.find('#proposedSalary').val() || null;
 
                 if (toEmployyes) {
+                    event = 'hired';
                     transferArray.push({
                         status: 'hired',
                         date: moment(),
@@ -671,6 +687,8 @@
                         info: ''
                     });
                 }
+            } else {
+                position = $.trim($trs.last().find('#jobPositionDd').text());
             }
 
             isEmployee = (event === 'hired') || (event === 'updated');
@@ -789,8 +807,8 @@
                             if (parseInt(data.proposedSalary)) {
                                 kanban_holder.find(".application-header .right").text(data.proposedSalary + "$");
                             }
-                            el = $('.edit-employee-info');
-                            position = $.trim(el.find('#jobPosition').text());
+                            /*el = $('.edit-employee-info');
+                             position = $.trim(el.find('#jobPosition').text());*/
                             kanban_holder.find(".application-content p.center").text(position);
                             kanban_holder.find(".application-content p.right").text(nextAction);
                             if (new Date() > new Date(nextAction)) {
@@ -822,7 +840,7 @@
                     }
                     self.hideDialog();
 
-                    if (toEmployyes) {
+                    if (event === 'hired') {
                         Backbone.history.navigate("easyErp/Employees", {trigger: true});
                     }
                 },
