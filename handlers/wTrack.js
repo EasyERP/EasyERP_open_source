@@ -1135,8 +1135,9 @@ var wTrack = function (event, models) {
                     var totalHolidays = 0;
                     var total = 0;
                     var employee = options.employee;
+                    var j;
 
-                    for (var j = 7; j >= 1; j--) {
+                    for (j = 7; j >= 1; j--) {
                         options[j] = parseInt(options[j]);
                     }
 
@@ -1144,7 +1145,6 @@ var wTrack = function (event, models) {
                         var query = Employee.find({_id: objectId(employee)}, {name: 1, hire: 1, fire: 1});
 
                         query.exec(function (err, result) {
-
                             if (err) {
                                 parallelCb(err);
                             }
@@ -1158,7 +1158,6 @@ var wTrack = function (event, models) {
                         var queryHolidays = Holiday.find({year: {$gte: startIsoYear, $lte: endIsoYear}}).lean();
 
                         queryHolidays.exec(function (err, result) {
-
                             if (err) {
                                 parallelCb(err);
                             }
@@ -1240,11 +1239,12 @@ var wTrack = function (event, models) {
 
                 function taskRunner(vacationsHolidays, generateCb) {
                     var dayHours;
+                    var dayNumber;
 
                     if (!hours && endDate.toString() !== 'Invalid Date') {
                         calculateWeeks(startDate, endDate, vacationsHolidays, generateCb);
                     } else if (hours) {
-                        for (var dayNumber = 7; dayNumber >= 1; dayNumber--) {
+                        for (dayNumber = 7; dayNumber >= 1; dayNumber--) {
                             dayHours = options[dayNumber];
                             hoursInWeek += parseInt(dayHours, 10);
                         }
