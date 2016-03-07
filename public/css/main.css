@@ -1850,8 +1850,8 @@ input::-ms-clear {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev span,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next span {
-  width: 6px;
-  height: 7px;
+  width: 7px;
+  height: 8px;
   margin-top: -4px;
   margin-left: -3px;
   text-indent: -99999px;
@@ -1869,13 +1869,13 @@ input::-ms-clear {
   left: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev span {
-  background-position: 0 -7px;
+  background-position: 3px 0;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
   right: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next span {
-  background-position: -6px -7px;
+  background-position: -4px 0;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
   margin: 0 2.3em;
@@ -5936,8 +5936,8 @@ ul.dialog-tabs li.right button {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev span,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next span {
-  width: 6px;
-  height: 7px;
+  width: 7px;
+  height: 8px;
   margin-top: -4px;
   margin-left: -3px;
   text-indent: -99999px;
@@ -5955,13 +5955,13 @@ ul.dialog-tabs li.right button {
   left: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev span {
-  background-position: 0 -7px;
+  background-position: 3px 0;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
   right: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next span {
-  background-position: -6px -7px;
+  background-position: -4px 0;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
   margin: 0 2.3em;
