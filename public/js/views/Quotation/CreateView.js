@@ -113,6 +113,10 @@ define([
                 }
             },
 
+            validateForm: function(e){
+
+            },
+
             changeTab: function (e) {
                 var holder = $(e.target);
                 var n;
