@@ -856,14 +856,32 @@ var wTrack = function (event, models) {
             async.each(data, function (options, asyncCb) {
                 var startDate = moment(new Date(options.startDate));
                 var startIsoYear = startDate.isoWeekYear();
-                //todo add logic based on hours
+
                 var endDate = moment(new Date(options.endDate));
                 var endIsoYear = options.endDate ? endDate.isoWeekYear() : startIsoYear + 1;
-
                 var hours = parseInt(options.hours, 10);
                 var project = options.project;
                 var employee = options.employee;
                 var department = options.department;
+                var hoursInWeek = 0;
+
+                function canFillIt(hours){
+                    return (isFinite(hours) && hours > 0) || isNaN(hours);
+
+                }
+
+                function endDateCalculator(startDate, hoursInWeek, totalHours) {
+                    var weekCount = Math.ceil(totalHours / hoursInWeek);
+                    var endDate;
+
+                    if (!isFinite(weekCount)) {
+                        return moment();
+                    }
+
+                    endDate = moment(startDate).add(weekCount, 'weeks');
+
+                    return endDate;
+                }
 
                 function dateSplitter(startDate, endDate) {
                     var datesArray = [];
@@ -969,6 +987,7 @@ var wTrack = function (event, models) {
                             "owner": null
                         }
                     };
+                    var canFillIt = !!options.canFillIt;
                     var hasHolidayOrVacation;
                     var isData;
                     var day;
@@ -984,12 +1003,18 @@ var wTrack = function (event, models) {
                     for (day = endDay; day >= startDay; day--) {
                         hasHolidayOrVacation = comparator(holidaysArray, vacationsArray, dateByWeek, day);
 
-                        if (!hasHolidayOrVacation && weekData[day]) {
+                        if (!hasHolidayOrVacation && weekData[day] && canFillIt) {
                             isData = true;
                             worked = parseInt(weekData[day], 10);
 
                             if (isNaN(worked)) {
                                 worked = 0;
+                            }
+
+                            if (hours && hours > 0) {
+                                if(hours - worked < 0){
+                                    worked = hours;
+                                }
                             }
 
                             weekObject[day] = worked;
@@ -1038,6 +1063,7 @@ var wTrack = function (event, models) {
                         lastDayInMonth = moment(startDate).endOf('month').day();
                         firstDayInMonth = moment(endDate).startOf('month').day();
 
+                        options.canFillIt = canFillIt(hours);
                         result.push(filler(startDay, lastDayInMonth, options));
 
                         if (startYear < endYear) {
@@ -1047,9 +1073,10 @@ var wTrack = function (event, models) {
                         }
 
                         clonedOptions.month = endMonth;
-
+                        clonedOptions.canFillIt = canFillIt(hours);
                         result.push(filler(firstDayInMonth, endDay, clonedOptions));
                     } else {
+                        options.canFillIt = canFillIt(hours);
                         result.push(filler(startDay, endDay, options));
                     }
 
@@ -1149,15 +1176,12 @@ var wTrack = function (event, models) {
 
                                             dayKey = dayNumber.toString();
 
-                                            if (dayNumber !== 0 && dayNumber !== 6) {
-
-                                                if (!newResult[key]) {
-                                                    newResult[key] = {};
-                                                }
-
-                                                newResult[key][dayKey] = dayNumber;
-                                                total++;
+                                            if (!newResult[key]) {
+                                                newResult[key] = {};
                                             }
+
+                                            newResult[key][dayKey] = dayNumber;
+                                            total++;
                                         }
                                     }
                                 });
@@ -1169,7 +1193,38 @@ var wTrack = function (event, models) {
                     async.parallel([getHolidays, getVacations, getEmployee], generateCb);
                 }
 
-                function calculateWeeks(vacationsHolidays, generateCb) {
+                function taskRunner(vacationsHolidays, generateCb) {
+                    var dayHours;
+
+                    if (!hours && endDate.toString() !== 'Invalid Date') {
+                        calculateWeeks(startDate, endDate, vacationsHolidays, generateCb);
+                    } else if (hours) {
+                        for (var dayNumber = 7; dayNumber >= 1; dayNumber--) {
+                            dayHours = options[dayNumber];
+                            hoursInWeek += parseInt(dayHours, 10);
+                        }
+
+                        endDate = endDateCalculator(startDate, hoursInWeek, hours);
+                        calculateWeeks(startDate, endDate, vacationsHolidays, function (err) {
+                            if (err) {
+                                return generateCb(err);
+                            }
+
+                            if (hours && hours > 0) {
+                                taskRunner(vacationsHolidays, generateCb);
+                            } else {
+                                generateCb();
+                            }
+                        });
+                    } else {
+                        err = new Error('Bad Request');
+                        err.status = 400;
+
+                        generateCb(err);
+                    }
+                }
+
+                function calculateWeeks(startDate, endDate, vacationsHolidays, cb) {
                     var holidays = vacationsHolidays[0] ? vacationsHolidays[0].holidays : {};
                     var vacations = vacationsHolidays[1] ? vacationsHolidays[1].vacations : {};
 
@@ -1185,14 +1240,14 @@ var wTrack = function (event, models) {
 
                     WTrack.create(result, function (err, _tCards) {
                         if (err) {
-                            return generateCb(err);
+                            return cb(err);
                         }
 
-                        generateCb();
+                        cb();
                     });
                 }
 
-                async.waterfall([getVacationsHolidays, calculateWeeks], asyncCb);
+                async.waterfall([getVacationsHolidays, taskRunner], asyncCb);
             }, mainCb);
 
         };
