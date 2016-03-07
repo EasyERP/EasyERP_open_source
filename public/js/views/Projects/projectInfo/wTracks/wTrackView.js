@@ -14,9 +14,10 @@ define([
     'collections/wTrack/filterCollection',
     'dataService',
     'populate',
-    'async'
+    'async',
+    'constants'
 
-], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async) {
+], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async, constants) {
     var wTrackView = listView.extend({
 
         el                      : '#timesheet',
@@ -44,7 +45,7 @@ define([
         initialize: function (options) {
             this.remove();
             this.collection = options.model;
-            this.defaultItemsNumber = options.defaultItemsNumber;
+            this.defaultItemsNumber = options.defaultItemsNumber || constants.DEFAULT_ELEMENTS_PER_PAGE;
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
 
