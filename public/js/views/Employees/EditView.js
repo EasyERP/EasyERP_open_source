@@ -234,10 +234,37 @@ define([
                 var element = $target.closest('a') || parentUl.closest('a');
                 var id = element.attr('id') || parentUl.attr('id');
                 var valueId = $target.attr('id');
+                var managersIds = this.responseObj['#departmentManagers'];
+                var managers = this.responseObj['#projectManagerDD'];
+                var managerId;
+                var manager;
 
                 if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
                     element.text($target.text());
                     element.attr('data-id', valueId);
+
+                    if (id === 'departmentsDd') {
+
+                        managersIds.forEach(function(managerObj) {
+                            if (managerObj._id === valueId) {
+                                managerId = managerObj.name;
+                            }
+                        });
+
+                        managers.forEach(function(managerObj) {
+                            if (managerObj._id === managerId) {
+                                manager = managerObj.name;
+                            }
+                        });
+
+                        if (manager) {
+                            element = element.closest('tr').find('a#projectManagerDD');
+
+                            element.text(manager);
+                            element.attr('data-id', managerId);
+                        }
+                    }
+
                 } else {
                     $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 }
@@ -847,6 +874,7 @@ define([
                     $('.endContractReasonList').attr('data-id', workflow[0]._id);
                 });
                 populate.get("#jobTypeDd", "/jobType", {}, "name", this);
+                populate.get("#departmentManagers", "/DepartmentsForDd", {}, "departmentManager", this);
                 populate.get("#nationality", "/nationality", {}, "_id", this);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, false, false);
