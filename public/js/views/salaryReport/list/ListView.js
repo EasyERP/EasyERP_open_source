@@ -67,7 +67,7 @@ define([
             },
 
             goSort: function (e) {
-                var target = $(e.target);
+                var target = $(e.target).closest('th');
                 var currentParrentSortClass = target.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
                 var dataSort = target.attr('data-sort');

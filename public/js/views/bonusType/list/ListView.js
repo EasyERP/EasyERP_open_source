@@ -358,7 +358,7 @@ define([
                 if (this.isNewRow()) {
                     return false;
                 }
-                var target$ = $(e.target);
+                var  target$ = $(e.target).closest('th');
                 var currentParentSortClass = target$.attr('class');
                 var sortClass = currentParentSortClass.split(' ')[1];
                 var sortConst = 1;
