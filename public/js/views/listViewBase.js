@@ -105,6 +105,7 @@ define([
                     }
                         break;
                 }
+
                 sortObject[sortBy] = sortConst;
 
                 this.fetchSortCollection(sortObject);

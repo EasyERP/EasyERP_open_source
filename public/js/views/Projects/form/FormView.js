@@ -718,7 +718,7 @@ define([
                 var jobsCollection = custom.retriveFromCash(key);
 
                 var projectTeam = _.filter(this.jobsCollection.toJSON(), function (el) {
-                    return el.project._id === _id
+                    return el.project._id === _id;
                 });
 
                 if (!jobsCollection || !jobsCollection.length) {

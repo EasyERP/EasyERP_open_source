@@ -398,6 +398,10 @@ var wTrack = function (event, models) {
         var waterfallTasks;
         var key;
         var keyForDay;
+        var sortArray;
+        var sortLength;
+        var dynamicKey = '';
+        var i;
         var sortObj = {
             "Mo": 1,
             "Tu": 2,
@@ -417,6 +421,19 @@ var wTrack = function (event, models) {
         if (query.sort) {
             key = Object.keys(query.sort)[0].toString();
             keyForDay = sortObj[key];
+
+            if (key.indexOf('.name.first') !== -1){
+                sortArray = key.split('.');
+                sortLength = sortArray.length;
+
+                for (i = 0; i < sortLength - 1; i++){
+                    dynamicKey += sortArray[i] + '.';
+                }
+
+                dynamicKey += 'last';
+                query.sort[dynamicKey] = parseInt(query.sort[key], 10);
+                sort = query.sort;
+            }
 
             if (sortObj.hasOwnProperty(key)) {
                 sort[keyForDay] = parseInt(query.sort[key], 10);
