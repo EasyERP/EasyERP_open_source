@@ -572,7 +572,7 @@ define([
             productItemContainer = this.$el.find('#productItemsHolder');
 
             productItemContainer.append(
-                new ProductItemView({editable: true, service: service}).render({model: model}).el
+                new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
             );
 
             dataService.getData("/project/getForWtrack", null, function (projects) {

@@ -223,7 +223,7 @@ define([
                 productItemContainer.append(
                     new ProductItemView({
                         canBeSold       : true,
-                        service         : 'Service',
+                        service         : true,
                         projectModel    : this.projectModel,
                         wTrackCollection: this.wTrackCollection,
                         channelObject   : this.channelObject
