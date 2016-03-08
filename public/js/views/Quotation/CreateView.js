@@ -294,7 +294,7 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
                 if (App.weTrack && this.forSales) {
                     productItemContainer.append(
-                        new ProductItemView({canBeSold: true, service: 'Service'}).render().el
+                        new ProductItemView({canBeSold: true, service: true}).render().el
                     );
                 } else {
                     productItemContainer.append(
