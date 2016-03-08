@@ -199,7 +199,8 @@ define([
             var _firedDate;
             var i;
 
-            date = moment().set('year', year).set('week', _week);
+            //date = moment().set('year', year).set('week', _week);
+            date = moment().isoWeekYear(year).isoWeek(_week).day(7);
 
             if (!firedLength) {
                 return date > _firstHiredDate;
