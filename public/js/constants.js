@@ -398,6 +398,9 @@ define([], function () {
                 view   : 'onlyEmployees',
                 backend: 'onlyEmployees'
             }
+        },
+        "DOMElements" : {
+            "Trash"   : '<a class="fa fa-trash"></a>'
         }
     };
 

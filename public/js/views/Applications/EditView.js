@@ -602,9 +602,10 @@
             var sourceId = $("#sourceDd").data("id");
             var viewType = custom.getCurrentVT();
             var transferArray = [];
-            var redirect = false;
             var homeAddress = {};
             var currentWorkflow;
+            var proposedSalary;
+            var expectedSalary;
             var fireArray = [];
             var hireArray = [];
             var groupsId = [];
@@ -614,7 +615,6 @@
             var isEmployee;
             var department;
             var workflowId;
-            var empThumb;
             var lastFire;
             var workflow;
             var position;
@@ -671,8 +671,10 @@
                 jobType = $.trim(el.find('#jobTypeDd').text());
                 jobPosition = el.find('#jobPositionDd').attr('data-id');
                 department = el.find('#departmentsDd').attr('data-id');
-                manager = el.find('#projectManagerDD').attr('data-id') || null;
-                salary = el.find('#proposedSalary').val() || null;
+                manager = el.find('#projectManagerDD').attr('data-id');
+                expectedSalary = parseInt($.trim(el.find("#expectedSalary").val()), 10) || 0;
+                salary = parseInt($.trim(el.find("#proposedSalary").val()), 10) || 0;
+                proposedSalary = salary;
 
                 if (toEmployyes) {
                     event = 'hired';
@@ -756,7 +758,10 @@
                 whoCanRW: whoCanRW,
                 hire: hireArray,
                 fire: fireArray,
-                transfer: transferArray
+                nextAction    : nextAction,
+                transfer: transferArray,
+                expectedSalary: expectedSalary,
+                proposedSalary: proposedSalary
             };
 
             el = this.$el;
