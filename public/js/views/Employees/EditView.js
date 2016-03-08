@@ -14,9 +14,10 @@ define([
 		"common",
 		"populate",
 		"moment",
-		'helpers/keyCodeHelper'
+		'helpers/keyCodeHelper',
+		'constants'
 	],
-	function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment, keyCodes) {
+	function (Backbone, $, _, EditTemplate, attachView, selectView, EmployeesCollection, JobPositionsCollection, DepartmentsCollection, AccountsDdCollection, UsersCollection, AssigneesView, common, populate, moment, keyCodes, constants) {
 		'use strict';
 		var EditView = Backbone.View.extend({
 			el         : "#content-holder",
@@ -170,7 +171,7 @@ define([
 			renderRemoveBtn: function () {
 				var table     = this.$el.find('#hireFireTable');
 				var trs       = table.find('tr');
-				var removeBtn = '<a class="fa fa-trash"></a>';
+				var removeBtn = constants.TRASH_BIN;
 
 				trs.find('td:first-child').text('');
 				trs.last().find('td').first().html(removeBtn);
@@ -382,222 +383,6 @@ define([
 			},
 
 			saveItem: function () {
-				/*this.hideNewSelect();
-
-				 var jobType;
-				 var department;
-				 var jobPosition;
-				 var manager;
-				 var empThumb;
-				 var self = this;
-				 var redirect = false;
-				 var $tableFire = this.$el.find('#hireFireTable');
-				 var lastRow = $tableFire.find('tr').last();
-				 var firedDate;
-				 var fireReason;
-				 var gender = $("#genderDd").data("id") || null;
-				 var marital = $("#maritalDd").data("id") || null;
-				 var relatedUser = this.$el.find("#relatedUsersDd").data("id") || null;
-				 var coach = $.trim(this.$el.find("#coachDd").data("id")) || null;
-				 var homeAddress = {};
-
-				 $("dd").find(".homeAddress").each(function () {
-				 var el = $(this);
-				 homeAddress[el.attr("name")] = $.trim(el.val());
-				 });
-
-				 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-				 var transferArray = $tableFire.find('[data-content="transfer"]');
-				 var newHireArray = [];
-				 var newTransferArray = [];
-				 var lengthHire = transferArray.length - 1;
-				 var fireArray = this.currentModel.get('fire');
-				 var hireModelArray = this.currentModel.get('hire');
-				 var newFire = _.clone(fireArray);
-				 var newFireArray = [];
-
-				 _.each(transferArray, function (hire, key) {
-				 var tr = self.$el.find("#hire" + key);
-				 var date = new Date($.trim(tr.find("[data-id='hiredDate']").text()));
-				 var jobPosition = tr.find('#jobPositionDd').attr('data-id');
-				 var department = tr.find('#departmentsDd').attr('data-id');
-				 var manager = tr.find('#projectManagerDD').attr('data-id') || null;
-				 var salary = parseInt(tr.find('[data-id="salary"]').text()) || (hireModelArray[key] ? hireModelArray[key].salary : hireModelArray[key - 1].salary);
-				 var info = tr.find('#statusInfoDd').val();
-				 var jobType = $.trim(tr.find('#jobTypeDd').text());
-
-				 var trFire = $(self.$el.find("#fire" + key));
-
-				 newTransferArray.push({
-				 date       : date,
-				 department : department,
-				 jobPosition: jobPosition,
-				 manager    : manager,
-				 jobType    : jobType,
-				 salary     : salary,
-				 info       : info
-				 });
-
-				 if (lengthHire === key && !lastRow.hasClass('fired')) {
-				 newHireArray.push(date);
-				 return newHireArray;
-				 }
-
-				 if (trFire && trFire.length) {
-				 newFire[key] = _.clone(newHireArray[key]);
-
-				 newFire[key].date = new Date($.trim(trFire.find("[data-id='firedDate']").text()));
-				 newFire[key].info = trFire.find('#statusInfoDd').val();
-
-				 newFireArray.push(newFire[key]);
-				 } else {
-				 newFire[key] = _.clone(newHireArray[key]);
-
-				 newFire[key].date = date;
-				 newFire[key].info = 'Update';
-
-				 newFireArray.push(newFire[key]);
-				 }
-				 return newHireArray;
-				 });
-
-				 lengthHire = newHireArray.length;
-				 jobPosition = newHireArray[lengthHire - 1].jobPosition;
-				 department = newHireArray[lengthHire - 1].department;
-				 manager = newHireArray[lengthHire - 1].manager;
-				 jobType = newHireArray[lengthHire - 1].jobType;
-
-				 if (lastRow.hasClass('fired')) {
-				 redirect = true;
-				 firedDate = newFireArray[newFireArray.length - 1].date;
-				 fireReason = newFireArray[newFireArray.length - 1].info;
-				 }
-
-				 var sourceId = $("#sourceDd").data("id");
-
-				 var usersId = [];
-				 var groupsId = [];
-
-				 $(".groupsAndUser tr").each(function () {
-				 if ($(this).data("type") === "targetUsers") {
-				 usersId.push($(this).data("id"));
-				 }
-				 if ($(this).data("type") === "targetGroups") {
-				 groupsId.push($(this).data("id"));
-				 }
-
-				 });
-				 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-				 var nationality = $("#nationality").data("id");
-				 var data = {
-				 name          : {
-				 first: $.trim(this.$el.find("#first").val()),
-				 last : $.trim(this.$el.find("#last").val())
-				 },
-				 gender        : gender,
-				 jobType       : jobType,
-				 marital       : marital,
-				 workAddress   : {
-				 street : $.trim(this.$el.find('#street').val()),
-				 city   : $.trim(this.$el.find('#city').val()),
-				 state  : $.trim(this.$el.find('#state').val()),
-				 zip    : $.trim(this.$el.find('#zip').val()),
-				 country: $.trim(this.$el.find('#country').val())
-				 },
-				 social        : {
-				 LI: $.trim(this.$el.find('#LI').val()),
-				 FB: $.trim(this.$el.find('#FB').val())
-				 },
-				 tags          : $.trim(this.$el.find("#tags").val()).split(','),
-				 workEmail     : $.trim(this.$el.find("#workEmail").val()),
-				 personalEmail : $.trim(this.$el.find("#personalEmail").val()),
-				 skype         : $.trim(this.$el.find("#skype").val()),
-				 workPhones    : {
-				 phone : $.trim(this.$el.find("#phone").val()),
-				 mobile: $.trim(this.$el.find("#mobile").val())
-				 },
-				 officeLocation: $.trim(this.$el.find("#officeLocation").val()),
-				 bankAccountNo : $.trim($("#bankAccountNo").val()),
-				 relatedUser   : relatedUser,
-				 department    : department,
-				 jobPosition   : jobPosition,
-				 manager       : manager,
-				 coach         : coach,
-				 identNo       : $.trim($("#identNo").val()),
-				 passportNo    : $.trim(this.$el.find("#passportNo").val()),
-				 otherId       : $.trim(this.$el.find("#otherId").val()),
-				 homeAddress   : homeAddress,
-				 dateBirth     : dateBirthSt,
-				 source        : sourceId,
-				 imageSrc      : this.imageSrc,
-				 nationality   : nationality,
-				 groups        : {
-				 owner: $("#allUsersSelect").data("id"),
-				 users: usersId,
-				 group: groupsId
-				 },
-				 whoCanRW      : whoCanRW,
-				 hire          : newHireArray,
-				 fire          : newFireArray
-				 };
-
-				 if (redirect) {
-				 data.isEmployee = false;
-				 data.lastFire = moment(firedDate).year() * 100 + moment(firedDate).isoWeek();
-				 data.contractEnd = {
-				 "date"  : new Date(firedDate),
-				 "reason": fireReason
-				 };
-				 }
-
-				 this.currentModel.set(data);
-				 this.currentModel.save(this.currentModel.changed, {
-				 headers: {
-				 mid: 39
-				 },
-				 patch  : true,
-				 success: function (model) {
-				 if (redirect) {
-				 return Backbone.history.navigate("easyErp/Applications/kanban", {trigger: true});
-				 }
-
-				 if (model.get('relatedUser') === App.currentUser._id) {
-				 App.currentUser.imageSrc = self.imageSrc;
-
-				 $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
-				 $("#loginPanel #userName").text(model.toJSON().fullName);
-				 }
-
-				 if (self.firstData === data.name.first &&
-				 self.lastData === data.name.last &&
-				 self.departmentData === department &&
-				 self.jobPositionData === jobPosition &&
-				 self.projectManagerData === manager) {
-
-				 model = model.toJSON();
-				 empThumb = $('#' + model._id);
-
-				 empThumb.find('.age').html(model.result.age);
-				 empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
-				 empThumb.find('.telephone a').html(model.workPhones.mobile);
-				 empThumb.find('.telephone a').attr('href', "skype:" + model.workPhones.mobile + "?call");
-
-				 if (model.relatedUser) {
-				 empThumb.find('.relUser').html(model.relatedUser.login);
-				 }
-
-				 } else {
-				 Backbone.history.fragment = '';
-				 Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
-				 }
-				 self.hideDialog();
-				 },
-				 error  : function (model, xhr) {
-				 self.errorNotification(xhr);
-				 }
-
-				 });*/
-
 				var transferArray;
 				var homeAddress;
 				var dateBirthSt;
@@ -761,7 +546,7 @@ define([
 				};
 
 				if (!isEmployee) {
-					data.workflow = "52d2c1369b57890814000005";
+					data.workflow = constants.END_CONTRACT_WORKFLOW_ID;
 				}
 
 				this.currentModel.set(data);

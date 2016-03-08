@@ -398,9 +398,6 @@ define([], function () {
                 view   : 'onlyEmployees',
                 backend: 'onlyEmployees'
             }
-        },
-        "DOMElements" : {
-            "Trash"   : '<a class="fa fa-trash"></a>'
         }
     };
 
@@ -479,6 +476,9 @@ define([], function () {
         SELECTP_ROJECT   : 'Please select a Project',
 
         IT_SERVICES: 'IT services',
+
+        END_CONTRACT_WORKFLOW_ID : "52d2c1369b57890814000005",
+        TRASH_BIN   : '<a class="fa fa-trash"></a>',
 
         DASH_VAC_WEEK_BEFORE: 2,
         DASH_VAC_WEEK_AFTER: 8
