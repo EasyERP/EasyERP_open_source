@@ -53,18 +53,24 @@ var Employee = function (models) {
         var date = moment().year(year).month(month - 1).date(1);
 
         Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
+            var salary = 0;
+            var hire;
+            var i;
+            var length;
+
             if (err){
                 return next(err);
             }
-            var hire = result.hire;
-            var salary = 0;
-            var i;
-            var length = hire.length;
 
-            for (i = length - 1; i >= 0; i--){
-                if (date >= hire[i].date){
-                    salary = hire[i].salary;
-                    break;
+            if (result){
+                hire = result.hire;
+                length = hire.length;
+
+                for (i = length - 1; i >= 0; i--){
+                    if (date >= hire[i].date){
+                        salary = hire[i].salary;
+                        break;
+                    }
                 }
             }
 
