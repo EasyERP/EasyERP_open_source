@@ -204,6 +204,8 @@ define([
             var message;
             var projectWorkflow;
 
+            this.$el.find('#check_all').prop('checked', false);
+
             this.hideGenerateCopy();
             this.changed = true;
             this.createdCopied = true;
