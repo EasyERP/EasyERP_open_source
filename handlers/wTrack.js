@@ -107,7 +107,6 @@ var wTrack = function (event, models) {
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var needUpdateKeys = body.month || body.week || body.year || body.isoYear;
         var uId;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -116,6 +115,7 @@ var wTrack = function (event, models) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
+                        var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
 
                         if (data && data.revenue) {
                             data.revenue *= 100;
