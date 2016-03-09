@@ -661,170 +661,195 @@ var requestHandler = function (app, event, mainDb) {
             if (err) {
                 return console.log(err);
             }
+            if (result && result.length) { //add from
+                Employee.populate(result, {
+                    'path'  : "wTracks.employee",
+                    'select': '_id, name',
+                    'lean'  : true
+                }, function (err, result) {
+                    async.forEach(result, function (job, cb) {
+                        var jobID = job._id;
+                        var projectTeam = {};
+                        var projectValues = {};
+                        var budgetTotal = {};
+                        var wTRack = job.wTracks;
+                        var empKeys;
+                        var keys;
+                        var hoursByMonth = {};
+                        var employees = {};
+                        var keysForPT;
+                        var sortBudget = [];
+                        var budget = {};
+                        var minDate = 1 / 0;
+                        var maxDate = 0;
+                        var nextDate;
+                        var nextMaxDate;
 
-            Employee.populate(result, {
-                'path'  : "wTracks.employee",
-                'select': '_id, name',
-                'lean'  : true
-            }, function (err, result) {
-                async.forEach(result, function (job, cb) {
-                    var jobID = job._id;
-                    var projectTeam = {};
-                    var projectValues = {};
-                    var budgetTotal = {};
-                    var wTRack = job.wTracks;
-                    var empKeys;
-                    var keys;
-                    var hoursByMonth = {};
-                    var employees = {};
-                    var keysForPT;
-                    var sortBudget = [];
-                    var budget = {};
-                    var minDate = 1 / 0;
-                    var maxDate = 0;
-                    var nextDate;
-                    var nextMaxDate;
+                        budgetTotal.profitSum = 0;
+                        budgetTotal.costSum = 0;
+                        //budgetTotal.rateSum = 0;
+                        budgetTotal.revenueSum = 0;
+                        budgetTotal.hoursSum = 0;
+                        budgetTotal.revenueByQA = 0;
+                        budgetTotal.hoursByQA = 0;
 
-                    budgetTotal.profitSum = 0;
-                    budgetTotal.costSum = 0;
-                    //budgetTotal.rateSum = 0;
-                    budgetTotal.revenueSum = 0;
-                    budgetTotal.hoursSum = 0;
-                    budgetTotal.revenueByQA = 0;
-                    budgetTotal.hoursByQA = 0;
-
-                    wTRack.forEach(function (wTrack) {
-                        var key;
-                        var employee = wTrack.employee;
-
-                        if (!( employee._id in employees)) {
-                            employees[employee._id] = employee.name.first + ' ' + employee.name.last;
-                        }
-
-                        key = wTrack.year * 100 + wTrack.month;
-
-                        if (hoursByMonth[key]) {
-                            hoursByMonth[key] += parseFloat(wTrack.worked);
-                        } else {
-                            hoursByMonth[key] = parseFloat(wTrack.worked);
-                        }
-                    });
-
-                    empKeys = Object.keys(employees);
-
-                    empKeys.forEach(function (empId) {
                         wTRack.forEach(function (wTrack) {
-                            var emp = (wTrack.employee._id).toString();
+                            var key;
+                            var employee = wTrack.employee;
 
-                            nextDate = wTrack.dateByWeek;
-                            nextMaxDate = wTrack.dateByWeek;
-
-                            if (nextDate <= minDate) {
-                                minDate = nextDate;
+                            if (!( employee._id in employees)) {
+                                employees[employee._id] = employee.name.first + ' ' + employee.name.last;
                             }
 
-                            if (nextMaxDate > maxDate) {
-                                if (wTrack.month === 1 && wTrack.week >= moment().year(wTrack.year - 1).isoWeeksInYear()) {
-                                } else {
-                                    maxDate = nextMaxDate;
-                                }
-                            }
+                            key = wTrack.year * 100 + wTrack.month;
 
-                            if (empId === emp) {
-                                if (projectTeam[empId]) {
-                                    if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                        projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
-                                        projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
-                                    }
-                                    projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-                                    projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
-                                    // projectTeam[empId].rate += parseFloat(wTrack.rate);
-                                    projectTeam[empId].hours += parseFloat(wTrack.worked);
-                                    projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
-                                } else {
-                                    projectTeam[empId] = {};
-
-                                    if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                        projectTeam[empId].byQA = {};
-                                        projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue) / 100;
-                                        projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
-                                    }
-
-                                    projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-                                    projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
-                                    //projectTeam[empId].rate = parseFloat(wTrack.rate);
-                                    projectTeam[empId].hours = parseFloat(wTrack.worked);
-                                    projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
-                                }
+                            if (hoursByMonth[key]) {
+                                hoursByMonth[key] += parseFloat(wTrack.worked);
+                            } else {
+                                hoursByMonth[key] = parseFloat(wTrack.worked);
                             }
                         });
 
-                        budgetTotal.maxDate = maxDate;
-                        budgetTotal.minDate = minDate;
-                    });
+                        empKeys = Object.keys(employees);
 
-                    keys = Object.keys(projectTeam);
+                        empKeys.forEach(function (empId) {
+                            wTRack.forEach(function (wTrack) {
+                                var emp = (wTrack.employee._id).toString();
 
-                    if (keys.length > 0) {
-                        keys.forEach(function (key) {
-                            budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
-                            budgetTotal.costSum += parseFloat(projectTeam[key].cost);
-                            budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
-                            budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-                            budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
-                            budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
-                        });
-                        //budgetTotal.rateSum = {};
-                        //var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                        //var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
-                        //budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
-                        //budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;
+                                nextDate = wTrack.dateByWeek;
+                                nextMaxDate = wTrack.dateByWeek;
 
-                        projectValues.revenue = budgetTotal.revenueSum;
-                        projectValues.profit = budgetTotal.profitSum;
-                        projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
-                        if (!isFinite(projectValues.markUp)) {
-                            projectValues.markUp = 0;
-                        }
-                        projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
-                        if (!isFinite(projectValues.radio)) {
-                            projectValues.radio = 0;
-                        }
+                                if (nextDate <= minDate) {
+                                    minDate = nextDate;
+                                }
 
-                        var empQuery = Employee
-                            .find({_id: {$in: keys}}, {
-                                'name'       : 1,
-                                'jobPosition': 1,
-                                'department' : 1
-                            })
-                            .populate('department', '_id departmentName')
-                            .populate('jobPosition', '_id name')
-                            .lean();
-                        empQuery.exec(function (err, response) {
-
-                            if (err) {
-                                return console.log(err);
-                            }
-
-                            keysForPT = Object.keys(projectTeam);
-
-                            response.forEach(function (employee) {
-                                keysForPT.forEach(function (id) {
-                                    if ((employee._id).toString() === id) {
-                                        sortBudget.push(projectTeam[id]);
+                                if (nextMaxDate > maxDate) {
+                                    if (wTrack.month === 1 && wTrack.week >= moment().year(wTrack.year - 1).isoWeeksInYear()) {
+                                    } else {
+                                        maxDate = nextMaxDate;
                                     }
-                                })
+                                }
+
+                                if (empId === emp) {
+                                    if (projectTeam[empId]) {
+                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                            projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                            projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                        }
+                                        projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                        projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
+                                        // projectTeam[empId].rate += parseFloat(wTrack.rate);
+                                        projectTeam[empId].hours += parseFloat(wTrack.worked);
+                                        projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
+                                    } else {
+                                        projectTeam[empId] = {};
+
+                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                            projectTeam[empId].byQA = {};
+                                            projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue) / 100;
+                                            projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                        }
+
+                                        projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                        projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
+                                        //projectTeam[empId].rate = parseFloat(wTrack.rate);
+                                        projectTeam[empId].hours = parseFloat(wTrack.worked);
+                                        projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
+                                    }
+                                }
                             });
 
+                            budgetTotal.maxDate = maxDate;
+                            budgetTotal.minDate = minDate;
+                        });
+
+                        keys = Object.keys(projectTeam);
+
+                        if (keys.length > 0) {
+                            keys.forEach(function (key) {
+                                budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
+                                budgetTotal.costSum += parseFloat(projectTeam[key].cost);
+                                budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
+                                budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
+                                budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                                budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
+                            });
+                            //budgetTotal.rateSum = {};
+                            //var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                            //var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
+                            //budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
+                            //budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;
+
+                            projectValues.revenue = budgetTotal.revenueSum;
+                            projectValues.profit = budgetTotal.profitSum;
+                            projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+                            if (!isFinite(projectValues.markUp)) {
+                                projectValues.markUp = 0;
+                            }
+                            projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
+                            if (!isFinite(projectValues.radio)) {
+                                projectValues.radio = 0;
+                            }
+
+                            var empQuery = Employee
+                                .find({_id: {$in: keys}}, {
+                                    'name'       : 1,
+                                    'jobPosition': 1,
+                                    'department' : 1
+                                })
+                                .populate('department', '_id departmentName')
+                                .populate('jobPosition', '_id name')
+                                .lean();
+                            empQuery.exec(function (err, response) {
+
+                                if (err) {
+                                    return console.log(err);
+                                }
+
+                                keysForPT = Object.keys(projectTeam);
+
+                                response.forEach(function (employee) {
+                                    keysForPT.forEach(function (id) {
+                                        if ((employee._id).toString() === id) {
+                                            sortBudget.push(projectTeam[id]);
+                                        }
+                                    })
+                                });
+
+                                budget = {
+                                    projectTeam: response,
+                                    budget     : sortBudget,
+                                    budgetTotal: budgetTotal
+                                };
+
+                                Job.update({_id: jobID}, {$set: {budget: budget}}, function (err, result) {
+                                    if (err) {
+                                        return console.log(err);
+                                    }
+
+                                    event.emit('updateQuntity', {
+                                        jobId   : jobID,
+                                        quontity: budget.budgetTotal.hoursSum,
+                                        req     : req
+                                    });
+                                    console.log(count++);
+                                })
+                            });
+                        } else {
                             budget = {
-                                projectTeam: response,
-                                budget     : sortBudget,
+                                projectTeam: [],
+                                budget     : [],
                                 budgetTotal: budgetTotal
                             };
 
-                            Job.update({_id: jobID}, {$set: {budget: budget}}, function (err, result) {
+                            Job.update({_id: jobID}, {
+                                $set: {
+                                    budget  : budget,
+                                    editedBy: editedBy
+                                }
+                            }, function (err, result) {
                                 if (err) {
-                                    return console.log(err);
+                                    return next(err);
                                 }
 
                                 event.emit('updateQuntity', {
@@ -834,66 +859,46 @@ var requestHandler = function (app, event, mainDb) {
                                 });
                                 console.log(count++);
                             })
-                        });
-                    } else {
-                        budget = {
-                            projectTeam: [],
-                            budget     : [],
-                            budgetTotal: budgetTotal
-                        };
-
-                        Job.update({_id: jobID}, {$set: {budget: budget, editedBy: editedBy}}, function (err, result) {
-                            if (err) {
-                                return next(err);
+                        }
+                        cb();
+                    }, function () {
+                        Job.aggregate([{
+                            $match: {
+                                'project': ObjectId(pId)
                             }
-
-                            event.emit('updateQuntity', {
-                                jobId   : jobID,
-                                quontity: budget.budgetTotal.hoursSum,
-                                req     : req
-                            });
-                            console.log(count++);
-                        })
-                    }
-                    cb();
-                }, function () {
-                    Job.aggregate([{
-                        $match: {
-                            'project': ObjectId(pId)
-                        }
-                    },
-                        {
-                            $group: {
-                                _id   : "$project",
-                                jobIds: {$addToSet: '$_id'}
-                            }
-                        }
-                    ], function (err, result) {
-                        if (err) {
-                            return console.log(err);
-                        }
-
-                        async.each(result, function (res, cb) {
-
-                            projectId = res._id;
-                            var jobIds = res.jobIds;
-
-                            Project.findByIdAndUpdate(projectId, {$set: {"budget.projectTeam": jobIds}}, {new: true}, function (err, result) {
-                                if (err) {
-                                    console.log(err);
+                        },
+                            {
+                                $group: {
+                                    _id   : "$project",
+                                    jobIds: {$addToSet: '$_id'}
                                 }
-                                cb();
-                            });
-
-                        }, function () {
-                            if (projectId) {
-                                event.emit('fetchJobsCollection', {project: projectId});
                             }
-                        })
-                    })
-                });
-            });
+                        ], function (err, result) {
+                            if (err) {
+                                return console.log(err);
+                            }
 
+                            async.each(result, function (res, cb) {
+
+                                projectId = res._id;
+                                var jobIds = res.jobIds;
+
+                                Project.findByIdAndUpdate(projectId, {$set: {"budget.projectTeam": jobIds}}, {new: true}, function (err, result) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    cb();
+                                });
+
+                            }, function () {
+                                if (projectId) {
+                                    event.emit('fetchJobsCollection', {project: projectId});
+                                }
+                            })
+                        })
+                    });
+                });
+            }
         });
 
     });
@@ -919,7 +924,7 @@ var requestHandler = function (app, event, mainDb) {
                         return console.log(err);
                     }
 
-                    if(result) {
+                    if (result) {
                         products = result.toJSON().products;
 
                         if (products) {
@@ -945,7 +950,7 @@ var requestHandler = function (app, event, mainDb) {
         });
     });
 
-    //if name was updated, need update related wTrack, or other models
+//if name was updated, need update related wTrack, or other models
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
         //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
         var sercObject = {};
@@ -999,7 +1004,7 @@ var requestHandler = function (app, event, mainDb) {
         });
     });
 
-    //binding for Sequence
+//binding for Sequence
     event.on('updateSequence', function (model, sequenceField, start, end, workflowStart, workflowEnd, isCreate, isDelete, callback) {
         var query;
         var objFind = {};
@@ -1066,7 +1071,7 @@ var requestHandler = function (app, event, mainDb) {
 
         }
     });
-    //Emit UI event for information user about some changes
+//Emit UI event for information user about some changes
     event.on('recollectVacationDash', function () {
         io.emit('recollectVacationDash');
         redisStore.removeAllFromStorage('dashboardVacation');
@@ -1261,7 +1266,7 @@ var requestHandler = function (app, event, mainDb) {
         users.login(req, res, next);
     };
 
-    // Get users Total count
+// Get users Total count
     function usersTotalCollectionLength(req, res) {
         users.getTotalCount(req, res);
     }
@@ -1312,7 +1317,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    // Get users for list
+// Get users for list
     function getFilterUsers(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 7, function (access) {
@@ -1383,7 +1388,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------------Profile--------------------------------
+//---------------------Profile--------------------------------
     function createProfile(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 51, function (access) {
@@ -1461,7 +1466,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------Persons--------------------------------
+//---------------Persons--------------------------------
     function getForDdByRelatedUser(req, res) {
         try {
             if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1629,7 +1634,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------------Project--------------------------------
+//---------------------Project--------------------------------
     function createProject(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 39, function (access) {
@@ -1685,19 +1690,19 @@ var requestHandler = function (app, event, mainDb) {
             res.send(401);
         }
     };
-    //function getProjectPMForDashboard(req, res) {
-    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
-    //        access.getReadAccess(req, req.session.uId, 39, function (access) {
-    //            if (access) {
-    //                project.getProjectPMForDashboard(req, res);
-    //            } else {
-    //                res.send(403);
-    //            }
-    //        });
-    //    } else {
-    //        res.send(401);
-    //    }
-    //};
+//function getProjectPMForDashboard(req, res) {
+//    if (req.session && req.session.loggedIn && req.session.lastDb) {
+//        access.getReadAccess(req, req.session.uId, 39, function (access) {
+//            if (access) {
+//                project.getProjectPMForDashboard(req, res);
+//            } else {
+//                res.send(403);
+//            }
+//        });
+//    } else {
+//        res.send(401);
+//    }
+//};
 
     function getProjectByEndDateForDashboard(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1811,7 +1816,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------------Tasks-------------------------------
+//---------------------Tasks-------------------------------
     function createTask(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 40, function (access) {
@@ -1953,7 +1958,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //------------------Workflow---------------------------------
+//------------------Workflow---------------------------------
 
     function getRelatedStatus(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2045,7 +2050,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------------Companies-------------------------------
+//---------------------Companies-------------------------------
 
     function getCompaniesForDd(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2139,7 +2144,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    // Get  Persons or Companies or ownCompanies for list and thumbnail
+// Get  Persons or Companies or ownCompanies for list and thumbnail
     function getFilterCustomers(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 50, function (access) {
@@ -2155,7 +2160,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    // Get  Persons or Companies or ownCompanies images for thumbnails
+// Get  Persons or Companies or ownCompanies images for thumbnails
     function getCustomersImages(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             /*access.getReadAccess(req, req.session.uId, 43, function (access) {
@@ -2171,7 +2176,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    // Get Alphabet for Companies or ownCompanies or Persons
+// Get Alphabet for Companies or ownCompanies or Persons
     function getCustomersAlphabet(req, res) {
         try {
             if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2185,9 +2190,9 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------------JobPosition--------------------------------
+//---------------------JobPosition--------------------------------
 
-    // get  jobPositions Total count
+// get  jobPositions Total count
     function jobPositionsTotalCollectionLength(req, res) {
         jobPosition.getTotalCount(req, res);
     }
@@ -2232,7 +2237,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    // Get JobPosition for list
+// Get JobPosition for list
     function getFilterJobPosition(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 14, function (access) {
@@ -2296,7 +2301,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------------Employee--------------------------------
+//---------------------Employee--------------------------------
 
     function employeesTotalCollectionLength(req, res) {
         employee.getTotalCount(req, res);
@@ -2332,7 +2337,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    // get employee or Applications for list or thumbnails
+// get employee or Applications for list or thumbnails
     function getEmployeesFilter(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 42, function (access) {
@@ -2348,7 +2353,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    // Get Employee form by employee id
+// Get Employee form by employee id
     function getEmployeesById(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 42, function (access) {
@@ -2429,7 +2434,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------------Application--------------------------------
+//---------------------Application--------------------------------
     function getApplicationsLengthByWorkflows(req, res) {
         employee.getCollectionLengthByWorkflows(req, res);
     }
@@ -2561,7 +2566,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
-    //---------------------Department--------------------------------
+//---------------------Department--------------------------------
     function createDepartment(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             data.department.uId = req.session.uId;
@@ -2670,7 +2675,7 @@ var requestHandler = function (app, event, mainDb) {
 
     };
 
-    //---------------------Deegree--------------------------------
+//---------------------Deegree--------------------------------
     function createDegree(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             degrees.create(req, data.degree, res);
@@ -2703,7 +2708,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    //-----------------Campaigns--------------------------------------
+//-----------------Campaigns--------------------------------------
     function getCampaigns(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             campaigns.getForDd(req, res);
@@ -2791,9 +2796,9 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    //-------------------Opportunities---------------------------
+//-------------------Opportunities---------------------------
 
-    // Get  Leads or Opportunities for List
+// Get  Leads or Opportunities for List
     function getFilterOpportunities(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 24, function (access) {
@@ -2808,7 +2813,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    // Get  Leads or Opportunities total count
+// Get  Leads or Opportunities total count
     function opportunitiesTotalCollectionLength(req, res) {
         opportunities.getTotalCount(req, res);
     }
@@ -2959,7 +2964,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    // Get  Persons or Companies or ownCompanies total count
+// Get  Persons or Companies or ownCompanies total count
     function customerTotalCollectionLength(req, res) {
         customer.getTotalCount(req, res);
     }
