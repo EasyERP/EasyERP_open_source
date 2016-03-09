@@ -774,7 +774,7 @@ var Filters = function (models) {
 
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                  return callback(err);
                 }
 
                 result = result[0];
@@ -934,7 +934,7 @@ var Filters = function (models) {
                 }
             }], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 result = result[0];
@@ -1028,7 +1028,7 @@ var Filters = function (models) {
                     }
                 }], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 result = result[0];
@@ -1104,7 +1104,7 @@ var Filters = function (models) {
             }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 result = result[0];
@@ -1134,7 +1134,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
                 if (result.length === 0) {
                     return callback(null, result);
@@ -1224,7 +1224,7 @@ var Filters = function (models) {
             ], function (err, result) {
 
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 if (result && result.length > 0) {
@@ -1316,7 +1316,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 if (result && result.length) {
@@ -1408,7 +1408,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 if (result && result.length) {
@@ -1569,7 +1569,7 @@ var Filters = function (models) {
             }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 if (result && result.length) {
@@ -1688,7 +1688,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 if (!result || result.length === 0) {
@@ -1771,7 +1771,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 if (result && result.length) {
@@ -1839,7 +1839,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                   return callback(err);
                 }
 
                 if (result && result.length) {
