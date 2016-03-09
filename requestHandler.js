@@ -428,7 +428,7 @@ var requestHandler = function (app, event, mainDb) {
                                         console.log(err);
                                     }
 
-                                })
+                                });
                             }
 
                         });
@@ -448,10 +448,10 @@ var requestHandler = function (app, event, mainDb) {
                         var keysForPT;
                         var sortBudget = [];
                         var budget = {};
+                        var empQuery;
 
                         budgetTotal.profitSum = 0;
                         budgetTotal.costSum = 0;
-                        //budgetTotal.rateSum = 0;
                         budgetTotal.revenueSum = 0;
                         budgetTotal.hoursSum = 0;
                         budgetTotal.revenueByQA = 0;
@@ -537,7 +537,7 @@ var requestHandler = function (app, event, mainDb) {
                                 projectValues.radio = 0;
                             }
 
-                            var empQuery = Employee
+                            empQuery = Employee
                                 .find({_id: {$in: keys}}, {
                                     'name'       : 1,
                                     'jobPosition': 1,
@@ -551,6 +551,8 @@ var requestHandler = function (app, event, mainDb) {
                                 if (err) {
                                     console.log(err);
                                 }
+
+                                response = response || [];
 
                                 bonuses.forEach(function (element) {
                                     var objToSave = {};
@@ -580,7 +582,7 @@ var requestHandler = function (app, event, mainDb) {
                                         if ((employee._id).toString() === id) {
                                             sortBudget.push(projectTeam[id]);
                                         }
-                                    })
+                                    });
                                 });
 
                                 budget = {
@@ -593,7 +595,7 @@ var requestHandler = function (app, event, mainDb) {
                                     }
 
                                     //console.log('success');
-                                })
+                                });
                             });
                         }
                     });
@@ -657,7 +659,7 @@ var requestHandler = function (app, event, mainDb) {
 
         query.exec(function (err, result) {
             if (err) {
-                return next(err);
+                return console.log(err);
             }
 
             Employee.populate(result, {
@@ -762,8 +764,8 @@ var requestHandler = function (app, event, mainDb) {
                     });
 
                     keys = Object.keys(projectTeam);
-                    if (keys.length > 0) {
 
+                    if (keys.length > 0) {
                         keys.forEach(function (key) {
                             budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
                             budgetTotal.costSum += parseFloat(projectTeam[key].cost);
@@ -801,7 +803,7 @@ var requestHandler = function (app, event, mainDb) {
                         empQuery.exec(function (err, response) {
 
                             if (err) {
-                                return next(err);
+                                return console.log(err);
                             }
 
                             keysForPT = Object.keys(projectTeam);
@@ -822,7 +824,7 @@ var requestHandler = function (app, event, mainDb) {
 
                             Job.update({_id: jobID}, {$set: {budget: budget}}, function (err, result) {
                                 if (err) {
-                                    return next(err);
+                                    return console.log(err);
                                 }
 
                                 event.emit('updateQuntity', {
@@ -909,25 +911,34 @@ var requestHandler = function (app, event, mainDb) {
             }
             if (job && job.quotation) {
                 Quotation.findById(job.quotation, {products: 1}, function (err, result) {
+                    var products;
+                    var obj;
+                    var index;
+
                     if (err) {
-                        console.log(err);
+                        return console.log(err);
                     }
 
-                    var products = result.toJSON().products;
-                    var obj = _.find(products, function (obj) {
-                        return obj.jobs.toString() === jobId.toString();
-                    });
-                    var index = _.indexOf(products, obj);
-                    newProducts = _.clone(products);
+                    if(result) {
+                        products = result.toJSON().products;
 
-                    obj.quantity = job.toJSON().budget.budgetTotal.hoursSum;
-                    newProducts[index] = obj;
+                        if (products) {
+                            obj = _.find(products, function (obj) {
+                                return obj.jobs.toString() === jobId.toString();
+                            });
+                            index = _.indexOf(products, obj);
+                            newProducts = _.clone(products);
 
-                    Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
-                        if (err) {
-                            console.log(err);
+                            obj.quantity = job.toJSON().budget.budgetTotal.hoursSum;
+                            newProducts[index] = obj;
+
+                            Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            });
                         }
-                    });
+                    }
                 });
 
             }

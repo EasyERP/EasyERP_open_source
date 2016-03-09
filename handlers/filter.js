@@ -847,7 +847,7 @@ var Filters = function (models) {
                 }
             }], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -1639,7 +1639,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 if (result && result.length) {
