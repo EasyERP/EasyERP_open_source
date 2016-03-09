@@ -111,9 +111,9 @@
 
 			tr.remove();
 
-			this.removeIcon.show();
-
 			this.$el.find('#update').show();
+
+			this.renderRemoveBtn();
 		},
 
 		addNewRow: function (e) {
