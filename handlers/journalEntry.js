@@ -451,7 +451,7 @@ var Module = function (models) {
         });
     }
 
-    this.reconcile = function (req, res, next) {
+    /*this.reconcile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -1120,7 +1120,7 @@ var Module = function (models) {
             });
         });
 
-    };
+    };*/
 
     /*  this.reconcile = function (req, res, next) {
      var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);

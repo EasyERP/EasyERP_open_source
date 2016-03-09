@@ -35,10 +35,6 @@ define([
                     $(tds[3]).addClass('editable');
                     $(tds[4]).text('');
                     $(tds[4]).addClass('editable');
-                    $(tds[7]).text('0');
-                    $(tds[8]).text('0');
-                    $(tds[9]).text('0');
-                    $(tds[10]).text('0');
                 } else {
                     this.$el.prepend(this.template(options));
                 }

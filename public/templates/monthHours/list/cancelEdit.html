@@ -7,10 +7,11 @@
     <td data-content="hours" data-type="input" class="editable"><%=model.hours%></td>
     <td data-type="input" data-content="expenseCoefficient" class="editable"><%=model.expenseCoefficient%></td>
     <td data-type="input" data-content="fixedExpense" class="editable"><%=model.fixedExpense%></td>
-    <td data-content="estimatedHours"><%=model.estimatedHours%></td>
-    <td data-content="actualHours"><%=model.actualHours%></td>
-    <td data-content="idleHours"><%=model.idleHours%></td>
-    <td data-content="overtimeHours"><%=model.overtimeHours%></td>
-    <td data-type="input" class="editable" data-content="adminCoefficient"><%=currencySplitter(model.adminCoefficient ? model.adminCoefficient.toFixed(2) : '0') || 0%></td>
-    <td data-type="input" class="editable" data-content="adminBudget"><%=model.adminBudget%></td>
+    <td data-type="input" class="editable" data-content="estimatedHours"><%=model.estimatedHours%></td>
+    <td data-type="input" class="editable"  data-content="actualHours"><%=model.actualHours%></td>
+    <td data-type="input" class="editable money"  data-content="adminBudget"><%=model.adminBudget%></td>
+    <td data-type="input" class="editable money"  data-content="adminSalaryBudget"><%=model.adminSalaryBudget%></td>
+    <td data-type="input" class="editable money"  data-content="vacationBudget"><%=model.vacationBudget%></td>
+    <td data-type="input" class="editable money"  data-content="idleBudget"><%=model.idleBudget%></td>
+    <td data-type="input" class="editable money"  data-content="overheadRate"><%=model.overheadRate%></td>
 </tr>

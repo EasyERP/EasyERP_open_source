@@ -15,13 +15,10 @@ module.exports = (function () {
         idleBudget: {type: Number, default: 0},
         vacationBudget: {type: Number, default: 0},
         adminBudget: {type: Number, default: 0},
+        adminSalaryBudget: {type: Number, default: 0},
         estimatedHours: {type: Number, default: 0},
         actualHours: {type: Number, default: 0},
-        idleHours: {type: Number, default: 0},
-        overtimeHours: {type: Number, default: 0},
-        vacationCoefficient: {type: Number, default: 0},
-        adminCoefficient: {type: Number, default: 0},
-        idleCoefficient: {type: Number, default: 0}
+        overheadRate: {type: Number, default: 0}
     }, {collection: 'MonthHours'});
 
     mongoose.model('MonthHours', monthHoursSchema);

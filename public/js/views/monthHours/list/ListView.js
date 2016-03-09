@@ -71,9 +71,11 @@ define([
             var editedElementValue;
             var editModel;
             var estimatedHours;
-            var adminCoefficient;
+            var adminSalaryBudget;
             var actualHours;
             var adminBudget;
+            var vacationBudget;
+            var idleBudget;
             var hours;
 
             if (editedElement.length) {
@@ -92,27 +94,17 @@ define([
 
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                if (editedElementContent === 'adminCoefficient') {
-                    estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
-                    adminCoefficient = this.changedModels[editedElementRowId].adminCoefficient || editModel.get('adminCoefficient');
-                    actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
-                    hours = actualHours || estimatedHours;
+                estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
+                adminBudget = this.changedModels[editedElementRowId].adminBudget || editModel.get('adminBudget');
+                adminSalaryBudget = this.changedModels[editedElementRowId].adminSalaryBudget || editModel.get('adminSalaryBudget');
+                vacationBudget = this.changedModels[editedElementRowId].vacationBudget || editModel.get('vacationBudget');
+                idleBudget = this.changedModels[editedElementRowId].idleBudget || editModel.get('idleBudget');
+                actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
+                hours = actualHours || estimatedHours;
 
-                    if (hours){
-                        this.changedModels[editedElementRowId].adminBudget = hours * adminCoefficient;
-                        editedElement.closest('tr').find('[data-content="adminBudget"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].adminBudget.toFixed()));
-                    }
-
-                } else if (editedElementContent === 'adminBudget') {
-                    estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
-                    adminBudget = this.changedModels[editedElementRowId].adminBudget || editModel.get('adminBudget');
-                    actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
-                    hours = actualHours || estimatedHours;
-
-                    if (isFinite(adminBudget / hours)) {
-                        this.changedModels[editedElementRowId].adminCoefficient = adminBudget / hours;
-                        editedElement.closest('tr').find('[data-content="adminCoefficient"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].adminCoefficient.toFixed(2)));
-                    }
+                if (isFinite(adminBudget / hours)) {
+                    this.changedModels[editedElementRowId].adminCoefficient = adminBudget / hours;
+                    editedElement.closest('tr').find('[data-content="adminCoefficient"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].adminCoefficient.toFixed(2)));
                 }
 
                 if (editedElementContent !== 'year') {
