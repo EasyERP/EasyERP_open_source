@@ -72,9 +72,9 @@ var wTrack = function (models) {
 
         if (filter && filter.startDate && filter.endDate) {
             startDate = new Date(filter.startDate);
-            startDate = moment(filter.startDate);
+            startDate = moment(startDate);
             endDate = new Date(filter.endDate);
-            endDate = moment(filter.endDate);
+            endDate = moment(endDate);
         } else {
             startDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
             endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
