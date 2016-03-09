@@ -393,9 +393,9 @@ define([
 
             this.dateByWeek = year * 100 + week;
 
-            startDateStr = moment(startDateStr);
-            endDate = endDateStr = moment(endDateStr);
-            startDate = moment(startDateStr);
+            startDateStr = moment.utc(startDateStr);
+            endDate = endDateStr = moment.utc(endDateStr);
+            startDate = moment.utc(startDateStr);
             duration = endDateStr.diff(startDateStr, 'weeks');
 
             for (i = 0; i <= duration; i++) {
