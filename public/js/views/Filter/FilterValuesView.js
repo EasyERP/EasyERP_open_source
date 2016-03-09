@@ -4,9 +4,10 @@
 define([
         'text!templates/Filter/filterGroup.html',
         'collections/Filter/filterCollection',
-        'constants'
+        'constants',
+        'jQuery'
     ],
-    function (valuesTemplate, filterCollection, CONSTANTS) {
+    function (valuesTemplate, filterCollection, CONSTANTS, $) {
         var filterValuesView = Backbone.View.extend({
             initialize: function (options) {
                 var sortOptions = options.sortOptions ? options.sortOptions : {};
@@ -111,6 +112,7 @@ define([
                 for (var i = 0; i <= (this.elementToShow - 1); i++) {
                     element = displayCollection[i];
                     if (element) {
+                        element.name = $.trim(element.name) || 'None';
                         if (element.status) {
                             status = ' class="checkedValue"';
                         } else {
