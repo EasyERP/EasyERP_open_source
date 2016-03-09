@@ -44,6 +44,14 @@ define([
 
         appRouter.checkLogin = Communication.checkLogin;
         Communication.checkLogin(Custom.runApplication);
+
+        App.startPreload = function() {
+            $(spinner.el).show();
+        };
+
+        App.stopPreload = function() {
+            $(spinner.el).hide();
+        };
     };
 
     var applyDefaults = function () {
