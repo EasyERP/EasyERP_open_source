@@ -4,8 +4,8 @@
     <td class="centerCell"><%=index + 1 %></td>
     <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
     <td><%=journalEntry.date%></td>
-    <td><%=journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name.first + ' ' + journalEntry.sourceDocument.subject.name.last : journalEntry.sourceDocument.subject.projectName%></td>
-    <td><a class="<%=journalEntry.sourceDocument.model%>" data-id="<%=journalEntry.sourceDocument._id._id%>"><%=journalEntry.sourceDocument.name%></a></td>
+    <td><%=journalEntry.sourceDocument.subject && journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name.first + ' ' + journalEntry.sourceDocument.subject.name.last : journalEntry.sourceDocument.subject && journalEntry.sourceDocument.subject.projectName ? journalEntry.sourceDocument.subject.projectName : ''%></td>
+    <td><a class="<%=journalEntry.sourceDocument.model%>" data-id="<%=journalEntry.sourceDocument._id ? journalEntry.sourceDocument._id._id : ''%>"><%=journalEntry.sourceDocument.name%></a></td>
     <td><%=journalEntry.journal.debitAccount.name%></td>
     <td><%=journalEntry.journal.creditAccount.name%></td>
 

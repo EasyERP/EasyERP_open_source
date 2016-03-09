@@ -77,6 +77,7 @@ define([
             var vacationBudget;
             var idleBudget;
             var hours;
+            var sumBudget = 0;
 
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
@@ -101,10 +102,11 @@ define([
                 idleBudget = this.changedModels[editedElementRowId].idleBudget || editModel.get('idleBudget');
                 actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
                 hours = actualHours || estimatedHours;
+                sumBudget = parseInt(adminBudget, 10) + parseInt(adminSalaryBudget, 10) + parseInt(vacationBudget, 10) + parseInt(idleBudget, 10);
 
-                if (isFinite(adminBudget / hours)) {
-                    this.changedModels[editedElementRowId].adminCoefficient = adminBudget / hours;
-                    editedElement.closest('tr').find('[data-content="adminCoefficient"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].adminCoefficient.toFixed(2)));
+                if (isFinite(sumBudget / hours)) {
+                    this.changedModels[editedElementRowId].overheadRate = sumBudget / hours;
+                    editedElement.closest('tr').find('[data-content="overheadRate"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].overheadRate.toFixed(2)));
                 }
 
                 if (editedElementContent !== 'year') {
