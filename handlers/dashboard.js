@@ -62,6 +62,10 @@ var wTrack = function (models) {
         var key;
         var i;
 
+        function getDate(dateStr){
+            return dateStr.isoWeekday(5).format("DD.MM");
+        }
+
         if (filter.department && filter.department.value) {
             departmentQuery = {
                 $in: filter.department.value.objectID()
@@ -94,6 +98,7 @@ var wTrack = function (models) {
             week = _dateStr.isoWeek();
             year = _dateStr.isoWeekYear();
             weeksArr.push({
+                lastDate: getDate(/*week, year*/_dateStr),
                 dateByWeek: year * 100 + week,
                 week      : week,
                 year      : year
@@ -263,6 +268,9 @@ var wTrack = function (models) {
                     select: 'departmentName _id'
                 }, function () {
                     var sortDepartments = [];
+                    var resultData = {
+                        weeksArray: weeksArr
+                    };
 
                     constForView.forEach(function (dep) {
                         employeesByDep.forEach(function (department, index) {
@@ -276,9 +284,11 @@ var wTrack = function (models) {
                         });
                     });
 
-                    res.status(200).send(sortDepartments);
+                    resultData.sortDepartments = sortDepartments;
+
+                    res.status(200).send(resultData);
                     console.timeEnd('dash');
-                    redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(sortDepartments));
+                    redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(resultData));
                 });
             }
 

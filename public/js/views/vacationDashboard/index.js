@@ -396,21 +396,21 @@ define([
             startDateStr = moment.utc(startDateStr);
             endDate = endDateStr = moment.utc(endDateStr);
             startDate = moment.utc(startDateStr);
-            duration = endDateStr.diff(startDateStr, 'weeks');
+            /*duration = endDateStr.diff(startDateStr, 'weeks');
 
             for (i = 0; i <= duration; i++) {
                 _dateStr = startDateStr.add(weeks, 'weeks');
                 week = _dateStr.isoWeek();
                 year = _dateStr.isoWeekYear();
                 weeksArr.push({
-                    lastDate: this.getDate(/*week, year*/_dateStr),
+                    lastDate: this.getDate(/!*week, year*!/_dateStr),
                     week    : week,
                     year    : year
                 });
                 weeks = weeks || 1;
             }
 
-            custom.cacheToApp('vacationDashWeeksArr', weeksArr);
+            custom.cacheToApp('vacationDashWeeksArr', weeksArr);*/
 
             filter = this.filter || custom.retriveFromCash('DashVacation.filter') || {};
 
@@ -444,7 +444,7 @@ define([
 
             var i;
 
-            if (filter && filter.endDate) {
+           /* if (filter && filter.endDate) {
                 endDate = new Date(filter.endDate);
                 endDate = moment(endDate);
             } else {
@@ -459,7 +459,7 @@ define([
                     week = _dateStr.isoWeek();
                     year = _dateStr.isoWeekYear();
                     weeksArr.push({
-                        lastDate: this.getDate(/*week, year*/_dateStr),
+                        lastDate: this.getDate(/!*week, year*!/_dateStr),
                         week    : week,
                         year    : year
                     });
@@ -467,7 +467,7 @@ define([
                 }
 
                 custom.cacheToApp('vacationDashWeeksArr', weeksArr);
-            }
+            }*/
 
             return weeksArr;
         },

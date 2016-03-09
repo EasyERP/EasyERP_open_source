@@ -1,7 +1,7 @@
-/**
- * Created by soundstorm on 30.06.15.
- */
-define(['collections/Dashboard/employeeDashboardData'], function (employeeDashboardData) {
+define([
+    'Backbone',
+    'collections/Dashboard/employeeDashboardData'
+], function (Backbone, employeeDashboardData) {
     var VacationDashboard = Backbone.Model.extend({
         idAttribute: "department._id",
         /*urlRoot: function () {
