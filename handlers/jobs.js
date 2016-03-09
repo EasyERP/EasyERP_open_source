@@ -385,7 +385,13 @@ var Jobs = function (models, event) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var all = req.query.all;
-        var queryObj = {type: "Not Quoted", 'project': objectId(pId)};
+        var queryObj;
+
+        if (!pId.length) {
+            return res.status(200).send([]);
+        }
+
+        queryObj = {type: "Not Quoted", 'project': objectId(pId)};
 
         if (all) {
             queryObj = {'project': objectId(pId)};
@@ -399,8 +405,8 @@ var Jobs = function (models, event) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send(jobs);
 
+            res.status(200).send(jobs);
         });
     };
 
