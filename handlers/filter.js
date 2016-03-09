@@ -262,6 +262,10 @@ var Filters = function (models) {
                     return callback(err);
                 }
 
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
                 result = result[0];
 
                 if (result) {
@@ -308,6 +312,10 @@ var Filters = function (models) {
                     return callback(err);
                 }
 
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
                 result = result[0];
 
                 if (result) {
@@ -352,6 +360,10 @@ var Filters = function (models) {
             ], function (err, result) {
                 if (err) {
                     return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
                 }
 
                 result = result[0];
@@ -411,6 +423,10 @@ var Filters = function (models) {
             ], function (err, result) {
                 if (err) {
                     return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
                 }
 
                 result = result[0];
@@ -500,6 +516,10 @@ var Filters = function (models) {
                     return callback(err);
                 }
 
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
                 result = result[0];
 
                 callback(null, result);
@@ -560,6 +580,10 @@ var Filters = function (models) {
             ], function (err, result) {
                 if (err) {
                     return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
                 }
 
                 result = result[0];
@@ -636,6 +660,10 @@ var Filters = function (models) {
                         return callback(err);
                     }
 
+                    if (result.length === 0) {
+                        return callback(null, result);
+                    }
+
                     if (result) {
                         result = result[0];
 
@@ -697,6 +725,10 @@ var Filters = function (models) {
             ], function (err, result) {
                 if (err) {
                     return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
                 }
 
                 result = result[0];
@@ -777,6 +809,10 @@ var Filters = function (models) {
                   return callback(err);
                 }
 
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
                 result = result[0];
 
                 /*Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
@@ -848,6 +884,10 @@ var Filters = function (models) {
             }], function (err, result) {
                 if (err) {
                     return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
                 }
 
                 result = result[0];
@@ -935,6 +975,10 @@ var Filters = function (models) {
             }], function (err, result) {
                 if (err) {
                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
                 }
 
                 result = result[0];
@@ -1031,6 +1075,10 @@ var Filters = function (models) {
                    return callback(err);
                 }
 
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
                 result = result[0];
 
                 callback(null, result);
@@ -1107,6 +1155,10 @@ var Filters = function (models) {
                    return callback(err);
                 }
 
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
                 result = result[0];
 
                 callback(null, result);
@@ -1136,9 +1188,11 @@ var Filters = function (models) {
                 if (err) {
                    return callback(err);
                 }
-                if (result.length === 0) {
+
+                if (!result.length) {
                     return callback(null, result);
                 }
+
                 result = result[0];
 
                 result['canBeSold'] = [
@@ -1225,6 +1279,10 @@ var Filters = function (models) {
 
                 if (err) {
                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
                 }
 
                 if (result && result.length > 0) {
