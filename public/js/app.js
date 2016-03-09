@@ -46,11 +46,11 @@ define([
         Communication.checkLogin(Custom.runApplication);
 
         App.startPreload = function() {
-            $(spinner.el).show();
+            $('#loading').show();
         };
 
         App.stopPreload = function() {
-            $(spinner.el).hide();
+            $('#loading').hide();
         };
     };
 
