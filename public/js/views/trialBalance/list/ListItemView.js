@@ -3,7 +3,7 @@ define([
         'Backbone',
         'jQuery',
         'Underscore',
-        'text!templates/gLReport/list/ListTemplate.html',
+        'text!templates/trialBalance/list/ListTemplate.html',
         'helpers'
     ],
 

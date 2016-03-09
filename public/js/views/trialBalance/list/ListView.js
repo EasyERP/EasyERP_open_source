@@ -9,10 +9,10 @@ define([
         "jQuery",
         "Underscore",
         'views/listViewBase',
-        'text!templates/gLReport/list/ListHeader.html',
-        'views/gLReport/list/ListItemView',
+        'text!templates/trialBalance/list/ListHeader.html',
+        'views/trialBalance/list/ListItemView',
         'views/Filter/FilterView',
-        'collections/gLReport/filterCollection',
+        'collections/trialBalance/filterCollection',
         'constants',
         'dataService',
         'helpers',
@@ -30,7 +30,7 @@ define([
             sort              : null,
             newCollection     : null,
             page              : null,
-            contentType       : CONSTANTS.GLREPORT,//needs in view.prototype.changeLocationHash
+            contentType       : CONSTANTS.TRIALBALANCE,//needs in view.prototype.changeLocationHash
             viewType          : 'list',//needs in view.prototype.changeLocationHash
             yearElement       : null,
             filterView        : FilterView,
@@ -46,9 +46,9 @@ define([
                 this.sort = options.sort || {};
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.page = options.collection.page;
-                var dateRange = custom.retriveFromCash('glReportDateRange');
+                var dateRange = custom.retriveFromCash('trialBalanceDateRange');
 
-                this.filter = options.filter || custom.retriveFromCash('glReport.filter');
+                this.filter = options.filter || custom.retriveFromCash('trialBalance.filter');
 
                 if (!this.filter) {
                     this.filter = {};
@@ -71,7 +71,7 @@ define([
                 this.render();
 
                 this.contentCollection = reportCollection;
-                custom.cacheToApp('glReport.filter', this.filter);
+                custom.cacheToApp('trialBalance.filter', this.filter);
             },
 
             showHidden: function (e) {
@@ -187,7 +187,7 @@ define([
 
                 App.filter = this.filter;
 
-                custom.cacheToApp('glReport.filter', this.filter);
+                custom.cacheToApp('trialBalance.filter', this.filter);
             },
 
             showMoreContent: function (newModels) {

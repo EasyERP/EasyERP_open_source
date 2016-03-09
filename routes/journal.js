@@ -13,7 +13,7 @@ module.exports = function (models) {
     router.get('/journalEntry/getForReport', _journalEntryHandler.getForReport);
     router.get('/journalEntry/getAsyncData', _journalEntryHandler.getAsyncData);
     router.get('/journalEntry/getAsyncDataForGL', _journalEntryHandler.getAsyncDataForGL);
-    router.get('/journalEntry/getForGL', _journalEntryHandler.getForGL);
+    router.get('/journalEntry/getTrialBalance', _journalEntryHandler.getForGL);
     router.get('/journalEntry/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/journalEntry/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
     router.get('/journalEntry/:viewType', _journalEntryHandler.getForView);

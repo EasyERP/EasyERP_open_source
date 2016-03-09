@@ -11,7 +11,7 @@ define([
     var gLReportCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
-        url         : 'journal/journalEntry/getForGL',
+        url         : 'journal/journalEntry/getTrialBalance',
         contentType : null,
         page        : null,
         numberToShow: null,
@@ -20,7 +20,7 @@ define([
         initialize: function (options) {
             options = options || {};
             this.startTime = new Date();
-            this.filter = options.filter || Custom.retriveFromCash('glReport.filter');
+            this.filter = options.filter || Custom.retriveFromCash('trialBalance.filter');
             var startDate = moment(new Date());
             var endDate = moment(new Date());
 
@@ -29,7 +29,7 @@ define([
             endDate.month(startDate.month());
             endDate.endOf('month');
 
-            var dateRange = Custom.retriveFromCash('glReportDateRange') || {};
+            var dateRange = Custom.retriveFromCash('trialBalanceDateRange') || {};
             this.startDate = dateRange.startDate;
             this.endDate = dateRange.endDate;
 
@@ -40,7 +40,7 @@ define([
             options.endDate = this.endDate;
             options.filter = this.filter;
 
-            Custom.cacheToApp('glReportDateRange', {
+            Custom.cacheToApp('trialBalanceDateRange', {
                 startDate: this.startDate,
                 endDate  : this.endDate
             });

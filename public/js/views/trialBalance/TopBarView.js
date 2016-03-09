@@ -7,7 +7,7 @@ define([
         'Backbone',
         'jQuery',
         'Underscore',
-        'text!templates/gLReport/TopBarTemplate.html',
+        'text!templates/trialBalance/TopBarTemplate.html',
         'custom',
         'constants',
         'common',
@@ -16,7 +16,7 @@ define([
     function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS, common, moment) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
-            contentType: CONSTANTS.GLREPORT,
+            contentType: CONSTANTS.TRIALBALANCE,
             template   : _.template(ContentTopBarTemplate),
 
             initialize: function (options) {
@@ -54,7 +54,7 @@ define([
                 startTime.text(startDate);
                 endTime.text(endDate);
 
-                Custom.cacheToApp('glReportDateRange', {
+                Custom.cacheToApp('trialBalanceDateRange', {
                     startDate: startDate,
                     endDate  : endDate
                 });
@@ -110,7 +110,7 @@ define([
 
             render: function () {
                 $('title').text(this.contentType);
-                var dateRange = Custom.retriveFromCash('glReportDateRange');
+                var dateRange = Custom.retriveFromCash('trialBalanceDateRange');
                 var viewType = Custom.getCurrentVT();
 
                 this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
