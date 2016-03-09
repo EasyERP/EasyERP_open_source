@@ -824,7 +824,7 @@ var requestHandler = function (app, event, mainDb) {
 
                             Job.update({_id: jobID}, {$set: {budget: budget}}, function (err, result) {
                                 if (err) {
-                                    return next(err);
+                                    return console.log(err);
                                 }
 
                                 event.emit('updateQuntity', {
