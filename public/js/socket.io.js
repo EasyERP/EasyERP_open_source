@@ -83,7 +83,7 @@ define([
 
     function fetchData() {
         var fragment = Backbone.history.fragment;
-        var filter = custom.retriveFromCash('DashVacation.filter') || {};
+        /*var filter = custom.retriveFromCash('DashVacation.filter') || {};
         var dashCollection;
 
         function notifyAndCache() {
@@ -97,7 +97,10 @@ define([
         }
 
         dashCollection = new VacationDashboard({filter: filter});
-        dashCollection.on('reset', notifyAndCache, dashCollection);
+        dashCollection.on('reset', notifyAndCache, dashCollection);*/
+        if (fragment && fragment.indexOf('DashBoardVacation') !== -1) {
+            App.render({type: 'notify', message: "Data was updated. Please refresh browser."});
+        }
     }
 
     App.socket = socket;
