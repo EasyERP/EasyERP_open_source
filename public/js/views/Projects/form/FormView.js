@@ -179,7 +179,7 @@ define([
             },
 
             showReport: function (e) {
-               // App.startPreload();
+                App.startPreload();
 
                 var tr = $(e.target).closest('tr');
                 var id = tr.attr('data-id');

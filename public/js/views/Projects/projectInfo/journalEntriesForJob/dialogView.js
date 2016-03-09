@@ -105,7 +105,7 @@ define([
                     this.delegateEvents(this.events);
                     this.asyncRenderInfo(asyncKeys);
 
-                    //App.stopPreload();
+                    App.stopPreload();
 
                     return this;
                 }

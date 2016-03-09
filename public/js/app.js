@@ -42,6 +42,14 @@ define([
             $(target).fadeOut();
         });
 
+        App.startPreload = function() {
+            $(spinner.el).show();
+        };
+
+        App.stopPreload = function() {
+            $(spinner.el).hide();
+        };
+
         appRouter.checkLogin = Communication.checkLogin;
         Communication.checkLogin(Custom.runApplication);
     };
