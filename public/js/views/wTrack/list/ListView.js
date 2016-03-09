@@ -204,6 +204,8 @@ define([
             var message;
             var projectWorkflow;
 
+            this.$el.find('#check_all').prop('checked', false);
+
             this.hideGenerateCopy();
             this.changed = true;
             this.createdCopied = true;
@@ -405,6 +407,7 @@ define([
             var currentYear;
             var previousYear;
             var nextYear;
+            var projectId = tr.find('[data-content="project"]').attr('data-id');
 
             if (wTrackId && el.prop('tagName') !== 'INPUT') {
                 if (this.wTrackId) {
@@ -420,20 +423,21 @@ define([
 
             if (isSelect) {
                 if (content === 'jobs') {
+                    if (!projectId && !projectId.length){
+                        return false;
+                    }
                     dataService.getData("/jobs/getForDD", {
-                        "projectId": tr.find('[data-content="project"]').attr('data-id'),
+                        "projectId": projectId,
                         "all"      : true
                     }, function (jobs) {
 
                         self.responseObj['#jobs'] = jobs;
 
-                        tr.find('[data-content="jobs"]').addClass('editable');
-                        // populate.showSelect(e, prev, next, self);
+                       // tr.find('[data-content="jobs"]').addClass('editable');
                         self.showNewSelect(e);
                         return false;
                     });
                 } else {
-                    //populate.showSelect(e, prev, next, this);
                     this.showNewSelect(e);
                     return false;
                 }
@@ -1084,6 +1088,7 @@ define([
             var localCounter = 0;
             var count = $("#listTable input:checked").length;
             var message;
+            var enableDelete = true;
             this.collectionLength = this.collection.length;
 
             if (!this.changed) {
@@ -1108,7 +1113,13 @@ define([
                         } else {
 
                             model = that.collection.get(value);
-                            if (model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') {
+                            enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed' ? true: false;
+                            if (!model.toJSON().workflow){
+                                if ($.trim($currentEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
+                                    enableDelete = true;
+                                }
+                            }
+                            if (enableDelete) {
                                 model.destroy({
                                     headers: {
                                         mid: mid

@@ -1,7 +1,7 @@
 <tr class="false enableEdit" data-id="<%=cid%>">
     <td class="notForm"><input type="checkbox" class="checkbox listCB" value="<%=cid%>"/></td>
     <td>New</td>
-    <td data-content="jobs" class="<%= projectModel ? 'editable' : ''%> errorContent"></td>
+    <td data-content="jobs" class="<%= projectModel ? '' : ''%> errorContent"></td>
     <td data-content="assigned"><%= projectModel ? projectModel.projectmanager.name.first + ' ' +
         projectModel.projectmanager.name.last : ''%>
     </td>

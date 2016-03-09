@@ -103,7 +103,7 @@ define([
                 var newSel;
                 var start;
                 var end;
-                var s;
+                //var s;
                 var allPages;
                 var $curUl;
                 var curUlHeight;
@@ -160,14 +160,29 @@ define([
                     this.currentPage++;
                 }
 
-                s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
+                //s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
                 start = (this.currentPage - 1) * elementVisible;
                 end = Math.min(this.currentPage * elementVisible, data.length);
                 allPages = Math.ceil(data.length / elementVisible);
 
-                if ((this.attr === 'jobs') && !data.length){
-                    this.searchInput.remove();
-                    contentHolder.append(s);
+                if (this.attr === 'jobs'){
+                    //this.searchInput.remove();
+                    data.push({_id: 'createJob', name: "Generate sprint"});
+
+                    start = (this.currentPage - 1) * elementVisible;
+                    end = Math.min(this.currentPage * elementVisible, data.length);
+                    allPages = Math.ceil(data.length / elementVisible);
+
+                    contentHolder.html(_.template(selectContent, {
+                        collection    : data.slice(start, end),
+                        currentPage   : this.currentPage,
+                        allPages      : allPages,
+                        start         : start,
+                        end           : end,
+                        dataLength    : data.length,
+                        elementVisible: elementVisible
+                    }));
+
                 } else {
                     contentHolder.html(_.template(selectContent, {
                         collection    : data.slice(start, end),
