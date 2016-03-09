@@ -387,7 +387,7 @@ var Jobs = function (models, event) {
         var all = req.query.all;
         var queryObj;
 
-        if (!pId.length) {
+        if (!pId || !pId.length) {
             return res.status(200).send([]);
         }
 
