@@ -33,18 +33,20 @@ define([
             },
 
             events: {
-                "click .checkbox"                                                 : "checked",
-                "click td.editable"                                               : "editRow",
-                "click .newSelectList li"                                         : "chooseOption",
-                "change .autoCalc"                                                : "autoCalc",
-                "change .editable"                                                : "setEditable",
-                "keydown input.editing"                                           : "keyDown",
-                "click #expandAll"                                                : "expandAll",
-                "click"                                                           : "removeNewSelect",
-                "click .diff"                                                     : "newPayment",
-               // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .checkbox"        : "checked",
+                "click td.editable"      : "editRow",
+                "click .newSelectList li": "chooseOption",
+                "change .autoCalc"       : "autoCalc",
+                "change .editable"       : "setEditable",
+                "keydown input.editing"  : "keyDown",
+                "click #expandAll"       : "expandAll",
+                "click"                  : "removeNewSelect",
+                "click .diff"            : "newPayment",
+                // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .oe_sortable"                                              : "goSort"
+                "click .oe_sortable"     : "goSort",
+                'click .mainTr'          : 'showHidden'
+
             },
 
             cancelChanges: function (e) {
@@ -190,7 +192,7 @@ define([
             hideNewSelect: function () {
                 $(".newSelectList").remove();
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove();
                 }
             },
@@ -261,7 +263,7 @@ define([
                     });
                 } else {
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Please, check at most one unpaid item."
                     });
                 }
@@ -373,7 +375,7 @@ define([
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -546,7 +548,7 @@ define([
             removeNewSelect: function () {
                 $('.newSelectList').remove();
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove()
                 }
             },
@@ -837,8 +839,8 @@ define([
                 } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
-                    tempContainer + '" value="' + tempContainer +
-                    '"  maxLength="4" style="display: block;" />';
+                        tempContainer + '" value="' + tempContainer +
+                        '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -1073,9 +1075,46 @@ define([
                 });
             },
 
+            showHidden: function (e) {
+                var $target = $(e.target);
+                var $tr = $target.closest('tr');
+                var dataId = $tr.attr('data-id');
+                var $body = this.$el.find('#payRoll-listTable');
+                var childTr = $body.find("[data-main='" + dataId + "']");
+                var sign = $.trim($tr.find('.expand').text());
+
+                if (sign === '+') {
+                    $tr.find('.expand').text('-');
+                } else {
+                    $tr.find('.expand').text('+');
+                }
+
+                childTr.toggleClass();
+            },
+
+            asyncRender: function (asyncKeys) {
+                var self = this;
+                var body = this.$el.find('#payRoll-listTable');
+
+                async.each(asyncKeys, function (asyncDate) {
+                    dataService.getData('/payroll/getAsyncData', {
+                        dataKey: self.dataKey,
+                        _id    : asyncDate
+                    }, function (result) {
+                        var mainTr = body.find("[data-id='" + asyncDate + "']");
+                        result.forEach(function (entry) {
+                            mainTr.after("<tr data-main='" + asyncDate + "' class='hidden'><td colspan='4'>" + (entry.employee.name.first + ' ' + entry.employee.name.last) + "</td><td>" + (entry.month + '/' + entry.year) + "</td><td>" + entry.type.name + "</td><td class='money'>" + helpers.currencySplitter(entry.calc.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.paid.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.diff.toFixed(2)) + "</td></tr>");
+                        });
+                    });
+
+                });
+
+            },
+
             render: function () {
                 var self = this;
                 var collection = this.collection.toJSON();
+                var asyncKeys = [];
 
                 this.$el.html(_.template(PayrollTemplate, {
                     collection      : collection,
@@ -1087,6 +1126,12 @@ define([
                 this.hideSaveCancelBtns();
 
                 this.filterEmployeesForDD(this);
+
+                collection.forEach(function (el) {
+                    asyncKeys.push(el._id);
+                });
+
+                this.asyncRender(asyncKeys);
 
                 $('.check_all').click(function (e) {
                     var totalOld = 0;

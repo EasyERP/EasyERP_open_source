@@ -23,7 +23,7 @@ var PayRoll = function (models) {
         ObjectId("55b92ace21e4b7c40f000015")
     ];
 
-    var journalArray = [CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.IDLE_PAYABLE, CONSTANTS.VACATION_PAYABLE];
+    var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE), ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)];
 
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
@@ -336,15 +336,63 @@ var PayRoll = function (models) {
         }
     };
 
+    this.getAsyncData = function (req, res, next) {
+        var data = req.query;
+        var dataKey = data.dataKey;
+        var _id = data._id;
+        var sort = {"type.name": 1};
+        var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
+        var queryObject = {dataKey: parseInt(dataKey, 10), employee: ObjectId(_id)};
+
+        PayRoll.aggregate([{
+            $match: queryObject
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "employee",
+                foreignField: "_id", as: "employee"
+            }
+        }, {
+            $lookup: {
+                from        : "journals",
+                localField  : "type",
+                foreignField: "_id", as: "type"
+            }
+        }, {
+            $project: {
+                employee: {$arrayElemAt: ["$employee", 0]},
+                type    : {$arrayElemAt: ["$type", 0]},
+                calc    : 1,
+                paid    : 1,
+                diff    : 1,
+                month   : 1,
+                year    : 1,
+                dataKey : 1
+            }
+        }, {
+            $sort: sort
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
+    };
+
     function getByDataKey(req, res, next) {
         var id = req.query.id;
         var data = req.query;
         var error;
         var sort = data.sort || {"employee.name": 1};
+        var sortKeys = Object.keys(sort);
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         var queryObject = {dataKey: parseInt(id, 10)};
         var query;
+
+        if (data.sort) {
+            sort[sortKeys[0]] = parseInt(sort[sortKeys[0]], 10);
+        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, mid, function (access) {
@@ -355,9 +403,53 @@ var PayRoll = function (models) {
                     return next(error);
                 }
 
-                query = PayRoll.find(queryObject).sort(sort).populate('employee').populate('type');
+                // query = PayRoll.find(queryObject).sort(sort).populate('employee').populate('type');
 
-                query.exec(function (err, result) {
+                PayRoll.aggregate([{
+                    $match: {
+                        dataKey: parseInt(id, 10)
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "employee",
+                        foreignField: "_id", as: "employee"
+                    }
+                }, {
+                    $project: {
+                        employee: {$arrayElemAt: ["$employee", 0]},
+                        calc    : 1,
+                        paid    : 1,
+                        diff    : 1,
+                        month   : 1,
+                        year    : 1,
+                        dataKey : 1
+                    }
+                }, {
+                    $group: {
+                        _id     : '$employee._id',
+                        employee: {$addToSet: '$employee'},
+                        month   : {$addToSet: '$month'},
+                        year    : {$addToSet: '$year'},
+                        dataKey : {$addToSet: '$dataKey'},
+                        calc    : {$sum: '$calc'},
+                        paid    : {$sum: '$paid'},
+                        diff    : {$sum: '$diff'}
+                    }
+                }, {
+                    $project: {
+                        _id     : 1,
+                        month   : {$arrayElemAt: ["$month", 0]},
+                        year    : {$arrayElemAt: ["$year", 0]},
+                        employee: {$arrayElemAt: ["$employee", 0]},
+                        dataKey : {$arrayElemAt: ["$dataKey", 0]},
+                        calc    : 1,
+                        paid    : 1,
+                        diff    : 1
+                    }
+                }, {
+                    $sort: sort
+                }], function (err, result) {
                     if (err) {
                         return next(err);
                     }
@@ -378,15 +470,61 @@ var PayRoll = function (models) {
         var dataKey = data.dataKey;
         var queryObject = {dataKey: parseInt(dataKey, 10)};
         var sort = data.sort || {"employee": 1};
+        var sortKeys = Object.keys(sort);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
 
-        var query = Payroll.find(queryObject).sort(sort).lean();
+        if (data.sort) {
+            sort[sortKeys[0]] = parseInt(sort[sortKeys[0]], 10);
+        }
 
-        query.exec(function (err, result) {
+        //   var query = Payroll.find(queryObject).sort(sort).lean();
+
+        Payroll.aggregate([{
+            $match: queryObject
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "employee",
+                foreignField: "_id", as: "employee"
+            }
+        }, {
+            $project: {
+                employee: {$arrayElemAt: ["$employee", 0]},
+                calc    : 1,
+                paid    : 1,
+                diff    : 1,
+                month   : 1,
+                year    : 1,
+                dataKey : 1
+            }
+        }, {
+            $group: {
+                _id     : '$employee._id',
+                employee: {$addToSet: '$employee'},
+                month   : {$addToSet: '$month'},
+                year    : {$addToSet: '$year'},
+                dataKey : {$addToSet: '$dataKey'},
+                calc    : {$sum: '$calc'},
+                paid    : {$sum: '$paid'},
+                diff    : {$sum: '$diff'}
+            }
+        }, {
+            $project: {
+                _id     : 1,
+                month   : {$arrayElemAt: ["$month", 0]},
+                year    : {$arrayElemAt: ["$year", 0]},
+                employee: {$arrayElemAt: ["$employee", 0]},
+                dataKey : {$arrayElemAt: ["$dataKey", 0]},
+                calc    : 1,
+                paid    : 1,
+                diff    : 1
+            }
+        }, {
+            $sort: sort
+        }], function (err, result) {
             if (err) {
                 return next(err);
             }
-
             res.status(200).send(result);
         });
     };
@@ -667,16 +805,13 @@ var PayRoll = function (models) {
         var data = req.body;
         var month = parseInt(data.month, 10);
         var year = parseInt(data.year, 10);
-        var dateKey = year * 100 + month;
+        var dataKey = year * 100 + month;
         var waterfallTasks;
-        var maxKey = 0;
-        var createdIds = [];
-        var difference;
         var employees;
         var ids = {};
         var i;
         var date = moment().isoWeekYear(year).month(month - 1).date(1);
-        var endDate = date.endOf('month');
+        var endDate = moment(date).endOf('month');
 
         function getEmployees(callback) {
             var queryObject = {
@@ -707,7 +842,9 @@ var PayRoll = function (models) {
                         }
                     }
 
-                    ids[elem._id] = salary;
+                    if (salary) {
+                        ids[elem._id] = salary;
+                    }
                 });
 
                 callback(null, ids);
@@ -715,16 +852,77 @@ var PayRoll = function (models) {
         }
 
         function getJournalEntries(ids, callback) {
-            JournalEntry.find({
-                journal: {$in: journalArray},
-                debit  : {$gt: 0},
-                date   : {$gte: date, $lte: endDate}
-            }, function (err, result) {
+            function matchEmployee(pcb) {
+                JournalEntry.aggregate([{
+                    $match: {
+                        'sourceDocument.model': "Employees",
+                        journal               : CONSTANTS.VACATION_PAYABLE,
+                        debit                 : {$gt: 0},
+                        date                  : {
+                            $gte: new Date(date),
+                            $lte: new Date(endDate)
+                        }
+                    }
+                }, {
+                    $project: {
+                        employee: '$sourceDocument._id',
+                        summ    : {$divide: ['$debit', 100]}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
+
+                    pcb(null, result);
+                });
+            }
+
+            function matchByWTrack(pcb) {
+                JournalEntry.aggregate([{
+                    $match: {
+                        'sourceDocument.model': "wTrack",
+                        journal               : {$in: journalArray},
+                        debit                 : {$gt: 0},
+                        date                  : {
+                            $gte: new Date(date),
+                            $lte: new Date(endDate)
+                        }
+                    }
+                }, {
+                    $lookup: {
+                        from        : "wTrack",
+                        localField  : "sourceDocument._id",
+                        foreignField: "_id", as: "sourceDocument"
+                    }
+                }, {
+                    $project: {
+                        debit  : {$divide: ['$debit', 100]},
+                        journal: 1,
+                        wTrack : {$arrayElemAt: ["$sourceDocument", 0]},
+                        date   : 1
+                    }
+                }, {
+                    $project: {
+                        summ    : '$debit',
+                        journal : 1,
+                        employee: '$wTrack.employee',
+                        date    : 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
+
+                    pcb(null, result);
+                });
+            }
+
+            async.parallel([matchByWTrack, matchEmployee], function (err, result) {
                 if (err) {
                     return callback(err);
                 }
 
-                callback(null, {ids: ids, journalEntries: result});
+                callback(null, {ids: ids, journalEntries: result[0].concat(result[1])});
             });
         }
 
@@ -733,22 +931,46 @@ var PayRoll = function (models) {
             var journalEntries = resultItems.journalEntries;
             var empKeys = Object.keys(empIds);
             var parallelTasks;
+            var newPayroll;
             var startBody = {
                 year   : year,
                 month  : month,
-                dataKey: year * 100 + month,
+                dataKey: dataKey,
                 paid   : 0
             };
 
-            function createForDev(pCb) {
-                async.each(empKeys, function (employee) {
-                    startBody.employee =  employee;
-                    startBody.calc =  empIds[employee];
+            function createForNotDev(pCb) {
+                async.each(empKeys, function (employee, asyncCb) {
+                    startBody.employee = employee;
+                    startBody.calc = empIds[employee];
+                    startBody.diff = empIds[employee];
+                    startBody.type = CONSTANTS.SALARY_NOTDEV;
+
+                    newPayroll = new Payroll(startBody);
+
+                    newPayroll.save(asyncCb);
+                }, function () {
+                    pCb();
                 });
 
             }
 
-            function createForNotDev(pCb) {
+            function createForDev(pCb) {
+                async.each(journalEntries, function (journalEntry, asyncCb) {
+                    startBody.employee = journalEntry.employee;
+                    startBody.calc = parseFloat(journalEntry.summ.toFixed(2));
+                    startBody.diff = startBody.calc;
+                    startBody.type = journalEntry.journal;
+                    startBody.month = moment(new Date(journalEntry.date)).month() + 1;
+                    startBody.year = moment(new Date(journalEntry.date)).isoWeekYear();
+                    startBody.dataKey = startBody.year * 100 + startBody.month;
+
+                    newPayroll = new Payroll(startBody);
+
+                    newPayroll.save(asyncCb);
+                }, function () {
+                    pCb();
+                });
 
             }
 

@@ -1,9 +1,13 @@
 /**
  * Created by lilya on 16/11/15.
  */
-define(
-    function () {
-        var PayRollCollection = Backbone.Collection.extend({});
+define([
+    'models/PayRollAddModel'
+],
+    function (PayRollAddModel) {
+        var PayRollCollection = Backbone.Collection.extend({
+            model: PayRollAddModel
+        });
 
         return PayRollCollection;
     });

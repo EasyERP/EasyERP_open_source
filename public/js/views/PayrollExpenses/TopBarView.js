@@ -17,7 +17,7 @@ define([
                 "click #top-bar-editBtn"      : "editEvent",
                 "click #top-bar-createBtn"    : "createEvent",
                 "click #top-bar-generate"     : "generateEvent",
-                "click #top-bar-copy"         : "copyEvent",
+                //"click #top-bar-copy"         : "copyEvent",
                 "click #topBarPaymentGenerate": "createPayment"
             },
 
