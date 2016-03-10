@@ -1060,7 +1060,6 @@ var wTrack = function (event, models) {
                     var diffHours;
                     var worked;
 
-
                     startDay = startDay || 1;
 
                     if (!endDay && endDay === 0) {
