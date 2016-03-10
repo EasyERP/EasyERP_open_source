@@ -654,6 +654,14 @@ th {
   overflow-y: hidden;
   -ms-overflow-style: -ms-autohiding-scrollbar;
 }
+#loading {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+}
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
