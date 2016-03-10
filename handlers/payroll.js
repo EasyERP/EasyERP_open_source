@@ -6,6 +6,8 @@ var PayRoll = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var PayRollSchema = mongoose.Schemas.PayRoll;
     var EmployeeSchema = mongoose.Schemas.Employees;
+    var journalEntrySchema = mongoose.Schemas.journalEntry;
+
     var _ = require('lodash');
 
     var async = require('async');
@@ -658,6 +660,7 @@ var PayRoll = function (models) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+        var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var data = req.body;
         var month = parseInt(data.month, 10);
         var year = parseInt(data.year, 10);
@@ -707,8 +710,11 @@ var PayRoll = function (models) {
             });
         }
 
-        function savePayroll(ids, callback) {
+        function getJournalEntries(ids, callback){
+            JournalEntry.find();
+        }
 
+        function savePayroll(ids, callback) {
             var newResult;
             var keys;
             var query = Payroll.find({});
