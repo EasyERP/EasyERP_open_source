@@ -10,8 +10,15 @@ var PayRoll = function (models) {
 
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
-    var objectId = mongoose.Types.ObjectId;
+    var ObjectId = mongoose.Types.ObjectId;
     var mid = 66;
+
+    var departmentArray = [
+        ObjectId("560c0b83a5d4a2e20ba5068c"),
+        ObjectId("55b92ace21e4b7c40f000013"),
+        ObjectId("55b92ace21e4b7c40f000014"),
+        ObjectId("55b92ace21e4b7c40f000015")
+    ];
 
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
@@ -208,7 +215,7 @@ var PayRoll = function (models) {
                 };
 
                 if (data.type) {
-                    data.type = objectId(data.type);
+                    data.type = ObjectId(data.type);
                 }
 
                 PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err) {
@@ -305,7 +312,7 @@ var PayRoll = function (models) {
                     delete data._id;
 
                     if (data.type) {
-                        data.type = objectId(data.type);
+                        data.type = ObjectId(data.type);
                     }
 
                     PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
@@ -660,14 +667,19 @@ var PayRoll = function (models) {
         var createdIds = [];
         var difference;
         var employees;
-        var ids = [];
+        var ids = {};
+        var i;
+        var date = moment().isoWeekYear(year).month(month - 1).date(1);
 
         function getEmployees(callback) {
             var queryObject = {
-                isEmployee: true
+                isEmployee: true,
+                department: {
+                    $in: departmentArray
+                }
             };
 
-            var query = Employee.find(queryObject).lean();
+            var query = Employee.find(queryObject, {hire: 1}).lean();
 
             query.exec(function (err, result) {
                 if (err) {
@@ -677,7 +689,18 @@ var PayRoll = function (models) {
                 employees = result;
 
                 result.forEach(function (elem) {
-                    ids.push(elem._id.toString());
+                    var salary = 0;
+                    var hire = elem.hire;
+                    var length = hire.length;
+
+                    for (i = length - 1; i >= 0; i--) {
+                        if (date >= hire[i].date) {
+                            salary = hire[i].salary;
+                            break;
+                        }
+                    }
+
+                    ids[elem._id] = salary;
                 });
 
                 callback(null, ids);
@@ -775,7 +798,7 @@ var PayRoll = function (models) {
             });
         }
 
-        waterfallTasks = [getEmployees, savePayroll];
+        waterfallTasks = [getEmployees, getJournalEntries, savePayroll];
 
         async.waterfall(waterfallTasks, function (err) {
             if (err) {

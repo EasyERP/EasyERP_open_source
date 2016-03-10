@@ -43,11 +43,11 @@ define([
         });
 
         App.startPreload = function() {
-            $(spinner.el).show();
+            $('#loading').show();
         };
 
         App.stopPreload = function() {
-            $(spinner.el).hide();
+            $('#loading').hide();
         };
 
         appRouter.checkLogin = Communication.checkLogin;
