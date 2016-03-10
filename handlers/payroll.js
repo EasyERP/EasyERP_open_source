@@ -436,13 +436,13 @@ var PayRoll = function (models) {
         var query = req.query;
         //var year = parseInt(query.year, 10) || date.getFullYear();
         var filter = query.filter || {};
-        var startDate = new Date (query.startDate);
-        var endDate = new Date (query.endDate);
+        var startDate = new Date(query.startDate);
+        var endDate = new Date(query.endDate);
         var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
-        var startDateKey = moment(startDate).year() * 100 +  moment(startDate).isoWeek();
-        var endDateKey = moment(endDate).year() * 100 +  moment(endDate).isoWeek();
+        var startDateKey = moment(startDate).year() * 100 + moment(startDate).isoWeek();
+        var endDateKey = moment(endDate).year() * 100 + moment(endDate).isoWeek();
         var filterValue;
 
         function caseFilterEmployee(filter) {
@@ -517,7 +517,7 @@ var PayRoll = function (models) {
 
             if (filter && typeof filter === 'object') {
                 filterValue = caseFilterEmployee(filter);
-                if (filterValue.length){
+                if (filterValue.length) {
                     matchObj.$and.push({$and: caseFilterEmployee(filter)});
                 }
             }
@@ -559,10 +559,10 @@ var PayRoll = function (models) {
                         lastFire  : 1,
                         year      : {$year: '$hire.date'}
                     }
-                //}, {
-                //    $match: {
-                //        'year': {$lt: year + 1}
-                //    }
+                    //}, {
+                    //    $match: {
+                    //        'year': {$lt: year + 1}
+                    //    }
                 }, {
                     $project: {
                         isEmployee: 1,
@@ -676,6 +676,7 @@ var PayRoll = function (models) {
         var ids = {};
         var i;
         var date = moment().isoWeekYear(year).month(month - 1).date(1);
+        var endDate = date.endOf('month');
 
         function getEmployees(callback) {
             var queryObject = {
@@ -713,97 +714,52 @@ var PayRoll = function (models) {
             });
         }
 
-        function getJournalEntries(ids, callback){
-            JournalEntry.find({journal: {$in: journalArray}});
-        }
-
-        function savePayroll(ids, callback) {
-            var newResult;
-            var keys;
-            var query = Payroll.find({});
-
-            query.exec(function (err, result) {
+        function getJournalEntries(ids, callback) {
+            JournalEntry.find({
+                journal: {$in: journalArray},
+                debit  : {$gt: 0},
+                date   : {$gte: date, $lte: endDate}
+            }, function (err, result) {
                 if (err) {
-                    return next(err);
+                    return callback(err);
                 }
 
-                newResult = _.groupBy(result, "dataKey");
+                callback(null, {ids: ids, journalEntries: result});
+            });
+        }
 
-                keys = Object.keys(newResult);
+        function savePayroll(resultItems, callback) {
+            var empIds = resultItems.ids;
+            var journalEntries = resultItems.journalEntries;
+            var empKeys = Object.keys(empIds);
+            var parallelTasks;
+            var startBody = {
+                year   : year,
+                month  : month,
+                dataKey: year * 100 + month,
+                paid   : 0
+            };
 
-                keys.forEach(function (key) {
-                    if (parseInt(key, 10) >= maxKey) {
-                        maxKey = key;
-                    }
+            function createForDev(pCb) {
+                async.each(empKeys, function (employee) {
+                    startBody.employee =  employee;
+                    startBody.calc =  empIds[employee];
                 });
 
-                var parseKey = parseInt(maxKey, 10);
+            }
 
-                var neqQuery = Payroll.find({dataKey: parseKey}).lean();
+            function createForNotDev(pCb) {
 
-                neqQuery.exec(function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
+            }
 
-                    async.each(result, function (element, cb) {
-                        var dataToSave = _.clone(element);
+            parallelTasks = [createForDev, createForNotDev];
 
-                        delete dataToSave._id;
-                        delete dataToSave.ID;
-                        delete dataToSave.data;
-                        dataToSave.status = false;
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
 
-                        dataToSave.dataKey = dateKey;
-                        dataToSave.month = month;
-                        dataToSave.year = year;
-                        dataToSave.paid = 0;
-                        dataToSave.diff = (dataToSave.paid || 0) - (dataToSave.calc || 0);
-
-                        var PRoll = new Payroll(dataToSave);
-
-                        PRoll.save(function (err, result) {
-                            if (err) {
-                                cb(err);
-                            }
-
-                            createdIds.push(result.employee.toString());
-                            cb();
-                        });
-
-                    }, function () {
-                        difference = _.difference(ids, createdIds);
-
-                        async.each(difference, function (id, callB) {
-                            var PRoll;
-                            var defObj = {};
-                            var empl = _.find(employees, function (el) {
-                                return el._id.toString() === id;
-                            });
-
-                            defObj.dataKey = dateKey;
-                            defObj.month = month;
-                            defObj.year = year;
-                            defObj.paid = 0;
-                            defObj.diff = 0;
-                            defObj.calc = 0;
-
-                            defObj.employee = empl._id;
-
-                            PRoll = new Payroll(defObj);
-
-                            PRoll.save(function (err, result) {
-                                if (err) {
-                                    callB(err);
-                                }
-
-                                callB(null, result);
-                            });
-                        }, function () {
-                            callback();
-                        });
-                    });
-                });
+                callback();
             });
         }
 
