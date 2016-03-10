@@ -7,6 +7,7 @@ var PayRoll = function (models) {
     var PayRollSchema = mongoose.Schemas.PayRoll;
     var EmployeeSchema = mongoose.Schemas.Employees;
     var journalEntrySchema = mongoose.Schemas.journalEntry;
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var _ = require('lodash');
 
@@ -21,6 +22,8 @@ var PayRoll = function (models) {
         ObjectId("55b92ace21e4b7c40f000014"),
         ObjectId("55b92ace21e4b7c40f000015")
     ];
+
+    var journalArray = [CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.IDLE_PAYABLE, CONSTANTS.VACATION_PAYABLE];
 
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
@@ -711,7 +714,7 @@ var PayRoll = function (models) {
         }
 
         function getJournalEntries(ids, callback){
-            JournalEntry.find();
+            JournalEntry.find({journal: {$in: journalArray}});
         }
 
         function savePayroll(ids, callback) {

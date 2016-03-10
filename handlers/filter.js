@@ -1846,7 +1846,7 @@ var Filters = function (models) {
             var getForInvoices = function (pCb) {
                 JournalEntry.aggregate([{
                     $match: {
-                        "sourceDocument.model": "wTrack",
+                        //"sourceDocument.model": "wTrack",
                         debit                 : {$gt: 0}
                     }
                 }, {
@@ -1864,7 +1864,7 @@ var Filters = function (models) {
                 }, {
                     $project: {
                         journal               : {$arrayElemAt: ["$journal", 0]},
-                        'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]},
+                        'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]}
                     }
                 }, {
                     $lookup: {
