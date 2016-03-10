@@ -652,7 +652,7 @@ var requestHandler = function (app, event, mainDb) {
             date: new Date()
         };
 
-        var query = Job.find({'project': pId}).lean();
+        var query = Job.find({project: pId}).lean();
 
         query
             .populate('wTracks');
@@ -667,7 +667,9 @@ var requestHandler = function (app, event, mainDb) {
                     'select': '_id, name',
                     'lean'  : true
                 }, function (err, result) {
-                    async.forEach(result, function (job, cb) {
+                    result = result || [];
+
+                    async.each(result, function (job, cb) {
                         var jobID = job._id;
                         var projectTeam = {};
                         var projectValues = {};

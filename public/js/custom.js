@@ -19,6 +19,9 @@ define([
 
             return (store && JSON.parse(store)) || null;
         };
+        this.remove = function (name) {
+           localStorage.removeItem(name);
+        };
     };
 
     var runApplication = function (success) {
@@ -284,6 +287,14 @@ define([
         return App.cashedData[key] || App.storage.find(key);
     }
 
+    function removeFromCash(key) {
+        App.cashedData = App.cashedData || {};
+
+        delete App.cashedData[key];
+
+        return App.storage.remove(key);
+    }
+
     //ToDo refactor It
     var savedFilters = function (contentType, uIFilter) {
         var savedFilter;
@@ -440,6 +451,7 @@ define([
         setCurrentCL: setCurrentCL,
         cacheToApp: cacheToApp,
         retriveFromCash: retriveFromCash,
+        removeFromCash: removeFromCash,
         savedFilters: savedFilters,
         getFiltersForContentType: getFiltersForContentType,
         getFilterById: getFilterById,

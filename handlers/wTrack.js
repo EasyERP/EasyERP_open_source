@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var wTrack = function (event, models) {
     'use strict';
-    var access = require("../Modules/additions/access.js")(models);
+    var access = require('../Modules/additions/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var _ = require('underscore');
     var wTrackSchema = mongoose.Schemas.wTrack;
@@ -29,30 +29,31 @@ var wTrack = function (event, models) {
 
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-    }, exportMap, "wTrack");
+    }, exportMap, 'wTrack');
 
     this.create = function (req, res, next) {
-        access.getEditWritAccess(req, req.session.uId, 75, function (access) {
-            if (access) {
+        access.getEditWritAccess(req, req.session.uId, 75, function (success) {
+            var WTrack;
+            var body;
 
-                var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-                var body = mapObject(req.body);
+            if (success) {
+                WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+                body = mapObject(req.body);
 
                 wTrack = new WTrack(body);
-
-                wTrack.save(function (err, wTrack) {
+                wTrack.save(function (err, _wTrack) {
                     if (err) {
                         return next(err);
                     }
 
-                    event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                    event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                    event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
+                    event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
                     event.emit('recollectProjectInfo');
 
-                    res.status(200).send({success: wTrack});
+                    res.status(200).send({success: _wTrack});
                 });
             } else {
                 res.status(403).send();
@@ -62,9 +63,20 @@ var wTrack = function (event, models) {
 
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
-        var data = mapObject(req.body);
+        var data = mapObject(req.body) || {};
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
+
+        var worked = 0;
+        var hours;
+
+        for (var day = 7; day >= 1; day--) {
+            hours = data[day];
+
+            if (hours) {
+                worked += parseInt(hours, 10);
+            }
+        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -74,27 +86,47 @@ var wTrack = function (event, models) {
                         date: new Date()
                     };
 
-                    //if (data && data.revenue) {
-                    //    data.revenue *= 100;
-                    //}
-
-                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
-                        if (err) {
-                            return next(err);
-                        }
-                        if (wTrack) {
-                            event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                            event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
-                            event.emit('recollectProjectInfo');
-                            event.emit('dropHoursCashes', req);
-                            event.emit('recollectVacationDash');
-
-                            if (needUpdateKeys) {
-                                event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                    if (isFinite(worked) && worked === 0) {
+                        WTrack.findByIdAndRemove(id, function (err, wTrack) {
+                            if (err) {
+                                return next(err);
                             }
+                            if (wTrack) {
+                                event.emit('updateRevenue', {wTrack: wTrack, req: req});
+                                event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
+                                event.emit('recollectProjectInfo');
+                                event.emit('dropHoursCashes', req);
+                                event.emit('recollectVacationDash');
+
+                                if (needUpdateKeys) {
+                                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                                }
+                            }
+                            res.status(200).send({success: 'updated'});
+                        });
+                    } else {
+                        if (isFinite(worked)) {
+                            data.worked = worked;
                         }
-                        res.status(200).send({success: 'updated'});
-                    });
+
+                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
+                            if (err) {
+                                return next(err);
+                            }
+                            if (wTrack) {
+                                event.emit('updateRevenue', {wTrack: wTrack, req: req});
+                                event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
+                                event.emit('recollectProjectInfo');
+                                event.emit('dropHoursCashes', req);
+                                event.emit('recollectVacationDash');
+
+                                if (needUpdateKeys) {
+                                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                                }
+                            }
+                            res.status(200).send({success: 'updated'});
+                        });
+                    }
                 } else {
                     res.status(403).send();
                 }
@@ -107,7 +139,6 @@ var wTrack = function (event, models) {
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var needUpdateKeys = body.month || body.week || body.year || body.isoYear;
         var uId;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -116,6 +147,7 @@ var wTrack = function (event, models) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
+                        var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
 
                         if (data && data.revenue) {
                             data.revenue *= 100;
@@ -424,11 +456,11 @@ var wTrack = function (event, models) {
             key = Object.keys(query.sort)[0].toString();
             keyForDay = sortObj[key];
 
-            if (key.indexOf('.name.first') !== -1){
+            if (key.indexOf('.name.first') !== -1) {
                 sortArray = key.split('.');
                 sortLength = sortArray.length;
 
-                for (i = 0; i < sortLength - 1; i++){
+                for (i = 0; i < sortLength - 1; i++) {
                     dynamicKey += sortArray[i] + '.';
                 }
 
@@ -701,11 +733,11 @@ var wTrack = function (event, models) {
             key = Object.keys(query.sort)[0];
             keyForDay = sortObj[key];
 
-            if (key.indexOf('.name.first') !== -1){
+            if (key.indexOf('.name.first') !== -1) {
                 sortArray = key.split('.');
                 sortLength = sortArray.length;
 
-                for (i = 0; i < sortLength - 1; i++){
+                for (i = 0; i < sortLength - 1; i++) {
                     dynamicKey += sortArray[i] + '.';
                 }
 
@@ -1027,7 +1059,6 @@ var wTrack = function (event, models) {
                     var day;
                     var diffHours;
                     var worked;
-
 
                     startDay = startDay || 1;
 
