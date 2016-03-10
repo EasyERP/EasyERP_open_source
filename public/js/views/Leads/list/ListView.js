@@ -27,7 +27,7 @@ define([
                 "click .list td:not(.notForm)": "goToEditDialog",
                 "click #convertToOpportunity" : "openDialog",
                 "click .stageSelect"          : "showNewSelect",
-                "click .newSelectList li"     : "chooseOption",
+                "click .newSelectList li"     : "chooseOption"
             },
 
             initialize: function (options) {

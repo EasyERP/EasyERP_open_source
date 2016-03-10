@@ -12,10 +12,12 @@ define([
                 return url;
             },
             initialize: function (options) {
-                if (!options) {
-                    this.type = "";
-                } else {
+                // change check options.id
+
+                if (options && options.id) {
                     this.type = options.id;
+                } else {
+                    this.type = "";
                 }
                 this.fetch({
                     type   : 'GET',
@@ -26,7 +28,7 @@ define([
             },
             parse     : function (response) {
                 return response.data;
-            },
+            }
         });
         return WorkflowsCollection;
     });

@@ -1,4 +1,5 @@
 define([
+        'Backbone',
         "text!templates/Opportunities/CreateTemplate.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
@@ -9,7 +10,7 @@ define([
         'views/Notes/AttachView',
     'constants'
     ],
-    function (CreateTemplate, selectView, AssigneesView, OpportunityModel, common, populate, dataService, attachView, CONSTANTS) {
+    function (Backbone, CreateTemplate, selectView, AssigneesView, OpportunityModel, common, populate, dataService, attachView, CONSTANTS) {
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Opportunities",

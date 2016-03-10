@@ -360,7 +360,7 @@ define([
             },
 
             hidePagesPopup: function (e) {
-                var el = e.target;
+                var el = $(e.target);
 
                 if (this.selectView) {
                     this.selectView.remove();

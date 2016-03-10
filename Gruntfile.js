@@ -21,8 +21,9 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.loadNpmTasks('grunt-jsdoc');
+    //grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-karma');
 
-    grunt.registerTask('default', ['jsdoc']);
+    //grunt.registerTask('default', ['jsdoc']);
+    grunt.registerTask('default', ['karma']);
 };

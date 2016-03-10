@@ -2,12 +2,13 @@
  * Created by Roman on 25.05.2015.
  */
 define([
+        'Backbone',
         'text!templates/CustomersSuppliers/salesPurchases.html',
         'populate',
         'constants'
     ],
 
-    function (listTemplate, populate, CONSTANTS) {
+    function (Backbone, listTemplate, populate, CONSTANTS) {
         var salesPurchases = Backbone.View.extend({
 
             template: _.template(listTemplate),

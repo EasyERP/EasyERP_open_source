@@ -2,11 +2,12 @@
  * Created by liliya on 8/13/15.
  */
 define([
+        'Backbone',
         'text!templates/Filter/filterFavourites.html',
         'models/UsersModel',
         'custom'
     ],
-    function (ContentFilterTemplate, usersModel, custom) {
+    function (Backbone, ContentFilterTemplate, usersModel, custom) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el          : '#favoritesContent',

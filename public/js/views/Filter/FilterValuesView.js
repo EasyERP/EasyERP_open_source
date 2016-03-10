@@ -2,11 +2,12 @@
  * Created by soundstorm on 12.08.15.
  */
 define([
+        'Backbone',
         'text!templates/Filter/filterGroup.html',
         'collections/Filter/filterCollection',
         'constants'
     ],
-    function (valuesTemplate, filterCollection, CONSTANTS) {
+    function (Backbone, valuesTemplate, filterCollection, CONSTANTS) {
         var filterValuesView = Backbone.View.extend({
             initialize: function (options) {
                 var sortOptions = options.sortOptions ? options.sortOptions : {};

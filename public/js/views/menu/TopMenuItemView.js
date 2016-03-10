@@ -1,7 +1,8 @@
 define([
+        'Backbone',
         'text!templates/menu/TopMenuItemTemplate.html'
     ],
-    function (ItemTpl) {
+    function (Backbone, ItemTpl) {
 
         var TopMenuItemView = Backbone.View.extend({
             tagName : 'li',
