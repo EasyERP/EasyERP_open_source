@@ -15,6 +15,9 @@ var Jobs = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var objectId = mongoose.Types.ObjectId;
 
+    var JournalEntry = require('./journalEntry.js');
+    var journalEntry = new JournalEntry(models);
+
     function caseFilter(filter) {
         var condition;
         var resArray = [];
@@ -457,6 +460,7 @@ var Jobs = function (models, event) {
         var query;
         var products;
         var type;
+        var createJournalEntry = false;
         var editedBy = {
             user: req.session.uId,
             date: new Date()
@@ -465,6 +469,7 @@ var Jobs = function (models, event) {
         if (id) {
             if (data.workflowId) {
                 query = {workflow: data.workflowId};
+                createJournalEntry = true;
             } else if (data.name) {
                 query = {name: data.name};
             } else if (data.type) {
@@ -481,6 +486,10 @@ var Jobs = function (models, event) {
                 }
 
                 event.emit('recollectVacationDash');
+
+                if (createJournalEntry){
+                    journalEntry.checkAndCreateForJob({workflow: result.workflow, jobId: result._id});
+                }
                 res.status(200).send(result)
             });
         } else if (data.products && data.products.length) {

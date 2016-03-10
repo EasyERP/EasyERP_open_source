@@ -267,6 +267,7 @@ var Module = function (models) {
         var type = req.query.type;
         var options;
         var query = [];
+        filter = JSON.parse(filter);
         var startDate = filter.startDate.value;
         var endDate = filter.endDate.value;
         var matchObject = {
@@ -275,8 +276,6 @@ var Module = function (models) {
                 $lte: new Date(endDate)
             }
         };
-
-        filter = JSON.parse(filter);
 
         if (filter) {
             filterObj.$and = caseFilter(filter);
@@ -373,33 +372,105 @@ var Module = function (models) {
         var filter = req.params.filter;
         var filterObj = {};
         var type = req.query.type;
-        var query = [{$match: type ? {type: type} : {}}];
         var options;
-
+        var query = [];
         filter = JSON.parse(filter);
+        var startDate = filter.startDate.value;
+        var endDate = filter.endDate.value;
+        var matchObject = {
+            date: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        };
 
         if (filter) {
             filterObj.$and = caseFilter(filter);
         }
 
-        for (var i = 0; i < lookupWTrackArray.length; i++) {
-            query.push(lookupWTrackArray[i]);
-        }
-
-        if (filterObj && filterObj.$and && filterObj.$and.length) {
-            query.push({$match: filterObj});
-        }
-
         options = {
-            res     : res,
-            next    : next,
-            Model   : Model,
-            query   : query,
-            map     : exportMap,
-            fileName: 'journalEntry'
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : 'journalEntry'
         };
 
-        exporter.exportToCsv(options);
+        function lookupForWTrack(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+
+            query.push({$match: matchObject});
+
+            for (var i = 0; i < lookupWTrackArray.length; i++) {
+                query.push(lookupWTrackArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        function lookupForEmployees(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+
+            query.push({$match: matchObject});
+
+            for (var i = 0; i < lookupEmployeesArray.length; i++) {
+                query.push(lookupEmployeesArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        function lookupForInvoice(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+
+            query.push({$match: matchObject});
+
+            for (var i = 0; i < lookupInvoiceArray.length; i++) {
+                query.push(lookupInvoiceArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        async.parallel([lookupForWTrack, lookupForEmployees, lookupForInvoice], function (err, result) {
+            var wTrackResult = result[0];
+            var employeesResult = result[1];
+            var invoiceResult = result[2];
+            var resultArray;
+
+            resultArray = (wTrackResult.concat(employeesResult)).concat(invoiceResult);
+
+            exporter.exportToCsv({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : 'journalEntry'
+            });
+        });
     };
 
     this.removeBySourceDocument = function (req, sourceId) {
@@ -450,6 +521,28 @@ var Module = function (models) {
             }
         });
     }
+
+    this.checkAndCreateForJob = function (options){
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var jobId = options.jobId;
+        var workflow = options.workflow;
+        var remove = false;
+
+        if (workflow !== CONSTANTS.JOB_FINISHED){
+            remove = true;
+        }
+
+        if (remove){
+            Model.remove({journal: CONSTANTS.FINISHED_JOB_JOURNAL, "sourceDocument._id": jobId}, function (err, result) {
+                if (err){
+                    return console.log(err);
+                }
+            })
+        } else {
+            //TODO create finishedJob journalEntry
+        }
+
+    };
 
     this.reconcile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
