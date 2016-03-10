@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var wTrack = function (event, models) {
     'use strict';
-    var access = require("../Modules/additions/access.js")(models);
+    var access = require('../Modules/additions/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var _ = require('underscore');
     var wTrackSchema = mongoose.Schemas.wTrack;
@@ -29,30 +29,31 @@ var wTrack = function (event, models) {
 
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-    }, exportMap, "wTrack");
+    }, exportMap, 'wTrack');
 
     this.create = function (req, res, next) {
-        access.getEditWritAccess(req, req.session.uId, 75, function (access) {
-            if (access) {
+        access.getEditWritAccess(req, req.session.uId, 75, function (success) {
+            var WTrack;
+            var body;
 
-                var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-                var body = mapObject(req.body);
+            if (success) {
+                WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+                body = mapObject(req.body);
 
                 wTrack = new WTrack(body);
-
-                wTrack.save(function (err, wTrack) {
+                wTrack.save(function (err, _wTrack) {
                     if (err) {
                         return next(err);
                     }
 
-                    event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                    event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                    event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
+                    event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
                     event.emit('recollectProjectInfo');
 
-                    res.status(200).send({success: wTrack});
+                    res.status(200).send({success: _wTrack});
                 });
             } else {
                 res.status(403).send();
@@ -104,6 +105,10 @@ var wTrack = function (event, models) {
                             res.status(200).send({success: 'updated'});
                         });
                     } else {
+                        if (isFinite(hours)) {
+                            data.worked = worked;
+                        }
+
                         WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
                             if (err) {
                                 return next(err);
