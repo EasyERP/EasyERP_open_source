@@ -105,7 +105,7 @@ var wTrack = function (event, models) {
                             res.status(200).send({success: 'updated'});
                         });
                     } else {
-                        if (isFinite(hours)) {
+                        if (isFinite(worked)) {
                             data.worked = worked;
                         }
 
