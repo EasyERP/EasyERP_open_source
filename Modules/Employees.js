@@ -12,7 +12,7 @@ var Employee = function (event, models) {
     var CONSTANTS = require('../constants/mainConstants');
     var Payroll = require('../handlers/payroll');
     var payrollHandler = new Payroll(models);
-    var ids = ['52203e707d4dba8813000003', '563f673270bbc2b740ce89ae', '55b8cb7d0ce4affc2a0015cb', '55ba2ef1d79a3a343900001c', '560255d1638625cf32000005'];
+    var ids = ['52203e707d4dba8813000003', '563f673270bbc2b740ce89ae', '55b8cb7d0ce4affc2a0015cb', '55ba2ef1d79a3a343900001c', '560255d1638625cf32000005', '55ba2f3ed79a3a343900001d'];
 
     function getTotalCount(req, response) {
         var res = {};
