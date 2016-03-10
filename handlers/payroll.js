@@ -340,7 +340,7 @@ var PayRoll = function (models) {
         var data = req.query;
         var dataKey = data.dataKey;
         var _id = data._id;
-        var sort = {"type.name": 1};
+        var sort = {date: -1, "type.name": -1};
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var queryObject = {dataKey: parseInt(dataKey, 10), employee: ObjectId(_id)};
 
@@ -367,7 +367,8 @@ var PayRoll = function (models) {
                 diff    : 1,
                 month   : 1,
                 year    : 1,
-                dataKey : 1
+                dataKey : 1,
+                date    : 1
             }
         }, {
             $sort: sort
@@ -964,6 +965,7 @@ var PayRoll = function (models) {
                     startBody.month = moment(new Date(journalEntry.date)).month() + 1;
                     startBody.year = moment(new Date(journalEntry.date)).isoWeekYear();
                     startBody.dataKey = startBody.year * 100 + startBody.month;
+                    startBody.date = journalEntry.date;
 
                     newPayroll = new Payroll(startBody);
 

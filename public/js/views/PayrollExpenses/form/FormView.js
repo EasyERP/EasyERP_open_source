@@ -16,10 +16,11 @@ define([
         "moment",
         "populate",
         "dataService",
-        "async"
+        "async",
+        'common'
     ],
 
-    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
+    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, common) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
@@ -1103,7 +1104,7 @@ define([
                     }, function (result) {
                         var mainTr = body.find("[data-id='" + asyncDate + "']");
                         result.forEach(function (entry) {
-                            mainTr.after("<tr data-main='" + asyncDate + "' class='hidden'><td colspan='4'>" + (entry.employee.name.first + ' ' + entry.employee.name.last) + "</td><td>" + (entry.month + '/' + entry.year) + "</td><td>" + entry.type.name + "</td><td class='money'>" + helpers.currencySplitter(entry.calc.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.paid.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.diff.toFixed(2)) + "</td></tr>");
+                            mainTr.after("<tr data-main='" + asyncDate + "' class='hidden'><td colspan='4'>" + (entry.employee.name.first + ' ' + entry.employee.name.last) + "</td><td>" + common.utcDateToLocaleFullDateTime(entry.date) + "</td><td>" + entry.type.name + "</td><td class='money'>" + helpers.currencySplitter(entry.calc.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.paid.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.diff.toFixed(2)) + "</td></tr>");
                         });
                     });
 
