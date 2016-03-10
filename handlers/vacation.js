@@ -152,11 +152,13 @@ var Vacation = function (event, models) {
 
         query = Vacation.distinct('year');
 
-        query.exec(function (err, result) {
+        query.exec(function (err, years) {
+            var result;
+
             if (err) {
                 return next(err);
             }
-            result = _.map(result, function (element) {
+            result = _.map(years, function (element) {
                 var el = element;
 
                 element = {};
@@ -173,7 +175,7 @@ var Vacation = function (event, models) {
                     name: year
                 };
 
-                if (result.indexOf(newYear) === -1) {
+                if (years.indexOf(newYear.name) === -1) {
                     result.push(newYear);
                 }
             }
