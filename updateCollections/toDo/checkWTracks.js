@@ -20,7 +20,7 @@ dbObject.once('open', function callback() {
 
     wTrackModel.find({}, function (err, result) {
 
-        async.each(result, function (wTrack) {
+        async.each(result, function (wTrack, cb) {
             var month = wTrack.month;
             var year = wTrack.year;
             var week = wTrack.week;
@@ -28,25 +28,26 @@ dbObject.once('open', function callback() {
             var dayFirst;
 
             for (var i = 1; i <= 7; i++){
-                if (wTrack[i] !== 0){
+                if (wTrack[i]){
                     day = i;
                 }
             }
 
             for (var i = 7; i >= 1; i--){
-                if (wTrack[i] !== 0){
+                if (wTrack[i]){
                     dayFirst = i;
                 }
             }
 
-            var dateLast = moment().isoWeekYear(year).month(month - 1).isoWeek(week).day(day);
-            var dateFirst = moment().isoWeekYear(year).month(month - 1).isoWeek(week).day(dayFirst);
+            var dateLast = moment().isoWeekYear(wTrack.isoYear || wTrack.year).month(month - 1).isoWeek(week).day(day);
+            var dateFirst = moment().isoWeekYear(wTrack.isoYear || wTrack.year).month(month - 1).isoWeek(week).day(dayFirst);
 
             if (dateLast && dateFirst){
-                if ((moment(dateLast).month() !== moment(dateFirst).month()) && (moment(dateLast).year() !==  moment(dateFirst).year())){
+                if ((moment(dateLast).month() !== moment(dateFirst).month()) || (moment(dateLast).year() !==  moment(dateFirst).year())){
 
                     console.log(wTrack._id);
-                    console.log(wTrack.dateByWeek);
+                    console.log(dateFirst.toString());
+                    console.log(dateLast.toString());
                     console.log(counter++);
                 }
             } else {
@@ -54,6 +55,10 @@ dbObject.once('open', function callback() {
                 console.log('empty date');
             }
 
+            cb();
+
+        }, function () {
+            console.log('good');
         });
     });
 

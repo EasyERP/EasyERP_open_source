@@ -26,6 +26,9 @@ var Module = function (models) {
 
     var access = require("../Modules/additions/access.js")(models);
     var CONSTANTS = require("../constants/mainConstants.js");
+
+    var notDevArray = CONSTANTS.NOT_DEV_ARRAY;
+
     var lookupWTrackArray = [
         {
             $match: {
@@ -542,6 +545,166 @@ var Module = function (models) {
             //TODO create finishedJob journalEntry
         }
 
+    };
+
+    this.createIdleByMonth = function (options) {
+        var req = options.req;
+        var callback = options.callback;
+        var month = options.month;
+        var year = options.year;
+        var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var startDate = moment(new Date()).isoWeekYear(year).month(month).date(1);
+        var endDate = moment(new Date()).isoWeekYear(year).month(month).endOf('month');
+        var dateKeysInMonth = {};
+        var parallelFuncs;
+        var waterfallFuncs;
+        var monthKey = year * 100 + month;
+        var monthHoursObject = {};
+        var holidaysObject;
+        var hireObj = {};
+
+        function parallelFuncFind (wfCb){
+
+            function formDateArray(pCb){
+                var endOfMonth = endDate.date();
+                var i;
+
+                for(i = endOfMonth; i >= 1; i--){
+                    var key = (year * 100 + month) * 100 + i;
+                    dateKeysInMonth[key] = true;
+                }
+                pCb(null, dateKeysInMonth);
+            }
+
+            function findMonthHours(pCb){
+                redisStore.readFromStorage('monthHours', monthKey, function (err, result) {
+
+                    result = JSON.parse(result);
+                    monthHoursObject = result;
+                    pCb(null, monthHoursObject);
+                });
+            }
+
+            function findHolidays(pCb){
+                var query = Holidays.find().lean();
+
+                query.exec(function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    result.forEach(function (holiday) {
+                        var holidayDate = moment(holiday.date);
+                        var key = (holidayDate.isoWeekYear() * 100 + holidayDate.month() + 1) * 100 + holidayDate.date();
+                        holidaysObject[key] = true;
+                    });
+
+                    pCb(null, holidaysObject);
+                });
+            }
+
+            function findAllDevs(pCb){
+                var query = {
+                    $and: [{
+                        $or         : [{
+                            $and: [{
+                                isEmployee: true
+                            }, {
+                                $or: [{
+                                    lastFire: null
+                                }, {
+                                    lastFire: {
+                                        $ne : null,
+                                        $gte: new Date(startDate)
+                                    }
+                                }, {
+                                    lastHire: {
+                                        $ne : null,
+                                        $lte: new Date(endDate)
+                                    }
+                                }]
+                            }]
+                        }, {
+                            $and: [{
+                                isEmployee: false
+                            }, {
+                                lastFire: {
+                                    $ne : null,
+                                    $gte: new Date(startDate)
+                                }
+                            }]
+                        }
+                        ]
+                    }]
+                };
+
+                Employee.aggregate([{
+                    $match: {
+                        'department': {$nin : notDevArray},
+                        hire: {$ne: []}
+                    }
+                }, {
+                    $project: {
+                        isEmployee: 1,
+                        department: 1,
+                        fire      : 1,
+                        hire      : 1,
+                        lastFire  : 1,
+                        lastHire  : {
+                            $let: {
+                                vars: {
+                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                },
+                                in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                            }
+                        }
+                    }
+                }, {
+                    $match: query
+                }, {
+                    $project: {
+                        _id: 1,
+                        department: 1
+                    }
+                }], function (err, employees) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    var resultObject = {};
+
+                    employees.forEach(function (emp) {
+                        resultObject[emp._id] = emp.department;
+                    });
+
+                    pCb(null, resultObject);
+                });
+
+            }
+            parallelFuncs = [formDateArray, findMonthHours, findHolidays, findAllDevs];
+
+            async.parallel(parallelFuncs, function () {
+                if (err){
+                    return wfCb(err);
+                }
+
+                wfCb(null, '');
+            });
+        }
+
+        function createIdle(totalObj, wfCb){
+
+        }
+        waterfallFuncs = [parallelFuncFind, createIdle];
+
+        async.waterfall(waterfallFuncs, function (err, result) {
+            if (err){
+                return callback(err);
+            }
+
+            callback();
+        });
     };
 
     this.reconcile = function (req, res, next) {

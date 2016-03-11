@@ -16,16 +16,14 @@ var PayRoll = function (models) {
     var ObjectId = mongoose.Types.ObjectId;
     var mid = 66;
 
-    var departmentArray = [
-        ObjectId("560c0b83a5d4a2e20ba5068c"),
-        ObjectId("55b92ace21e4b7c40f000013"),
-        ObjectId("55b92ace21e4b7c40f000014"),
-        ObjectId("55b92ace21e4b7c40f000015")
-    ];
+    var departmentArray = CONSTANTS.NOT_DEV_ARRAY;
 
     var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE), ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)];
 
     var composeExpensesAndCache = require('../helpers/expenses')(models);
+
+    var JournalEntryHandler = require('./journalEntry');
+    var journalEntry = new JournalEntryHandler(models);
 
     /*function convertType(array, type) {
      var i;
@@ -814,11 +812,15 @@ var PayRoll = function (models) {
             Payroll.remove({dataKey: dataKey}, wfCb);
         }
 
-        function generateByDataKey(removed, wfCb){
+        function createIdleByMonth(removed, wfCb){
+            journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
+        }
+
+        function generateByDataKey(created, wfCb){
             generate(req, res, next, wfCb);
         }
 
-        waterfallFunc = [removeByDataKey, generateByDataKey];
+        waterfallFunc = [removeByDataKey, createIdleByMonth, generateByDataKey];
 
         async.waterfall(waterfallFunc, function (err, result) {
             if (err){
