@@ -266,19 +266,19 @@ define([
             var vacationHours = (week.vacations || 0) * 8;
             var workedHours = week.hours || 0;
 
-            if (vacationHours > 16) {
-                v = workedHours ? "size40" : "sizeFull";
-                w = workedHours ? "size40" : "size0";
+            // if (vacationHours > 16) {
+            if (vacationHours === 40) {
+                v = workedHours ? 'size40' : 'sizeFull';
+                w = workedHours ? 'size40' : 'size0';
             } else if (vacationHours > 8) {
-                v = workedHours ? "size16" : "size40";
-                w = workedHours ? "size24" : "size40";
+                v = workedHours ? 'size16' : 'size40';
+                w = workedHours ? 'size24' : 'size40';
             } else if (vacationHours > 0) {
-                //v = workedHours ? "size8" : "size8";
-                v = "size8";
-                w = "sizeFull";
+                v = 'size8';
+                w = 'sizeFull';
             } else {
-                v = "size0";
-                w = "sizeFull";
+                v = 'size0';
+                w = 'sizeFull';
             }
 
             if (vacation && vacationHours) {
