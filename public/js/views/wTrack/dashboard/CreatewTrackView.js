@@ -4,7 +4,7 @@ define([
     'Underscore',
     'views/selectView/selectView',
     'views/wTrack/list/createJob',
-    "text!templates/wTrack/dashboard/CreatewTrackTemplate.html",
+    'text!templates/wTrack/dashboard/CreatewTrackTemplate.html',
     'models/wTrackModel',
     'moment',
     'async',
@@ -12,19 +12,19 @@ define([
     'dataService',
     'helpers/employeeHelper'
 ], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService, employeeHelper) {
-    "use strict";
+    'use strict';
     var CreateView = Backbone.View.extend({
-        template: _.template(template),
+        template   : _.template(template),
         responseObj: {},
-        dateByWeek: null,
-        row: null,
+        dateByWeek : null,
+        row        : null,
 
         events: {
-            "click .stageSelect": "showNewSelect",
-            "click td.editable": "editRow",
-            "keydown input.editing ": "keyDown",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click": "removeInputs"
+            'click .stageSelect'                               : 'showNewSelect',
+            'click td.editable'                                : 'editRow',
+            'keydown input.editing'                            : 'keyDown',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            click                                              : 'removeInputs'
         },
 
         initialize: function (options) {
@@ -36,7 +36,7 @@ define([
 
             App.startPreload();
 
-            _.bindAll(self, "saveItem");
+            _.bindAll(self, 'saveItem');
 
             self.dateByWeek = options.dateByWeek;
             self.tds = options.tds;
@@ -52,18 +52,18 @@ define([
             self.employee = options.employee;
             self.department = options.department;
             body = {
-                year: year,
-                month: month,
-                week: self.week,
-                department: {
-                    _id: self.department,
+                year       : year,
+                month      : month,
+                week       : self.week,
+                department : {
+                    _id           : self.department,
                     departmentName: options.departmentName
                 },
-                employee: {
-                    _id: self.employee,
+                employee   : {
+                    _id : self.employee,
                     name: options.employeeName
                 },
-                dateByWeek: parseInt(self.dateByWeek, 10),
+                dateByWeek : parseInt(self.dateByWeek, 10),
                 dateByMonth: dateByMonth
             };
 
@@ -183,7 +183,7 @@ define([
 
             if (this.$el.find('.error').length || this.$el.find('.errorContent').length) {
                 return App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: 'Please, select all information first.'
                 });
             }
@@ -194,24 +194,24 @@ define([
 
             worked = retriveText(worked);
             wTrack = {
-                _id: id,
-                1: mo,
-                2: tu,
-                3: we,
-                4: th,
-                5: fr,
-                6: sa,
-                7: su,
-                jobs: jobs.attr('data-id'),
-                worked: worked,
-                project: project,
-                month: m,
-                year: y,
-                dateByWeek: this.dateByWeek,
+                _id        : id,
+                1          : mo,
+                2          : tu,
+                3          : we,
+                4          : th,
+                5          : fr,
+                6          : sa,
+                7          : su,
+                jobs       : jobs.attr('data-id'),
+                worked     : worked,
+                project    : project,
+                month      : m,
+                year       : y,
+                dateByWeek : this.dateByWeek,
                 dateByMonth: dateByMonth,
-                employee: this.employee,
-                department: this.department,
-                week: this.week
+                employee   : this.employee,
+                department : this.department,
+                week       : this.week
             };
 
             model = new Model(wTrack);
@@ -220,9 +220,9 @@ define([
                 success: function () {
                     return self.hideDialog();
                 },
-                error: function (err) {
+                error  : function (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err.text
                     });
                 }
@@ -331,7 +331,7 @@ define([
                     if (self.project) {
                         dataService.getData("/jobs/getForDD", {
                             "projectId": self.project,
-                            "all": true
+                            "all"      : true
                         }, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
@@ -343,7 +343,7 @@ define([
                         });
                     } else {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please, choose project first.'
                         });
                     }
@@ -456,7 +456,7 @@ define([
             var model = this.project;
 
             new CreateJob({
-                model: model,
+                model    : model,
                 createJob: true
             });
 
@@ -476,7 +476,7 @@ define([
             }
 
             this.selectView = new selectView({
-                e: e,
+                e          : e,
                 responseObj: this.responseObj
             });
 
@@ -500,11 +500,9 @@ define([
 
             dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
                 projects = _.map(projects.data, function (project) {
-                    "use strict";
-
                     project.name = project.projectName;
 
-                    return project
+                    return project;
                 });
 
                 self.responseObj['#project'] = projects;
@@ -514,19 +512,19 @@ define([
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
-                autoOpen: true,
-                resizable: false,
-                title: "Edit Project",
-                dialogClass: "edit-dialog",
-                width: "900px",
-                buttons: {
-                    save: {
-                        text: "Save",
+                autoOpen     : true,
+                resizable    : false,
+                title        : "Edit Project",
+                dialogClass  : "edit-dialog",
+                width        : "900px",
+                buttons      : {
+                    save  : {
+                        text : "Save",
                         class: "btn",
                         click: self.saveItem
                     },
                     cancel: {
-                        text: "Cancel",
+                        text : "Cancel",
                         class: "btn",
                         click: self.hideDialog
                     }

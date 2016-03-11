@@ -65,14 +65,8 @@ define([
         },
 
         createWTrack: function (e) {
-            e.stopPropagation();
             var table = this.$el.find('#dashboardBody');
             var $target = $(e.target);
-
-            if ($target.hasClass('inactive')) {
-                return false;
-            }
-
             var td = $target.closest('td');
             var tr = td.closest('tr');
             var dateByWeek = td.attr('data-date');
@@ -90,6 +84,12 @@ define([
                 first: nameFirst,
                 last : nameLast
             };
+
+            e.stopPropagation();
+
+            if ($target.hasClass('inactive')) {
+                return false;
+            }
 
             new CreatewTrackView({
                 tr            : tr,
