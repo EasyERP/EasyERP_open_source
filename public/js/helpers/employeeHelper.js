@@ -1,44 +1,49 @@
-define(['helpers/getVacationHelper', 'helpers/getHolidayHelper'],
-    function (getVacation, getHoliday) {
-        "use strict";
+define([
+    'helpers/getVacationHelper',
+    'helpers/getHolidayHelper',
+    'moment'
+], function (getVacation, getHoliday, moment) {
+    'use strict';
 
-        var getNonWorkingDaysByWeek = function (year, week, employee, wtrack, callback, context) {
+    var getNonWorkingDaysByWeek = function (year, week, employee, wtrack, callback, context) {
 
-            getVacation.forEmployeeByWeek(year, week, employee, function (vacations) {
+        getVacation.forEmployeeByWeek(year, week, employee, function (vacations) {
 
-                getHoliday.byWeek(year, week, function (holidays) {
-                    var nonWorkingDays = {};
-                    var workingHours = 0;
-                    var vacation;
-                    var holiday;
-                    var i;
+            getHoliday.byWeek(year, week, function (holidays) {
+                var nonWorkingDays = {};
+                var _date = moment().isoWeekYear(year).isoWeek(week).day(1);
+                var _endDay = _date.endOf('month').day();
+                var workingHours = 0;
+                var vacation;
+                var holiday;
+                var i;
 
-                    nonWorkingDays.workingHours = 0;
+                nonWorkingDays.workingHours = 0;
 
-                    for (i = 1; i <= 7; i++) {
-                        vacation = vacations[i.toString()];
-                        holiday = holidays[i.toString()];
+                for (i = 1; i <= 7; i++) {
+                    vacation = vacations[i];
+                    holiday = holidays[i];
 
-                        vacation = vacation || holiday;
+                    vacation = i < _endDay ? (vacation || holiday) : 'disabled';
 
-                        if (vacation) {
-                            nonWorkingDays[i.toString()] = vacation;
-                        } else if (wtrack) {
-                            workingHours = wtrack.get([i.toString()]);
-                            nonWorkingDays.workingHours += workingHours;
+                    if (vacation) {
+                        nonWorkingDays[i] = vacation;
+                    } else if (wtrack) {
+                        workingHours = wtrack.get([i]);
+                        nonWorkingDays.workingHours += workingHours;
 
-                            nonWorkingDays[i.toString()] = workingHours || '';
-                        } else {
-                            nonWorkingDays[i.toString()] = '';
-                        }
+                        nonWorkingDays[i] = workingHours || '';
+                    } else {
+                        nonWorkingDays[i] = '';
                     }
+                }
 
-                    callback(nonWorkingDays, context);
-                });
+                callback(nonWorkingDays, context);
             });
-        };
+        });
+    };
 
-        return {
-            getNonWorkingDaysByWeek: getNonWorkingDaysByWeek
-        };
-    });
+    return {
+        getNonWorkingDaysByWeek: getNonWorkingDaysByWeek
+    };
+});

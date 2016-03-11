@@ -21,7 +21,8 @@ define([
 
         events: {
             'click .stageSelect'                               : 'showNewSelect',
-            'click td.editable'                                : 'editRow',
+            'click td.editable:not(.disabled)'                 : 'editRow',
+            'click td.disabled'                                : 'notify',
             'keydown input.editing'                            : 'keyDown',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             click                                              : 'removeInputs'
@@ -52,17 +53,20 @@ define([
             self.employee = options.employee;
             self.department = options.department;
             body = {
-                year       : year,
-                month      : month,
-                week       : self.week,
-                department : {
+                year : year,
+                month: month,
+                week : self.week,
+
+                department: {
                     _id           : self.department,
                     departmentName: options.departmentName
                 },
-                employee   : {
+
+                employee: {
                     _id : self.employee,
                     name: options.employeeName
                 },
+
                 dateByWeek : parseInt(self.dateByWeek, 10),
                 dateByMonth: dateByMonth
             };
@@ -76,8 +80,6 @@ define([
 
             employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack,
                 function (nonWorkingDays, self) {
-                    "use strict";
-
                     options.nonWorkingDays = nonWorkingDays;
                     self.render(options);
                 }, self);
@@ -88,6 +90,13 @@ define([
             if (e.which === 13) {
                 this.autoCalc(e);
             }
+        },
+
+        notify: function () {
+            App.render({
+                type: 'notify',
+                message: 'This day from another month'
+            });
         },
 
         stopDefaultEvents: function (e) {
