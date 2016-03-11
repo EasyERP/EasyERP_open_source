@@ -1091,6 +1091,7 @@ define([
             var count = $checked.length;
             var message;
             var enableDelete = true;
+
             this.collectionLength = this.collection.length;
 
             if (!this.changed) {
