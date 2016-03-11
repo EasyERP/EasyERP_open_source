@@ -47,7 +47,7 @@ var wTrack = function (models) {
         };
         var employeeQueryForEmployeeByDep;
 
-        var weeksArr;
+        var weeksArr = [];
         var week;
         var year;
         var startDate;
@@ -71,8 +71,6 @@ var wTrack = function (models) {
                 $in: filter.department.value.objectID()
             };
         }
-
-        weeksArr = [];
 
         if (filter && filter.startDate && filter.endDate) {
             startDate = new Date(filter.startDate);

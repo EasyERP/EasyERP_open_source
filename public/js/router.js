@@ -103,7 +103,9 @@ define([
         dashBoardVacation: function (filter) {
             var self = this;
 
-            if (filter) {
+            filter = filter || custom.retriveFromCash('DashVacation.filter');
+
+            if (filter && typeof filter === 'string') {
                 filter = decodeURIComponent(filter);
                 filter = JSON.parse(filter);
             }
