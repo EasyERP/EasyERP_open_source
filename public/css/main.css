@@ -2656,6 +2656,7 @@ dl dd span.ui-spinner {
   width: 99%;
   height: 160px;
   resize: none;
+  line-height: 20px;
 }
 .form .job-info {
   clear: both;
@@ -3231,6 +3232,7 @@ dl dd span.ui-spinner {
   width: 99%;
   height: 160px;
   resize: none;
+  line-height: 20px;
 }
 .formLeftColumn .edited-block p,
 .formLeftColumn .edited-block span {
@@ -3565,6 +3567,7 @@ dl dd span.ui-spinner {
   width: 99%;
   height: 160px;
   resize: none;
+  line-height: 20px;
 }
 .noteWrapper {
   width: 100%;
