@@ -309,7 +309,7 @@ define([
                         App.filter[filterObjectName] = {
                             key  : groupType,
                             value: [],
-                            type : filterType ? filterType : null
+                            type : filterType || null
                         };
                     }
 
