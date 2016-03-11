@@ -798,7 +798,39 @@ var PayRoll = function (models) {
         salaryReport(req, cb);
     };
 
-    this.generate = function (req, res, next) {
+    this.recount = function (req, res, next) {
+        var db = req.session.lastDb;
+        var data = req.body;
+        var dataKey = parseInt(data.dataKey, 10);
+        var year = parseInt(data.dataKey.slice(0, 4), 10);
+        var month = parseInt(data.dataKey.slice(4), 10);
+        var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+        var waterfallFunc;
+
+        req.body.month = month;
+        req.body.year = year;
+
+        function removeByDataKey(wfCb){
+            Payroll.remove({dataKey: dataKey}, wfCb);
+        }
+
+        function generateByDataKey(removed, wfCb){
+            generate(req, res, next, wfCb);
+        }
+
+        waterfallFunc = [removeByDataKey, generateByDataKey];
+
+        async.waterfall(waterfallFunc, function (err, result) {
+            if (err){
+               return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+
+    };
+
+    function generate (req, res, next, cbFromRecalc){
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
@@ -999,10 +1031,18 @@ var PayRoll = function (models) {
                     return next(err);
                 }
 
-                res.status(200).send("ok");
+                if (cbFromRecalc){
+                    cbFromRecalc(null, "ok");
+                } else {
+                    res.status(200).send("ok");
+                }
             });
         });
 
+    }
+
+    this.generate = function (req, res, next) {
+       generate(req, res, next);
     };
 };
 

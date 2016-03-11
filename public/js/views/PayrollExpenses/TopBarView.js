@@ -17,7 +17,8 @@ define([
                 "click #top-bar-editBtn"      : "editEvent",
                 "click #top-bar-createBtn"    : "createEvent",
                 "click #top-bar-generate"     : "generateEvent",
-                //"click #top-bar-copy"         : "copyEvent",
+                "click #top-bar-recount"      : "recountEvent",
+                "click #top-bar-copy"         : "copyEvent",
                 "click #topBarPaymentGenerate": "createPayment"
             },
 
@@ -61,6 +62,12 @@ define([
                 event.preventDefault();
 
                 this.trigger('saveEvent');
+            },
+
+            recountEvent: function (event) {
+                event.preventDefault();
+
+                this.trigger('recountEvent');
             },
 
             createPayment: function (event) {

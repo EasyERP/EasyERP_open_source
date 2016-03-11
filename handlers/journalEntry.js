@@ -801,12 +801,12 @@ var Module = function (models) {
                                     var day = i;
                                     var dateByMonth = wTrackModel.dateByMonth;
                                     var monthHours = monthHoursObject[dateByMonth];
-                                    var overheadRate = monthHours[0].overheadRate || 0;
+                                    var overheadRate =monthHours && monthHours[0] ?   monthHours[0].overheadRate : 0;
                                     var employeeSalary = salaryObject[employeeSubject];
                                     var salary = 0;
                                     var salaryChangeDates = Object.keys(employeeSalary);
                                     var costHour;
-                                    var hoursInMonth = monthHours[0].hours;
+                                    var hoursInMonth = monthHours && monthHours[0] ?  monthHours[0].hours : 0;
                                     var dateKey = (date.isoWeekYear() * 100 + date.month() + 1) * 100 + date.date();
                                     var holidayDate = holidaysObject[dateKey];
                                     var sameDayHoliday = holidayDate;

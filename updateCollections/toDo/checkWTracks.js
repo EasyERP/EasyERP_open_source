@@ -25,6 +25,7 @@ dbObject.once('open', function callback() {
             var year = wTrack.year;
             var week = wTrack.week;
             var day;
+            var dayFirst;
 
             for (var i = 1; i <= 7; i++){
                 if (wTrack[i] !== 0){
@@ -32,21 +33,25 @@ dbObject.once('open', function callback() {
                 }
             }
 
-            var date = moment().isoWeekYear(year).month(month - 1).isoWeek(week).day(day);
+            for (var i = 7; i >= 1; i--){
+                if (wTrack[i] !== 0){
+                    dayFirst = i;
+                }
+            }
 
-            if (date){
-                var checkMonth = moment(date).month() + 1;
+            var dateLast = moment().isoWeekYear(year).month(month - 1).isoWeek(week).day(day);
+            var dateFirst = moment().isoWeekYear(year).month(month - 1).isoWeek(week).day(dayFirst);
 
-                if (month > checkMonth){
+            if (dateLast && dateFirst){
+                if ((moment(dateLast).month() !== moment(dateFirst).month()) && (moment(dateLast).year() !==  moment(dateFirst).year())){
+
                     console.log(wTrack._id);
-                    console.log(year);
-                    console.log(checkMonth);
-                    console.log(moment(date).isoWeek());
-                    console.log(new Date(date));
-                    console.log(month);
-                    console.log(week);
+                    console.log(wTrack.dateByWeek);
                     console.log(counter++);
                 }
+            } else {
+                console.log(wTrack._id);
+                console.log('empty date');
             }
 
         });

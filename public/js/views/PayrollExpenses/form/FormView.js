@@ -1,7 +1,9 @@
 /**
  * Created by lilya on 16/11/15.
  */
+'use strict';
 define([
+    'Backbone',
         'text!templates/PayrollExpenses/form/FormTemplate.html',
         'text!templates/PayrollExpenses/form/sortTemplate.html',
         'text!templates/PayrollExpenses/form/cancelEdit.html',
@@ -20,7 +22,7 @@ define([
         'common'
     ],
 
-    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, common) {
+    function (Backbone, PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, common) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
@@ -47,6 +49,18 @@ define([
                 //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .oe_sortable"     : "goSort",
                 'click .mainTr'          : 'showHidden'
+
+            },
+
+            recount: function () {
+                var self = this;
+                App.startPreload();
+
+                dataService.postData('/payroll/recount', {dataKey: self.dataKey}, function () {
+                    App.stopPreload();
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
+                });
 
             },
 
@@ -973,6 +987,7 @@ define([
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var copyBtnEl = $('#top-bar-copy');
                 var generate = $('#top-bar-generate');
+                var recount = $('#top-bar-recount');
                 var paymentBtnEl = $('#topBarPaymentGenerate');
 
                 this.changed = false;
@@ -983,6 +998,7 @@ define([
                 copyBtnEl.hide();
                 paymentBtnEl.hide();
                 generate.hide();
+                recount.show();
 
                 return false;
             },

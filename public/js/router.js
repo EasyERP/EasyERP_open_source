@@ -910,6 +910,7 @@ define([
                             topbarView.bind('copyEvent', contentView.copy, contentView);
                             topbarView.bind('generateEvent', contentView.generate, contentView);
                             topbarView.bind('createEvent', contentView.createItem, contentView);
+                            topbarView.bind('recountEvent', contentView.recount, contentView);
 
                             contentView.render();
                             self.changeView(contentView);
