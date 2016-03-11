@@ -1087,7 +1087,8 @@ define([
             var mid = 39;
             var model;
             var localCounter = 0;
-            var count = $('#listTable input:checked').length;
+            var $checked = $('#listTable input:checked');
+            var count = $checked.length;
             var message;
             var enableDelete = true;
             this.collectionLength = this.collection.length;
@@ -1100,7 +1101,7 @@ define([
 
                     App.startPreload();
 
-                    $.each($("#listTable input:checked"), function (index, checkbox) {
+                    $.each($checked, function (index, checkbox) {
                         value = checkbox.value;
 
                         if (value.length < 24) {
