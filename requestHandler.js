@@ -85,7 +85,7 @@ var requestHandler = function (app, event, mainDb) {
     event.on('dropHoursCashes', function (req) {
         var HoursCashes = models.get(req.session.lastDb, 'HoursCashes', HoursCashesSchema);
 
-        HoursCashes.remove({}, function (err, result) {
+        HoursCashes.remove({}, function (err) {
             if (err) {
                 return logger.error(err);
             }
@@ -98,20 +98,32 @@ var requestHandler = function (app, event, mainDb) {
     event.on('recalculateKeys', function (options) {
         var req = options.req;
 
-        var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+        var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        var wTrackModel;
+        var month;
+        var week;
+        var year;
+        var _id;
+
+        var isoYear;
+        var dateByWeek;
+        var dateByMonth;
+
+        var query;
 
         if (options.wTrack) {
-            var wTrackModel = options.wTrack.toJSON();
-            var month = wTrackModel.month;
-            var week = wTrackModel.week;
-            var year = wTrackModel.year;
-            var _id = wTrackModel._id;
+            wTrackModel = options.wTrack.toJSON();
+            month = wTrackModel.month;
+            week = wTrackModel.week;
+            year = wTrackModel.year;
+            _id = wTrackModel._id;
 
-            var isoYear = isoWeekYearComposer(wTrackModel);
-            var dateByWeek = isoYear * 100 + week;
-            var dateByMonth = year * 100 + month;
+            isoYear = isoWeekYearComposer(wTrackModel);
+            dateByWeek = isoYear * 100 + week;
+            dateByMonth = year * 100 + month;
 
-            var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth, isoYear: isoYear};
+            query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth, isoYear: isoYear};
 
             wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                 if (err) {

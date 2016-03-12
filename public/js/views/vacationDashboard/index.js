@@ -14,7 +14,7 @@ define([
     'moment',
     'constants'
 ], function (Backbone, $, _, mainTemplate, StatisticsView, VacationDashboard, VacationDashEdit, CreatewTrackView, FilterView, dataService, async, custom, moment, CONSTANTS) {
-    "use strict";
+    'use strict';
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -24,12 +24,12 @@ define([
         expandAll: false,
 
         events: {
-            "click .openAll"                   : "openAll",
-            "click .employeesRow"              : "openEmployee",
-            "click .group"                     : "openDepartment",
-            "click .wTrackInfo :not(.createTd)": "getWtrackInfo",
-            "click td.createTd:not(.inactive)" : "createWTrack",
-            "click"                            : "hideDateRange"
+            'click .openAll'                   : 'openAll',
+            'click .employeesRow'              : 'openEmployee',
+            'click .group'                     : 'openDepartment',
+            'click .wTrackInfo :not(.createTd)': 'getWtrackInfo',
+            'click td.createTd:not(.inactive)' : 'createWTrack',
+            click                              : 'hideDateRange'
         },
 
         initialize: function (options) {
@@ -147,7 +147,7 @@ define([
             var targetEmployee = '.' + $(target).parents('tr').attr('data-id');
             var display = self.$el.find(targetEmployee).css('display');
 
-            if (display === "none") {
+            if (display === 'none') {
                 self.$el.find(targetEmployee).show();
                 targetIcon.text('-');
             } else {
@@ -163,7 +163,7 @@ define([
             var targetProjects = '.projectsFor' + $(target).parents('tr').attr('data-id');
             var display = self.$el.find(targetDepartment).css('display');
 
-            if (display === "none") {
+            if (display === 'none') {
                 self.$el.find(targetDepartment).show();
             } else {
                 self.$el.find(targetDepartment).hide();
@@ -199,7 +199,7 @@ define([
             var _firedDate;
             var i;
 
-            //date = moment().set('year', year).set('week', _week);
+            // date = moment().set('year', year).set('week', _week);
             date = moment().isoWeekYear(year).isoWeek(_week).day(7);
 
             if (!firedLength) {
@@ -220,7 +220,7 @@ define([
         },
 
         getCellClass: function (week, self, employee) {
-            var s = "";
+            var s = '';
             var hours = week.hours || 0;
             var holidays = week.holidays || 0;
             var vacations = week.vacations || 0;
@@ -228,23 +228,23 @@ define([
             hours = hours + (holidays + vacations) * 8;
 
             if (hours > 40) {
-                s += "dgreen ";
+                s += 'dgreen ';
             } else if (hours > 35) {
-                s += "green ";
+                s += 'green ';
             } else if (hours > 19) {
-                s += "yellow ";
+                s += 'yellow ';
             } else if (hours > 8) {
-                s += week.hours ? "pink " : ((self.dateByWeek >= week.dateByWeek) ? "red" : "");
+                s += week.hours ? 'pink ' : ((self.dateByWeek >= week.dateByWeek) ? "red" : "");
             } else if (self.dateByWeek >= week.dateByWeek) {
-                s += "red ";
+                s += 'red ';
             }
 
             if (self.dateByWeek === week.dateByWeek) {
-                s += "active ";
+                s += 'active ';
             }
 
             if (!self.isWorking(employee, week)) {
-                s += "inactive ";
+                s += 'inactive ';
             }
             return s;
         },
@@ -266,19 +266,19 @@ define([
             var vacationHours = (week.vacations || 0) * 8;
             var workedHours = week.hours || 0;
 
-            if (vacationHours > 16) {
-                v = workedHours ? "size40" : "sizeFull";
-                w = workedHours ? "size40" : "size0";
+            // if (vacationHours > 16) {
+            if (vacationHours === 40) {
+                v = workedHours ? 'size40' : 'sizeFull';
+                w = workedHours ? 'size40' : 'size0';
             } else if (vacationHours > 8) {
-                v = workedHours ? "size16" : "size40";
-                w = workedHours ? "size24" : "size40";
+                v = workedHours ? 'size16' : 'size40';
+                w = workedHours ? 'size24' : 'size40';
             } else if (vacationHours > 0) {
-                //v = workedHours ? "size8" : "size8";
-                v = "size8";
-                w = "sizeFull";
+                v = 'size8';
+                w = 'sizeFull';
             } else {
-                v = "size0";
-                w = "sizeFull";
+                v = 'size0';
+                w = 'sizeFull';
             }
 
             if (vacation && vacationHours) {

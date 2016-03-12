@@ -9,9 +9,6 @@ define([
     'use strict';
     var socket = io.connect();
     var fetch;
-    var fetchProjects;
-    var fetchJobs;
-    var fetchInvoice;
 
     function fetchProjects() {
         var fragment = Backbone.history.fragment;
@@ -19,6 +16,8 @@ define([
         if (fragment && fragment.indexOf('projectDashboard') !== -1) {
             App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
         }
+
+        custom.removeFromCash('projectInfo');
     }
 
     function fetchJobs(options) {
@@ -72,6 +71,8 @@ define([
         if (fragment && fragment.indexOf('DashBoardVacation') !== -1) {
             App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
         }
+
+        custom.removeFromCash('dashboardVacation');
     }
 
     fetch = _.debounce(fetchData, 500);

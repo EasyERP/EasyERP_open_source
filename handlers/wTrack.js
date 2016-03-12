@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var wTrack = function (event, models) {
     'use strict';
-    var access = require("../Modules/additions/access.js")(models);
+    var access = require('../Modules/additions/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var _ = require('underscore');
     var wTrackSchema = mongoose.Schemas.wTrack;
@@ -29,30 +29,31 @@ var wTrack = function (event, models) {
 
     exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-    }, exportMap, "wTrack");
+    }, exportMap, 'wTrack');
 
     this.create = function (req, res, next) {
-        access.getEditWritAccess(req, req.session.uId, 75, function (access) {
-            if (access) {
+        access.getEditWritAccess(req, req.session.uId, 75, function (success) {
+            var WTrack;
+            var body;
 
-                var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-                var body = mapObject(req.body);
+            if (success) {
+                WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+                body = mapObject(req.body);
 
                 wTrack = new WTrack(body);
-
-                wTrack.save(function (err, wTrack) {
+                wTrack.save(function (err, _wTrack) {
                     if (err) {
                         return next(err);
                     }
 
-                    event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
+                    event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                    event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
+                    event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
                     event.emit('recollectProjectInfo');
 
-                    res.status(200).send({success: wTrack});
+                    res.status(200).send({success: _wTrack});
                 });
             } else {
                 res.status(403).send();
@@ -68,8 +69,9 @@ var wTrack = function (event, models) {
 
         var worked = 0;
         var hours;
+        var day;
 
-        for (var day = 7; day >= 1; day--) {
+        for (day = 7; day >= 1; day--) {
             hours = data[day];
 
             if (hours) {
@@ -78,52 +80,43 @@ var wTrack = function (event, models) {
         }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 75, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date()
-                    };
-
-                    if (isFinite(worked) && worked === 0) {
-                        WTrack.findByIdAndRemove(id, function (err, wTrack) {
-                            if (err) {
-                                return next(err);
-                            }
-                            if (wTrack) {
-                                event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                                event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
-                                event.emit('recollectProjectInfo');
-                                event.emit('dropHoursCashes', req);
-                                event.emit('recollectVacationDash');
-
-                                if (needUpdateKeys) {
-                                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
-                                }
-                            }
-                            res.status(200).send({success: 'updated'});
-                        });
-                    } else {
-                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
-                            if (err) {
-                                return next(err);
-                            }
-                            if (wTrack) {
-                                event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                                event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
-                                event.emit('recollectProjectInfo');
-                                event.emit('dropHoursCashes', req);
-                                event.emit('recollectVacationDash');
-
-                                if (needUpdateKeys) {
-                                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
-                                }
-                            }
-                            res.status(200).send({success: 'updated'});
-                        });
+            access.getEditWritAccess(req, req.session.uId, 75, function (success) {
+                function resultCb(err, tCard) {
+                    if (err) {
+                        return next(err);
                     }
+
+                    if (tCard) {
+                        event.emit('updateRevenue', {wTrack: tCard, req: req});
+                        event.emit('updateProjectDetails', {req: req, _id: tCard.project});
+                        event.emit('recollectProjectInfo');
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+
+                        if (needUpdateKeys) {
+                            event.emit('recalculateKeys', {req: req, wTrack: tCard});
+                        }
+                    }
+                    res.status(200).send({success: 'updated'});
+                }
+
+                if (!success) {
+                    return res.status(403).send();
+                }
+
+                data.editedBy = {
+                    user: req.session.uId,
+                    date: new Date()
+                };
+
+                if (isFinite(worked) && worked === 0) {
+                    WTrack.findByIdAndRemove(id, resultCb);
                 } else {
-                    res.status(403).send();
+                    if (isFinite(worked)) {
+                        data.worked = worked;
+                    }
+
+                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, resultCb);
                 }
             });
         } else {
@@ -138,55 +131,55 @@ var wTrack = function (event, models) {
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 75, function (access) {
-                if (access) {
-                    async.each(body, function (data, cb) {
-                        var id = data._id;
-                        var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
-
-                        if (data && data.revenue) {
-                            data.revenue *= 100;
-                        }
-
-                        if (data && data.cost) {
-                            data.cost *= 100;
-                        }
-
-                        data.editedBy = {
-                            user: uId,
-                            date: new Date().toISOString()
-                        };
-                        delete data._id;
-
-                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
-                            if (err) {
-                                return cb(err);
-                            }
-
-                            if (wTrack) {
-                                event.emit('updateRevenue', {wTrack: wTrack, req: req});
-                                event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
-                                event.emit('recollectProjectInfo');
-                                event.emit('recollectVacationDash');
-
-                                if (needUpdateKeys) {
-                                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
-                                }
-                            }
-
-                            cb(null, wTrack);
-                        });
-                    }, function (err) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        event.emit('dropHoursCashes', req);
-                        res.status(200).send({success: 'updated'});
-                    });
-                } else {
-                    res.status(403).send();
+            access.getEditWritAccess(req, req.session.uId, 75, function (success) {
+                if (!success) {
+                    return res.status(403).send();
                 }
+
+                async.each(body, function (data, cb) {
+                    var id = data._id;
+                    var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
+
+                    if (data && data.revenue) {
+                        data.revenue *= 100;
+                    }
+
+                    if (data && data.cost) {
+                        data.cost *= 100;
+                    }
+
+                    data.editedBy = {
+                        user: uId,
+                        date: new Date().toISOString()
+                    };
+                    delete data._id;
+
+                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, tCard) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        if (tCard) {
+                            event.emit('updateRevenue', {wTrack: tCard, req: req});
+                            event.emit('updateProjectDetails', {req: req, _id: tCard.project});
+                            event.emit('recollectProjectInfo');
+                            event.emit('recollectVacationDash');
+
+                            if (needUpdateKeys) {
+                                event.emit('recalculateKeys', {req: req, wTrack: tCard});
+                            }
+                        }
+
+                        cb(null, tCard);
+                    });
+                }, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    event.emit('dropHoursCashes', req);
+                    res.status(200).send({success: 'updated'});
+                });
             });
         } else {
             res.status(401).send();
@@ -221,54 +214,58 @@ var wTrack = function (event, models) {
         var filterName;
 
         for (filterName in filter) {
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+            if (filter.hasOwnProperty(filterName)) {
+                condition = filter[filterName].value;
+                key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'projectManager':
-                    filtrElement['projectmanager._id'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'projectName':
-                    filtrElement['project._id'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'customer':
-                    filtrElement['customer._id'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'employee':
-                    filtrElement.employee = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'department':
-                    filtrElement.department = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'year':
-                    convertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'month':
-                    convertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'week':
-                    convertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'isPaid':
-                    convertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'jobs':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
+                switch (filterName) {
+                    case 'projectManager':
+                        filtrElement['projectmanager._id'] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'projectName':
+                        filtrElement['project._id'] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'customer':
+                        filtrElement['customer._id'] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'employee':
+                        filtrElement.employee = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'department':
+                        filtrElement.department = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'year':
+                        convertType(condition, 'integer');
+                        filtrElement[key] = {$in: condition};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'month':
+                        convertType(condition, 'integer');
+                        filtrElement[key] = {$in: condition};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'week':
+                        convertType(condition, 'integer');
+                        filtrElement[key] = {$in: condition};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'isPaid':
+                        convertType(condition, 'boolean');
+                        filtrElement[key] = {$in: condition};
+                        resArray.push(filtrElement);
+                        break;
+                    case 'jobs':
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                        break;
+
+                    // no default
+                }
             }
         }
 
@@ -290,7 +287,7 @@ var wTrack = function (event, models) {
         }
 
         departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
                 {
                     $match: {
                         users: objectId(req.session.uId)
@@ -311,7 +308,7 @@ var wTrack = function (event, models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    //queryObject,
+                    // queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -343,13 +340,14 @@ var wTrack = function (event, models) {
 
             WTrack.aggregate([{
                 $lookup: {
-                    from        : "Project",
-                    localField  : "project",
-                    foreignField: "_id", as: "project"
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id',
+                    as          : 'project'
                 }
             }, {
                 $project: {
-                    project   : {$arrayElemAt: ["$project", 0]},
+                    project   : {$arrayElemAt: ['$project', 0]},
                     employee  : 1,
                     department: 1,
                     month     : 1,
@@ -360,20 +358,22 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $lookup: {
-                    from        : "Employees",
-                    localField  : "project.projectmanager",
-                    foreignField: "_id", as: "projectmanager"
+                    from        : 'Employees',
+                    localField  : 'project.projectmanager',
+                    foreignField: '_id',
+                    as          : 'projectmanager'
                 }
             }, {
                 $lookup: {
-                    from        : "Customers",
-                    localField  : "project.customer",
-                    foreignField: "_id", as: "customer"
+                    from        : 'Customers',
+                    localField  : 'project.customer',
+                    foreignField: '_id',
+                    as          : 'customer'
                 }
             }, {
                 $project: {
-                    customer      : {$arrayElemAt: ["$customer", 0]},
-                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    customer      : {$arrayElemAt: ['$customer', 0]},
+                    projectmanager: {$arrayElemAt: ['$projectmanager', 0]},
                     project       : 1,
                     employee      : 1,
                     department    : 1,
@@ -432,13 +432,13 @@ var wTrack = function (event, models) {
         var dynamicKey = '';
         var i;
         var sortObj = {
-            "Mo": 1,
-            "Tu": 2,
-            "We": 3,
-            "Th": 4,
-            "Fr": 5,
-            "Sa": 6,
-            "Su": 7
+            Mo: 1,
+            Tu: 2,
+            We: 3,
+            Th: 4,
+            Fr: 5,
+            Sa: 6,
+            Su: 7
         };
 
         var sort = {};
@@ -471,11 +471,11 @@ var wTrack = function (event, models) {
                 sort = query.sort;
             }
         } else {
-            sort = {"createdBy.date": -1};
+            sort = {'createdBy.date': -1};
         }
 
         departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
                 {
                     $match: {
                         users: objectId(req.session.uId)
@@ -496,7 +496,7 @@ var wTrack = function (event, models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    //queryObject,
+                    // queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -517,6 +517,7 @@ var wTrack = function (event, models) {
 
         contentSearcher = function (wtrackIds, waterfallCallback) {
             var queryObject = {};
+            var aggregation;
 
             queryObject.$and = [];
             queryObject.$and.push({_id: {$in: _.pluck(wtrackIds, '_id')}});
@@ -525,36 +526,40 @@ var wTrack = function (event, models) {
                 queryObject.$and.push(filterObj);
             }
 
-            var aggregation = WTrack.aggregate([{
+            aggregation = WTrack.aggregate([{
                 $lookup: {
-                    from        : "Project",
-                    localField  : "project",
-                    foreignField: "_id", as: "project"
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id',
+                    as          : 'project'
                 }
             }, {
                 $lookup: {
-                    from        : "Employees",
-                    localField  : "employee",
-                    foreignField: "_id", as: "employee"
+                    from        : 'Employees',
+                    localField  : 'employee',
+                    foreignField: '_id',
+                    as          : 'employee'
                 }
             }, {
                 $lookup: {
-                    from        : "Department",
-                    localField  : "department",
-                    foreignField: "_id", as: "department"
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
                 }
             }, {
                 $lookup: {
-                    from        : "jobs",
-                    localField  : "jobs",
-                    foreignField: "_id", as: "jobs"
+                    from        : 'jobs',
+                    localField  : 'jobs',
+                    foreignField: '_id',
+                    as          : 'jobs'
                 }
             }, {
                 $project: {
-                    project   : {$arrayElemAt: ["$project", 0]},
-                    jobs      : {$arrayElemAt: ["$jobs", 0]},
-                    employee  : {$arrayElemAt: ["$employee", 0]},
-                    department: {$arrayElemAt: ["$department", 0]},
+                    project   : {$arrayElemAt: ['$project', 0]},
+                    jobs      : {$arrayElemAt: ['$jobs', 0]},
+                    employee  : {$arrayElemAt: ['$employee', 0]},
+                    department: {$arrayElemAt: ['$department', 0]},
                     createdBy : 1,
                     month     : 1,
                     year      : 1,
@@ -566,37 +571,40 @@ var wTrack = function (event, models) {
                     cost      : 1,
                     worked    : 1,
                     isPaid    : 1,
-                    "1"       : 1,
-                    "2"       : 1,
-                    "3"       : 1,
-                    "4"       : 1,
-                    "5"       : 1,
-                    "6"       : 1,
-                    "7"       : 1
+                    1         : 1,
+                    2         : 1,
+                    3         : 1,
+                    4         : 1,
+                    5         : 1,
+                    6         : 1,
+                    7         : 1
                 }
             }, {
                 $lookup: {
-                    from        : "Employees",
-                    localField  : "project.projectmanager",
-                    foreignField: "_id", as: "projectmanager"
+                    from        : 'Employees',
+                    localField  : 'project.projectmanager',
+                    foreignField: '_id',
+                    as          : 'projectmanager'
                 }
             }, {
                 $lookup: {
-                    from        : "Customers",
-                    localField  : "project.customer",
-                    foreignField: "_id", as: "customer"
+                    from        : 'Customers',
+                    localField  : 'project.customer',
+                    foreignField: '_id',
+                    as          : 'customer'
                 }
             }, {
                 $lookup: {
-                    from        : "workflows",
-                    localField  : "project.workflow",
-                    foreignField: "_id", as: "workflow"
+                    from        : 'workflows',
+                    localField  : 'project.workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
                 }
             }, {
                 $project: {
-                    customer      : {$arrayElemAt: ["$customer", 0]},
-                    workflow      : {$arrayElemAt: ["$workflow", 0]},
-                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    customer      : {$arrayElemAt: ['$customer', 0]},
+                    workflow      : {$arrayElemAt: ['$workflow', 0]},
+                    projectmanager: {$arrayElemAt: ['$projectmanager', 0]},
                     createdBy     : 1,
                     project       : 1,
                     jobs          : 1,
@@ -612,13 +620,13 @@ var wTrack = function (event, models) {
                     cost          : 1,
                     worked        : 1,
                     isPaid        : 1,
-                    "1"           : 1,
-                    "2"           : 1,
-                    "3"           : 1,
-                    "4"           : 1,
-                    "5"           : 1,
-                    "6"           : 1,
-                    "7"           : 1
+                    1             : 1,
+                    2             : 1,
+                    3             : 1,
+                    4             : 1,
+                    5             : 1,
+                    6             : 1,
+                    7             : 1
                 }
             }, {
                 $match: queryObject
@@ -639,8 +647,8 @@ var wTrack = function (event, models) {
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        access.getReadAccess(req, req.session.uId, 75, function (access) {
-            if (!access) {
+        access.getReadAccess(req, req.session.uId, 75, function (success) {
+            if (!success) {
                 return res.status(403).send();
             }
 
@@ -658,20 +666,20 @@ var wTrack = function (event, models) {
         var id = req.params.id;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
-        access.getDeleteAccess(req, req.session.uId, 75, function (access) {
-            if (access) {
-                WTrack.findByIdAndRemove(id, function (err, wTrack) {
+        access.getDeleteAccess(req, req.session.uId, 75, function (success) {
+            if (success) {
+                WTrack.findByIdAndRemove(id, function (err, tCard) {
                     var projectId;
 
                     if (err) {
                         return next(err);
                     }
 
-                    projectId = wTrack ? wTrack.project : null;
+                    projectId = tCard ? tCard.project : null;
 
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('updateRevenue', {wTrack: wTrack, req: req});
+                    event.emit('updateRevenue', {wTrack: tCard, req: req});
 
                     if (projectId) {
                         event.emit('updateProjectDetails', {req: req, _id: projectId});
@@ -679,7 +687,7 @@ var wTrack = function (event, models) {
 
                     event.emit('recollectProjectInfo');
 
-                    res.status(200).send({success: wTrack});
+                    res.status(200).send({success: tCard});
                 });
             } else {
                 res.status(403).send();
@@ -709,13 +717,13 @@ var wTrack = function (event, models) {
         var dynamicKey = '';
         var i;
         var sortObj = {
-            "Mo": 1,
-            "Tu": 2,
-            "We": 3,
-            "Th": 4,
-            "Fr": 5,
-            "Sa": 6,
-            "Su": 7
+            Mo: 1,
+            Tu: 2,
+            We: 3,
+            Th: 4,
+            Fr: 5,
+            Sa: 6,
+            Su: 7
         };
 
         var sort = {};
@@ -747,11 +755,11 @@ var wTrack = function (event, models) {
                 sort = query.sort;
             }
         } else {
-            sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
+            sort = {'project.projectName': 1, year: 1, month: 1, week: 1};
         }
 
         departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
                 {
                     $match: {
                         users: objectId(req.session.uId)
@@ -772,7 +780,7 @@ var wTrack = function (event, models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    //queryObject,
+                    // queryObject,
                     {
                         $or: whoCanRw
                     }

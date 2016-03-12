@@ -495,6 +495,8 @@ define([
                 if (this.editCollection) { // add for reset editCollection after sort
                     this.editCollection.reset(this.collection.models);
                 }
+
+                App.stopPreload();
             },
 
             alpabeticalRender: function (e) {

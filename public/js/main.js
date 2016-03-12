@@ -315,7 +315,7 @@ require(['app'], function (app) {
             }
         }
 
-        Backbone.history.navigate(url);
+        Backbone.history.navigate(url, {replace: true});
 
     };
 

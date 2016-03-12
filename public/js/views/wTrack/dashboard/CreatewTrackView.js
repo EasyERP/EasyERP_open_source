@@ -34,6 +34,8 @@ define([
             var dateByMonth;
             var body;
 
+            App.startPreload();
+
             _.bindAll(self, "saveItem");
 
             self.dateByWeek = options.dateByWeek;
@@ -506,6 +508,8 @@ define([
                 });
 
                 self.responseObj['#project'] = projects;
+
+                App.stopPreload();
             });
 
             this.$el = $(formString).dialog({

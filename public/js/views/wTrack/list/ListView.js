@@ -1,32 +1,32 @@
 define([
-        'Backbone',
-        'Underscore',
-        'jQuery',
-        'views/listViewBase',
-        'views/selectView/selectView',
-        'text!templates/wTrack/list/ListHeader.html',
-        'text!templates/wTrack/list/cancelEdit.html',
-        'text!templates/wTrack/list/forWeek.html',
-        'views/wTrack/CreateView',
-        'views/wTrack/list/ListItemView',
-        'views/wTrack/EditView',
-        'views/salesInvoice/wTrack/CreateView',
-        'models/wTrackModel',
-        'collections/wTrack/filterCollection',
-        'collections/wTrack/editCollection',
-        'views/Filter/FilterView',
-        'views/wTrack/list/createJob',
-        'common',
-        'dataService',
-        'populate',
-        'async',
-        'custom',
-        'moment',
-        'constants',
-        'helpers/keyCodeHelper',
-        'helpers/employeeHelper'
-    ], function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes, employeeHelper) {
-        "use strict";
+    'Backbone',
+    'Underscore',
+    'jQuery',
+    'views/listViewBase',
+    'views/selectView/selectView',
+    'text!templates/wTrack/list/ListHeader.html',
+    'text!templates/wTrack/list/cancelEdit.html',
+    'text!templates/wTrack/list/forWeek.html',
+    'views/wTrack/CreateView',
+    'views/wTrack/list/ListItemView',
+    'views/wTrack/EditView',
+    'views/salesInvoice/wTrack/CreateView',
+    'models/wTrackModel',
+    'collections/wTrack/filterCollection',
+    'collections/wTrack/editCollection',
+    'views/Filter/FilterView',
+    'views/wTrack/list/createJob',
+    'common',
+    'dataService',
+    'populate',
+    'async',
+    'custom',
+    'moment',
+    'constants',
+    'helpers/keyCodeHelper',
+    'helpers/employeeHelper'
+], function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes, employeeHelper) {
+    'use strict';
 
     var wTrackListView = listViewBase.extend({
         createView              : createView,
@@ -298,8 +298,8 @@ define([
             this.changedModels[wTrackId].worked = worked;
         },
 
-            setEditable: function (td) {
-                var tr;
+        setEditable: function (td) {
+            var tr;
 
             if (!td.parents) {
                 td = $(td.target).closest('td');
@@ -310,9 +310,9 @@ define([
             tr.addClass('edited');
             // td.addClass('edited');
 
-                if (this.isEditRows()) {
-                    this.setChangedValue();
-                }
+            if (this.isEditRows()) {
+                this.setChangedValue();
+            }
 
             return false;
         },
@@ -370,11 +370,11 @@ define([
                     editedElement.remove();
                 }
 
-                }
-                function funcForWeek(cb) {
-                    var weeks;
-                    var month = editedElementValue;
-                    var year = editedElement.closest('tr').find('[data-content="year"]').text();
+            }
+            function funcForWeek(cb) {
+                var weeks;
+                var month = editedElementValue;
+                var year = editedElement.closest('tr').find('[data-content="year"]').text();
 
                 weeks = custom.getWeeks(month, year);
 
@@ -423,7 +423,7 @@ define([
 
             if (isSelect) {
                 if (content === 'jobs') {
-                    if (!projectId && !projectId.length){
+                    if (!projectId && !projectId.length) {
                         return false;
                     }
                     dataService.getData("/jobs/getForDD", {
@@ -433,7 +433,7 @@ define([
 
                         self.responseObj['#jobs'] = jobs;
 
-                       // tr.find('[data-content="jobs"]').addClass('editable');
+                        // tr.find('[data-content="jobs"]').addClass('editable');
                         self.showNewSelect(e);
                         return false;
                     });
@@ -692,7 +692,7 @@ define([
                     changedAttr.employee = employee;
                     changedAttr.department = department;
 
-                        targetElement.attr("data-id", employee._id);
+                    targetElement.attr("data-id", employee._id);
 
                     this.calculateCost(e, wTrackId);
 
@@ -771,8 +771,8 @@ define([
             this.setAllTotalVals();
         },
 
-            saveItem: function () {
-                var model;
+        saveItem: function () {
+            var model;
 
             var errors = this.$el.find('.errorContent');
 
@@ -789,13 +789,13 @@ define([
 
             this.editCollection.save();
 
-                //for (var id in this.changedModels) {
-                //    delete this.changedModels[id];
-                //    this.editCollection.remove(id);
-                //}
+            //for (var id in this.changedModels) {
+            //    delete this.changedModels[id];
+            //    this.editCollection.remove(id);
+            //}
 
-                this.$el.find('.edited').removeClass('edited');
-            },
+            this.$el.find('.edited').removeClass('edited');
+        },
 
         savedNewModel: function (modelObject) {
             var savedRow = this.$listTable.find('.false');
@@ -891,19 +891,19 @@ define([
             return !!newRow.length;
         },
 
-            createItem: function () {
-                var now = new Date();
-                var year = now.getFullYear();
-                var month = now.getMonth() + 1;
-                var week = now.getWeek();
-                // var rate = 3;
-                var startData = {
-                    year        : year,
-                    month       : month,
-                    week        : week,
-                    //rate        : rate,
-                    projectModel: null
-                };
+        createItem: function () {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth() + 1;
+            var week = now.getWeek();
+            // var rate = 3;
+            var startData = {
+                year        : year,
+                month       : month,
+                week        : week,
+                //rate        : rate,
+                projectModel: null
+            };
 
             var model = new currentModel(startData);
 
@@ -921,9 +921,9 @@ define([
                 });
             }
 
-                this.createdCopied = true;
-                this.changed = true;
-            },
+            this.createdCopied = true;
+            this.changed = true;
+        },
 
         showSaveCancelBtns: function () {
             var saveBtnEl = $('#top-bar-saveBtn');
@@ -1053,11 +1053,12 @@ define([
 
             if (deleteCounter !== this.collectionLength) {
                 var created = holder.find('#timeRecivingDataFromServer');
-                created.before(new listItemView({
-                    collection : this.collection,
-                    page       : holder.find("#currentShowPage").val(),
-                    itemsNumber: holder.find("span#itemsNumber").text()
-                }).render());//added two parameters page and items number
+                created.before(
+                    new listItemView({
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
+                        itemsNumber: holder.find("span#itemsNumber").text()
+                    }).render());//added two parameters page and items number
             }
 
             pagenation = this.$el.find('.pagination');
@@ -1082,21 +1083,25 @@ define([
 
         deleteItems: function () {
             var $currentEl = this.$el;
-            var that = this,
-                mid = 39,
-                model;
+            var that = this;
+            var mid = 39;
+            var model;
             var localCounter = 0;
-            var count = $("#listTable input:checked").length;
+            var $checked = $('#listTable input:checked');
+            var count = $checked.length;
             var message;
             var enableDelete = true;
             this.collectionLength = this.collection.length;
 
             if (!this.changed) {
-                var answer = confirm("Really DELETE items ?!");
+                var answer = confirm('Really DELETE items ?!');
                 var value;
 
                 if (answer === true) {
-                    $.each($("#listTable input:checked"), function (index, checkbox) {
+
+                    App.startPreload();
+
+                    $.each($checked, function (index, checkbox) {
                         value = checkbox.value;
 
                         if (value.length < 24) {
@@ -1105,7 +1110,7 @@ define([
                                 this.listLength--;
                                 localCounter++;
 
-                                if (index === count - 1) {
+                                if (localCounter === count) {
                                     that.triggerDeleteItemsRender(localCounter);
                                 }
 
@@ -1113,8 +1118,9 @@ define([
                         } else {
 
                             model = that.collection.get(value);
-                            enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed' ? true: false;
-                            if (!model.toJSON().workflow){
+                            enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed';
+
+                            if (!model.toJSON().workflow) {
                                 if ($.trim($currentEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
                                     enableDelete = true;
                                 }
@@ -1129,7 +1135,7 @@ define([
                                         that.listLength--;
                                         localCounter++;
 
-                                        if (index === count - 1) {
+                                        if (localCounter === count) {
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
@@ -1142,24 +1148,31 @@ define([
                                         }
                                         that.listLength--;
                                         localCounter++;
-                                        if (index == count - 1) {
-                                            if (index === count - 1) {
-                                                that.triggerDeleteItemsRender(localCounter);
-                                            }
-                                        }
 
+                                        if (localCounter === count) {
+                                            that.triggerDeleteItemsRender(localCounter);
+                                        }
                                     }
                                 });
                             } else {
                                 message = "You can't delete tCard with closed project.";
+
                                 App.render({
                                     type   : 'error',
                                     message: message
                                 });
+
+                                localCounter++;
+
+                                if (localCounter === count) {
+                                    that.triggerDeleteItemsRender(localCounter);
+                                }
                             }
 
                         }
                     });
+
+
                 }
             } else {
                 this.cancelChanges();
@@ -1222,9 +1235,9 @@ define([
                 this.createdCopied = false;
             }
 
-                self.changedModels = {};
-                self.responseObj['#jobs'] = [];
-            },
+            self.changedModels = {};
+            self.responseObj['#jobs'] = [];
+        },
 
         render: function () {
             var self = this;
@@ -1323,7 +1336,7 @@ define([
             this.$saveBtn = $('#top-bar-saveBtn');
 
             return this;
-        },
+        }
     });
 
     return wTrackListView;

@@ -2,5 +2,8 @@
   "extends": "thinkmobiles/legacy.js",
   "globals"     : {
     "App": true
+  },
+  "rules": {
+    "no-param-reassign": [2, {"props": true}]
   }
 }
