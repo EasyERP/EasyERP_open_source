@@ -35,6 +35,7 @@ var wTrack = function (event, models) {
         access.getEditWritAccess(req, req.session.uId, 75, function (success) {
             var WTrack;
             var body;
+            var wTrack;
 
             if (success) {
                 WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -136,15 +137,42 @@ var wTrack = function (event, models) {
                     return res.status(403).send();
                 }
 
-                async.each(body, function (data, cb) {
-                    var id = data._id;
-                    var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
+                function resultCb(err, tCard, needUpdateKeys, cb) {
+                    if (err) {
+                        return cb(err);
+                    }
 
-                    if (data && data.revenue) {
+                    if (tCard) {
+                        event.emit('updateRevenue', {wTrack: tCard, req: req});
+                        event.emit('updateProjectDetails', {req: req, _id: tCard.project});
+                        event.emit('recollectProjectInfo');
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+
+                        if (needUpdateKeys) {
+                            event.emit('recalculateKeys', {req: req, wTrack: tCard});
+                        }
+                    }
+
+                    cb(null, tCard);
+                }
+
+                async.each(body, function (data, cb) {
+                    var id;
+                    var needUpdateKeys;
+                    var worked;
+
+                    data = data || {};
+                    worked = data.worked || 0;
+
+                    id = data._id;
+                    needUpdateKeys = data.month || data.week || data.year || data.isoYear;
+
+                    if (data.revenue) {
                         data.revenue *= 100;
                     }
 
-                    if (data && data.cost) {
+                    if (data.cost) {
                         data.cost *= 100;
                     }
 
@@ -152,26 +180,22 @@ var wTrack = function (event, models) {
                         user: uId,
                         date: new Date().toISOString()
                     };
+
                     delete data._id;
 
-                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, tCard) {
-                        if (err) {
-                            return cb(err);
+                    if (isFinite(worked) && worked === 0) {
+                        WTrack.findByIdAndRemove(id, function(err, tCard){
+                            resultCb(err, tCard, needUpdateKeys, cb);
+                        });
+                    } else {
+                        if (isFinite(worked)) {
+                            data.worked = worked;
                         }
 
-                        if (tCard) {
-                            event.emit('updateRevenue', {wTrack: tCard, req: req});
-                            event.emit('updateProjectDetails', {req: req, _id: tCard.project});
-                            event.emit('recollectProjectInfo');
-                            event.emit('recollectVacationDash');
-
-                            if (needUpdateKeys) {
-                                event.emit('recalculateKeys', {req: req, wTrack: tCard});
-                            }
-                        }
-
-                        cb(null, tCard);
-                    });
+                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, tCard){
+                            resultCb(err, tCard, needUpdateKeys, cb);
+                        });
+                    }
                 }, function (err) {
                     if (err) {
                         return next(err);

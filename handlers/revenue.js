@@ -3620,7 +3620,7 @@ var wTrack = function (models) {
                 }
             }, {
                 $group: {
-                    _id  : {
+                    _id           : {
                         date   : '$date',
                         revenue: '$revenue'
                     },
@@ -3633,10 +3633,10 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    date   : '$_id.date',
-                    revenue: '$_id.revenue',
-                    revenueBySales  : 1,
-                    _id    : 0
+                    date          : '$_id.date',
+                    revenue       : '$_id.revenue',
+                    revenueBySales: 1,
+                    _id           : 0
                 }
             }], parallelCb);
 
