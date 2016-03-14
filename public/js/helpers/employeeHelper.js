@@ -11,12 +11,18 @@ define([
 
             getHoliday.byWeek(year, week, function (holidays) {
                 var nonWorkingDays = {};
-                var _date = moment().isoWeekYear(year).isoWeek(week).day(1);
-                var _endDay = _date.endOf('month').day();
+                var _date = moment().isoWeekYear(year).isoWeek(week);
+                var _monDate = moment(_date).day(1);
+                var _satDate = moment(_date).day(7);
                 var workingHours = 0;
+                var _endDay = 7;
                 var vacation;
                 var holiday;
                 var i;
+
+                if (_monDate.month() !== _satDate.month()) {
+                    _endDay = _date.endOf('month').day();
+                }
 
                 nonWorkingDays.workingHours = 0;
 
@@ -24,7 +30,7 @@ define([
                     vacation = vacations[i];
                     holiday = holidays[i];
 
-                    vacation = i < _endDay ? (vacation || holiday) : 'disabled';
+                    vacation = i <= _endDay ? (vacation || holiday) : 'disabled';
 
                     if (vacation) {
                         nonWorkingDays[i] = vacation;

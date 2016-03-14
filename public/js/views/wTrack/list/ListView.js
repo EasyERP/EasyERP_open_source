@@ -37,9 +37,9 @@ define([
         contentType             : 'wTrack',
         viewType                : 'list',
         responseObj             : {},
-        wTrackId                : null, //need for edit rows in listView
+        wTrackId                : null, // need for edit rows in listView
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-        $listTable              : null, //cashedJqueryEllemnt
+        $listTable              : null, // cashedJqueryEllemnt
         editCollection          : null,
         selectedProjectId       : [],
         genInvoiceEl            : null,
@@ -65,13 +65,13 @@ define([
         },
 
         events: {
-            "click .stageSelect"                               : "showNewSelect",
-            "click tr.enableEdit"                              : "editRow",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "change .autoCalc"                                 : "autoCalc",
-            "change .editable"                                 : "setEditable",
-            "keydown input.editing"                            : "keyDown",
-            "click"                                            : "removeInputs"
+            'click .stageSelect'                               : 'showNewSelect',
+            'click tr.enableEdit'                              : 'editRow',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'change .autoCalc'                                 : 'autoCalc',
+            'change .editable'                                 : 'setEditable',
+            'keydown input.editing'                            : 'keyDown',
+            'click'                                            : 'removeInputs'
         },
 
         removeInputs: function () {
@@ -110,7 +110,7 @@ define([
             var tr = this.$listTable.find('.false');
             var projectId = tr.find('[data-content="project"]').attr('data-id');
 
-            dataService.getData("/jobs/getForDD", {"projectId": projectId, "all": true}, function (jobs) {
+            dataService.getData('/jobs/getForDD', {projectId: projectId, all: true}, function (jobs) {
 
                 self.responseObj['#jobs'] = jobs;
 
@@ -383,7 +383,6 @@ define([
         },
 
         editRow: function (e) {
-            e.stopPropagation();
             var el = $(e.target);
             var self = this;
             var tr = $(e.target).closest('tr');
@@ -408,6 +407,8 @@ define([
             var previousYear;
             var nextYear;
             var projectId = tr.find('[data-content="project"]').attr('data-id');
+
+            e.stopPropagation();
 
             if (wTrackId && el.prop('tagName') !== 'INPUT') {
                 if (this.wTrackId) {
@@ -616,11 +617,11 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
-            var targetElement = target.parents("td");
-            var tr = target.parents("tr");
+            var targetElement = target.parents('td');
+            var tr = target.parents('tr');
             var modelId = tr.attr('data-id');
-            var id = target.attr("id");
-            var attr = targetElement.attr("id") || targetElement.data("content");
+            var id = target.attr('id');
+            var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
             var projectManager;
             var assignedContainer;
@@ -659,7 +660,7 @@ define([
                     assignedContainer.text(projectManager);
                     targetElement.attr('data-id', id);
 
-                    tr.find('[data-content="jobs"]').text("");
+                    tr.find('[data-content="jobs"]').text('');
 
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
                     tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
@@ -668,7 +669,7 @@ define([
 
                     changedAttr.project = project;
 
-                    dataService.getData("/jobs/getForDD", {"projectId": project, "all": true}, function (jobs) {
+                    dataService.getData('/jobs/getForDD', {projectId: project, all: true}, function (jobs) {
 
                         self.responseObj['#jobs'] = jobs;
 
@@ -676,7 +677,6 @@ define([
                     });
 
                 } else if (elementType === '#jobs') {
-
                     jobs = element._id;
 
                     changedAttr.jobs = jobs;
@@ -692,9 +692,11 @@ define([
                     changedAttr.employee = employee;
                     changedAttr.department = department;
 
-                    targetElement.attr("data-id", employee._id);
+                    targetElement.attr('data-id', employee._id);
 
-                    this.calculateCost(e, wTrackId);
+
+                    // this.calculateCost(e, wTrackId);
+                    this.chackVacHolMonth(tr);
 
                     tr.find('[data-content="department"]').removeClass('errorContent');
                 } else if (elementType === '#department') {
@@ -705,16 +707,18 @@ define([
                     week = $(e.target).text();
 
                     changedAttr.week = week;
+
+                    this.chackVacHolMonth(tr);
                 } else if (elementType === '#year') {
                     year = $(e.target).text();
 
                     changedAttr.year = year;
+
+                    this.chackVacHolMonth(tr);
                 }
 
                 targetElement.removeClass('errorContent');
-
                 targetElement.text(target.text());
-
             } else if (id === 'createJob') {
                 self.generateJob(e);
             }
@@ -723,6 +727,15 @@ define([
             this.setEditable(targetElement);
 
             return false;
+        },
+
+        chackVacHolMonth: function ($targetTr) {
+            // todo add spiner load
+            employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack,
+                function (nonWorkingDays, self) {
+                    options.nonWorkingDays = nonWorkingDays;
+                    self.render(options);
+                }, self);
         },
 
         checked: function (e) {
@@ -973,7 +986,6 @@ define([
 
             if (!checkLength || !model || model.get('isPaid')) {
                 this.selectedProjectId = [];
-                //this.genInvoiceEl.hide();
 
                 return false;
             }
@@ -985,12 +997,6 @@ define([
             }
 
             this.selectedProjectId = _.uniq(this.selectedProjectId);
-
-            //if (this.selectedProjectId.length !== 1) {
-            //    this.genInvoiceEl.hide();
-            //} else {
-            //    this.genInvoiceEl.show();
-            //}
         },
 
         getAutoCalcField: function (idTotal, dataRow, money) {
