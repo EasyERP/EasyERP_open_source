@@ -588,35 +588,35 @@ var Module = function (models) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
-        var startDate = moment(new Date()).isoWeekYear(year).month(month).date(1);
-        var endDate = moment(new Date()).isoWeekYear(year).month(month).endOf('month');
-        var dateKeysInMonth = {};
+        var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+        var startDate = moment(new Date()).isoWeekYear(year).month(month - 1).date(1);
+        var endDate = moment(new Date()).isoWeekYear(year).month(month - 1).endOf('month');
+        var dateArrayInMonth = [];
         var parallelFuncs;
         var waterfallFuncs;
         var monthKey = year * 100 + month;
         var monthHoursObject = {};
         var holidaysObject = {};
-        var employeesObject = [];
-        var hireObj = {};
+        var employeesObject = {};
 
         function parallelFuncFind(wfCb) {
 
             function formDateArray(pCb) {
                 var endOfMonth = endDate.date();
+                var date = startDate;
                 var i;
 
                 for (i = endOfMonth; i >= 1; i--) {
-                    var key = (year * 100 + month) * 100 + i;
-                    dateKeysInMonth[key] = true;
+                   // var key = (year * 100 + month) * 100 + i;
+                    dateArrayInMonth.push(new Date(date.date(i).set({hour: 18, minute: 1, second: 0})));
                 }
-                pCb(null, dateKeysInMonth);
+                pCb(null, dateArrayInMonth);
             }
 
             function findMonthHours(pCb) {
                 redisStore.readFromStorage('monthHours', monthKey, function (err, result) {
 
-                    result = JSON.parse(result);
-                    monthHoursObject = result;
+                    monthHoursObject = result[0] || {};
                     pCb(null, monthHoursObject);
                 });
             }
@@ -708,7 +708,7 @@ var Module = function (models) {
                     }
 
                     employees.forEach(function (emp) {
-                        employeesObject[emp._id] = emp.department;
+                        employeesObject[emp._id.toString()] = emp.department.toString();
                     });
 
                     pCb(null, employeesObject);
@@ -730,7 +730,6 @@ var Module = function (models) {
         function forEachEmployee(totalObj, wfCb) {
             var waterfallTasks;
             var parallelPart;
-            var removeIdleJE;
             var createJE;
             var employees = Object.keys(employeesObject);
 
@@ -743,15 +742,114 @@ var Module = function (models) {
                     var salary = 0;
 
                     findJE = function (pcb) {
-                        Model.aggregate([], function (err, result) {
+
+                        function findByWTrack(parallelCb) {
+                            Model.aggregate([{
+                                $match: {
+                                    date                  : {
+                                        $gte: new Date(startDate),
+                                        $lte: new Date(endDate)
+                                    },
+                                    "sourceDocument.model": "wTrack",
+                                    debit                 : {$gt: 0}
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "wTrack",
+                                    localField  : "sourceDocument._id",
+                                    foreignField: "_id", as: "sourceDocument._id"
+                                }
+                            }, {
+                                $project: {
+                                    debit               : {$divide: ['$debit', '$currency.rate']},
+                                    'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]}
+                                }
+                            }, {
+                                $match: {
+                                    'sourceDocument._id.employee': employeeId
+                                }
+                            }, {
+                                $group: {
+                                    _id: '$date'
+                                }
+                            }], function (err, result) {
+                                if (err) {
+                                    return parallelCb(err);
+                                }
+
+                                var dates = _.pluck(result, '_id');
+
+                                parallelCb(null, dates);
+                            });
+                        }
+
+                        function findByEmployee(parallelCb) {
+                            Model.aggregate([{
+                                $match: {
+                                    date                : {
+                                        $gte: new Date(startDate),
+                                        $lte: new Date(endDate)
+                                    },
+                                    "sourceDocument._id": employeeId,
+                                    debit               : {$gt: 0}
+                                }
+                            }, {
+                                $group: {
+                                    _id: '$date'
+                                }
+                            }], function (err, result) {
+                                if (err) {
+                                    return parallelCb(err);
+                                }
+
+                                var dates = _.pluck(result, '_id');
+
+                                parallelCb(null, dates);
+                            });
+                        }
+
+                        function removeIdleJE(parallelCb) {
+                            Model.aggregate([{
+                                $match: {
+                                    date                  : {
+                                        $gte: new Date(startDate),
+                                        $lte: new Date(endDate)
+                                    },
+                                    "sourceDocument.model": 'Employees',
+                                    debit                 : {$gt: 0},
+                                    journal               : CONSTANTS.IDLE_PAYABLE
+                                }
+                            }, {
+                                $project: {
+                                    _id: 1
+                                }
+                            }], function (err, result) {
+                                if (err) {
+                                    return parallelCb(err);
+                                }
+
+                                var ids = _.pluck(result, '_id');
+
+                                Model.remove({_id: {$in: ids}}, function (err, result) {
+                                    if (err) {
+                                        return parallelCb(err);
+                                    }
+                                });
+
+                                parallelCb();
+                            });
+                        }
+
+                        async.parallel([findByWTrack, findByEmployee, removeIdleJE], function (err, result) {
                             if (err) {
                                 return pcb(err);
                             }
 
-                            var jEForRemove = [];
-                            var dateObjectForEmployee = {};
+                            var firstResult = result[0];
+                            var secondResult = result[1];
+                            var dateArrayForEmployee = _.union(firstResult, secondResult);
 
-                            pcb(null, {jEForRemove: jEForRemove, dateObjectForEmployee: dateObjectForEmployee});
+                            pcb(null, dateArrayForEmployee);
                         });
 
                     };
@@ -768,19 +866,24 @@ var Module = function (models) {
 
                             var vacation = result && result.length ? result[0] : {};
 
-                            var vacArray = vacation.vacArray;
-                            var newDate = moment().isoWeekYear(vacation.year).month(vacation.month - 1).date(1);
-                            var i;
-                            var resultObject = {};
+                            if (Object.keys(vacation).length){
+                                var vacArray = vacation.vacArray;
+                                var newDate = moment(new Date()).isoWeekYear(vacation.year).month(vacation.month - 1).date(1);
+                                var i;
+                                var resultObject = {};
 
-                            for (i = vacArray.length - 1; i >= 0; i--) {
-                                if ((vacArray[i] === "V") || (vacArray[i] === "S")) {
-                                    var key = (newDate.date(i + 1).year() * 100 + newDate.date(i + 1).month() + 1) * 100 + i + 1;
-                                    resultObject[key] = vacArray[i];
+                                for (i = vacArray.length - 1; i >= 0; i--) {
+                                    if ((vacArray[i] === "V") || (vacArray[i] === "S")) {
+                                        var key = (newDate.date(i + 1).year() * 100 + newDate.date(i + 1).month() + 1) * 100 + i + 1;
+                                        resultObject[key] = vacArray[i];
+                                    }
                                 }
+
+                                pcb(null, resultObject);
+                            } else {
+                                pcb(null, {});
                             }
 
-                            pcb(null, resultObject);
                         });
                     };
 
@@ -811,11 +914,62 @@ var Module = function (models) {
                             return cb(err);
                         }
 
-                        cb();
+                        cb(null, {journalDates: result[0], vacation: result[1], salary: result[2]});
                     });
                 };
 
-                waterfallTasks = [parallelPart, removeIdleJE, createJE];
+                createJE = function (result, cb) {
+                    var journalDates = result.journalDates;
+                    var vacation = result.vacation;
+                    var salary = result.salary;
+                    var hourCost = isFinite(salary / monthHoursObject.hours) ? salary / monthHoursObject.hours : 0;
+
+
+                    var diffDates = _.difference(dateArrayInMonth, journalDates);
+
+                    async.each(diffDates, function (date, asyncCb) {
+                        var dateKey = (moment(date).isoWeekYear() * 100 + moment(date).month() + 1) * 100 + moment(date).date();
+                        var callB = _.after(2, asyncCb);
+
+                        var vacationBody = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : CONSTANTS.VACATION_PAYABLE,
+                            date          : date,
+                            sourceDocument: {
+                                model: 'Employees',
+                                _id: employeeId
+                            },
+                            amount: 0
+                        };
+
+                        var salaryIdleBody = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : CONSTANTS.IDLE_PAYABLE,
+                            date          : date,
+                            sourceDocument: {
+                                model: 'Employees',
+                                _id: employeeId
+                            }
+                        };
+
+                        if (vacation && vacation[dateKey]){
+                            vacationBody.amount = hourCost * HOURSCONSTANT * 100;
+                            salaryIdleBody.amount = 0;
+                        } else {
+                            salaryIdleBody.amount = hourCost * HOURSCONSTANT * 100;
+                            vacationBody.amount = 0;
+                        }
+
+
+                        createReconciled(salaryIdleBody, req.session.lastDb, callB, req.session.uId);
+                        createReconciled(vacationBody, req.session.lastDb, callB, req.session.uId);
+                    }, function () {
+                        cb();
+                    });
+
+                };
+
+                waterfallTasks = [parallelPart, createJE];
                 async.waterfall(waterfallTasks, function (err, result) {
                     if (err) {
                         return wfCb(err);
@@ -1015,8 +1169,7 @@ var Module = function (models) {
                                         monthHoursObject[key] = {};
                                     }
 
-                                    result = JSON.parse(result);
-                                    monthHoursObject[key] = result;
+                                    monthHoursObject[key] = result[0] || {};
                                     cb();
                                 });
                             }, function () {
@@ -1056,7 +1209,7 @@ var Module = function (models) {
                                     if (!vacationObject[vacation.employee]) {
                                         vacationObject[vacation.employee] = {};
                                     }
-                                    var newDate = moment().isoWeekYear(vacation.year).month(vacation.month - 1).date(1);
+                                    var newDate = moment(new Date()).isoWeekYear(vacation.year).month(vacation.month - 1).date(1);
                                     var vacArray = vacation.vacArray;
                                     var length = vacArray.length;
                                     var i;
@@ -1283,7 +1436,7 @@ var Module = function (models) {
                                     var callB = _.after(2, asyncCb);
                                     var totalWorked = wTracks[sourceDoc];
                                     var idleTime = HOURSCONSTANT - totalWorkedForDay;
-                                    var idleCoeff = idleTime / totalWorkedForDay;
+                                    var idleCoeff = isFinite(idleTime / totalWorkedForDay) ? idleTime / totalWorkedForDay : 0;
 
                                     bodySalaryIdle.sourceDocument._id = sourceDoc;
                                     bodySalaryOvertime.sourceDocument._id = sourceDoc;
@@ -1295,8 +1448,8 @@ var Module = function (models) {
                                                 bodySalaryIdle.amount = 0;
                                             } else {
                                                 bodySalaryOvertime.amount = 0;
-                                                bodySalaryIdle.amount = costHour * totalWorked * idleCoeff * 100;
-                                                totalIdleObject[dateKey] += costHour * totalWorked * idleCoeff * 100;
+                                                bodySalaryIdle.amount = costHour * idleTime * idleCoeff * 100;
+                                                totalIdleObject[dateKey] += costHour * idleTime * idleCoeff * 100;
                                             }
 
                                             notUsedVacationCost -= vacationRateForDay * totalWorked;
