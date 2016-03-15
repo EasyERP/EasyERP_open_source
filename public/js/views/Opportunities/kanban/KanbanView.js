@@ -37,7 +37,9 @@
 
                 this.render();
 
-                this.asyncFetc(options.workflowCollection.toJSON());
+                this.filterView.trigger('filter', App.filter);
+
+                //this.asyncFetc(options.workflowCollection.toJSON());
                 this.getCollectionLengthByWorkflows(this);
             },
             updateFoldWorkflow: function () {
