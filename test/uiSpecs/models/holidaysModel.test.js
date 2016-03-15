@@ -1,13 +1,13 @@
 define([
-    'models/MonthHoursModel',
+    'models/HolidayModel',
     'chai'
-], function (MonthHoursModel, chai) {
+], function (HolidayModel, chai) {
     'use strict';
     var expect = chai.expect;
 
-    describe('MonthHoursModel', function () {
+    describe('HolidayModel', function () {
         var mainSpy;
-        var monthHours;
+        var holiday;
         var server;
 
         before(function () {
@@ -18,22 +18,22 @@ define([
             server.restore();
         });
 
-        it('should be a MonthHours object', function () {
-            monthHours = new MonthHoursModel({});
+        it('should be a Holiday object', function () {
+            holiday = new HolidayModel();
 
-            expect(monthHours).to.be.instanceOf(Object);
+            expect(holiday).to.be.instanceOf(Object);
         });
 
         it('Try to save model', function (done) {
-            monthHours.set({
+            holiday.set({
                 fixedExpense: 45
             });
 
-            server.respondWith('POST', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify([{
-                fixedExpense  : 45
+            server.respondWith('POST', '/Holiday/', [200, {"Content-Type": "application/json"}, JSON.stringify([{
+                comment  : 'Defender of Ukraine Day'
             }])]);
 
-            monthHours.save(null, {
+            holiday.save(null, {
                 editMode: false,
                 success: function () {
                     done();
@@ -45,7 +45,7 @@ define([
 
             server.respond();
 
-            expect(monthHours.get('fixedExpense')).to.be.equals(45)
+            expect(holiday.get('comment')).to.be.equals('Defender of Ukraine Day');
         });
 
 

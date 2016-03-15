@@ -84,6 +84,18 @@ define([
                 server = sinon.fakeServer.create();
                 server.autoRespond = true;
                 server.respondWith("GET", "/filter/getFiltersValues", [200, {"Content-Type": "application/json"}, JSON.stringify([{filter1: 'fakeFilter'}])]);
+                server.respondWith("GET", "/getDBS", [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    dbsNames: {
+                        development: {
+                            DBname: "development",
+                            url: "localhost"
+                        },
+                        production: {
+                            DBname: "production",
+                            url: "localhost"
+                        }
+                    }
+                })]);
 
                 loginSpy = sinon.spy(LoginView.prototype, "login");
                 customSpy = sinon.spy(Custom, "runApplication");
@@ -151,6 +163,8 @@ define([
 
                 $loginButton.click();
                 server.respond();
+
+                App.weTrack = true;
 
                 expect($loginButton).to.exist;
                 expect(loginSpy.called).to.be.true;

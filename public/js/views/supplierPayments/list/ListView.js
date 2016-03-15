@@ -39,7 +39,7 @@ define([
 
             events: {
                 "click td.editable"                                               : "editRow",
-                "change .editable"                                               : "setEditable",
+                "change .editable"                                                : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "focusout .editing"                                               : "onChangeInput",
                 "keydown .editing"                                                : "onKeyDownInput"
@@ -171,7 +171,6 @@ define([
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
-
 
                     dataContent = el.attr('data-content');
                     editingEl = el.find('.editing');

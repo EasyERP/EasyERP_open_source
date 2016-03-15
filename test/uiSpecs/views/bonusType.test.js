@@ -1,19 +1,18 @@
-/*
 define([
     'text!fixtures/index.html',
-    'collections/monthHours/filterCollection',
+    'collections/bonusType/filterCollection',
     'views/main/MainView',
-    'views/monthHours/list/ListView',
-    'views/monthHours/TopBarView',
-    'views/monthHours/CreateView',
-    'views/monthHours/EditView',
+    'views/bonusType/list/ListView',
+    'views/bonusType/TopBarView',
+    'views/bonusType/CreateView',
+    'views/bonusType/EditView',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, MonthHoursCollection, MainView, ListView, TopBarView,  CreateView, EditView, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, BonusTypeCollection, MainView, ListView, TopBarView, CreateView, EditView, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
 
@@ -515,152 +514,396 @@ define([
         "href": "DashBoardVacation"
     }];
 
-    var fakeMonthHours = [
+    var fakeBonusTypes = [
         {
-            _id: "55b92ace21e4b7c40f000005",
-            fixedExpense: 40,
-            expenseCoefficient: 1.2,
-            year: 2014,
-            hours: 168,
-            month: 8,
-            ID: 1,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f000006",
-            fixedExpense: 40,
-            expenseCoefficient: 1.2,
-            year: 2014,
-            hours: 176,
-            month: 9,
+            _id: "55b92ad521e4b7c40f000602",
+            isPercent: true,
+            value: 8,
+            name: "Sales/Head 8%",
             ID: 2,
-            __v: 0
+            __v: 0,
+            bonusType: "Sales"
         },
         {
-            _id: "55b92ace21e4b7c40f000007",
-            fixedExpense: 40,
-            expenseCoefficient: 1.2,
-            year: 2014,
-            hours: 184,
-            month: 10,
+            _id: "55b92ad521e4b7c40f000603",
+            isPercent: true,
+            value: 6,
+            name: "Sales/Usual 6%",
             ID: 3,
-            __v: 0
+            __v: 0,
+            bonusType: "Sales"
         },
         {
-            _id: "55b92ace21e4b7c40f000008",
-            fixedExpense: 40,
-            expenseCoefficient: 1.2,
-            year: 2014,
-            hours: 160,
-            month: 11,
+            _id: "55b92ad521e4b7c40f000604",
+            isPercent: true,
+            value: 2,
+            name: "Sales/Ref 2%",
             ID: 4,
-            __v: 0
+            __v: 0,
+            bonusType: "Sales"
         },
         {
-            _id: "55b92ace21e4b7c40f000009",
-            fixedExpense: 265,
-            expenseCoefficient: 1.12,
-            year: 2014,
-            hours: 184,
-            month: 12,
+            _id: "55b92ad521e4b7c40f000605",
+            isPercent: true,
+            value: 16,
+            name: "Sales/QA 16%",
+            ID: 5,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000606",
+            isPercent: true,
+            value: 14,
+            name: "Sales/QA 14%",
             ID: 6,
-            __v: 0
+            __v: 0,
+            bonusType: "Sales"
         },
         {
-            _id: "55b92ace21e4b7c40f00000a",
-            fixedExpense: 265,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 176,
-            month: 1,
+            _id: "55b92ad521e4b7c40f000607",
+            isPercent: true,
+            value: 8,
+            name: "Sales/QA 8%",
             ID: 7,
-            __v: 0
+            __v: 0,
+            bonusType: "Sales"
         },
         {
-            _id: "55b92ace21e4b7c40f00000b",
-            fixedExpense: 265,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 160,
-            month: 2,
+            _id: "55b92ad521e4b7c40f000608",
+            isPercent: true,
+            value: 8,
+            name: "Sales/Usual 8%",
             ID: 8,
-            __v: 0
+            __v: 0,
+            bonusType: "Sales"
         },
         {
-            _id: "55b92ace21e4b7c40f00000c",
-            fixedExpense: 280,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 168,
-            month: 3,
+            _id: "55b92ad521e4b7c40f000609",
+            isPercent: true,
+            value: 10,
+            name: "Sales/Head 10%",
             ID: 9,
-            __v: 0
+            __v: 0,
+            bonusType: "Sales"
         },
         {
-            _id: "55b92ace21e4b7c40f00000d",
-            fixedExpense: 300,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 176,
-            month: 4,
+            _id: "55b92ad521e4b7c40f00060a",
+            isPercent: true,
+            value: 1.5,
+            name: "PM Junior/Usual 1.5%",
             ID: 10,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f00000e",
-            fixedExpense: 305,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 168,
-            month: 5,
-            ID: 11,
-            __v: 0
-        },
-        {
-            _id: "55f19aefbb6bf5d80b000008",
-            month: 6,
-            hours: 160,
-            year: 2015,
-            expenseCoefficient: 1.12,
             __v: 0,
-            fixedExpense: 305
+            bonusType: "PM"
         },
         {
-            _id: "55f19b8bbb6bf5d80b000009",
-            month: 7,
-            hours: 184,
-            year: 2015,
+            _id: "55b92ad521e4b7c40f00060b",
+            isPercent: false,
+            value: 30,
+            name: "PM Base/Junior",
+            ID: 12,
             __v: 0,
-            expenseCoefficient: 1.12,
-            fixedExpense: 305
+            bonusType: "PM"
         },
         {
-            _id: "55f19bb8bb6bf5d80b00000a",
-            month: 8,
-            hours: 160,
-            year: 2015,
+            _id: "56053965cdc112333a000009",
+            name: "hjkhg",
+            value: 6,
+            isPercent: true,
             __v: 0,
-            expenseCoefficient: 1.12,
-            fixedExpense: 305
+            bonusType: "Sales"
         },
         {
-            _id: "55f19bccbb6bf5d80b00000b",
-            month: 9,
-            hours: 176,
-            year: 2015,
+            _id: "5605396a82ca87623a00000b",
+            name: "hjkhgytryt",
+            value: 6,
+            isPercent: true,
             __v: 0,
-            expenseCoefficient: 1.12,
-            fixedExpense: 305
+            bonusType: "Sales"
+        },
+        {
+            _id: "560eaaa5c90e2fb026ce061e",
+            name: "Sales/Usual 4%",
+            value: 4,
+            isPercent: true,
+            __v: 0,
+            bonusType: "Sales"
         }
     ];
 
-    var monthHoursCollection;
+    var fakeSortedDownBonusType = [
+        {
+            _id: "55b92ad521e4b7c40f000602",
+            isPercent: true,
+            value: 8,
+            name: "Sales/Head 8%",
+            ID: 2,
+            __v: 0,
+            bonusType: "HR"
+        },
+        {
+            _id: "55b92ad521e4b7c40f00060a",
+            isPercent: true,
+            value: 1.5,
+            name: "PM Junior/Usual 1.5%",
+            ID: 10,
+            __v: 0,
+            bonusType: "PM"
+        },
+        {
+            _id: "55b92ad521e4b7c40f00060b",
+            isPercent: false,
+            value: 30,
+            name: "PM Base/Junior",
+            ID: 12,
+            __v: 0,
+            bonusType: "PM"
+        },
+        {
+            _id: "56e2ed3f3abb6ba70f73ae93",
+            name: "dfg",
+            value: 9,
+            isPercent: true,
+            __v: 0,
+            bonusType: "PM"
+        },
+        {
+            _id: "56e2fb7e3abb6ba70f73ae94",
+            name: "df",
+            value: 9,
+            isPercent: false,
+            __v: 0,
+            bonusType: "PM"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000603",
+            isPercent: true,
+            value: 6,
+            name: "Sales/Usual 6%",
+            ID: 3,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000604",
+            isPercent: true,
+            value: 2,
+            name: "Sales/Ref 2%",
+            ID: 4,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000605",
+            isPercent: true,
+            value: 16,
+            name: "Sales/QA 16%",
+            ID: 5,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000606",
+            isPercent: true,
+            value: 14,
+            name: "Sales/QA 14%",
+            ID: 6,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000607",
+            isPercent: true,
+            value: 8,
+            name: "Sales/QA 8%",
+            ID: 7,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000608",
+            isPercent: true,
+            value: 8,
+            name: "Sales/Usual 8%",
+            ID: 8,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000609",
+            isPercent: true,
+            value: 10,
+            name: "Sales/Head 10%",
+            ID: 9,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "56053965cdc112333a000009",
+            name: "hjkhg",
+            value: 6,
+            isPercent: true,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "5605396a82ca87623a00000b",
+            name: "hjkhgytryt",
+            value: 6,
+            isPercent: true,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "560eaaa5c90e2fb026ce061e",
+            name: "Sales/Usual 4%",
+            value: 4,
+            isPercent: true,
+            __v: 0,
+            bonusType: "Sales"
+        }
+    ];
+
+    var fakeSortedUpBonusType = [
+        {
+            _id: "55b92ad521e4b7c40f000603",
+            isPercent: true,
+            value: 6,
+            name: "Sales/Usual 6%",
+            ID: 3,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000604",
+            isPercent: true,
+            value: 2,
+            name: "Sales/Ref 2%",
+            ID: 4,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000605",
+            isPercent: true,
+            value: 16,
+            name: "Sales/QA 16%",
+            ID: 5,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000606",
+            isPercent: true,
+            value: 14,
+            name: "Sales/QA 14%",
+            ID: 6,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000607",
+            isPercent: true,
+            value: 8,
+            name: "Sales/QA 8%",
+            ID: 7,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000608",
+            isPercent: true,
+            value: 8,
+            name: "Sales/Usual 8%",
+            ID: 8,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000609",
+            isPercent: true,
+            value: 10,
+            name: "Sales/Head 10%",
+            ID: 9,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "56053965cdc112333a000009",
+            name: "hjkhg",
+            value: 6,
+            isPercent: true,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "5605396a82ca87623a00000b",
+            name: "hjkhgytryt",
+            value: 6,
+            isPercent: true,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "560eaaa5c90e2fb026ce061e",
+            name: "Sales/Usual 4%",
+            value: 4,
+            isPercent: true,
+            __v: 0,
+            bonusType: "Sales"
+        },
+        {
+            _id: "55b92ad521e4b7c40f00060a",
+            isPercent: true,
+            value: 1.5,
+            name: "PM Junior/Usual 1.5%",
+            ID: 10,
+            __v: 0,
+            bonusType: "PM"
+        },
+        {
+            _id: "55b92ad521e4b7c40f00060b",
+            isPercent: false,
+            value: 30,
+            name: "PM Base/Junior",
+            ID: 12,
+            __v: 0,
+            bonusType: "PM"
+        },
+        {
+            _id: "56e2ed3f3abb6ba70f73ae93",
+            name: "dfg",
+            value: 9,
+            isPercent: true,
+            __v: 0,
+            bonusType: "PM"
+        },
+        {
+            _id: "56e2fb7e3abb6ba70f73ae94",
+            name: "df",
+            value: 9,
+            isPercent: false,
+            __v: 0,
+            bonusType: "PM"
+        },
+        {
+            _id: "55b92ad521e4b7c40f000602",
+            isPercent: true,
+            value: 8,
+            name: "Sales/Head 8%",
+            ID: 2,
+            __v: 0,
+            bonusType: "HR"
+        }
+    ];
+
+    var bonusTypesCollection;
     var view;
     var topBarView;
     var listView;
     var windowConfirmStub;
 
-    describe('MonthHours View', function () {
+    describe('BonusTypes View', function () {
         var $fixture;
         var $elFixture;
 
@@ -698,7 +941,7 @@ define([
 
                 server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
 
-                view = new MainView({el: $elFixture, contentType: 'monthHours'});
+                view = new MainView({el: $elFixture, contentType: 'Holiday'});
 
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
                 $expectedSubMenuEl = view.$el.find('#submenu-holder');
@@ -713,14 +956,14 @@ define([
                 var $expectedMenuEl;
                 var $needAEl;
 
-                $needAEl = view.$el.find('a[data-module-id="68"]')[0];
+                $needAEl = view.$el.find('a[data-module-id="72"]')[0];
 
-                $expectedMenuEl = view.$el.find('a[data-module-id="68"]').closest('li');
+                $expectedMenuEl = view.$el.find('a[data-module-id="72"]').closest('li');
 
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/monthHours');
+                expect(window.location.hash).to.be.equals('#easyErp/bonusType');
 
             });
 
@@ -734,41 +977,33 @@ define([
             });
 
             after(function(){
-               server.restore();
+                server.restore();
             });
 
             it('Try to create TopBarView', function(){
-                var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+                var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
 
-                server.respondWith('GET', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeMonthHours)]);
+                server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
 
-                monthHoursCollection = new MonthHoursCollection({
+                bonusTypesCollection = new BonusTypeCollection({
                     viewType: 'list',
                     page: 1,
-                    count: 14
+                    count: 13
                 });
 
                 server.respond();
 
                 topBarView = new TopBarView({
-                    collection: monthHoursCollection
+                    collection: bonusTypesCollection
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
                 expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
 
-            it('Try to change ContentViewType', function(){
-                var $listTypeBtn = topBarView.$el.find('a[data-view-type="list"].changeContentView');
-
-                $listTypeBtn.click();
-
-                expect(window.location.hash).to.be.equals('#easyErp/monthHours/list');
-            });
-
         });
 
-        describe('MonthHours list view', function () {
+        describe('Holidays list view', function () {
             var server;
             var mainSpy;
 
@@ -784,39 +1019,41 @@ define([
 
             describe('INITIALIZE', function(){
 
-                it('Try to create monthHours list view', function (done) {
-                    this.timeout(150);
+                it('Try to create bonusType list view', function (done) {
+                    var bonusTypeTotalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i');
+                    var $listHolder;
 
                     setTimeout(function(){
-                        var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
-
-
-                        server.respondWith('GET', monthTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                            count: 14
+                        server.respondWith('GET', bonusTypeTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                            count: 13
                         })]);
 
                         listView = new ListView({
-                            collection: monthHoursCollection,
-                            startTime: new Date(),
-                            newCollection: false
+                            collection: bonusTypesCollection,
+                            startTime: new Date()
                         });
 
                         server.respond();
 
+                        $listHolder = listView.$el;
+
+                        expect($listHolder.find('table')).to.exist;
+
                         done();
                     }, 50);
+
                 });
 
-                it('Try to delete item', function(){
-                    var monthHoursUrl = new RegExp('\/monthHours\/', 'i');
-                    var $firstEl = $(listView.$el.find('.notForm input')[0]);
+                it('Try to delete item', function () {
+                    var bonusTypeUrl = new RegExp('\/bonusType\/', 'i');
+                    var $firstEl = $(listView.$el.find('#listTable input')[0]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
                     windowConfirmStub.returns(true);
 
-                    $firstEl.click();
+                    $firstEl.prop('checked', true);
 
-                    server.respondWith('DELETE', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    server.respondWith('DELETE', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
 
                     $deleteBtn.click();
 
@@ -828,70 +1065,42 @@ define([
 
                 });
 
-                /!*it('Try to delete with changes', function(){
-                    var $input;
-                    var $firstEl = $(listView.$el.find('.notForm input')[0]);
-                    var $expenseInput = listView.$el.find('td[data-content="expenseCoefficient"]')[0];
-                    var $body = $('body');
-
-                    $expenseInput.click();
-                    $input = listView.$el.find('input.editing');
-                    $input.val('1.7878787');
-                    $body.click();
-
-                    listView.deleteItems();
-
-                    expect($(listView.$el.find('td[data-content="expenseCoefficient"]')[0]).text()).to.be.equals('1.2');
-
-                });*!/
-
                 it('Try to create item', function(){
-                    var $monthInput;
-                    var $hoursInput;
-                    var $yearInput;
-                    var $expenseInput;
-                    var $fixedInput;
+                    var $nameInput;
+                    var $bonusTypeInput;
+                    var $valueInput;
+                    var $isPercentInput;
                     var $input;
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $tableContainer = listView.$el.find('table');
+                    var $newSelectEl;
 
                     $createBtn.click();
                     listView.createItem();
 
-                    $monthInput = listView.$el.find('td[data-content="month"]')[0];
+                    $nameInput = listView.$el.find('td[data-content="name"]')[0];
+                    $bonusTypeInput = listView.$el.find('td[data-content="bonusType"]')[0];
+                    $valueInput = listView.$el.find('td[data-content="value"]')[0];
+                    $isPercentInput = listView.$el.find('td[data-content="isPercent"]')[0];
 
-                    $hoursInput = listView.$el.find('td[data-content="hours"]')[0];
-                    $yearInput = listView.$el.find('td[data-content="year"]')[0];
-                    $expenseInput = listView.$el.find('td[data-content="expenseCoefficient"]')[0];
-                    $fixedInput = listView.$el.find('td[data-content="fixedExpense"]')[0];
-
-                    $monthInput.click();
-
+                    $nameInput.click();
                     $input = listView.$el.find('input.editing');
-                    $input.val('8');
+                    $input.val('test');
 
-                    $hoursInput.click();
+                    $bonusTypeInput.click();
+                    $newSelectEl = listView.$el.find('.newSelectList li')[0];
+                    $newSelectEl.click();
 
+                    $valueInput.click();
                     $input = listView.$el.find('input.editing');
-                    $input.val('150');
+                    $input.val('15');
 
-                    $yearInput.click();
+                    $isPercentInput.click();
+                    $newSelectEl = listView.$el.find('.newSelectList li')[0];
+                    $newSelectEl.click();
 
-                    $input = listView.$el.find('input.editing');
-                    $input.val('2016');
-
-                    $expenseInput.click();
-
-                    $input = listView.$el.find('input.editing');
-                    $input.val('1.4');
-
-                    $fixedInput.click();
-
-                    $input = listView.$el.find('input.editing');
-                    $input.val('45');
-
-                    server.respondWith('POST', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
+                    server.respondWith('POST', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"__v":0,"date":"2016-03-11T22:00:00.000Z","year":null,"week":null,"_id":"56e2cd4a3abb6ba70f73ad73"}})]);
 
                     $saveBtn.click();
                     listView.saveItem();
@@ -904,19 +1113,19 @@ define([
 
                 it('Try to edit item', function(){
                     var $input;
-                    var $fixedInput = listView.$el.find('td[data-content="fixedExpense"]')[0];
+                    var $valueInput = listView.$el.find('td[data-content="value"]')[0];
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $body = $('body');
                     var $tableContainer = listView.$el.find('table');
 
-                    $fixedInput.click();
+                    $valueInput.click();
 
                     $input = listView.$el.find('input.editing');
-                    $input.val('165');
+                    $input.val('17');
 
                     $body.click();
 
-                    server.respondWith('PATCH', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
+                    server.respondWith('PATCH', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"__v":0,"date":"2016-03-11T22:00:00.000Z","year":null,"week":null,"_id":"56e2cd4a3abb6ba70f73ad73"}})]);
 
                     $saveBtn.click();
                     listView.saveItem();
@@ -924,9 +1133,52 @@ define([
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
-                    expect($(listView.$el.find('td[data-content="fixedExpense"]')[0]).text()).to.be.equals('165');
+                    expect($(listView.$el.find('td[data-content="value"]')[0]).text()).to.be.equals('17');
 
                 });
+
+                it ('Try to sort down list', function(){
+                    var $sortTypeBtn = listView.$el.find('th[data-sort="bonusType"]');
+                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+                    var totalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i')
+                    var $bonusTypeInput;
+
+                    server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSortedDownBonusType)]);
+                    server.respondWith('GET', totalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 15
+                    })]);
+
+                    $sortTypeBtn.click();
+
+                    server.respond();
+
+                    $bonusTypeInput = $(listView.$el.find('td[data-content="bonusType"]')[0]);
+
+                    expect($bonusTypeInput.text()).to.be.equals('HR');
+
+                });
+
+                it ('Try to sort up list', function(){
+                    var $sortTypeBtn = listView.$el.find('th[data-sort="bonusType"]');
+                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+                    var totalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i')
+                    var $bonusTypeInput;
+
+                    server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSortedUpBonusType)]);
+                    server.respondWith('GET', totalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 15
+                    })]);
+
+                    $sortTypeBtn.click();
+
+                    server.respond();
+
+                    $bonusTypeInput = $(listView.$el.find('td[data-content="bonusType"]')[0]);
+
+                    expect($bonusTypeInput.text()).to.be.equals('Sales');
+
+                });
+
 
             });
 
@@ -934,6 +1186,4 @@ define([
 
     });
 
-
 });
-*/

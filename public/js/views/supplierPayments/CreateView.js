@@ -2,9 +2,11 @@
  * Created by soundstorm on 27.08.15.
  */
 define([
+        'Backbone',
+        'Underscore',
         "text!templates/supplierPayments/CreateTemplate.html",
     ],
-    function (CreateTemplate) {
+    function (Backbone, _, CreateTemplate) {
 
         var CreateView = Backbone.View.extend({
             el      : '#listTable',

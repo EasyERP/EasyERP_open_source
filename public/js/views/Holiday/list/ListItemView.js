@@ -1,8 +1,11 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Holiday/list/ListTemplate.html'
     ],
 
-    function (listTemplate) {
+    function (Backbone, $, _, listTemplate) {
         var HolidayListItemView = Backbone.View.extend({
             el: '#listTable',
 

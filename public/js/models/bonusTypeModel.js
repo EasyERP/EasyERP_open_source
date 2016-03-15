@@ -1,7 +1,9 @@
 /**
  * Created by Liliya_Pikiner on 7/1/2015.
  */
-define([], function () {
+define([
+    'Backbone'
+], function (Backbone) {
 
     var bonusTypeModel = Backbone.Model.extend({
         idAttribute: "_id",

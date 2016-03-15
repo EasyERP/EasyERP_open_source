@@ -259,12 +259,14 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                setTimeout(function () {
-                    self.editCollection = new editCollection(self.collection.toJSON());
-                    self.editCollection.on('saved', self.savedNewModel, self);
-                    self.editCollection.on('updated', self.updatedOptions, self);
+                //todo put in setTimeOut
+                self.$listTable = $('#listTable');
+                self.editCollection = new editCollection(self.collection.toJSON());
 
-                    self.$listTable = $('#listTable');
+                setTimeout(function () {
+                    self.editCollection.on('saved', self.savedNewModel, self);
+
+                    self.editCollection.on('updated', self.updatedOptions, self);
                 }, 10);
 
                 this.renderCheckboxes();
@@ -380,7 +382,6 @@ define([
                         $.each($("#listTable input:checked"), function (index, checkbox) {
                             value = checkbox.value;
                             that.changedModels = {};
-                            ;
 
                             if (value.length < 24) {
                                 that.editCollection.remove(value);

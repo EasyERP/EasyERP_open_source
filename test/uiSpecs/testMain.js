@@ -1,6 +1,7 @@
 var allTestFiles = [];
 var TEST_REGEXP = /(spec|test)\.js$/i;
 var App = App || {
+        weTrack: true,
         render: function (options) {
             "use strict";
             Backbone.Collection.prototype.getElement = function (id) {
@@ -1128,6 +1129,7 @@ require.config({
         collections  : './public/js/collections',
         views        : './public/js/views',
         templates    : './public/templates',
+        helpers      : './public/js/helpers',
         jQuery       : './public/js/libs/jquery-2.1.0.min.map',
         jqueryui     : './public/js/libs/jquery-ui.min',
         Underscore   : './public/js/libs/underscore-min.map.1.6.0',

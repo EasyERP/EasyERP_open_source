@@ -25,6 +25,7 @@ module.exports = function (config) {
             {pattern: 'public/js/Validation.js', included: false, watching: false},
             {pattern: 'public/js/collections/**/*.js', included: false, watching: false},
             {pattern: 'public/js/models/*.js', included: false, watching: false},
+            {pattern: 'public/js/helpers/*.js', included: false, watching: false},
             {pattern: 'public/js/views/**/*.js', included: false, watching: false},
             {pattern: 'public/js/views/**/**/*.js', included: false, watching: false},
             {pattern: 'public/js/views/*.js', included: false, watching: false},
@@ -57,7 +58,7 @@ module.exports = function (config) {
 
         autoWatch: true,
 
-        browsers: ['Chrome', 'Firefox', 'Safari', 'IE', 'PhantomJS'],
+        browsers: ['Chrome'/*, 'Firefox', 'Safari', 'IE', 'PhantomJS'*/],
 
         singleRun: false,
 

@@ -1,7 +1,10 @@
 /**
  * Created by Liliya on 23.06.2015.
  */
-define(['text!templates/monthHours/list/listTemplate.html'], function (listTemplate) {
+define([
+    'Backbone',
+    'text!templates/monthHours/list/listTemplate.html'
+], function (Backbone, listTemplate) {
     var monthHoursListItemView = Backbone.View.extend({
         el           : '#listTable',
         newCollection: null,

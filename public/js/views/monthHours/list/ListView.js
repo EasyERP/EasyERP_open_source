@@ -1,4 +1,7 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'views/listViewBase',
     'text!templates/monthHours/list/listHeader.html',
     'views/monthHours/CreateView',
@@ -13,7 +16,7 @@ define([
     'async',
     'constants',
     'text!templates/monthHours/list/cancelEdit.html'
-], function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit) {
+], function (Backbone, $, _, listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit) {
     var monthHoursListView = listViewBase.extend({
         createView              : createView,
         listTemplate            : listTemplate,

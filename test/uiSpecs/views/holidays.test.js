@@ -1,19 +1,17 @@
-/*
 define([
     'text!fixtures/index.html',
-    'collections/monthHours/filterCollection',
+    'collections/Holiday/filterCollection',
     'views/main/MainView',
-    'views/monthHours/list/ListView',
-    'views/monthHours/TopBarView',
-    'views/monthHours/CreateView',
-    'views/monthHours/EditView',
+    'views/Holiday/list/ListView',
+    'views/Holiday/TopBarView',
+    'views/Holiday/CreateView',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, MonthHoursCollection, MainView, ListView, TopBarView,  CreateView, EditView, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, HolidaysCollection, MainView, ListView, TopBarView,  CreateView, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
 
@@ -515,152 +513,260 @@ define([
         "href": "DashBoardVacation"
     }];
 
-    var fakeMonthHours = [
-        {
-            _id: "55b92ace21e4b7c40f000005",
-            fixedExpense: 40,
-            expenseCoefficient: 1.2,
-            year: 2014,
-            hours: 168,
-            month: 8,
-            ID: 1,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f000006",
-            fixedExpense: 40,
-            expenseCoefficient: 1.2,
-            year: 2014,
-            hours: 176,
-            month: 9,
-            ID: 2,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f000007",
-            fixedExpense: 40,
-            expenseCoefficient: 1.2,
-            year: 2014,
-            hours: 184,
-            month: 10,
-            ID: 3,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f000008",
-            fixedExpense: 40,
-            expenseCoefficient: 1.2,
-            year: 2014,
-            hours: 160,
-            month: 11,
-            ID: 4,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f000009",
-            fixedExpense: 265,
-            expenseCoefficient: 1.12,
-            year: 2014,
-            hours: 184,
-            month: 12,
-            ID: 6,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f00000a",
-            fixedExpense: 265,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 176,
-            month: 1,
-            ID: 7,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f00000b",
-            fixedExpense: 265,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 160,
-            month: 2,
-            ID: 8,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f00000c",
-            fixedExpense: 280,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 168,
-            month: 3,
-            ID: 9,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f00000d",
-            fixedExpense: 300,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 176,
-            month: 4,
-            ID: 10,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f00000e",
-            fixedExpense: 305,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 168,
-            month: 5,
-            ID: 11,
-            __v: 0
-        },
-        {
-            _id: "55f19aefbb6bf5d80b000008",
-            month: 6,
-            hours: 160,
-            year: 2015,
-            expenseCoefficient: 1.12,
-            __v: 0,
-            fixedExpense: 305
-        },
-        {
-            _id: "55f19b8bbb6bf5d80b000009",
-            month: 7,
-            hours: 184,
-            year: 2015,
-            __v: 0,
-            expenseCoefficient: 1.12,
-            fixedExpense: 305
-        },
-        {
-            _id: "55f19bb8bb6bf5d80b00000a",
-            month: 8,
-            hours: 160,
-            year: 2015,
-            __v: 0,
-            expenseCoefficient: 1.12,
-            fixedExpense: 305
-        },
-        {
-            _id: "55f19bccbb6bf5d80b00000b",
-            month: 9,
-            hours: 176,
-            year: 2015,
-            __v: 0,
-            expenseCoefficient: 1.12,
-            fixedExpense: 305
-        }
-    ];
+    var fakeHoliday = {
+        success: [
+            {
+                _id: "569fa6fc62d172544baf0db9",
+                date: "2016-10-13T22:00:00.000Z",
+                year: 2016,
+                week: 41,
+                comment: "Defender of Ukraine Day",
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f00056d",
+                comment: "Independence Day Ukraine",
+                date: "2016-08-23T22:00:00.000Z",
+                ID: 19,
+                year: 2015,
+                week: 35,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f00056b",
+                comment: "Constitution Day Ukraine",
+                date: "2016-06-27T22:00:00.000Z",
+                ID: 17,
+                year: 2015,
+                week: 26,
+                __v: 0
+            },
+            {
+                _id: "569fa5cc62d172544baf0db1",
+                date: "2016-06-19T22:00:00.000Z",
+                comment: "Orthodox Trinity",
+                year: 2016,
+                week: 25,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f00056a",
+                comment: "Orthodox Trinity",
+                date: "2016-06-18T22:00:00.000Z",
+                ID: 16,
+                year: 2016,
+                week: 24,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f000566",
+                comment: "Victory and Commemoration Day",
+                date: "2016-05-08T22:00:00.000Z",
+                ID: 12,
+                year: 2016,
+                week: 19,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f000564",
+                comment: "Labour Day",
+                date: "2016-05-02T22:00:00.000Z",
+                ID: 10,
+                year: 2015,
+                week: 18,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f000563",
+                comment: "Labour Day",
+                date: "2016-05-01T22:00:00.000Z",
+                ID: 9,
+                year: 2015,
+                week: 18,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f000561",
+                comment: "Orthodox Easter",
+                date: "2016-04-30T22:00:00.000Z",
+                ID: 7,
+                year: 2016,
+                week: 17,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f00055e",
+                comment: "International Womens Day",
+                date: "2016-03-07T23:00:00.000Z",
+                ID: 4,
+                year: 2015,
+                week: 10,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f00055c",
+                comment: "Christmas",
+                date: "2016-01-06T23:00:00.000Z",
+                ID: 2,
+                year: 2016,
+                week: 1,
+                __v: 0
+            },
+            {
+                _id: "55b92ad421e4b7c40f00055b",
+                comment: "New Year",
+                date: "2015-12-31T23:00:00.000Z",
+                ID: 1,
+                year: 2016,
+                week: 53,
+                __v: 0
+            },
+            {
+                _id: "569fae9262d172544baf0de7",
+                date: "2015-10-13T22:00:00.000Z",
+                comment: "Defender of Ukraine Day",
+                year: 2015,
+                week: 42,
+                __v: 0
+            },
+            {
+                _id: "569fadb562d172544baf0de5",
+                date: "2015-08-23T22:00:00.000Z",
+                comment: "Independence Day Ukraine",
+                year: 2015,
+                week: 35,
+                __v: 0
+            },
+            {
+                _id: "569fae0462d172544baf0de6",
+                date: "2015-06-28T22:00:00.000Z",
+                comment: "Constitution Day Ukraine",
+                year: 2015,
+                week: 27,
+                __v: 0
+            },
+            {
+                _id: "569fad7f62d172544baf0de4",
+                date: "2015-06-27T22:00:00.000Z",
+                comment: "Constitution Day Ukraine",
+                year: 2015,
+                week: 26,
+                __v: 0
+            },
+            {
+                _id: "569fad5b62d172544baf0de3",
+                date: "2015-05-31T22:00:00.000Z",
+                comment: "Orthodox Trinity",
+                year: 2015,
+                week: 23,
+                __v: 0
+            },
+            {
+                _id: "569fad3e62d172544baf0de2",
+                date: "2015-05-30T22:00:00.000Z",
+                comment: "Orthodox Trinity",
+                year: 2015,
+                week: 22,
+                __v: 0
+            },
+            {
+                _id: "569facef62d172544baf0ddb",
+                date: "2015-05-10T22:00:00.000Z",
+                comment: "Victory and Commemoration Day",
+                year: 2015,
+                week: 20,
+                __v: 0
+            },
+            {
+                _id: "569fad1562d172544baf0ddc",
+                date: "2015-05-08T22:00:00.000Z",
+                comment: "Victory and Commemoration Day",
+                year: 2015,
+                week: 19,
+                __v: 0
+            },
+            {
+                _id: "569fac8a62d172544baf0dda",
+                date: "2015-05-03T22:00:00.000Z",
+                comment: "Labour Day",
+                year: 2015,
+                week: 19,
+                __v: 0
+            },
+            {
+                _id: "569fac6c62d172544baf0dd9",
+                date: "2015-05-01T22:00:00.000Z",
+                comment: "Labour Day",
+                year: 2015,
+                week: 18,
+                __v: 0
+            },
+            {
+                _id: "569fac3962d172544baf0dd6",
+                date: "2015-04-30T22:00:00.000Z",
+                comment: "Labour Day",
+                year: 2015,
+                week: 18,
+                __v: 0
+            },
+            {
+                _id: "569fabcc62d172544baf0dd4",
+                date: "2015-04-12T22:00:00.000Z",
+                comment: "Orthodox Easter",
+                year: 2015,
+                week: 16,
+                __v: 0
+            },
+            {
+                _id: "569fab9d62d172544baf0dd3",
+                date: "2015-04-11T22:00:00.000Z",
+                comment: "Orthodox Easter",
+                year: 2015,
+                week: 15,
+                __v: 0
+            },
+            {
+                _id: "569fabe862d172544baf0dd5",
+                date: "2015-03-08T23:00:00.000Z",
+                comment: "International Womens Day",
+                year: 2015,
+                week: 11,
+                __v: 0
+            },
+            {
+                _id: "569fab7062d172544baf0dd2",
+                date: "2015-03-07T23:00:00.000Z",
+                comment: "International Womens Day",
+                year: 2015,
+                week: 10,
+                __v: 0
+            },
+            {
+                _id: "569faaed62d172544baf0dd1",
+                date: "2015-01-06T23:00:00.000Z",
+                comment: "Christmas",
+                year: 2015,
+                week: 2,
+                __v: 0
+            },
+            {
+                _id: "569faad862d172544baf0dd0",
+                date: "2014-12-31T23:00:00.000Z",
+                comment: "New Year",
+                year: 2015,
+                week: 1,
+                __v: 0
+            }
+        ]
+    };
 
-    var monthHoursCollection;
+    var holidaysCollection;
     var view;
     var topBarView;
     var listView;
     var windowConfirmStub;
 
-    describe('MonthHours View', function () {
+    describe('Holidays View', function () {
         var $fixture;
         var $elFixture;
 
@@ -698,7 +804,7 @@ define([
 
                 server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
 
-                view = new MainView({el: $elFixture, contentType: 'monthHours'});
+                view = new MainView({el: $elFixture, contentType: 'Holiday'});
 
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
                 $expectedSubMenuEl = view.$el.find('#submenu-holder');
@@ -713,14 +819,14 @@ define([
                 var $expectedMenuEl;
                 var $needAEl;
 
-                $needAEl = view.$el.find('a[data-module-id="68"]')[0];
+                $needAEl = view.$el.find('a[data-module-id="69"]')[0];
 
-                $expectedMenuEl = view.$el.find('a[data-module-id="68"]').closest('li');
+                $expectedMenuEl = view.$el.find('a[data-module-id="69"]').closest('li');
 
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/monthHours');
+                expect(window.location.hash).to.be.equals('#easyErp/Holiday');
 
             });
 
@@ -734,27 +840,26 @@ define([
             });
 
             after(function(){
-               server.restore();
+                server.restore();
             });
 
             it('Try to create TopBarView', function(){
-                var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+                var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
 
-                server.respondWith('GET', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeMonthHours)]);
+                server.respondWith('GET', holidaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeHoliday)]);
 
-                monthHoursCollection = new MonthHoursCollection({
+                holidaysCollection = new HolidaysCollection({
                     viewType: 'list',
-                    page: 1,
-                    count: 14
+                    page: 1
                 });
 
                 server.respond();
 
                 topBarView = new TopBarView({
-                    collection: monthHoursCollection
+                    collection: holidaysCollection
                 });
 
-                expect(topBarView.$el.find('#createBtnHolder')).to.exist;
+                expect(topBarView.$el.find('.createBtnHolder')).to.exist;
                 expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
 
@@ -763,12 +868,12 @@ define([
 
                 $listTypeBtn.click();
 
-                expect(window.location.hash).to.be.equals('#easyErp/monthHours/list');
+                expect(window.location.hash).to.be.equals('#easyErp/Holiday/list');
             });
 
         });
 
-        describe('MonthHours list view', function () {
+        describe('Holidays list view', function () {
             var server;
             var mainSpy;
 
@@ -784,39 +889,37 @@ define([
 
             describe('INITIALIZE', function(){
 
-                it('Try to create monthHours list view', function (done) {
-                    this.timeout(150);
+                it('Try to create holidays list view', function () {
+                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
+                    var $listHolder;
 
-                    setTimeout(function(){
-                        var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
+                    server.respondWith('GET', holidayTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 29
+                    })]);
 
+                    listView = new ListView({
+                        collection: holidaysCollection,
+                        startTime: new Date()
+                    });
 
-                        server.respondWith('GET', monthTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                            count: 14
-                        })]);
+                    server.respond();
 
-                        listView = new ListView({
-                            collection: monthHoursCollection,
-                            startTime: new Date(),
-                            newCollection: false
-                        });
+                    $listHolder = listView.$el;
 
-                        server.respond();
+                    expect($listHolder.find('table')).to.exist;
 
-                        done();
-                    }, 50);
                 });
 
-                it('Try to delete item', function(){
-                    var monthHoursUrl = new RegExp('\/monthHours\/', 'i');
-                    var $firstEl = $(listView.$el.find('.notForm input')[0]);
+                /*it('Try to delete item', function(){
+                    var holidaysUrl = new RegExp('\/Holiday\/', 'i');
+                    var $firstEl = $(listView.$el.find('#listTable input')[0]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
                     windowConfirmStub.returns(true);
 
-                    $firstEl.click();
+                    $firstEl.prop('checked', true);
 
-                    server.respondWith('DELETE', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    server.respondWith('DELETE', holidaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
 
                     $deleteBtn.click();
 
@@ -826,31 +929,27 @@ define([
 
                     $firstEl.click();
 
-                });
+                });*/
 
-                /!*it('Try to delete with changes', function(){
+                /*it('Try to delete with changes', function () {
                     var $input;
-                    var $firstEl = $(listView.$el.find('.notForm input')[0]);
-                    var $expenseInput = listView.$el.find('td[data-content="expenseCoefficient"]')[0];
+                    var $expenseInput = listView.$el.find('td[data-type="input"]')[0];
                     var $body = $('body');
 
                     $expenseInput.click();
                     $input = listView.$el.find('input.editing');
-                    $input.val('1.7878787');
+                    $input.val('test');
                     $body.click();
 
                     listView.deleteItems();
 
-                    expect($(listView.$el.find('td[data-content="expenseCoefficient"]')[0]).text()).to.be.equals('1.2');
+                    expect($(listView.$el.find('td[data-type="input"]')[0]).text()).to.be.equals('Independence Day Ukraine');
 
-                });*!/
+                });*/
 
                 it('Try to create item', function(){
-                    var $monthInput;
-                    var $hoursInput;
-                    var $yearInput;
-                    var $expenseInput;
-                    var $fixedInput;
+                    var $dateInput;
+                    var $commentInput;
                     var $input;
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
@@ -859,39 +958,20 @@ define([
                     $createBtn.click();
                     listView.createItem();
 
-                    $monthInput = listView.$el.find('td[data-content="month"]')[0];
+                    $dateInput = listView.$el.find('td[data-content="date"]')[0];
+                    $commentInput = listView.$el.find('td[data-content="comment"]')[0];
 
-                    $hoursInput = listView.$el.find('td[data-content="hours"]')[0];
-                    $yearInput = listView.$el.find('td[data-content="year"]')[0];
-                    $expenseInput = listView.$el.find('td[data-content="expenseCoefficient"]')[0];
-                    $fixedInput = listView.$el.find('td[data-content="fixedExpense"]')[0];
-
-                    $monthInput.click();
+                    $dateInput.click();
 
                     $input = listView.$el.find('input.editing');
-                    $input.val('8');
+                    $input.val('10 Mar, 2016');
 
-                    $hoursInput.click();
-
-                    $input = listView.$el.find('input.editing');
-                    $input.val('150');
-
-                    $yearInput.click();
+                    $commentInput.click();
 
                     $input = listView.$el.find('input.editing');
-                    $input.val('2016');
+                    $input.val('test');
 
-                    $expenseInput.click();
-
-                    $input = listView.$el.find('input.editing');
-                    $input.val('1.4');
-
-                    $fixedInput.click();
-
-                    $input = listView.$el.find('input.editing');
-                    $input.val('45');
-
-                    server.respondWith('POST', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
+                    server.respondWith('POST', '/Holiday/', [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"__v":0,"date":"2016-03-11T22:00:00.000Z","year":null,"week":null,"_id":"56e2cd4a3abb6ba70f73ad73"}})]);
 
                     $saveBtn.click();
                     listView.saveItem();
@@ -904,19 +984,19 @@ define([
 
                 it('Try to edit item', function(){
                     var $input;
-                    var $fixedInput = listView.$el.find('td[data-content="fixedExpense"]')[0];
+                    var $commentInput = listView.$el.find('td[data-content="comment"]')[0];
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $body = $('body');
                     var $tableContainer = listView.$el.find('table');
 
-                    $fixedInput.click();
+                    $commentInput.click();
 
                     $input = listView.$el.find('input.editing');
-                    $input.val('165');
+                    $input.val('TEST Comment');
 
                     $body.click();
 
-                    server.respondWith('PATCH', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
+                    server.respondWith('PATCH', '/Holiday/', [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"__v":0,"date":"2016-03-11T22:00:00.000Z","year":null,"week":null,"_id":"56e2cd4a3abb6ba70f73ad73"}})]);
 
                     $saveBtn.click();
                     listView.saveItem();
@@ -924,9 +1004,10 @@ define([
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
-                    expect($(listView.$el.find('td[data-content="fixedExpense"]')[0]).text()).to.be.equals('165');
+                    expect($(listView.$el.find('td[data-content="comment"]')[0]).text()).to.be.equals('TEST Comment');
 
                 });
+
 
             });
 
@@ -934,6 +1015,4 @@ define([
 
     });
 
-
 });
-*/

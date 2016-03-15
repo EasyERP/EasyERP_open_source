@@ -2,12 +2,16 @@
  * Created by ����� on 23.06.2015.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/monthHours/topBarTemplate.html',
         'custom',
         'common',
         'constants'
     ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+
         var topBarView = Backbone.View.extend({
             el           : '#top-bar',
             contentType  : CONSTANTS.MONTHHOURS,

@@ -14137,7 +14137,6 @@ define([
                 var $editableEl = $($formHolder.find('.editable')[5]);
                 var companyIdUrl = new RegExp('/Companies/', 'i');
 
-
                 $editableEl.mouseenter();
                 $editSpan = $formHolder.find('#editSpan a');
 
@@ -14282,6 +14281,14 @@ define([
                 $('.ui-dialog').remove();
 
                 expect(window.location.hash).to.be.equals('#easyErp/Persons');
+            });
+
+            it ('Try to go to person form', function(){
+                var $gotoPersonBtn = $('#persons p>a');
+
+                $gotoPersonBtn.click();
+
+                expect(window.location.hash).to.equals('#easyErp/Persons/form/55b92ad521e4b7c40f00060c');
             });
 
             // create Edit form into

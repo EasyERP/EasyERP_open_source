@@ -1,7 +1,9 @@
 define([
+        'Backbone',
+        'Underscore',
         "text!templates/Holiday/CreateTemplate.html",
     ],
-    function (CreateTemplate) {
+    function (Backbone, _, CreateTemplate) {
 
         var CreateView = Backbone.View.extend({
             el      : '#listTable',

@@ -2,6 +2,9 @@
  * Created by lilya on 16/11/15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/PayrollExpenses/form/FormTemplate.html',
         'text!templates/PayrollExpenses/form/sortTemplate.html',
         'text!templates/PayrollExpenses/form/cancelEdit.html',
@@ -20,7 +23,7 @@ define([
         'constants'
     ],
 
-    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, CONSTANTS) {
+    function (Backbone, $, _, PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, CONSTANTS) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
