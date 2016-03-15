@@ -3,18 +3,19 @@ define([
         'text!templates/salesQuotation/list/ListHeader.html',
         'text!templates/salesOrder/wTrack/ListHeader.html',
         'text!templates/stages.html',
+        'text!templates/supplierPayments/list/ListTotal.html',
         'views/salesQuotation/CreateView',
         'views/salesOrder/list/ListItemView',
-        'views/supplierPayments/list/ListTotalView',
         'views/salesOrder/EditView',
         'models/QuotationModel',
         'collections/salesQuotation/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+    function (listViewBase, listTemplate, listForWTrack, stagesTamplate, totalTemplate, createView, listItemView, editView, quotationModel, contentCollection, filterView, common, dataService, helpers) {
         var OrdersListView = listViewBase.extend({
 
             createView              : createView,
@@ -116,6 +117,29 @@ define([
                 }
             },
 
+            setAllTotalVals: function () {      // added method for choosing auto-calculating fields
+                this.getAutoCalcField('total');
+            },
+
+            getAutoCalcField: function (idTotal) { // added method for auto-calculating field if row checked
+                var footerRow = this.$el.find('#listTotal');
+
+                var checkboxes = this.$el.find('#listTable :checked');
+                var totalTd = $(footerRow).find('#' + idTotal);
+                var rowTdVal = 0;
+                var row;
+                var rowTd;
+
+                $(checkboxes).each(function (index, element) {
+                    row = $(element).closest('tr');
+                    rowTd = row.find('.' + idTotal + '');
+                    var currentText = rowTd.text().split(' ').join('');
+                    rowTdVal += parseFloat(currentText || 0) * 100;
+                });
+
+                totalTd.text(helpers.currencySplitter((rowTdVal/100).toFixed(2) ));
+            },
+
             hideNewSelect: function (e) {
                 $(".newSelectList").remove();
             },
@@ -146,7 +170,7 @@ define([
                     }).render());
                 }
                 //added two parameters page and items number
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
+                $currentEl.find('#listTotal').append(_.template(totalTemplate, {total: 0, cellSpan: 5, currencySplitter: helpers.currencySplitter}));
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);

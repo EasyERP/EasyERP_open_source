@@ -2178,6 +2178,10 @@ select:not([type="checkbox"]) {
   color: #000 !important;
   background-color: #BEF624 !important;
 }
+.newSelectList li.selected {
+  color: #f3f3f3;
+  background-color: #545454;
+}
 .newSelectList li:hover {
   background-color: #3d3d3e !important;
   border: 0 !important;

@@ -3,18 +3,19 @@ define([
         'views/listViewBase',
         'text!templates/Order/list/ListHeader.html',
         'text!templates/stages.html',
+        'text!templates/Order/list/ListTotal.html',
         'views/Quotation/CreateView',
         'views/Order/list/ListItemView',
-        'views/Order/list/ListTotalView',
         'views/Order/EditView',
         'models/QuotationModel',
         'collections/Order/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
 
-    function ($, listViewBase, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+    function ($, listViewBase, listTemplate, stagesTamplate, totalTemplate, createView, listItemView,  editView, quotationModel, contentCollection, filterView, common, dataService, helpers) {
         var OrdersListView = listViewBase.extend({
             createView              : createView,
             filterView              : filterView,
@@ -49,8 +50,7 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
-            }
-            ,
+            },
 
             chooseOption: function (e) {
                 var self = this;
@@ -74,8 +74,7 @@ define([
 
                 this.hideNewSelect();
                 return false;
-            }
-            ,
+            },
 
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
@@ -85,13 +84,37 @@ define([
                     $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
                 }
-            }
-            ,
+            },
+
+            setAllTotalVals: function () {      // added method for choosing auto-calculating fields
+                this.getAutoCalcField('total');
+                this.getAutoCalcField('unTaxed');
+            },
+
+            getAutoCalcField: function (idTotal) { // added method for auto-calculating field if row checked
+                var footerRow = this.$el.find('#listTotal');
+
+                var checkboxes = this.$el.find('#listTable :checked');
+                var totalTd = $(footerRow).find('#' + idTotal);
+                var rowTdVal = 0;
+                var row;
+                var rowTd;
+
+                $(checkboxes).each(function (index, element) {
+                    row = $(element).closest('tr');
+                    rowTd = row.find('.' + idTotal + '');
+                    var currentText = rowTd.text().split(' ').join('');
+                    rowTdVal += parseFloat(currentText || 0) * 100;
+                });
+
+
+                totalTd.text(helpers.currencySplitter((rowTdVal/100).toFixed(2) ));
+
+            },
 
             hideNewSelect: function (e) {
                 $(".newSelectList").remove();
-            }
-            ,
+            },
 
             render: function () {
                 var self;
@@ -108,7 +131,7 @@ define([
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
+                $currentEl.find('#listTotal').append(_.template(totalTemplate, {unTaxed: 0, total: 0, cellSpan: 5}));
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);

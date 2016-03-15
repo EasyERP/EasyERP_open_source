@@ -2,6 +2,9 @@
  * Created by Roman on 27.04.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Product/InvoiceOrder/ProductItems.html',
     'text!templates/Product/InvoiceOrder/ProductInputContent.html',
     'text!templates/Product/InvoiceOrder/ProductItemsEditList.html',
@@ -13,7 +16,7 @@ define([
     'helpers',
     'dataService',
     'constants'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS) {
+], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS) {
     "use strict";
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
@@ -28,9 +31,12 @@ define([
             "click .current-selected.jobs"                                            : "showSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
             "mouseleave .editable"                                                    : "removeEdit",
+            "mouseover  .jobs"                                                        : "showDelete",
+            "mouseleave  .jobs"                                                       : "hideDelete",
             "click #cancelSpan"                                                       : "cancelClick",
             "click #saveSpan"                                                         : "saveClick",
-            "click #editSpan"                                                         : "editClick"
+            "click #editSpan"                                                         : "editClick",
+            "click .fa-trash-o"                                                       : 'deleteRow'
         },
 
         template: _.template(productItemTemplate),
@@ -118,6 +124,30 @@ define([
             return false;
         },
 
+        deleteRow : function (e) {
+
+            var target = $(e.target);
+            var tr = target.closest("tr");
+            var jobId = tr.attr('data-id');
+            var exJob = _.findWhere(this.responseObj['#jobs'], {_id: jobId});
+
+            e.stopPropagation();
+            e.preventDefault();
+            if (this.responseObj['#jobs']) {
+                this.responseObj['#jobs'].splice(_.indexOf(this.responseObj['#jobs'], exJob), 1);
+            }
+
+            tr.remove();
+        },
+
+        showDelete: function (e) {
+            $(e.target).find('.fa-trash-o').removeClass('hidden');
+        },
+
+        hideDelete: function (e) {
+            $(e.target).find('.fa-trash-o').addClass('hidden');
+        },
+
         generatedWtracks: function () {
             var tr = this.$el.find('tr[data-error="true"]');
             var aEl = tr.find('a[data-id="jobs"]');
@@ -137,6 +167,7 @@ define([
             var self = this;
             var $thisEl = this.$el;
             var project = $("#projectDd").attr("data-id");
+            var existedJobs = $thisEl.find('.jobs.current-selected[data-id!="jobs"]');
 
             if (!this.checkForQuickEdit($targetEl)) {
                 return false;
@@ -149,11 +180,19 @@ define([
                     var aEl;
 
                     self.responseObj['#jobs'] = jobs;
+                    if (existedJobs.length) {
+                        existedJobs.each(function(){
+                            var jobId = $(this).attr('data-id');
+                            var exJob = _.findWhere(self.responseObj['#jobs'], {_id: jobId});
+                            self.responseObj['#jobs'].splice(_.indexOf(self.responseObj['#jobs'], exJob), 1);
+                        });
+
+                    } // to show only not selected jobs
 
                     if (!jobs.length) {
                         /* $("#jobs").text("Select");
                          $("#jobs").attr("data-id", null);*/
-                        aEl = $thisEl.find('.current-selected.jobs');
+                        aEl = $thisEl.find('.current-selected.jobs[data-id="jobs"]'); // if other jobs are on page
                         aEl.text("Select");
                     }
 
@@ -399,12 +438,14 @@ define([
                     jobId = $target.attr("id");
 
                     currentJob = _.find(self.responseObj['#jobs'], function (job) {
-                        return job._id === jobId
+                        return job._id === jobId;
                     });
 
                     quantity = currentJob ? currentJob.budget.budgetTotal.hoursSum : 1;
 
                     $parrent.find(".jobs").text($target.text()).attr("data-id", jobId);
+                    $parrent.append('<span title="Delete" class="fa fa-trash-o hidden"></span>');
+
                     $hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
 
                     model = this.products.get(_id);
@@ -442,7 +483,7 @@ define([
                 datePicker.remove();
 
                 //$($parrents[2]).attr('class', 'editable');
-                $($parrents[3])/*.attr('class', 'editable')*/.find("span").text(quantity);
+                $($parrents[3]).attr('class', 'editable').find("span").text(quantity);
 
                 /*if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
                     $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
@@ -451,7 +492,7 @@ define([
                 } else {*/
                 if (!this.forSales) {   // added possibility to edit quantity and scheduled date for Purchase Quotation
                     $($parrents[2]).addClass('editable');
-                    $($parrents[3]).addClass('editable');
+                    /*$($parrents[3]).addClass('editable');*/
                 }
                     salePrice = selectedProduct.info.salePrice;
 

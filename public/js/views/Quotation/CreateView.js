@@ -87,7 +87,7 @@ define([
 
                     aEl = $('.current-selected.jobs');
                     aEl.text("Select");
-                    aEl.attr('id', 'jobs');
+                    aEl.attr('data-id', 'jobs');
                 }
 
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
@@ -160,7 +160,7 @@ define([
                 var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
                 var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
                 var orderDate = thisEl.find('#orderDate').val();
-                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
+                var expectedDate = thisEl.find('#expectedDate').val() || orderDate;
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var total = $.trim(thisEl.find('#totalAmount').text());
                 var totalTaxes = $.trim(thisEl.find('#taxes').text());
@@ -208,7 +208,7 @@ define([
                                 product      : productId,
                                 unitPrice    : price,
                                 quantity     : quantity,
-                                scheduledDate: scheduledDate,
+                               /* scheduledDate: scheduledDate,*/
                                 taxes        : taxes,
                                 description  : description,
                                 subTotal     : subTotal,

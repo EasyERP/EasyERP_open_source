@@ -46,7 +46,7 @@ define([
         events: {
             'keypress .forNum'                                 : 'keydownHandler',
             'click .dialog-tabs a'                             : 'changeTab',
-            "click .current-selected"                          : "showNewSelect",
+            "click .current-selected:not(.jobs)"               : "showNewSelect",
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .confirmOrder"                              : "confirmOrder",
@@ -151,7 +151,7 @@ define([
             } else {
                 wId = 'Purchase Order';
                 mid = 57;
-                status = 'In Progress'; // todo workflow for purchase
+                status = 'New'; // todo workflow for purchase
             }
 
             populate.fetchWorkflow({
@@ -328,7 +328,7 @@ define([
             var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
             var supplierReference = thisEl.find('#supplierReference').val();
             var orderDate = thisEl.find('#orderDate').val();
-            var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
+            var expectedDate = thisEl.find('#expectedDate').val() || orderDate;
             var total = $.trim(thisEl.find('#totalAmount').text());
 
             var totalTaxes = $.trim(thisEl.find('#taxes').text());
