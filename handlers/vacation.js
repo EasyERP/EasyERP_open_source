@@ -175,7 +175,7 @@ var Vacation = function (event, models) {
                     name: year
                 };
 
-                if (years.indexOf(newYear.name) === -1) {
+                if (years.indexOf(year) === -1) {
                     result.push(newYear);
                 }
             }

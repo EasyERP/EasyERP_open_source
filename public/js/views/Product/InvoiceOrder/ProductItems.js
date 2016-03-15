@@ -492,24 +492,25 @@ define([
                 } else {*/
                 if (!this.forSales) {   // added possibility to edit quantity and scheduled date for Purchase Quotation
                     $($parrents[2]).addClass('editable');
-                    /*$($parrents[3]).addClass('editable');*/
+                    /*$($parrents[3]).addClass('editable');*/ // in case of taken away Scheduled Date
                 }
-                    salePrice = selectedProduct.info.salePrice;
 
-                    $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
-                    total = parseFloat(selectedProduct.info.salePrice);
-                    taxes = total * this.taxesRate;
-                    subtotal = total + taxes;
-                    taxes = taxes.toFixed(2);
-                    subtotal = subtotal.toFixed(2);
+                salePrice = selectedProduct.info.salePrice;
 
-                    $($parrents[5]).text(taxes);
-                    $($parrents[6]).text(subtotal);
+                $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
+                total = parseFloat(selectedProduct.info.salePrice);
+                taxes = total * this.taxesRate;
+                subtotal = total + taxes;
+                taxes = taxes.toFixed(2);
+                subtotal = subtotal.toFixed(2);
+
+                $($parrents[5]).text(taxes);
+                $($parrents[6]).text(subtotal);
 
                 $(".newSelectList").remove();
 
-                    this.calculateTotal(selectedProduct.info.salePrice);
-               /* }*/
+                this.calculateTotal(selectedProduct.info.salePrice);
+                /* }*/
             } else if (_id === 'createJob') {
                 self.generateJob();
             }
