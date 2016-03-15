@@ -425,29 +425,31 @@ var Jobs = function (models, event) {
                 return next(err);
             }
 
-            jobId = result.get('_id');
-            projectId = result.get('project');
+            if (result){
+                jobId = result.get('_id');
+                projectId = result.get('project');
 
-            wTrack.find({"jobs": jobId}, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                async.each(result, function (wTrackEl, cb) {
-                    var _id = wTrackEl.get('_id');
-
-                    wTrack.findByIdAndRemove(_id, function (err, r) {
-                        cb();
-                    });
-                }, function () {
-                    if (projectId) {
-                        event.emit('updateProjectDetails', {req: req, _id: projectId});
+                wTrack.find({"jobs": jobId}, function (err, result) {
+                    if (err) {
+                        return next(err);
                     }
 
-                    event.emit('recollectVacationDash');
-                });
+                    async.each(result, function (wTrackEl, cb) {
+                        var _id = wTrackEl.get('_id');
 
-            });
+                        wTrack.findByIdAndRemove(_id, function (err, r) {
+                            cb();
+                        });
+                    }, function () {
+                        if (projectId) {
+                            event.emit('updateProjectDetails', {req: req, _id: projectId});
+                        }
+
+                        event.emit('recollectVacationDash');
+                    });
+
+                });
+            }
 
             res.status(200).send(result)
         })
