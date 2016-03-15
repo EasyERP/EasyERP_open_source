@@ -94,7 +94,7 @@ define([
 
         notify: function () {
             App.render({
-                type: 'notify',
+                type   : 'notify',
                 message: 'This day from another month'
             });
         },
@@ -105,7 +105,7 @@ define([
         },
 
         hideDialog: function () {
-            $(".edit-dialog").remove();
+            $('.edit-dialog').remove();
         },
 
         asyncLoadImgs: function (model) {
@@ -240,14 +240,15 @@ define([
 
         autoCalc: function (e, targetEl) {
             this.removeInputs();
-            var tr = this.$el.find('tr');
-            var edited = tr.find('input.edited');
-            var days = tr.find('.autoCalc');
+
+            targetEl = targetEl || $(e.target);
+
+            var isInput = targetEl.prop('tagName') === 'INPUT';
+            var trs = targetEl.closest('tr');
+            var edited = trs.find('input.edited');
             var editedCol = edited.closest('td');
-            var worked = 0;
             var value;
             var calcEl;
-            var workedEl = tr.find('[data-content="worked"]');
 
             function appplyDefaultValue(el) {
                 var value = el.text();
@@ -261,26 +262,42 @@ define([
                     }
                 }
 
-                return value;
+                return value || '0';
             }
 
-            for (var i = days.length - 1; i >= 0; i--) {
-                calcEl = $(days[i]);
+            trs.each(function () {
+                var tr = $(this);
+                var days = tr.find('td.autoCalc:not(.disabled)');
+                var worked = 0;
+                var _value;
+                var workedEl;
 
-                value = appplyDefaultValue(calcEl);
+                workedEl = tr.find('[data-content="worked"]');
 
-                if (value === undefined) {
-                    editedCol = targetEl.closest('td');
-                    edited = targetEl;
+                for (var i = days.length - 1; i >= 0; i--) {
+                    calcEl = $(days[i]);
+
+                    value = appplyDefaultValue(calcEl);
+
+                    if (isInput) {
+                        editedCol = targetEl.closest('td');
+                        edited = targetEl;
+                    }
+
+                    worked += parseInt(value, 10);
                 }
 
-                worked += parseInt(value);
-            }
+                _value = parseInt(edited.val(), 10);
 
-            editedCol.text(edited.val());
-            edited.remove();
+                if (isNaN(_value)) {
+                    _value = 0;
+                }
 
-            workedEl.text(worked);
+                editedCol.text(_value);
+                edited.remove();
+
+                workedEl.text(worked);
+            });
         },
 
         autoHoursPerDay: function (e) {
@@ -401,15 +418,18 @@ define([
 
         removeInputs: function (e) {
             var self = this;
+
             if (this.selectView) {
                 this.selectView.remove();
             }
 
             this.$el.find('.editing').each(function (el) {
-                var val = $(this).val();
-                $(this).closest('td').text(val);
-                self.autoCalc();
-                $(this).remove();
+                var $el = $(this);
+                var val = $el.val();
+
+                $el.closest('td').text(val);
+                self.autoCalc($el);
+                $el.remove();
             });
 
         },

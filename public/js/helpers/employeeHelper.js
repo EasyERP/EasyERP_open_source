@@ -52,7 +52,11 @@ define([
                     vacation = vacations[i];
                     holiday = holidays[i];
 
-                    vacation = i <= _endDay ? (vacation || holiday) : 'disabled';
+                    if (nonWorkingDays.splited) {
+                        vacation = vacation || holiday;
+                    } else {
+                        vacation = i <= _endDay ? (vacation || holiday) : 'disabled';
+                    }
 
                     if (vacation) {
                         nonWorkingDays[i] = vacation;
