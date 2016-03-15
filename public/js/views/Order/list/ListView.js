@@ -131,7 +131,7 @@ define([
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
-                $currentEl.find('#listTotal').append(_.template(totalTemplate, {unTaxed: 0, total: 0, cellSpan: 5}));
+                $currentEl.find('#listTotal').append(_.template(totalTemplate, {unTaxed: 0, total: 0, cellSpan: 4}));
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
