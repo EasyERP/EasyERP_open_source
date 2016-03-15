@@ -1,4 +1,5 @@
 ﻿define([
+        'Backbone',
         'text!templates/Opportunities/kanban/WorkflowsTemplate.html',
         'text!templates/Opportunities/kanbanSettings.html',
         'collections/Workflows/WorkflowsCollection',
@@ -8,12 +9,17 @@
         'collections/Opportunities/OpportunitiesCollection',
         'models/OpportunitiesModel',
         'dataService',
-        'views/Filter/FilterView'
+        'views/Filter/FilterView',
+        'collections/Opportunities/filterCollection'
     ],
-    function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, filterView) {
+    function (Backbone, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, filterView, contentCollection) {
         var collection = new OpportunitiesCollection();
         var OpportunitiesKanbanView = Backbone.View.extend({
-            el    : '#content-holder',
+            el                      : '#content-holder',
+            filterView              : filterView,
+            contentCollection       : contentCollection,
+            contentType             : 'Opportunities',
+            viewType                : 'kanban',
             events: {
                 "dblclick .item"    : "gotoEditForm",
                 "click .item"       : "selectItem",
@@ -31,7 +37,7 @@
 
                 this.render();
 
-                this.asyncFetc(options.workflowCollection);
+                this.asyncFetc(options.workflowCollection.toJSON());
                 this.getCollectionLengthByWorkflows(this);
             },
             updateFoldWorkflow: function () {
@@ -185,9 +191,14 @@
                 });
             },
 
-            asyncFetc: function (workflows) {
-                _.each(workflows.toJSON(), function (wfModel) {
-                    dataService.getData('/Opportunities/kanban', {workflowId: wfModel._id}, this.asyncRender, this);
+            asyncFetc: function (workflows, filter) {
+                var url = '/Opportunities/kanban';
+
+                filter = filter || {};
+
+                _.each(workflows, function (wfModel) {
+                    filter.workflowId = wfModel._id;
+                    dataService.getData(url, filter, this.asyncRender, this);
                 }, this);
             },
 
@@ -395,6 +406,46 @@
                 });
             },
 
+            renderFilter: function () {
+                var self = this;
+                
+                self.filterView = new this.filterView({
+                    contentType: self.contentType
+                });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter);
+                });
+
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
+            },
+
+            showFilteredPage: function (filter) {
+                var self = this;
+                var workflows = this.workflowsCollection.toJSON();
+
+                if (filter.workflow) {
+                    workflows = [];
+                    filter.workflow.value.forEach(function(wId) {
+                        workflows.push({
+                            _id: wId
+                        });
+                    });
+                }
+
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
+
+                self.changeLocationHash(false, false, filter);
+
+                self.$el.find('td.column #forContent').html('');
+
+                this.asyncFetc(workflows, filter);
+            },
+
             render: function () {
                 var self = this;
                 var FilterView;
@@ -463,6 +514,8 @@
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+
+                this.renderFilter(self);
 
                 return this;
             }

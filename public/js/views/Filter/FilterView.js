@@ -356,7 +356,7 @@ define([
                         filterIc.addClass('active');
                         filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                     } else {
-                        if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate')) {
+                        if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
                             groupName = 'Letter';
                             filterIc.addClass('active');
                             filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
@@ -388,7 +388,7 @@ define([
                 var collectionElement;
 
                 if (filterView) {
-                    valuesArray = App.filter[filterView]['value'];
+                    valuesArray = App.filter[filterView] || App.filter[filterView]['value'];
                 } else {
                     App.filter = {};
                     this.removeSelectedFilter();

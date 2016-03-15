@@ -9,7 +9,7 @@
     </div>
     <div class="opportunity-content">
         <div class="half-block left">
-            <p class="left"><%=(model.customer) ? model.customer.name.first + ' ' + model.customer.name.last : ''%></p>
+            <p class="left"><%=(model.customer) && (model.customer.name)  ? model.customer.name.first + ' ' + model.customer.name.last : ''%></p>
 
             <p class="left"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last :
                 ''%></p>
