@@ -891,7 +891,32 @@ var PayRoll = function (models) {
                 JournalEntry.aggregate([{
                     $match: {
                         'sourceDocument.model': "Employees",
-                        journal               : CONSTANTS.VACATION_PAYABLE,
+                        journal               : ObjectId(CONSTANTS.VACATION_PAYABLE),
+                        debit                 : {$gt: 0},
+                        date                  : {
+                            $gte: new Date(date),
+                            $lte: new Date(endDate)
+                        }
+                    }
+                }, {
+                    $project: {
+                        employee: '$sourceDocument._id',
+                        summ    : {$divide: ['$debit', 100]}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
+
+                    pcb(null, result);
+                });
+            }
+
+            function matchByIdle(pcb){
+                JournalEntry.aggregate([{
+                    $match: {
+                        'sourceDocument.model': "Employees",
+                        journal               : ObjectId(CONSTANTS.IDLE_PAYABLE),
                         debit                 : {$gt: 0},
                         date                  : {
                             $gte: new Date(date),
@@ -952,12 +977,12 @@ var PayRoll = function (models) {
                 });
             }
 
-            async.parallel([matchByWTrack, matchEmployee], function (err, result) {
+            async.parallel([matchByWTrack, matchEmployee, matchByIdle], function (err, result) {
                 if (err) {
                     return callback(err);
                 }
 
-                callback(null, {ids: ids, journalEntries: result[0].concat(result[1])});
+                callback(null, {ids: ids, journalEntries: (result[0].concat(result[1])).concat(result[2])});
             });
         }
 

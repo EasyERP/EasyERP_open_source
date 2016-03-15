@@ -589,7 +589,7 @@ var Module = function (models) {
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
         var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-        var startDate = moment(new Date()).isoWeekYear(year).month(month - 1).date(1);
+        var startDate = moment(new Date()).isoWeekYear(year).month(month - 1).startOf('month');
         var endDate = moment(new Date()).isoWeekYear(year).month(month - 1).endOf('month');
         var dateArrayInMonth = [];
         var parallelFuncs;
@@ -607,8 +607,11 @@ var Module = function (models) {
                 var i;
 
                 for (i = endOfMonth; i >= 1; i--) {
-                   // var key = (year * 100 + month) * 100 + i;
-                    dateArrayInMonth.push(new Date(date.date(i).set({hour: 18, minute: 1, second: 0})));
+                    var dateEl = date.date(i).set({hour: 18, minute: 1, second: 0});
+
+                    if ((dateEl.day() !== 0) && (dateEl.day() !== 6)) {
+                        dateArrayInMonth.push(new Date(dateEl));
+                    }
                 }
                 pCb(null, dateArrayInMonth);
             }
@@ -728,11 +731,12 @@ var Module = function (models) {
             });
         }
 
-        function forEachEmployee(totalObj, wfCb) {
+        function forEachEmployee(wfCb, cb) {
             var waterfallTasks;
             var parallelPart;
             var createJE;
             var employees = Object.keys(employeesObject);
+            var mainCallback = _.after(employees.length, wfCb);
 
             employees.forEach(function (employeeId) {
                 parallelPart = function (cb) {
@@ -763,11 +767,12 @@ var Module = function (models) {
                             }, {
                                 $project: {
                                     debit               : {$divide: ['$debit', '$currency.rate']},
-                                    'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]}
+                                    'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]},
+                                    date                : 1
                                 }
                             }, {
                                 $match: {
-                                    'sourceDocument._id.employee': employeeId
+                                    'sourceDocument._id.employee': objectId(employeeId)
                                 }
                             }, {
                                 $group: {
@@ -791,7 +796,7 @@ var Module = function (models) {
                                         $gte: new Date(startDate),
                                         $lte: new Date(endDate)
                                     },
-                                    "sourceDocument._id": employeeId,
+                                    "sourceDocument._id": objectId(employeeId),
                                     debit               : {$gt: 0}
                                 }
                             }, {
@@ -818,7 +823,7 @@ var Module = function (models) {
                                     },
                                     "sourceDocument.model": 'Employees',
                                     debit                 : {$gt: 0},
-                                    journal               : CONSTANTS.IDLE_PAYABLE
+                                    journal               : objectId(CONSTANTS.IDLE_PAYABLE)
                                 }
                             }, {
                                 $project: {
@@ -867,7 +872,7 @@ var Module = function (models) {
 
                             var vacation = result && result.length ? result[0].toJSON() : {};
 
-                            if (Object.keys(vacation).length){
+                            if (Object.keys(vacation).length) {
                                 var vacArray = vacation.vacArray;
                                 var newDate = moment(new Date()).isoWeekYear(vacation.year).month(vacation.month - 1).date(1);
                                 var i;
@@ -925,11 +930,22 @@ var Module = function (models) {
                     var salary = result.salary;
                     var hourCost = isFinite(salary / monthHoursObject.hours) ? salary / monthHoursObject.hours : 0;
 
+                    var diffDates;
+                    var datemonth = [];
+                    var daterendered = [];
 
-                    var diffDates = _.difference(dateArrayInMonth, journalDates);
+                    dateArrayInMonth.forEach(function (date) {
+                        datemonth.push(date.valueOf());
+                    });
+
+                    journalDates.forEach(function (date) {
+                        daterendered.push(date.valueOf());
+                    });
+
+                    diffDates = _.difference(datemonth, daterendered);
 
                     async.each(diffDates, function (date, asyncCb) {
-                        var dateKey = (moment(date).isoWeekYear() * 100 + moment(date).month() + 1) * 100 + moment(date).date();
+                        var dateKey = (moment(new Date(date)).isoWeekYear() * 100 + moment(date).month() + 1) * 100 + moment(date).date();
                         var callB = _.after(2, asyncCb);
 
                         var vacationBody = {
@@ -938,9 +954,9 @@ var Module = function (models) {
                             date          : date,
                             sourceDocument: {
                                 model: 'Employees',
-                                _id: employeeId
+                                _id  : employeeId
                             },
-                            amount: 0
+                            amount        : 0
                         };
 
                         var salaryIdleBody = {
@@ -949,18 +965,17 @@ var Module = function (models) {
                             date          : date,
                             sourceDocument: {
                                 model: 'Employees',
-                                _id: employeeId
+                                _id  : employeeId
                             }
                         };
 
-                        if (vacation && vacation[dateKey]){
+                        if (vacation && vacation[dateKey]) {
                             vacationBody.amount = hourCost * HOURSCONSTANT * 100;
                             salaryIdleBody.amount = 0;
                         } else {
                             salaryIdleBody.amount = hourCost * HOURSCONSTANT * 100;
                             vacationBody.amount = 0;
                         }
-
 
                         createReconciled(salaryIdleBody, req.session.lastDb, callB, req.session.uId);
                         createReconciled(vacationBody, req.session.lastDb, callB, req.session.uId);
@@ -973,10 +988,10 @@ var Module = function (models) {
                 waterfallTasks = [parallelPart, createJE];
                 async.waterfall(waterfallTasks, function (err, result) {
                     if (err) {
-                        return wfCb(err);
+                        return mainCallback(err);
                     }
 
-                    wfCb();
+                    mainCallback();
                 });
             });
 
@@ -1097,7 +1112,6 @@ var Module = function (models) {
                     var weekKeys;
 
                     result.forEach(function (el) {
-                        var j;
                         resultArray.push(el._id);
                         employeesObj[el.employee] = true;
                         monthKeysObj[el.dateByMonth] = true;
@@ -1250,12 +1264,12 @@ var Module = function (models) {
                                     var day = i;
                                     var dateByMonth = wTrackModel.dateByMonth;
                                     var monthHours = monthHoursObject[dateByMonth];
-                                    var overheadRate = monthHours && monthHours[0] ? monthHours[0].overheadRate : 0;
+                                    var overheadRate = monthHours ? monthHours.overheadRate : 0;
                                     var employeeSalary = salaryObject[employeeSubject];
                                     var salary = 0;
                                     var salaryChangeDates = Object.keys(employeeSalary);
                                     var costHour;
-                                    var hoursInMonth = monthHours && monthHours[0] ? monthHours[0].hours : 0;
+                                    var hoursInMonth = monthHours ? monthHours.hours : 0;
                                     var dateKey = (date.isoWeekYear() * 100 + date.month() + 1) * 100 + date.date();
                                     var holidayDate = holidaysObject[dateKey];
                                     var sameDayHoliday = holidayDate;
@@ -3777,7 +3791,7 @@ var Module = function (models) {
         var findInvoice;
         var findSalary;
         var findByEmployee;
-        var count = parseInt(data.count, 10) || 100;
+        var count = parseInt(data.count, 10) / 2 || 50;
         var page = parseInt(data.page, 10);
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var filter = data.filter;

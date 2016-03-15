@@ -95,7 +95,7 @@ var MonthHours = function (event, models) {
                             cb(null, result);
                         });
 
-                    }, function (err) {
+                    00}, function (err) {
                         if (err) {
                             return next(err);
                         }
