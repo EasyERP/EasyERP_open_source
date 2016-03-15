@@ -616,6 +616,7 @@ var Module = function (models) {
             function findMonthHours(pCb) {
                 redisStore.readFromStorage('monthHours', monthKey, function (err, result) {
 
+                    result = JSON.parse(result);
                     monthHoursObject = result[0] || {};
                     pCb(null, monthHoursObject);
                 });
@@ -859,12 +860,12 @@ var Module = function (models) {
                             employee: employeeId,
                             month   : month,
                             year    : year
-                        }, {vacArray: 1}, function (err, result) {
+                        }, {vacArray: 1, month: 1, year: 1}, function (err, result) {
                             if (err) {
                                 return pcb(err);
                             }
 
-                            var vacation = result && result.length ? result[0] : {};
+                            var vacation = result && result.length ? result[0].toJSON() : {};
 
                             if (Object.keys(vacation).length){
                                 var vacArray = vacation.vacArray;
@@ -1169,6 +1170,7 @@ var Module = function (models) {
                                         monthHoursObject[key] = {};
                                     }
 
+                                    result = JSON.parse(result);
                                     monthHoursObject[key] = result[0] || {};
                                     cb();
                                 });
