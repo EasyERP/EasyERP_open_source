@@ -368,12 +368,13 @@ var requestHandler = function (app, event, mainDb) {
             var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
             var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
             var paralellTasks;
+            var projectTeam;
             var editedBy = {
                 user: req.session.uId,
                 date: new Date()
             };
 
-            var query = Project.find({_id: pId}, {_id: 1, bonus: 1}).lean();
+            var query = Project.find({_id: pId}, {_id: 1, bonus: 1, 'budget.projectTeam': 1}).lean();
 
             query.populate('bonus.employeeId', '_id name')
                 .populate('bonus.bonusId', '_id name value isPercent');
@@ -382,6 +383,8 @@ var requestHandler = function (app, event, mainDb) {
                 if (err) {
                     return console.log(err);
                 }
+
+                projectTeam = result ? result[0].budget.projectTeam : [];
 
                 result.forEach(function (project) {
                     paralellTasks = [getwTrackAndMonthHours];
@@ -630,16 +633,23 @@ var requestHandler = function (app, event, mainDb) {
                     if (err) {
                         return console.log(err);
                     }
-                    async.each(result, function (el, cb) {
-                        Job.findByIdAndUpdate(el._id, {
+
+                    async.each(projectTeam, function (el, cb) {
+                        var element;
+
+                        element = _.find(result, function (resEl) {
+                            return resEl._id.toString() === el.toString();
+                        });
+
+                        Job.findByIdAndUpdate(el, {
                             $set: {
-                                wTracks : el.ids,
+                                wTracks : element ? element.ids : [],
                                 editedBy: editedBy
                             }
                         }, {new: true}, function (err) {
 
                             cb();
-                        })
+                        });
 
                     }, function () {
                         event.emit('updateJobBudget', {req: options.req, pId: pId});
