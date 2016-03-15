@@ -10,9 +10,10 @@ define([
         'constants',
         'views/Assignees/AssigneesView',
         'dataService',
-        'helpers/keyValidator'
+        'helpers/keyValidator',
+        'helpers'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator, helpers) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -162,11 +163,11 @@ define([
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || orderDate;
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-                var total = $.trim(thisEl.find('#totalAmount').text());
-                var totalTaxes = $.trim(thisEl.find('#taxes').text());
+                var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
+                var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
                 var taxes;
                 var description;
-                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
                 var subTotal;
                 var jobs;
                 var usersId = [];
@@ -190,11 +191,11 @@ define([
                         productId = targetEl.data('id');
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = targetEl.find('[data-name="price"]').text();
-                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                            taxes = targetEl.find('.taxes').text();
+                            price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
+                            /*scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();*/
+                            taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                             description = targetEl.find('[data-name="productDescr"]').text();
-                            subTotal = targetEl.find('.subtotal').text();
+                            subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
                             if (jobs === "jobs" && this.forSales) {

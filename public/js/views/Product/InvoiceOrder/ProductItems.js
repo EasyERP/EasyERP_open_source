@@ -322,7 +322,7 @@ define([
                     parent.append('<input id="editInput" class="forNum"  maxlength="' + maxlength + '" type="text"/>'); // changed validation for numbers on keyValidator
                 }
 
-                $('#editInput').val(this.text);
+                $('#editInput').val(helpers.spaceReplacer(this.text));
             }
 
             if (datePicker.length) {
@@ -358,10 +358,10 @@ define([
             var val = inputEl.val();
 
             if (!val.length) {
-                val = 0;
+                val = '0';
             }
 
-            parent.removeClass('quickEdit').html('<span>' + val + '</span>');
+            parent.removeClass('quickEdit').html('<span>' + helpers.currencySplitter(val) + '</span>');
 
             if (inputEl.hasClass('datepicker')) {
                 parent.find('span').addClass('datepicker');
@@ -605,7 +605,7 @@ define([
 
             $parent = $parent.closest('tr');
 
-            cost = $parent.find('[data-name="price"] span').text();
+            cost = helpers.spaceReplacer($parent.find('[data-name="price"] span').text());
             cost = parseFloat(cost);
 
             total = quantity * cost;
@@ -616,7 +616,7 @@ define([
             $parent.find('.taxes').text(taxes);
 
             subtotal = subtotal.toFixed(2);
-            $parent.find('.subtotal').text(subtotal);
+            $parent.find('.subtotal').text(helpers.currencySplitter(subtotal));
 
             this.calculateTotal();
         },
@@ -644,7 +644,7 @@ define([
                 for (var i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     quantity = this.quantityRetriver($currentEl);
-                    cost = $currentEl.find('[data-name="price"]').text();
+                    cost = helpers.spaceReplacer($currentEl.find('[data-name="price"]').text());
                     totalUntax += (quantity * cost);
                     date = $currentEl.find('.datepicker').text();
                     dates.push(date);
@@ -652,17 +652,17 @@ define([
             }
 
             totalUntax = totalUntax.toFixed(2);
-            totalUntaxContainer.text(totalUntax);
+            totalUntaxContainer.text(helpers.currencySplitter(totalUntax));
             totalUntax = parseFloat(totalUntax);
 
             taxes = totalUntax * this.taxesRate;
             taxes = taxes.toFixed(2);
-            taxesContainer.text(taxes);
+            taxesContainer.text(helpers.currencySplitter(taxes));
             taxes = parseFloat(taxes);
 
             total = totalUntax + taxes;
             total = total.toFixed(2);
-            totalContainer.text(total);
+            totalContainer.text(helpers.currencySplitter(total));
 
             date = helpers.minFromDates(dates);
             $thisEl.find('#minScheduleDate span').text(date);
@@ -693,18 +693,24 @@ define([
                     productsContainer.append(_.template(ItemsEditList, {
                         products: products,
                         editable: this.editable,
-                        forSales: self.forSales
+                        forSales: self.forSales,
+                        currencySplitter: helpers.currencySplitter
                     }));
                     totalAmountContainer = $thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
                         model         : options.model,
-                        balanceVisible: this.visible
+                        balanceVisible: this.visible,
+                        currencySplitter : helpers.currencySplitter
                     }));
                 }
             } else {
                 this.$el.html(this.template({forSales: self.forSales}));
                 totalAmountContainer = $thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
+                totalAmountContainer.append(_.template(totalAmount, {
+                    model           : null,
+                    balanceVisible: this.visible,
+                    currencySplitter: helpers.currencySplitter
+                }));
             }
 
             return this;

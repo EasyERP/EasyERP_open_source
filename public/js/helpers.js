@@ -15,9 +15,14 @@ define([], function () {
         return date.replace(/(\d{4})/, "$1/");
     }
 
+    function spaceReplacer (value){
+        return value.replace(/\s/g, '');
+    }
+
     return {
         minFromDates    : minFromDates,
         currencySplitter: currencySplitter,
-        weekSplitter    : weekSplitter
+        weekSplitter    : weekSplitter,
+        spaceReplacer   : spaceReplacer
     };
 });
