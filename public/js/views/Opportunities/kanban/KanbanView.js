@@ -40,7 +40,7 @@
                 this.filterView.trigger('filter', App.filter);
 
                 //this.asyncFetc(options.workflowCollection.toJSON());
-                this.getCollectionLengthByWorkflows(this);
+                //this.getCollectionLengthByWorkflows(this);
             },
             updateFoldWorkflow: function () {
                 if (this.foldWorkflows.length === 0) {
@@ -226,7 +226,7 @@
                 if (response.fold) {
                     context.foldUnfoldKanban(null, response.workflowId);
                 }
-                column.find(".counter").html(parseInt(column.find(".counter").html()) + contentCollection.models.length);
+                column.find(".totalCount").html(contentCollection.models.length);
                 _.each(contentCollection.models, function (wfModel) {
                     var curEl;
 
@@ -444,6 +444,8 @@
                 self.changeLocationHash(false, false, filter);
 
                 self.$el.find('td.column #forContent').html('');
+
+                //self.$el.find(".counter").html(0);
 
                 this.asyncFetc(workflows, filter);
             },
