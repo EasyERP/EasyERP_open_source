@@ -25,7 +25,32 @@ define([
     'constants',
     'helpers/keyCodeHelper',
     'helpers/employeeHelper'
-], function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes, employeeHelper) {
+], function (Backbone,
+             _,
+             $,
+             listViewBase,
+             selectView,
+             listTemplate,
+             cancelEdit,
+             forWeek,
+             createView,
+             listItemView,
+             editView,
+             wTrackCreateView,
+             currentModel,
+             contentCollection,
+             EditCollection,
+             filterView,
+             CreateJob,
+             common,
+             dataService,
+             populate,
+             async,
+             custom,
+             moment,
+             CONSTANTS,
+             keyCodes,
+             employeeHelper) {
     'use strict';
 
     var wTrackListView = listViewBase.extend({
@@ -71,7 +96,7 @@ define([
             'change .autoCalc'                                 : 'autoCalc',
             'change .editable'                                 : 'setEditable',
             'keydown input.editing'                            : 'keyDown',
-            'click'                                            : 'removeInputs'
+            click                                              : 'removeInputs'
         },
 
         removeInputs: function () {
@@ -221,12 +246,16 @@ define([
                 projectWorkflow = $.trim(row.find('[data-content="workflow"]').text());
 
                 if ((model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') || (projectWorkflow !== 'Closed')) {
-                    model.set({"isPaid": false});
-                    model.set({"amount": 0});
-                    model.set({"cost": 0});
-                    model.set({"revenue": 0});
+                    model.set({
+                        isPaid : false,
+                        amount : 0,
+                        cost   : 0,
+                        revenue: 0
+                    });
                     model = model.toJSON();
+
                     delete model._id;
+
                     _model = new currentModel(model);
 
                     this.showSaveCancelBtns();
@@ -243,7 +272,7 @@ define([
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[1]).text("New");
+                    $(tdsArr[1]).text('New');
                 } else {
                     message = "You can't copy tCard with closed project.";
                     App.render({
@@ -254,17 +283,26 @@ define([
             }
         },
 
-        autoCalc: function (e) {
-            var el = $(e.target);
-            var tr = $(e.target).closest('tr');
-            var input = tr.find('input.editing');
-            var days = tr.find('.autoCalc');
-            var wTrackId = tr.attr('data-id');
+        autoCalc: function (e, $tr) {
             var worked = 0;
+            var $el;
+            var input;
+            var days;
+            var wTrackId;
             var value;
             var calcEl;
-            var editWtrackModel;
-            var workedEl = tr.find('[data-content="worked"]');
+            var workedEl;
+            var i;
+
+            if (e) {
+                $el = $(e.target);
+            }
+
+            $tr = $tr || $el.closest('tr');
+            input = $tr.find('input.editing');
+            days = $tr.find('.autoCalc');
+            wTrackId = $tr.attr('data-id');
+            workedEl = $tr.find('[data-content="worked"]');
 
             function eplyDefaultValue(el) {
                 var value = el.text();
@@ -281,7 +319,7 @@ define([
                 return value;
             };
 
-            for (var i = days.length - 1; i >= 0; i--) {
+            for (i = days.length - 1; i >= 0; i--) {
                 calcEl = $(days[i]);
 
                 value = eplyDefaultValue(calcEl);
@@ -334,7 +372,7 @@ define([
             var self = this;
             var weeks;
 
-            if (navigator.userAgent.indexOf("Firefox") > -1) {
+            if (navigator.userAgent.indexOf('Firefox') > -1) {
                 this.setEditable(editedElement);
             }
 
@@ -353,6 +391,7 @@ define([
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                 if (editedElementContent === 'month') {
+                    //ToDo add disabled functionality for days
                     async.parallel([funcForWeek], function (err, result) {
                         if (err) {
                             console.log(err);
@@ -363,7 +402,7 @@ define([
                         editedCol.text(editedElementValue);
                         editedElement.remove();
 
-                        self.changedModels[editedElementRowId]['week'] = weeks[0].week;
+                        self.changedModels[editedElementRowId].week = weeks[0].week;
                     });
                 } else {
                     editedCol.text(editedElementValue);
@@ -389,11 +428,11 @@ define([
             var wTrackId = tr.attr('data-id');
             var colType = el.data('type');
             var content = el.data('content');
-            var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-            var isWeek = el.attr("data-content") === 'week';
-            var isYear = el.attr("data-content") === 'year';
-            var isMonth = el.attr("data-content") === 'month';
-            var isDay = el.hasClass("autoCalc");
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
+            var isWeek = el.attr('data-content') === 'week';
+            var isYear = el.attr('data-content') === 'year';
+            var isMonth = el.attr('data-content') === 'month';
+            var isDay = el.hasClass('autoCalc');
             var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
             var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
             var maxValue = 100;
@@ -427,11 +466,10 @@ define([
                     if (!projectId && !projectId.length) {
                         return false;
                     }
-                    dataService.getData("/jobs/getForDD", {
-                        "projectId": projectId,
-                        "all"      : true
+                    dataService.getData('/jobs/getForDD', {
+                        projectId: projectId,
+                        all      : true
                     }, function (jobs) {
-
                         self.responseObj['#jobs'] = jobs;
 
                         // tr.find('[data-content="jobs"]').addClass('editable');
@@ -473,7 +511,7 @@ define([
 
                 // validation for month and days of week
                 if (isMonth || isDay) {
-                    insertedInput.attr("maxLength", "2");
+                    insertedInput.attr('maxLength', '2');
                     if (isMonth) {
                         maxValue = 12;
                     }
@@ -485,7 +523,7 @@ define([
                 insertedInput.keyup(function (e) {
                     if (insertedInput.val() > maxValue) {
                         e.preventDefault();
-                        insertedInput.val("" + maxValue);
+                        insertedInput.val('' + maxValue);
                     }
                 });
 
@@ -493,6 +531,7 @@ define([
                 insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                 this.autoCalc(e);
+
                 if (wTrackId) {
                     this.calculateCost(e, wTrackId);
                 }
@@ -639,6 +678,7 @@ define([
             });
 
             var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
+            var needCheckVacHol = elementType === '#employee' || elementType === '#week' || elementType === '#year';
 
             if (!this.changedModels[modelId]) {
                 if (!editWtrackModel.id) {
@@ -670,7 +710,6 @@ define([
                     changedAttr.project = project;
 
                     dataService.getData('/jobs/getForDD', {projectId: project, all: true}, function (jobs) {
-
                         self.responseObj['#jobs'] = jobs;
 
                         tr.find('[data-content="jobs"]').addClass('editable');
@@ -696,8 +735,6 @@ define([
 
 
                     // this.calculateCost(e, wTrackId);
-                    this.chackVacHolMonth(tr);
-
                     tr.find('[data-content="department"]').removeClass('errorContent');
                 } else if (elementType === '#department') {
                     department = element._id;
@@ -707,14 +744,10 @@ define([
                     week = $(e.target).text();
 
                     changedAttr.week = week;
-
-                    this.chackVacHolMonth(tr);
                 } else if (elementType === '#year') {
                     year = $(e.target).text();
 
                     changedAttr.year = year;
-
-                    this.chackVacHolMonth(tr);
                 }
 
                 targetElement.removeClass('errorContent');
@@ -726,15 +759,20 @@ define([
             this.hideNewSelect();
             this.setEditable(targetElement);
 
+            if (needCheckVacHol) {
+                this.checkVacHolMonth(tr);
+            }
+
             return false;
         },
 
-        chackVacHolMonth: function ($targetTr, wTrack) {
+        checkVacHolMonth: function ($targetTr, wTrack) {
             // todo add spiner load
             var self = this;
             var $employee = $targetTr.find('[data-content="employee"]');
             var employeeId = $employee.attr('data-id');
             var year = $targetTr.find('[data-content="year"]').text();
+            var month = $targetTr.find('[data-content="month"]').text();
             var week = $targetTr.find('[data-content="week"]').text();
 
             var _$days = $targetTr.find('.autoCalc');
@@ -742,24 +780,39 @@ define([
             _$days.removeClass();
             _$days.addClass('editable autoCalc');
 
-            employeeHelper.getNonWorkingDaysByWeek(year, week, employeeId, wTrack,
+            employeeHelper.getNonWorkingDaysByWeek(year, week, month, employeeId, wTrack,
                 function (nonWorkingDays, self) {
                     var days = Object.keys(nonWorkingDays);
                     var length = days.length - 1;
                     var $el;
                     var day;
+                    var value;
                     var i;
 
                     console.dir(nonWorkingDays);
 
-                    for (var i = length; i >= 0; i--) {
+                    for (i = length; i >= 0; i--) {
                         day = days[i];
 
                         if (day) {
+                            value = nonWorkingDays[day];
                             $el = $targetTr.find('[data-content="' + day + '"]');
-                            $el.addClass(nonWorkingDays[day]);
+
+                            if (value) {
+                                $el.addClass(value);
+
+                                if (value !== 'disabled') {
+                                    $el.text(0);
+                                } else {
+                                    $el.text('');
+                                }
+                            } else if (day !== '7' && day !== '6' && value === '' && value !== 'disabled') {
+                                $el.text(8);
+                            }
                         }
                     }
+
+                    self.autoCalc(null, $targetTr);
                 }, self);
         },
 
@@ -822,15 +875,10 @@ define([
             }
 
             if (errors.length) {
-                return
+                return false;
             }
 
             this.editCollection.save();
-
-            //for (var id in this.changedModels) {
-            //    delete this.changedModels[id];
-            //    this.editCollection.remove(id);
-            //}
 
             this.$el.find('.edited').removeClass('edited');
         },
@@ -1347,7 +1395,7 @@ define([
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 
-                    return department
+                    return department;
                 });
 
                 self.responseObj['#department'] = departments;

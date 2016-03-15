@@ -42,7 +42,7 @@ define([
             this.row = options.tr;
             this.wTracks = options.wTracks;
 
-            employeeHelper.getNonWorkingDaysByWeek(year, week, employee, null,
+            employeeHelper.getNonWorkingDaysByWeek(year, week, null, employee, null,
                 function (nonWorkingDays, self) {
                     options.nonWorkingDays = nonWorkingDays;
                     self.render(options);

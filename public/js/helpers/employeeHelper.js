@@ -5,23 +5,45 @@ define([
 ], function (getVacation, getHoliday, moment) {
     'use strict';
 
-    var getNonWorkingDaysByWeek = function (year, week, employee, wtrack, callback, context) {
+    var getNonWorkingDaysByWeek = function (year, week, month, employee, wtrack, callback, context) {
 
         getVacation.forEmployeeByWeek(year, week, employee, function (vacations) {
 
             getHoliday.byWeek(year, week, function (holidays) {
                 var nonWorkingDays = {};
                 var _date = moment().isoWeekYear(year).isoWeek(week);
-                var _monDate = moment(_date).day(1);
-                var _satDate = moment(_date).day(7);
                 var workingHours = 0;
                 var _endDay = 7;
+                var _monDate;
+                var _satDate;
+                var _secondStartDate;
                 var vacation;
                 var holiday;
                 var i;
 
+                if (month) {
+                    _date.month(month - 1);
+                }
+
+                _monDate = moment(_date).day(1);
+                _satDate = moment(_date).day(7);
+
                 if (_monDate.month() !== _satDate.month()) {
-                    _endDay = _date.endOf('month').day();
+                    _endDay = _monDate.endOf('month').day();
+                    _secondStartDate = moment(_satDate).startOf('month');
+                    if (!month) {
+                        nonWorkingDays.splited = [{
+                            startDay: 1,
+                            endDay  : _endDay,
+                            month   : _monDate.month() + 1,
+                            year    : _monDate.year()
+                        }, {
+                            startDay: _secondStartDate.day(),
+                            endDay  : 7,
+                            month   : _satDate.month() + 1,
+                            year    : _satDate.year()
+                        }];
+                    }
                 }
 
                 nonWorkingDays.workingHours = 0;
@@ -53,3 +75,4 @@ define([
         getNonWorkingDaysByWeek: getNonWorkingDaysByWeek
     };
 });
+

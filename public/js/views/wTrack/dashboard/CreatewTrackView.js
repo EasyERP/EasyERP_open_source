@@ -78,7 +78,7 @@ define([
             self.wTrack = new WTrackModel(body);
             options.wTrack = self.wTrack;
 
-            employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack,
+            employeeHelper.getNonWorkingDaysByWeek(year, self.week, null, options.employee, self.wTrack,
                 function (nonWorkingDays, self) {
                     options.nonWorkingDays = nonWorkingDays;
                     self.render(options);
@@ -133,7 +133,7 @@ define([
 
         saveItem: function () {
             var Model = WTrackModel.extend({
-                //redefine defaults for proper putch backEnd model;
+                // redefine defaults for proper putch backEnd model;
                 defaults: {}
             });
             var self = this;
