@@ -692,7 +692,7 @@ define([
                     changedAttr.employee = employee;
                     changedAttr.department = department;
 
-                    targetElement.attr('data-id', employee._id);
+                    targetElement.attr('data-id', employee);
 
 
                     // this.calculateCost(e, wTrackId);
@@ -729,12 +729,37 @@ define([
             return false;
         },
 
-        chackVacHolMonth: function ($targetTr) {
+        chackVacHolMonth: function ($targetTr, wTrack) {
             // todo add spiner load
-            employeeHelper.getNonWorkingDaysByWeek(year, self.week, options.employee, self.wTrack,
+            var self = this;
+            var $employee = $targetTr.find('[data-content="employee"]');
+            var employeeId = $employee.attr('data-id');
+            var year = $targetTr.find('[data-content="year"]').text();
+            var week = $targetTr.find('[data-content="week"]').text();
+
+            var _$days = $targetTr.find('.autoCalc');
+
+            _$days.removeClass();
+            _$days.addClass('editable autoCalc');
+
+            employeeHelper.getNonWorkingDaysByWeek(year, week, employeeId, wTrack,
                 function (nonWorkingDays, self) {
-                    options.nonWorkingDays = nonWorkingDays;
-                    self.render(options);
+                    var days = Object.keys(nonWorkingDays);
+                    var length = days.length - 1;
+                    var $el;
+                    var day;
+                    var i;
+
+                    console.dir(nonWorkingDays);
+
+                    for (var i = length; i >= 0; i--) {
+                        day = days[i];
+
+                        if (day) {
+                            $el = $targetTr.find('[data-content="' + day + '"]');
+                            $el.addClass(nonWorkingDays[day]);
+                        }
+                    }
                 }, self);
         },
 
@@ -747,7 +772,7 @@ define([
             var changedRows = Object.keys(this.changedModels);
 
             if (this.collection.length > 0) {
-                $checkedEls = $thisEl.find("input.listCB:checked");
+                $checkedEls = $thisEl.find('input.listCB:checked');
 
                 checkLength = $checkedEls.length;
                 rawRows = $checkedEls.closest('.false');
