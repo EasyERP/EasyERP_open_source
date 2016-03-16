@@ -397,12 +397,14 @@ var Filters = function (models) {
             }, {
                 $project: {
                     department: {$arrayElemAt: ["$department", 0]},
-                    name      : 1
+                    name      : 1,
+                    isEmployee: 1
                 }
             }, {
                 $project: {
                     department: 1,
-                    name      : 1
+                    name      : 1,
+                    isEmployee: 1
                 }
             }, {
                 $group: {
@@ -410,7 +412,8 @@ var Filters = function (models) {
                     'employee'  : {
                         $addToSet: {
                             _id : '$_id',
-                            name: {$concat: ['$name.first', ' ', '$name.last']}
+                            name: {$concat: ['$name.first', ' ', '$name.last']},
+                            isEmployee: '$isEmployee'
                         }
                     },
                     'department': {
@@ -1122,7 +1125,8 @@ var Filters = function (models) {
                             _id : '$supplier._id',
                             name: {
                                 $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
-                            }
+                            },
+                            isEmployee: '$supplier.isEmployee'
                         }
                     },
                     'paymentRef': {
