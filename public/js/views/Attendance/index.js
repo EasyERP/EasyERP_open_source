@@ -60,7 +60,7 @@ define([
                 employees = result;
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
-
+                    employee.isEmployee = employee.isEmployee;
                     return employee;
                 });   // changed for getting proper form of names
 
@@ -101,8 +101,6 @@ define([
             });
         },
 
-
-
         showNewSelect: function (e, prev, next) {
             //populate.showSelect(e, prev, next, this);
 
@@ -136,6 +134,13 @@ define([
 
             var target = $(e.target);
             var targetElement = target.closest(".editable").find('span');
+
+            var tempClass = target.attr('class');
+            if (tempClass && tempClass === 'fired') {
+                target.closest(".editable").addClass('fired');
+            } else {
+                target.closest(".editable").removeClass('fired');
+            }
 
             targetElement.text(target.text());
 
