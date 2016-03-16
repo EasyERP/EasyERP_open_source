@@ -1182,6 +1182,8 @@ define([
                 var bonusView;
                 var container;
 
+                App.startPreload();
+
                 var notesEl = new noteView({
                     model: this.formModel
                 }).render().el;
@@ -1238,6 +1240,7 @@ define([
                     self.renderProformRevenue();
                     self.getInvoiceStats();
                     self.activeTab();
+                    App.stopPreload();
                 });
 
                 $("#top-bar-deleteBtn").hide();
