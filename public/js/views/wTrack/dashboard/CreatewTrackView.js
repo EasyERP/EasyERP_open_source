@@ -140,101 +140,108 @@ define([
             var thisEl = this.$el;
             var table = thisEl.find('#wTrackCreateTable');
             var inputEditing = table.find('input.editing');
-            var row = table.find('tr');
-            var target = row;
-            var id = target.attr('data-id');
-            var jobs = target.find('[data-content="jobs"]');
-            var monEl = target.find('[data-content="1"]');
-            var tueEl = target.find('[data-content="2"]');
-            var wenEl = target.find('[data-content="3"]');
-            var thuEl = target.find('[data-content="4"]');
-            var friEl = target.find('[data-content="5"]');
-            var satEl = target.find('[data-content="6"]');
-            var sunEl = target.find('[data-content="7"]');
-            var worked = target.find('[data-content="worked"]');
-            var month = target.find('[data-content="month"]');
-            var year = target.find('[data-content="year"]');
-            var dateByMonth;
-            var mo;
-            var tu;
-            var we;
-            var th;
-            var fr;
-            var sa;
-            var su;
-            var m;
-            var y;
-            var wTrack;
-            var model;
-            var project;
+            var rows = table.find('tr');
+            var count = rows.length - 1;
 
-            function retriveText(el) {
-                var child = el.children('input');
+            rows.each(function (index) {
+                var target = $(this);
+                var id = target.attr('data-id');
+                var jobs = target.find('[data-content="jobs"]');
+                var monEl = target.find('[data-content="1"]');
+                var tueEl = target.find('[data-content="2"]');
+                var wenEl = target.find('[data-content="3"]');
+                var thuEl = target.find('[data-content="4"]');
+                var friEl = target.find('[data-content="5"]');
+                var satEl = target.find('[data-content="6"]');
+                var sunEl = target.find('[data-content="7"]');
+                var worked = target.find('[data-content="worked"]');
+                var month = target.find('[data-content="month"]');
+                var year = target.find('[data-content="year"]');
+                var dateByMonth;
+                var mo;
+                var tu;
+                var we;
+                var th;
+                var fr;
+                var sa;
+                var su;
+                var m;
+                var y;
+                var wTrack;
+                var model;
+                var project;
 
-                if (child.length) {
-                    return child.val();
+                function retriveText(el) {
+                    var child = el.children('input');
+
+                    if (child.length) {
+                        return child.val();
+                    }
+
+                    return el.text() || 0;
                 }
 
-                return el.text() || 0;
-            }
+                mo = retriveText(monEl);
+                tu = retriveText(tueEl);
+                we = retriveText(wenEl);
+                th = retriveText(thuEl);
+                fr = retriveText(friEl);
+                sa = retriveText(satEl);
+                su = retriveText(sunEl);
+                m = retriveText(month);
+                y = retriveText(year);
 
-            mo = retriveText(monEl);
-            tu = retriveText(tueEl);
-            we = retriveText(wenEl);
-            th = retriveText(thuEl);
-            fr = retriveText(friEl);
-            sa = retriveText(satEl);
-            su = retriveText(sunEl);
-            m = retriveText(month);
-            y = retriveText(year);
-            dateByMonth = y * 100 + parseInt(m, 10);
-            project = self.$el.find('#project').attr('data-id');
+                dateByMonth = y * 100 + parseInt(m, 10);
+                project = self.$el.find('#project').attr('data-id');
 
-            if (this.$el.find('.error').length || this.$el.find('.errorContent').length) {
-                return App.render({
-                    type   : 'error',
-                    message: 'Please, select all information first.'
-                });
-            }
-
-            if (inputEditing.length) {
-                this.autoCalc(null, inputEditing);
-            }
-
-            worked = retriveText(worked);
-            wTrack = {
-                _id        : id,
-                1          : mo,
-                2          : tu,
-                3          : we,
-                4          : th,
-                5          : fr,
-                6          : sa,
-                7          : su,
-                jobs       : jobs.attr('data-id'),
-                worked     : worked,
-                project    : project,
-                month      : m,
-                year       : y,
-                dateByWeek : this.dateByWeek,
-                dateByMonth: dateByMonth,
-                employee   : this.employee,
-                department : this.department,
-                week       : this.week
-            };
-
-            model = new Model(wTrack);
-
-            model.save(null, {
-                success: function () {
-                    return self.hideDialog();
-                },
-                error  : function (err) {
-                    App.render({
+                if (self.$el.find('.error').length || self.$el.find('.errorContent').length) {
+                    return App.render({
                         type   : 'error',
-                        message: err.text
+                        message: 'Please, select all information first.'
                     });
                 }
+
+                if (inputEditing.length) {
+                    self.autoCalc(null, inputEditing);
+                }
+
+                worked = retriveText(worked);
+                wTrack = {
+                    _id        : id,
+                    1          : mo,
+                    2          : tu,
+                    3          : we,
+                    4          : th,
+                    5          : fr,
+                    6          : sa,
+                    7          : su,
+                    jobs       : jobs.attr('data-id'),
+                    worked     : worked,
+                    project    : project,
+                    month      : m,
+                    year       : y,
+                    dateByWeek : self.dateByWeek,
+                    dateByMonth: dateByMonth,
+                    employee   : self.employee,
+                    department : self.department,
+                    week       : self.week
+                };
+
+                model = new Model(wTrack);
+
+                model.save(null, {
+                    success: function () {
+                        if (count === index) {
+                            return self.hideDialog();
+                        }
+                    },
+                    error  : function (err) {
+                        App.render({
+                            type   : 'error',
+                            message: err.text
+                        });
+                    }
+                });
             });
         },
 
