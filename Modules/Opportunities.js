@@ -9,7 +9,8 @@ var Opportunities = function (models, event) {
 	    var fs                  = require('fs');
 
 	    function getTotalCount(req, response) {
-		    var res       = {};
+
+		    /*var res       = {};
 		    var data      = req.query;
 		    var filterObj = {};
 		    var filter    = data.filter || {};
@@ -21,10 +22,10 @@ var Opportunities = function (models, event) {
 		    filterObj.$and     = [];
 
 		    if (filter) {
-			    filterObj.$and = [caseFilterOpp(filter)];
+			    filterObj = caseFilterOpp(filter);
 		    }
 
-		    /*        if (data.filter && data.filter.workflow) {
+		    /!*        if (data.filter && data.filter.workflow) {
 		     data.filter.workflow = data.filter.workflow.map(function (item) {
 		     return item === "null" ? null : item;
 		     });
@@ -32,7 +33,7 @@ var Opportunities = function (models, event) {
 		     optionsObject['workflow'] = {$in: data.filter.workflow.objectID()};
 		     } else if (data && !data.newCollection) {
 		     optionsObject['workflow'] = {$in: []};
-		     }*/
+		     }*!/
 
 		    switch (contentType) {
 			    case ('Opportunities'):
@@ -141,7 +142,329 @@ var Opportunities = function (models, event) {
 					    console.log(err);
 					    response.send(500, {error: 'Server Eroor'});
 				    }
+			    });*/
+
+		    var res = {};
+		    var filterObj = {};
+		    var optionsObject = {};
+		    var data = req.query;
+		    var filter = data.filter || {};
+		    res.data = [];
+
+		    if (filter) {
+			    filterObj = caseFilterOpp(filter);
+		    }
+
+		    switch (data.contentType) {
+			    case ('Opportunities'):
+
+				    optionsObject = [];
+				    optionsObject.push({'isOpportunitie': true});
+				    if (data && data.filter) {
+					    optionsObject.push(filterObj);
+				    }
+
+				    break;
+			    case ('Leads'):
+
+				    optionsObject = [];
+				    optionsObject.push({'isOpportunitie': false});
+				    if (data && data.filter) {
+					    optionsObject.push(filterObj);
+				    }
+
+				    break;
+		    }
+
+		    models.get(req.session.lastDb, "Department", departmentSchema).aggregate(
+			    {
+				    $match: {
+					    users: objectId(req.session.uId)
+				    }
+			    }, {
+				    $project: {
+					    _id: 1
+				    }
+			    },
+			    function (err, deps) {
+				    if (!err) {
+					    var arrOfObjectId = deps.objectID();
+
+					    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
+						    {
+							    $project: {
+								    'groups.users': 1,
+								    'groups.group': 1,
+								    'groups.owner': 1,
+								    contactName   : {$concat: ['$contactName.first', " ", '$contactName.last']},
+								    source        : 1,
+								    workflow      : 1,
+								    whoCanRW      : 1,
+								    isConverted   : 1,
+								    isOpportunitie: 1,
+								    customer      : 1,
+								    salesPerson   : 1
+							    }
+						    },
+						    {
+							    $match: {
+								    $or: [
+									    {
+										    $or: [
+											    {
+												    $and: [
+													    {whoCanRW: 'group'},
+													    {'groups.users': objectId(req.session.uId)}
+												    ]
+											    },
+											    {
+												    $and: [
+													    {whoCanRW: 'group'},
+													    {'groups.group': {$in: arrOfObjectId}}
+												    ]
+											    }
+										    ]
+									    },
+									    {
+										    $and: [
+											    {whoCanRW: 'owner'},
+											    {'groups.owner': objectId(req.session.uId)}
+										    ]
+									    },
+									    {whoCanRW: "everyOne"}
+								    ]
+							    }
+						    },
+						    {
+							    $project: {
+								    _id: 1
+							    }
+						    },
+						    function (err, result) {
+							    var aggregateQuery;
+
+							    if (!err) {
+								    var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
+
+								    switch (data.contentType) {
+
+									    case ('Opportunities'):
+									    {
+
+										    aggregateQuery = [
+											    {
+												    $match: {
+													    $or: result
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Customers',
+													    localField  : 'customer',
+													    foreignField: '_id',
+													    as          : 'customer'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Employees',
+													    localField  : 'salesPerson',
+													    foreignField: '_id',
+													    as          : 'salesPerson'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'workflows',
+													    localField  : 'workflow',
+													    foreignField: '_id',
+													    as          : 'workflow'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Users',
+													    localField  : 'createdBy.user',
+													    foreignField: '_id',
+													    as          : 'createdBy.user'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Users',
+													    localField  : 'editedBy.user',
+													    foreignField: '_id',
+													    as          : 'editedBy.user'
+												    }
+											    },
+											    {
+												    $project: {
+													    "customer"        : {$arrayElemAt: ["$customer", 0]},
+													    "salesPerson"     : {$arrayElemAt: ["$salesPerson", 0]},
+													    "workflow"        : {$arrayElemAt: ["$workflow", 0]},
+													    "createdBy.user"  : {$arrayElemAt: ["$createdBy.user", 0]},
+													    "editedBy.user"   : {$arrayElemAt: ["$editedBy.user", 0]},
+													    "createdBy.date"  : 1,
+													    "editedBy.date"   : 1,
+													    "creationDate"    : 1,
+													    "isOpportunitie"  : 1,
+													    "name"            : 1,
+													    "expectedRevenue" : 1,
+													    "attachments"     : 1,
+													    "notes"           : 1,
+													    "convertedDate"   : 1,
+													    "isConverted"     : 1,
+													    "source"          : 1,
+													    "campaign"        : 1,
+													    "sequence"        : 1,
+													    "reffered"        : 1,
+													    "optout"          : 1,
+													    "active"          : 1,
+													    "color"           : 1,
+													    "categories"      : 1,
+													    "priority"        : 1,
+													    "expectedClosing" : 1,
+													    "nextAction"      : 1,
+													    "internalNotes"   : 1,
+													    "salesTeam"       : 1,
+													    "phones"          : 1,
+													    "email"           : 1,
+													    "contactName"     : 1,
+													    "address"         : 1,
+													    "company"         : 1,
+													    "tempCompanyField": 1
+												    }
+											    },
+											    {
+												    $match: {
+													    $and: optionsObject
+												    }
+											    }
+
+										    ];
+
+									    }
+										    break;
+									    case ('Leads'):
+									    {
+
+										    aggregateQuery = [
+											    {
+												    $match: {
+													    $or: result
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Customers',
+													    localField  : 'company',
+													    foreignField: '_id',
+													    as          : 'customer'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Employees',
+													    localField  : 'salesPerson',
+													    foreignField: '_id',
+													    as          : 'salesPerson'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'workflows',
+													    localField  : 'workflow',
+													    foreignField: '_id',
+													    as          : 'workflow'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Users',
+													    localField  : 'createdBy.user',
+													    foreignField: '_id',
+													    as          : 'createdBy.user'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Users',
+													    localField  : 'editedBy.user',
+													    foreignField: '_id',
+													    as          : 'editedBy.user'
+												    }
+											    },
+											    {
+												    $project: {
+													    "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
+													    "customer"       : {$arrayElemAt: ["$customer", 0]},
+													    "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
+													    "workflow"       : {$arrayElemAt: ["$workflow", 0]},
+													    "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
+													    "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
+													    "createdBy.date" : 1,
+													    "editedBy.date"  : 1,
+													    "creationDate"   : 1,
+													    "isOpportunitie" : 1,
+													    "name"           : 1,
+													    "expectedRevenue": 1,
+													    "attachments"    : 1,
+													    "notes"          : 1,
+													    "convertedDate"  : 1,
+													    "isConverted"    : 1,
+													    "source"         : 1,
+													    "campaign"       : 1,
+													    "sequence"       : 1,
+													    "reffered"       : 1,
+													    "optout"         : 1,
+													    "active"         : 1,
+													    "color"          : 1,
+													    "categories"     : 1,
+													    "priority"       : 1,
+													    "expectedClosing": 1,
+													    "nextAction"     : 1,
+													    "internalNotes"  : 1,
+													    "phones"         : 1,
+													    "email"          : 1,
+													    "address"        : 1,
+													    "company"        : 1
+												    }
+											    },
+											    {
+												    $match: {
+													    $and: optionsObject
+												    }
+											    }
+
+										    ];
+
+									    }
+										    break;
+								    }
+
+
+								    query.aggregate(aggregateQuery, function (err, result) {
+									    if (!err) {
+										    if (data.currentNumber && data.currentNumber < result.length) {
+											    res.showMore = true;
+										    }
+										    res.count = result.length;
+										    response.send(res);
+									    } else {
+										    console.log(err);
+										    response.send(500, {error: 'Server Eroor'});
+									    }
+								    });
+							    } else {
+								    console.log(err);
+							    }
+						    }
+					    );
+				    } else {
+					    console.log(err);
+				    }
 			    });
+
 	    }
 
 	    function create(req, data, res) {
