@@ -154,7 +154,7 @@
                                 var hours;
                                 var workingStr;
                                 for (var i = 1; i <= 7; i++) {
-                                    workingStr = nonWorkingDays[i.toString()];
+                                    workingStr = nonWorkingDays[i];
 
                                     if(i >= dateObject.startDay && i <= dateObject.endDay){
                                         cls = (isNaN(parseInt(workingStr)) ? workingStr : "");

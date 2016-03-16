@@ -22,7 +22,8 @@ define([
 
         events: {
             'click .stageSelect'                               : 'showNewSelect',
-            'click td.editable'                                : 'editRow',
+            'click td.editable:not(.disabled)'                 : 'editRow',
+            'click td.disabled'                                : 'notify',
             'keydown input.editing'                            : 'keyDown',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             click                                              : 'removeInputs'
@@ -359,6 +360,13 @@ define([
              }*/
 
             return false;
+        },
+
+        notify: function () {
+            App.render({
+                type   : 'notify',
+                message: 'This day from another month'
+            });
         },
 
         removeInputs: function () {

@@ -365,24 +365,26 @@ define([
 
         setChangedValueToModel: function () {
             var editedElement = this.$listTable.find('.editing');
-            var editedCol;
+            var $editedCol;
             var editedElementRowId;
             var editedElementContent;
             var editedElementValue;
             var self = this;
             var weeks;
+            var $tr;
 
             if (navigator.userAgent.indexOf('Firefox') > -1) {
                 this.setEditable(editedElement);
             }
 
             if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
-                editedCol = editedElement.closest('td');
-                editedElementRowId = editedElement.closest('tr').attr('data-id');
-                editedElementContent = editedCol.data('content');
+                $editedCol = editedElement.closest('td');
+                $tr = editedElement.closest('tr');
+                editedElementRowId = $tr.attr('data-id');
+                editedElementContent = $editedCol.data('content');
                 editedElementValue = editedElement.val();
 
-                //editWtrackModel = this.editCollection.get(editedElementRowId);
+                // editWtrackModel = this.editCollection.get(editedElementRowId);
 
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
@@ -391,7 +393,7 @@ define([
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                 if (editedElementContent === 'month') {
-                    //ToDo add disabled functionality for days
+                    // ToDo add disabled functionality for days
                     async.parallel([funcForWeek], function (err, result) {
                         if (err) {
                             console.log(err);
@@ -399,23 +401,23 @@ define([
 
                         weeks = result[0];
                         editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
-                        editedCol.text(editedElementValue);
+                        $editedCol.text(editedElementValue);
                         editedElement.remove();
 
                         self.changedModels[editedElementRowId].week = weeks[0].week;
+
+                        self.checkVacHolMonth($tr);
                     });
                 } else {
-                    editedCol.text(editedElementValue);
+                    $editedCol.text(editedElementValue);
                     editedElement.remove();
                 }
 
             }
-            function funcForWeek(cb) {
-                var weeks;
-                var month = editedElementValue;
-                var year = editedElement.closest('tr').find('[data-content="year"]').text();
 
-                weeks = custom.getWeeks(month, year);
+            function funcForWeek(cb) {
+                var year = editedElement.closest('tr').find('[data-content="year"]').text();
+                var weeks = custom.getWeeks(editedElementValue, year);
 
                 cb(null, weeks);
             }
