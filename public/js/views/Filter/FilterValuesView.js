@@ -121,7 +121,7 @@ define([
 
                         if (element._id || element._id === 0) {
 
-                            if (('isEmployee' in element) && (element.isEmployee === true)) {
+                            if (('isEmployee' in element) && (element.isEmployee === false)) {
                                 var classFired = '';
 
                                 if (!element.status) {
