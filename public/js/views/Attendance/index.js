@@ -104,6 +104,16 @@ define([
         showNewSelect: function (e, prev, next) {
             //populate.showSelect(e, prev, next, this);
 
+            var modelsForNewSelect;
+
+            if(this.currentStatus === 'statusNotHired'){
+                modelsForNewSelect = _.filter(this.model.get("employees"),function(element){ return element.isEmployee === true;});
+            }else if (this.currentStatus === 'statusHired'){
+                modelsForNewSelect = _.filter(this.model.get("employees"),function(element){ return element.isEmployee === false;});
+            } else {
+                modelsForNewSelect = this.model.get("employees");
+            }
+
             var $target = $(e.target);
             e.stopPropagation();
             if ($target.attr('id') === 'selectInput') {
@@ -116,7 +126,7 @@ define([
 
             this.selectView = new SelectView({
                 e          : e,
-                responseObj: {'#employee': this.model.get("employees")}
+                responseObj: {'#employee': modelsForNewSelect}
             });
 
             $target.append(this.selectView.render().el);
@@ -180,9 +190,9 @@ define([
             var self = this;
             self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
-            dataService.getData("/getPersonsForDd", {}, function (result) {
-                //ToDo Hired and Not Hired
-            });
+            //dataService.getData("/getPersonsForDd", {}, function (result) {
+            //
+            //});
         },
 
         changeTime: function () {
