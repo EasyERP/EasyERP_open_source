@@ -1458,7 +1458,8 @@ var Module = function (models) {
                                         journal       : CONSTANTS.OVERHEAD,
                                         date          : date.set(timeToSet),
                                         sourceDocument: {
-                                            model: 'wTrack'
+                                            model: 'wTrack',
+                                            _id  : sourceDoc
                                         }
                                     };
 
