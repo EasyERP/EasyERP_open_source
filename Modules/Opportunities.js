@@ -21,7 +21,7 @@ var Opportunities = function (models, event) {
 		    filterObj.$and     = [];
 
 		    if (filter) {
-			    filterObj.$and = caseFilterOpp(filter);
+			    filterObj.$and = [caseFilterOpp(filter)];
 		    }
 
 		    /*        if (data.filter && data.filter.workflow) {
@@ -501,41 +501,93 @@ var Opportunities = function (models, event) {
 		    }
 	    }
 
-	    function caseFilterOpp(filter) {
-		    var condition;
-		    var resArray     = [];
-		    var filtrElement = {};
-		    var key;
-		    var filterName;
+	    function caseFilterOpp(data) {
+		    /*var condition;
+		     var resArray     = [];
+		     var filtrElement = {};
+		     var key;
+		     var filterName;
 
-		    for (filterName in filter) {
-			    condition = filter[filterName].value;
-			    key       = filter[filterName].key;
+		     for (filterName in filter) {
+		     condition = filter[filterName].value;
+		     key       = filter[filterName].key;
 
-			    switch (filterName) {
-				    case 'contactName':
-					    filtrElement.contactName = {$in: condition};
-					    resArray.push(filtrElement);
-					    break;
-				    case 'workflow':
-					    filtrElement.workflow = {$in: condition.objectID()};
-					    resArray.push(filtrElement);
-					    break;
-				    case 'source':
-					    filtrElement.source = {$in: condition};
-					    resArray.push(filtrElement);
-					    break;
-				    case 'customer':
-					    filtrElement.customer = {$in: condition.objectID()};
-					    resArray.push(filtrElement);
-					    break;
-				    case 'salesPerson':
-					    filtrElement.salesPerson = {$in: condition.objectID()};
-					    resArray.push(filtrElement);
-					    break;
+		     switch (filterName) {
+		     case 'contactName':
+		     filtrElement.contactName = {$in: condition};
+		     resArray.push(filtrElement);
+		     break;
+		     case 'workflow':
+		     filtrElement.workflow = {$in: condition.objectID()};
+		     resArray.push(filtrElement);
+		     break;
+		     case 'source':
+		     filtrElement.source = {$in: condition};
+		     resArray.push(filtrElement);
+		     break;
+		     case 'customer':
+		     filtrElement.customer = {$in: condition.objectID()};
+		     resArray.push(filtrElement);
+		     break;
+		     case 'salesPerson':
+		     filtrElement.salesPerson = {$in: condition.objectID()};
+		     resArray.push(filtrElement);
+		     break;
+		     }
+		     }
+		     return resArray;*/
+
+		    var filter  = {};
+		    var tempObj = {};
+		    var query   = {};
+		    var ids;
+		    var opportunityModel;
+		    query['$or'] = [];
+		    filter['$and'] = [];
+
+
+		    for (var key in data) {
+			    ids = [];
+
+			    if (key !== 'workflowId') {
+
+				    if (key === 'contactName') {
+
+					    tempObj.contactName = {$in: data[key].value};
+
+				    } else if (key === 'source') {
+
+					    tempObj.source = {$in: data[key].value};
+
+				    } else {
+
+					    data[key].value.forEach(function (id) {
+						    if (id !== 'Empty') {
+							    ids.push(objectId(id));
+						    } else {
+							    tempObj[data[key].key] = {$exists: false};
+							    query['$or'].push(tempObj);
+							    tempObj = {};
+						    }
+					    });
+
+					    tempObj[data[key].key] = {$in: ids};
+				    }
+
+				    query['$or'].push(tempObj);
+				    tempObj = {};
 			    }
+
+			    if (query['$or'].length) {
+				    filter['$and'].push(query);
+
+				    query = {};
+				    query['$or'] = [];
+			    }
+
 		    }
-		    return resArray;
+
+		    return filter;
 	    }
 
 	    function getFilter(req, response) {
@@ -554,16 +606,16 @@ var Opportunities = function (models, event) {
 		    var filter = data.filter || {};
 
 		    if (filter) {
-			    filterObj.$and = caseFilterOpp(filter);
+			    filterObj = caseFilterOpp(filter);
 		    }
 
 		    switch (data.contentType) {
 			    case ('Opportunities'):
 
-				    optionsObject['$and'] = [];
-				    optionsObject['$and'].push({'isOpportunitie': true});
+				    optionsObject = [];
+				    optionsObject.push({'isOpportunitie': true});
 				    if (data && data.filter) {
-					    optionsObject['$and'].push(filterObj);
+					    optionsObject.push(filterObj);
 				    }
 				    /*  if (data && data.filter) {
 				     optionsObject['$and'] = [];
@@ -606,10 +658,10 @@ var Opportunities = function (models, event) {
 				    break;
 			    case ('Leads'):
 
-				    optionsObject['$and'] = [];
-				    optionsObject['$and'].push({'isOpportunitie': false});
+				    optionsObject = [];
+				    optionsObject.push({'isOpportunitie': false});
 				    if (data && data.filter) {
-					    optionsObject['$and'].push(filterObj);
+					    optionsObject.push(filterObj);
 				    }
 				    //if (data.filter.isConverted) {
 				    //   // optionsObject['$and'].push({'isConverted' : true});
@@ -687,35 +739,30 @@ var Opportunities = function (models, event) {
 						    },
 						    {
 							    $match: {
-								    $and: [
-									    optionsObject,
+								    $or: [
 									    {
 										    $or: [
 											    {
-												    $or: [
-													    {
-														    $and: [
-															    {whoCanRW: 'group'},
-															    {'groups.users': objectId(req.session.uId)}
-														    ]
-													    },
-													    {
-														    $and: [
-															    {whoCanRW: 'group'},
-															    {'groups.group': {$in: arrOfObjectId}}
-														    ]
-													    }
+												    $and: [
+													    {whoCanRW: 'group'},
+													    {'groups.users': objectId(req.session.uId)}
 												    ]
 											    },
 											    {
 												    $and: [
-													    {whoCanRW: 'owner'},
-													    {'groups.owner': objectId(req.session.uId)}
+													    {whoCanRW: 'group'},
+													    {'groups.group': {$in: arrOfObjectId}}
 												    ]
-											    },
-											    {whoCanRW: "everyOne"}
+											    }
 										    ]
-									    }
+									    },
+									    {
+										    $and: [
+											    {whoCanRW: 'owner'},
+											    {'groups.owner': objectId(req.session.uId)}
+										    ]
+									    },
+									    {whoCanRW: "everyOne"}
 								    ]
 							    }
 						    },
@@ -725,13 +772,11 @@ var Opportunities = function (models, event) {
 							    }
 						    },
 						    function (err, result) {
+							    var aggregateQuery;
+
 							    if (!err) {
-								    var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).find().where('_id').in(result);
-								    if (data.sort) {
-									    query.sort(data.sort);
-								    } else {
-									    query.sort({"editedBy.date": -1});
-								    }
+								    var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
+
 								    //if (data && data.filter && data.filter.workflow) {
 								    //    data.filter.workflow = data.filter.workflow.map(function (item) {
 								    //        return item === "null" ? null : item;
@@ -746,11 +791,108 @@ var Opportunities = function (models, event) {
 										    //} else if (data && (!data.newCollection || data.newCollection === 'false')) {
 										    //    query.where('workflow').in([]);
 										    //}
-										    query.populate('customer', 'name')
-											    .populate('workflow', '_id name status')
-											    .populate('salesPerson', 'name')
-											    .populate('createdBy.user', 'login')
-											    .populate('editedBy.user', 'login');
+
+										    aggregateQuery = [
+											    {
+												    $match: {
+													    $or: result
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Customers',
+													    localField  : 'customer',
+													    foreignField: '_id',
+													    as          : 'customer'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Employees',
+													    localField  : 'salesPerson',
+													    foreignField: '_id',
+													    as          : 'salesPerson'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'workflows',
+													    localField  : 'workflow',
+													    foreignField: '_id',
+													    as          : 'workflow'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Users',
+													    localField  : 'createdBy.user',
+													    foreignField: '_id',
+													    as          : 'createdBy.user'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Users',
+													    localField  : 'editedBy.user',
+													    foreignField: '_id',
+													    as          : 'editedBy.user'
+												    }
+											    },
+											    {
+												    $project: {
+													    "customer"        : {$arrayElemAt: ["$customer", 0]},
+													    "salesPerson"     : {$arrayElemAt: ["$salesPerson", 0]},
+													    "workflow"        : {$arrayElemAt: ["$workflow", 0]},
+													    "createdBy.user"  : {$arrayElemAt: ["$createdBy.user", 0]},
+													    "editedBy.user"   : {$arrayElemAt: ["$editedBy.user", 0]},
+													    "createdBy.date"  : 1,
+													    "editedBy.date"   : 1,
+													    "creationDate"    : 1,
+													    "isOpportunitie"  : 1,
+													    "name"            : 1,
+													    "expectedRevenue" : 1,
+													    "attachments"     : 1,
+													    "notes"           : 1,
+													    "convertedDate"   : 1,
+													    "isConverted"     : 1,
+													    "source"          : 1,
+													    "campaign"        : 1,
+													    "sequence"        : 1,
+													    "reffered"        : 1,
+													    "optout"          : 1,
+													    "active"          : 1,
+													    "color"           : 1,
+													    "categories"      : 1,
+													    "priority"        : 1,
+													    "expectedClosing" : 1,
+													    "nextAction"      : 1,
+													    "internalNotes"   : 1,
+													    "salesTeam"       : 1,
+													    "phones"          : 1,
+													    "email"           : 1,
+													    "contactName"     : 1,
+													    "address"         : 1,
+													    "company"         : 1,
+													    "tempCompanyField": 1
+												    }
+											    },
+											    {
+												    $match: {
+													    $and: optionsObject
+												    }
+											    }
+
+										    ];
+
+
+
+										    //query.aggregate(aggregateQuery);
+
+										    /*query.populate('customer', 'name')
+										     .populate('workflow', '_id name status')
+										     .populate('salesPerson', 'name')
+										     .populate('createdBy.user', 'login')
+										     .populate('editedBy.user', 'login');*/
 									    }
 										    break;
 									    case ('Leads'):
@@ -763,16 +905,125 @@ var Opportunities = function (models, event) {
 										    //    query.where('workflow').in([]);
 										    //}
 
-										    query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName salesPerson address")
+										    aggregateQuery = [
+											    {
+												    $match: {
+													    $or: result
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Customers',
+													    localField  : 'company',
+													    foreignField: '_id',
+													    as          : 'customer'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Employees',
+													    localField  : 'salesPerson',
+													    foreignField: '_id',
+													    as          : 'salesPerson'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'workflows',
+													    localField  : 'workflow',
+													    foreignField: '_id',
+													    as          : 'workflow'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Users',
+													    localField  : 'createdBy.user',
+													    foreignField: '_id',
+													    as          : 'createdBy.user'
+												    }
+											    },
+											    {
+												    $lookup: {
+													    from        : 'Users',
+													    localField  : 'editedBy.user',
+													    foreignField: '_id',
+													    as          : 'editedBy.user'
+												    }
+											    },
+											    {
+												    $project: {
+													    "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
+													    "customer"       : {$arrayElemAt: ["$customer", 0]},
+													    "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
+													    "workflow"       : {$arrayElemAt: ["$workflow", 0]},
+													    "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
+													    "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
+													    "createdBy.date" : 1,
+													    "editedBy.date"  : 1,
+													    "creationDate"   : 1,
+													    "isOpportunitie" : 1,
+													    "name"           : 1,
+													    "expectedRevenue": 1,
+													    "attachments"    : 1,
+													    "notes"          : 1,
+													    "convertedDate"  : 1,
+													    "isConverted"    : 1,
+													    "source"         : 1,
+													    "campaign"       : 1,
+													    "sequence"       : 1,
+													    "reffered"       : 1,
+													    "optout"         : 1,
+													    "active"         : 1,
+													    "color"          : 1,
+													    "categories"     : 1,
+													    "priority"       : 1,
+													    "expectedClosing": 1,
+													    "nextAction"     : 1,
+													    "internalNotes"  : 1,
+													    "phones"         : 1,
+													    "email"          : 1,
+													    "address"        : 1,
+													    "company"        : 1
+												    }
+											    },
+											    {
+												    $match: {
+													    $and: optionsObject
+												    }
+											    }
+
+										    ];
+
+										    /*query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName salesPerson address")
 											    .populate('company', 'name')
 											    .populate('workflow', "name status")
 											    .populate('salesPerson', 'name')
 											    .populate('createdBy.user', 'login')
-											    .populate('editedBy.user', 'login');
+											    .populate('editedBy.user', 'login');*/
 									    }
 										    break;
 								    }
-								    query.skip((data.page - 1) * data.count).limit(data.count).exec(function (error, _res) {
+
+								    if (data.sort) {
+									    aggregateQuery.push({
+										    $sort: data.sort
+									    });
+								    } else {
+									    aggregateQuery.push({
+										    $sort: {"editedBy.date": -1}
+									    });
+								    }
+
+								    aggregateQuery.push({
+									    $skip: (data.page - 1) * data.count
+								    });
+
+								    aggregateQuery.push({
+									    $limit: parseInt(data.count)
+								    });
+
+								    query.aggregate(aggregateQuery, function (error, _res) {
 									    if (!error) {
 										    res['data'] = _res;
 										    response.send(res);

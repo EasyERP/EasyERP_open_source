@@ -6,7 +6,7 @@
     <td><%=opportunity.creationDate%></td>
     <td><span class="blue"><%=opportunity.name%></span></td>
     <td><%=opportunity.expectedRevenue.value%></td>
-    <td><%=(opportunity.customer) ? opportunity.customer.name.first + ' ' + opportunity.customer.name.last : ''%></td>
+    <td><%=(opportunity.customer && opportunity.customer.name) ? opportunity.customer.name.first + ' ' + opportunity.customer.name.last : ''%></td>
     <td><%=(opportunity.nextAction) ? opportunity.nextAction.date : ''%></td>
     <td><%=(opportunity.nextAction) ? opportunity.nextAction.desc : ''%></td>
     <td id='<%=opportunity._id%>' data-sequence='<%=opportunity.sequence%>'>
