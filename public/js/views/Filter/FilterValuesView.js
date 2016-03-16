@@ -65,7 +65,7 @@ define([
 
                 resultCollection = this.collection.filter(function (model) {
 
-                    var  searchItem = model.get('name') ? model.get('name').toString() : ''; // added in case of not string values
+                    var searchItem = model.get('name') ? model.get('name').toString() : ''; // added in case of not string values
 
                     return searchItem.match(regex);
                 });
@@ -120,7 +120,19 @@ define([
                         }
 
                         if (element._id || element._id === 0) {
-                            ulElement.append('<li data-value="' + element._id + '"' + status + '>' + element.name + '</li>');
+
+                            if (('isEmployee' in element) && (element.isEmployee === true)) {
+                                var classFired = '';
+
+                                if (!element.status) {
+                                    classFired = "fired";
+                                } else {
+                                    classFired = "fired checkedValue";
+                                }
+                                ulElement.append('<li class="' + classFired + '" data-value="' + element._id + '"' + status + '>' + element.name + '</li>');
+                            } else {
+                                ulElement.append('<li data-value="' + element._id + '"' + status + '>' + element.name + '</li>');
+                            }
                         }
                     }
                 }

@@ -228,7 +228,8 @@ var Filters = function (models) {
                             _id : '$employee._id',
                             name: {
                                 $concat: ['$employee.name.first', ' ', '$employee.name.last']
-                            }
+                            },
+                            isEmployee: '$employee.isEmployee'
                         }
                     },
                     'department'    : {

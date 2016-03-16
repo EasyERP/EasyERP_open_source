@@ -296,7 +296,13 @@ define([
                 var index;
                 var self = this;
 
-                $currentElement.toggleClass('checkedValue');
+                if ($currentElement.hasClass('checkedValue')) {
+                    $currentElement.removeClass('checkedValue');
+                } else {
+                    $currentElement.addClass('checkedValue');
+                }
+
+                //$currentElement.toggleClass('checkedValue');
 
                 intVal = parseInt(currentValue);
 
@@ -498,7 +504,7 @@ define([
                 var sortOptions;
                 var intFiltersArray = ['week', 'month', 'year'];
 
-                if(!groupOptions){
+                if (!groupOptions) {
                     groupOptions = {};
                 }
 
