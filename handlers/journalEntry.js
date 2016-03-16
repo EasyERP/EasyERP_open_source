@@ -951,7 +951,7 @@ var Module = function (models) {
                         var vacationBody = {
                             currency      : CONSTANTS.CURRENCY_USD,
                             journal       : CONSTANTS.VACATION_PAYABLE,
-                            date          : date,
+                            date          : new Date(date),
                             sourceDocument: {
                                 model: 'Employees',
                                 _id  : employeeId
@@ -962,7 +962,7 @@ var Module = function (models) {
                         var salaryIdleBody = {
                             currency      : CONSTANTS.CURRENCY_USD,
                             journal       : CONSTANTS.IDLE_PAYABLE,
-                            date          : date,
+                            date          : new Date(date),
                             sourceDocument: {
                                 model: 'Employees',
                                 _id  : employeeId
