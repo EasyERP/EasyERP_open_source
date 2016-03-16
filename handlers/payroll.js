@@ -18,7 +18,7 @@ var PayRoll = function (models) {
 
     var departmentArray = CONSTANTS.NOT_DEV_ARRAY;
 
-    var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE), ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)];
+    var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE), ObjectId(CONSTANTS.IDLE_PAYABLE)];
 
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
@@ -808,23 +808,23 @@ var PayRoll = function (models) {
         req.body.month = month;
         req.body.year = year;
 
-        function removeByDataKey(wfCb){
+        function removeByDataKey(wfCb) {
             Payroll.remove({dataKey: dataKey}, wfCb);
         }
 
-        function createIdleByMonth(removed, wfCb){
+        function createIdleByMonth(removed, wfCb) {
             journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
         }
 
-        function generateByDataKey(created, wfCb){
+        function generateByDataKey(created, wfCb) {
             generate(req, res, next, wfCb);
         }
 
         waterfallFunc = [removeByDataKey, createIdleByMonth, generateByDataKey];
 
         async.waterfall(waterfallFunc, function (err, result) {
-            if (err){
-               return next(err);
+            if (err) {
+                return next(err);
             }
 
             res.status(200).send({success: true});
@@ -832,7 +832,7 @@ var PayRoll = function (models) {
 
     };
 
-    function generate (req, res, next, cbFromRecalc){
+    function generate(req, res, next, cbFromRecalc) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
@@ -901,7 +901,9 @@ var PayRoll = function (models) {
                 }, {
                     $project: {
                         employee: '$sourceDocument._id',
-                        summ    : {$divide: ['$debit', 100]}
+                        summ    : {$divide: ['$debit', 100]},
+                        journal : 1,
+                        date    : 1
                     }
                 }], function (err, result) {
                     if (err) {
@@ -912,7 +914,7 @@ var PayRoll = function (models) {
                 });
             }
 
-            function matchByIdle(pcb){
+            function matchByIdle(pcb) {
                 JournalEntry.aggregate([{
                     $match: {
                         'sourceDocument.model': "Employees",
@@ -926,7 +928,9 @@ var PayRoll = function (models) {
                 }, {
                     $project: {
                         employee: '$sourceDocument._id',
-                        summ    : {$divide: ['$debit', 100]}
+                        summ    : {$divide: ['$debit', 100]},
+                        journal : 1,
+                        date    : 1
                     }
                 }], function (err, result) {
                     if (err) {
@@ -1058,7 +1062,7 @@ var PayRoll = function (models) {
                     return next(err);
                 }
 
-                if (cbFromRecalc){
+                if (cbFromRecalc) {
                     cbFromRecalc(null, "ok");
                 } else {
                     res.status(200).send("ok");
@@ -1069,7 +1073,7 @@ var PayRoll = function (models) {
     }
 
     this.generate = function (req, res, next) {
-       generate(req, res, next);
+        generate(req, res, next);
     };
 };
 
