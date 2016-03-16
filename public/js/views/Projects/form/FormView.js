@@ -1237,10 +1237,10 @@ define([
                 paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    App.stopPreload();
                     self.renderProformRevenue();
                     self.getInvoiceStats();
                     self.activeTab();
-                    App.stopPreload();
                 });
 
                 $("#top-bar-deleteBtn").hide();
