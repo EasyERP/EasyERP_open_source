@@ -107,9 +107,15 @@ define([
             var modelsForNewSelect;
 
             if(this.currentStatus === 'statusNotHired'){
-                modelsForNewSelect = _.filter(this.model.get("employees"),function(element){ return element.isEmployee === true;});
+                modelsForNewSelect = _.filter(this.model.get("employees"),
+                    function(element){
+                        return element.isEmployee === false;
+                    });
             }else if (this.currentStatus === 'statusHired'){
-                modelsForNewSelect = _.filter(this.model.get("employees"),function(element){ return element.isEmployee === false;});
+                modelsForNewSelect = _.filter(this.model.get("employees"),
+                    function(element){
+                        return element.isEmployee === true;
+                    });
             } else {
                 modelsForNewSelect = this.model.get("employees");
             }
