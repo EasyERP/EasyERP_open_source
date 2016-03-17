@@ -563,10 +563,27 @@ var Module = function (models) {
     }
 
     this.checkAndCreateForJob = function (options) {
+        var req = options.req;
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var jobId = options.jobId;
         var workflow = options.workflow;
         var remove = false;
+        var wTracks = options.wTracks;
+        var date = moment(options.date).subtract(60, 'seconds');
+        var bodyFinishedJob = {
+            currency      : CONSTANTS.CURRENCY_USD,
+            journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
+            date          : new Date(date),
+            sourceDocument: {
+                model: 'jobs',
+                _id  : jobId
+            },
+            amount        : 0
+        };
+
+        var jobFinshedCb = function () {
+            return false;
+        };
 
         if (workflow !== CONSTANTS.JOB_FINISHED) {
             remove = true;
@@ -582,7 +599,25 @@ var Module = function (models) {
                 }
             })
         } else {
-            //TODO create finishedJob journalEntry
+            Model.aggregate([{
+                $match: {
+                    'sourceDocument._id': {$in: wTracks},
+                    debit               : {$gt: 0}
+                }
+            }, {
+                $group: {
+                    _id   : null,
+                    amount: {$sum: '$debit'}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return console.log(err);
+                }
+
+                bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+
+                createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+            });
         }
 
     };
@@ -3837,6 +3872,7 @@ var Module = function (models) {
         var key;
         var startDate = data.startDate;
         var endDate = data.endDate;
+        var findJobsFinished;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -3945,7 +3981,7 @@ var Module = function (models) {
                             $limit: count
                         }], function (err, result) {
                             if (err) {
-                                return next(err);
+                                return cb(err);
                             }
 
                             cb(null, result);
@@ -4042,7 +4078,7 @@ var Module = function (models) {
 
                     query.exec(function (err, result) {
                         if (err) {
-                            return next(err);
+                            return cb(err);
                         }
 
                         cb(null, result);
@@ -4145,14 +4181,118 @@ var Module = function (models) {
 
                     query.exec(function (err, result) {
                         if (err) {
-                            return next(err);
+                            return cb(err);
                         }
 
                         cb(null, result);
                     });
                 };
 
-                var parallelTasks = [findInvoice, findSalary, findByEmployee];
+                findJobsFinished = function (cb) {
+                    var query = Model
+                        .aggregate([{
+                            $match: matchObject
+                        }, {
+                            $match: {
+                                "sourceDocument.model": "jobs",
+                                debit                 : {$gt: 0}
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "chartOfAccount",
+                                localField             : "account",
+                                foreignField: "_id", as: "account"
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "jobs",
+                                localField             : "sourceDocument._id",
+                                foreignField: "_id", as: "sourceDocument._id"
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "journals",
+                                localField             : "journal",
+                                foreignField: "_id", as: "journal"
+                            }
+                        }, {
+                            $project: {
+                                debit                 : {$divide: ['$debit', '$currency.rate']},
+                                currency              : 1,
+                                journal               : {$arrayElemAt: ["$journal", 0]},
+                                account               : {$arrayElemAt: ["$account", 0]},
+                                'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]},
+                                'sourceDocument.model': 1,
+                                date                  : 1
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "chartOfAccount",
+                                localField             : "journal.debitAccount",
+                                foreignField: "_id", as: "journal.debitAccount"
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "chartOfAccount",
+                                localField             : "journal.creditAccount",
+                                foreignField: "_id", as: "journal.creditAccount"
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "Project",
+                                localField             : "sourceDocument._id.project",
+                                foreignField: "_id", as: "sourceDocument._id.project"
+                            }
+                        }, {
+                            $project: {
+                                debit                       : 1,
+                                currency                    : 1,
+                                'journal.debitAccount'      : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                                'journal.creditAccount'     : {$arrayElemAt: ["$journal.creditAccount", 0]},
+                                'sourceDocument._id.project': {$arrayElemAt: ["$sourceDocument._id.project", 0]},
+                                'journal.name'              : 1,
+                                date                        : 1,
+                                'sourceDocument.model'      : 1,
+                                'sourceDocument.subject'    : '$sourceDocument._id',
+                                account                     : 1
+                            }
+                        }, {
+                            $project: {
+                                debit                              : 1,
+                                currency                           : 1,
+                                'journal.debitAccount'             : 1,
+                                'journal.creditAccount'            : 1,
+                                'sourceDocument._id.department'    : 1,
+                                'journal.name'                     : 1,
+                                date                               : 1,
+                                'sourceDocument.model'             : 1,
+                                'sourceDocument.subject._id'       : 1,
+                                'sourceDocument.subject.name.first': '$sourceDocument.subject.name',
+                                'sourceDocument.name'              : '$sourceDocument._id.project.projectName',
+                                account                            : 1
+                            }
+                        }, {
+                            $match: filterObj
+                        }, {
+                            $sort: sort
+                        }, {
+                            $skip: skip
+                        }, {
+                            $limit: count
+                        }]);
+
+                    query.options = {allowDiskUse: true};
+
+                    query.exec(function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+                };
+
+                var parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished];
 
                 async.parallel(parallelTasks, function (err, result) {
                     if (err) {
@@ -4161,9 +4301,10 @@ var Module = function (models) {
                     var invoices = result[0];
                     var salary = result[1];
                     var salaryEmployee = result[2];
+                    var jobsResult = result[3];
                     var models = invoices.concat(salary);
 
-                    res.status(200).send(models.concat(salaryEmployee));
+                    res.status(200).send((models.concat(salaryEmployee)).concat(jobsResult));
                 });
             } else {
                 res.status(403).send();
