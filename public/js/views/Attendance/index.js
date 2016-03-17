@@ -106,14 +106,14 @@ define([
 
             var modelsForNewSelect;
 
-            if(this.currentStatus === 'statusNotHired'){
+            if (this.currentStatus === 'statusNotHired') {
                 modelsForNewSelect = _.filter(this.model.get("employees"),
-                    function(element){
+                    function (element) {
                         return element.isEmployee === false;
                     });
-            }else if (this.currentStatus === 'statusHired'){
+            } else if (this.currentStatus === 'statusHired') {
                 modelsForNewSelect = _.filter(this.model.get("employees"),
-                    function(element){
+                    function (element) {
                         return element.isEmployee === true;
                     });
             } else {
@@ -150,8 +150,8 @@ define([
 
             var target = $(e.target);
             var targetElement = target.closest(".editable").find('span');
-
             var tempClass = target.attr('class');
+
             if (tempClass && tempClass === 'fired') {
                 target.closest(".editable").addClass('fired');
             } else {
