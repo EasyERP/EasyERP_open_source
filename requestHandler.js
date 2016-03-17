@@ -368,7 +368,7 @@ var requestHandler = function (app, event, mainDb) {
             var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
             var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
             var paralellTasks;
-            var projectTeam;
+            var projectTeamInProject;
             var editedBy = {
                 user: req.session.uId,
                 date: new Date()
@@ -384,7 +384,7 @@ var requestHandler = function (app, event, mainDb) {
                     return console.log(err);
                 }
 
-                projectTeam = result ? result[0].budget.projectTeam : [];
+                projectTeamInProject = result && result[0] && result[0].budget ? result[0].budget.projectTeam : [];
 
                 result.forEach(function (project) {
                     paralellTasks = [getwTrackAndMonthHours];
@@ -634,7 +634,7 @@ var requestHandler = function (app, event, mainDb) {
                         return console.log(err);
                     }
 
-                    async.each(projectTeam, function (el, cb) {
+                    async.each(projectTeamInProject, function (el, cb) {
                         var element;
 
                         element = _.find(result, function (resEl) {
