@@ -296,7 +296,13 @@ define([
                 var index;
                 var self = this;
 
-                $currentElement.toggleClass('checkedValue');
+                if ($currentElement.hasClass('checkedValue')) {
+                    $currentElement.removeClass('checkedValue');
+                } else {
+                    $currentElement.addClass('checkedValue');
+                }
+
+                //$currentElement.toggleClass('checkedValue');
 
                 intVal = parseInt(currentValue);
 
@@ -375,7 +381,8 @@ define([
                         if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate')) {
                             groupName = 'Letter';
                             filterIc.addClass('active');
-                            filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                            filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                            //filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                         }
                     }
                 });
@@ -498,7 +505,7 @@ define([
                 var sortOptions;
                 var intFiltersArray = ['week', 'month', 'year'];
 
-                if(!groupOptions){
+                if (!groupOptions) {
                     groupOptions = {};
                 }
 

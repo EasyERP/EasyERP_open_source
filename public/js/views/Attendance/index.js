@@ -60,7 +60,7 @@ define([
                 employees = result;
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
-
+                    employee.isEmployee = employee.isEmployee;
                     return employee;
                 });   // changed for getting proper form of names
 
@@ -101,10 +101,24 @@ define([
             });
         },
 
-
-
         showNewSelect: function (e, prev, next) {
             //populate.showSelect(e, prev, next, this);
+
+            var modelsForNewSelect;
+
+            if(this.currentStatus === 'statusNotHired'){
+                modelsForNewSelect = _.filter(this.model.get("employees"),
+                    function(element){
+                        return element.isEmployee === false;
+                    });
+            }else if (this.currentStatus === 'statusHired'){
+                modelsForNewSelect = _.filter(this.model.get("employees"),
+                    function(element){
+                        return element.isEmployee === true;
+                    });
+            } else {
+                modelsForNewSelect = this.model.get("employees");
+            }
 
             var $target = $(e.target);
             e.stopPropagation();
@@ -118,7 +132,7 @@ define([
 
             this.selectView = new SelectView({
                 e          : e,
-                responseObj: {'#employee': this.model.get("employees")}
+                responseObj: {'#employee': modelsForNewSelect}
             });
 
             $target.append(this.selectView.render().el);
@@ -136,6 +150,13 @@ define([
 
             var target = $(e.target);
             var targetElement = target.closest(".editable").find('span');
+
+            var tempClass = target.attr('class');
+            if (tempClass && tempClass === 'fired') {
+                target.closest(".editable").addClass('fired');
+            } else {
+                target.closest(".editable").removeClass('fired');
+            }
 
             targetElement.text(target.text());
 
@@ -175,9 +196,9 @@ define([
             var self = this;
             self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
-            dataService.getData("/getPersonsForDd", {}, function (result) {
-                //ToDo Hired and Not Hired
-            });
+            //dataService.getData("/getPersonsForDd", {}, function (result) {
+            //
+            //});
         },
 
         changeTime: function () {
