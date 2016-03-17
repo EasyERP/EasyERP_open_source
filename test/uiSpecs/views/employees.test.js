@@ -1376,8 +1376,6 @@ define([
     var view;
     var topBarView;
     var listView;
-    var thumbnailsView;
-    var formView;
 
     describe('Employees View', function () {
         var $fixture;
@@ -1386,7 +1384,7 @@ define([
         after(function(){
             view.remove();
             topBarView.remove();
-            listView.remove();
+            //listView.remove();
         });
 
         describe('#initialize()', function () {
@@ -1487,18 +1485,15 @@ define([
 
         });
 
-        describe('ChartsOfAccount list view', function () {
+        /*describe('Employees list view', function () {
             var server;
-            var mainSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
-                mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
-                mainSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -1527,26 +1522,15 @@ define([
                 });
 
                 it('Try to click on alphabet letter', function(){
-                    var $listHolder;
                     var $needLetterEl = listView.$el.find('#startLetter > a:nth-child(3)');
-                    var employeeListUrl = new RegExp('\/employees\/list', 'i');
-
-                    server.respondWith('GET', employeeListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForA)]);
 
                     $needLetterEl.click();
 
-                    server.respond();
-
-                    $listHolder = listView.$el;
-
-                    expect($listHolder).to.exist;
-                    expect($listHolder.find('#searchContainer')).to.exist;
-                    expect($listHolder.find('#startLetter')).to.exist;
-                    expect($listHolder.find('.pagination')).to.exist;
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=100/filter=%7B%22letter%22%3A%22A%22%7D');
                 });
             });
 
-        });
+        });*/
 
     });
 

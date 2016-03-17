@@ -1096,7 +1096,7 @@ define([
         after(function(){
             view.remove();
             topBarView.remove();
-            //listView.remove();
+            listView.remove();
 
             windowConfirmStub.restore();
         });
