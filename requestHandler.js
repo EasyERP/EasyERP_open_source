@@ -438,7 +438,7 @@ var requestHandler = function (app, event, mainDb) {
                                     cb(null, {wTrack: result, monthHours: months});
                                 });
                             } else {
-                                Project.update({_id: project._id}, {$set: {budget: {}}}, function (err, result) {
+                                Project.update({_id: project._id}, {$set: {budget: {projectTeam: [], bonus: []}}}, function (err, result) {
                                     if (err) {
                                        return console.log(err);
                                     }

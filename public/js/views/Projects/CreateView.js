@@ -23,18 +23,18 @@ define([
             },
 
             events       : {
-                'click #workflowNamesDd'                                          : 'chooseUser',
-                "submit form"                                                     : "formSubmitHandler",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click #health a"                                                 : "showHealthDd",
-                "click #health ul li div"                                         : "chooseHealthDd",
-                "click"                                                           : "hideHealth",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                'click #workflowNamesDd'                           : 'chooseUser',
+                "submit form"                                      : "formSubmitHandler",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click #health a"                                  : "showHealthDd",
+                "click #health ul li div"                          : "chooseHealthDd",
+                "click"                                            : "hideHealth",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 //"click .newSelectList li.miniStylePagination"                     : "notHide",
                 //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected"                                         : "showNewSelect"
+                "click .current-selected"                          : "showNewSelect"
 
             },
             notHide      : function () {
@@ -65,23 +65,23 @@ define([
             },
             chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-               // $(".newSelectList").hide();
+                // $(".newSelectList").hide();
                 this.hideHealth();
             },
 
-            nextSelect   : function (e) {
+            nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
 
-            prevSelect   : function (e) {
+            prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
 
-            hideHealth   : function () {
-               // $(".newSelectList").hide();
+            hideHealth: function () {
+                // $(".newSelectList").hide();
                 $("#health ul").hide();
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove();
                 }
             },
@@ -139,7 +139,7 @@ define([
                 if (custom === 'Select') {
                     value = 'Customer';
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please, choose ' + value + ' first.'
                     });
                 }
