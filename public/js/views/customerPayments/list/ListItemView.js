@@ -2,12 +2,14 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/customerPayments/list/ListTemplate.html',
         'text!templates/customerPayments/forWTrack/ListTemplate.html',
         'helpers'
     ],
 
-    function (PaymentListTemplate, ListTemplateForWTrack, helpers) {
+    function (Backbone, _, PaymentListTemplate, ListTemplateForWTrack, helpers) {
         var PaymentListItemView = Backbone.View.extend({
             el: '#listTable',
 

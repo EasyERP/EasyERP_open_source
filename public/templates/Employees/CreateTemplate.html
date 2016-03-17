@@ -187,7 +187,7 @@
                         <div class="half-block left withPaddingLeft">
                             <dt><label>Hire</label></dt>
                             <dd><input type="text" name="hire" id="hire"
-                                       value="<%= dateFormat(new Date(), 'd mmm, yyyy', false) %>" required readonly/>
+                                       value="<%= moment(new Date()).format('D MMM, YYYY') %>" required readonly/>
                             </dd>
 
                         </div>

@@ -25618,7 +25618,7 @@ define([
         after(function(){
             view.remove();
             topBarView.remove();
-            //listView.remove();
+            listView.remove();
 
             windowConfirmStub.restore();
         });
@@ -25693,8 +25693,7 @@ define([
                     viewType: 'list',
                     page: 1,
                     count: 100,
-                    contentType: 'customerPayments',
-                    newCollection: false
+                    contentType: 'customerPayments'
                 });
 
                 server.respond();
@@ -25726,18 +25725,16 @@ define([
             describe('INITIALIZE', function(){
 
                 it('Try to create customerPayments list view', function (done) {
-                    var customerPaymentsTotalCollUrl = new RegExp('\/payment\/customers\/totalCollectionLength', 'i');
                     var $listHolder;
+                    var customerPaymentsUrl = new RegExp('\/payment\/customers\/list', 'i');
 
                     setTimeout(function(){
-                        server.respondWith('GET', customerPaymentsTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                            count: 32
-                        })]);
+                        server.respondWith('GET', customerPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomerPayments)]);
 
                         listView = new ListView({
                             collection: customerPaymentsCollection,
                             startTime: new Date(),
-                            newCollection: false
+                            count: 100
                         });
 
                         server.respond();
@@ -25749,108 +25746,44 @@ define([
                         done();
                     }, 50);
 
+
                 });
 
-                /*it('Try to delete item', function () {
-                 var supplierPaymentsUrl = new RegExp('\/payment\/', 'i');
-                 var $firstEl = $(listView.$el.find('#listTable input')[5]);
-                 var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                it('Try to delete item', function () {
+                    var supplierPaymentsUrl = new RegExp('\/payment\/', 'i');
+                    var $firstEl = $(listView.$el.find('#listTable input')[0]);
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
-                 $firstEl.prop('checked', true);
+                    $firstEl.prop('checked', true);
+                    windowConfirmStub.returns(true);
 
-                 server.respondWith('DELETE', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    server.respondWith('DELETE', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
 
-                 $deleteBtn.click();
+                    $deleteBtn.click();
 
-                 listView.deleteItems();
-
-                 server.respond();
-
-                 $firstEl.click();
-
-                 });
-
-                it('Try to create item', function(){
-                    var $emplInput;
-                    var $bonusTypeInput;
-                    var $yearInput;
-                    var $monthInput;
-                    var $paidInput;
-                    var $amountInput;
-                    var $dateOfPaidInput;
-                    var $input;
-                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-                    var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
-                    var $newSelectEl;
-
-                    $createBtn.click();
-                    listView.createItem();
-
-                    $emplInput = listView.$el.find('td[data-content="employee"]')[0];
-                    $bonusTypeInput = listView.$el.find('td[data-content="bonusType"]')[0];
-                    $yearInput = listView.$el.find('td[data-content="year"]')[0];
-                    $monthInput = listView.$el.find('td[data-content="month"]')[0];
-                    $paidInput = listView.$el.find('td[data-content="paid"]')[0];
-                    $amountInput = listView.$el.find('td[data-content="paidAmount"]')[0];
-                    $dateOfPaidInput = listView.$el.find('td[data-content="date"]')[0];
-
-                    $emplInput.click();
-                    $newSelectEl = listView.$el.find('.newSelectList li')[0];
-                    $newSelectEl.click();
-
-                    $bonusTypeInput.click();
-                    $newSelectEl = listView.$el.find('.newSelectList li')[0];
-                    $newSelectEl.click();
-
-                    $yearInput.click();
-                    $input = listView.$el.find('input.editing');
-                    $input.val('2016');
-                    $input.focusout();
-
-                    $monthInput.click();
-                    $input = listView.$el.find('input.editing');
-                    $input.val('1');
-                    $input.focusout();
-
-                    $paidInput.click();
-                    $input = listView.$el.find('input.editing');
-                    $input.val('1000');
-                    $input.focusout();
-
-                    $amountInput.click();
-                    $input = listView.$el.find('input.editing');
-                    $input.val('1000000000');
-                    $input.focusout();
-
-                    $dateOfPaidInput.click();
-                    $input = listView.$el.find('input.editing');
-                    $input.val('2 Mar, 2016');
-                    $input.focusout();
-
-                    server.respondWith('POST', '/payment/supplier/ ', [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
-                    $saveBtn.click();
-                    listView.saveItem();
+                    listView.deleteItems();
 
                     server.respond();
-                    expect(listView.$el.find('input[type="text"].editing').length).to.equals(0);
+
+                    $firstEl.click();
+
                 });
 
                 it('Try to edit item', function(){
                     var $input;
-                    var $monthInput = listView.$el.find('td[data-content="month"]')[0];
+                    var $dateInput = listView.$el.find('td[data-content="date"]')[0];
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $body = $('body');
                     var $tableContainer = listView.$el.find('table');
 
-                    $monthInput.click();
+                    $dateInput.click();
 
                     $input = listView.$el.find('input.editing');
-                    $input.val('2');
+                    $input.val('16 Mar, 2016');
 
                     $body.click();
 
-                    server.respondWith('PATCH', '/payment/supplier/', [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('PATCH', '/payment/customers/', [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
 
                     $saveBtn.click();
                     listView.saveItem();
@@ -25858,11 +25791,23 @@ define([
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"].editing').length).to.equals(0);
-                    expect($(listView.$el.find('td[data-content="month"]')[0]).text()).to.be.equals('2');
+                    //expect($(listView.$el.find('td[data-content="date"]')[0]).text()).to.be.equals('16 Mar, 2016');
 
                 });
 
-                it('Try to sort down list', function () {
+                it('Try to open edit dialog', function(){
+                    var $editDialog;
+                    var $needTdEl = $(listView.$el.find('td')[3]);
+
+                    $needTdEl.click();
+
+                    $editDialog = $('.ui-dialog');
+
+                    expect($editDialog).to.exist;
+
+                });
+
+                /*it('Try to sort down list', function () {
                     var $yearInput;
                     var $cancelBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var $sortTypeBtn = listView.$el.find('th[data-sort="year"]');

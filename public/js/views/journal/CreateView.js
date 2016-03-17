@@ -1,9 +1,12 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/journal/CreateTemplate.html",
         'models/JournalModel',
         'populate'
     ],
-    function (CreateTemplate, JournalModel, populate) {
+    function (Backbone, $, _, CreateTemplate, JournalModel, populate) {
         "use strict";
 
         var CreateView = Backbone.View.extend({
@@ -84,7 +87,8 @@ define([
             },
 
             redirectAfterSave: function (content, model) {
-                var redirectUrl = content.forSales ? "easyErp/journal" : "easyErp/journal";
+                //var redirectUrl = content.forSales ? "easyErp/journal" : "easyErp/journal"; TODO changed after unit tests
+                var redirectUrl  = 'easyErp/journal';
 
                 content.hideDialog();
                 Backbone.history.navigate(redirectUrl, {trigger: true});

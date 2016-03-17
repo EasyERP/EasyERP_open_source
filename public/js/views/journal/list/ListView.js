@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/journal/list/ListHeader.html',
         'views/journal/list/ListItemView',
@@ -9,7 +12,7 @@ define([
         'custom'
     ],
 
-    function (listViewBase, listTemplate, listItemView, createView, currentModel, contentCollection, dataService, custom) {
+    function (Backbone, $, _, listViewBase, listTemplate, listItemView, createView, currentModel, contentCollection, dataService, custom) {
         "use strict";
 
         var ListView = listViewBase.extend({

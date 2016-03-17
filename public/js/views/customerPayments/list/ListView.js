@@ -2,6 +2,9 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/customerPayments/forWTrack/ListHeader.html',
@@ -18,7 +21,7 @@ define([
         'async',
         "helpers"
     ],
-    function (listViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, listTotalView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async, helpers) {
+    function (Backbone, $, _, listViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, listTotalView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async, helpers) {
         var PaymentListView = listViewBase.extend({
 
             listTemplate            : listTemplate,
@@ -129,9 +132,9 @@ define([
 
             deleteItems: function () {
                 var $currentEl = this.$el;
-                var that = this,
-                    mid = 68,
-                    model;
+                var that = this;
+                var mid = 68;
+                var model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
                 this.collectionLength = this.collection.length;
@@ -504,8 +507,9 @@ define([
 
                 this.renderFilter(self);
 
+                self.editCollection = new editCollection(self.collection.toJSON()); //todo move into setTimeOut
+
                 setTimeout(function () {
-                    self.editCollection = new editCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
 

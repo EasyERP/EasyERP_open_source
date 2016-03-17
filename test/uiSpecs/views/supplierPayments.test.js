@@ -22309,21 +22309,19 @@ define([
             describe('INITIALIZE', function(){
 
                 it('Try to create supplierPayments list view', function (done) {
-                    var supplierPaymentsTotalCollUrl = new RegExp('\/payment\/supplier\/totalCollectionLength', 'i');
                     var $listHolder;
+                    var supplierPaymentsUrl = new RegExp('\/payment\/supplier\/list', 'i');
+
 
                     setTimeout(function(){
-                        server.respondWith('GET', supplierPaymentsTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                            count: 32
-                        })]);
                         server.respondWith('GET', '/bonusType/getForDD', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypeForDD)]);
                         server.respondWith('GET', '/employees/getForDD', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplForDD)]);
-                        server.respondWith('GET', '/filter/getFiltersValues', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeFilteredValues)]);
+                        server.respondWith('GET', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSupplierPayments)]);
 
                         listView = new ListView({
                             collection: supplierPaymentsCollecion,
                             startTime: new Date(),
-                            newCollection: false
+                            count: 100
                         });
 
                         server.respond();
@@ -22337,9 +22335,7 @@ define([
 
                 });
 
-                //TODO need explain
-
-                /*it('Try to delete item', function () {
+                it('Try to delete item', function () {
                     var supplierPaymentsUrl = new RegExp('\/payment\/', 'i');
                     var $firstEl = $(listView.$el.find('#listTable input')[5]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
@@ -22356,7 +22352,7 @@ define([
 
                     $firstEl.click();
 
-                });*/
+                });
 
                 it('Try to create item', function(){
                     var $emplInput;

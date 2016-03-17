@@ -1,4 +1,7 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/invoiceCharts/index.html',
     'text!templates/invoiceCharts/tableBody.html',
     'collections/invoiceCharts/invoiceCharts',
@@ -8,7 +11,7 @@ define([
     'custom',
     'moment',
     'constants'
-], function (mainTemplate, tableBodyTemplate, InvoiceCharts, dataService, helpers, async, custom, moment, CONSTANTS) {
+], function (Backbone, $, _, mainTemplate, tableBodyTemplate, InvoiceCharts, dataService, helpers, async, custom, moment, CONSTANTS) {
     "use strict";
     var View = Backbone.View.extend({
         el: '#content-holder',

@@ -2,6 +2,9 @@
  * Created by lilya on 27/11/15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
         'text!templates/ChartOfAccount/list/cancelEdit.html',
@@ -12,7 +15,7 @@ define([
         "populate",
         "async"
     ],
-    function (listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
+    function (Backbone, $, _, listHeaderTemplate, listTemplate, cancelEdit, createView, contentCollection, EditCollection, currentModel, populate, async) {
         var ProjectsListView = Backbone.View.extend({
             el           : '#content-holder',
             contentType  : "ChartOfAccount",
@@ -491,13 +494,15 @@ define([
                     }
                 });
 
+                self.editCollection = new EditCollection(self.collection.toJSON());
+                self.$listTable = currentEl.find('#chartOfAccount');
+
                 setTimeout(function () {
-                    self.editCollection = new EditCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('error', self.errorFunction, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
 
-                    self.$listTable = currentEl.find('#chartOfAccount');
+
                 }, 10);
 
                 return this;

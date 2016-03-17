@@ -2,11 +2,14 @@
  * Created by soundstorm on 14.05.15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/customerPayments/list/ListTotal.html',
         'helpers'
     ],
 
-    function (listTemplate, helpers) {
+    function (Backbone, $, _, listTemplate, helpers) {
         var supplierPaymentsListTotalView = Backbone.View.extend({
             el: '#listTotal',
 

@@ -1003,7 +1003,7 @@ define([
 
         });
 
-        describe('Holidays list view', function () {
+        describe('BonusType list view', function () {
             var server;
             var mainSpy;
 
