@@ -285,12 +285,12 @@ define([
                     currency = {
                         _id : thisEl.find('#currencyDd').attr('data-id'),
                         name: thisEl.find('#currencyDd').text()
-                    }
+                    };
                 } else {
                     currency = {
                         _id : null,
                         name: ''
-                    }
+                    };
                 }
 
                 $(".groupsAndUser tr").each(function () {

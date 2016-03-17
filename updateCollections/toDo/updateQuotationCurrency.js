@@ -77,7 +77,7 @@ var Invoice = dbObject.model("wTrackInvoice", Schema.wTrackInvoice);
 
 var query = Cuotation.find({'currency._id': null});
 
-var invoiceQuery = Invoice.find({'currency._id': null});
+var invoiceQuery = Invoice.find({forSales: true, 'currency._id': null});
 
 query.exec(function (error, _res) {
     if (error) {
@@ -116,7 +116,9 @@ invoiceQuery.exec(function (error, _res) {
             currency._id = '565eab29aeb95fa9c0f9df2d';
             currency.rate = 1;
 
-            Invoice.update({_id: emp._id}, {$set: {currency: currency}}, callback);
+            Invoice.update({_id: emp._id}, {$set: {currency: currency}}, function (err, result) {
+                callback(err, result);
+            });
         } else {
             callback();
         }
