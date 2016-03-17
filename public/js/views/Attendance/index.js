@@ -8,13 +8,13 @@ define([
     'text!templates/Attendance/index.html',
     'models/AttendanceModel',
     'views/Attendance/MonthView',
-    'views/Attendance/StatisticsView',
-    'populate',
+    /*'views/Attendance/StatisticsView',
+    'populate',*/
     'moment',
     'dataService',
     'views/selectView/selectView',
     'constants'// added view for employees dd list
-], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, SelectView, CONSTANTS) {
+], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, /*StatisticsView, populate,*/ moment, dataService, SelectView, CONSTANTS) {
     'use strict';
     var View = Backbone.View.extend({
         el: '#content-holder',
@@ -101,27 +101,24 @@ define([
             });
         },
 
-        showNewSelect: function (e, prev, next) {
-            //populate.showSelect(e, prev, next, this);
-
+        showNewSelect: function (e) {
             var modelsForNewSelect;
+            var $target = $(e.target);
+
+            e.stopPropagation();
 
             if (this.currentStatus === 'statusNotHired') {
-                modelsForNewSelect = _.filter(this.model.get("employees"),
-                    function (element) {
-                        return element.isEmployee === false;
-                    });
+                modelsForNewSelect = _.filter(this.model.get("employees"), function (element) {
+                    return element.isEmployee === false;
+                });
             } else if (this.currentStatus === 'statusHired') {
-                modelsForNewSelect = _.filter(this.model.get("employees"),
-                    function (element) {
-                        return element.isEmployee === true;
-                    });
+                modelsForNewSelect = _.filter(this.model.get("employees"), function (element) {
+                    return element.isEmployee === true;
+                });
             } else {
                 modelsForNewSelect = this.model.get("employees");
             }
 
-            var $target = $(e.target);
-            e.stopPropagation();
             if ($target.attr('id') === 'selectInput') {
                 return false;
             }
