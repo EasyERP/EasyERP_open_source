@@ -90,7 +90,7 @@ var requestHandler = function (app, event, mainDb) {
                 return logger.error(err);
             }
 
-            console.log('HoursCashes removed');
+            //console.log('HoursCashes removed');
         });
 
     });
@@ -214,7 +214,7 @@ var requestHandler = function (app, event, mainDb) {
                                             new: true
                                         }, function (err, result) {
                                             if (err) {
-                                                console.log(err);
+                                                return console.log(err);
                                             }
                                         });
 
@@ -233,7 +233,7 @@ var requestHandler = function (app, event, mainDb) {
                                         new: true
                                     }, function (err, result) {
                                         if (err) {
-                                            console.log(err);
+                                            return console.log(err);
                                         }
                                     });
 
@@ -440,7 +440,7 @@ var requestHandler = function (app, event, mainDb) {
                             } else {
                                 Project.update({_id: project._id}, {$set: {budget: {}}}, function (err, result) {
                                     if (err) {
-                                        console.log(err);
+                                       return console.log(err);
                                     }
 
                                 });
@@ -564,7 +564,7 @@ var requestHandler = function (app, event, mainDb) {
                             empQuery.exec(function (err, response) {
 
                                 if (err) {
-                                    console.log(err);
+                                   return console.log(err);
                                 }
 
                                 response = response || [];
@@ -606,7 +606,7 @@ var requestHandler = function (app, event, mainDb) {
 
                                 Project.update({_id: project._id}, {$set: {"budget.bonus": budget.bonus}}, function (err, result) {
                                     if (err) {
-                                        console.log(err);
+                                       return console.log(err);
                                     }
 
                                     //console.log('success');
@@ -616,7 +616,7 @@ var requestHandler = function (app, event, mainDb) {
                     });
                 });
 
-                console.log('success');
+                //console.log('success');
 
                 wTrack.aggregate([{
                     $match: {
@@ -873,7 +873,7 @@ var requestHandler = function (app, event, mainDb) {
                                 }
                             }, function (err, result) {
                                 if (err) {
-                                    return next(err);
+                                    return console.log(err);
                                 }
 
                                 event.emit('updateQuntity', {
@@ -909,7 +909,7 @@ var requestHandler = function (app, event, mainDb) {
 
                                 Project.findByIdAndUpdate(projectId, {$set: {"budget.projectTeam": jobIds}}, {new: true}, function (err, result) {
                                     if (err) {
-                                        console.log(err);
+                                       return cb(err);
                                     }
                                     cb();
                                 });
@@ -936,7 +936,7 @@ var requestHandler = function (app, event, mainDb) {
 
         Job.findById(jobId, function (err, job) {
             if (err) {
-                console.log(err);
+               return console.log(err);
             }
             if (job && job.quotation) {
                 Quotation.findById(job.quotation, {products: 1}, function (err, result) {
@@ -963,7 +963,7 @@ var requestHandler = function (app, event, mainDb) {
 
                             Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
                                 if (err) {
-                                    console.log(err);
+                                   return console.log(err);
                                 }
                             });
                         }
@@ -1203,7 +1203,7 @@ var requestHandler = function (app, event, mainDb) {
                 if (err) {
                     return cb(err);
                 }
-                console.log(response);
+                //console.log(response);
                 cb();
             };
 
