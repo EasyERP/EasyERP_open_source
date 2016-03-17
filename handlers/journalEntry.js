@@ -300,6 +300,10 @@ var Module = function (models) {
         filter = JSON.parse(filter);
         var startDate = filter.startDate.value;
         var endDate = filter.endDate.value;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
         var matchObject = {
             date: {
                 $gte: new Date(startDate),
@@ -409,6 +413,10 @@ var Module = function (models) {
         filter = JSON.parse(filter);
         var startDate = filter.startDate.value;
         var endDate = filter.endDate.value;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
         var matchObject = {
             date: {
                 $gte: new Date(startDate),
@@ -620,7 +628,7 @@ var Module = function (models) {
                 redisStore.readFromStorage('monthHours', monthKey, function (err, result) {
 
                     result = JSON.parse(result);
-                    monthHoursObject = result[0] || {};
+                    monthHoursObject = result && result[0] ? result[0] : {};
                     pCb(null, monthHoursObject);
                 });
             }
@@ -1185,7 +1193,7 @@ var Module = function (models) {
                                     }
 
                                     result = JSON.parse(result);
-                                    monthHoursObject[key] = result[0] || {};
+                                    monthHoursObject[key] = result && result[0] ? result[0] : {};
                                     cb();
                                 });
                             }, function () {
@@ -2971,6 +2979,10 @@ var Module = function (models) {
         var filterObj = {};
         var startDate = data.startDate || filter.startDate.value;
         var endDate = data.endDate || filter.endDate.value;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
         var matchObject = {
             date: {
                 $gte: new Date(startDate),
@@ -3195,6 +3207,9 @@ var Module = function (models) {
         var account = query._id;
         var startDate = query.startDate;
         var endDate = query.endDate;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
 
         Model.aggregate([{
             $match: {
@@ -3444,6 +3459,10 @@ var Module = function (models) {
         var query = req.query;
         var startDate = query.startDate;
         var endDate = query.endDate;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
         // var filter = query.filter;
 
         Model.aggregate([{
@@ -3818,6 +3837,10 @@ var Module = function (models) {
         var key;
         var startDate = data.startDate;
         var endDate = data.endDate;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
         var matchObject = {
             date: {
                 $gte: new Date(startDate),
