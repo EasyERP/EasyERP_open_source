@@ -373,11 +373,18 @@ define([
             var weeks;
             var $tr;
 
+            function funcForWeek(cb) {
+                var year = editedElement.closest('tr').find('[data-content="year"]').text();
+                var weeks = custom.getWeeks(editedElementValue, year);
+
+                cb(null, weeks);
+            }
+
             if (navigator.userAgent.indexOf('Firefox') > -1) {
                 this.setEditable(editedElement);
             }
 
-            if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
+            if (/* wTrackId !== this.wTrackId && */ editedElement.length) {
                 $editedCol = editedElement.closest('td');
                 $tr = editedElement.closest('tr');
                 editedElementRowId = $tr.attr('data-id');
@@ -393,7 +400,6 @@ define([
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                 if (editedElementContent === 'month') {
-                    // ToDo add disabled functionality for days
                     async.parallel([funcForWeek], function (err, result) {
                         if (err) {
                             console.log(err);
@@ -413,13 +419,6 @@ define([
                     editedElement.remove();
                 }
 
-            }
-
-            function funcForWeek(cb) {
-                var year = editedElement.closest('tr').find('[data-content="year"]').text();
-                var weeks = custom.getWeeks(editedElementValue, year);
-
-                cb(null, weeks);
             }
         },
 
@@ -1333,7 +1332,7 @@ define([
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
-            }).render());//added two parameters page and items number
+            }).render());// added two parameters page and items number
 
             this.renderPagination($currentEl, this);
 
@@ -1344,15 +1343,15 @@ define([
 
                 allInputs = $('.listCB');
                 allInputs.prop('checked', this.checked);
-                checkedInputs = $("input.listCB:checked");
+                checkedInputs = $('input.listCB:checked');
 
                 if (self.collection.length > 0) {
                     checkLength = checkedInputs.length;
 
                     if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
-                        $("#top-bar-copyBtn").show();
-                        $("#top-bar-createBtn").hide();
+                        $('#top-bar-deleteBtn').show();
+                        $('#top-bar-copyBtn').show();
+                        $('#top-bar-createBtn').hide();
 
                         if (checkLength === self.collection.length) {
                             checkedInputs.each(function (index, element) {
@@ -1362,8 +1361,8 @@ define([
                             $('#check_all').prop('checked', true);
                         }
                     } else {
-                        $("#top-bar-deleteBtn").hide();
-                        $("#top-bar-createBtn").show();
+                        $('#top-bar-deleteBtn').hide();
+                        $('#top-bar-createBtn').show();
                         // self.genInvoiceEl.hide();
                         self.copyEl.hide();
                         $('#check_all').prop('checked', false);
@@ -1373,27 +1372,27 @@ define([
                 self.setAllTotalVals();
             });
 
-            dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
+            dataService.getData('/project/getForWtrack', {inProgress: true}, function (projects) {
                 projects = _.map(projects.data, function (project) {
                     project.name = project.projectName;
 
-                    return project
+                    return project;
                 });
 
                 self.responseObj['#project'] = projects;
             });
 
-            dataService.getData("/employee/getForDD", null, function (employees) {
+            dataService.getData('/employee/getForDD', null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
-                    return employee
+                    return employee;
                 });
 
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData("/department/getForDD", null, function (departments) {
+            dataService.getData('/department/getForDD', null, function (departments) {
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 
