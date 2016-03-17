@@ -668,7 +668,7 @@ var requestHandler = function (app, event, mainDb) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
-        var count = 0;
+       // var count = 0;
         var editedBy = {
             user: req.session.uId,
             date: new Date()
@@ -856,7 +856,7 @@ var requestHandler = function (app, event, mainDb) {
                                         quontity: budget.budgetTotal.hoursSum,
                                         req     : req
                                     });
-                                    console.log(count++);
+                                    //console.log(count++);
                                 })
                             });
                         } else {
@@ -881,7 +881,7 @@ var requestHandler = function (app, event, mainDb) {
                                     quontity: budget.budgetTotal.hoursSum,
                                     req     : req
                                 });
-                                console.log(count++);
+                                //console.log(count++);
                             })
                         }
                         cb();
