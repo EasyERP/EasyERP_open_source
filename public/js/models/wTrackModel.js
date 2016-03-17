@@ -1,13 +1,10 @@
 define([
-    'Backbone',
-    'Validation',
-    'common',
-    'moment'
-], function (Backbone, Validation, common, moment) {
+    'Backbone'
+], function (Backbone) {
     "use strict";
 
     var wTrackModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
 
         defaults: {
             dateByWeek : 0,
@@ -33,7 +30,7 @@ define([
             rate       : 0
         },
         urlRoot : function () {
-            return "/wTrack/";
+            return '/wTrack/';
         },
         parse   : function (model) {
             var profit;

@@ -91,7 +91,7 @@ define([
 
         events: {
             'click .stageSelect'                               : 'showNewSelect',
-            'click tr.enableEdit'                              : 'editRow',
+            'click tr.enableEdit td.editable:not(.disabled)'   : 'editRow',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'change .autoCalc'                                 : 'autoCalc',
             'change .editable'                                 : 'setEditable',
@@ -103,6 +103,16 @@ define([
             // this.setChangedValueToModel();
             if (this.selectView) {
                 this.selectView.remove();
+            }
+        },
+
+        validateRow: function ($tr, cb) {
+            var wTrackId = $tr.attr('data-id');
+            var edited = !!$tr.attr('data-edited');
+            var wTrack = this.editCollection.get(wTrackId) || this.collection.get(wTrackId);
+
+            if (!edited) {
+                this.checkVacHolMonth($tr, wTrack, cb);
             }
         },
 
@@ -145,6 +155,10 @@ define([
 
         keyDown: function (e) {
             var code = e.keyCode;
+            var $target = $(e.target);
+            var $tr = $target.closest('tr');
+
+            $tr.attr('data-edited', true);
 
             if (keyCodes.isEnter(code)) {
                 this.autoCalc(e);
@@ -228,6 +242,7 @@ define([
             var hours;
             var message;
             var projectWorkflow;
+            var i;
 
             this.$el.find('#check_all').prop('checked', false);
 
@@ -235,7 +250,7 @@ define([
             this.changed = true;
             this.createdCopied = true;
 
-            for (var i = length - 1; i >= 0; i--) {
+            for (i = length - 1; i >= 0; i--) {
                 selectedWtrack = checkedRows[i];
                 target = $(selectedWtrack);
                 id = target.val();
@@ -317,7 +332,7 @@ define([
                 }
 
                 return value;
-            };
+            }
 
             for (i = days.length - 1; i >= 0; i--) {
                 calcEl = $(days[i]);
@@ -424,9 +439,12 @@ define([
 
         editRow: function (e) {
             var el = $(e.target);
+            var $td = el.closest('td');
             var self = this;
-            var tr = $(e.target).closest('tr');
-            var wTrackId = tr.attr('data-id');
+            var $tr = $(e.target).closest('tr');
+            var isEdited = !!$tr.attr('data-edited');
+            var $input = $tr.find('td:not([data-content="month"]) input.editing');
+            var wTrackId = $tr.attr('data-id');
             var colType = el.data('type');
             var content = el.data('content');
             var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
@@ -434,111 +452,126 @@ define([
             var isYear = el.attr('data-content') === 'year';
             var isMonth = el.attr('data-content') === 'month';
             var isDay = el.hasClass('autoCalc');
-            var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
-            var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
-            var maxValue = 100;
-            var tempContainer;
-            var width;
-            var value;
-            var insertedInput;
-            var weeks;
-            var template;
-            var currentYear;
-            var previousYear;
-            var nextYear;
-            var projectId = tr.find('[data-content="project"]').attr('data-id');
+            var month = $tr.find('[data-content="month"]').text() || $tr.find('.editing').val();
+            var year = $tr.find('[data-content="year"]').text() || $tr.find('.editing').val();
+
+            var editCb = function () {
+                var maxValue = 100;
+                var tempContainer;
+                var width;
+                var value;
+                var insertedInput;
+                var weeks;
+                var template;
+                var currentYear;
+                var previousYear;
+                var nextYear;
+                var projectId = $tr.find('[data-content="project"]').attr('data-id');
+
+                if ($td.hasClass('disabled')) {
+                    return false;
+                }
+
+                if (wTrackId && el.prop('tagName') !== 'INPUT') {
+                    /*if (this.wTrackId) {
+                     this.setChangedValueToModel();
+                     }*/
+                    this.wTrackId = wTrackId;
+                    this.setChangedValueToModel();
+                }
+
+                if (el.hasClass('editing')) {  // added in case of double click on el
+                    return false;
+                }
+
+                if (isSelect) {
+                    if (content === 'jobs') {
+                        if (!projectId && !projectId.length) {
+                            return false;
+                        }
+                        dataService.getData('/jobs/getForDD', {
+                            projectId: projectId,
+                            all      : true
+                        }, function (jobs) {
+                            self.responseObj['#jobs'] = jobs;
+
+                            // $tr.find('[data-content="jobs"]').addClass('editable');
+                            self.showNewSelect(e);
+                            return false;
+                        });
+                    } else {
+                        this.showNewSelect(e);
+                        return false;
+                    }
+                } else if (isWeek) {
+                    weeks = custom.getWeeks(month, year);
+
+                    template = _.template(forWeek);
+
+                    el.append(template({
+                        weeks: weeks
+                    }));
+
+                    this.calculateCost(e, wTrackId);
+                } else if (isYear) {
+                    currentYear = parseInt(moment().year());
+                    previousYear = currentYear - 1;
+                    nextYear = currentYear + 1;
+
+                    width = el.width() - 6;
+                    el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
+
+                    this.calculateCost(e, wTrackId);
+                } else if (el.attr('id') === 'selectInput') {
+                    return false;
+                } else {
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+
+                    insertedInput = el.find('input');
+                    insertedInput.focus();
+
+                    // validation for month and days of week
+                    if (isMonth || isDay) {
+                        insertedInput.attr('maxLength', '2');
+                        if (isMonth) {
+                            maxValue = 12;
+                        }
+                        if (isDay) {
+                            maxValue = 24;
+                        }
+                    }
+
+                    insertedInput.keyup(function (e) {
+                        if (insertedInput.val() > maxValue) {
+                            e.preventDefault();
+                            insertedInput.val('' + maxValue);
+                        }
+                    });
+
+                    // end
+                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
+                    this.autoCalc(e);
+
+                    if (wTrackId) {
+                        this.calculateCost(e, wTrackId);
+                    }
+                }
+
+                return false;
+            };
+
+            editCb = editCb.bind(this);
 
             e.stopPropagation();
 
-            if (wTrackId && el.prop('tagName') !== 'INPUT') {
-                if (this.wTrackId) {
-                    this.setChangedValueToModel();
-                }
-                this.wTrackId = wTrackId;
-                this.setChangedValueToModel();
-            }
-
-            if (el.hasClass('editing')) {  // added in case of double click on el
-                return false;
-            }
-
-            if (isSelect) {
-                if (content === 'jobs') {
-                    if (!projectId && !projectId.length) {
-                        return false;
-                    }
-                    dataService.getData('/jobs/getForDD', {
-                        projectId: projectId,
-                        all      : true
-                    }, function (jobs) {
-                        self.responseObj['#jobs'] = jobs;
-
-                        // tr.find('[data-content="jobs"]').addClass('editable');
-                        self.showNewSelect(e);
-                        return false;
-                    });
-                } else {
-                    this.showNewSelect(e);
-                    return false;
-                }
-            } else if (isWeek) {
-                weeks = custom.getWeeks(month, year);
-
-                template = _.template(forWeek);
-
-                el.append(template({
-                    weeks: weeks
-                }));
-
-                this.calculateCost(e, wTrackId);
-            } else if (isYear) {
-                currentYear = parseInt(moment().year());
-                previousYear = currentYear - 1;
-                nextYear = currentYear + 1;
-
-                width = el.width() - 6;
-                el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
-
-                this.calculateCost(e, wTrackId);
-            } else if (el.attr('id') === 'selectInput') {
-                return false;
+            if (!$input.length && isDay && !isEdited) {
+                this.validateRow($tr, editCb);
             } else {
-                tempContainer = el.text();
-                width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
-
-                insertedInput = el.find('input');
-                insertedInput.focus();
-
-                // validation for month and days of week
-                if (isMonth || isDay) {
-                    insertedInput.attr('maxLength', '2');
-                    if (isMonth) {
-                        maxValue = 12;
-                    }
-                    if (isDay) {
-                        maxValue = 24;
-                    }
-                }
-
-                insertedInput.keyup(function (e) {
-                    if (insertedInput.val() > maxValue) {
-                        e.preventDefault();
-                        insertedInput.val('' + maxValue);
-                    }
-                });
-
-                // end
-                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
-
-                this.autoCalc(e);
-
-                if (wTrackId) {
-                    this.calculateCost(e, wTrackId);
-                }
+                editCb();
             }
-
-            return false;
         },
 
         calculateCost: function (e, wTrackId) {
@@ -577,7 +610,7 @@ define([
                 this.editCollection.add(editWtrackModel);
 
                 employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;
-                ;
+
                 year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                 trackWeek = tr.find('[data-content="worked"]').text();
             }
@@ -669,7 +702,6 @@ define([
             var employee;
             var department;
             var changedAttr;
-            var wTrackId = tr.attr('data-id');
             var week;
             var year;
             var jobs = {};
@@ -761,13 +793,13 @@ define([
             this.setEditable(targetElement);
 
             if (needCheckVacHol) {
-                this.checkVacHolMonth(tr);
+                this.checkVacHolMonth(tr, this.collection.get(modelId));
             }
 
             return false;
         },
 
-        checkVacHolMonth: function ($targetTr, wTrack) {
+        checkVacHolMonth: function ($targetTr, wTrack, cb) {
             // todo add spiner load
             var self = this;
             var $employee = $targetTr.find('[data-content="employee"]');
@@ -775,45 +807,63 @@ define([
             var year = $targetTr.find('[data-content="year"]').text();
             var month = $targetTr.find('[data-content="month"]').text();
             var week = $targetTr.find('[data-content="week"]').text();
-
+            var dateByWeek = year * 100 + parseInt(week, 10);
             var _$days = $targetTr.find('.autoCalc');
 
             _$days.removeClass();
             _$days.addClass('editable autoCalc');
 
+            if (wTrack && wTrack.get('dateByWeek') !== dateByWeek) {
+                wTrack = null;
+            }
+
             employeeHelper.getNonWorkingDaysByWeek(year, week, month, employeeId, wTrack,
                 function (nonWorkingDays, self) {
                     var days = Object.keys(nonWorkingDays);
                     var length = days.length - 1;
+                    var _class;
+                    var isDefaultHours;
                     var $el;
                     var day;
                     var value;
                     var i;
 
-                    console.dir(nonWorkingDays);
-
                     for (i = length; i >= 0; i--) {
                         day = days[i];
+                        _class = '';
 
                         if (day) {
                             value = nonWorkingDays[day];
                             $el = $targetTr.find('[data-content="' + day + '"]');
+                            isDefaultHours = day !== '7' && day !== '6' /* && value === '' */ && _class !== 'disabled' && !wTrack;
 
                             if (value) {
-                                $el.addClass(value);
 
-                                if (value !== 'disabled') {
-                                    $el.text(0);
+                                if (!isFinite(value)) {
+                                    _class = value;
+                                    value = 0;
+                                }
+
+                                $el.addClass(_class);
+
+                                if (_class !== 'disabled') {
+                                    $el.text(value);
                                 } else {
                                     $el.text('');
                                 }
-                            } else if (day !== '7' && day !== '6' && value === '' && value !== 'disabled') {
+                            } else if (isDefaultHours) {
                                 $el.text(8);
+                            } else {
+                                $el.text('');
                             }
                         }
                     }
 
                     self.autoCalc(null, $targetTr);
+
+                    if (cb && typeof cb === 'function') {
+                        cb();
+                    }
                 }, self);
         },
 

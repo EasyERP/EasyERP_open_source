@@ -184,7 +184,7 @@ var wTrack = function (event, models) {
                     delete data._id;
 
                     if (isFinite(worked) && worked === 0) {
-                        WTrack.findByIdAndRemove(id, function(err, tCard){
+                        WTrack.findByIdAndRemove(id, function (err, tCard) {
                             resultCb(err, tCard, needUpdateKeys, cb);
                         });
                     } else {
@@ -192,7 +192,7 @@ var wTrack = function (event, models) {
                             data.worked = worked;
                         }
 
-                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, tCard){
+                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, tCard) {
                             resultCb(err, tCard, needUpdateKeys, cb);
                         });
                     }
@@ -584,6 +584,7 @@ var wTrack = function (event, models) {
                     jobs      : {$arrayElemAt: ['$jobs', 0]},
                     employee  : {$arrayElemAt: ['$employee', 0]},
                     department: {$arrayElemAt: ['$department', 0]},
+                    dateByWeek: 1,
                     createdBy : 1,
                     month     : 1,
                     year      : 1,
@@ -629,6 +630,7 @@ var wTrack = function (event, models) {
                     customer      : {$arrayElemAt: ['$customer', 0]},
                     workflow      : {$arrayElemAt: ['$workflow', 0]},
                     projectmanager: {$arrayElemAt: ['$projectmanager', 0]},
+                    dateByWeek    : 1,
                     createdBy     : 1,
                     project       : 1,
                     jobs          : 1,
