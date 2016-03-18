@@ -27,11 +27,11 @@ define([
             },
 
             events: {
-                "click #updateDate"                  : "changeDateRange",
-                "click .dateRange"                   : "toggleDateRange",
-                "click #cancelBtn"                   : "cancel",
+                "click #updateDate"                 : "changeDateRange",
+                "click .dateRange"                  : "toggleDateRange",
+                "click #cancelBtn"                  : "cancel",
                 "click li.filterValues:not(#custom)": "setDateRange",
-                "click #custom"                      : "showDatePickers"
+                "click #custom"                     : "showDatePickers"
             },
 
             removeAllChecked: function () {
