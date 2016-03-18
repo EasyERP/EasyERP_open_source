@@ -32,8 +32,6 @@ var wTrack = function (models) {
     var VacationSchema = mongoose.Schemas.Vacation;
 
     this.composeForVacation = function (req, res, next) {
-        console.time('dash');
-
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var query = req.query;
@@ -143,7 +141,7 @@ var wTrack = function (models) {
                     }]
                 }
                 ],
-                'department': departmentQuery
+                department: departmentQuery
             }]
         };
 
@@ -285,7 +283,6 @@ var wTrack = function (models) {
                     resultData.sortDepartments = sortDepartments;
 
                     res.status(200).send(resultData);
-                    console.timeEnd('dash');
                     redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(resultData));
                 });
             }

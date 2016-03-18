@@ -158,7 +158,7 @@
 
                                     if(i >= dateObject.startDay && i <= dateObject.endDay){
                                         cls = (isNaN(parseInt(workingStr)) ? workingStr : "");
-                                        hours = workingStr ? (workingStr !== 'disabled' ? 0 : '') : wTrack[i];
+                                        hours = workingStr && workingStr !== 'disabled' ? wTrack[i]  : '';
                                     } else {
                                         cls = 'disabled';
                                         hours = '';
@@ -195,7 +195,7 @@
                                for (var i = 1; i <= 7; i++) {
                                  workingStr = nonWorkingDays[i];
                                  cls = (isNaN(parseInt(workingStr)) ? workingStr : "");
-                                 hours = workingStr ? 0 : wTrack[i];
+                                 hours = wTrack[i] || 0 ;
                             %>
                             <td data-type="input" class="editable autoCalc <%= cls %>" data-content="<%= i %>"><%= hours %></td>
                             <% } %>

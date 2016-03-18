@@ -36,26 +36,33 @@ var wTrack = function (event, models) {
             var WTrack;
             var body;
             var wTrack;
+            var worked;
 
             if (success) {
                 WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
                 body = mapObject(req.body);
+                worked = parseInt(body.worked);
+                worked = isNaN(worked) ? 0 : worked;
 
-                wTrack = new WTrack(body);
-                wTrack.save(function (err, _wTrack) {
-                    if (err) {
-                        return next(err);
-                    }
+                if (worked) {
+                    wTrack = new WTrack(body);
+                    wTrack.save(function (err, _wTrack) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                    event.emit('updateRevenue', {wTrack: _wTrack, req: req});
-                    event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
-                    event.emit('dropHoursCashes', req);
-                    event.emit('recollectVacationDash');
-                    event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
-                    event.emit('recollectProjectInfo');
+                        event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                        event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+                        event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
+                        event.emit('recollectProjectInfo');
 
-                    res.status(200).send({success: _wTrack});
-                });
+                        res.status(200).send({success: _wTrack});
+                    });
+                } else {
+                    res.status(200).send({success: 'Empty tCard'});
+                }
             } else {
                 res.status(403).send();
             }
@@ -162,7 +169,8 @@ var wTrack = function (event, models) {
                     var needUpdateKeys;
                     var worked;
 
-                    data = data || {}; console.log(data);
+                    data = data || {};
+                    console.log(data);
                     worked = data.worked;
 
                     id = data._id;

@@ -246,16 +246,23 @@ define([
         },
 
         autoCalc: function (e, targetEl) {
-            this.removeInputs();
-
-            targetEl = targetEl || $(e.target);
-
-            var isInput = targetEl.prop('tagName') === 'INPUT';
-            var trs = targetEl.closest('tr');
-            var edited = trs.find('input.edited');
-            var editedCol = edited.closest('td');
+            var isInput;
+            var trs;
+            var edited;
+            var editedCol;
             var value;
             var calcEl;
+
+            if (e || targetEl) {
+                targetEl = targetEl || $(e.target);
+
+                isInput = targetEl.prop('tagName') === 'INPUT';
+                trs = targetEl.closest('tr');
+                edited = trs.find('input.edited');
+                editedCol = edited.closest('td');
+            } else {
+                trs = this.$tableBody.find('tr');
+            }
 
             function appplyDefaultValue(el) {
                 var value = el.text();
@@ -274,14 +281,15 @@ define([
 
             trs.each(function () {
                 var tr = $(this);
-                var days = tr.find('td.autoCalc:not(.disabled)');
+                var days = tr.find('.autoCalc');
                 var worked = 0;
                 var _value;
                 var workedEl;
+                var i;
 
                 workedEl = tr.find('[data-content="worked"]');
 
-                for (var i = days.length - 1; i >= 0; i--) {
+                for (i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
 
                     value = appplyDefaultValue(calcEl);
@@ -294,14 +302,16 @@ define([
                     worked += parseInt(value, 10);
                 }
 
-                _value = parseInt(edited.val(), 10);
+                if (edited) {
+                    _value = parseInt(edited.val(), 10);
 
-                if (isNaN(_value)) {
-                    _value = 0;
+                    if (isNaN(_value)) {
+                        _value = 0;
+                    }
+
+                    editedCol.text(_value);
+                    edited.remove();
                 }
-
-                editedCol.text(_value);
-                edited.remove();
 
                 workedEl.text(worked);
             });
@@ -534,7 +544,7 @@ define([
             data.wTrack = data.wTrack.toJSON();
             formString = this.template(data);
 
-            dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
+            dataService.getData('/project/getForWtrack', {inProgress: true}, function (projects) {
                 projects = _.map(projects.data, function (project) {
                     project.name = project.projectName;
 
@@ -570,6 +580,9 @@ define([
             this.delegateEvents(this.events);
 
             this.asyncLoadImgs(data);
+
+            this.$tableBody = $('#wTrackCreateTable');
+            this.autoCalc();
 
             return this;
         }

@@ -199,14 +199,24 @@ define([
         },
 
         autoCalc: function (e, targetEl) {
-            targetEl = targetEl || $(e.target);
-
-            var isInput = targetEl.prop('tagName') === 'INPUT';
-            var trs = targetEl.closest('tr');
-            var edited = trs.find('input.edited');
-            var editedCol = edited.closest('td');
+            var isInput;
+            var trs;
+            var edited;
+            var editedCol;
             var value;
             var calcEl;
+
+            targetEl = targetEl || $(e.target);
+
+            isInput = targetEl.prop('tagName') === 'INPUT';
+            trs = targetEl.closest('tr');
+            edited = trs.find('input.edited');
+            editedCol = edited.closest('td');
+
+            isInput = targetEl.prop('tagName') === 'INPUT';
+            trs = targetEl.closest('tr');
+            edited = trs.find('input.edited');
+            editedCol = edited.closest('td');
 
             function appplyDefaultValue(el) {
                 var value = el.text();
