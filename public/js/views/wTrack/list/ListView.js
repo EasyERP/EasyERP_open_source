@@ -157,6 +157,7 @@ define([
             var code = e.keyCode;
             var $target = $(e.target);
             var $tr = $target.closest('tr');
+            var $td = $target.closest('td');
 
             $tr.attr('data-edited', true);
 
@@ -169,6 +170,8 @@ define([
                 e.stopPropagation();
             } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
                 e.preventDefault();
+            } else {
+                this.setEditable($td);
             }
         },
 
@@ -313,8 +316,13 @@ define([
                 $el = $(e.target);
             }
 
+            if (!$el && !$tr) {
+                input = this.$listTable.find('input.editing');
+                $tr = input.closest('tr');
+            }
+
             $tr = $tr || $el.closest('tr');
-            input = $tr.find('input.editing');
+            input = input || $tr.find('input.editing');
             days = $tr.find('.autoCalc');
             wTrackId = $tr.attr('data-id');
             workedEl = $tr.find('[data-content="worked"]');
@@ -339,7 +347,7 @@ define([
 
                 value = eplyDefaultValue(calcEl);
 
-                worked += parseInt(value);
+                worked += parseInt(value, 10);
             }
 
             workedEl.text(worked);
@@ -378,15 +386,15 @@ define([
             return !!edited.length;
         },
 
-        setChangedValueToModel: function () {
+        setChangedValueToModel: function ($tr) {
             var editedElement = this.$listTable.find('.editing');
             var $editedCol;
             var editedElementRowId;
             var editedElementContent;
             var editedElementValue;
             var self = this;
+            var $days;
             var weeks;
-            var $tr;
 
             function funcForWeek(cb) {
                 var year = editedElement.closest('tr').find('[data-content="year"]').text();
@@ -399,7 +407,23 @@ define([
                 this.setEditable(editedElement);
             }
 
-            if (/* wTrackId !== this.wTrackId && */ editedElement.length) {
+            if ($tr) {
+                editedElementRowId = $tr.attr('data-id');
+                $days = $tr.find('td.autoCalc');
+
+                if (!this.changedModels[editedElementRowId]) {
+                    this.changedModels[editedElementRowId] = {};
+                }
+
+                $days.each(function () {
+                    var $el = $(this);
+                    var day = $el.attr('data-content');
+                    var value = $el.text() || 0;
+
+                    self.changedModels[editedElementRowId][day] = value;
+                });
+
+            } else if (editedElement.length) {
                 $editedCol = editedElement.closest('td');
                 $tr = editedElement.closest('tr');
                 editedElementRowId = $tr.attr('data-id');
@@ -473,9 +497,6 @@ define([
                 }
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
-                    /*if (this.wTrackId) {
-                     this.setChangedValueToModel();
-                     }*/
                     this.wTrackId = wTrackId;
                     this.setChangedValueToModel();
                 }
@@ -487,6 +508,11 @@ define([
                 if (isSelect) {
                     if (content === 'jobs') {
                         if (!projectId && !projectId.length) {
+                            App.render({
+                                type   : 'error',
+                                message: 'Please choose a project before'
+                            });
+
                             return false;
                         }
                         dataService.getData('/jobs/getForDD', {
@@ -494,8 +520,6 @@ define([
                             all      : true
                         }, function (jobs) {
                             self.responseObj['#jobs'] = jobs;
-
-                            // $tr.find('[data-content="jobs"]').addClass('editable');
                             self.showNewSelect(e);
                             return false;
                         });
@@ -696,6 +720,7 @@ define([
             var id = target.attr('id');
             var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
+            var jobs = {};
             var projectManager;
             var assignedContainer;
             var project;
@@ -704,13 +729,13 @@ define([
             var changedAttr;
             var week;
             var year;
-            var jobs = {};
+            var $job;
 
             var element = _.find(this.responseObj[elementType], function (el) {
                 return el._id === id;
             });
 
-            var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
+            var editWtrackModel = this.editCollection.get(modelId) || this.collection.get(modelId);
             var needCheckVacHol = elementType === '#employee' || elementType === '#week' || elementType === '#year';
 
             if (!this.changedModels[modelId]) {
@@ -732,8 +757,8 @@ define([
                     assignedContainer = tr.find('[data-content="assigned"]');
                     assignedContainer.text(projectManager);
                     targetElement.attr('data-id', id);
-
-                    tr.find('[data-content="jobs"]').text('');
+                    $job = tr.find('[data-content="jobs"]');
+                    $job.text('');
 
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
                     tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
@@ -743,9 +768,20 @@ define([
                     changedAttr.project = project;
 
                     dataService.getData('/jobs/getForDD', {projectId: project, all: true}, function (jobs) {
+                        var _job = jobs ? jobs[0] : {name: ''};
+
+                        _job = _job || {name: ''};
                         self.responseObj['#jobs'] = jobs;
 
-                        tr.find('[data-content="jobs"]').addClass('editable');
+                        $job.text(_job.name);
+
+                        if (!_job._id) {
+                            $job.addClass('errorContent editable');
+                            $job.removeAttr('data-id');
+                        } else {
+                            $job.addClass(' editable');
+                            $job.attr('data-id', _job._id);
+                        }
                     });
 
                 } else if (elementType === '#jobs') {
@@ -793,7 +829,9 @@ define([
             this.setEditable(targetElement);
 
             if (needCheckVacHol) {
-                this.checkVacHolMonth(tr, this.collection.get(modelId));
+                this.checkVacHolMonth(tr, editWtrackModel, function () {
+                    self.setChangedValueToModel(tr);
+                });
             }
 
             return false;
@@ -914,12 +952,16 @@ define([
         },
 
         saveItem: function () {
-            var model;
-
             var errors = this.$el.find('.errorContent');
+            var model;
+            var id;
 
-            for (var id in this.changedModels) {
-                model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+            this.setChangedValueToModel();
+            //this.autoCalc();
+
+            for (id in this.changedModels) {
+                model = this.editCollection.get(id) || this.collection.get(id);
+
                 if (model) {
                     model.changed = this.changedModels[id];
                 }
@@ -975,9 +1017,8 @@ define([
         },
 
         showNewSelect: function (e, prev, next) {
-            //populate.showSelect(e, prev, next, this);
-
             var $target = $(e.target);
+
             e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
