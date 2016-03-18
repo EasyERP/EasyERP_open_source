@@ -3021,6 +3021,29 @@ dl {
       padding-right: 16px;
     }
   }
+
+  &.checked {
+    display: block;
+    text-align: left !important;  // need refactor important. use now because must have.
+    font-size: 14px !important; // need refactor important. use now because must have.
+    line-height: 16px;
+    padding-left: 20px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &.checkedValue {
+    position: relative;
+    &:before {
+      content: '\2713';
+      color: @mainText-color;
+      position: absolute;
+      top: 0;
+      left: 4px;
+    }   // need refactor before. use now because must have.
+  }
 }
 
 .removeValues {
