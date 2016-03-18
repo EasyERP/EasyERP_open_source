@@ -162,8 +162,8 @@ var wTrack = function (event, models) {
                     var needUpdateKeys;
                     var worked;
 
-                    data = data || {};
-                    worked = data.worked || 0;
+                    data = data || {}; console.log(data);
+                    worked = data.worked;
 
                     id = data._id;
                     needUpdateKeys = data.month || data.week || data.year || data.isoYear;

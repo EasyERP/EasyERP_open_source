@@ -779,8 +779,11 @@ define([
                             $job.addClass('errorContent editable');
                             $job.removeAttr('data-id');
                         } else {
-                            $job.addClass(' editable');
+                            $job.removeClass('errorContent');
+                            $job.addClass('editable');
                             $job.attr('data-id', _job._id);
+
+                            changedAttr.jobs = _job._id;
                         }
                     });
 
