@@ -3550,6 +3550,121 @@ var Module = function (models) {
         });
     };
 
+    this.getProfitAndLoss = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var getGrossFit;
+        var getExpenses;
+        var query = req.query;
+        var startDate = query.startDate;
+        var endDate = query.endDate;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
+        getGrossFit = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date: {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: objectId(CONSTANTS.PRODUCT_SALES),
+                    credit: {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "account",
+                    foreignField: "_id", as: "account"
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    credit  : {$divide: ['$credit', '$currency.rate']},
+                    account: {$arrayElemAt: ["$account", 0]}
+                }
+            }, {
+                $group: {
+                    _id   : '$account._id',
+                    name  : {$addToSet: '$account.name'},
+                    debit : {$sum: '$credit'}
+                }
+            }, {
+                $project: {
+                    _id   : 1,
+                    debit : {$divide: ['$debit', 100]},
+                    name  : {$arrayElemAt: ["$name", 0]}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        getExpenses = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date: {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: objectId(CONSTANTS.COGS),
+                    debit: {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "account",
+                    foreignField: "_id", as: "account"
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    debit  : {$divide: ['$debit', '$currency.rate']},
+                    account: {$arrayElemAt: ["$account", 0]}
+                }
+            }, {
+                $group: {
+                    _id   : '$account._id',
+                    name  : {$addToSet: '$account.name'},
+                    debit : {$sum: '$debit'}
+                }
+            }, {
+                $project: {
+                    _id   : 1,
+                    debit : {$divide: ['$debit', 100]},
+                    name  : {$arrayElemAt: ["$name", 0]}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+
+        async.parallel([getGrossFit, getExpenses], function (err, result) {
+            if (err){
+                return next(err);
+            }
+
+            res.status(200).send({grossFit: result[0], expenses: result[1]});
+        });
+    };
+
     this.getForGL = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = req.query;

@@ -1,5 +1,5 @@
 /**
- * Created by liliy on 02.03.2016.
+ * Created by liliy on 18.03.2016.
  */
 'use strict';
 define([
@@ -11,7 +11,7 @@ define([
     var gLReportCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
-        url         : 'journal/journalEntry/getTrialBalance',
+        url         : 'journal/journalEntry/getProfitAndLoss',
         contentType : null,
         page        : null,
         numberToShow: null,
@@ -20,7 +20,7 @@ define([
         initialize: function (options) {
             options = options || {};
             this.startTime = new Date();
-            this.filter = options.filter || Custom.retriveFromCash('trialBalance.filter');
+            this.filter = options.filter || Custom.retriveFromCash('profitAndLoss.filter');
             var startDate = moment(new Date());
             var endDate = moment(new Date());
 
@@ -29,7 +29,7 @@ define([
             endDate.month(startDate.month());
             endDate.endOf('month');
 
-            var dateRange = Custom.retriveFromCash('trialBalanceDateRange') || {};
+            var dateRange = Custom.retriveFromCash('profitAndLossDateRange') || {};
             this.startDate = dateRange.startDate;
             this.endDate = dateRange.endDate;
 
@@ -40,7 +40,7 @@ define([
             options.endDate = this.endDate;
             options.filter = this.filter;
 
-            Custom.cacheToApp('trialBalanceDateRange', {
+            Custom.cacheToApp('profitAndLossDateRange', {
                 startDate: this.startDate,
                 endDate  : this.endDate
             });
