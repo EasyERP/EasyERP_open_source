@@ -96,7 +96,7 @@ var wTrack = function (models) {
             week = _dateStr.isoWeek();
             year = _dateStr.isoWeekYear();
             weeksArr.push({
-                lastDate: getDate(/*week, year*/_dateStr),
+                lastDate: getDate(_dateStr),
                 dateByWeek: year * 100 + week,
                 week      : week,
                 year      : year
