@@ -296,13 +296,7 @@ define([
                 var index;
                 var self = this;
 
-                if ($currentElement.hasClass('checkedValue')) {
-                    $currentElement.removeClass('checkedValue');
-                } else {
-                    $currentElement.addClass('checkedValue');
-                }
-
-                //$currentElement.toggleClass('checkedValue');
+                $currentElement.toggleClass('checkedValue');
 
                 intVal = parseInt(currentValue);
 
