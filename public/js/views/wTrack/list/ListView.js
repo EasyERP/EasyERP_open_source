@@ -92,6 +92,7 @@ define([
         events: {
             'click .stageSelect'                               : 'showNewSelect',
             'click tr.enableEdit td.editable:not(.disabled)'   : 'editRow',
+            'click td.disabled'                                : 'notify',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'change .autoCalc'                                 : 'autoCalc',
             'change .editable'                                 : 'setEditable',
@@ -596,6 +597,13 @@ define([
             } else {
                 editCb();
             }
+        },
+
+        notify: function () {
+            App.render({
+                type   : 'notify',
+                message: 'This day from another month'
+            });
         },
 
         calculateCost: function (e, wTrackId) {
