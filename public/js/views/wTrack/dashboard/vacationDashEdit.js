@@ -394,10 +394,10 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
-            var targetElement = target.parents("td");
-            var tr = target.parents("tr");
-            var id = target.attr("id");
-            var attr = targetElement.attr("id") || targetElement.data("content");
+            var targetElement = target.parents('td');
+            var tr = target.parents('tr');
+            var id = target.attr('id');
+            var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
             var jobs = {};
 

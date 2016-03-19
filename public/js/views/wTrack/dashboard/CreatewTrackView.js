@@ -109,31 +109,38 @@ define([
         },
 
         asyncLoadImgs: function (model) {
+            var self = this;
             var currentModel = model.id ? model.toJSON() : model;
             var id = currentModel._id;
             var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
             var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
+            var fullName;
 
             if (pm) {
-                common.getImagesPM([pm], "/getEmployeesImages", "#" + id, function (result) {
+                fullName = currentModel.projectmanager && currentModel.projectmanager.name ? currentModel.projectmanager.name.first + ' ' + currentModel.projectmanager.name.last : '';
+                self.$el.find('#projectManager').text(fullName);
+
+                common.getImagesPM([pm], '/getEmployeesImages', '#' + id, function (result) {
                     var res = result.data[0];
 
-                    $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
+                    self.$el.find('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
                 });
             }
 
             if (customer) {
-                common.getImagesPM([customer], "/getCustomersImages", "#" + id, function (result) {
+                fullName = currentModel.customer && currentModel.customer.name ? currentModel.customer.name.first + ' ' + currentModel.customer.name.last : '';
+                self.$el.find('#customer').text(fullName);
+
+                common.getImagesPM([customer], '/getCustomersImages', '#' + id, function (result) {
                     var res = result.data[0];
 
-                    $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
+                    self.$el.find('.miniAvatarCustomer').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
                 });
             }
         },
 
         saveItem: function () {
             var Model = WTrackModel.extend({
-                // redefine defaults for proper putch backEnd model;
                 defaults: {}
             });
             var self = this;
@@ -354,7 +361,6 @@ define([
         },
 
         editRow: function (e) {
-            $(".newSelectList").hide();
             var self = this;
             var el = $(e.target);
             var td = el.closest('td');
@@ -367,14 +373,16 @@ define([
             var value;
             var insertedInput;
             var colType = el.data('type');
-            var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
+
+            $('.newSelectList').hide();
 
             if (isSelect) {
                 if (content === 'jobs') {
                     if (self.project) {
-                        dataService.getData("/jobs/getForDD", {
-                            "projectId": self.project,
-                            "all"      : true
+                        dataService.getData('/jobs/getForDD', {
+                            projectId: self.project,
+                            all      : true
                         }, function (jobs) {
 
                             self.responseObj['#jobs'] = jobs;
@@ -392,7 +400,7 @@ define([
                     }
 
                 } else {
-                    //populate.showSelect(e, prev, next, this);
+                    // populate.showSelect(e, prev, next, this);
                     this.showNewSelect(e);
                     return false;
                 }
@@ -454,18 +462,27 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
-            var targetElement = target.parents("td");
-            if (!targetElement.length) {
-                targetElement = target.parents("span");
-            }
-            var tr = target.parents("tr");
-            var id = target.attr("id");
-            var attr = targetElement.data("content");
-            var elementType = '#' + attr;
+            var targetElement = target.parents('td');
             var jobs = {};
+            var tr;
+            var id;
+            var attr;
+            var elementType;
+            var element;
             var project;
 
-            var element = _.find(this.responseObj[elementType], function (el) {
+            if (!targetElement.length) {
+                targetElement = target.parents('span');
+            }
+
+
+            tr = target.parents('tr');
+            id = target.attr('id');
+            attr = targetElement.data('content');
+            elementType = '#' + attr;
+
+
+            element = _.find(this.responseObj[elementType], function (el) {
                 return el._id === id;
             });
 
@@ -474,14 +491,30 @@ define([
 
                     jobs = element._id;
 
-                    targetElement.attr("data-id", jobs);
+                    targetElement.attr('data-id', jobs);
                     tr.find('[data-content="jobs"]').removeClass('errorContent');
                 } else if (elementType === '#project') {
                     project = element._id;
                     this.project = project;
 
-                    targetElement.attr("data-id", project);
+                    targetElement.attr('data-id', project);
                     targetElement.removeClass('error');
+
+                    dataService.getData('/jobs/getForDD', {
+                        projectId: project,
+                        all      : true
+                    }, function (jobs) {
+                        var $jobs = self.$el.find('[data-content="jobs"]');
+                        var job = jobs ? jobs[0] : {name: 'Empty'};
+                        var jobId = job._id;
+
+                        $jobs.text(job.name);
+                        $jobs.attr('data-id', jobId);
+
+                        if (jobId) {
+                            $jobs.removeClass('errorContent');
+                        }
+                    });
 
                     this.asyncLoadImgs(element);
                 }
@@ -498,7 +531,7 @@ define([
             return false;
         },
 
-        generateJob: function (e) {
+        generateJob: function () {
             var model = this.project;
 
             new CreateJob({
@@ -531,7 +564,7 @@ define([
             return false;
         },
 
-        hideNewSelect: function (e) {
+        hideNewSelect: function () {
             if (this.selectView) {
                 this.selectView.remove();
             }
@@ -560,18 +593,18 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : false,
-                title        : "Edit Project",
-                dialogClass  : "edit-dialog",
-                width        : "900px",
+                title        : 'Edit Project',
+                dialogClass  : 'edit-dialog',
+                width        : '900px',
                 buttons      : {
                     save  : {
-                        text : "Save",
-                        class: "btn",
+                        text : 'Save',
+                        class: 'btn',
                         click: self.saveItem
                     },
                     cancel: {
-                        text : "Cancel",
-                        class: "btn",
+                        text : 'Cancel',
+                        class: 'btn',
                         click: self.hideDialog
                     }
                 }
