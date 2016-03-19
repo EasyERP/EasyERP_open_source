@@ -155,10 +155,9 @@
                                 <% var cls;
                                  for (var i = 1; i <= 7; i++) {
                                     workingStr = nonWorkingDays[i];
-
                                     if(i >= dateObject.startDay && i <= dateObject.endDay){
                                         cls = (isNaN(parseInt(workingStr)) ? workingStr : "");
-                                        hours = workingStr && workingStr !== 'disabled' ? wTrack[i]  : '';
+                                        hours = (!workingStr || workingStr !== 'disabled') ? wTrack[i]  : '';
                                     } else {
                                         cls = 'disabled';
                                         hours = '';
