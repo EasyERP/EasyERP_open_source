@@ -3550,6 +3550,180 @@ var Module = function (models) {
         });
     };
 
+    this.getBalanceSheet = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var getAssets;
+        var getLiabilities;
+        var getEquities;
+        var query = req.query;
+        var startDate = query.startDate;
+        var endDate = query.endDate;
+
+        var assets = _.union(CONSTANTS.BANK_AND_CASH, CONSTANTS.ACCOUNT_RECEIVABLE);
+        var liabilities = CONSTANTS.LIABILITIES.objectID();
+        var equity = CONSTANTS.EQUITY.objectID();
+
+        assets = assets.objectID();
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
+        getAssets = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: {$in: assets}
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "account",
+                    foreignField: "_id", as: "account"
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    credit : {$divide: ['$credit', '$currency.rate']},
+                    debit : {$divide: ['$debit', '$currency.rate']},
+                    account: {$arrayElemAt: ["$account", 0]}
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$addToSet: '$account.name'},
+                    credit: {$sum: '$credit'},
+                    debit: {$sum: '$debit'}
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    debit: {$divide: ['$debit', 100]},
+                    credit: {$divide: ['$credit', 100]},
+                    name : {$arrayElemAt: ["$name", 0]}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        getLiabilities = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: {$in: liabilities},
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "account",
+                    foreignField: "_id", as: "account"
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    credit : {$divide: ['$credit', '$currency.rate']},
+                    debit : {$divide: ['$debit', '$currency.rate']},
+                    account: {$arrayElemAt: ["$account", 0]}
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$addToSet: '$account.name'},
+                    credit: {$sum: '$credit'},
+                    debit: {$sum: '$debit'}
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    debit: {$divide: ['$debit', 100]},
+                    credit: {$divide: ['$credit', 100]},
+                    name : {$arrayElemAt: ["$name", 0]}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        getEquities = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: {$in: equity}
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "account",
+                    foreignField: "_id", as: "account"
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    debit : {$divide: ['$debit', '$currency.rate']},
+                    credit : {$divide: ['$credit', '$currency.rate']},
+                    account: {$arrayElemAt: ["$account", 0]}
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$addToSet: '$account.name'},
+                    credit: {$sum: '$credit'},
+                    debit: {$sum: '$debit'}
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    credit: {$divide: ['$credit', 100]},
+                    debit: {$divide: ['$debit', 100]},
+                    name : {$arrayElemAt: ["$name", 0]}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        async.parallel([getAssets, getLiabilities, getEquities], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({assets: result[0], liabilities: result[1], equity: result[2]});
+        });
+    };
+
     this.getProfitAndLoss = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var getGrossFit;
@@ -3564,12 +3738,12 @@ var Module = function (models) {
         getGrossFit = function (cb) {
             Model.aggregate([{
                 $match: {
-                    date: {
+                    date   : {
                         $gte: new Date(startDate),
                         $lte: new Date(endDate)
                     },
                     account: objectId(CONSTANTS.PRODUCT_SALES),
-                    credit: {$gt: 0}
+                    credit : {$gt: 0}
                 }
             }, {
                 $lookup: {
@@ -3580,20 +3754,20 @@ var Module = function (models) {
             }, {
                 $project: {
                     date   : 1,
-                    credit  : {$divide: ['$credit', '$currency.rate']},
+                    credit : {$divide: ['$credit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
                 $group: {
-                    _id   : '$account._id',
-                    name  : {$addToSet: '$account.name'},
-                    debit : {$sum: '$credit'}
+                    _id  : '$account._id',
+                    name : {$addToSet: '$account.name'},
+                    debit: {$sum: '$credit'}
                 }
             }, {
                 $project: {
-                    _id   : 1,
-                    debit : {$divide: ['$debit', 100]},
-                    name  : {$arrayElemAt: ["$name", 0]}
+                    _id  : 1,
+                    debit: {$divide: ['$debit', 100]},
+                    name : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -3611,12 +3785,12 @@ var Module = function (models) {
         getExpenses = function (cb) {
             Model.aggregate([{
                 $match: {
-                    date: {
+                    date   : {
                         $gte: new Date(startDate),
                         $lte: new Date(endDate)
                     },
                     account: objectId(CONSTANTS.COGS),
-                    debit: {$gt: 0}
+                    debit  : {$gt: 0}
                 }
             }, {
                 $lookup: {
@@ -3632,15 +3806,15 @@ var Module = function (models) {
                 }
             }, {
                 $group: {
-                    _id   : '$account._id',
-                    name  : {$addToSet: '$account.name'},
-                    debit : {$sum: '$debit'}
+                    _id  : '$account._id',
+                    name : {$addToSet: '$account.name'},
+                    debit: {$sum: '$debit'}
                 }
             }, {
                 $project: {
-                    _id   : 1,
-                    debit : {$divide: ['$debit', 100]},
-                    name  : {$arrayElemAt: ["$name", 0]}
+                    _id  : 1,
+                    debit: {$divide: ['$debit', 100]},
+                    name : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -3655,9 +3829,8 @@ var Module = function (models) {
             });
         };
 
-
         async.parallel([getGrossFit, getExpenses], function (err, result) {
-            if (err){
+            if (err) {
                 return next(err);
             }
 

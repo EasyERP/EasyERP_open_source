@@ -39,6 +39,33 @@ module.exports = {
     PRODUCT_SALES: '565eb53a6aa50532e5df0be0',
     COGS: '565eb53a6aa50532e5df0be2',
 
+    ACCOUNT_RECEIVABLE: '565eb53a6aa50532e5df0bc9',
+
+    BANK_AND_CASH: [
+      '565eb53a6aa50532e5df0bd6',
+        '565eb53a6aa50532e5df0bd3',
+        '565eb53a6aa50532e5df0bd2',
+        '565eb53a6aa50532e5df0bd1',
+        '565eb53a6aa50532e5df0bd0',
+        '565eb53a6aa50532e5df0bcf',
+        '565eb53a6aa50532e5df0bce',
+        '565eb53a6aa50532e5df0bcd',
+        '565eb53a6aa50532e5df0bcc',
+        '565eb53a6aa50532e5df0bcb',
+        '565eb53a6aa50532e5df0bca'
+    ],
+
+    LIABILITIES: [
+        '565eb53a6aa50532e5df0bde',
+        '565eb53a6aa50532e5df0bdd',
+        '565eb53a6aa50532e5df0bdb'
+    ],
+
+    EQUITY: [
+        '565eb53a6aa50532e5df0bf3',
+        '565eb53a6aa50532e5df0bf2'
+    ],
+
     MOBILE_DEFAULT_COUNT_PER_LIST: 50,
 
     DASH_VAC_WEEK_BEFORE: 2,

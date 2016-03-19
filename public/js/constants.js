@@ -493,6 +493,7 @@ define([], function () {
         SALARYREPORT      : "salaryReport",
         TRIALBALANCE      : "trialBalance",
         PROFITANDLOSS     : "profitAndLoss",
+        BALANCESHEET      : 'balanceSheet',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
