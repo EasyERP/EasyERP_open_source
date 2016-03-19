@@ -240,7 +240,7 @@ var Project = function (models, event) {
             }
             function saveProjectToBd(data) {
                 try {
-                    _project = new models.get(req.session.lastDb, 'Project', projectSchema)();
+                   var _project = new models.get(req.session.lastDb, 'Project', projectSchema)();
                     if (data.projectName) {
                         _project.projectName = data.projectName;
                     }
@@ -309,6 +309,11 @@ var Project = function (models, event) {
                     if (data.bonus) {
                         _project.bonus = data.bonus;
                     }
+
+                    _project.budget = {
+                        projectTeam: [],
+                        bonus: []
+                    };
 
                     _project.save(function (err, result) {
                         try {

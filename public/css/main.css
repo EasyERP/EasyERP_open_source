@@ -541,25 +541,6 @@ th {
   outline: medium none;
   border: 1px solid #66b5d4 !important;
 }
-.alert {
-  padding: 15px 15px 15px 35px;
-  position: relative;
-}
-.alert:before {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  font-family: 'FontAwesome';
-}
-.alertDanger:before {
-  content: '\f071';
-}
-.alertSuccess:before {
-  content: '\f05d';
-}
-.textUnderlineHover:hover {
-  text-decoration: underline !important;
-}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -9669,4 +9650,26 @@ textarea#editInput {
   text-decoration: underline;
   line-height: 30px;
   font-size: 18px;
+}
+.alert {
+  padding: 15px 15px 15px 35px;
+  position: relative;
+}
+.alert:before {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-family: 'FontAwesome';
+}
+.alertDanger:before {
+  content: '\f071';
+}
+.alertSuccess:before {
+  content: '\f05d';
+}
+.textUnderlineHover:hover {
+  text-decoration: underline !important;
+}
+.fired {
+  background-color: rgba(235, 0, 4, 0.73) !important;
 }
