@@ -129,31 +129,77 @@
                     </tr>
                     </thead>
                     <tbody id="wTrackCreateTable">
-                    <tr>
-                        <td data-content="jobs" data-id="<%=wTrack.jobs ? wTrack.jobs.name : '------'%>"
-                            class="editable errorContent" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>"><%=wTrack.jobs ?
-                            wTrack.jobs.name : 'Select'%>
-                        </td>
-                        <td data-content="employee">
-                            <%=(wTrack.employee) ? wTrack.employee.name.first + ' ' +  wTrack.employee.name.last: ''%>
-                        </td>
-                        <td data-content="department">
-                            <%=(wTrack.department) ? wTrack.department.departmentName : ''%>
-                        </td>
-                        <td data-type="input" class="editable" data-content="year"><%=wTrack.year%></td>
-                        <td data-type="input" class="editable" data-content="month"><%=wTrack.month%></td>
-                        <td data-type="input" data-content="week"><%=wTrack.week%></td>
-                        <td data-type="input" class="hours" data-content="worked"><%= nonWorkingDays.workingHours %></td>
+                    <% if (nonWorkingDays && nonWorkingDays.splited) {
+                      nonWorkingDays.splited.forEach(function(dateObject){%>
+                            <tr>
+                                <td data-content="jobs" data-id="<%=wTrack.jobs ? wTrack.jobs.name : '------'%>"
+                                    class="editable errorContent" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>">
+                                    <%=wTrack.jobs ?
+                                    wTrack.jobs.name : 'Select'%>
+                                </td>
+                                <td data-content="employee">
+                                    <%=(wTrack.employee) ? wTrack.employee.name.first + ' ' + wTrack.employee.name.last: ''%>
+                                </td>
+                                <td data-content="department">
+                                    <%=(wTrack.department) ? wTrack.department.departmentName : ''%>
+                                </td>
+                                <td data-type="input" class="editable" data-content="year"><%= dateObject.year%></td>
+                                <td data-type="input" class="editable" data-content="month"><%= dateObject.month%></td>
+                                <td data-type="input" data-content="week"><%=wTrack.week%></td>
+                                <%var endDay = dateObject.endDay > 5 ? 5 : dateObject.endDay%>
+                                <td data-type="input" class="hours" data-content="worked"><%= (endDay - dateObject.startDay + 1) * 8%>
+                                </td>
 
-                        <% var cls; %>
-                        <% var hours; %>
-                        <% for (var i = 1; i <= 7; i++) { %>
-                        <% cls = (isNaN(parseInt(nonWorkingDays[i.toString()])) ? nonWorkingDays[i.toString()] : ""); %>
-                        <% hours = isNaN(parseInt(nonWorkingDays[i.toString()])) ? 0 : nonWorkingDays[i.toString()]; %>
-                        <td data-type="input" class="editable autoCalc <%= cls %>" data-content="<%= i %>"><%= hours %></td>
-                        <% } %>
+                                <% var cls;
+                                var hours;
+                                var workingStr;
+                                for (var i = 1; i <= 7; i++) {
+                                    workingStr = nonWorkingDays[i];
 
-                    </tr>
+                                    if(i >= dateObject.startDay && i <= dateObject.endDay){
+                                        cls = (isNaN(parseInt(workingStr)) ? workingStr : "");
+                                        hours = isNaN(parseInt(workingStr)) ? (workingStr !== 'disabled' ? 0 : '') : workingStr;
+                                    } else {
+                                        cls = 'disabled';
+                                        hours = '';
+                                    }%>
+                                    <td data-type="input" class="editable autoCalc <%= cls %>" data-content="<%= i %>"><%= hours %></td>
+                                <% } %>
+
+                            </tr>
+                    <%});
+                    } else { %>
+                        <tr>
+                            <td data-content="jobs" data-id="<%=wTrack.jobs ? wTrack.jobs.name : '------'%>"
+                                class="editable errorContent" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>">
+                                <%=wTrack.jobs ?
+                                wTrack.jobs.name : 'Select'%>
+                            </td>
+                            <td data-content="employee">
+                                <%=(wTrack.employee) ? wTrack.employee.name.first + ' ' + wTrack.employee.name.last: ''%>
+                            </td>
+                            <td data-content="department">
+                                <%=(wTrack.department) ? wTrack.department.departmentName : ''%>
+                            </td>
+                            <td data-type="input" class="editable" data-content="year"><%=wTrack.year%></td>
+                            <td data-type="input" class="editable" data-content="month"><%=wTrack.month%></td>
+                            <td data-type="input" data-content="week"><%=wTrack.week%></td>
+                            <td data-type="input" class="hours" data-content="worked"><%= nonWorkingDays.workingHours %></td>
+
+                            <% var cls;
+                            var hours;
+                            var workingStr;
+                            for (var i = 1; i <= 7; i++) {
+                            workingStr = nonWorkingDays[i.toString()];
+                            cls = (isNaN(parseInt(workingStr)) ? workingStr : "");
+                            hours = isNaN(parseInt(workingStr)) ? (workingStr !== 'disabled' ? 0 : '') : workingStr; %>
+                            <td data-type="input" class="editable autoCalc <%= cls %>" data-content="<%= i %>"><%= hours
+                                %>
+                            </td>
+                            <% } %>
+
+                        </tr>
+                    <% } %>
                     </tbody>
                     <tfoot>
 

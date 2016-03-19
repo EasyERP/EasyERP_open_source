@@ -19,7 +19,8 @@ var wTrack = function (models) {
         '55b92ace21e4b7c40f000012',
         '55b92ace21e4b7c40f000011',
         '55bb1f14cb76ca630b000006',
-        '55bb1f40cb76ca630b000007'
+        '55bb1f40cb76ca630b000007',
+        '56e175c4d62294582e10ca68'
     ];
 
     var objectId = mongoose.Types.ObjectId;
@@ -29,11 +30,8 @@ var wTrack = function (models) {
     var EmployeeSchema = mongoose.Schemas.Employee;
     var HolidaySchema = mongoose.Schemas.Holiday;
     var VacationSchema = mongoose.Schemas.Vacation;
-    //var vacationCacheSchema = mongoose.Schemas.vacationCacheSchema;
 
     this.composeForVacation = function (req, res, next) {
-        console.time('dash');
-
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var query = req.query;
@@ -96,7 +94,7 @@ var wTrack = function (models) {
             week = _dateStr.isoWeek();
             year = _dateStr.isoWeekYear();
             weeksArr.push({
-                lastDate: getDate(/*week, year*/_dateStr),
+                lastDate: getDate(_dateStr),
                 dateByWeek: year * 100 + week,
                 week      : week,
                 year      : year
@@ -143,7 +141,7 @@ var wTrack = function (models) {
                     }]
                 }
                 ],
-                'department': departmentQuery
+                department: departmentQuery
             }]
         };
 
@@ -285,7 +283,6 @@ var wTrack = function (models) {
                     resultData.sortDepartments = sortDepartments;
 
                     res.status(200).send(resultData);
-                    console.timeEnd('dash');
                     redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(resultData));
                 });
             }
