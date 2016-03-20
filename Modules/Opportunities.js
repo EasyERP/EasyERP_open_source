@@ -9,8 +9,6 @@ var Opportunities = function (models, event) {
 	    var fs                  = require('fs');
 
 	    function getTotalCount(req, response) {
-
-
 		    var res = {};
 		    var filterObj = {};
 		    var optionsObject = {};
@@ -1491,35 +1489,15 @@ var Opportunities = function (models, event) {
 						    },
 						    function (err, responseOpportunities) {
 							    if (!err) {
-								    var filter  = {};
-								    var tempObj = {};
-								    var query   = [];
-								    var ids;
+								    var filter = data || {};
 								    var opportunityModel;
 
-
-								    for (var key in data) {
-									    ids = [];
-
-									    if (key !== 'workflowId') {
-										    data[key].value.forEach(function (id) {
-											    if (id !== 'Empty') {
-												    ids.push(objectId(id));
-											    } else {
-												    tempObj[data[key].key] = {$exists: false};
-												    query.push(tempObj);
-												    tempObj = {};
-											    }
-										    });
-
-										    tempObj[data[key].key] = {$in: ids};
-										    query.push(tempObj);
-										    tempObj = {};
-									    }
+								    if (filter) {
+									    filterObj = caseFilterOpp(filter);
 								    }
 
-								    if (query.length) {
-									    filter['$or'] = query;
+								    if (filterObj.$and.length === 0) {
+									    filterObj = {};
 								    }
 
 								    opportunityModel = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
@@ -1567,7 +1545,7 @@ var Opportunities = function (models, event) {
 											    }
 										    },
 										    {
-											    $match: filter
+											    $match: filterObj
 										    },
 										    {
 											    $sort: {
