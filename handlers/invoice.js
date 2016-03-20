@@ -1436,7 +1436,7 @@ var Invoice = function (models, event) {
                         optionsObject[condition].push({_id: {$in: invoicesIds}});
                         optionsObject[condition].push({expense: {$exists: false}});
 
-                        if (baseUrl === '/Proforma') {
+                        if (baseUrl === '/proforma') {
                             optionsObject.$and.push({kind: 'Proforma'});
                         } else {
                             optionsObject.$and.push({kind: {$exists: false}});

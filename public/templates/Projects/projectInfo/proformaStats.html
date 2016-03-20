@@ -1,0 +1,43 @@
+<table class="list tableProjects tableProform">
+
+    <colgroup span="5">
+        <col width="40%">
+        <col width="15%">
+        <col width="15%">
+        <col width="15%">
+        <col width="15%">
+    </colgroup>
+
+    <thead>
+    <tr>
+        <th colspan="5" class="forCaption">Proformas</th>
+    </tr>
+    <tr>
+        <th>Proforma</th>
+        <th>Status</th>
+        <th>Amount</th>
+        <th>Paid</th>
+        <th>Balance</th>
+    </tr>
+    </thead>
+    <tbody id="proformRevenue">
+    <%invoceStats.forEach(function(stat){%>
+    <tr>
+        <td><%=stat.name%></td>
+        <td><%=stat.status%></td>
+        <td><%=stat.paymentInfo.ammount%></td>
+        <td><%=stat.paymentInfo.paid%></td>
+        <td><%=stat.paymentInfo.balance%></td>
+    </tr>
+    <%})%>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="2">Total:</td>
+        <td><%=invoceStat.ammount%></td>
+        <td><%=invoceStat.paid%></td>
+        <td><%=invoceStat.balance%></td>
+    </tr>
+
+    </tfoot>
+</table>

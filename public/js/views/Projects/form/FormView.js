@@ -10,6 +10,7 @@ define([
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
         'text!templates/Projects/projectInfo/invoiceStats.html',
+        'text!templates/Projects/projectInfo/proformaStats.html',
         'views/selectView/selectView',
         'views/salesOrder/EditView',
         'views/salesQuotation/EditView',
@@ -52,6 +53,7 @@ define([
               ProformRevenueTemplate,
               jobsWTracksTemplate,
               invoiceStats,
+              proformaStats,
               selectView,
               EditViewOrder,
               editViewQuotation,
@@ -91,6 +93,7 @@ define([
             contentType     : 'Projects',
             proformRevenue  : _.template(ProformRevenueTemplate),
             invoiceStatsTmpl: _.template(invoiceStats),
+            proformaStatsTmpl: _.template(proformaStats),
 
             events: {
                 'click .chart-tabs'                                                                                       : 'changeTab',
@@ -845,6 +848,7 @@ define([
 
                 this.renderProformRevenue();
                 this.getInvoiceStats();
+                this.getProformaStats();
             },
 
             getWTrack: function (cb) {
@@ -923,7 +927,7 @@ define([
                 this.wCollection.bind('reset', this.createView);
             },
 
-            getInvoiceStats: function () {
+            getInvoiceStats: function (cb) {
                 //ToDo optimize
                 var _id = window.location.hash.split('form/')[1];
                 var self = this;
@@ -936,6 +940,31 @@ define([
                 dataService.getData('invoice/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderInvoiceStats(response.success);
+
+                        if (typeof cb === 'function') {
+                            cb();
+                        }
+                    }
+                });
+            },
+
+            getProformaStats: function (cb) {
+                //ToDo optimize
+                var _id = window.location.hash.split('form/')[1];
+                var self = this;
+                var filter = {
+                    "project": {
+                        key  : "project._id",
+                        value: [_id]
+                    }
+                };
+                dataService.getData('proforma/stats/project', {filter: filter}, function (response) {
+                    if (response && response.success) {
+                        self.renderProformaStats(response.success);
+
+                        if (typeof cb === 'function') {
+                            cb();
+                        }
                     }
                 });
             },
@@ -944,6 +973,17 @@ define([
                 var statsContainer = this.$el.find('#invoiceStatsContainer');
 
                 statsContainer.html(this.invoiceStatsTmpl({
+                        invoceStats     : data.invoices,
+                        invoceStat      : data,
+                        currencySplitter: helpers.currencySplitter
+                    })
+                );
+            },
+
+            renderProformaStats: function (data) {
+                var statsContainer = this.$el.find('#proformaStatsContainer');
+
+                statsContainer.html(this.proformaStatsTmpl({
                         invoceStats     : data.invoices,
                         invoceStat      : data,
                         currencySplitter: helpers.currencySplitter
@@ -985,11 +1025,14 @@ define([
 
                 function createView() {
                     var payments = [];
+                    var count = self.iCollection.length;
 
-                    App.invoiceCollection = self.iCollection;
+                    self.showTabCounter(count, '#invoicesTab');
+
+                    //App.invoiceCollection = self.iCollection;
 
                     new InvoiceView({
-                        model : App.invoiceCollection,
+                        model : self.iCollection,
                         filter: filter,
                         eventChannel: self.eventChannel
                     }).render();
@@ -1033,8 +1076,11 @@ define([
 
                 function createView() {
                     var payments = [];
+                    var count = self.pCollection.length;
+
+                    self.showTabCounter(count, '#proformaTab');
                     
-                    App.proformaCollection = self.pCollection;
+                    //App.proformaCollection = self.pCollection;
 
                     new ProformaView({
                         el    : '#proforma',
@@ -1066,12 +1112,18 @@ define([
                 var self = this;
                 var payFromInvoice;
                 var payFromProforma;
+                var payments;
+                var count;
+
 
                 self.payments = self.payments || {};
                 payFromInvoice = self.payments.fromInvoces || [];
                 payFromProforma = self.payments.fromProformas || [];
 
-                var payments = payFromInvoice.concat(payFromProforma);
+                payments = payFromInvoice.concat(payFromProforma);
+
+                count = payments.length;
+                self.showTabCounter(count, '#paymentsTab');
 
                 var filterPayment = {
                     'name': {
@@ -1120,6 +1172,10 @@ define([
                 });
 
                 function createView() {
+                    var count = self.qCollection.length;
+
+                    self.showTabCounter(count, '#quotationsTab');
+
                     cb();
                     new QuotationView({
                         collection      : self.qCollection,
@@ -1133,6 +1189,7 @@ define([
                     }).render();
 
                 };
+
                 this.qCollection.bind('reset', createView);
                 this.qCollection.bind('add', self.renderProformRevenue);
                 this.qCollection.bind('remove', self.renderProformRevenue);
@@ -1161,6 +1218,10 @@ define([
                 });
 
                 function createView() {
+                    var count = self.ordersCollection.length;
+
+                    self.showTabCounter(count, '#ordersTab');
+
                     cb();
                     new oredrView({
                         collection    : self.ordersCollection,
@@ -1181,7 +1242,7 @@ define([
                 this.ordersCollection.bind('showmore', showMoreContent);
             },
 
-            renderProformRevenue: function () {
+            renderProformRevenue: function (cb) {
                 var self = this;
                 var proformContainer = this.$el.find('#proformRevenueContainer');
 
@@ -1235,6 +1296,21 @@ define([
                         currencySplitter: helpers.currencySplitter
                     })
                 );
+
+                if (typeof cb === 'function') {
+                    cb();
+                }
+            },
+
+            showTabCounter: function (count, id) {
+                var $tab = $(id);
+                var tabText = $tab.text().split('(')[0];
+
+                tabText += '(';
+                tabText += count;
+                tabText += ')';
+
+                $tab.text(tabText);
             },
 
             editItem: function () {
@@ -1323,7 +1399,13 @@ define([
                 var self = this;
                 var paralellTasks;
 
-                paralellTasks = [self.getProforma, self.getInvoice];
+                paralellTasks = [
+                    self.getProforma,
+                    self.getInvoice,
+                    self.renderProformRevenue,
+                    self.getInvoiceStats,
+                    self.getProformaStats
+                ];
 
                 async.parallel(paralellTasks, function () {
                     self.getPayments(true);
@@ -1393,7 +1475,7 @@ define([
                 });
 
                 thisEl.find('#createBonus').hide();
-                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProforma');
+                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
                 paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
