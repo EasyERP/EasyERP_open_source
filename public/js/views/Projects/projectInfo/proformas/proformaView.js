@@ -3,10 +3,10 @@
  */
 
 define([
-    'views/salesInvoice/list/ListView',
-    'text!templates/Projects/projectInfo/invoiceTemplate.html',
-    'views/salesInvoice/EditView',
-    'views/salesInvoice/list/ListItemView',
+    'views/Proforma/list/ListView',
+    'text!templates/Projects/projectInfo/proformaTemplate.html',
+    'views/Proforma/EditView',
+    'views/Proforma/list/ListItemView',
     'collections/salesInvoice/filterCollection',
     'models/InvoiceModel',
     'common',

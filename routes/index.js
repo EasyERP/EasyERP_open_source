@@ -18,6 +18,7 @@ module.exports = function (app, mainDb) {
     var productRouter = require('./product')(models);
     var orderRouter = require('./order')(models, event);
     var invoiceRouter = require('./invoice')(models, event);
+    var proformaRouter = require('./proforma')(models, event);
     var supplierRouter = require('./supplier')(models);
     var quotationRouter = require('./quotation')(models, event);
     var destinationRouter = require('./destination')(models);
@@ -163,6 +164,7 @@ module.exports = function (app, mainDb) {
     app.use('/product', productRouter);
     app.use('/order', orderRouter);
     app.use('/invoice', invoiceRouter);
+    app.use('/proforma', proformaRouter);
     app.use('/supplier', supplierRouter);
     app.use('/quotation', quotationRouter);
     app.use('/destination', destinationRouter);

@@ -14,6 +14,7 @@ define([
         'views/salesOrder/EditView',
         'views/salesQuotation/EditView',
         'views/salesInvoice/EditView',
+        'views/Proforma/EditView',
         'views/Projects/EditView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -22,6 +23,7 @@ define([
         'views/Projects/projectInfo/wTracks/wTrackView',
         'views/Projects/projectInfo/payments/paymentView',
         'views/Projects/projectInfo/invoices/invoiceView',
+        'views/Projects/projectInfo/proformas/proformaView',
         'views/Projects/projectInfo/quotations/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
         'views/Projects/projectInfo/orders/orderView',
@@ -30,6 +32,7 @@ define([
         'collections/salesInvoice/filterCollection',
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
+        'collections/Proforma/filterCollection',
         'models/QuotationModel',
         'models/InvoiceModel',
         'text!templates/Notes/AddAttachments.html',
@@ -41,7 +44,46 @@ define([
         'helpers'
     ],
 
-    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (Backbone,
+              $,
+              _,
+              ProjectsFormTemplate,
+              DetailsTemplate,
+              ProformRevenueTemplate,
+              jobsWTracksTemplate,
+              invoiceStats,
+              selectView,
+              EditViewOrder,
+              editViewQuotation,
+              editViewInvoice,
+              editViewProforma,
+              EditView,
+              noteView,
+              attachView,
+              AssigneesView,
+              BonusView,
+              wTrackView,
+              PaymentView,
+              InvoiceView,
+              ProformaView,
+              QuotationView,
+              GenerateWTrack,
+              oredrView,
+              wTrackCollection,
+              quotationCollection,
+              invoiceCollection,
+              paymentCollection,
+              jobsCollection,
+              proformaCollection,
+              quotationModel,
+              invoiceModel,
+              addAttachTemplate,
+              common,
+              populate,
+              custom,
+              dataService,
+              async,
+              helpers) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -71,16 +113,23 @@ define([
                 'click'                                                                                                   : 'hideSelect',
                 'keydown'                                                                                                 : 'keydownHandler',
                 "click a.quotation"                                                                                       : "viewQuotation",
-                "click a.invoice"                                                                                         : "viewInvoice"
+                "click a.invoice"                                                                                         : "viewInvoice",
+                "click a.proforma"                                                                                        : "viewProforma"
             },
 
             initialize: function (options) {
+                var eventChannel = {};
+                _.extend(eventChannel, Backbone.Events);
+
+                this.eventChannel = eventChannel;
                 this.formModel = options.model;
                 this.id = this.formModel.id;
                 this.formModel.urlRoot = '/Projects/';
                 this.projectManager = this.formModel.get('projectmanager');
                 this.responseObj = {};
                 this.proformValues = {};
+
+                this.listenTo(eventChannel, 'newPayment', this.newPayment);
             },
 
             viewQuotation: function (e) {
@@ -142,11 +191,12 @@ define([
             },
 
             viewInvoice: function (e) {
-                e.stopPropagation();
-
+                var self = this;
                 var target = e.target;
                 var id = $(target).attr('data-id');
                 var model = new invoiceModel({validate: false});
+
+                e.stopPropagation();
 
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
@@ -158,7 +208,39 @@ define([
                         new editViewInvoice({
                             model    : model,
                             notCreate: true,
-                            redirect : true
+                            redirect : true,
+                            eventChannel: self.eventChannel
+                        });
+                    },
+                    error  : function () {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            },
+
+            viewProforma: function (e) {
+                var self = this;
+                var target = e.target;
+                var id = $(target).attr('data-id');
+                var model = new invoiceModel({validate: false});
+
+                e.stopPropagation();
+
+                model.urlRoot = '/Invoice/form';
+                model.fetch({
+                    data   : {
+                        id       : id,
+                        currentDb: App.currentDb
+                    },
+                    success: function (model) {
+                        new editViewProforma({
+                            model    : model,
+                            notCreate: true,
+                            redirect : true,
+                            eventChannel: self.eventChannel
                         });
                     },
                     error  : function () {
@@ -904,13 +986,12 @@ define([
                 function createView() {
                     var payments = [];
 
-                    callback();
-
                     App.invoiceCollection = self.iCollection;
 
                     new InvoiceView({
-                        model : self.iCollection,
-                        filter: filter
+                        model : App.invoiceCollection,
+                        filter: filter,
+                        eventChannel: self.eventChannel
                     }).render();
 
                     self.iCollection.toJSON().forEach(function (element) {
@@ -919,30 +1000,10 @@ define([
                         });
                     });
 
-                    var filterPayment = {
-                        'name': {
-                            key  : '_id',
-                            value: payments
-                        }
-                    };
+                    self.payments = self.payments || {};
+                    self.payments.fromInvoces = payments;
 
-                    self.pCollection = new paymentCollection({
-                        count      : 50,
-                        viewType   : 'list',
-                        contentType: 'customerPayments',
-                        filter     : filterPayment
-                    });
-
-                    self.pCollection.unbind();
-                    self.pCollection.bind('reset', createPayment);
-
-                    function createPayment() {
-                        new PaymentView({
-                            model : self.pCollection,
-                            filter: filterPayment
-                        });
-                    }
-
+                    callback();
                 };
 
                 callback = _.once(cb);
@@ -950,6 +1011,94 @@ define([
                 self.iCollection.unbind();
                 self.iCollection.bind('reset', createView);
 
+            },
+
+            getProforma: function (cb) {
+                var self = this;
+                var _id = window.location.hash.split('form/')[1];
+                var filter = {
+                    'project': {
+                        key  : 'project._id',
+                        value: [_id]
+                    }
+                };
+                var callback;
+
+                self.pCollection = new proformaCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'proforma',
+                    filter     : filter
+                });
+
+                function createView() {
+                    var payments = [];
+                    
+                    App.proformaCollection = self.pCollection;
+
+                    new ProformaView({
+                        el    : '#proforma',
+                        model : self.pCollection,
+                        filter: filter,
+                        eventChannel: self.eventChannel
+                    }).render();
+
+                    self.pCollection.toJSON().forEach(function (element) {
+                        element.payments.forEach(function (payment) {
+                            payments.push(payment);
+                        });
+                    });
+
+                    self.payments = self.payments || {};
+                    self.payments.fromProformas = payments;
+
+                    callback();
+                };
+
+                callback = _.once(cb);
+
+                self.pCollection.unbind();
+                self.pCollection.bind('reset', createView);
+
+            },
+
+            getPayments: function(activate) {
+                var self = this;
+                var payFromInvoice;
+                var payFromProforma;
+
+                self.payments = self.payments || {};
+                payFromInvoice = self.payments.fromInvoces || [];
+                payFromProforma = self.payments.fromProformas || [];
+
+                var payments = payFromInvoice.concat(payFromProforma);
+
+                var filterPayment = {
+                    'name': {
+                        key  : '_id',
+                        value: payments
+                    }
+                };
+
+                self.payCollection = new paymentCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'customerPayments',
+                    filter     : filterPayment
+                });
+
+                self.payCollection.unbind();
+                self.payCollection.bind('reset', createPayment);
+
+                function createPayment() {
+                    var data = {
+                        model : self.payCollection,
+                        filter: filterPayment,
+                        activate: activate
+                    };
+
+                    new PaymentView(data);
+                }
             },
 
             getQuotations: function (cb) {
@@ -1170,6 +1319,18 @@ define([
                 }
             },
 
+            newPayment : function() {
+                var self = this;
+                var paralellTasks;
+
+                paralellTasks = [self.getProforma, self.getInvoice];
+
+                async.parallel(paralellTasks, function () {
+                    self.getPayments(true);
+                });
+
+            },
+
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
@@ -1232,11 +1393,12 @@ define([
                 });
 
                 thisEl.find('#createBonus').hide();
-                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');
+                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProforma');
 
-                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
+                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    self.getPayments();
                     App.stopPreload();
                     self.renderProformRevenue();
                     self.getInvoiceStats();

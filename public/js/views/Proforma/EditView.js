@@ -1,9 +1,9 @@
 define([
-        'text!templates/Invoice/EditTemplate.html',
+        'text!templates/Proforma/EditTemplate.html',
         'views/Assignees/AssigneesView',
         'views/Invoice/InvoiceProductItems',
         'views/salesInvoice/wTrack/wTrackRows',
-        'views/Payment/CreateView',
+        'views/Payment/ProformaCreateView',
         'views/Payment/list/ListHeaderInvoice',
         'common',
         'custom',

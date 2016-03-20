@@ -453,6 +453,7 @@ var Invoice = function (models, event) {
                     var query = req.query;
                     var queryObject = {};
                     var filter = query.filter;
+                    var baseUrl = req.baseUrl;
 
                     var optionsObject = {};
                     var sort = {};
@@ -529,6 +530,12 @@ var Invoice = function (models, event) {
                         optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
                         optionsObject.$and.push({expense: {$exists: false}});
 
+                        if (baseUrl === '/Proforma') {
+                            optionsObject.$and.push({kind: 'Proforma'});
+                        } else {
+                            optionsObject.$and.push({kind: {$exists: false}});
+                        }
+
                         Invoice
                             .aggregate([{
                                 $lookup: {
@@ -588,25 +595,8 @@ var Invoice = function (models, event) {
                                     name            : 1,
                                     paymentDate     : 1,
                                     dueDate         : 1,
-                                    payments        : 1
-                                }
-                            }, {
-                                $project: {
-                                    sourceDocument  : 1,
-                                    workflow        : 1,
-                                    supplier        : 1,
-                                    salesPerson     : 1,
-                                    'editedBy.user' : 1,
-                                    'createdBy.user': 1,
-                                    project         : 1,
-                                    expense         : 1,
-                                    forSales        : 1,
-                                    paymentInfo     : 1,
-                                    invoiceDate     : 1,
-                                    name            : 1,
-                                    paymentDate     : 1,
-                                    dueDate         : 1,
-                                    payments        : 1
+                                    payments        : 1,
+                                    kind            : 1
                                 }
                             }, {
                                 $match: optionsObject
@@ -1364,6 +1354,7 @@ var Invoice = function (models, event) {
         var moduleId = 56;
         var isWtrack;
         var Invoice;
+        var baseUrl = req.baseUrl;
 
         if (checkDb(db)) {
             moduleId = 64;
@@ -1445,6 +1436,12 @@ var Invoice = function (models, event) {
                         optionsObject[condition].push({_id: {$in: invoicesIds}});
                         optionsObject[condition].push({expense: {$exists: false}});
 
+                        if (baseUrl === '/Proforma') {
+                            optionsObject.$and.push({kind: 'Proforma'});
+                        } else {
+                            optionsObject.$and.push({kind: {$exists: false}});
+                        }
+
                         Invoice
                             .aggregate([{
                                 $lookup: {
@@ -1466,7 +1463,8 @@ var Invoice = function (models, event) {
                                     status     : {$arrayElemAt: ["$workflow", 0]},
                                     ammount    : {$divide: ['$paymentInfo.total', 100]},
                                     paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
-                                    balance    : {$divide: ['$paymentInfo.balance', 100]}
+                                    balance    : {$divide: ['$paymentInfo.balance', 100]},
+                                    kind       : 1
                                 }
                             }, {
                                 $match: optionsObject

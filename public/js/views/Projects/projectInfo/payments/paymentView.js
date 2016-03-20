@@ -26,7 +26,12 @@ define([
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
 
-            this.render();
+            if (options.activate) {
+                this.render({activeTab: true});
+            } else {
+                this.render();
+            }
+
         },
 
         template: _.template(paymentTemplate),

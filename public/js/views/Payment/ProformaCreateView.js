@@ -5,7 +5,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    "text!templates/Payment/CreateTemplate.html",
+    "text!templates/Payment/ProformaCreateTemplate.html",
     "collections/Persons/PersonsCollection",
     "collections/Departments/DepartmentsCollection",
     'collections/salesInvoice/filterCollection',

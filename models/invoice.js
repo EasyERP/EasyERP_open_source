@@ -74,6 +74,10 @@ module.exports = (function () {
         project : {type: ObjectId, ref: 'Project', default: null}
     });
 
+    var proformaSchema = jobsInvoiceSchema.extend({
+        kind : {type: String, default: 'Proforma'}
+    });
+
     var payRollInvoiceSchema = baseSchema.extend({
         expense : {type: Boolean, default: true},
         products: [{
@@ -103,10 +107,12 @@ module.exports = (function () {
     jobsInvoiceSchema.set('toJSON', {getters: true});
     payRollInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
+    proformaSchema.set('toJSON', {getters: true});
 
     mongoose.model('wTrackInvoice', jobsInvoiceSchema);
     mongoose.model('payRollInvoice', payRollInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
+    mongoose.model('Proforma', proformaSchema);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
@@ -115,4 +121,5 @@ module.exports = (function () {
     mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
     mongoose.Schemas['payRollInvoice'] = payRollInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
+    mongoose.Schemas['Proforma'] = proformaSchema;
 })();

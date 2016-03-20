@@ -57,12 +57,10 @@ var workflows = function (models) {
                     }
                     return next(err);
                 }
-                ;
                 if (callback) {
                     return callback(null, workflow);
                 }
-                ;
-                res.status(200).send(workflow)
+                res.status(200).send(workflow);
             });
     };
 

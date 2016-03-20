@@ -3,18 +3,20 @@ define([
     'jQuery',
     'Underscore',
     "text!templates/Quotation/EditTemplate.html",
+    "views/Projects/projectInfo/invoices/invoiceView",
     'views/selectView/selectView',
     'views/Assignees/AssigneesView',
     'views/Product/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/orders/orderView',
     'collections/Quotation/filterCollection',
+    'collections/Proforma/filterCollection',
     "common",
     "custom",
     "dataService",
     "populate",
     'constants',
     'helpers/keyValidator'
-], function (Backbone, $, _, EditTemplate, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, common, Custom, dataService, populate, CONSTANTS, keyValidator) {
+], function (Backbone, $, _, EditTemplate, ProformaView, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, ProformaCollection, common, Custom, dataService, populate, CONSTANTS, keyValidator) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -50,6 +52,7 @@ define([
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .confirmOrder"                              : "confirmOrder",
+            "click .createProforma"                            : "createProforma",
             "click .cancelQuotation"                           : "cancelQuotation",
             "click .setDraft"                                  : "setDraft"
         },
@@ -235,6 +238,70 @@ define([
             });
         },
 
+        createProforma: function (e) {
+            e.preventDefault();
+
+            var self = this;
+            var url = '/proforma/create';
+            var quotationId = this.currentModel.id;
+            var data = {
+                forSales: this.forSales,
+                quotationId : quotationId,
+                currency: this.currentModel.currency
+            };
+
+            this.saveItem(function (err) {
+                if (!err) {
+
+                    dataService.postData(url, data, function (err, response) {
+                        var filter;
+                        var _id;
+                        var tr;
+
+                        function createView() {
+                            this.proformaView = new ProformaView({
+                                el       : '#proforma',
+                                model    : self.collection,
+                                activeTab: true
+                            });
+                            this.proformaView.showDialog(quotationId);
+                        }
+
+                        if (err) {
+                            App.render({
+                                type   : 'error',
+                                message: 'Can\'t create proforma'
+                            });
+                        } else {
+
+                            _id = window.location.hash.split('form/')[1];
+                            tr = $('[data-id=' + quotationId + ']');
+
+                            tr.find('.checkbox').addClass('notRemovable');
+                            tr.find('.workflow').find('a').text('Proformed');
+
+                            filter = {
+                                project: {
+                                    key  : 'project._id',
+                                    value: [_id]
+                                }
+                            };
+
+                            self.collection = new ProformaCollection({
+                                count      : 50,
+                                viewType   : 'list',
+                                contentType: 'salesProforma',
+                                filter     : filter
+                            });
+
+                            self.collection.unbind();
+                            self.collection.bind('reset', createView);
+                        }
+                    });
+                }
+            });
+        },
+
         cancelQuotation: function (e) {
             e.preventDefault();
 
@@ -307,7 +374,7 @@ define([
             });
         },
 
-        saveItem: function () {
+        saveItem: function (proformaCb) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
             var thisEl = this.$el;
@@ -437,9 +504,17 @@ define([
 
                         App.projectInfo = App.projectInfo || {};
                         App.projectInfo.currentTab = 'quotations';
+
+                        if (proformaCb && typeof proformaCb === 'function') {
+                            return proformaCb(null);
+                        }
                     },
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
+
+                        if (proformaCb && typeof proformaCb === 'function') {
+                            return proformaCb(xhr.text);
+                        }
                     }
                 });
 
