@@ -148,7 +148,45 @@ var Invoice = function (models, event) {
                 .populate('products.jobs')
                 .populate('project', '_id projectName projectmanager');
 
-            query.exec(callback)
+            query.exec(callback);
+        };
+
+        function findProformaPayments(callback) {
+            Invoice.aggregate([
+                {
+                    $match: {
+                        sourceDocument: objectId(id)
+                    }
+                },
+                {
+                    $project: {
+                        payments: 1,
+                        _id: 0
+                    }
+                },
+                {
+                    $unwind: '$payments'
+                },
+                {
+                    $lookup: {
+                        from                   : "Payment",
+                        localField             : "payments",
+                        foreignField: "_id", as: "payment"
+                    }
+                },
+                {
+                    $project: {
+                        payment: {$arrayElemAt: ["$payment", 0]}
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        paidAmount: {$sum: "$payment.paidAmount"},
+                        payments: {$push: "$payment._id"}
+                    }
+                }
+            ], callback);
         };
 
         function parallel(callback) {
@@ -162,10 +200,16 @@ var Invoice = function (models, event) {
             var invoice;
             var supplier;
             var query;
+            var paidAmount;
+            var proforma;
+            var payments;
 
             if (parallelResponse && parallelResponse.length) {
+                proforma = parallelResponse[2][0];
                 order = parallelResponse[0];
                 workflow = parallelResponse[1];
+                paidAmount = proforma.paidAmount;
+                payments = proforma.payments;
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
                 err.status = 400;
@@ -187,10 +231,11 @@ var Invoice = function (models, event) {
             }
 
             // invoice.sourceDocument = order.name;
+            invoice.payments = payments;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
             invoice.workflow = workflow._id;
-            invoice.paymentInfo.balance = order.paymentInfo.total;
+            invoice.paymentInfo.balance = order.paymentInfo.total - paidAmount/100;
 
             if (forSales === "true") {
                 if (!invoice.project) {
@@ -226,7 +271,7 @@ var Invoice = function (models, event) {
 
         };
 
-        parallelTasks = [findOrder, fetchFirstWorkflow];
+        parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments];
         waterFallTasks = [parallel, createInvoice];
 
         async.waterfall(waterFallTasks, function (err, result) {

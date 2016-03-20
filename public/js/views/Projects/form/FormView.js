@@ -1025,9 +1025,6 @@ define([
 
                 function createView() {
                     var payments = [];
-                    var count = self.iCollection.length;
-
-                    self.showTabCounter(count, '#invoicesTab');
 
                     //App.invoiceCollection = self.iCollection;
 
@@ -1076,9 +1073,6 @@ define([
 
                 function createView() {
                     var payments = [];
-                    var count = self.pCollection.length;
-
-                    self.showTabCounter(count, '#proformaTab');
                     
                     //App.proformaCollection = self.pCollection;
 
@@ -1113,17 +1107,12 @@ define([
                 var payFromInvoice;
                 var payFromProforma;
                 var payments;
-                var count;
-
 
                 self.payments = self.payments || {};
                 payFromInvoice = self.payments.fromInvoces || [];
                 payFromProforma = self.payments.fromProformas || [];
 
                 payments = payFromInvoice.concat(payFromProforma);
-
-                count = payments.length;
-                self.showTabCounter(count, '#paymentsTab');
 
                 var filterPayment = {
                     'name': {
@@ -1150,6 +1139,8 @@ define([
                     };
 
                     new PaymentView(data);
+
+                    self.renderTabCounter();
                 }
             },
 
@@ -1172,9 +1163,6 @@ define([
                 });
 
                 function createView() {
-                    var count = self.qCollection.length;
-
-                    self.showTabCounter(count, '#quotationsTab');
 
                     cb();
                     new QuotationView({
@@ -1218,9 +1206,6 @@ define([
                 });
 
                 function createView() {
-                    var count = self.ordersCollection.length;
-
-                    self.showTabCounter(count, '#ordersTab');
 
                     cb();
                     new oredrView({
@@ -1302,15 +1287,28 @@ define([
                 }
             },
 
-            showTabCounter: function (count, id) {
-                var $tab = $(id);
-                var tabText = $tab.text().split('(')[0];
+            renderTabCounter: function () {
+                var tabs = {};
+                var $tab;
+                var tabText;
 
-                tabText += '(';
-                tabText += count;
-                tabText += ')';
+                tabs['#ordersTab'] = $('#orders table tr').length - 1;
+                tabs['#quotationsTab'] = $('#quotationTable table tr').length - 1;
+                tabs['#paymentsTab'] = $('#payments table tr').length - 1;
+                tabs['#proformaTab'] = $('#proforma table tr').length - 2;
+                tabs['#invoicesTab'] = $('#invoices table tr').length - 2;
 
-                $tab.text(tabText);
+                for (var tab in tabs) {
+                    $tab = $(tab);
+                    tabText = $tab.text().split('(')[0];
+
+                    tabText += '(';
+                    tabText += tabs[tab];
+                    tabText += ')';
+
+                    $tab.text(tabText);
+                }
+
             },
 
             editItem: function () {
