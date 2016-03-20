@@ -10,139 +10,6 @@ var Opportunities = function (models, event) {
 
 	    function getTotalCount(req, response) {
 
-		    /*var res       = {};
-		    var data      = req.query;
-		    var filterObj = {};
-		    var filter    = data.filter || {};
-
-		    var contentType   = req.params.contentType;
-		    var optionsObject = {};
-
-		    optionsObject.$and = [];
-		    filterObj.$and     = [];
-
-		    if (filter) {
-			    filterObj = caseFilterOpp(filter);
-		    }
-
-		    /!*        if (data.filter && data.filter.workflow) {
-		     data.filter.workflow = data.filter.workflow.map(function (item) {
-		     return item === "null" ? null : item;
-		     });
-
-		     optionsObject['workflow'] = {$in: data.filter.workflow.objectID()};
-		     } else if (data && !data.newCollection) {
-		     optionsObject['workflow'] = {$in: []};
-		     }*!/
-
-		    switch (contentType) {
-			    case ('Opportunities'):
-				    optionsObject.$and.push({'isOpportunitie': true});
-
-				    if (data && data.filter) {
-					    optionsObject.$and.push(filterObj);
-				    }
-				    break;
-			    case ('Leads'):
-				    optionsObject.$and.push({'isOpportunitie': false});
-
-				    if (data.filter && data.filter.isConverted) {
-					    optionsObject.$and.push({'isOpportunitie': true});
-					    optionsObject.$and.push({'isConverted': true});
-				    }
-				    if (data && data.filter) {
-					    optionsObject.$and.push(filterObj);
-				    }
-				    break;
-		    }
-
-		    models.get(req.session.lastDb, "Department", departmentSchema).aggregate(
-			    {
-				    $match: {
-					    users: objectId(req.session.uId)
-				    }
-			    }, {
-				    $project: {
-					    _id: 1
-				    }
-			    },
-			    function (err, deps) {
-				    if (!err) {
-					    var arrOfObjectId = deps.objectID();
-					    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
-						    {
-							    $project: {
-								    'groups.users': 1,
-								    'groups.group': 1,
-								    'groups.owner': 1,
-								    contactName   : {$concat: ['$contactName.first', " ", '$contactName.last']},
-								    source        : 1,
-								    workflow      : 1,
-								    whoCanRW      : 1,
-								    isConverted   : 1,
-								    isOpportunitie: 1,
-								    customer      : 1,
-								    salesPerson   : 1
-							    }
-						    },
-						    {
-							    $match: {
-								    $and: [
-									    optionsObject,
-									    {
-										    $or: [
-											    {
-												    $or: [
-													    {
-														    $and: [
-															    {whoCanRW: 'group'},
-															    {'groups.users': objectId(req.session.uId)}
-														    ]
-													    },
-													    {
-														    $and: [
-															    {whoCanRW: 'group'},
-															    {'groups.group': {$in: arrOfObjectId}}
-														    ]
-													    }
-												    ]
-											    },
-											    {
-												    $and: [
-													    {whoCanRW: 'owner'},
-													    {'groups.owner': objectId(req.session.uId)}
-												    ]
-											    },
-											    {whoCanRW: "everyOne"}
-										    ]
-									    }
-								    ]
-							    }
-						    },
-						    {
-							    $project: {
-								    _id: 1
-							    }
-						    },
-						    function (err, result) {
-							    if (!err) {
-								    if (data.currentNumber && data.currentNumber < result.length) {
-									    res.showMore = true;
-								    }
-								    res.count = result.length;
-								    response.send(res);
-							    } else {
-								    console.log(err);
-								    response.send(500, {error: 'Server Eroor'});
-							    }
-						    }
-					    );
-
-				    } else {
-					    console.log(err);
-					    response.send(500, {error: 'Server Eroor'});
-				    }
-			    });*/
 
 		    var res = {};
 		    var filterObj = {};
@@ -241,7 +108,12 @@ var Opportunities = function (models, event) {
 							    }
 						    },
 						    function (err, result) {
-							    var aggregateQuery;
+							    var aggregateQuery = [
+								    {
+									    $match: {
+										    $or: result
+									    }
+								    }];
 
 							    if (!err) {
 								    var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
@@ -250,14 +122,7 @@ var Opportunities = function (models, event) {
 
 									    case ('Opportunities'):
 									    {
-
-										    aggregateQuery = [
-											    {
-												    $match: {
-													    $or: result
-												    }
-											    },
-											    {
+										    aggregateQuery.push({
 												    $lookup: {
 													    from        : 'Customers',
 													    localField  : 'customer',
@@ -280,81 +145,14 @@ var Opportunities = function (models, event) {
 													    foreignField: '_id',
 													    as          : 'workflow'
 												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Users',
-													    localField  : 'createdBy.user',
-													    foreignField: '_id',
-													    as          : 'createdBy.user'
-												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Users',
-													    localField  : 'editedBy.user',
-													    foreignField: '_id',
-													    as          : 'editedBy.user'
-												    }
-											    },
-											    {
-												    $project: {
-													    "customer"        : {$arrayElemAt: ["$customer", 0]},
-													    "salesPerson"     : {$arrayElemAt: ["$salesPerson", 0]},
-													    "workflow"        : {$arrayElemAt: ["$workflow", 0]},
-													    "createdBy.user"  : {$arrayElemAt: ["$createdBy.user", 0]},
-													    "editedBy.user"   : {$arrayElemAt: ["$editedBy.user", 0]},
-													    "createdBy.date"  : 1,
-													    "editedBy.date"   : 1,
-													    "creationDate"    : 1,
-													    "isOpportunitie"  : 1,
-													    "name"            : 1,
-													    "expectedRevenue" : 1,
-													    "attachments"     : 1,
-													    "notes"           : 1,
-													    "convertedDate"   : 1,
-													    "isConverted"     : 1,
-													    "source"          : 1,
-													    "campaign"        : 1,
-													    "sequence"        : 1,
-													    "reffered"        : 1,
-													    "optout"          : 1,
-													    "active"          : 1,
-													    "color"           : 1,
-													    "categories"      : 1,
-													    "priority"        : 1,
-													    "expectedClosing" : 1,
-													    "nextAction"      : 1,
-													    "internalNotes"   : 1,
-													    "salesTeam"       : 1,
-													    "phones"          : 1,
-													    "email"           : 1,
-													    "contactName"     : 1,
-													    "address"         : 1,
-													    "company"         : 1,
-													    "tempCompanyField": 1
-												    }
-											    },
-											    {
-												    $match: {
-													    $and: optionsObject
-												    }
-											    }
-
-										    ];
+											    });
 
 									    }
 										    break;
 									    case ('Leads'):
 									    {
 
-										    aggregateQuery = [
-											    {
-												    $match: {
-													    $or: result
-												    }
-											    },
-											    {
+										    aggregateQuery.push({
 												    $lookup: {
 													    from        : 'Customers',
 													    localField  : 'company',
@@ -377,71 +175,50 @@ var Opportunities = function (models, event) {
 													    foreignField: '_id',
 													    as          : 'workflow'
 												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Users',
-													    localField  : 'createdBy.user',
-													    foreignField: '_id',
-													    as          : 'createdBy.user'
-												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Users',
-													    localField  : 'editedBy.user',
-													    foreignField: '_id',
-													    as          : 'editedBy.user'
-												    }
-											    },
-											    {
-												    $project: {
-													    "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
-													    "customer"       : {$arrayElemAt: ["$customer", 0]},
-													    "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
-													    "workflow"       : {$arrayElemAt: ["$workflow", 0]},
-													    "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
-													    "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
-													    "createdBy.date" : 1,
-													    "editedBy.date"  : 1,
-													    "creationDate"   : 1,
-													    "isOpportunitie" : 1,
-													    "name"           : 1,
-													    "expectedRevenue": 1,
-													    "attachments"    : 1,
-													    "notes"          : 1,
-													    "convertedDate"  : 1,
-													    "isConverted"    : 1,
-													    "source"         : 1,
-													    "campaign"       : 1,
-													    "sequence"       : 1,
-													    "reffered"       : 1,
-													    "optout"         : 1,
-													    "active"         : 1,
-													    "color"          : 1,
-													    "categories"     : 1,
-													    "priority"       : 1,
-													    "expectedClosing": 1,
-													    "nextAction"     : 1,
-													    "internalNotes"  : 1,
-													    "phones"         : 1,
-													    "email"          : 1,
-													    "address"        : 1,
-													    "company"        : 1
-												    }
-											    },
-											    {
-												    $match: {
-													    $and: optionsObject
-												    }
-											    }
-
-										    ];
+											    });
 
 									    }
 										    break;
 								    }
 
+								    aggregateQuery.push({
+										    $lookup: {
+											    from        : 'Users',
+											    localField  : 'createdBy.user',
+											    foreignField: '_id',
+											    as          : 'createdBy.user'
+										    }
+									    },
+									    {
+										    $lookup: {
+											    from        : 'Users',
+											    localField  : 'editedBy.user',
+											    foreignField: '_id',
+											    as          : 'editedBy.user'
+										    }
+									    },
+									    {
+										    $project: {
+											    "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
+											    "customer"       : {$arrayElemAt: ["$customer", 0]},
+											    "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
+											    "workflow"       : {$arrayElemAt: ["$workflow", 0]},
+											    "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
+											    "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
+											    "isOpportunitie" : 1,
+											    "name"           : 1,
+											    "isConverted"    : 1,
+											    "source"         : 1,
+											    "campaign"       : 1,
+											    "reffered"       : 1,
+											    "company"        : 1
+										    }
+									    },
+									    {
+										    $match: {
+											    $and: optionsObject
+										    }
+									    });
 
 								    query.aggregate(aggregateQuery, function (err, result) {
 									    if (!err) {
@@ -825,40 +602,6 @@ var Opportunities = function (models, event) {
 	    }
 
 	    function caseFilterOpp(data) {
-		    /*var condition;
-		     var resArray     = [];
-		     var filtrElement = {};
-		     var key;
-		     var filterName;
-
-		     for (filterName in filter) {
-		     condition = filter[filterName].value;
-		     key       = filter[filterName].key;
-
-		     switch (filterName) {
-		     case 'contactName':
-		     filtrElement.contactName = {$in: condition};
-		     resArray.push(filtrElement);
-		     break;
-		     case 'workflow':
-		     filtrElement.workflow = {$in: condition.objectID()};
-		     resArray.push(filtrElement);
-		     break;
-		     case 'source':
-		     filtrElement.source = {$in: condition};
-		     resArray.push(filtrElement);
-		     break;
-		     case 'customer':
-		     filtrElement.customer = {$in: condition.objectID()};
-		     resArray.push(filtrElement);
-		     break;
-		     case 'salesPerson':
-		     filtrElement.salesPerson = {$in: condition.objectID()};
-		     resArray.push(filtrElement);
-		     break;
-		     }
-		     }
-		     return resArray;*/
 
 		    var filter  = {};
 		    var tempObj = {};
@@ -914,118 +657,31 @@ var Opportunities = function (models, event) {
 
 	    function getFilter(req, response) {
 		    var res = {};
-		    //var condition;
 		    var filterObj = {};
-
-		    var optionsObject = {};
+		    var optionsObject = [];
+		    var data = req.query;
+		    var filter = data.filter || {};
 
 		    res.data = [];
-		    var data = req.query;
-		    //for (var i in req.query) {
-		    //    data[i] = req.query[i];
-		    //}
-
-		    var filter = data.filter || {};
 
 		    if (filter) {
 			    filterObj = caseFilterOpp(filter);
 		    }
 
 		    switch (data.contentType) {
-			    case ('Opportunities'):
 
-				    optionsObject = [];
+			    case ('Opportunities'):
 				    optionsObject.push({'isOpportunitie': true});
 				    if (data && data.filter) {
 					    optionsObject.push(filterObj);
 				    }
-				    /*  if (data && data.filter) {
-				     optionsObject['$and'] = [];
-				     optionsObject['$and'].push({'isOpportunitie': false});
-				     //    if (data.filter.condition === 'or') {
-				     //        filterObj['$or'] = [];
-				     //        condition = filterObj['$or'];
-				     //    } else {
-				     //        filterObj['$and'] = [];
-				     //        condition = filterObj['$and'];
-				     //}
-
-				     //caseFilterOpp(data.filter, condition);
-
-				     /!*for (var key in data.filter) {
-				     condition = data.filter[key];
-				     switch (key) {
-				     case 'Name':
-				     or.push({ 'name': {$in: condition}});
-				     break;
-				     case 'Creation date':
-				     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-				     break;
-				     case 'Next action':
-				     if (!condition.length) condition = [''];
-				     or.push({ 'nextAction.desc': {$in: condition}});
-				     break;
-				     case 'Expected revenue':
-				     ConvertType(condition, 'integer');
-				     or.push({ 'expectedRevenue.value': {$in: condition}});
-				     break;
-				     }
-				     }*!/
-				     // if (!condition.length) {
-				     //     delete filterObj['$or'];
-				     //     delete filterObj['$and']
-				     // }
-				     }*/
-
 				    break;
-			    case ('Leads'):
 
-				    optionsObject = [];
+			    case ('Leads'):
 				    optionsObject.push({'isOpportunitie': false});
 				    if (data && data.filter) {
 					    optionsObject.push(filterObj);
 				    }
-				    //if (data.filter.isConverted) {
-				    //   // optionsObject['$and'].push({'isConverted' : true});
-				    //  //  optionsObject['isOpportunitie'] = true;
-				    //}
-				    //if (data && data.filter) {
-				    //    filterObj = {};
-				    //    optionsObject['$and'].push(filterObj);
-				    //    //if (data.filter.condition === 'or') {
-				    //    //    filterObj['$or'] = [];
-				    //    //    condition = filterObj['$or'];
-				    //    //} else {
-				    //    //    filterObj['$and'] = [];
-				    //    //    condition = filterObj['$and'];
-				    //    //}
-				    //    caseFilterOpp(data.filter, condition);
-				    //
-				    //    /*for (var key in data.filter) {
-				    //     condition = data.filter[key];
-				    //     switch (key) {
-				    //     case 'name':
-				    //     or.push({ 'name': {$in: condition}});
-				    //     break;
-				    //     case 'creationDate':
-				    //     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-				    //     break;
-				    //     case 'nextAction':
-				    //     if (!condition.length) condition = [''];
-				    //     or.push({ 'nextAction.desc': {$in: condition}});
-				    //     break;
-				    //     case 'expectedRevenue':
-				    //     ConvertType(condition, 'integer');
-				    //     or.push({ 'expectedRevenue.value': {$in: condition}});
-				    //     break;
-				    //     }
-				    //     }*/
-				    //    //if (!condition.length) {
-				    //    //    delete filterObj['$or'];
-				    //    //    delete filterObj['$and']
-				    //    //}
-				    //}
-
 				    break;
 		    }
 
@@ -1094,33 +750,22 @@ var Opportunities = function (models, event) {
 							    }
 						    },
 						    function (err, result) {
-							    var aggregateQuery;
+							    var aggregateQuery = [
+								    {
+									    $match: {
+										    $or: result
+									    }
+								    }];
 
 							    if (!err) {
 								    var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
 
-								    //if (data && data.filter && data.filter.workflow) {
-								    //    data.filter.workflow = data.filter.workflow.map(function (item) {
-								    //        return item === "null" ? null : item;
-								    //    });
-								    //}
+
 								    switch (data.contentType) {
 
 									    case ('Opportunities'):
 									    {
-										    //if (data && data.filter && data.filter.workflow) {
-										    //    query.where('workflow').in(data.filter.workflow);
-										    //} else if (data && (!data.newCollection || data.newCollection === 'false')) {
-										    //    query.where('workflow').in([]);
-										    //}
-
-										    aggregateQuery = [
-											    {
-												    $match: {
-													    $or: result
-												    }
-											    },
-											    {
+										    aggregateQuery.push({
 												    $lookup: {
 													    from        : 'Customers',
 													    localField  : 'customer',
@@ -1143,97 +788,14 @@ var Opportunities = function (models, event) {
 													    foreignField: '_id',
 													    as          : 'workflow'
 												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Users',
-													    localField  : 'createdBy.user',
-													    foreignField: '_id',
-													    as          : 'createdBy.user'
-												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Users',
-													    localField  : 'editedBy.user',
-													    foreignField: '_id',
-													    as          : 'editedBy.user'
-												    }
-											    },
-											    {
-												    $project: {
-													    "customer"        : {$arrayElemAt: ["$customer", 0]},
-													    "salesPerson"     : {$arrayElemAt: ["$salesPerson", 0]},
-													    "workflow"        : {$arrayElemAt: ["$workflow", 0]},
-													    "createdBy.user"  : {$arrayElemAt: ["$createdBy.user", 0]},
-													    "editedBy.user"   : {$arrayElemAt: ["$editedBy.user", 0]},
-													    "createdBy.date"  : 1,
-													    "editedBy.date"   : 1,
-													    "creationDate"    : 1,
-													    "isOpportunitie"  : 1,
-													    "name"            : 1,
-													    "expectedRevenue" : 1,
-													    "attachments"     : 1,
-													    "notes"           : 1,
-													    "convertedDate"   : 1,
-													    "isConverted"     : 1,
-													    "source"          : 1,
-													    "campaign"        : 1,
-													    "sequence"        : 1,
-													    "reffered"        : 1,
-													    "optout"          : 1,
-													    "active"          : 1,
-													    "color"           : 1,
-													    "categories"      : 1,
-													    "priority"        : 1,
-													    "expectedClosing" : 1,
-													    "nextAction"      : 1,
-													    "internalNotes"   : 1,
-													    "salesTeam"       : 1,
-													    "phones"          : 1,
-													    "email"           : 1,
-													    "contactName"     : 1,
-													    "address"         : 1,
-													    "company"         : 1,
-													    "tempCompanyField": 1
-												    }
-											    },
-											    {
-												    $match: {
-													    $and: optionsObject
-												    }
-											    }
+											    });
 
-										    ];
-
-
-
-										    //query.aggregate(aggregateQuery);
-
-										    /*query.populate('customer', 'name')
-										     .populate('workflow', '_id name status')
-										     .populate('salesPerson', 'name')
-										     .populate('createdBy.user', 'login')
-										     .populate('editedBy.user', 'login');*/
 									    }
 										    break;
 									    case ('Leads'):
 									    {
-										    //if (data && data.filter && data.filter.workflow) {
-										    //    query.where('workflow').in(data.filter.workflow);
-										    //} else if (data && data.filter) {
-										    //    query;
-										    //} else if (data && (!data.newCollection || data.newCollection === 'false')) {
-										    //    query.where('workflow').in([]);
-										    //}
 
-										    aggregateQuery = [
-											    {
-												    $match: {
-													    $or: result
-												    }
-											    },
-											    {
+										    aggregateQuery.push({
 												    $lookup: {
 													    from        : 'Customers',
 													    localField  : 'company',
@@ -1256,76 +818,69 @@ var Opportunities = function (models, event) {
 													    foreignField: '_id',
 													    as          : 'workflow'
 												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Users',
-													    localField  : 'createdBy.user',
-													    foreignField: '_id',
-													    as          : 'createdBy.user'
-												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Users',
-													    localField  : 'editedBy.user',
-													    foreignField: '_id',
-													    as          : 'editedBy.user'
-												    }
-											    },
-											    {
-												    $project: {
-													    "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
-													    "customer"       : {$arrayElemAt: ["$customer", 0]},
-													    "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
-													    "workflow"       : {$arrayElemAt: ["$workflow", 0]},
-													    "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
-													    "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
-													    "createdBy.date" : 1,
-													    "editedBy.date"  : 1,
-													    "creationDate"   : 1,
-													    "isOpportunitie" : 1,
-													    "name"           : 1,
-													    "expectedRevenue": 1,
-													    "attachments"    : 1,
-													    "notes"          : 1,
-													    "convertedDate"  : 1,
-													    "isConverted"    : 1,
-													    "source"         : 1,
-													    "campaign"       : 1,
-													    "sequence"       : 1,
-													    "reffered"       : 1,
-													    "optout"         : 1,
-													    "active"         : 1,
-													    "color"          : 1,
-													    "categories"     : 1,
-													    "priority"       : 1,
-													    "expectedClosing": 1,
-													    "nextAction"     : 1,
-													    "internalNotes"  : 1,
-													    "phones"         : 1,
-													    "email"          : 1,
-													    "address"        : 1,
-													    "company"        : 1
-												    }
-											    },
-											    {
-												    $match: {
-													    $and: optionsObject
-												    }
-											    }
+											    });
 
-										    ];
-
-										    /*query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName salesPerson address")
-											    .populate('company', 'name')
-											    .populate('workflow', "name status")
-											    .populate('salesPerson', 'name')
-											    .populate('createdBy.user', 'login')
-											    .populate('editedBy.user', 'login');*/
 									    }
 										    break;
 								    }
+
+								    aggregateQuery.push({
+										    $lookup: {
+											    from        : 'Users',
+											    localField  : 'createdBy.user',
+											    foreignField: '_id',
+											    as          : 'createdBy.user'
+										    }
+									    },
+									    {
+										    $lookup: {
+											    from        : 'Users',
+											    localField  : 'editedBy.user',
+											    foreignField: '_id',
+											    as          : 'editedBy.user'
+										    }
+									    },
+									    {
+										    $project: {
+											    "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
+											    "customer"       : {$arrayElemAt: ["$customer", 0]},
+											    "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
+											    "workflow"       : {$arrayElemAt: ["$workflow", 0]},
+											    "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
+											    "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
+											    "createdBy.date" : 1,
+											    "editedBy.date"  : 1,
+											    "creationDate"   : 1,
+											    "isOpportunitie" : 1,
+											    "name"           : 1,
+											    "expectedRevenue": 1,
+											    "attachments"    : 1,
+											    "notes"          : 1,
+											    "convertedDate"  : 1,
+											    "isConverted"    : 1,
+											    "source"         : 1,
+											    "campaign"       : 1,
+											    "sequence"       : 1,
+											    "reffered"       : 1,
+											    "optout"         : 1,
+											    "active"         : 1,
+											    "color"          : 1,
+											    "categories"     : 1,
+											    "priority"       : 1,
+											    "expectedClosing": 1,
+											    "nextAction"     : 1,
+											    "internalNotes"  : 1,
+											    "phones"         : 1,
+											    "email"          : 1,
+											    "address"        : 1,
+											    "company"        : 1
+										    }
+									    },
+									    {
+										    $match: {
+											    $and: optionsObject
+										    }
+									    });
 
 								    if (data.sort) {
 									    aggregateQuery.push({
@@ -1339,9 +894,8 @@ var Opportunities = function (models, event) {
 
 								    aggregateQuery.push({
 									    $skip: (data.page - 1) * data.count
-								    });
-
-								    aggregateQuery.push({
+								    },
+								    {
 									    $limit: parseInt(data.count)
 								    });
 
