@@ -127,22 +127,6 @@ var Opportunities = function (models, event) {
 													    foreignField: '_id',
 													    as          : 'customer'
 												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Employees',
-													    localField  : 'salesPerson',
-													    foreignField: '_id',
-													    as          : 'salesPerson'
-												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'workflows',
-													    localField  : 'workflow',
-													    foreignField: '_id',
-													    as          : 'workflow'
-												    }
 											    });
 
 									    }
@@ -157,22 +141,6 @@ var Opportunities = function (models, event) {
 													    foreignField: '_id',
 													    as          : 'customer'
 												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Employees',
-													    localField  : 'salesPerson',
-													    foreignField: '_id',
-													    as          : 'salesPerson'
-												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'workflows',
-													    localField  : 'workflow',
-													    foreignField: '_id',
-													    as          : 'workflow'
-												    }
 											    });
 
 									    }
@@ -180,6 +148,22 @@ var Opportunities = function (models, event) {
 								    }
 
 								    aggregateQuery.push({
+										    $lookup: {
+											    from        : 'Employees',
+											    localField  : 'salesPerson',
+											    foreignField: '_id',
+											    as          : 'salesPerson'
+										    }
+									    },
+									    {
+										    $lookup: {
+											    from        : 'workflows',
+											    localField  : 'workflow',
+											    foreignField: '_id',
+											    as          : 'workflow'
+										    }
+									    },
+									    {
 										    $lookup: {
 											    from        : 'Users',
 											    localField  : 'createdBy.user',
@@ -770,22 +754,6 @@ var Opportunities = function (models, event) {
 													    foreignField: '_id',
 													    as          : 'customer'
 												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Employees',
-													    localField  : 'salesPerson',
-													    foreignField: '_id',
-													    as          : 'salesPerson'
-												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'workflows',
-													    localField  : 'workflow',
-													    foreignField: '_id',
-													    as          : 'workflow'
-												    }
 											    });
 
 									    }
@@ -800,22 +768,6 @@ var Opportunities = function (models, event) {
 													    foreignField: '_id',
 													    as          : 'customer'
 												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'Employees',
-													    localField  : 'salesPerson',
-													    foreignField: '_id',
-													    as          : 'salesPerson'
-												    }
-											    },
-											    {
-												    $lookup: {
-													    from        : 'workflows',
-													    localField  : 'workflow',
-													    foreignField: '_id',
-													    as          : 'workflow'
-												    }
 											    });
 
 									    }
@@ -823,6 +775,22 @@ var Opportunities = function (models, event) {
 								    }
 
 								    aggregateQuery.push({
+										    $lookup: {
+											    from        : 'Employees',
+											    localField  : 'salesPerson',
+											    foreignField: '_id',
+											    as          : 'salesPerson'
+										    }
+									    },
+									    {
+										    $lookup: {
+											    from        : 'workflows',
+											    localField  : 'workflow',
+											    foreignField: '_id',
+											    as          : 'workflow'
+										    }
+									    },
+									    {
 										    $lookup: {
 											    from        : 'Users',
 											    localField  : 'createdBy.user',
