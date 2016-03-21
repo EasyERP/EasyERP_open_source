@@ -395,6 +395,7 @@ define([
 
             deleteItem: function (event) {
                 var url = window.location.hash;
+                var self = this;
 
                 // var redirectUrl = this.forSales ? url : "easyErp/Invoice";
 
@@ -407,6 +408,8 @@ define([
                             $('.edit-invoice-dialog').remove();
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(url, {trigger: true});
+
+                            self.eventChannel.trigger('elemCountChanged');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {

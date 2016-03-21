@@ -32,6 +32,8 @@ define([
                 this.render();
             }
 
+            this.eventChannel = options.eventChannel || {};
+
         },
 
         template: _.template(paymentTemplate),
@@ -76,6 +78,8 @@ define([
                         that.collection.remove(checkbox.value);
 
                         cb();
+
+                        that.eventChannel.trigger('elemCountChanged');
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {

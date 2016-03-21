@@ -131,6 +131,7 @@ define([
                 this.proformValues = {};
 
                 this.listenTo(eventChannel, 'newPayment', this.newPayment);
+                this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
             },
 
             viewQuotation: function (e) {
@@ -1136,7 +1137,8 @@ define([
                     var data = {
                         model : self.payCollection,
                         filter: filterPayment,
-                        activate: activate
+                        activate: activate,
+                        eventChannel: self.eventChannel
                     };
 
                     new PaymentView(data);
@@ -1174,7 +1176,8 @@ define([
                         filter          : filter,
                         model           : self.formModel,
                         wTrackCollection: self.wCollection,
-                        createJob       : true
+                        createJob       : true,
+                        eventChannel: self.eventChannel
                     }).render();
 
                 };
@@ -1214,7 +1217,8 @@ define([
                         projectId     : _id,
                         customerId    : self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
-                        filter        : filter
+                        filter        : filter,
+                        eventChannel: self.eventChannel
                     }).render();
 
                 }
@@ -1278,9 +1282,9 @@ define([
                 };
 
                 proformContainer.html(this.proformRevenue({
-                        proformValues   : self.proformValues,
-                        currencySplitter: helpers.currencySplitter
-                    })
+                    proformValues   : self.proformValues,
+                    currencySplitter: helpers.currencySplitter
+                })
                 );
 
                 if (typeof cb === 'function') {
@@ -1295,7 +1299,7 @@ define([
 
                 tabs['#ordersTab'] = $('#orders table tr').length - 1;
                 tabs['#quotationsTab'] = $('#quotationTable table tr').length - 1;
-                tabs['#paymentsTab'] = $('#payments table tr').length - 1;
+                tabs['#paymentsTab'] = $('#payments table tr').length - 2;
                 tabs['#proformaTab'] = $('#proforma table tr').length - 2;
                 tabs['#invoicesTab'] = $('#invoices table tr').length - 2;
 
