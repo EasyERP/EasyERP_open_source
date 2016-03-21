@@ -1901,12 +1901,20 @@ var Filters = function (models) {
                     }
                 }
             ], function (err, result) {
+                var emptyCustomer = {
+                    name : 'Empty',
+                    _id: 'Empty'
+                };
+
                 if (err) {
                    return callback(err);
                 }
 
                 if (result && result.length) {
                     result = result[0];
+
+                    result.customer.unshift(emptyCustomer);
+
                     callback(null, result);
                 } else {
                     callback(null, []);
