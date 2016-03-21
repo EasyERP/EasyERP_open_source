@@ -36,16 +36,16 @@ var Filters = function (models) {
         var startDate;
         var endDate;
         var dateRangeObject;
+        var _startDate;
+        var _endDate;
 
         //made by R.Katsala block
         function validNames(result) {
             var modelName;
             var filterName;
 
-            for (modelName in
-                result) {
-                for (filterName in
-                    result[modelName]) {
+            for (modelName in result) {
+                for (filterName in result[modelName]) {
                     if (_.isArray(result[modelName][filterName])) {
                         result[modelName][filterName] = _.reject(result[modelName][filterName], function (element) {
                             return (element.name === '' || element.name === 'None');
@@ -90,6 +90,11 @@ var Filters = function (models) {
             if (startFilter) {
                 startDate = startFilter.startDate;
                 endDate = startFilter.startDate;
+            } else if (query.startDate && query.endDate) {
+                _startDate = moment(query.startDate);
+                _endDate = moment(query.endDate);
+                startDate = _startDate.isoWeekYear() * 100 + _startDate.isoWeek();
+                endDate = _endDate.isoWeekYear() * 100 + _endDate.isoWeek();
             }
         }
 
@@ -225,8 +230,8 @@ var Filters = function (models) {
                     },
                     'employee'      : {
                         $addToSet: {
-                            _id : '$employee._id',
-                            name: {
+                            _id       : '$employee._id',
+                            name      : {
                                 $concat: ['$employee.name.first', ' ', '$employee.name.last']
                             },
                             isEmployee: '$employee.isEmployee'
@@ -411,8 +416,8 @@ var Filters = function (models) {
                     _id         : null,
                     'employee'  : {
                         $addToSet: {
-                            _id : '$_id',
-                            name: {$concat: ['$name.first', ' ', '$name.last']},
+                            _id       : '$_id',
+                            name      : {$concat: ['$name.first', ' ', '$name.last']},
                             isEmployee: '$isEmployee'
                         }
                     },
@@ -689,7 +694,7 @@ var Filters = function (models) {
                                 $ne : null,
                                 $gte: startDate
                             }
-                        } /*{firedCount: {$gt: 0}}*/]
+                        }]
                     }
                 ]
             };
@@ -810,7 +815,7 @@ var Filters = function (models) {
 
             ], function (err, result) {
                 if (err) {
-                  return callback(err);
+                    return callback(err);
                 }
 
                 if (!result.length) {
@@ -978,7 +983,7 @@ var Filters = function (models) {
                 }
             }], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (!result.length) {
@@ -1076,7 +1081,7 @@ var Filters = function (models) {
                     }
                 }], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (!result.length) {
@@ -1122,8 +1127,8 @@ var Filters = function (models) {
                     _id         : null,
                     'supplier'  : {
                         $addToSet: {
-                            _id : '$supplier._id',
-                            name: {
+                            _id       : '$supplier._id',
+                            name      : {
                                 $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                             },
                             isEmployee: '$supplier.isEmployee'
@@ -1157,7 +1162,7 @@ var Filters = function (models) {
             }
             ], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (!result.length) {
@@ -1191,7 +1196,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (!result.length) {
@@ -1283,7 +1288,7 @@ var Filters = function (models) {
             ], function (err, result) {
 
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (!result.length) {
@@ -1379,7 +1384,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (result && result.length) {
@@ -1471,7 +1476,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (result && result.length) {
@@ -1632,7 +1637,7 @@ var Filters = function (models) {
             }
             ], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (result && result.length) {
@@ -1751,7 +1756,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (!result || result.length === 0) {
@@ -1790,7 +1795,7 @@ var Filters = function (models) {
                         localField  : "workflow",
                         foreignField: "_id", as: "workflow"
                     }
-                },{
+                }, {
                     $lookup: {
                         from        : "Employees",
                         localField  : "salesPerson",
@@ -1834,7 +1839,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (result && result.length) {
@@ -1902,12 +1907,12 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 var emptyCustomer = {
-                    name : 'Empty',
-                    _id: 'Empty'
+                    name: 'Empty',
+                    _id : 'Empty'
                 };
 
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
 
                 if (result && result.length) {

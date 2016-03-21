@@ -212,6 +212,10 @@ define([
                 _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
                 _firedDate = moment(_firedDate).format('YYYY-MM-DD');
 
+                if (!employee.isEmployee && date > _lastFiredDate && date > _lastHiredDate) {
+                    return false;
+                }
+
                 if (_hiredDate === _firedDate || date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
                     return true;
                 }

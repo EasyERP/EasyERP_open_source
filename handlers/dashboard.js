@@ -60,7 +60,7 @@ var wTrack = function (models) {
         var key;
         var i;
 
-        function getDate(dateStr){
+        function getDate(dateStr) {
             return dateStr.isoWeekday(5).format("DD.MM");
         }
 
@@ -94,7 +94,7 @@ var wTrack = function (models) {
             week = _dateStr.isoWeek();
             year = _dateStr.isoWeekYear();
             weeksArr.push({
-                lastDate: getDate(_dateStr),
+                lastDate  : getDate(_dateStr),
                 dateByWeek: year * 100 + week,
                 week      : week,
                 year      : year
@@ -112,7 +112,7 @@ var wTrack = function (models) {
 
         employeeQueryForEmployeeByDep = {
             $and: [{
-                $or         : [{
+                $or       : [{
                     $and: [{
                         isEmployee: true
                     }, {
@@ -408,15 +408,16 @@ var wTrack = function (models) {
                 $match: employeeQueryForEmployeeByDep
             }, {
                 $group: {
-                    _id      : "$department",
+                    _id      : '$department',
                     employees: {
                         $push: {
-                            isLead  : '$isLead',
-                            fired   : '$fire',
-                            hired   : '$hire',
-                            lastHire: '$lastHire',
-                            name    : {$concat: ['$name.first', ' ', '$name.last']},
-                            _id     : '$_id'
+                            isEmployee: '$isEmployee',
+                            isLead    : '$isLead',
+                            fired     : '$fire',
+                            hired     : '$hire',
+                            lastHire  : '$lastHire',
+                            name      : {$concat: ['$name.first', ' ', '$name.last']},
+                            _id       : '$_id'
                         }
                     }
                 }
