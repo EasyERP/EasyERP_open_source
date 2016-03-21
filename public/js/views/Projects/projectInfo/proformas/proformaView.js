@@ -213,7 +213,7 @@ define([
 
         showDialog: function (orderId) {
             var invoice = _.find(this.collection.toJSON(), function (el) {
-                return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null)
+                return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null);
             });
 
             var model = new invoiceModel({validate: false});
@@ -406,7 +406,7 @@ define([
                 dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
 
                 App.projectInfo = App.projectInfo || {};
-                App.projectInfo.currentTab = 'invoices';
+                App.projectInfo.currentTab = 'proforma';
             }
 
             $currentEl.append(template({

@@ -54,7 +54,7 @@ define([
                 this.redirect = options.redirect;
                 this.collection = options.collection;
 
-                this.notCreate = options.notCreate ? false : true;
+                this.notCreate = !!options.notCreate;
 
                 if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
@@ -479,7 +479,7 @@ define([
                          text : "Delete",
                          click: self.deleteItem
                          }*/
-                    ]
+                    ];
                 } else {
                     buttons = [
                         {
