@@ -96,26 +96,26 @@ define([
             events: {
                 'click .chart-tabs'                                                                                       : 'changeTab',
                 'click .deleteAttach'                                                                                     : 'deleteAttach',
-                "click #health a:not(.disabled)"                                                                          : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                                                                  : "chooseHealthDd",
-                "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                                        : "chooseOption",
-                "click .current-selected:not(.disabled)"                                                                  : "showNewSelect",
-                "click #createItem"                                                                                       : "createDialog",
-                "click #createJob"                                                                                        : "createJob",
-                "change input:not(.checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)": "showSaveButton",  // added id for noteView
-                "change #description"                                                                                     : "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)"                                       : "renderJobWTracks",
-                "mouseover #jobsItem"                                                                                     : "showRemoveButton",
-                "mouseleave #jobsItem"                                                                                    : "hideRemoveButton",
-                "click .fa.fa-trash"                                                                                      : "removeJobAndWTracks",
-                "dblclick td.editableJobs"                                                                                : "editRow",
-                "click #saveName"                                                                                         : "saveNewJobName",
-                "keydown input.editing "                                                                                  : "keyDown",
-                'click'                                                                                                   : 'hideSelect',
-                'keydown'                                                                                                 : 'keydownHandler',
-                "click a.quotation"                                                                                       : "viewQuotation",
-                "click a.invoice"                                                                                         : "viewInvoice",
-                "click a.proforma"                                                                                        : "viewProforma"
+                'click #health a:not(.disabled)'                                                                          : 'showHealthDd',
+                'click #health ul li div:not(.disabled)'                                                                  : 'chooseHealthDd',
+                'click .newSelectList li:not(.miniStylePagination):not(.disabled)'                                        : 'chooseOption',
+                'click .current-selected:not(.disabled)'                                                                  : 'showNewSelect',
+                'click #createItem'                                                                                       : 'createDialog',
+                'click #createJob'                                                                                        : 'createJob',
+                'change input:not(.checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)': 'showSaveButton',  // added id for noteView
+                'change #description'                                                                                     : 'showSaveButton',
+                'click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)'                                       : 'renderJobWTracks',
+                'mouseover #jobsItem'                                                                                     : 'showRemoveButton',
+                'mouseleave #jobsItem'                                                                                    : 'hideRemoveButton',
+                'click .fa.fa-trash'                                                                                      : 'removeJobAndWTracks',
+                'dblclick td.editableJobs'                                                                                : 'editRow',
+                'click #saveName'                                                                                         : 'saveNewJobName',
+                'keydown input.editing '                                                                                  : 'keyDown',
+                click                                                                                                     : 'hideSelect',
+                keydown                                                                                                   : 'keydownHandler',
+                'click a.quotation'                                                                                       : 'viewQuotation',
+                'click a.invoice'                                                                                         : 'viewInvoice',
+                'click a.proforma'                                                                                        : 'viewProforma'
             },
 
             initialize: function (options) {
@@ -134,16 +134,15 @@ define([
             },
 
             viewQuotation: function (e) {
-                e.stopPropagation();
                 var self = this;
-
                 var target = e.target;
                 var id = $(target).attr('data-id');
                 var model;
                 var type = $(target).closest('tr').find('#type').text();
                 var onlyView = false;
 
-                if (type === "Quoted") {
+                e.stopPropagation();
+                if (type === 'Quoted') {
                     model = new quotationModel({validate: false});
 
                     model.urlRoot = '/quotation/form/' + id;
