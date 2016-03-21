@@ -1319,7 +1319,7 @@ var Module = function (models) {
                                     var vacationForEmployee = vacationObject[employeeSubject] || {};
                                     var vacationSameDate = vacationForEmployee[dateKey];
 
-                                    var overtime = wTrackModel._type === 'overtime' ? true : false;
+                                    var overtime = (wTrackModel._type === 'overtime') || false;
 
                                     Model.remove({
                                         "sourceDocument.model": 'Employees',
@@ -1479,14 +1479,15 @@ var Module = function (models) {
                         var startDateKey = startYear * 100 + moment(date).isoWeek();
                         var endDateKey = endYear * 100 + moment(endDate).isoWeek();
 
-                        var startOfMonth = moment(date).startOf('month');
-                        var startK = (moment(startOfMonth).isoWeekYear() * 100 + moment(startOfMonth).month() + 1) * 100 + moment(startOfMonth).date();
-                        var endOfMonth = moment(endDate).endOf('month');
-                        var endK = (moment(endOfMonth).isoWeekYear() * 100 + moment(endOfMonth).month() + 1) * 100 + moment(endOfMonth).date();
-
-                        for (j = endK; j >= startK; j--){
-                            newDateArrayWithIdle.push(j.toString());
-                        }
+                        //var startOfMonth = moment(date).startOf('month');
+                        //var startK = (moment(startOfMonth).isoWeekYear() * 100 + moment(startOfMonth).month() + 1) * 100 + moment(startOfMonth).date();
+                        //var endOfMonth = moment(endDate).endOf('month');
+                        //var endK = (moment(endOfMonth).isoWeekYear() * 100 + moment(endOfMonth).month() + 1) * 100 + moment(endOfMonth).date();
+                        //var length = endK - startK;
+                        //
+                        //for (j = length - 1; j >= 0; j--){
+                        //    newDateArrayWithIdle.push((startK + j).toString());
+                        //}
 
                         matchObj = {
                             $and: [{
@@ -1562,7 +1563,7 @@ var Module = function (models) {
                         };
 
                         findMonthHours = function(empResult, callback){
-                            async.each(newDateArrayWithIdle, function (dateKey, asyncCb) {
+                            async.each(dates, function (dateKey, asyncCb) {
                                 var year = parseInt(dateKey.slice(0, 4), 10);
                                 var month = parseInt(dateKey.slice(4, 6), 10);
                                 var key = year * 100 + month;
@@ -1583,7 +1584,7 @@ var Module = function (models) {
                         };
 
                         createIdleTime = function (empResult, callback) {
-                            async.each(newDateArrayWithIdle, function (dateKey, asyncCb) {
+                            async.each(dates, function (dateKey, asyncCb) {
                                 var year = parseInt(dateKey.slice(0, 4), 10);
                                 var month = parseInt(dateKey.slice(4, 6), 10);
                                 var dateOfMonth = parseInt(dateKey.slice(6), 10);
@@ -1596,8 +1597,12 @@ var Module = function (models) {
                                 var i;
                                 var employeesWithSalary = empResult.salary;
                                 var monthHours = empResult.monthHours[year * 100 + month] || {};
-
+                                var dayOfWeek = moment(date).day();
                                 var cb  = _.after(employeesCount, asyncCb);
+
+                                if ((dayOfWeek === 0) || (dayOfWeek === 6)){
+                                    return asyncCb();
+                                }
 
                                 if (!totalIdleObject[dateKey]) {
                                     totalIdleObject[dateKey] = 0;
@@ -1637,7 +1642,6 @@ var Module = function (models) {
                                     };
 
                                     var idleTime = HOURSCONSTANT - totalWorkedForDay;
-                                    var idleCoeff = isFinite(idleTime / totalWorkedForDay) ? idleTime / totalWorkedForDay : 0;
 
                                     bodySalaryIdle.sourceDocument._id = employee;
 
@@ -1646,8 +1650,8 @@ var Module = function (models) {
                                             if (totalWorkedForDay - HOURSCONSTANT >= 0) {
                                                 bodySalaryIdle.amount = 0;
                                             } else {
-                                                bodySalaryIdle.amount = costHour * idleTime * idleCoeff * 100;
-                                                totalIdleObject[dateKey] += costHour * idleTime * idleCoeff * 100;
+                                                bodySalaryIdle.amount = costHour * idleTime  * 100;
+                                                totalIdleObject[dateKey] += costHour * idleTime  * 100;
                                             }
 
                                         } else {
