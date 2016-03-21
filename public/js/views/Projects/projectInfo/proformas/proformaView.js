@@ -17,7 +17,7 @@ define([
 ], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers, dataService, async) {
     var invoiceView = ListView.extend({
 
-        el               : '#invoices',
+        el               : '#proforma',
         listItemView     : listItemView,
         contentCollection: invoiceCollection,
         changedModels    : {},
@@ -396,7 +396,7 @@ define([
                 self.hideDialog();
 
                 tabs = $(".chart-tabs");
-                target = tabs.find('#invoicesTab');
+                target = tabs.find('#proformaTab');
 
                 target.closest(".chart-tabs").find("a.active").removeClass("active");
                 target.addClass("active");

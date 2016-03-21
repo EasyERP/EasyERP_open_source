@@ -3,7 +3,7 @@ define([
     'jQuery',
     'Underscore',
     "text!templates/Quotation/EditTemplate.html",
-    "views/Projects/projectInfo/invoices/invoiceView",
+    "views/Projects/projectInfo/proformas/proformaView",
     'views/selectView/selectView',
     'views/Assignees/AssigneesView',
     'views/Product/InvoiceOrder/ProductItems',

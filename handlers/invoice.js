@@ -208,13 +208,17 @@ var Invoice = function (models, event) {
                 proforma = parallelResponse[2][0];
                 order = parallelResponse[0];
                 workflow = parallelResponse[1];
-                paidAmount = proforma.paidAmount;
-                payments = proforma.payments;
+
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
                 err.status = 400;
 
                 return callback(err);
+            }
+
+            if (proforma) {
+                paidAmount = proforma.paidAmount / 100;
+                payments = proforma.payments;
             }
 
             delete order._id;
@@ -230,12 +234,13 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
+
             // invoice.sourceDocument = order.name;
             invoice.payments = payments;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
-            invoice.workflow = workflow._id;
-            invoice.paymentInfo.balance = order.paymentInfo.total - paidAmount/100;
+            invoice.workflow = paidAmount ? objectId("55647d952e4aa3804a765eca") : workflow._id;
+            invoice.paymentInfo.balance = order.paymentInfo.total - (paidAmount || 0);
 
             if (forSales === "true") {
                 if (!invoice.project) {

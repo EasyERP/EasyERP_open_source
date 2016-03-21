@@ -1035,9 +1035,11 @@ define([
                     }).render();
 
                     self.iCollection.toJSON().forEach(function (element) {
-                        element.payments.forEach(function (payment) {
-                            payments.push(payment);
-                        });
+                        if (element.payments) {
+                            element.payments.forEach(function (payment) {
+                                payments.push(payment);
+                            });
+                        }
                     });
 
                     self.payments = self.payments || {};
@@ -1084,9 +1086,11 @@ define([
                     }).render();
 
                     self.pCollection.toJSON().forEach(function (element) {
-                        element.payments.forEach(function (payment) {
-                            payments.push(payment);
-                        });
+                        if (element.payments) {
+                            element.payments.forEach(function (payment) {
+                                payments.push(payment);
+                            });
+                        }
                     });
 
                     self.payments = self.payments || {};
