@@ -1110,7 +1110,7 @@ var Module = function (models) {
                             var journalEntryBody = {};
 
                             journalEntryBody.date = invoice.invoiceDate;
-                            journalEntryBody.journal = invoice.journal;
+                            journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
                             journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
                             journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
                             journalEntryBody.sourceDocument = {};
@@ -1456,16 +1456,22 @@ var Module = function (models) {
                         var findAllDevs;
                         var createIdle;
                         var matchObj;
+                        var findMonthHours;
+                        var monthHours = {};
+
+                        if (!dates.length){
+                           return createWaterfallCb();
+                        }
 
                         var minDate = _.min(dates);
                         var maxDate = _.max(dates);
-                        var startYear = minDate.slice(0, 4);
-                        var startMonth = minDate.slice(4, 6);
-                        var dateOfMonth = minDate.slice(6);
+                        var startYear = parseInt(minDate.slice(0, 4), 10);
+                        var startMonth = parseInt(minDate.slice(4, 6), 10);
+                        var dateOfMonth = parseInt(minDate.slice(6), 10);
                         var date = moment().isoWeekYear(startYear).month(startMonth - 1).date(dateOfMonth);
-                        var endYear = maxDate.slice(0, 4);
-                        var endMonth = maxDate.slice(4, 6);
-                        var endDateOfMonth = maxDate.slice(6);
+                        var endYear = parseInt(maxDate.slice(0, 4), 10);
+                        var endMonth = parseInt(maxDate.slice(4, 6), 10);
+                        var endDateOfMonth = parseInt(maxDate.slice(6), 10);
                         var endDate = moment().isoWeekYear(endYear).month(endMonth - 1).date(endDateOfMonth);
 
                         var startDateKey = startYear * 100 + moment(date).isoWeek();
@@ -1544,11 +1550,32 @@ var Module = function (models) {
                                 });
                         };
 
+                        findMonthHours = function(empResult, callback){
+                            async.each(dates, function (dateKey, asyncCb) {
+                                var year = parseInt(dateKey.slice(0, 4), 10);
+                                var month = parseInt(dateKey.slice(4, 6), 10);
+                                var key = year * 100 + month;
+
+                                redisStore.readFromStorage('monthHours', key, function (err, result) {
+
+                                    if (!monthHours[key]) {
+                                        monthHours[key] = {};
+                                    }
+
+                                    result = JSON.parse(result);
+                                    monthHours[key] = result && result[0] ? result[0] : {};
+                                    asyncCb();
+                                });
+                            }, function () {
+                                callback(null, {monthHours: monthHours, emps: empResult.emps, salary: empResult.salary});
+                            });
+                        };
+
                         createIdle = function (empResult, callback) {
                             async.each(dates, function (dateKey, asyncCb) {
-                                var year = dateKey.slice(0, 4);
-                                var month = dateKey.slice(4, 6);
-                                var dateOfMonth = dateKey.slice(6);
+                                var year = parseInt(dateKey.slice(0, 4), 10);
+                                var month = parseInt(dateKey.slice(4, 6), 10);
+                                var dateOfMonth = parseInt(dateKey.slice(6), 10);
                                 var date = moment().isoWeekYear(year).month(month - 1).date(dateOfMonth);
                                 var objectForDay = totalObject[dateKey];
                                 var employeesObjects = objectForDay.employees;
@@ -1557,7 +1584,9 @@ var Module = function (models) {
                                 var employeesCount = allEmployees.length;
                                 var i;
                                 var employeesWithSalary = empResult.salary;
-                                var monthHours = monthHoursObject[year * 100 + month];
+                                var monthHours = empResult.monthHours[year * 100 + month] || {};
+
+                                var cb  = _.after(employeesCount, asyncCb);
 
                                 if (!totalIdleObject[dateKey]) {
                                     totalIdleObject[dateKey] = 0;
@@ -1576,6 +1605,7 @@ var Module = function (models) {
                                     var length = hireArray.length;
                                     var j;
                                     var costHour = 0;
+                                    var hours = monthHours.hours || 0;
 
                                     for (j = length - 1; j >= 0; j--) {
                                         if (date >= hireArray[j].date) {
@@ -1584,7 +1614,7 @@ var Module = function (models) {
                                         }
                                     }
 
-                                   costHour = empObject.costHour || salary / monthHours.hours;
+                                   costHour = empObject.costHour || (isFinite(salary / hours) ? (salary / hours) : 0);
 
                                     var bodySalaryIdle = {
                                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1616,14 +1646,14 @@ var Module = function (models) {
                                         bodySalaryIdle.amount = 0;
                                     }
 
-                                    createReconciled(bodySalaryIdle, req.session.lastDb, asyncCb, req.session.uId);
+                                    createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
                                 }
                             }, function (err, result) {
                                 callback(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
                             });
                         };
 
-                        var waterfall = [findAllDevs, createIdle];
+                        var waterfall = [findAllDevs, findMonthHours, createIdle];
 
                         async.waterfall(waterfall, function (err, result) {
                             if (err) {
@@ -4104,9 +4134,9 @@ var Module = function (models) {
                 date: {
                     $gte: new Date(startDate),
                     $lte: new Date(endDate)
-                }
-            }
-        }, {
+                },
+                account: {$nin: [objectId(CONSTANTS.PRODUCT_SALES), objectId(CONSTANTS.COGS)]}
+            }}, {
             $lookup: {
                 from        : "chartOfAccount",
                 localField  : "account",

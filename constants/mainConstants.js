@@ -41,6 +41,8 @@ module.exports = {
 
     ACCOUNT_RECEIVABLE: '565eb53a6aa50532e5df0bc9',
 
+    INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
+
     BANK_AND_CASH: [
         '565eb53a6aa50532e5df0bd6', //bank and Cash
         '565eb53a6aa50532e5df0bd3',

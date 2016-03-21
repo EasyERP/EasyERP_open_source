@@ -56,7 +56,7 @@ define([
             setBalance: function () {
                 var footerRow = $('#glReportFooter');
                 var debit = footerRow.find('#debitTotal').attr('data-value');
-                var credit = footerRow.find('#debitTotal').attr('data-value');
+                var credit = footerRow.find('#creditTotal').attr('data-value');
 
                 var balance = debit - credit;
 
