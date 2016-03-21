@@ -37,12 +37,12 @@ module.exports = {
     FINISHED_JOB_JOURNAL: '56ebb636b2a906141f194fa5',
 
     PRODUCT_SALES: '565eb53a6aa50532e5df0be0',
-    COGS: '565eb53a6aa50532e5df0be2',
+    COGS         : '565eb53a6aa50532e5df0be2',
 
     ACCOUNT_RECEIVABLE: '565eb53a6aa50532e5df0bc9',
 
     BANK_AND_CASH: [
-      '565eb53a6aa50532e5df0bd6', //bank and Cash
+        '565eb53a6aa50532e5df0bd6', //bank and Cash
         '565eb53a6aa50532e5df0bd3',
         '565eb53a6aa50532e5df0bd2',
         '565eb53a6aa50532e5df0bd1',
@@ -65,6 +65,10 @@ module.exports = {
         '565eb53a6aa50532e5df0bf3', //dividends
         '565eb53a6aa50532e5df0bf2' //capital
     ],
+
+    OPERATING: [],
+    INVESTING: [],
+    FINANCING: [],
 
     MOBILE_DEFAULT_COUNT_PER_LIST: 50,
 

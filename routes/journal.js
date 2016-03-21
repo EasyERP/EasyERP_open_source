@@ -16,6 +16,7 @@ module.exports = function (models) {
     router.get('/journalEntry/getTrialBalance', _journalEntryHandler.getForGL);
     router.get('/journalEntry/getBalanceSheet', _journalEntryHandler.getBalanceSheet);
     router.get('/journalEntry/getProfitAndLoss', _journalEntryHandler.getProfitAndLoss);
+    router.get('/journalEntry/getCashFlow', _journalEntryHandler.getCashFlow);
     router.get('/journalEntry/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/journalEntry/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
     router.get('/journalEntry/:viewType', _journalEntryHandler.getForView);

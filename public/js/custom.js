@@ -128,6 +128,7 @@ define([
                     case CONTENT_TYPES.SALARYREPORT:
                     case CONTENT_TYPES.PROFITANDLOSS:
                     case CONTENT_TYPES.BALANCESHEET:
+                    case CONTENT_TYPES.CASHFLOW:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -182,6 +183,7 @@ define([
                     case CONTENT_TYPES.SALARYREPORT:
                     case CONTENT_TYPES.PROFITANDLOSS:
                     case CONTENT_TYPES.BALANCESHEET:
+                    case CONTENT_TYPES.CASHFLOW:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

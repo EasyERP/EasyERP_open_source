@@ -3731,6 +3731,174 @@ var Module = function (models) {
         });
     };
 
+    this.getCashFlow = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var getOperating;
+        var getInvesting;
+        var getFinancing;
+        var query = req.query;
+        var startDate = query.startDate;
+        var endDate = query.endDate;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
+        getOperating = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: {$in: CONSTANTS.OPERATING}
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "account",
+                    foreignField: "_id", as: "account"
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    credit : {$divide: ['$credit', '$currency.rate']},
+                    debit : {$divide: ['$debit', '$currency.rate']},
+                    account: {$arrayElemAt: ["$account", 0]}
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$addToSet: '$account.name'},
+                    debit: {$sum: '$debit'},
+                    credit: {$sum: '$credit'}
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    debit: {$divide: ['$debit', 100]},
+                    credit: {$divide: ['$credit', 100]},
+                    name : {$arrayElemAt: ["$name", 0]}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        getInvesting = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: {$in: CONSTANTS.INVESTING}
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "account",
+                    foreignField: "_id", as: "account"
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    credit : {$divide: ['$credit', '$currency.rate']},
+                    debit : {$divide: ['$debit', '$currency.rate']},
+                    account: {$arrayElemAt: ["$account", 0]}
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$addToSet: '$account.name'},
+                    debit: {$sum: '$debit'},
+                    credit: {$sum: '$credit'}
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    debit: {$divide: ['$debit', 100]},
+                    credit: {$divide: ['$credit', 100]},
+                    name : {$arrayElemAt: ["$name", 0]}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        getFinancing = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: {$in: CONSTANTS.FINANCING}
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "account",
+                    foreignField: "_id", as: "account"
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    credit : {$divide: ['$credit', '$currency.rate']},
+                    debit : {$divide: ['$debit', '$currency.rate']},
+                    account: {$arrayElemAt: ["$account", 0]}
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$addToSet: '$account.name'},
+                    debit: {$sum: '$debit'},
+                    credit: {$sum: '$credit'}
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    debit: {$divide: ['$debit', 100]},
+                    credit: {$divide: ['$credit', 100]},
+                    name : {$arrayElemAt: ["$name", 0]}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        async.parallel([getOperating, getInvesting, getFinancing], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({operating: result[0], investing: result[1], financing: result[2]});
+        });
+    };
+
     this.getProfitAndLoss = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var getGrossFit;

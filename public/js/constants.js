@@ -494,6 +494,7 @@ define([], function () {
         TRIALBALANCE      : "trialBalance",
         PROFITANDLOSS     : "profitAndLoss",
         BALANCESHEET      : 'balanceSheet',
+        CASHFLOW          : 'cashFlow',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
