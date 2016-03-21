@@ -1319,7 +1319,7 @@ var Module = function (models) {
                                     var vacationForEmployee = vacationObject[employeeSubject] || {};
                                     var vacationSameDate = vacationForEmployee[dateKey];
 
-                                    var overtime = (wTrackModel._type === 'overtime') ? true : false;
+                                    var overtime = wTrackModel._type === 'overtime' ? true : false;
 
                                     Model.remove({
                                         "sourceDocument.model": 'Employees',
@@ -1397,9 +1397,9 @@ var Module = function (models) {
                                             //    bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
                                             //    bodyOverhead.amount = overheadRate * HOURSCONSTANT * 100;
                                             //} else {
-                                                bodySalary.amount = costHour * hours * 100;
-                                                bodyOvertime.amount = 0;
-                                                bodyOverhead.amount = overheadRate * hours * 100;
+                                            bodySalary.amount = costHour * hours * 100;
+                                            bodyOvertime.amount = 0;
+                                            bodyOverhead.amount = overheadRate * hours * 100;
                                             //}
 
                                             if (vacationSameDate) {
@@ -1431,7 +1431,7 @@ var Module = function (models) {
                                             }
                                         }
 
-                                        if (overtime){
+                                        if (overtime) {
                                             bodyOvertime.amount = costHour * hours * 100;
                                             bodyOverhead.amount = overheadRate * hours * 100;
                                         }
@@ -1453,108 +1453,183 @@ var Module = function (models) {
                     createIdleOvertime = function (totalObject, createWaterfallCb) {
                         var dates = Object.keys(totalObject);
                         var totalIdleObject = {};
-                        var notUsedVacationCost = 0;
+                        var findAllDevs;
+                        var createIdle;
+                        var matchObj;
 
-                        async.each(dates, function (dateKey, asyncCb) {
-                            var vacationRateForDay;
-                            var year = dateKey.slice(0, 4);
-                            var month = dateKey.slice(4, 6);
-                            var dateOfMonth = dateKey.slice(6);
-                            var date = moment().isoWeekYear(year).month(month - 1).date(dateOfMonth);
-                            var objectForDay = totalObject[dateKey];
-                            var employeesObjects = objectForDay.employees;
-                            var employeesIds = Object.keys(objectForDay.employees);
-                            var employeesCount = employeesIds.length;
-                            var i;
-                            var ourCb = _.after(employeesCount, asyncCb);
-                            var monthHours = monthHoursObject[dateKey];
-                            var overheadRate = monthHours ? monthHours.overheadRate : 0;
+                        var minDate = _.min(dates);
+                        var maxDate = _.max(dates);
+                        var startYear = minDate.slice(0, 4);
+                        var startMonth = minDate.slice(4, 6);
+                        var dateOfMonth = minDate.slice(6);
+                        var date = moment().isoWeekYear(startYear).month(startMonth - 1).date(dateOfMonth);
+                        var endYear = maxDate.slice(0, 4);
+                        var endMonth = maxDate.slice(4, 6);
+                        var endDateOfMonth = maxDate.slice(6);
+                        var endDate = moment().isoWeekYear(endYear).month(endMonth - 1).date(endDateOfMonth);
 
-                            if (!totalIdleObject[dateKey]) {
-                                totalIdleObject[dateKey] = 0;
-                            }
+                        var startDateKey = startYear * 100 + moment(date).isoWeek();
+                        var endDateKey = endYear * 100 + moment(endDate).isoWeek();
 
-                            for (i = employeesCount - 1; i >= 0; i--) {
-                                var employee = employeesIds[i];
-                                var empObject = employeesObjects[employee];
-                                var wTracks = empObject.wTracks;
-                                var sourceDocuments = Object.keys(wTracks);
-                                var vacation = empObject.vacation;
-                                var totalWorkedForDay = empObject.hours;
-                                var costHour = empObject.costHour;
+                        matchObj = {
+                            $and: [{
+                                $or: [{
+                                    $and: [{
+                                        isEmployee: true
+                                    }, {
+                                        $or: [{
+                                            lastFire: null
+                                        }, {
+                                            lastFire: {
+                                                $ne : null,
+                                                $gte: startDateKey
+                                            }
+                                        }, {
+                                            lastHire: {
+                                                $ne : null,
+                                                $lte: endDateKey
+                                            }
+                                        }]
+                                    }]
+                                }, {
+                                    $and: [{
+                                        isEmployee: false
+                                    }, {
+                                        lastFire: {
+                                            $ne : null,
+                                            $gte: startDateKey
+                                        }
+                                    }]
+                                }
+                                ]
+                            }]
+                        };
 
-                                async.each(sourceDocuments, function (sourceDoc, asyncCb) {
+                        findAllDevs = function (callback) {
+                            Employee
+                                .aggregate([{
+                                    $match: {
+                                        department: {$nin: CONSTANTS.NOT_DEV_ARRAY.objectID()}
+                                    }
+                                }, {
+                                    $project: {
+                                        isEmployee: 1,
+                                        hire      : 1,
+                                        name      : 1,
+                                        lastFire  : 1,
+                                        lastHire  : {
+                                            $let: {
+                                                vars: {
+                                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                                },
+                                                in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                                            }
+                                        }
+                                    }
+                                }, {
+                                    $match: matchObj
+                                }, {
+                                    $project: {
+                                        _id : 1,
+                                        hire: 1
+                                    }
+                                }], function (err, result) {
+                                    if (err) {
+                                        callback(err);
+                                    }
+
+                                    var emps = _.pluck(result, '_id');
+
+                                    callback(null, {emps: emps, salary: result});
+                                });
+                        };
+
+                        createIdle = function (empResult, callback) {
+                            async.each(dates, function (dateKey, asyncCb) {
+                                var year = dateKey.slice(0, 4);
+                                var month = dateKey.slice(4, 6);
+                                var dateOfMonth = dateKey.slice(6);
+                                var date = moment().isoWeekYear(year).month(month - 1).date(dateOfMonth);
+                                var objectForDay = totalObject[dateKey];
+                                var employeesObjects = objectForDay.employees;
+                                var employeesIds = Object.keys(objectForDay.employees);
+                                var allEmployees = _.union(employeesIds, empResult.emps);
+                                var employeesCount = allEmployees.length;
+                                var i;
+                                var employeesWithSalary = empResult.salary;
+                                var monthHours = monthHoursObject[year * 100 + month];
+
+                                if (!totalIdleObject[dateKey]) {
+                                    totalIdleObject[dateKey] = 0;
+                                }
+
+                                for (i = employeesCount - 1; i >= 0; i--) {
+                                    var employee = allEmployees[i];
+                                    var empObject = employeesObjects[employee] || {};
+                                    var vacation = empObject.vacation;
+                                    var totalWorkedForDay = empObject.hours || 0;
+                                    var salary = 0;
+                                    var employeeNotTracked = _.find(employeesWithSalary, function (elem) {
+                                        return elem._id.toString() === employee.toString();
+                                    });
+                                    var hireArray = employeeNotTracked.hire;
+                                    var length = hireArray.length;
+                                    var j;
+                                    var costHour = 0;
+
+                                    for (j = length - 1; j >= 0; j--) {
+                                        if (date >= hireArray[j].date) {
+                                            salary = hireArray[j].salary;
+                                            break;
+                                        }
+                                    }
+
+                                   costHour = empObject.costHour || salary / monthHours.hours;
 
                                     var bodySalaryIdle = {
                                         currency      : CONSTANTS.CURRENCY_USD,
                                         journal       : CONSTANTS.IDLE_PAYABLE,
                                         date          : date.set(timeToSet),
                                         sourceDocument: {
-                                            model: 'wTrack'
+                                            model: 'Employees'
                                         }
                                     };
 
-                                   /* var bodySalaryOvertime = {
-                                        currency      : CONSTANTS.CURRENCY_USD,
-                                        journal       : CONSTANTS.OVERTIME_PAYABLE,
-                                        date          : date.set(timeToSet),
-                                        sourceDocument: {
-                                            model: 'wTrack'
-                                        }
-                                    };*/
-
-                                    var bodyOverhead = {
-                                        currency      : CONSTANTS.CURRENCY_USD,
-                                        journal       : CONSTANTS.OVERHEAD,
-                                        date          : date.set(timeToSet),
-                                        sourceDocument: {
-                                            model: 'wTrack',
-                                            _id  : sourceDoc
-                                        }
-                                    };
-
-                                    var callB = _.after(2, asyncCb);
-                                    var totalWorked = wTracks[sourceDoc];
                                     var idleTime = HOURSCONSTANT - totalWorkedForDay;
                                     var idleCoeff = isFinite(idleTime / totalWorkedForDay) ? idleTime / totalWorkedForDay : 0;
 
-                                    bodySalaryIdle.sourceDocument._id = sourceDoc;
-                                   // bodySalaryOvertime.sourceDocument._id = sourceDoc;
+                                    bodySalaryIdle.sourceDocument._id = employee;
 
                                     if (totalWorkedForDay - HOURSCONSTANT < 0) {
                                         if (!vacation) {
-                                            if (totalWorked - HOURSCONSTANT >= 0) {
-                                               // bodySalaryOvertime.amount = costHour * (totalWorked - HOURSCONSTANT) * 100;
-                                                bodyOverhead.amount = overheadRate * (totalWorked - HOURSCONSTANT) * 100;
+                                            if (totalWorkedForDay - HOURSCONSTANT >= 0) {
                                                 bodySalaryIdle.amount = 0;
                                             } else {
-                                               // bodySalaryOvertime.amount = 0;
-                                                bodyOverhead.amount = 0;
                                                 bodySalaryIdle.amount = costHour * idleTime * idleCoeff * 100;
                                                 totalIdleObject[dateKey] += costHour * idleTime * idleCoeff * 100;
                                             }
 
-                                            notUsedVacationCost -= vacationRateForDay * totalWorked;
                                         } else {
-                                           // bodySalaryOvertime.amount = 0;
                                             bodySalaryIdle.amount = 0;
-                                            bodyOverhead.amount = 0;
                                         }
                                     } else {
-                                       // bodySalaryOvertime.amount = 0;
                                         bodySalaryIdle.amount = 0;
-                                        bodyOverhead.amount = 0;
                                     }
 
-                                    createReconciled(bodySalaryIdle, req.session.lastDb, callB, req.session.uId);
-                                    //createReconciled(bodySalaryOvertime, req.session.lastDb, callB, req.session.uId);
-                                    createReconciled(bodyOverhead, req.session.lastDb, callB, req.session.uId);
-                                }, function () {
-                                    ourCb();
-                                });
+                                    createReconciled(bodySalaryIdle, req.session.lastDb, asyncCb, req.session.uId);
+                                }
+                            }, function (err, result) {
+                                callback(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
+                            });
+                        };
 
+                        var waterfall = [findAllDevs, createIdle];
+
+                        async.waterfall(waterfall, function (err, result) {
+                            if (err) {
+                                return createWaterfallCb(err);
                             }
-                        }, function (err, result) {
+
                             createWaterfallCb(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
                         });
 
@@ -3594,22 +3669,22 @@ var Module = function (models) {
                 $project: {
                     date   : 1,
                     credit : {$divide: ['$credit', '$currency.rate']},
-                    debit : {$divide: ['$debit', '$currency.rate']},
+                    debit  : {$divide: ['$debit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
                 $group: {
-                    _id  : '$account._id',
-                    name : {$addToSet: '$account.name'},
+                    _id   : '$account._id',
+                    name  : {$addToSet: '$account.name'},
                     credit: {$sum: '$credit'},
-                    debit: {$sum: '$debit'}
+                    debit : {$sum: '$debit'}
                 }
             }, {
                 $project: {
-                    _id  : 1,
-                    debit: {$divide: ['$debit', 100]},
+                    _id   : 1,
+                    debit : {$divide: ['$debit', 100]},
                     credit: {$divide: ['$credit', 100]},
-                    name : {$arrayElemAt: ["$name", 0]}
+                    name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -3643,22 +3718,22 @@ var Module = function (models) {
                 $project: {
                     date   : 1,
                     credit : {$divide: ['$credit', '$currency.rate']},
-                    debit : {$divide: ['$debit', '$currency.rate']},
+                    debit  : {$divide: ['$debit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
                 $group: {
-                    _id  : '$account._id',
-                    name : {$addToSet: '$account.name'},
+                    _id   : '$account._id',
+                    name  : {$addToSet: '$account.name'},
                     credit: {$sum: '$credit'},
-                    debit: {$sum: '$debit'}
+                    debit : {$sum: '$debit'}
                 }
             }, {
                 $project: {
-                    _id  : 1,
-                    debit: {$divide: ['$debit', 100]},
+                    _id   : 1,
+                    debit : {$divide: ['$debit', 100]},
                     credit: {$divide: ['$credit', 100]},
-                    name : {$arrayElemAt: ["$name", 0]}
+                    name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -3691,23 +3766,23 @@ var Module = function (models) {
             }, {
                 $project: {
                     date   : 1,
-                    debit : {$divide: ['$debit', '$currency.rate']},
+                    debit  : {$divide: ['$debit', '$currency.rate']},
                     credit : {$divide: ['$credit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
                 $group: {
-                    _id  : '$account._id',
-                    name : {$addToSet: '$account.name'},
+                    _id   : '$account._id',
+                    name  : {$addToSet: '$account.name'},
                     credit: {$sum: '$credit'},
-                    debit: {$sum: '$debit'}
+                    debit : {$sum: '$debit'}
                 }
             }, {
                 $project: {
-                    _id  : 1,
+                    _id   : 1,
                     credit: {$divide: ['$credit', 100]},
-                    debit: {$divide: ['$debit', 100]},
-                    name : {$arrayElemAt: ["$name", 0]}
+                    debit : {$divide: ['$debit', 100]},
+                    name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -3762,22 +3837,22 @@ var Module = function (models) {
                 $project: {
                     date   : 1,
                     credit : {$divide: ['$credit', '$currency.rate']},
-                    debit : {$divide: ['$debit', '$currency.rate']},
+                    debit  : {$divide: ['$debit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
                 $group: {
-                    _id  : '$account._id',
-                    name : {$addToSet: '$account.name'},
-                    debit: {$sum: '$debit'},
+                    _id   : '$account._id',
+                    name  : {$addToSet: '$account.name'},
+                    debit : {$sum: '$debit'},
                     credit: {$sum: '$credit'}
                 }
             }, {
                 $project: {
-                    _id  : 1,
-                    debit: {$divide: ['$debit', 100]},
+                    _id   : 1,
+                    debit : {$divide: ['$debit', 100]},
                     credit: {$divide: ['$credit', 100]},
-                    name : {$arrayElemAt: ["$name", 0]}
+                    name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -3811,22 +3886,22 @@ var Module = function (models) {
                 $project: {
                     date   : 1,
                     credit : {$divide: ['$credit', '$currency.rate']},
-                    debit : {$divide: ['$debit', '$currency.rate']},
+                    debit  : {$divide: ['$debit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
                 $group: {
-                    _id  : '$account._id',
-                    name : {$addToSet: '$account.name'},
-                    debit: {$sum: '$debit'},
+                    _id   : '$account._id',
+                    name  : {$addToSet: '$account.name'},
+                    debit : {$sum: '$debit'},
                     credit: {$sum: '$credit'}
                 }
             }, {
                 $project: {
-                    _id  : 1,
-                    debit: {$divide: ['$debit', 100]},
+                    _id   : 1,
+                    debit : {$divide: ['$debit', 100]},
                     credit: {$divide: ['$credit', 100]},
-                    name : {$arrayElemAt: ["$name", 0]}
+                    name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -3860,22 +3935,22 @@ var Module = function (models) {
                 $project: {
                     date   : 1,
                     credit : {$divide: ['$credit', '$currency.rate']},
-                    debit : {$divide: ['$debit', '$currency.rate']},
+                    debit  : {$divide: ['$debit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
                 $group: {
-                    _id  : '$account._id',
-                    name : {$addToSet: '$account.name'},
-                    debit: {$sum: '$debit'},
+                    _id   : '$account._id',
+                    name  : {$addToSet: '$account.name'},
+                    debit : {$sum: '$debit'},
                     credit: {$sum: '$credit'}
                 }
             }, {
                 $project: {
-                    _id  : 1,
-                    debit: {$divide: ['$debit', 100]},
+                    _id   : 1,
+                    debit : {$divide: ['$debit', 100]},
                     credit: {$divide: ['$credit', 100]},
-                    name : {$arrayElemAt: ["$name", 0]}
+                    name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
