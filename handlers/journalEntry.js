@@ -1319,6 +1319,8 @@ var Module = function (models) {
                                     var vacationForEmployee = vacationObject[employeeSubject] || {};
                                     var vacationSameDate = vacationForEmployee[dateKey];
 
+                                    var overtime = (wTrackModel._type === 'overtime') ? true : false;
+
                                     Model.remove({
                                         "sourceDocument.model": 'Employees',
                                         date                  : date.set(timeToSet)
@@ -1390,15 +1392,15 @@ var Module = function (models) {
                                         };
 
                                         if (day <= 5 && !sameDayHoliday) {
-                                            if (hours - HOURSCONSTANT >= 0) {
-                                                bodySalary.amount = costHour * HOURSCONSTANT * 100;
-                                                bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
-                                                bodyOverhead.amount = overheadRate * HOURSCONSTANT * 100;
-                                            } else {
+                                            //if (hours - HOURSCONSTANT >= 0) {
+                                            //    bodySalary.amount = costHour * HOURSCONSTANT * 100;
+                                            //    bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
+                                            //    bodyOverhead.amount = overheadRate * HOURSCONSTANT * 100;
+                                            //} else {
                                                 bodySalary.amount = costHour * hours * 100;
                                                 bodyOvertime.amount = 0;
                                                 bodyOverhead.amount = overheadRate * hours * 100;
-                                            }
+                                            //}
 
                                             if (vacationSameDate) {
                                                 if ((vacationForEmployee[dateKey] === "V") || (vacationForEmployee[dateKey] === "S")) {
@@ -1427,6 +1429,11 @@ var Module = function (models) {
                                             if (sameDayHoliday) {
                                                 bodyOvertime.amount = costHour * hours * 100;
                                             }
+                                        }
+
+                                        if (overtime){
+                                            bodyOvertime.amount = costHour * hours * 100;
+                                            bodyOverhead.amount = overheadRate * hours * 100;
                                         }
 
                                         createReconciled(bodySalary, req.session.lastDb, methodCb, req.session.uId);
@@ -1487,14 +1494,14 @@ var Module = function (models) {
                                         }
                                     };
 
-                                    var bodySalaryOvertime = {
+                                   /* var bodySalaryOvertime = {
                                         currency      : CONSTANTS.CURRENCY_USD,
                                         journal       : CONSTANTS.OVERTIME_PAYABLE,
                                         date          : date.set(timeToSet),
                                         sourceDocument: {
                                             model: 'wTrack'
                                         }
-                                    };
+                                    };*/
 
                                     var bodyOverhead = {
                                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1506,22 +1513,22 @@ var Module = function (models) {
                                         }
                                     };
 
-                                    var callB = _.after(3, asyncCb);
+                                    var callB = _.after(2, asyncCb);
                                     var totalWorked = wTracks[sourceDoc];
                                     var idleTime = HOURSCONSTANT - totalWorkedForDay;
                                     var idleCoeff = isFinite(idleTime / totalWorkedForDay) ? idleTime / totalWorkedForDay : 0;
 
                                     bodySalaryIdle.sourceDocument._id = sourceDoc;
-                                    bodySalaryOvertime.sourceDocument._id = sourceDoc;
+                                   // bodySalaryOvertime.sourceDocument._id = sourceDoc;
 
                                     if (totalWorkedForDay - HOURSCONSTANT < 0) {
                                         if (!vacation) {
                                             if (totalWorked - HOURSCONSTANT >= 0) {
-                                                bodySalaryOvertime.amount = costHour * (totalWorked - HOURSCONSTANT) * 100;
+                                               // bodySalaryOvertime.amount = costHour * (totalWorked - HOURSCONSTANT) * 100;
                                                 bodyOverhead.amount = overheadRate * (totalWorked - HOURSCONSTANT) * 100;
                                                 bodySalaryIdle.amount = 0;
                                             } else {
-                                                bodySalaryOvertime.amount = 0;
+                                               // bodySalaryOvertime.amount = 0;
                                                 bodyOverhead.amount = 0;
                                                 bodySalaryIdle.amount = costHour * idleTime * idleCoeff * 100;
                                                 totalIdleObject[dateKey] += costHour * idleTime * idleCoeff * 100;
@@ -1529,18 +1536,18 @@ var Module = function (models) {
 
                                             notUsedVacationCost -= vacationRateForDay * totalWorked;
                                         } else {
-                                            bodySalaryOvertime.amount = 0;
+                                           // bodySalaryOvertime.amount = 0;
                                             bodySalaryIdle.amount = 0;
                                             bodyOverhead.amount = 0;
                                         }
                                     } else {
-                                        bodySalaryOvertime.amount = 0;
+                                       // bodySalaryOvertime.amount = 0;
                                         bodySalaryIdle.amount = 0;
                                         bodyOverhead.amount = 0;
                                     }
 
                                     createReconciled(bodySalaryIdle, req.session.lastDb, callB, req.session.uId);
-                                    createReconciled(bodySalaryOvertime, req.session.lastDb, callB, req.session.uId);
+                                    //createReconciled(bodySalaryOvertime, req.session.lastDb, callB, req.session.uId);
                                     createReconciled(bodyOverhead, req.session.lastDb, callB, req.session.uId);
                                 }, function () {
                                     ourCb();

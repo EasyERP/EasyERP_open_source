@@ -42,7 +42,7 @@ module.exports = {
     ACCOUNT_RECEIVABLE: '565eb53a6aa50532e5df0bc9',
 
     BANK_AND_CASH: [
-      '565eb53a6aa50532e5df0bd6',
+      '565eb53a6aa50532e5df0bd6', //bank and Cash
         '565eb53a6aa50532e5df0bd3',
         '565eb53a6aa50532e5df0bd2',
         '565eb53a6aa50532e5df0bd1',
@@ -56,14 +56,14 @@ module.exports = {
     ],
 
     LIABILITIES: [
-        '565eb53a6aa50532e5df0bde',
-        '565eb53a6aa50532e5df0bdd',
-        '565eb53a6aa50532e5df0bdb'
+        '565eb53a6aa50532e5df0bde', //Reserve and Profit/Loss Account
+        '565eb53a6aa50532e5df0bdd', //tax received
+        '565eb53a6aa50532e5df0bdb' //current Liabilities
     ],
 
     EQUITY: [
-        '565eb53a6aa50532e5df0bf3',
-        '565eb53a6aa50532e5df0bf2'
+        '565eb53a6aa50532e5df0bf3', //dividends
+        '565eb53a6aa50532e5df0bf2' //capital
     ],
 
     MOBILE_DEFAULT_COUNT_PER_LIST: 50,
