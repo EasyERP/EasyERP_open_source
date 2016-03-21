@@ -3204,7 +3204,6 @@ var wTrack = function (models) {
     };
 
     this.synthetic = function (req, res, next) {
-        var ObjectId = mongoose.Types.ObjectId;
         var query = req.query;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
         var Payment = models.get(req.session.lastDb, 'Payment', paymentSchema);
@@ -3225,8 +3224,7 @@ var wTrack = function (models) {
         var endDateByMonth;
         var matchObject = {
             _type   : 'wTrackInvoice',
-            forSales: true,
-            salesPerson: ObjectId("55b92ad221e4b7c40f0000cb")
+            forSales: true
         };
 
         var wTrackMatchObject = {};
@@ -3664,19 +3662,24 @@ var wTrack = function (models) {
             if (err) {
                 return next(err);
             }
-            
-            sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
-            /*_sales = response.paid[0] ? response.paid[0].salesArray : [];
 
-            sales = _.unionBy(sales, _sales, '_id');*/
+            sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
+            _sales = response.paid[0] ? response.paid[0].salesArray : [];
+
+            sales = sales.concat(_sales);
+            sales = _.uniq(sales, function (elm) {
+                if (elm._id) {
+                    return elm._id.toString();
+                }
+            });
 
             mergeByProperty(response.invoiced, response.paid, 'date');
             mergeByProperty(response.invoiced, response.revenue, 'date');
-            
+
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
             res.status(200).send({payments: response.invoiced, sales: sales});
-             /*res.status(200).send(response);*/
+            /*res.status(200).send(response);*/
         });
     };
 };

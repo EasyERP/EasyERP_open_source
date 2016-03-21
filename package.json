@@ -24,7 +24,7 @@
     "googleapis": "0.4.6",
     "grunt": "0.4.5",
     "isodate": "0.1.4",
-    "lodash": "^4.6.0",
+    "lodash": "3.8.0",
     "money": "0.2.0",
     "mongodb": "2.0.44",
     "mongoose": "4.0.8",
