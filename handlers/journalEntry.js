@@ -1072,7 +1072,7 @@ var Module = function (models) {
         var parallelFunctionRemoveCreate;
         var removeBySource;
         var create;
-        var createIdleOvertime;
+        var createIdle;
         var parallelRemoveCreate;
         var waterfallCreateEntries;
         var wTracks;
@@ -1450,14 +1450,15 @@ var Module = function (models) {
                         });
                     };
 
-                    createIdleOvertime = function (totalObject, createWaterfallCb) {
+                    createIdle = function (totalObject, createWaterfallCb) {
                         var dates = Object.keys(totalObject);
                         var totalIdleObject = {};
                         var findAllDevs;
-                        var createIdle;
+                        var createIdleTime;
                         var matchObj;
                         var findMonthHours;
                         var monthHours = {};
+                        var newDateArrayWithIdle = [];
 
                         if (!dates.length){
                            return createWaterfallCb();
@@ -1473,9 +1474,19 @@ var Module = function (models) {
                         var endMonth = parseInt(maxDate.slice(4, 6), 10);
                         var endDateOfMonth = parseInt(maxDate.slice(6), 10);
                         var endDate = moment().isoWeekYear(endYear).month(endMonth - 1).date(endDateOfMonth);
+                        var j;
 
                         var startDateKey = startYear * 100 + moment(date).isoWeek();
                         var endDateKey = endYear * 100 + moment(endDate).isoWeek();
+
+                        var startOfMonth = moment(date).startOf('month');
+                        var startK = (moment(startOfMonth).isoWeekYear() * 100 + moment(startOfMonth).month() + 1) * 100 + moment(startOfMonth).date();
+                        var endOfMonth = moment(endDate).endOf('month');
+                        var endK = (moment(endOfMonth).isoWeekYear() * 100 + moment(endOfMonth).month() + 1) * 100 + moment(endOfMonth).date();
+
+                        for (j = endK; j >= startK; j--){
+                            newDateArrayWithIdle.push(j.toString());
+                        }
 
                         matchObj = {
                             $and: [{
@@ -1551,7 +1562,7 @@ var Module = function (models) {
                         };
 
                         findMonthHours = function(empResult, callback){
-                            async.each(dates, function (dateKey, asyncCb) {
+                            async.each(newDateArrayWithIdle, function (dateKey, asyncCb) {
                                 var year = parseInt(dateKey.slice(0, 4), 10);
                                 var month = parseInt(dateKey.slice(4, 6), 10);
                                 var key = year * 100 + month;
@@ -1571,15 +1582,15 @@ var Module = function (models) {
                             });
                         };
 
-                        createIdle = function (empResult, callback) {
-                            async.each(dates, function (dateKey, asyncCb) {
+                        createIdleTime = function (empResult, callback) {
+                            async.each(newDateArrayWithIdle, function (dateKey, asyncCb) {
                                 var year = parseInt(dateKey.slice(0, 4), 10);
                                 var month = parseInt(dateKey.slice(4, 6), 10);
                                 var dateOfMonth = parseInt(dateKey.slice(6), 10);
                                 var date = moment().isoWeekYear(year).month(month - 1).date(dateOfMonth);
-                                var objectForDay = totalObject[dateKey];
-                                var employeesObjects = objectForDay.employees;
-                                var employeesIds = Object.keys(objectForDay.employees);
+                                var objectForDay = totalObject[dateKey] || {};
+                                var employeesObjects = objectForDay.employees || [];
+                                var employeesIds = Object.keys(employeesObjects);
                                 var allEmployees = _.union(employeesIds, empResult.emps);
                                 var employeesCount = allEmployees.length;
                                 var i;
@@ -1653,7 +1664,7 @@ var Module = function (models) {
                             });
                         };
 
-                        var waterfall = [findAllDevs, findMonthHours, createIdle];
+                        var waterfall = [findAllDevs, findMonthHours, createIdleTime];
 
                         async.waterfall(waterfall, function (err, result) {
                             if (err) {
@@ -1665,7 +1676,7 @@ var Module = function (models) {
 
                     };
 
-                    waterfallCreateEntries = [createDirect, createIdleOvertime];
+                    waterfallCreateEntries = [createDirect, createIdle];
 
                     async.waterfall(waterfallCreateEntries, function (err, result) {
                         if (err) {
