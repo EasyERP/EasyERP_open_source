@@ -3224,7 +3224,8 @@ var wTrack = function (models) {
         var endDateByMonth;
         var matchObject = {
             _type   : 'wTrackInvoice',
-            forSales: true
+            forSales: true,
+            salesPerson: "55b92ad221e4b7c40f0000cb"
         };
 
         var wTrackMatchObject = {};
@@ -3644,8 +3645,8 @@ var wTrack = function (models) {
 
         async.parallel({
             invoiced: invoiceGrouper,
-            paid    : paymentGrouper,
-            revenue : revenueGrouper
+            /*paid    : paymentGrouper,
+            revenue : revenueGrouper*/
         }, function (err, response) {
             var sales;
 
@@ -3656,11 +3657,11 @@ var wTrack = function (models) {
                     });
 
                     if (arr1obj) {
-                        _.extend(arr1obj, arr2obj)
+                        _.extend(arr1obj, arr2obj);
                     } else {
-                        arr1.push(arr2obj)
+                        arr1.push(arr2obj);
                     }
-                    ;
+
                 });
             }
 
@@ -3669,15 +3670,15 @@ var wTrack = function (models) {
             }
 
             mergeByProperty(response.invoiced, response.paid, 'date');
-            mergeByProperty(response.invoiced, response.revenue, 'date');
+            /*mergeByProperty(response.invoiced, response.revenue, 'date');*/
 
             sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
             res.status(200).send({payments: response.invoiced, sales: sales});
-            /*res.status(200).send(response);*/
+             /*res.status(200).send(response);*/
         });
-    }
+    };
 };
 
 module.exports = wTrack;
