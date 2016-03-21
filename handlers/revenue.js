@@ -3204,6 +3204,7 @@ var wTrack = function (models) {
     };
 
     this.synthetic = function (req, res, next) {
+        var ObjectId = mongoose.Types.ObjectId;
         var query = req.query;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
         var Payment = models.get(req.session.lastDb, 'Payment', paymentSchema);
@@ -3225,7 +3226,7 @@ var wTrack = function (models) {
         var matchObject = {
             _type   : 'wTrackInvoice',
             forSales: true,
-            salesPerson: "55b92ad221e4b7c40f0000cb"
+            salesPerson: ObjectId("55b92ad221e4b7c40f0000cb")
         };
 
         var wTrackMatchObject = {};
@@ -3412,10 +3413,7 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     _id            : 0,
-                    salesPerson    : '$_id._id'/*{
-                     _id : '$_id._id',
-                     name: {$concat: ['$_id.name.first', ' ', '$_id.name.last']}
-                     }*/,
+                    salesPerson    : '$_id._id',
                     invoicedBySales: 1,
                     salesArray     : 1,
                     date           : '$_id.date',
@@ -3525,10 +3523,7 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     _id        : 0,
-                    salesPerson: '$_id._id'/*{
-                     _id : '$_id._id',
-                     name: {$concat: ['$_id.name.first', ' ', '$_id.name.last']}
-                     }*/,
+                    salesPerson: '$_id._id',
                     paidBySales: 1,
                     salesArray : 1,
                     date       : '$_id.date',
@@ -3645,10 +3640,11 @@ var wTrack = function (models) {
 
         async.parallel({
             invoiced: invoiceGrouper,
-            /*paid    : paymentGrouper,
-            revenue : revenueGrouper*/
+            paid    : paymentGrouper,
+            revenue : revenueGrouper
         }, function (err, response) {
             var sales;
+            var _sales;
 
             function mergeByProperty(arr1, arr2, prop) {
                 _.each(arr2, function (arr2obj) {
@@ -3668,11 +3664,15 @@ var wTrack = function (models) {
             if (err) {
                 return next(err);
             }
+            
+            sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
+            /*_sales = response.paid[0] ? response.paid[0].salesArray : [];
+
+            sales = _.unionBy(sales, _sales, '_id');*/
 
             mergeByProperty(response.invoiced, response.paid, 'date');
-            /*mergeByProperty(response.invoiced, response.revenue, 'date');*/
-
-            sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
+            mergeByProperty(response.invoiced, response.revenue, 'date');
+            
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
             res.status(200).send({payments: response.invoiced, sales: sales});

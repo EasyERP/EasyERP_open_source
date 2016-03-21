@@ -55,20 +55,20 @@ var requestHandler = function (app, event, mainDb) {
     event.on('removeWorkflow', function (req, wId, id) {
         var query;
         switch (wId) {
-            case "Opportunities":
-            case "Leads":
-                query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
+            case 'Opportunities':
+            case 'Leads':
+                query = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
                 break;
-            case "Projects":
-                query = models.get(req.session.lastDb, "Project", projectSchema);
+            case 'Projects':
+                query = models.get(req.session.lastDb, 'Project', projectSchema);
                 break;
-            case "Tasks":
-                query = models.get(req.session.lastDb, "Tasks", tasksSchema);
+            case 'Tasks':
+                query = models.get(req.session.lastDb, 'Tasks', tasksSchema);
                 break;
-            case "Applications":
-                query = models.get(req.session.lastDb, "Employees", employeeSchema);
+            case 'Applications':
+                query = models.get(req.session.lastDb, 'Employees', employeeSchema);
                 break;
-            case "Jobpositions":
+            case 'Jobpositions':
                 query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
                 break;
 
