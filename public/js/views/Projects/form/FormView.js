@@ -5,46 +5,44 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-        'text!templates/Projects/form/FormTemplate.html',
-        'text!templates/Projects/projectInfo/DetailsTemplate.html',
-        'text!templates/Projects/projectInfo/proformRevenue.html',
-        'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
-        'text!templates/Projects/projectInfo/invoiceStats.html',
-        'text!templates/Projects/projectInfo/proformaStats.html',
-        'views/selectView/selectView',
-        'views/salesOrder/EditView',
-        'views/salesQuotation/EditView',
-        'views/salesInvoice/EditView',
-        'views/Proforma/EditView',
-        'views/Projects/EditView',
-        'views/Notes/NoteView',
-        'views/Notes/AttachView',
-        'views/Assignees/AssigneesView',
-        'views/Bonus/BonusView',
-        'views/Projects/projectInfo/wTracks/wTrackView',
-        'views/Projects/projectInfo/payments/paymentView',
-        'views/Projects/projectInfo/invoices/invoiceView',
-        'views/Projects/projectInfo/proformas/proformaView',
-        'views/Projects/projectInfo/quotations/quotationView',
-        'views/Projects/projectInfo/wTracks/generateWTrack',
-        'views/Projects/projectInfo/orders/orderView',
-        'collections/wTrack/filterCollection',
-        'collections/Quotation/filterCollection',
-        'collections/salesInvoice/filterCollection',
-        'collections/customerPayments/filterCollection',
-        'collections/Jobs/filterCollection',
-        'collections/Proforma/filterCollection',
-        'models/QuotationModel',
-        'models/InvoiceModel',
-        'text!templates/Notes/AddAttachments.html',
-        "common",
-        'populate',
-        'custom',
-        'dataService',
-        'async',
-        'helpers'
-    ],
-
+    'text!templates/Projects/form/FormTemplate.html',
+    'text!templates/Projects/projectInfo/DetailsTemplate.html',
+    'text!templates/Projects/projectInfo/proformRevenue.html',
+    'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
+    'text!templates/Projects/projectInfo/invoiceStats.html',
+    'text!templates/Projects/projectInfo/proformaStats.html',
+    'views/selectView/selectView',
+    'views/salesOrder/EditView',
+    'views/salesQuotation/EditView',
+    'views/salesInvoice/EditView',
+    'views/Proforma/EditView',
+    'views/Projects/EditView',
+    'views/Notes/NoteView',
+    'views/Notes/AttachView',
+    'views/Assignees/AssigneesView',
+    'views/Bonus/BonusView',
+    'views/Projects/projectInfo/wTracks/wTrackView',
+    'views/Projects/projectInfo/payments/paymentView',
+    'views/Projects/projectInfo/invoices/invoiceView',
+    'views/Projects/projectInfo/proformas/proformaView',
+    'views/Projects/projectInfo/quotations/quotationView',
+    'views/Projects/projectInfo/wTracks/generateWTrack',
+    'views/Projects/projectInfo/orders/orderView',
+    'collections/wTrack/filterCollection',
+    'collections/Quotation/filterCollection',
+    'collections/salesInvoice/filterCollection',
+    'collections/customerPayments/filterCollection',
+    'collections/Jobs/filterCollection',
+    'collections/Proforma/filterCollection',
+    'models/QuotationModel',
+    'models/InvoiceModel',
+    'text!templates/Notes/AddAttachments.html',
+    'common',
+    'populate',
+    'custom',
+    'dataService',
+    'async',
+    'helpers'],
     function (Backbone,
               $,
               _,
@@ -86,7 +84,7 @@ define([
               dataService,
               async,
               helpers) {
-        "use strict";
+        'use strict';
 
         var View = Backbone.View.extend({
             el              : '#content-holder',
@@ -940,10 +938,10 @@ define([
                 dataService.getData('invoice/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderInvoiceStats(response.success);
+                    }
 
-                        if (typeof cb === 'function') {
-                            cb();
-                        }
+                    if (typeof cb === 'function') {
+                        cb();
                     }
                 });
             },
@@ -961,10 +959,10 @@ define([
                 dataService.getData('proforma/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderProformaStats(response.success);
+                    }
 
-                        if (typeof cb === 'function') {
-                            cb();
-                        }
+                    if (typeof cb === 'function') {
+                        cb();
                     }
                 });
             },
@@ -1307,7 +1305,7 @@ define([
                     tabText = $tab.text().split('(')[0];
 
                     tabText += '(';
-                    tabText += tabs[tab];
+                    tabText += tabs[tab] >= 0 ? tabs[tab] : 0;
                     tabText += ')';
 
                     $tab.text(tabText);
