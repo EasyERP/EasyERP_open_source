@@ -1,0 +1,45 @@
+<div id="top-bar-salesManagers" class="projectInfoTopBar">
+    <div id="createBtnHolder">
+        <a href="javascript;" class="fa fa-times" title="Remove" id="removeSalesManager"></a>
+    </div>
+</div>
+<table class="list task-list">
+    <colgroup>
+        <col width="2%"/>
+        <col width="2%"/>
+        <col width="20%"/>
+        <col width="20%"/>
+    </colgroup>
+    <thead>
+    <tr >
+        <th class="centerCell"><input type="checkbox" id="check_all_salesManagers"/></th>
+        <th class="centerCell">N</th>
+        <th>Sales Manager</th>
+        <th>Date</th>
+        <th></th>
+    </tr>
+
+    </thead>
+    <tbody id="salesManagersTable">
+
+    <%salesManagers.forEach(function(salesManager, index){ %>
+
+    <tr data-index="<%= index %>" data-id="<%=salesManager.manager ? salesManager.manager._id : ''%>">
+
+        <td class="centerCell">
+            <input type="checkbox" value="<%=salesManager.manager ? salesManager.manager._id : ''%>" class="salesManager-checkbox <%= index === salesManagers.length -1 ? 'notRemovable' : ''%>"/>
+        </td>
+        <td class="centerCell"><%=index + 1 %></td>
+
+        <td>
+            <%=salesManager.manager ? salesManager.manager.fullName : '' %>
+        </td>
+        <td class="salesManagerDate">
+            <%= salesManager.date ? utcDateToLocaleDate(salesManager.date) : ''%>
+        </td>
+
+    </tr>
+
+    <% }) %>
+    </tbody>
+</table>

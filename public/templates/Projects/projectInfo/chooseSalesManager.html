@@ -1,0 +1,26 @@
+<div class="form-holder">
+    <form method="post" action="" id="chooseSalesManagerForm">
+        <table>
+            <colgroup>
+                <col width="25%"/>
+                <col width="25%"/>
+                <col width="25%"/>
+                <col width="25%"/>
+            </colgroup>
+
+            <th><label for="employee">Sales Manager</label></th>
+            <th data-id="<%= salesManager.manager ? salesManager.manager._id : ''%>">
+                <a id="employee" class="current-selected" href="javascript:;"><%=salesManager.manager ?
+                    salesManager.manager.fullName: 'Select'%></a>
+            </th>
+
+            <th><label for="date">Date</label></th>
+            <th>
+                <input class="extrainfo" type="text" name="date" id="date"
+                       value="<%=salesManager.date ? utcDateToLocaleDate(salesManager.date) : 'Choose Date'%>"
+                       readonly="" placeholder="Date">
+            </th>
+
+        </table>
+    </form>
+</div>

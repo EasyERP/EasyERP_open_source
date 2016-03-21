@@ -188,6 +188,49 @@ var Employee = function (models) {
             });
     };
 
+    this.getByDepartments = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var matchObject = {};
+
+        if (req.query && req.query.departments) {
+            matchObject = {
+                "department.departmentName": {$in: req.query.departments}
+            };
+        }
+
+        Employee.aggregate([
+            {
+                $match: {isEmployee: true}
+            },
+            {
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id",
+                    as: "department"
+                }
+            }, {
+                $project: {
+                    department: {$arrayElemAt: ["$department", 0]},
+                    name      : 1
+                }
+            },
+            {
+                $match: matchObject
+            },
+            {
+                $project: {
+                    name: 1
+                }
+            }], function (err, employees) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: employees});
+        });
+    };
+
     this.getForProjectDetails = function (req, res, next) {
         var ids = req.query.data;
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
