@@ -73,6 +73,9 @@ module.exports = {
         '565eb53a6aa50532e5df0bf2' //capital
     ],
 
+    SALARY_PAYABLE_ACCOUNT: '56c4444eb81fd51e19207f3e',
+    SALARY_OVERTIME_ACCOUNT: '56c9d555c3b88f6d64490fb5',
+
     OPERATING: [],
     INVESTING: [],
     FINANCING: [],

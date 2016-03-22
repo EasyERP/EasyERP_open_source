@@ -1187,7 +1187,7 @@ var Module = function (models) {
                 var holidaysObject = {};
                 var vacationObject = {};
 
-                if (!wTrackIds.length){
+                if (!wTrackIds.length) {
                     return wfcallback();
                 }
 
@@ -3894,51 +3894,324 @@ var Module = function (models) {
         endDate = moment(new Date(endDate)).endOf('day');
 
         getOperating = function (cb) {
-            Model.aggregate([{
-                $match: {
-                    date   : {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
-                    account: {$in: CONSTANTS.OPERATING}
-                }
-            }, {
-                $lookup: {
-                    from        : "chartOfAccount",
-                    localField  : "account",
-                    foreignField: "_id", as: "account"
-                }
-            }, {
-                $project: {
-                    date   : 1,
-                    credit : {$divide: ['$credit', '$currency.rate']},
-                    debit  : {$divide: ['$debit', '$currency.rate']},
-                    account: {$arrayElemAt: ["$account", 0]}
-                }
-            }, {
-                $group: {
-                    _id   : '$account._id',
-                    name  : {$addToSet: '$account.name'},
-                    debit : {$sum: '$debit'},
-                    credit: {$sum: '$credit'}
-                }
-            }, {
-                $project: {
-                    _id   : 1,
-                    debit : {$divide: ['$debit', 100]},
-                    credit: {$divide: ['$credit', 100]},
-                    name  : {$arrayElemAt: ["$name", 0]}
-                }
-            }, {
-                $sort: {
-                    name: 1
-                }
-            }], function (err, result) {
+
+            var getEBIT = function (cb) {
+                var getGrossFit = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            },
+                            account: objectId(CONSTANTS.PRODUCT_SALES),
+                            credit : {$gt: 0}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id  : '$account._id',
+                            name : {$addToSet: '$account.name'},
+                            debit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $project: {
+                            debit: {$divide: ['$debit', 100]}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                var getExpenses = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            },
+                            account: objectId(CONSTANTS.COGS),
+                            debit  : {$gt: 0}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id  : '$account._id',
+                            name : {$addToSet: '$account.name'},
+                            debit: {$sum: '$debit'}
+                        }
+                    }, {
+                        $project: {
+                            debit: {$divide: ['$debit', 100]}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                async.parallel([getGrossFit, getExpenses], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var grossProfit = result[0] && result[0][0] ? result[0][0].debit : 0;
+                    var expenses = result[1] && result[1][0] ? result[1][0].debit : 0;
+
+                    var EBIT = grossProfit - expenses;
+
+                    cb(null, [{name: 'Operating Income (EBIT)', debit: EBIT}]);
+                });
+            };
+
+            var getAR = function (cb) {
+                var getArFirst = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(moment(startDate).endOf('day'))
+                            },
+                            account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE),
+                            credit : {$gt: 0}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id  : '$account._id',
+                            name : {$addToSet: '$account.name'},
+                            debit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $project: {
+                            debit: {$divide: ['$debit', 100]}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                var getARLast = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            },
+                            account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE),
+                            debit  : {$gt: 0}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id  : '$account._id',
+                            name : {$addToSet: '$account.name'},
+                            debit: {$sum: '$debit'}
+                        }
+                    }, {
+                        $project: {
+                            debit: {$divide: ['$debit', 100]}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                async.parallel([getArFirst, getARLast], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var arFirst = result[0] && result[0][0] ? result[0][0].debit : 0;
+                    var arLast = result[1] && result[1][0] ? result[1][0].debit : 0;
+
+                    var ar = Math.abs(arFirst - arLast) * (-1);
+
+                    var fieldName = ar > 0 ? 'Decrease in Accounts Receivable' : 'Increase in Accounts Receivable';
+
+                    cb(null, [{name: fieldName, debit: ar}]);
+                });
+            };
+
+            var getSalaryPayable = function (cb) {
+                var getSPFirst = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(moment(startDate).endOf('day'))
+                            },
+                            account: {$in: [objectId(CONSTANTS.SALARY_PAYABLE_ACCOUNT), objectId(CONSTANTS.SALARY_OVERTIME_ACCOUNT)]}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id  : '$account._id',
+                            name : {$addToSet: '$account.name'},
+                            debit: {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $project: {
+                            debit: {$divide: ['$debit', 100]},
+                            credit: {$divide: ['$credit', 100]}
+                        }
+                    }, {
+                        $group: {
+                            _id: null,
+                            debit: {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                var getSPLast = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            },
+                            account: {$in: [objectId(CONSTANTS.SALARY_PAYABLE_ACCOUNT), objectId(CONSTANTS.SALARY_OVERTIME_ACCOUNT)]}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id  : '$account._id',
+                            name : {$addToSet: '$account.name'},
+                            debit: {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $project: {
+                            debit: {$divide: ['$debit', 100]},
+                            credit: {$divide: ['$credit', 100]}
+                        }
+                    }, {
+                        $group: {
+                            _id: null,
+                            debit: {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                async.parallel([getSPFirst, getSPLast], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var spFirst = result[0] && result[0][0] ? result[0][0].debit + result[0][0].credit : 0;
+                    var spLast = result[1] && result[1][0] ? result[1][0].debit + result[1][0].credit : 0;
+
+                    var sp = spLast - spFirst;
+
+                    var fieldName = sp < 0 ? 'Decrease in Salary Payable' : 'Increase in Salary Payable';
+
+                    cb(null, [{name: fieldName, debit: sp}]);
+                });
+            };
+
+            async.parallel([getEBIT, getAR, getSalaryPayable], function (err, result) {
                 if (err) {
                     return cb(err);
                 }
 
-                cb(null, result);
+                cb(null, (result[0].concat(result[1]).concat(result[2])));
             });
         };
 
