@@ -24,7 +24,7 @@
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentInfo.unTaxed">Paid<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="paymentInfo.paid">Paid<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -61,8 +61,7 @@
         <td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
         <td data-content="dueDate"><%=invoice.dueDate%></td>
         <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
-        <td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%>
-        </td>
+        <td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>
         <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
         <td id='<%=invoice._id%>'>
             <%if(invoice.workflow){%>
@@ -85,7 +84,7 @@
         <!--</td>-->
 
         <%balance += parseFloat(invoice.paymentInfo.balance)%>
-        <%paid += parseFloat(invoice.paymentInfo.unTaxed)%>
+        <%paid += parseFloat(invoice.paymentInfo.paid)%>
         <%total += parseFloat(invoice.paymentInfo.total)%>
         </tr>
         <% }) %>

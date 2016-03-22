@@ -250,14 +250,16 @@ define([
 
                 var supplier = $thisEl.find('#supplier').attr("data-id");
 
-                var total = parseFloat($thisEl.find("#totalAmount").text());
-                var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text());
-                var balance = parseFloat($thisEl.find("#balance").text());
+                var total = parseFloat($thisEl.find("#totalAmount").text()) * 100;
+                var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text()) * 100;
+                var balance = parseFloat($thisEl.find("#balance").text()) * 100;
+                var taxes = parseFloat($thisEl.find("#taxes").text()) * 100;
 
                 var payments = {
                     total  : total,
                     unTaxed: unTaxed,
-                    balance: balance
+                    balance: balance,
+                    taxes: taxes
                 };
 
                 var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
@@ -291,7 +293,7 @@ define([
                                 unitPrice  : price,
                                 quantity   : quantity,
                                 taxes      : taxes,
-                                amount     : amount
+                                subTotal   : amount
                             });
                         }
                     }
@@ -323,8 +325,8 @@ define([
                     salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
 
-                    //products   : products,
-                    //paymentInfo: payments,
+                    products   : products,
+                    paymentInfo: payments,
 
                     groups  : {
                         owner: $("#allUsersSelect").data("id"),

@@ -26,7 +26,7 @@ var Invoice = function (models, event) {
     var _journalEntryHandler = new JournalEntryHandler(models);
 
     function checkDb(db) {
-        var validDbs = ["weTrack", "production", "development"];
+        var validDbs = ["weTrack", "production", "development", "maxdb"];
 
         return validDbs.indexOf(db) !== -1;
     }
