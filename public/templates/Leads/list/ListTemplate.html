@@ -3,7 +3,7 @@
     <td class="notForm centerCell"><input type="checkbox" value="<%=lead._id%>" class="checkbox"/></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><span class="blue"><%=lead.name%></span></td>
-    <td><%=lead.contactName.first%> <%=lead.contactName.last%></td>
+    <td><%= lead.contactName || ''%></td>
     <td><%=lead.email%></td>
     <td class="notForm"><a href="skype:<%=lead.phones.phone%>?call"><%=lead.phones.phone%></a></td>
     <td><%=lead.address.country%></td>

@@ -2,15 +2,18 @@
  * Created by soundstorm on 12.08.15.
  */
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/Filter/filterGroup.html',
         'collections/Filter/filterCollection',
         'constants',
         'jQuery'
     ],
-    function (valuesTemplate, filterCollection, CONSTANTS, $) {
+    function (Backbone, _, valuesTemplate, FilterCollection, CONSTANTS, $) {
+        'use strict';
         var filterValuesView = Backbone.View.extend({
             initialize: function (options) {
-                var sortOptions = options.sortOptions ? options.sortOptions : {};
+                var sortOptions = options.sortOptions || {};
 
                 _.bindAll(this, "renderContent");
                 this.contentType = options.parentContentType;
@@ -23,7 +26,7 @@ define([
                 this.elementToShow = options.elementToShow || (CONSTANTS.FILTERVALUESCOUNT > this.collectionLength) ? this.collectionLength : CONSTANTS.FILTERVALUESCOUNT;
                 this.$el = $(options.element);
 
-                this.filteredCollection = new filterCollection(this.collection.toJSON(), sortOptions);
+                this.filteredCollection = new FilterCollection(this.collection.toJSON(), sortOptions);
 
                 this.collection.on('change', function () {
                     this.filteredCollection.set(this.collection.toJSON());
@@ -91,6 +94,7 @@ define([
                 var ulContent = ulElement.closest('.ulContent');
                 var paginationLi = ulContent.find('.miniStylePagination');
                 var element;
+                var i;
 
                 this.collectionLength = this.filteredCollection.length;
                 this.paginationBool = this.collectionLength > this.elementToShow;
@@ -103,13 +107,14 @@ define([
                 var prevPage;
                 var nextPage;
                 var status = '';
+                var classFired = '';
 
                 displayCollection = this.filteredCollection.toJSON();
                 displayCollection = displayCollection.slice(this.start, this.end);
 
                 ulElement.html('');
 
-                for (var i = 0; i <= (this.elementToShow - 1); i++) {
+                for (i = 0; i <= (this.elementToShow - 1); i++) {
                     element = displayCollection[i];
                     if (element) {
                         element.name = $.trim(element.name) || 'None';
@@ -121,8 +126,7 @@ define([
 
                         if (element._id || element._id === 0) {
 
-                            if (('isEmployee' in element) && (element.isEmployee === false)) {
-                                var classFired = '';
+                            if (element.isEmployee === false) {
 
                                 if (!element.status) {
                                     classFired = "fired";
@@ -180,11 +184,11 @@ define([
                 searchInput = $currentEl.find(".ulContent input");
 
                 searchInput.keyup(function (e) {
-                    self.inputEvent(e)
+                    self.inputEvent(e);
                 });
 
                 searchInput.change(function (e) {
-                    self.inputEvent(e)
+                    self.inputEvent(e);
                 });
 
             }

@@ -22,7 +22,8 @@ define([
 
         events: {
             'click .stageSelect'                               : 'showNewSelect',
-            'click td.editable'                                : 'editRow',
+            'click td.editable:not(.disabled)'                 : 'editRow',
+            'click td.disabled'                                : 'notify',
             'keydown input.editing'                            : 'keyDown',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             click                                              : 'removeInputs'
@@ -42,7 +43,7 @@ define([
             this.row = options.tr;
             this.wTracks = options.wTracks;
 
-            employeeHelper.getNonWorkingDaysByWeek(year, week, employee, null,
+            employeeHelper.getNonWorkingDaysByWeek(year, week, null, employee, null,
                 function (nonWorkingDays, self) {
                     options.nonWorkingDays = nonWorkingDays;
                     self.render(options);
@@ -198,14 +199,24 @@ define([
         },
 
         autoCalc: function (e, targetEl) {
-            targetEl = targetEl || $(e.target);
-
-            var isInput = targetEl.prop('tagName') === 'INPUT';
-            var trs = targetEl.closest('tr');
-            var edited = trs.find('input.edited');
-            var editedCol = edited.closest('td');
+            var isInput;
+            var trs;
+            var edited;
+            var editedCol;
             var value;
             var calcEl;
+
+            targetEl = targetEl || $(e.target);
+
+            isInput = targetEl.prop('tagName') === 'INPUT';
+            trs = targetEl.closest('tr');
+            edited = trs.find('input.edited');
+            editedCol = edited.closest('td');
+
+            isInput = targetEl.prop('tagName') === 'INPUT';
+            trs = targetEl.closest('tr');
+            edited = trs.find('input.edited');
+            editedCol = edited.closest('td');
 
             function appplyDefaultValue(el) {
                 var value = el.text();
@@ -361,6 +372,13 @@ define([
             return false;
         },
 
+        notify: function () {
+            App.render({
+                type   : 'notify',
+                message: 'This day from another month'
+            });
+        },
+
         removeInputs: function () {
             if (this.selectView) {
                 this.selectView.remove();
@@ -376,10 +394,10 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
-            var targetElement = target.parents("td");
-            var tr = target.parents("tr");
-            var id = target.attr("id");
-            var attr = targetElement.attr("id") || targetElement.data("content");
+            var targetElement = target.parents('td');
+            var tr = target.parents('tr');
+            var id = target.attr('id');
+            var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
             var jobs = {};
 

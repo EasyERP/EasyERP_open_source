@@ -25,7 +25,32 @@ define([
     'constants',
     'helpers/keyCodeHelper',
     'helpers/employeeHelper'
-], function (Backbone, _, $, listViewBase, selectView, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, CreateJob, common, dataService, populate, async, custom, moment, CONSTANTS, keyCodes, employeeHelper) {
+], function (Backbone,
+             _,
+             $,
+             listViewBase,
+             selectView,
+             listTemplate,
+             cancelEdit,
+             forWeek,
+             createView,
+             listItemView,
+             editView,
+             wTrackCreateView,
+             currentModel,
+             contentCollection,
+             EditCollection,
+             filterView,
+             CreateJob,
+             common,
+             dataService,
+             populate,
+             async,
+             custom,
+             moment,
+             CONSTANTS,
+             keyCodes,
+             employeeHelper) {
     'use strict';
 
     var wTrackListView = listViewBase.extend({
@@ -37,9 +62,9 @@ define([
         contentType             : 'wTrack',
         viewType                : 'list',
         responseObj             : {},
-        wTrackId                : null, //need for edit rows in listView
+        wTrackId                : null, // need for edit rows in listView
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-        $listTable              : null, //cashedJqueryEllemnt
+        $listTable              : null, // cashedJqueryEllemnt
         editCollection          : null,
         selectedProjectId       : [],
         genInvoiceEl            : null,
@@ -65,19 +90,30 @@ define([
         },
 
         events: {
-            "click .stageSelect"                               : "showNewSelect",
-            "click tr.enableEdit"                              : "editRow",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "change .autoCalc"                                 : "autoCalc",
-            "change .editable"                                 : "setEditable",
-            "keydown input.editing"                            : "keyDown",
-            "click"                                            : "removeInputs"
+            'click .stageSelect'                               : 'showNewSelect',
+            'click tr.enableEdit td.editable:not(.disabled)'   : 'editRow',
+            'click td.disabled'                                : 'notify',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'change .autoCalc'                                 : 'autoCalc',
+            'change .editable'                                 : 'setEditable',
+            'keydown input.editing'                            : 'keyDown',
+            click                                              : 'removeInputs'
         },
 
         removeInputs: function () {
             // this.setChangedValueToModel();
             if (this.selectView) {
                 this.selectView.remove();
+            }
+        },
+
+        validateRow: function ($tr, cb) {
+            var wTrackId = $tr.attr('data-id');
+            var edited = !!$tr.attr('data-edited');
+            var wTrack = this.editCollection.get(wTrackId) || this.collection.get(wTrackId);
+
+            if (!edited) {
+                this.checkVacHolMonth($tr, wTrack, cb);
             }
         },
 
@@ -110,7 +146,7 @@ define([
             var tr = this.$listTable.find('.false');
             var projectId = tr.find('[data-content="project"]').attr('data-id');
 
-            dataService.getData("/jobs/getForDD", {"projectId": projectId, "all": true}, function (jobs) {
+            dataService.getData('/jobs/getForDD', {projectId: projectId, all: true}, function (jobs) {
 
                 self.responseObj['#jobs'] = jobs;
 
@@ -120,6 +156,11 @@ define([
 
         keyDown: function (e) {
             var code = e.keyCode;
+            var $target = $(e.target);
+            var $tr = $target.closest('tr');
+            var $td = $target.closest('td');
+
+            $tr.attr('data-edited', true);
 
             if (keyCodes.isEnter(code)) {
                 this.autoCalc(e);
@@ -130,6 +171,8 @@ define([
                 e.stopPropagation();
             } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
                 e.preventDefault();
+            } else {
+                this.setEditable($td);
             }
         },
 
@@ -203,6 +246,7 @@ define([
             var hours;
             var message;
             var projectWorkflow;
+            var i;
 
             this.$el.find('#check_all').prop('checked', false);
 
@@ -210,7 +254,7 @@ define([
             this.changed = true;
             this.createdCopied = true;
 
-            for (var i = length - 1; i >= 0; i--) {
+            for (i = length - 1; i >= 0; i--) {
                 selectedWtrack = checkedRows[i];
                 target = $(selectedWtrack);
                 id = target.val();
@@ -221,12 +265,16 @@ define([
                 projectWorkflow = $.trim(row.find('[data-content="workflow"]').text());
 
                 if ((model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') || (projectWorkflow !== 'Closed')) {
-                    model.set({"isPaid": false});
-                    model.set({"amount": 0});
-                    model.set({"cost": 0});
-                    model.set({"revenue": 0});
+                    model.set({
+                        isPaid : false,
+                        amount : 0,
+                        cost   : 0,
+                        revenue: 0
+                    });
                     model = model.toJSON();
+
                     delete model._id;
+
                     _model = new currentModel(model);
 
                     this.showSaveCancelBtns();
@@ -243,7 +291,7 @@ define([
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[1]).text("New");
+                    $(tdsArr[1]).text('New');
                 } else {
                     message = "You can't copy tCard with closed project.";
                     App.render({
@@ -254,17 +302,31 @@ define([
             }
         },
 
-        autoCalc: function (e) {
-            var el = $(e.target);
-            var tr = $(e.target).closest('tr');
-            var input = tr.find('input.editing');
-            var days = tr.find('.autoCalc');
-            var wTrackId = tr.attr('data-id');
+        autoCalc: function (e, $tr) {
             var worked = 0;
+            var $el;
+            var input;
+            var days;
+            var wTrackId;
             var value;
             var calcEl;
-            var editWtrackModel;
-            var workedEl = tr.find('[data-content="worked"]');
+            var workedEl;
+            var i;
+
+            if (e) {
+                $el = $(e.target);
+            }
+
+            if (!$el && !$tr) {
+                input = this.$listTable.find('input.editing');
+                $tr = input.closest('tr');
+            }
+
+            $tr = $tr || $el.closest('tr');
+            input = input || $tr.find('input.editing');
+            days = $tr.find('.autoCalc');
+            wTrackId = $tr.attr('data-id');
+            workedEl = $tr.find('[data-content="worked"]');
 
             function eplyDefaultValue(el) {
                 var value = el.text();
@@ -279,14 +341,14 @@ define([
                 }
 
                 return value;
-            };
+            }
 
-            for (var i = days.length - 1; i >= 0; i--) {
+            for (i = days.length - 1; i >= 0; i--) {
                 calcEl = $(days[i]);
 
                 value = eplyDefaultValue(calcEl);
 
-                worked += parseInt(value);
+                worked += parseInt(value, 10);
             }
 
             workedEl.text(worked);
@@ -325,26 +387,51 @@ define([
             return !!edited.length;
         },
 
-        setChangedValueToModel: function () {
+        setChangedValueToModel: function ($tr) {
             var editedElement = this.$listTable.find('.editing');
-            var editedCol;
+            var $editedCol;
             var editedElementRowId;
             var editedElementContent;
             var editedElementValue;
             var self = this;
+            var $days;
             var weeks;
 
-            if (navigator.userAgent.indexOf("Firefox") > -1) {
+            function funcForWeek(cb) {
+                var year = editedElement.closest('tr').find('[data-content="year"]').text();
+                var weeks = custom.getWeeks(editedElementValue, year);
+
+                cb(null, weeks);
+            }
+
+            if (navigator.userAgent.indexOf('Firefox') > -1) {
                 this.setEditable(editedElement);
             }
 
-            if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
-                editedCol = editedElement.closest('td');
-                editedElementRowId = editedElement.closest('tr').attr('data-id');
-                editedElementContent = editedCol.data('content');
+            if ($tr) {
+                editedElementRowId = $tr.attr('data-id');
+                $days = $tr.find('td.autoCalc');
+
+                if (!this.changedModels[editedElementRowId]) {
+                    this.changedModels[editedElementRowId] = {};
+                }
+
+                $days.each(function () {
+                    var $el = $(this);
+                    var day = $el.attr('data-content');
+                    var value = $el.text() || 0;
+
+                    self.changedModels[editedElementRowId][day] = value;
+                });
+
+            } else if (editedElement.length) {
+                $editedCol = editedElement.closest('td');
+                $tr = editedElement.closest('tr');
+                editedElementRowId = $tr.attr('data-id');
+                editedElementContent = $editedCol.data('content');
                 editedElementValue = editedElement.val();
 
-                //editWtrackModel = this.editCollection.get(editedElementRowId);
+                // editWtrackModel = this.editCollection.get(editedElementRowId);
 
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
@@ -360,144 +447,163 @@ define([
 
                         weeks = result[0];
                         editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
-                        editedCol.text(editedElementValue);
+                        $editedCol.text(editedElementValue);
                         editedElement.remove();
 
-                        self.changedModels[editedElementRowId]['week'] = weeks[0].week;
+                        self.changedModels[editedElementRowId].week = weeks[0].week;
+
+                        self.checkVacHolMonth($tr);
                     });
                 } else {
-                    editedCol.text(editedElementValue);
+                    $editedCol.text(editedElementValue);
                     editedElement.remove();
                 }
 
             }
-            function funcForWeek(cb) {
-                var weeks;
-                var month = editedElementValue;
-                var year = editedElement.closest('tr').find('[data-content="year"]').text();
-
-                weeks = custom.getWeeks(month, year);
-
-                cb(null, weeks);
-            }
         },
 
         editRow: function (e) {
-            e.stopPropagation();
             var el = $(e.target);
+            var $td = el.closest('td');
             var self = this;
-            var tr = $(e.target).closest('tr');
-            var wTrackId = tr.attr('data-id');
+            var $tr = $(e.target).closest('tr');
+            var isEdited = !!$tr.attr('data-edited');
+            var $input = $tr.find('td:not([data-content="month"]) input.editing');
+            var wTrackId = $tr.attr('data-id');
             var colType = el.data('type');
             var content = el.data('content');
-            var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-            var isWeek = el.attr("data-content") === 'week';
-            var isYear = el.attr("data-content") === 'year';
-            var isMonth = el.attr("data-content") === 'month';
-            var isDay = el.hasClass("autoCalc");
-            var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
-            var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
-            var maxValue = 100;
-            var tempContainer;
-            var width;
-            var value;
-            var insertedInput;
-            var weeks;
-            var template;
-            var currentYear;
-            var previousYear;
-            var nextYear;
-            var projectId = tr.find('[data-content="project"]').attr('data-id');
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
+            var isWeek = el.attr('data-content') === 'week';
+            var isYear = el.attr('data-content') === 'year';
+            var isMonth = el.attr('data-content') === 'month';
+            var isDay = el.hasClass('autoCalc');
+            var month = $tr.find('[data-content="month"]').text() || $tr.find('.editing').val();
+            var year = $tr.find('[data-content="year"]').text() || $tr.find('.editing').val();
 
-            if (wTrackId && el.prop('tagName') !== 'INPUT') {
-                if (this.wTrackId) {
-                    this.setChangedValueToModel();
-                }
-                this.wTrackId = wTrackId;
-                this.setChangedValueToModel();
-            }
+            var editCb = function () {
+                var maxValue = 100;
+                var tempContainer;
+                var width;
+                var value;
+                var insertedInput;
+                var weeks;
+                var template;
+                var currentYear;
+                var previousYear;
+                var nextYear;
+                var projectId = $tr.find('[data-content="project"]').attr('data-id');
 
-            if (el.hasClass('editing')) {  // added in case of double click on el
-                return false;
-            }
-
-            if (isSelect) {
-                if (content === 'jobs') {
-                    if (!projectId && !projectId.length) {
-                        return false;
-                    }
-                    dataService.getData("/jobs/getForDD", {
-                        "projectId": projectId,
-                        "all"      : true
-                    }, function (jobs) {
-
-                        self.responseObj['#jobs'] = jobs;
-
-                        // tr.find('[data-content="jobs"]').addClass('editable');
-                        self.showNewSelect(e);
-                        return false;
-                    });
-                } else {
-                    this.showNewSelect(e);
+                if ($td.hasClass('disabled')) {
                     return false;
                 }
-            } else if (isWeek) {
-                weeks = custom.getWeeks(month, year);
 
-                template = _.template(forWeek);
-
-                el.append(template({
-                    weeks: weeks
-                }));
-
-                this.calculateCost(e, wTrackId);
-            } else if (isYear) {
-                currentYear = parseInt(moment().year());
-                previousYear = currentYear - 1;
-                nextYear = currentYear + 1;
-
-                width = el.width() - 6;
-                el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
-
-                this.calculateCost(e, wTrackId);
-            } else if (el.attr('id') === 'selectInput') {
-                return false;
-            } else {
-                tempContainer = el.text();
-                width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
-
-                insertedInput = el.find('input');
-                insertedInput.focus();
-
-                // validation for month and days of week
-                if (isMonth || isDay) {
-                    insertedInput.attr("maxLength", "2");
-                    if (isMonth) {
-                        maxValue = 12;
-                    }
-                    if (isDay) {
-                        maxValue = 24;
-                    }
+                if (wTrackId && el.prop('tagName') !== 'INPUT') {
+                    this.wTrackId = wTrackId;
+                    this.setChangedValueToModel();
                 }
 
-                insertedInput.keyup(function (e) {
-                    if (insertedInput.val() > maxValue) {
-                        e.preventDefault();
-                        insertedInput.val("" + maxValue);
+                if (el.hasClass('editing')) {  // added in case of double click on el
+                    return false;
+                }
+
+                if (isSelect) {
+                    if (content === 'jobs') {
+                        if (!projectId && !projectId.length) {
+                            App.render({
+                                type   : 'error',
+                                message: 'Please choose a project before'
+                            });
+
+                            return false;
+                        }
+                        dataService.getData('/jobs/getForDD', {
+                            projectId: projectId,
+                            all      : true
+                        }, function (jobs) {
+                            self.responseObj['#jobs'] = jobs;
+                            self.showNewSelect(e);
+                            return false;
+                        });
+                    } else {
+                        this.showNewSelect(e);
+                        return false;
                     }
-                });
+                } else if (isWeek) {
+                    weeks = custom.getWeeks(month, year);
 
-                // end
-                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+                    template = _.template(forWeek);
 
-                this.autoCalc(e);
-                if (wTrackId) {
+                    el.append(template({
+                        weeks: weeks
+                    }));
+
                     this.calculateCost(e, wTrackId);
-                }
-            }
+                } else if (isYear) {
+                    currentYear = parseInt(moment().year());
+                    previousYear = currentYear - 1;
+                    nextYear = currentYear + 1;
 
-            return false;
+                    width = el.width() - 6;
+                    el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
+
+                    this.calculateCost(e, wTrackId);
+                } else if (el.attr('id') === 'selectInput') {
+                    return false;
+                } else {
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+
+                    insertedInput = el.find('input');
+                    insertedInput.focus();
+
+                    // validation for month and days of week
+                    if (isMonth || isDay) {
+                        insertedInput.attr('maxLength', '2');
+                        if (isMonth) {
+                            maxValue = 12;
+                        }
+                        if (isDay) {
+                            maxValue = 24;
+                        }
+                    }
+
+                    insertedInput.keyup(function (e) {
+                        if (insertedInput.val() > maxValue) {
+                            e.preventDefault();
+                            insertedInput.val('' + maxValue);
+                        }
+                    });
+
+                    // end
+                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
+                    this.autoCalc(e);
+
+                    if (wTrackId) {
+                        this.calculateCost(e, wTrackId);
+                    }
+                }
+
+                return false;
+            };
+
+            editCb = editCb.bind(this);
+
+            e.stopPropagation();
+
+            if (!$input.length && isDay && !isEdited) {
+                this.validateRow($tr, editCb);
+            } else {
+                editCb();
+            }
+        },
+
+        notify: function () {
+            App.render({
+                type   : 'notify',
+                message: 'This day from another month'
+            });
         },
 
         calculateCost: function (e, wTrackId) {
@@ -536,7 +642,7 @@ define([
                 this.editCollection.add(editWtrackModel);
 
                 employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;
-                ;
+
                 year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                 trackWeek = tr.find('[data-content="worked"]').text();
             }
@@ -616,28 +722,29 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
-            var targetElement = target.parents("td");
-            var tr = target.parents("tr");
+            var targetElement = target.parents('td');
+            var tr = target.parents('tr');
             var modelId = tr.attr('data-id');
-            var id = target.attr("id");
-            var attr = targetElement.attr("id") || targetElement.data("content");
+            var id = target.attr('id');
+            var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
+            var jobs = {};
             var projectManager;
             var assignedContainer;
             var project;
             var employee;
             var department;
             var changedAttr;
-            var wTrackId = tr.attr('data-id');
             var week;
             var year;
-            var jobs = {};
+            var $job;
 
             var element = _.find(this.responseObj[elementType], function (el) {
                 return el._id === id;
             });
 
-            var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
+            var editWtrackModel = this.editCollection.get(modelId) || this.collection.get(modelId);
+            var needCheckVacHol = elementType === '#employee' || elementType === '#week' || elementType === '#year';
 
             if (!this.changedModels[modelId]) {
                 if (!editWtrackModel.id) {
@@ -658,8 +765,8 @@ define([
                     assignedContainer = tr.find('[data-content="assigned"]');
                     assignedContainer.text(projectManager);
                     targetElement.attr('data-id', id);
-
-                    tr.find('[data-content="jobs"]').text("");
+                    $job = tr.find('[data-content="jobs"]');
+                    $job.text('');
 
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
                     tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
@@ -668,15 +775,27 @@ define([
 
                     changedAttr.project = project;
 
-                    dataService.getData("/jobs/getForDD", {"projectId": project, "all": true}, function (jobs) {
+                    dataService.getData('/jobs/getForDD', {projectId: project, all: true}, function (jobs) {
+                        var _job = jobs ? jobs[0] : {name: ''};
 
+                        _job = _job || {name: ''};
                         self.responseObj['#jobs'] = jobs;
 
-                        tr.find('[data-content="jobs"]').addClass('editable');
+                        $job.text(_job.name);
+
+                        if (!_job._id) {
+                            $job.addClass('errorContent editable');
+                            $job.removeAttr('data-id');
+                        } else {
+                            $job.removeClass('errorContent');
+                            $job.addClass('editable');
+                            $job.attr('data-id', _job._id);
+
+                            changedAttr.jobs = _job._id;
+                        }
                     });
 
                 } else if (elementType === '#jobs') {
-
                     jobs = element._id;
 
                     changedAttr.jobs = jobs;
@@ -692,10 +811,10 @@ define([
                     changedAttr.employee = employee;
                     changedAttr.department = department;
 
-                    targetElement.attr("data-id", employee._id);
+                    targetElement.attr('data-id', employee);
 
-                    this.calculateCost(e, wTrackId);
 
+                    // this.calculateCost(e, wTrackId);
                     tr.find('[data-content="department"]').removeClass('errorContent');
                 } else if (elementType === '#department') {
                     department = element._id;
@@ -712,9 +831,7 @@ define([
                 }
 
                 targetElement.removeClass('errorContent');
-
                 targetElement.text(target.text());
-
             } else if (id === 'createJob') {
                 self.generateJob(e);
             }
@@ -722,7 +839,81 @@ define([
             this.hideNewSelect();
             this.setEditable(targetElement);
 
+            if (needCheckVacHol) {
+                this.checkVacHolMonth(tr, editWtrackModel, function () {
+                    self.setChangedValueToModel(tr);
+                });
+            }
+
             return false;
+        },
+
+        checkVacHolMonth: function ($targetTr, wTrack, cb) {
+            // todo add spiner load
+            var self = this;
+            var $employee = $targetTr.find('[data-content="employee"]');
+            var employeeId = $employee.attr('data-id');
+            var year = $targetTr.find('[data-content="year"]').text();
+            var month = $targetTr.find('[data-content="month"]').text();
+            var week = $targetTr.find('[data-content="week"]').text();
+            var dateByWeek = year * 100 + parseInt(week, 10);
+            var _$days = $targetTr.find('.autoCalc');
+
+            _$days.removeClass();
+            _$days.addClass('editable autoCalc');
+
+            if (wTrack && wTrack.get('dateByWeek') !== dateByWeek) {
+                wTrack = null;
+            }
+
+            employeeHelper.getNonWorkingDaysByWeek(year, week, month, employeeId, wTrack,
+                function (nonWorkingDays, self) {
+                    var days = Object.keys(nonWorkingDays);
+                    var length = days.length - 1;
+                    var _class;
+                    var isDefaultHours;
+                    var $el;
+                    var day;
+                    var value;
+                    var i;
+
+                    for (i = length; i >= 0; i--) {
+                        day = days[i];
+                        _class = '';
+
+                        if (day) {
+                            value = nonWorkingDays[day];
+                            $el = $targetTr.find('[data-content="' + day + '"]');
+                            isDefaultHours = day !== '7' && day !== '6' /* && value === '' */ && _class !== 'disabled' && !wTrack;
+
+                            if (value) {
+
+                                if (!isFinite(value)) {
+                                    _class = value;
+                                    value = 0;
+                                }
+
+                                $el.addClass(_class);
+
+                                if (_class !== 'disabled') {
+                                    $el.text(value);
+                                } else {
+                                    $el.text('');
+                                }
+                            } else if (isDefaultHours) {
+                                $el.text(8);
+                            } else {
+                                $el.text('');
+                            }
+                        }
+                    }
+
+                    self.autoCalc(null, $targetTr);
+
+                    if (cb && typeof cb === 'function') {
+                        cb();
+                    }
+                }, self);
         },
 
         checked: function (e) {
@@ -734,7 +925,7 @@ define([
             var changedRows = Object.keys(this.changedModels);
 
             if (this.collection.length > 0) {
-                $checkedEls = $thisEl.find("input.listCB:checked");
+                $checkedEls = $thisEl.find('input.listCB:checked');
 
                 checkLength = $checkedEls.length;
                 rawRows = $checkedEls.closest('.false');
@@ -772,27 +963,26 @@ define([
         },
 
         saveItem: function () {
-            var model;
-
             var errors = this.$el.find('.errorContent');
+            var model;
+            var id;
 
-            for (var id in this.changedModels) {
-                model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+            this.setChangedValueToModel();
+            //this.autoCalc();
+
+            for (id in this.changedModels) {
+                model = this.editCollection.get(id) || this.collection.get(id);
+
                 if (model) {
                     model.changed = this.changedModels[id];
                 }
             }
 
             if (errors.length) {
-                return
+                return false;
             }
 
             this.editCollection.save();
-
-            //for (var id in this.changedModels) {
-            //    delete this.changedModels[id];
-            //    this.editCollection.remove(id);
-            //}
 
             this.$el.find('.edited').removeClass('edited');
         },
@@ -838,9 +1028,8 @@ define([
         },
 
         showNewSelect: function (e, prev, next) {
-            //populate.showSelect(e, prev, next, this);
-
             var $target = $(e.target);
+
             e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
@@ -973,7 +1162,6 @@ define([
 
             if (!checkLength || !model || model.get('isPaid')) {
                 this.selectedProjectId = [];
-                //this.genInvoiceEl.hide();
 
                 return false;
             }
@@ -985,12 +1173,6 @@ define([
             }
 
             this.selectedProjectId = _.uniq(this.selectedProjectId);
-
-            //if (this.selectedProjectId.length !== 1) {
-            //    this.genInvoiceEl.hide();
-            //} else {
-            //    this.genInvoiceEl.show();
-            //}
         },
 
         getAutoCalcField: function (idTotal, dataRow, money) {
@@ -1091,6 +1273,7 @@ define([
             var count = $checked.length;
             var message;
             var enableDelete = true;
+
             this.collectionLength = this.collection.length;
 
             if (!this.changed) {
@@ -1252,7 +1435,7 @@ define([
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
-            }).render());//added two parameters page and items number
+            }).render());// added two parameters page and items number
 
             this.renderPagination($currentEl, this);
 
@@ -1263,15 +1446,15 @@ define([
 
                 allInputs = $('.listCB');
                 allInputs.prop('checked', this.checked);
-                checkedInputs = $("input.listCB:checked");
+                checkedInputs = $('input.listCB:checked');
 
                 if (self.collection.length > 0) {
                     checkLength = checkedInputs.length;
 
                     if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
-                        $("#top-bar-copyBtn").show();
-                        $("#top-bar-createBtn").hide();
+                        $('#top-bar-deleteBtn').show();
+                        $('#top-bar-copyBtn').show();
+                        $('#top-bar-createBtn').hide();
 
                         if (checkLength === self.collection.length) {
                             checkedInputs.each(function (index, element) {
@@ -1281,8 +1464,8 @@ define([
                             $('#check_all').prop('checked', true);
                         }
                     } else {
-                        $("#top-bar-deleteBtn").hide();
-                        $("#top-bar-createBtn").show();
+                        $('#top-bar-deleteBtn').hide();
+                        $('#top-bar-createBtn').show();
                         // self.genInvoiceEl.hide();
                         self.copyEl.hide();
                         $('#check_all').prop('checked', false);
@@ -1292,31 +1475,31 @@ define([
                 self.setAllTotalVals();
             });
 
-            dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
+            dataService.getData('/project/getForWtrack', {inProgress: true}, function (projects) {
                 projects = _.map(projects.data, function (project) {
                     project.name = project.projectName;
 
-                    return project
+                    return project;
                 });
 
                 self.responseObj['#project'] = projects;
             });
 
-            dataService.getData("/employee/getForDD", null, function (employees) {
+            dataService.getData('/employee/getForDD', null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
-                    return employee
+                    return employee;
                 });
 
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData("/department/getForDD", null, function (departments) {
+            dataService.getData('/department/getForDD', null, function (departments) {
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 
-                    return department
+                    return department;
                 });
 
                 self.responseObj['#department'] = departments;

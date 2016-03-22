@@ -3411,10 +3411,7 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     _id            : 0,
-                    salesPerson    : '$_id._id'/*{
-                     _id : '$_id._id',
-                     name: {$concat: ['$_id.name.first', ' ', '$_id.name.last']}
-                     }*/,
+                    salesPerson    : '$_id._id',
                     invoicedBySales: 1,
                     salesArray     : 1,
                     date           : '$_id.date',
@@ -3524,10 +3521,7 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     _id        : 0,
-                    salesPerson: '$_id._id'/*{
-                     _id : '$_id._id',
-                     name: {$concat: ['$_id.name.first', ' ', '$_id.name.last']}
-                     }*/,
+                    salesPerson: '$_id._id',
                     paidBySales: 1,
                     salesArray : 1,
                     date       : '$_id.date',
@@ -3620,7 +3614,7 @@ var wTrack = function (models) {
                 }
             }, {
                 $group: {
-                    _id  : {
+                    _id           : {
                         date   : '$date',
                         revenue: '$revenue'
                     },
@@ -3633,10 +3627,10 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    date   : '$_id.date',
-                    revenue: '$_id.revenue',
-                    revenueBySales  : 1,
-                    _id    : 0
+                    date          : '$_id.date',
+                    revenue       : '$_id.revenue',
+                    revenueBySales: 1,
+                    _id           : 0
                 }
             }], parallelCb);
 
@@ -3648,6 +3642,7 @@ var wTrack = function (models) {
             revenue : revenueGrouper
         }, function (err, response) {
             var sales;
+            var _sales;
 
             function mergeByProperty(arr1, arr2, prop) {
                 _.each(arr2, function (arr2obj) {
@@ -3656,11 +3651,11 @@ var wTrack = function (models) {
                     });
 
                     if (arr1obj) {
-                        _.extend(arr1obj, arr2obj)
+                        _.extend(arr1obj, arr2obj);
                     } else {
-                        arr1.push(arr2obj)
+                        arr1.push(arr2obj);
                     }
-                    ;
+
                 });
             }
 
@@ -3668,16 +3663,25 @@ var wTrack = function (models) {
                 return next(err);
             }
 
+            sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
+            _sales = response.paid[0] ? response.paid[0].salesArray : [];
+
+            sales = sales.concat(_sales);
+            sales = _.uniq(sales, function (elm) {
+                if (elm._id) {
+                    return elm._id.toString();
+                }
+            });
+
             mergeByProperty(response.invoiced, response.paid, 'date');
             mergeByProperty(response.invoiced, response.revenue, 'date');
 
-            sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
             res.status(200).send({payments: response.invoiced, sales: sales});
             /*res.status(200).send(response);*/
         });
-    }
+    };
 };
 
 module.exports = wTrack;

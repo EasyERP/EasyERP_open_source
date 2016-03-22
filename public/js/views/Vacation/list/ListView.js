@@ -52,7 +52,7 @@ define([
 
         events: {
             "click .fa-trash-o"                                : "deleteItemPressed",
-            //"blur td.editable input"                                          : "hideInput",
+            // "blur td.editable input"                                          : "hideInput",
             "click td.editable, .current-selected"             : "showNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .oe_sortable"                               : "goSort",

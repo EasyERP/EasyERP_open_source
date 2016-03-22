@@ -1197,6 +1197,13 @@ tr.redBorder {
 li.fired {
   background-color: rgba(235, 0, 4, 0.73);
 }
+.holidays {
+  position: relative;
+  float: right;
+  width: 20% !important;
+  margin-right: 42%;
+  margin-top: -26px;
+}
 .V {
   background-color: #a22a2d;
 }

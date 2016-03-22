@@ -1212,12 +1212,21 @@ var Invoice = function (models, event) {
     };
 
     this.getStats = function (req, res, next) {
+        var sortObj = {'paymentInfo.balance': -1};
         var db = req.session.lastDb;
-        var Invoice;
         var now = new Date();
+        var sortValueInt;
+        var Invoice;
         var moduleId;
-
         var isWtrack;
+
+        sortObj = req.query.sort || sortObj;
+
+        for (var key in sortObj) {
+            sortValueInt = parseInt(sortObj[key]);
+            sortObj[key] = sortValueInt;
+            break;
+        }
 
         if (checkDb(db)) {
             moduleId = 64;
@@ -1319,9 +1328,7 @@ var Invoice = function (models, event) {
                 }
             }
         }, {
-            $sort: {
-                'paymentInfo.balance': -1
-            }
+            $sort: sortObj
         }], function (err, result) {
             if (err) {
                 return next(err);

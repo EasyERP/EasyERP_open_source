@@ -114,6 +114,11 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
+
+                if (this.contentType === 'invoiceAging') {
+                    return;
+                }
+
                 dataService.getData(this.totalCollectionLengthUrl, {
                     currentNumber: currentNumber,
                     filter       : filter,

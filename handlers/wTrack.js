@@ -35,26 +35,34 @@ var wTrack = function (event, models) {
         access.getEditWritAccess(req, req.session.uId, 75, function (success) {
             var WTrack;
             var body;
+            var wTrack;
+            var worked;
 
             if (success) {
                 WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
                 body = mapObject(req.body);
+                worked = parseInt(body.worked);
+                worked = isNaN(worked) ? 0 : worked;
 
-                wTrack = new WTrack(body);
-                wTrack.save(function (err, _wTrack) {
-                    if (err) {
-                        return next(err);
-                    }
+                if (worked) {
+                    wTrack = new WTrack(body);
+                    wTrack.save(function (err, _wTrack) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                    event.emit('updateRevenue', {wTrack: _wTrack, req: req});
-                    event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
-                    event.emit('dropHoursCashes', req);
-                    event.emit('recollectVacationDash');
-                    event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
-                    event.emit('recollectProjectInfo');
+                        event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                        event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+                        event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
+                        event.emit('recollectProjectInfo');
 
-                    res.status(200).send({success: _wTrack});
-                });
+                        res.status(200).send({success: _wTrack});
+                    });
+                } else {
+                    res.status(200).send({success: 'Empty tCard'});
+                }
             } else {
                 res.status(403).send();
             }
@@ -136,15 +144,43 @@ var wTrack = function (event, models) {
                     return res.status(403).send();
                 }
 
-                async.each(body, function (data, cb) {
-                    var id = data._id;
-                    var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
+                function resultCb(err, tCard, needUpdateKeys, cb) {
+                    if (err) {
+                        return cb(err);
+                    }
 
-                    if (data && data.revenue) {
+                    if (tCard) {
+                        event.emit('updateRevenue', {wTrack: tCard, req: req});
+                        event.emit('updateProjectDetails', {req: req, _id: tCard.project});
+                        event.emit('recollectProjectInfo');
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+
+                        if (needUpdateKeys) {
+                            event.emit('recalculateKeys', {req: req, wTrack: tCard});
+                        }
+                    }
+
+                    cb(null, tCard);
+                }
+
+                async.each(body, function (data, cb) {
+                    var id;
+                    var needUpdateKeys;
+                    var worked;
+
+                    data = data || {};
+                    console.log(data);
+                    worked = data.worked;
+
+                    id = data._id;
+                    needUpdateKeys = data.month || data.week || data.year || data.isoYear;
+
+                    if (data.revenue) {
                         data.revenue *= 100;
                     }
 
-                    if (data && data.cost) {
+                    if (data.cost) {
                         data.cost *= 100;
                     }
 
@@ -152,26 +188,22 @@ var wTrack = function (event, models) {
                         user: uId,
                         date: new Date().toISOString()
                     };
+
                     delete data._id;
 
-                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, tCard) {
-                        if (err) {
-                            return cb(err);
+                    if (isFinite(worked) && worked === 0) {
+                        WTrack.findByIdAndRemove(id, function (err, tCard) {
+                            resultCb(err, tCard, needUpdateKeys, cb);
+                        });
+                    } else {
+                        if (isFinite(worked)) {
+                            data.worked = worked;
                         }
 
-                        if (tCard) {
-                            event.emit('updateRevenue', {wTrack: tCard, req: req});
-                            event.emit('updateProjectDetails', {req: req, _id: tCard.project});
-                            event.emit('recollectProjectInfo');
-                            event.emit('recollectVacationDash');
-
-                            if (needUpdateKeys) {
-                                event.emit('recalculateKeys', {req: req, wTrack: tCard});
-                            }
-                        }
-
-                        cb(null, tCard);
-                    });
+                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, tCard) {
+                            resultCb(err, tCard, needUpdateKeys, cb);
+                        });
+                    }
                 }, function (err) {
                     if (err) {
                         return next(err);
@@ -560,6 +592,7 @@ var wTrack = function (event, models) {
                     jobs      : {$arrayElemAt: ['$jobs', 0]},
                     employee  : {$arrayElemAt: ['$employee', 0]},
                     department: {$arrayElemAt: ['$department', 0]},
+                    dateByWeek: 1,
                     createdBy : 1,
                     month     : 1,
                     year      : 1,
@@ -605,6 +638,7 @@ var wTrack = function (event, models) {
                     customer      : {$arrayElemAt: ['$customer', 0]},
                     workflow      : {$arrayElemAt: ['$workflow', 0]},
                     projectmanager: {$arrayElemAt: ['$projectmanager', 0]},
+                    dateByWeek    : 1,
                     createdBy     : 1,
                     project       : 1,
                     jobs          : 1,
