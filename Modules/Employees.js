@@ -923,49 +923,49 @@ var Employee = function (event, models) {
                                                 }
 
                                                 project = {
-                                                    manager         : {$arrayElemAt: ["$manager", 0]},
-                                                    jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                                    department      : {$arrayElemAt: ["$department", 0]},
-                                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                                                    name            : 1,
-                                                    'editedBy.date' : 1,
-                                                    'createdBy.date': 1,
-                                                    dateBirth       : 1,
-                                                    skype           : 1,
-                                                    workEmail       : 1,
-                                                    workPhones      : 1,
-                                                    jobType         : 1,
-                                                    isEmployee      : 1,
-                                                    creationDate    : 1,
-                                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
-                                                    personalEmail   : 1,
-                                                    sequence        : 1,
-                                                    hire            : 1,
-                                                    fire            : 1
+                                                    manager            : {$arrayElemAt: ["$manager", 0]},
+                                                    jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
+                                                    department         : {$arrayElemAt: ["$department", 0]},
+                                                    'createdBy.user'   : {$arrayElemAt: ["$createdBy.user", 0]},
+                                                    'editedBy.user'    : {$arrayElemAt: ["$editedBy.user", 0]},
+                                                    name               : 1,
+                                                    'editedBy.date'    : 1,
+                                                    'createdBy.date'   : 1,
+                                                    dateBirth          : 1,
+                                                    skype              : 1,
+                                                    workEmail          : 1,
+                                                    workPhones         : 1,
+                                                    jobType            : 1,
+                                                    isEmployee         : 1,
+                                                    creationDate       : 1,
+                                                    workflow           : {$arrayElemAt: ["$workflow", 0]},
+                                                    personalEmail      : 1,
+                                                    sequence           : 1,
+                                                    hire               : 1,
+                                                    fire               : 1
                                                 };
 
                                                 projectSecond = {
-                                                    manager         : 1,
-                                                    jobPosition     : 1,
-                                                    department      : 1,
-                                                    'createdBy.user': 1,
-                                                    'editedBy.user' : 1,
-                                                    'editedBy.date' : 1,
-                                                    'createdBy.date': 1,
-                                                    name            : 1,
-                                                    dateBirth       : 1,
-                                                    skype           : 1,
-                                                    workEmail       : 1,
-                                                    workPhones      : 1,
-                                                    jobType         : 1,
-                                                    isEmployee      : 1,
-                                                    creationDate    : 1,
-                                                    workflow        : 1,
-                                                    personalEmail   : 1,
-                                                    sequence        : 1,
-                                                    hire            : 1,
-                                                    fire            : 1
+                                                    manager            : 1,
+                                                    jobPosition        : 1,
+                                                    department         : 1,
+                                                    'createdBy.user'   : 1,
+                                                    'editedBy.user'    : 1,
+                                                    'editedBy.date'    : 1,
+                                                    'createdBy.date'   : 1,
+                                                    name               : 1,
+                                                    dateBirth          : 1,
+                                                    skype              : 1,
+                                                    workEmail          : 1,
+                                                    workPhones         : 1,
+                                                    jobType            : 1,
+                                                    isEmployee         : 1,
+                                                    creationDate       : 1,
+                                                    workflow           : 1,
+                                                    personalEmail      : 1,
+                                                    sequence           : 1,
+                                                    hire               : 1,
+                                                    fire               : 1
                                                 };
 
                                             }
@@ -1445,7 +1445,7 @@ var Employee = function (event, models) {
                 query = {$set: updateObject};
             }
 
-            if (updateObject.hire){
+            if (updateObject.hire) {
                 event.emit('setReconcileTimeCard', {req: req, employee: _id});
             }
 

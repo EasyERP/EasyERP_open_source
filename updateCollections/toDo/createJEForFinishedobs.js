@@ -140,44 +140,48 @@ dbObject.once('open', function callback() {
 
     query.exec(function (err, result) {
 
-        async.each(result, function (model, cb) {
-            var date = moment(new Date(model.invoice.invoiceDate)).subtract(60, 'seconds');
-            var wTracks = model.wTracks;
+        JE.findAndRemove({ journal       : CONSTANTS.FINISHED_JOB_JOURNAL, sourceDocument: {
+            model: 'jobs'
+        }}, function (err, result) {
+            async.each(result, function (model, cb) {
+                var date = moment(new Date(model.invoice.invoiceDate)).subtract(60, 'seconds');
+                var wTracks = model.wTracks;
 
-            var bodyFinishedJob = {
-                currency      : CONSTANTS.CURRENCY_USD,
-                journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
-                date          : new Date(date),
-                sourceDocument: {
-                    model: 'jobs',
-                    _id  : result._id
-                },
-                amount        : 0
-            };
+                var bodyFinishedJob = {
+                    currency      : CONSTANTS.CURRENCY_USD,
+                    journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
+                    date          : new Date(date),
+                    sourceDocument: {
+                        model: 'jobs',
+                        _id  : result._id
+                    },
+                    amount        : 0
+                };
 
-            JE.aggregate([{
-                $match: {
-                    'sourceDocument._id': {$in: wTracks},
-                    debit               : {$gt: 0}
-                }
-            }, {
-                $group: {
-                    _id   : null,
-                    amount: {$sum: '$debit'}
-                }
-            }], function (err, result) {
-                if (err) {
-                    return console.log(err);
-                }
+                JE.aggregate([{
+                    $match: {
+                        'sourceDocument._id': {$in: wTracks},
+                        debit               : {$gt: 0}
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        amount: {$sum: '$debit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return console.log(err);
+                    }
 
-                ++count;
+                    ++count;
 
-                bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+                    bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
 
-                createReconciled(bodyFinishedJob, 'production', cb, '52203e707d4dba8813000003');
+                    createReconciled(bodyFinishedJob, 'production', cb, '52203e707d4dba8813000003');
+                });
+            }, function () {
+                console.log(count++);
             });
-        }, function () {
-            console.log(count++);
         });
 
     });

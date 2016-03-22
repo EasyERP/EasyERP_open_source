@@ -1003,7 +1003,7 @@ var PayRoll = function (models) {
                 paid   : 0
             };
 
-            function createForNotDev(pCb) {
+            /*function createForNotDev(pCb) {
                 async.each(empKeys, function (employee, asyncCb) {
                     startBody.employee = employee;
                     startBody.calc = empIds[employee];
@@ -1017,7 +1017,7 @@ var PayRoll = function (models) {
                     pCb();
                 });
 
-            }
+            }*/
 
             function createForDev(pCb) {
                 async.each(journalEntries, function (journalEntry, asyncCb) {
@@ -1039,7 +1039,7 @@ var PayRoll = function (models) {
 
             }
 
-            parallelTasks = [createForDev, createForNotDev];
+            parallelTasks = [createForDev/*, createForNotDev*/];
 
             async.parallel(parallelTasks, function (err, result) {
                 if (err) {

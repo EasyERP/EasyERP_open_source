@@ -15,7 +15,7 @@ define([
     function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS, common, moment) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
-            contentType: CONSTANTS.PROFITANDLOSS,
+            contentType: CONSTANTS.BALANCESHEET,
             template   : _.template(ContentTopBarTemplate),
 
             initialize: function (options) {

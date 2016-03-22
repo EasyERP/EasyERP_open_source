@@ -1458,7 +1458,6 @@ var Module = function (models) {
                         var matchObj;
                         var findMonthHours;
                         var monthHours = {};
-                        var newDateArrayWithIdle = [];
 
                         if (!dates.length){
                            return createWaterfallCb();
@@ -1599,6 +1598,8 @@ var Module = function (models) {
                                 var monthHours = empResult.monthHours[year * 100 + month] || {};
                                 var dayOfWeek = moment(date).day();
                                 var cb  = _.after(employeesCount, asyncCb);
+                                var holidayDate = holidaysObject[dateKey];
+                                var sameDayHoliday = holidayDate;
 
                                 if ((dayOfWeek === 0) || (dayOfWeek === 6)){
                                     return asyncCb();
@@ -1622,6 +1623,10 @@ var Module = function (models) {
                                     var j;
                                     var costHour = 0;
                                     var hours = monthHours.hours || 0;
+
+                                    if (employeesIds.indexOf(employee) !== -1){
+                                        return cb();
+                                    }
 
                                     for (j = length - 1; j >= 0; j--) {
                                         if (date >= hireArray[j].date) {
@@ -1658,6 +1663,10 @@ var Module = function (models) {
                                             bodySalaryIdle.amount = 0;
                                         }
                                     } else {
+                                        bodySalaryIdle.amount = 0;
+                                    }
+
+                                    if (sameDayHoliday) {
                                         bodySalaryIdle.amount = 0;
                                     }
 
@@ -3685,12 +3694,10 @@ var Module = function (models) {
         var query = req.query;
         var startDate = query.startDate;
         var endDate = query.endDate;
-
-        var assets = _.union(CONSTANTS.BANK_AND_CASH, CONSTANTS.ACCOUNT_RECEIVABLE);
         var liabilities = CONSTANTS.LIABILITIES.objectID();
         var equity = CONSTANTS.EQUITY.objectID();
-
-        assets = assets.objectID();
+        var currentAssets = [CONSTANTS.ACCOUNT_RECEIVABLE, CONSTANTS.WORK_IN_PROCESS, CONSTANTS.FINISHED_GOODS];
+        var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -3702,7 +3709,7 @@ var Module = function (models) {
                         $gte: new Date(startDate),
                         $lte: new Date(endDate)
                     },
-                    account: {$in: assets}
+                    account: {$in:  allAssets.objectID()}
                 }
             }, {
                 $lookup: {
@@ -3712,7 +3719,6 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
-                    date   : 1,
                     credit : {$divide: ['$credit', '$currency.rate']},
                     debit  : {$divide: ['$debit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
@@ -3751,7 +3757,7 @@ var Module = function (models) {
                         $gte: new Date(startDate),
                         $lte: new Date(endDate)
                     },
-                    account: {$in: liabilities},
+                    account: {$in: liabilities}
                 }
             }, {
                 $lookup: {
@@ -3761,7 +3767,6 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
-                    date   : 1,
                     credit : {$divide: ['$credit', '$currency.rate']},
                     debit  : {$divide: ['$debit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}

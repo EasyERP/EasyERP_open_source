@@ -57,10 +57,15 @@ module.exports = {
         '565eb53a6aa50532e5df0bca'
     ],
 
+    FINISHED_GOODS: '565eb53a6aa50532e5df0bd9',
+    WORK_IN_PROCESS: '565eb53a6aa50532e5df0bda',
+
     LIABILITIES: [
         '565eb53a6aa50532e5df0bde', //Reserve and Profit/Loss Account
         '565eb53a6aa50532e5df0bdd', //tax received
-        '565eb53a6aa50532e5df0bdb' //current Liabilities
+        '565eb53a6aa50532e5df0bdb',//current Liabilities
+        '56c4444eb81fd51e19207f3e', //salary Payable
+        '56c9d555c3b88f6d64490fb5' //overtime Payable
     ],
 
     EQUITY: [

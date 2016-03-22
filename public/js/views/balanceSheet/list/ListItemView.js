@@ -18,7 +18,7 @@ define([
                 this.collection = options.collection && options.collection[0] ? options.collection[0] : {};
 
                 this.assets = this.collection.assets || [];
-                this.liabilities = this.collection.expenses || [];
+                this.liabilities = this.collection.liabilities || [];
                 this.equity = this.collection.equity || [];
 
                 this.startDate = options.startDate;
