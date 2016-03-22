@@ -770,11 +770,11 @@ var Module = function (models) {
                     return wfCb(err);
                 }
 
-                wfCb();
+                wfCb(null, result);
             });
         }
 
-        function forEachEmployee(wfCb, cb) {
+        function forEachEmployee(result, wfCb) {
             var waterfallTasks;
             var parallelPart;
             var createJE;
@@ -1579,7 +1579,7 @@ var Module = function (models) {
                                     monthHours[key] = result && result[0] ? result[0] : {};
                                     asyncCb();
                                 });
-                            }, function () {
+                            }, function (err, result) {
                                 callback(null, {
                                     monthHours: monthHours,
                                     emps      : empResult.emps,
@@ -1630,10 +1630,6 @@ var Module = function (models) {
                                     var costHour = 0;
                                     var hours = monthHours.hours || 0;
 
-                                    if (employeesIds.indexOf(employee) !== -1) {
-                                        return cb();
-                                    }
-
                                     for (j = length - 1; j >= 0; j--) {
                                         if (date >= hireArray[j].date) {
                                             salary = hireArray[j].salary;
@@ -1683,6 +1679,11 @@ var Module = function (models) {
                                     }
 
                                     if (sameDayHoliday) {
+                                        bodySalaryIdle.amount = 0;
+                                    }
+
+                                    if (employeesIds.indexOf(employee) !== -1) {
+                                        bodySalaryForNotDevs.amount = 0;
                                         bodySalaryIdle.amount = 0;
                                     }
 

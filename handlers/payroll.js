@@ -18,7 +18,7 @@ var PayRoll = function (models) {
 
     var departmentArray = CONSTANTS.NOT_DEV_ARRAY;
 
-    var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE), ObjectId(CONSTANTS.IDLE_PAYABLE)];
+    var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE)];
 
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
@@ -812,15 +812,15 @@ var PayRoll = function (models) {
             Payroll.remove({dataKey: dataKey}, wfCb);
         }
 
-        function createIdleByMonth(removed, wfCb) {
-            journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
-        }
+        /* function createIdleByMonth(removed, wfCb) {
+         journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
+         }*/
 
         function generateByDataKey(created, wfCb) {
             generate(req, res, next, wfCb);
         }
 
-        waterfallFunc = [removeByDataKey, createIdleByMonth, generateByDataKey];
+        waterfallFunc = [removeByDataKey, /*createIdleByMonth,*/ generateByDataKey];
 
         async.waterfall(waterfallFunc, function (err, result) {
             if (err) {
@@ -834,7 +834,6 @@ var PayRoll = function (models) {
 
     function generate(req, res, next, cbFromRecalc) {
         var db = req.session.lastDb;
-        var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
         var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var data = req.body;
@@ -842,83 +841,14 @@ var PayRoll = function (models) {
         var year = parseInt(data.year, 10);
         var dataKey = year * 100 + month;
         var waterfallTasks;
-        var employees;
-        var ids = {};
-        var i;
         var date = moment().isoWeekYear(year).month(month - 1).date(1);
         var endDate = moment(date).endOf('month');
 
-        function getEmployees(callback) {
-            var queryObject = {
-                isEmployee: true,
-                department: {
-                    $in: departmentArray
-                }
-            };
-
-            var query = Employee.find(queryObject, {hire: 1}).lean();
-
-            query.exec(function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
-
-                employees = result;
-
-                result.forEach(function (elem) {
-                    var salary = 0;
-                    var hire = elem.hire;
-                    var length = hire.length;
-
-                    for (i = length - 1; i >= 0; i--) {
-                        if (date >= hire[i].date) {
-                            salary = hire[i].salary;
-                            break;
-                        }
-                    }
-
-                    if (salary) {
-                        ids[elem._id] = salary;
-                    }
-                });
-
-                callback(null, ids);
-            });
-        }
-
-        function getJournalEntries(ids, callback) {
+        function getJournalEntries(callback) {
             function matchEmployee(pcb) {
                 JournalEntry.aggregate([{
                     $match: {
                         'sourceDocument.model': "Employees",
-                        //journal               : ObjectId(CONSTANTS.VACATION_PAYABLE),
-                        debit                 : {$gt: 0},
-                        date                  : {
-                            $gte: new Date(date),
-                            $lte: new Date(endDate)
-                        }
-                    }
-                }, {
-                    $project: {
-                        employee: '$sourceDocument._id',
-                        summ    : {$divide: ['$debit', 100]},
-                        journal : 1,
-                        date    : 1
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return pcb(err);
-                    }
-
-                    pcb(null, result);
-                });
-            }
-
-            function matchByIdle(pcb) {
-                JournalEntry.aggregate([{
-                    $match: {
-                        'sourceDocument.model': "Employees",
-                        journal               : ObjectId(CONSTANTS.IDLE_PAYABLE),
                         debit                 : {$gt: 0},
                         date                  : {
                             $gte: new Date(date),
@@ -981,20 +911,17 @@ var PayRoll = function (models) {
                 });
             }
 
-            async.parallel([matchByWTrack, matchEmployee, matchByIdle], function (err, result) {
+            async.parallel([matchByWTrack, matchEmployee], function (err, result) {
                 if (err) {
                     return callback(err);
                 }
 
-                callback(null, {ids: ids, journalEntries: (result[0].concat(result[1])).concat(result[2])});
+                callback(null, {journalEntries: result[0].concat(result[1])});
             });
         }
 
         function savePayroll(resultItems, callback) {
-            var empIds = resultItems.ids;
             var journalEntries = resultItems.journalEntries;
-            var empKeys = Object.keys(empIds);
-            var parallelTasks;
             var newPayroll;
             var startBody = {
                 year   : year,
@@ -1003,78 +930,50 @@ var PayRoll = function (models) {
                 paid   : 0
             };
 
-            /*function createForNotDev(pCb) {
-                async.each(empKeys, function (employee, asyncCb) {
-                    startBody.employee = employee;
-                    startBody.calc = empIds[employee];
-                    startBody.diff = empIds[employee];
-                    startBody.type = CONSTANTS.SALARY_NOTDEV;
+            async.each(journalEntries, function (journalEntry, asyncCb) {
+                startBody.employee = journalEntry.employee;
+                startBody.calc = parseFloat(journalEntry.summ.toFixed(2));
+                startBody.diff = startBody.calc;
+                startBody.type = journalEntry.journal;
+                startBody.month = moment(new Date(journalEntry.date)).month() + 1;
+                startBody.year = moment(new Date(journalEntry.date)).isoWeekYear();
+                startBody.dataKey = startBody.year * 100 + startBody.month;
+                startBody.date = journalEntry.date;
 
-                    newPayroll = new Payroll(startBody);
+                newPayroll = new Payroll(startBody);
 
-                    newPayroll.save(asyncCb);
-                }, function () {
-                    pCb();
-                });
-
-            }*/
-
-            function createForDev(pCb) {
-                async.each(journalEntries, function (journalEntry, asyncCb) {
-                    startBody.employee = journalEntry.employee;
-                    startBody.calc = parseFloat(journalEntry.summ.toFixed(2));
-                    startBody.diff = startBody.calc;
-                    startBody.type = journalEntry.journal;
-                    startBody.month = moment(new Date(journalEntry.date)).month() + 1;
-                    startBody.year = moment(new Date(journalEntry.date)).isoWeekYear();
-                    startBody.dataKey = startBody.year * 100 + startBody.month;
-                    startBody.date = journalEntry.date;
-
-                    newPayroll = new Payroll(startBody);
-
-                    newPayroll.save(asyncCb);
-                }, function () {
-                    pCb();
-                });
-
-            }
-
-            parallelTasks = [createForDev/*, createForNotDev*/];
-
-            async.parallel(parallelTasks, function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
-
+                newPayroll.save(asyncCb);
+            }, function () {
                 callback();
             });
+
         }
 
-        waterfallTasks = [getEmployees, getJournalEntries, savePayroll];
+            waterfallTasks = [getJournalEntries, savePayroll];
 
-        async.waterfall(waterfallTasks, function (err) {
-            if (err) {
-                return next(err);
-            }
-
-            composeExpensesAndCache(req, function (err) {
+            async.waterfall(waterfallTasks, function (err) {
                 if (err) {
                     return next(err);
                 }
 
-                if (cbFromRecalc) {
-                    cbFromRecalc(null, "ok");
-                } else {
-                    res.status(200).send("ok");
-                }
+                composeExpensesAndCache(req, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (cbFromRecalc) {
+                        cbFromRecalc(null, "ok");
+                    } else {
+                        res.status(200).send("ok");
+                    }
+                });
             });
-        });
 
-    }
+        }
 
-    this.generate = function (req, res, next) {
-        generate(req, res, next);
+        this.generate = function (req, res, next) {
+            generate(req, res, next);
+        };
     };
-};
 
-module.exports = PayRoll;
+    module.exports = PayRoll;
