@@ -396,7 +396,7 @@ define([
             },
 
             hideItemsNumber: function (e) {
-                var el = e.target;
+                var el = $(e.target);
                 var editedElement = this.$listTable.find('.editing');
 
                 this.$el.find(".allNumberPerPage").hide();

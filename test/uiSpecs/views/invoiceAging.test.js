@@ -1085,7 +1085,7 @@ define([
     var listView;
     var windowConfirmStub;
 
-    describe('CustomerPayments View', function () {
+    describe('InvoiceAging View', function () {
         var $fixture;
         var $elFixture;
 

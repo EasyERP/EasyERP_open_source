@@ -7,6 +7,7 @@ module.exports = function (config) {
 
         files: [
             'test/uiSpecs/testMain.js',
+            'public/css/*.css',
 
             {pattern: 'test/uiSpecs/fixtures/**/*'/*, included: false*/},
 
