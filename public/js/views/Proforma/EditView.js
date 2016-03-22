@@ -1,7 +1,7 @@
 define([
         'text!templates/Proforma/EditTemplate.html',
         'views/Assignees/AssigneesView',
-        'views/Invoice/InvoiceProductItems',
+        'views/Proforma/InvoiceProductItems',
         'views/salesInvoice/wTrack/wTrackRows',
         'views/Payment/ProformaCreateView',
         'views/Payment/list/ListHeaderInvoice',
@@ -323,7 +323,7 @@ define([
                     salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
 
-                    //products   : this.redirect ? productsOld : products,
+                    //products   : products,
                     //paymentInfo: payments,
 
                     groups  : {
