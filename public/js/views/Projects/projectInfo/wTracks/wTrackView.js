@@ -331,7 +331,7 @@ define([
         },
 
         savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find('.false');
+            var savedRow = this.$listTable.find(".false[data-id='" + modelObject.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -564,6 +564,7 @@ define([
             }
 
             this.$el.find('.edited').removeClass('edited');
+            this.rerenderNumbers(); // added rerender after saving too
         },
 
         checked: function (e) {
