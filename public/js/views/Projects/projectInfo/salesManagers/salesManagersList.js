@@ -1,7 +1,10 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Projects/projectInfo/salesManagersTemplate.html',
     'common'
-], function (salesManagersTemplate, common) {
+], function (Backbone, $, _,     salesManagersTemplate, common) {
     var BonusView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -66,8 +69,17 @@ define([
             self.selectedSalesManagers = [];
             self.$el.find('#removeSalesManager').hide();
             $('#check_all_salesManagers').prop('checked', false);
-
+            this.rerenderNumbers();
             this.trigger('save');
+        },
+
+        rerenderNumbers: function () {
+            var tableTr = $('#salesManagersTable').find('tr');
+
+            tableTr.each(function (index) {
+                $(this).find('.countNumber').text(index + 1);
+            });
+
         },
 
         checkAllSalesManagers: function (e) {

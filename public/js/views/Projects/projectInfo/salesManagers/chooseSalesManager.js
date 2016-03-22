@@ -112,7 +112,7 @@ define(['Backbone',
 
             render: function () {
                 var self = this;
-                var salesManagers = this.modelJSON.salesManagers;
+                var salesManagers = this.modelJSON.salesManagers; // toDO after deleting salesManager
                 var salesManager = salesManagers[salesManagers.length - 1];
                 var dialog = this.template({
                     salesManager       : salesManager,
