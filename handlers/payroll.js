@@ -891,7 +891,7 @@ var PayRoll = function (models) {
                 JournalEntry.aggregate([{
                     $match: {
                         'sourceDocument.model': "Employees",
-                        journal               : ObjectId(CONSTANTS.VACATION_PAYABLE),
+                        //journal               : ObjectId(CONSTANTS.VACATION_PAYABLE),
                         debit                 : {$gt: 0},
                         date                  : {
                             $gte: new Date(date),

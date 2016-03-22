@@ -1187,6 +1187,10 @@ var Module = function (models) {
                 var holidaysObject = {};
                 var vacationObject = {};
 
+                if (!wTrackIds.length){
+                    return wfcallback();
+                }
+
                 removeBySource = function (pbc) {
                     Model.remove({
                         "sourceDocument._id": {$in: wTrackIds}
@@ -1459,8 +1463,8 @@ var Module = function (models) {
                         var findMonthHours;
                         var monthHours = {};
 
-                        if (!dates.length){
-                           return createWaterfallCb();
+                        if (!dates.length) {
+                            return createWaterfallCb();
                         }
 
                         var minDate = _.min(dates);
@@ -1525,15 +1529,12 @@ var Module = function (models) {
                         findAllDevs = function (callback) {
                             Employee
                                 .aggregate([{
-                                    $match: {
-                                        department: {$nin: CONSTANTS.NOT_DEV_ARRAY.objectID()}
-                                    }
-                                }, {
                                     $project: {
                                         isEmployee: 1,
                                         hire      : 1,
                                         name      : 1,
                                         lastFire  : 1,
+                                        department: 1,
                                         lastHire  : {
                                             $let: {
                                                 vars: {
@@ -1547,8 +1548,9 @@ var Module = function (models) {
                                     $match: matchObj
                                 }, {
                                     $project: {
-                                        _id : 1,
-                                        hire: 1
+                                        _id       : 1,
+                                        hire      : 1,
+                                        department: 1
                                     }
                                 }], function (err, result) {
                                     if (err) {
@@ -1561,7 +1563,7 @@ var Module = function (models) {
                                 });
                         };
 
-                        findMonthHours = function(empResult, callback){
+                        findMonthHours = function (empResult, callback) {
                             async.each(dates, function (dateKey, asyncCb) {
                                 var year = parseInt(dateKey.slice(0, 4), 10);
                                 var month = parseInt(dateKey.slice(4, 6), 10);
@@ -1578,7 +1580,11 @@ var Module = function (models) {
                                     asyncCb();
                                 });
                             }, function () {
-                                callback(null, {monthHours: monthHours, emps: empResult.emps, salary: empResult.salary});
+                                callback(null, {
+                                    monthHours: monthHours,
+                                    emps      : empResult.emps,
+                                    salary    : empResult.salary
+                                });
                             });
                         };
 
@@ -1597,11 +1603,11 @@ var Module = function (models) {
                                 var employeesWithSalary = empResult.salary;
                                 var monthHours = empResult.monthHours[year * 100 + month] || {};
                                 var dayOfWeek = moment(date).day();
-                                var cb  = _.after(employeesCount, asyncCb);
+                                var cb = _.after(employeesCount, asyncCb);
                                 var holidayDate = holidaysObject[dateKey];
                                 var sameDayHoliday = holidayDate;
 
-                                if ((dayOfWeek === 0) || (dayOfWeek === 6)){
+                                if ((dayOfWeek === 0) || (dayOfWeek === 6)) {
                                     return asyncCb();
                                 }
 
@@ -1624,7 +1630,7 @@ var Module = function (models) {
                                     var costHour = 0;
                                     var hours = monthHours.hours || 0;
 
-                                    if (employeesIds.indexOf(employee) !== -1){
+                                    if (employeesIds.indexOf(employee) !== -1) {
                                         return cb();
                                     }
 
@@ -1635,7 +1641,7 @@ var Module = function (models) {
                                         }
                                     }
 
-                                   costHour = empObject.costHour || (isFinite(salary / hours) ? (salary / hours) : 0);
+                                    costHour = empObject.costHour || (isFinite(salary / hours) ? (salary / hours) : 0);
 
                                     var bodySalaryIdle = {
                                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1646,17 +1652,27 @@ var Module = function (models) {
                                         }
                                     };
 
+                                    var bodySalaryForNotDevs = {
+                                        currency      : CONSTANTS.CURRENCY_USD,
+                                        journal       : CONSTANTS.SALARY_PAYABLE,
+                                        date          : date.set(timeToSet),
+                                        sourceDocument: {
+                                            model: 'Employees'
+                                        }
+                                    };
+
                                     var idleTime = HOURSCONSTANT - totalWorkedForDay;
 
                                     bodySalaryIdle.sourceDocument._id = employee;
+                                    bodySalaryForNotDevs.sourceDocument._id = employee;
 
                                     if (totalWorkedForDay - HOURSCONSTANT < 0) {
                                         if (!vacation) {
                                             if (totalWorkedForDay - HOURSCONSTANT >= 0) {
                                                 bodySalaryIdle.amount = 0;
                                             } else {
-                                                bodySalaryIdle.amount = costHour * idleTime  * 100;
-                                                totalIdleObject[dateKey] += costHour * idleTime  * 100;
+                                                bodySalaryIdle.amount = costHour * idleTime * 100;
+                                                totalIdleObject[dateKey] += costHour * idleTime * 100;
                                             }
 
                                         } else {
@@ -1670,7 +1686,15 @@ var Module = function (models) {
                                         bodySalaryIdle.amount = 0;
                                     }
 
-                                    createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
+                                    if (notDevArray.indexOf(employeeNotTracked.department.toString()) !== -1) {
+                                        bodySalaryForNotDevs.amount = costHour * HOURSCONSTANT * 100;
+                                        if (sameDayHoliday) {
+                                            bodySalaryForNotDevs.amount = 0;
+                                        }
+                                        createReconciled(bodySalaryForNotDevs, req.session.lastDb, cb, req.session.uId);
+                                    } else {
+                                        createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
+                                    }
                                 }
                             }, function (err, result) {
                                 callback(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
@@ -3709,7 +3733,7 @@ var Module = function (models) {
                         $gte: new Date(startDate),
                         $lte: new Date(endDate)
                     },
-                    account: {$in:  allAssets.objectID()}
+                    account: {$in: allAssets.objectID()}
                 }
             }, {
                 $lookup: {
@@ -4151,12 +4175,13 @@ var Module = function (models) {
 
         Model.aggregate([{
             $match: {
-                date: {
+                date   : {
                     $gte: new Date(startDate),
                     $lte: new Date(endDate)
                 },
                 account: {$nin: [objectId(CONSTANTS.PRODUCT_SALES), objectId(CONSTANTS.COGS)]}
-            }}, {
+            }
+        }, {
             $lookup: {
                 from        : "chartOfAccount",
                 localField  : "account",

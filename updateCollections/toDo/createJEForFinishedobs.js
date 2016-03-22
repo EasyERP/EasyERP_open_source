@@ -140,9 +140,7 @@ dbObject.once('open', function callback() {
 
     query.exec(function (err, result) {
 
-        JE.findAndRemove({ journal       : CONSTANTS.FINISHED_JOB_JOURNAL, sourceDocument: {
-            model: 'jobs'
-        }}, function (err, result) {
+        JE.remove({ journal       : CONSTANTS.FINISHED_JOB_JOURNAL}, function (err, removed) {
             async.each(result, function (model, cb) {
                 var date = moment(new Date(model.invoice.invoiceDate)).subtract(60, 'seconds');
                 var wTracks = model.wTracks;
