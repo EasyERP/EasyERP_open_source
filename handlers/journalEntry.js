@@ -3998,7 +3998,7 @@ var Module = function (models) {
                         $match: {
                             date   : {
                                 $gte: new Date(startDate),
-                                $lte: new Date(moment(startDate).endOf('day'))
+                                $lte: new Date(startDate)
                             },
                             account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE),
                             credit : {$gt: 0}
@@ -4097,7 +4097,8 @@ var Module = function (models) {
                         $match: {
                             date   : {
                                 $gte: new Date(startDate),
-                                $lte: new Date(moment(startDate).endOf('day'))
+                                //$lte: new Date(moment(startDate).endOf('day'))
+                                $lte: new Date(startDate)
                             },
                             account: {$in: [objectId(CONSTANTS.SALARY_PAYABLE_ACCOUNT), objectId(CONSTANTS.SALARY_OVERTIME_ACCOUNT)]}
                         }
