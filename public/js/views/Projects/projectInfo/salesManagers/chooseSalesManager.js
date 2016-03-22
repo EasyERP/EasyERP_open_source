@@ -14,9 +14,9 @@ define(['Backbone',
             responseObj: {},
 
             events: {
-                "click "                                            : "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)" : "chooseOption",
-                "click a.current-selected"                          : "showNewSelect"
+                "click "                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click a.current-selected"                         : "showNewSelect"
             },
 
             initialize: function (options) {
@@ -50,14 +50,13 @@ define(['Backbone',
                 if (this.selectView) {
                     this.selectView.remove();
                 }
-
-                this.selectView = new selectView({
-                    e          : e,
-                    responseObj: this.responseObj
-                });
-               if (Object.keys(this.responseObj)){
-                   $target.append(this.selectView.render().el);
-               }
+                if (Object.keys(this.responseObj).length) {
+                    this.selectView = new selectView({
+                        e          : e,
+                        responseObj: this.responseObj
+                    });
+                    $target.append(this.selectView.render().el);
+                }
 
                 return false;
             },
@@ -98,8 +97,8 @@ define(['Backbone',
 
             chooseOption: function (e) {
                 var target = $(e.target);
-                var targetElement = target.parents("th");
-                var id = target.attr("id");
+                var targetElement = target.parents('th');
+                var id = target.attr('id');
                 var selectorContainer;
 
                 targetElement.attr('data-id', id);
@@ -113,7 +112,8 @@ define(['Backbone',
 
             render: function () {
                 var self = this;
-                var salesManager = this.modelJSON.salesManagers[this.modelJSON.salesManagers.length - 1];
+                var salesManagers = this.modelJSON.salesManagers;
+                var salesManager = salesManagers[salesManagers.length - 1];
                 var dialog = this.template({
                     salesManager       : salesManager,
                     utcDateToLocaleDate: common.utcDateToLocaleDate
@@ -164,4 +164,4 @@ define(['Backbone',
         });
 
         return ChooseSalesView;
-    })
+    });

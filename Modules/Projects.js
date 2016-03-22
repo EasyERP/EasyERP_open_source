@@ -296,6 +296,10 @@ var Project = function (models, event) {
                     }
                     if (data.projectmanager) {
                         _project.projectmanager = data.projectmanager;
+                        _project.salesManagers = [{
+                            manager: data.projectmanager,
+                            date   : data.StartDate || new Date().toString()
+                        }];
                     }
 
                     if (data.notes) {
