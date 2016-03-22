@@ -5,7 +5,7 @@ module.exports = function (wTrackObject) {
 
     var year = wTrackObject.year;
     var month = wTrackObject.month;
-    var week = wTrackObject.week;//it's isoWeek
+    var week = wTrackObject.week;// it's isoWeek
 
     if (month !== 1 && month !== 12) {
         return year;
@@ -22,4 +22,6 @@ module.exports = function (wTrackObject) {
     if (month === 1 && week === 53) {
         return --year;
     }
+
+    return year;
 };

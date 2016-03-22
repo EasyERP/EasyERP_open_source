@@ -1182,6 +1182,8 @@ define([
                 var bonusView;
                 var container;
 
+                App.startPreload();
+
                 var notesEl = new noteView({
                     model: this.formModel
                 }).render().el;
@@ -1235,6 +1237,7 @@ define([
                 paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    App.stopPreload();
                     self.renderProformRevenue();
                     self.getInvoiceStats();
                     self.activeTab();

@@ -294,6 +294,7 @@ define([
                 var collectionElement;
                 var intVal;
                 var index;
+                var self = this;
 
                 $currentElement.toggleClass('checkedValue');
 
@@ -309,7 +310,7 @@ define([
                         App.filter[filterObjectName] = {
                             key  : groupType,
                             value: [],
-                            type : filterType ? filterType : null
+                            type : filterType || null
                         };
                     }
 
@@ -317,6 +318,14 @@ define([
                     collectionElement.set({status: true});
 
                     groupNameElement.addClass('checkedGroup');
+
+                    //var inputFilterValue = filterGroupElement.find('input').val();
+                    (_.debounce(
+                        function () {
+                            self.renderFilterContent();
+                        }, 500))();
+
+                    //filterGroupElement.find('input').val(inputFilterValue);
 
                 } else {
                     index = App.filter[filterObjectName]['value'].indexOf(currentValue);
@@ -330,6 +339,12 @@ define([
                             groupNameElement.removeClass('checkedGroup');
                         }
                     }
+
+                    (_.debounce(
+                        function () {
+                            self.renderFilterContent();
+                        }, 500))();
+
                 }
 
                 //this.trigger('filter', App.filter);
@@ -354,12 +369,14 @@ define([
 
                     if (groupName.length > 0) {
                         filterIc.addClass('active');
-                        filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        //filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                     } else {
-                        if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate')) {
+                        if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
                             groupName = 'Letter';
                             filterIc.addClass('active');
-                            filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                            filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                            //filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                         }
                     }
                 });
@@ -388,7 +405,7 @@ define([
                 var collectionElement;
 
                 if (filterView) {
-                    valuesArray = App.filter[filterView]['value'];
+                    valuesArray = App.filter[filterView] || App.filter[filterView]['value'];
                 } else {
                     App.filter = {};
                     this.removeSelectedFilter();
@@ -482,6 +499,13 @@ define([
                 var sortOptions;
                 var intFiltersArray = ['week', 'month', 'year'];
 
+                if (!groupOptions) {
+                    groupOptions = {};
+                }
+
+                groupOptions.sort = {};
+                groupOptions.sort.order = 1;
+
                 if (!App.filtersValues || !App.filtersValues[self.parentContentType]) {
                     return setTimeout(function () {
                         self.renderGroup(key, filterView, groupStatus, null, null, cb);
@@ -493,10 +517,7 @@ define([
                 this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
                 if (intFiltersArray.indexOf(filterView) !== -1) {
-                    groupOptions = {};
-                    groupOptions.sort = {};
                     groupOptions.sort.key = 'name';
-                    groupOptions.sort.order = 1;
                     groupOptions.sort.int = true;
                 }
 

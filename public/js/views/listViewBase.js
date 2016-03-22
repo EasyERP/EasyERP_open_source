@@ -114,6 +114,11 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
+
+                if (this.contentType === 'invoiceAging') {
+                    return;
+                }
+
                 dataService.getData(this.totalCollectionLengthUrl, {
                     currentNumber: currentNumber,
                     filter       : filter,
@@ -495,6 +500,8 @@ define([
                 if (this.editCollection) { // add for reset editCollection after sort
                     this.editCollection.reset(this.collection.models);
                 }
+
+                App.stopPreload();
             },
 
             alpabeticalRender: function (e) {

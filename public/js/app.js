@@ -35,15 +35,29 @@ define([
         var target = document.getElementById('loading');
         var spinner = new Spinner(opts).spin(target);
 
+        App.preloaderShowFlag = false;
+
         $(document).ajaxStart(function () {
             $(target).fadeIn();
         });
         $(document).ajaxComplete(function () {
-            $(target).fadeOut();
+            if (!App.preloaderShowFlag) {
+                $(target).fadeOut();
+            }
         });
 
         appRouter.checkLogin = Communication.checkLogin;
         Communication.checkLogin(Custom.runApplication);
+
+        App.startPreload = function() {
+            App.preloaderShowFlag = true;
+            $('#loading').show();
+        };
+
+        App.stopPreload = function() {
+            App.preloaderShowFlag = false;
+            $('#loading').hide();
+        };
     };
 
     var applyDefaults = function () {
