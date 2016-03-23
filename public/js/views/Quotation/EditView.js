@@ -255,18 +255,6 @@ define([
 
                     dataService.postData(url, data, function (err, response) {
                         var tr;
-                       /* var _id;
-                        var filter;
-
-                        function createView() {
-                            this.proformaView = new ProformaView({
-                                el       : '#proforma',
-                                model    : self.collection,
-                                activeTab: true
-                            });
-
-                            this.proformaView.showDialog(quotationId);
-                        }*/
 
                         if (err) {
                             App.render({
@@ -278,25 +266,6 @@ define([
                             App.projectInfo.currentTab = 'proforma';
 
                             self.eventChannel.trigger('newProforma', quotationId);
-
-                            /*_id = window.location.hash.split('form/')[1];
-
-                            filter = {
-                                project: {
-                                    key  : 'project._id',
-                                    value: [_id]
-                                }
-                            };
-
-                            self.collection = new ProformaCollection({
-                                count      : 50,
-                                viewType   : 'list',
-                                contentType: 'salesProforma',
-                                filter     : filter
-                            });
-
-                            self.collection.unbind();
-                            self.collection.bind('reset', createView);*/
 
                             tr = $('[data-id=' + quotationId + ']');
                             tr.find('.checkbox').addClass('notRemovable');

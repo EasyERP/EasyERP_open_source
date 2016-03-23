@@ -657,11 +657,11 @@ var Payment = function (models, event) {
                     async.each(products, function (porduct) {
                         var job = porduct.jobs;
 
-                        JobsModel.findByIdAndUpdate(job, {$set: {payments: payments}}, {new: true}, function (err, result) {
+                        JobsModel.findByIdAndUpdate(job, payments, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err);
                             }
-                        })
+                        });
 
                     });
 

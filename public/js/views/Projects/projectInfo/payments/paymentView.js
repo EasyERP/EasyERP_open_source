@@ -63,6 +63,9 @@ define([
             listTableCheckedInput = $('#paymentsTable').find("input:not('#check_all_payments'):checked");
 
             this.collectionLength = this.collection.length;
+
+            App.startPreload();
+
             async.each(listTableCheckedInput, function (checkbox, cb) {
                 model = that.collection.get(checkbox.value);
                 model.destroy({
@@ -78,8 +81,6 @@ define([
                         that.collection.remove(checkbox.value);
 
                         cb();
-
-                        that.eventChannel.trigger('elemCountChanged');
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
@@ -92,6 +93,8 @@ define([
                         cb();
                     }
                 });
+            }, function (err) {
+                that.eventChannel.trigger('paymentRemoved');
             });
         },
 

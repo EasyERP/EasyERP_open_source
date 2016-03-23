@@ -131,6 +131,7 @@ define([
                 this.proformValues = {};
 
                 this.listenTo(eventChannel, 'newPayment', this.newPayment);
+                this.listenTo(eventChannel, 'paymentRemoved', this.newPayment);
                 this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
                 this.listenTo(eventChannel, 'newProforma', this.createProforma);
             },
