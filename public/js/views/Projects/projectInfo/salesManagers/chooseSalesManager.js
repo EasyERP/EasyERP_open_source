@@ -83,10 +83,10 @@ define(['Backbone',
                         success: function () {
                             var url = window.location.hash;
 
-                            self.hideDialog();
-
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(url, {trigger: true});
+                            App.projectInfo = App.projectInfo || {};
+                            App.projectInfo.currentTab = 'salesManagers';
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
@@ -97,7 +97,7 @@ define(['Backbone',
 
             chooseOption: function (e) {
                 var target = $(e.target);
-                var targetElement = target.parents('th');
+                var targetElement = target.parents('td');
                 var id = target.attr('id');
                 var selectorContainer;
 

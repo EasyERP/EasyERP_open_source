@@ -1,9 +1,11 @@
 <div id="top-bar-salesManagers" class="projectInfoTopBar">
     <div id="createBtnHolder">
+        <button  title="Update" id="updateSalesManager">Update</button>
         <a href="javascript;" class="fa fa-times" title="Remove" id="removeSalesManager"></a>
+        <a href="javascript;" class="fa fa-check" title="Save" id="saveSalesManager"></a>
     </div>
 </div>
-<table class="list task-list">
+<table class="list">
     <colgroup>
         <col width="2%"/>
         <col width="2%"/>
@@ -24,7 +26,7 @@
 
     <%salesManagers.forEach(function(salesManager, index){ %>
 
-    <tr data-index="<%= index %>" data-id="<%=salesManager.manager ? salesManager.manager._id : ''%>">
+    <tr data-id="<%=salesManager.manager ? salesManager.manager._id : ''%>">
 
         <td class="centerCell">
             <input type="checkbox" value="<%=salesManager.manager ? salesManager.manager._id : ''%>" class="salesManager-checkbox <%= index === salesManagers.length -1 ? 'notRemovable' : ''%>"/>
