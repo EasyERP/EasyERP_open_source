@@ -9,14 +9,13 @@
     </div>
 
     <table class="list payRoll-list">
-        <colgroup class="borders" span="8">
-            <col span="1" width="2%">
-            <col span="1" width="27%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
+        <colgroup class="borders" span="6">
+            <col span="1" width="5%">
+            <col span="1" width="35%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
         </colgroup>
         <thead>
         <tr>
@@ -26,9 +25,6 @@
                     class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th>Month</th>
-
-            <th class="oe_sortable_sub" data-sort="type">Payment Type<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
 
             <th class="oe_sortable_sub" data-sort="calc">Calc<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -44,14 +40,13 @@
             <td id="payRoll-Table" colspan="8">
                 <div class="scrollit">
                     <table class="list enable_hover" id="payRoll-listTable">
-                        <colgroup class="borders" span="8">
-                            <col span="1" width="2%">
-                            <col span="1" width="27%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
+                        <colgroup class="borders" span="6">
+                            <col span="1" width="5%">
+                            <col span="1" width="35%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
                         </colgroup>
                         <tbody id="payRoll-TableBody">
                         <% var total = 0;%>
@@ -63,26 +58,22 @@
                             <td data-content="number" class="centerCell"><%=index+1%></td>
                             <!--<td class="notForm centerCell"><input id="<%=cid%>" type="checkbox" value="<%=cid%>"-->
                             <!--class="checkbox"/></td>-->
-                            <td class="editable" data-content="supplier"><%=model.supplier ? model.supplier.fullName :
+                            <td class="" data-content="supplier"><%=model.supplier ? model.supplier.name.first + ' ' + model.supplier.name.last :
                                 ''%>
                             </td>
                             <td><%=model.month + '/' + model.year%></td>
-                            <td class="editable" data-content="paymentMethod"><%=model.paymentMethod ?
-                                model.paymentMethod.name : ''%>
-                            </td>
-
                             <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
-                                data-cash="<%=model.paidAmount%>"><%=currencySplitter(model.paidAmount.toString())%>
+                                data-cash="<%=model.paidAmount%>"><%=currencySplitter(model.paidAmount.toFixed())%>
                             </td>
 
                             <td data-content="onCash" class="differenceAmount money">0</td>
 
                             <td data-type="input" data-content="onCash" data-cash="<%=model.paidAmount%>"
                                 class="editable autoCalc cash paidAmount money">
-                                <%=currencySplitter(model.paidAmount.toString())%>
+                                <%=currencySplitter(model.paidAmount.toFixed())%>
                             </td>
 
-                            <%total += model.paidAmount;%>
+                            <%total += parseInt(model.paidAmount.toFixed(), 10);%>
                         </tr>
                         <% }) %>
                         </tbody>

@@ -425,28 +425,6 @@ var PayRoll = function (models) {
                         dataKey : 1
                     }
                 }, {
-                    $group: {
-                        _id     : '$employee._id',
-                        employee: {$addToSet: '$employee'},
-                        month   : {$addToSet: '$month'},
-                        year    : {$addToSet: '$year'},
-                        dataKey : {$addToSet: '$dataKey'},
-                        calc    : {$sum: '$calc'},
-                        paid    : {$sum: '$paid'},
-                        diff    : {$sum: '$diff'}
-                    }
-                }, {
-                    $project: {
-                        _id     : 1,
-                        month   : {$arrayElemAt: ["$month", 0]},
-                        year    : {$arrayElemAt: ["$year", 0]},
-                        employee: {$arrayElemAt: ["$employee", 0]},
-                        dataKey : {$arrayElemAt: ["$dataKey", 0]},
-                        calc    : 1,
-                        paid    : 1,
-                        diff    : 1
-                    }
-                }, {
                     $sort: sort
                 }], function (err, result) {
                     if (err) {
@@ -495,28 +473,6 @@ var PayRoll = function (models) {
                 month   : 1,
                 year    : 1,
                 dataKey : 1
-            }
-        }, {
-            $group: {
-                _id     : '$employee._id',
-                employee: {$addToSet: '$employee'},
-                month   : {$addToSet: '$month'},
-                year    : {$addToSet: '$year'},
-                dataKey : {$addToSet: '$dataKey'},
-                calc    : {$sum: '$calc'},
-                paid    : {$sum: '$paid'},
-                diff    : {$sum: '$diff'}
-            }
-        }, {
-            $project: {
-                _id     : 1,
-                month   : {$arrayElemAt: ["$month", 0]},
-                year    : {$arrayElemAt: ["$year", 0]},
-                employee: {$arrayElemAt: ["$employee", 0]},
-                dataKey : {$arrayElemAt: ["$dataKey", 0]},
-                calc    : 1,
-                paid    : 1,
-                diff    : 1
             }
         }, {
             $sort: sort
@@ -841,7 +797,7 @@ var PayRoll = function (models) {
         var year = parseInt(data.year, 10);
         var dataKey = year * 100 + month;
         var waterfallTasks;
-        var date = moment().isoWeekYear(year).month(month - 1).date(1);
+        var date = moment().isoWeekYear(year).month(month - 1).startOf('month');
         var endDate = moment(date).endOf('month');
 
         function getJournalEntries(callback) {
@@ -849,7 +805,6 @@ var PayRoll = function (models) {
                 JournalEntry.aggregate([{
                     $match: {
                         'sourceDocument.model': "Employees",
-                        debit                 : {$gt: 0},
                         date                  : {
                             $gte: new Date(date),
                             $lte: new Date(endDate)
@@ -858,9 +813,16 @@ var PayRoll = function (models) {
                 }, {
                     $project: {
                         employee: '$sourceDocument._id',
-                        summ    : {$divide: ['$debit', 100]},
+                        debit   : {$divide: ['$debit', 100]},
+                        credit  : {$divide: ['$credit', 100]},
                         journal : 1,
                         date    : 1
+                    }
+                }, {
+                    $group: {
+                        _id   : '$employee',
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
                     }
                 }], function (err, result) {
                     if (err) {
@@ -876,7 +838,6 @@ var PayRoll = function (models) {
                     $match: {
                         'sourceDocument.model': "wTrack",
                         journal               : {$in: journalArray},
-                        debit                 : {$gt: 0},
                         date                  : {
                             $gte: new Date(date),
                             $lte: new Date(endDate)
@@ -891,16 +852,24 @@ var PayRoll = function (models) {
                 }, {
                     $project: {
                         debit  : {$divide: ['$debit', 100]},
+                        credit : {$divide: ['$credit', 100]},
                         journal: 1,
                         wTrack : {$arrayElemAt: ["$sourceDocument", 0]},
                         date   : 1
                     }
                 }, {
                     $project: {
-                        summ    : '$debit',
+                        debit   : '$debit',
+                        credit  : '$credit',
                         journal : 1,
                         employee: '$wTrack.employee',
                         date    : 1
+                    }
+                }, {
+                    $group: {
+                        _id   : '$employee',
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
                     }
                 }], function (err, result) {
                     if (err) {
@@ -916,12 +885,21 @@ var PayRoll = function (models) {
                     return callback(err);
                 }
 
-                callback(null, {journalEntries: result[0].concat(result[1])});
+                var empIds = _.pluck(result[0], '_id');
+                var empIdsSecond = _.pluck(result[1], '_id');
+
+                callback(null, {
+                    resultByEmployee: result[0],
+                    resultByWTrack  : result[1],
+                    ids             : _.union(empIds, empIdsSecond)
+                });
             });
         }
 
         function savePayroll(resultItems, callback) {
-            var journalEntries = resultItems.journalEntries;
+            var resultByEmployee = resultItems.resultByEmployee;
+            var resultByWTrack = resultItems.resultByWTrack;
+            var ids = resultItems.ids;
             var newPayroll;
             var startBody = {
                 year   : year,
@@ -929,16 +907,33 @@ var PayRoll = function (models) {
                 dataKey: dataKey,
                 paid   : 0
             };
+            var newArray = [];
 
-            async.each(journalEntries, function (journalEntry, asyncCb) {
-                startBody.employee = journalEntry.employee;
-                startBody.calc = parseFloat(journalEntry.summ.toFixed(2));
+            ids.forEach(function (el) {
+                newArray.push(el.toString());
+            });
+
+            newArray = _.uniq(newArray);
+
+            async.each(newArray, function (id, asyncCb) {
+                var journalEntryEmp = _.find(resultByEmployee, function (el) {
+                    return el._id.toString() === id.toString();
+                });
+
+                var journalEntrywTrack = _.find(resultByWTrack, function (el) {
+                    return el._id.toString() === id.toString();
+                });
+
+                var sumFirst = parseFloat(journalEntryEmp ? (journalEntryEmp.debit || journalEntryEmp.credit).toFixed(2) : '0');
+                var sumSecond = parseFloat(journalEntrywTrack ? (journalEntrywTrack.debit || journalEntrywTrack.credit).toFixed(2) : '0');
+
+                startBody.employee = id;
+                startBody.calc = sumFirst + sumSecond;
                 startBody.diff = startBody.calc;
-                startBody.type = journalEntry.journal;
-                startBody.month = moment(new Date(journalEntry.date)).month() + 1;
-                startBody.year = moment(new Date(journalEntry.date)).isoWeekYear();
+                startBody.month = month;
+                startBody.year = year;
                 startBody.dataKey = startBody.year * 100 + startBody.month;
-                startBody.date = journalEntry.date;
+                startBody.date = new Date(moment().isoWeekYear(year).month(month).date(1));
 
                 newPayroll = new Payroll(startBody);
 
@@ -949,31 +944,31 @@ var PayRoll = function (models) {
 
         }
 
-            waterfallTasks = [getJournalEntries, savePayroll];
+        waterfallTasks = [getJournalEntries, savePayroll];
 
-            async.waterfall(waterfallTasks, function (err) {
+        async.waterfall(waterfallTasks, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            composeExpensesAndCache(req, function (err) {
                 if (err) {
                     return next(err);
                 }
 
-                composeExpensesAndCache(req, function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    if (cbFromRecalc) {
-                        cbFromRecalc(null, "ok");
-                    } else {
-                        res.status(200).send("ok");
-                    }
-                });
+                if (cbFromRecalc) {
+                    cbFromRecalc(null, "ok");
+                } else {
+                    res.status(200).send("ok");
+                }
             });
+        });
 
-        }
+    }
 
-        this.generate = function (req, res, next) {
-            generate(req, res, next);
-        };
+    this.generate = function (req, res, next) {
+        generate(req, res, next);
     };
+};
 
-    module.exports = PayRoll;
+module.exports = PayRoll;

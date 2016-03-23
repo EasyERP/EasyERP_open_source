@@ -438,16 +438,18 @@ var Payment = function (models, event) {
     function payrollExpensUpdater(db, _payment, mulParram, cb) {
         var Payroll = models.get(db, 'PayRoll', payrollSchema);
         var id = _payment.paymentRef ? _payment.paymentRef : _payment.product;
-        var paid = _payment.paidAmount ? _payment.paidAmount : _payment.paid;
+        var paid = _payment.paidAmount ? _payment.paidAmount + _payment.differenceAmount : _payment.paid + _payment.diff;
 
         paid = paid * mulParram;
 
         Payroll.findByIdAndUpdate(id, {
             $inc: {
-                diff: paid,
+                diff: -paid,
                 paid: paid
             }
-        }, cb);
+        }, function (err, result) {
+            cb(err, result);
+        });
     }
 
     this.salaryPayOut = function (req, res, next) {
@@ -472,7 +474,7 @@ var Payment = function (models, event) {
 
                         productObject.product = _payment.paymentRef;
                         productObject.paid = _payment.paidAmount;
-                        productObject.diff = _payment.diff;
+                        productObject.diff = _payment.differenceAmount;
 
                         supplierObject.paidAmount = _payment.paidAmount;
                         supplierObject.differenceAmount = _payment.differenceAmount;
@@ -482,7 +484,7 @@ var Payment = function (models, event) {
                         products.push(productObject);
 
                         return true;
-                    })
+                    });
 
                     resultObject.suppliers = suppliers;
                     resultObject.products = products;
@@ -526,6 +528,21 @@ var Payment = function (models, event) {
                 var updatePayRolls = function (params, cb) {
                     async.each(body, function (_payment, eachCb) {
                         payrollExpensUpdater(db, _payment, 1, eachCb);
+
+                        var bodySalary = {
+                            currency: MAIN_CONSTANTS.CURRENCY_USD,
+                            journal: MAIN_CONSTANTS.SALARY_PAYMENT_JOURNAL,
+                            date: _payment.date,
+                            sourceDocument: {
+                                model: 'salaryPayment',
+                                _id: _payment.supplier._id
+                            },
+                            amount: _payment.paidAmount
+                        };
+
+                        _journalEntryHandler.createReconciled(bodySalary, req.session.lastDb, function () {
+
+                        }, req.session.uId)
                     }, function (err) {
                         if (err) {
                             return cb(err);
@@ -1256,6 +1273,7 @@ var Payment = function (models, event) {
 
                             async.each(invoice.products, function (_payment, eachCb) {
                                 payrollExpensUpdater(db, _payment, -1, eachCb);
+                                _journalEntryHandler.removeByDocId({"sourceDocument.model": 'salaryPayment', "sourceDocument._id" : _payment}, req.session.lastDb, function () {});
                             }, function (err) {
                                 if (err) {
                                     return next(err);

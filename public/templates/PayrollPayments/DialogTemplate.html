@@ -6,28 +6,21 @@
     </div>
 
     <table class="list payRoll-list">
-        <colgroup class="borders" span="8">
-            <col span="1" width="2%">
-            <col span="1" width="2%">
-            <col span="1" width="27%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
-            <col span="1" width="7%">
+        <colgroup class="borders" span="6">
+            <col span="1" width="5%">
+            <col span="1" width="35%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
+            <col span="1" width="15%">
         </colgroup>
         <thead>
         <tr>
             <th><a id="expandAll">#</a></th>
-            <th></th>
             <th class="oe_sortable_sub" data-sort="employee.name">Complete Name<span
                     class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th>Month</th>
-
-            <th class="oe_sortable_sub" data-sort="type">Payment Type<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-
             <th class="oe_sortable_sub" data-sort="calc">Calc<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable_sub" data-sort="paid">Balance<span class="arrow down">7</span><span
@@ -42,15 +35,13 @@
             <td id="payRoll-Table" colspan="8">
                 <div class="scrollit">
                     <table class="list enable_hover" id="payRoll-listTable">
-                        <colgroup class="borders" span="8">
-                            <col span="1" width="2%">
-                            <col span="1" width="2%">
-                            <col span="1" width="27%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
-                            <col span="1" width="7%">
+                        <colgroup class="borders" span="6">
+                            <col span="1" width="5%">
+                            <col span="1" width="35%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
+                            <col span="1" width="15%">
                         </colgroup>
                         <tbody id="payRoll-TableBody">
                         <% var total = 0;%>
@@ -61,28 +52,23 @@
                             <td class="notForm centerCell"><input id="<%=_supplier._id%>" type="checkbox"
                                                                   value="<%=_supplier._id%>"
                                                                   class="checkbox"/></td>
-                            <td class="editable" data-content="supplier"><%=_supplier.fullName ? _supplier.fullName :
+                            <td class="" data-content="supplier"><%=_supplier.fullName ? _supplier.fullName :
                                 ''%>
                             </td>
                             <td><%=month + '/' + year%></td>
-                            <td class="editable" data-content="paymentMethod"><%=paymentMethod ? paymentMethod.name :
-                                ''%>
-                            </td>
-
                             <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
                                 data-cash="<%=_supplier.paidAmount%>">
-                                <%=currencySplitter(_supplier.paidAmount.toString())%>
+                                <%=currencySplitter(_supplier.paidAmount.toFixed())%>
                             </td>
 
-                            <td data-content="onCash" class="differenceAmount money"><%=_supplier.differenceAmount %>
-                            </td>
+                            <td data-content="onCash" class="differenceAmount money"> <%=currencySplitter(_supplier.paidAmount.toFixed())%></td>
 
                             <td data-type="input" data-content="onCash" data-cash="<%=_supplier.paidAmount%>"
                                 class="editable autoCalc cash paidAmount money">
-                                <%=currencySplitter(_supplier.paidAmount.toString())%>
+                                <%=currencySplitter(_supplier.paidAmount.toFixed())%>
                             </td>
 
-                            <%total += _supplier.paidAmount;%>
+                            <%total += parseInt(model.paidAmount.toFixed(), 10);%>
                         </tr>
                         <% }) %>
                         </tbody>

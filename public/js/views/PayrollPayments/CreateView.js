@@ -87,6 +87,7 @@ define([
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
+                    delete this.changedModels[id];
                 }
                 this.editCollection.save();
             },

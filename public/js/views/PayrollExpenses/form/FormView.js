@@ -3,7 +3,7 @@
  */
 'use strict';
 define([
-    'Backbone',
+        'Backbone',
         'text!templates/PayrollExpenses/form/FormTemplate.html',
         'text!templates/PayrollExpenses/form/sortTemplate.html',
         'text!templates/PayrollExpenses/form/cancelEdit.html',
@@ -36,19 +36,18 @@ define([
             },
 
             events: {
-                "click .checkbox"        : "checked",
-                "click td.editable"      : "editRow",
-                "click .newSelectList li": "chooseOption",
-                "change .autoCalc"       : "autoCalc",
-                "change .editable"       : "setEditable",
-                "keydown input.editing"  : "keyDown",
-                "click #expandAll"       : "expandAll",
-                "click"                  : "removeNewSelect",
-                "click .diff"            : "newPayment",
+                "click .checkbox"                   : "checked",
+                "click td.editable"                 : "editRow",
+                "click .newSelectList li"           : "chooseOption",
+                "change .autoCalc"                  : "autoCalc",
+                "change .editable"                  : "setEditable",
+                "keydown input.editing"             : "keyDown",
+                "click"                             : "removeNewSelect",
+                "click .diff"                       : "newPayment",
                 // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .oe_sortable"     : "goSort",
-                'click .mainTr'          : 'showHidden'
+                "click .oe_sortable"                : "goSort",
+                //'click tr.mainTr td:not(td.notForm)': 'showHidden'
 
             },
 
@@ -228,16 +227,16 @@ define([
                         model = this.editCollection.get(dataId);
                         jsonModel = model.toJSON();
 
-                        if (jsonModel.diff < 0) {
+                        if (jsonModel.diff > 0) {
 
                             modelPayment = {
-                                paidAmount      : jsonModel.diff * (-1),
+                                paidAmount      : jsonModel.diff,
                                 workflow        : "Draft",
                                 differenceAmount: 0,
                                 month           : jsonModel.month,
                                 year            : jsonModel.year,
                                 supplier        : jsonModel.employee,
-                                paymentMethod   : jsonModel.type,
+                                //paymentMethod   : jsonModel.type,
                                 period          : jsonModel.year + '-' + jsonModel.month + '-01',
                                 paymentRef      : dataId
                             };
@@ -248,21 +247,21 @@ define([
                     }
                 } else if (target) {
                     tr = $(target).closest('tr');
-                    dataId = tr.attr('data-id');
+                     dataId = tr.attr('data-id');
 
                     model = this.editCollection.get(dataId);
                     jsonModel = model.toJSON();
 
-                    if (jsonModel.diff < 0) {
+                    if (jsonModel.diff > 0) {
 
                         modelPayment = {
-                            paidAmount      : jsonModel.diff * (-1),
+                            paidAmount      : jsonModel.diff,
                             workflow        : "Draft",
                             differenceAmount: 0,
                             month           : jsonModel.month,
                             year            : jsonModel.year,
                             supplier        : jsonModel.employee,
-                            paymentMethod   : jsonModel.type,
+                            //paymentMethod   : jsonModel.type,
                             period          : jsonModel.year + '-' + jsonModel.month + '-01',
                             paymentRef      : dataId
                         };
@@ -870,6 +869,8 @@ define([
             },
 
             checked: function (e) {
+                e.stopPropagation();
+
                 if (this.$el.find('#false').length) {
                     return false;
                 }
@@ -1092,22 +1093,22 @@ define([
                 });
             },
 
-            showHidden: function (e) {
-                var $target = $(e.target);
-                var $tr = $target.closest('tr');
-                var dataId = $tr.attr('data-id');
-                var $body = this.$el.find('#payRoll-listTable');
-                var childTr = $body.find("[data-main='" + dataId + "']");
-                var sign = $.trim($tr.find('.expand').text());
-
-                if (sign === '+') {
-                    $tr.find('.expand').text('-');
-                } else {
-                    $tr.find('.expand').text('+');
-                }
-
-                childTr.toggleClass();
-            },
+            //showHidden: function (e) {
+            //    var $target = $(e.target);
+            //    var $tr = $target.closest('tr');
+            //    var dataId = $tr.attr('data-id');
+            //    var $body = this.$el.find('#payRoll-listTable');
+            //    var childTr = $body.find("[data-main='" + dataId + "']");
+            //    var sign = $.trim($tr.find('.expand').text());
+            //
+            //    if (sign === '+') {
+            //        $tr.find('.expand').text('-');
+            //    } else {
+            //        $tr.find('.expand').text('+');
+            //    }
+            //
+            //    childTr.toggleClass();
+            //},
 
             asyncRender: function (asyncKeys) {
                 var self = this;
@@ -1118,10 +1119,12 @@ define([
                         dataKey: self.dataKey,
                         _id    : asyncDate
                     }, function (result) {
-                        var mainTr = body.find("[data-id='" + asyncDate + "']");
-                        result.forEach(function (entry) {
-                            mainTr.after("<tr data-main='" + asyncDate + "' class='hidden'><td colspan='4'>" + (entry.employee.name.first + ' ' + entry.employee.name.last) + "</td><td>" + common.utcDateToLocaleFullDateTime(entry.date) + "</td><td>" + entry.type.name + "</td><td class='money'>" + helpers.currencySplitter(entry.calc.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.paid.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.diff.toFixed(2)) + "</td></tr>");
-                        });
+                        self[asyncDate] = result;
+
+                        //var mainTr = body.find("[data-id='" + asyncDate + "']");
+                        //result.forEach(function (entry) {
+                        //    mainTr.after("<tr data-main='" + asyncDate + "' class='hidden'><td colspan='4'>" + (entry.employee.name.first + ' ' + entry.employee.name.last) + "</td><td>" + common.utcDateToLocaleFullDateTime(entry.date) + "</td><td>" + entry.type.name + "</td><td class='money'>" + helpers.currencySplitter(entry.calc.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.paid.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.diff.toFixed(2)) + "</td></tr>");
+                        //});
                     });
 
                 });

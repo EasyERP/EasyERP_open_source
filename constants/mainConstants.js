@@ -57,7 +57,7 @@ module.exports = {
         '565eb53a6aa50532e5df0bca'
     ],
 
-    FINISHED_GOODS: '565eb53a6aa50532e5df0bd9',
+    FINISHED_GOODS : '565eb53a6aa50532e5df0bd9',
     WORK_IN_PROCESS: '565eb53a6aa50532e5df0bda',
 
     LIABILITIES: [
@@ -73,10 +73,12 @@ module.exports = {
         '565eb53a6aa50532e5df0bf2' //capital
     ],
 
-    SALARY_PAYABLE_ACCOUNT: '56c4444eb81fd51e19207f3e',
+    SALARY_PAYABLE_ACCOUNT : '56c4444eb81fd51e19207f3e',
     SALARY_OVERTIME_ACCOUNT: '56c9d555c3b88f6d64490fb5',
 
     PAYMENT_JOURNAL: '56f243d9574610102546a33a',
+
+    SALARY_PAYMENT_JOURNAL: '56f28cb517d856740da4c8d7',
 
     OPERATING: [],
     INVESTING: [],

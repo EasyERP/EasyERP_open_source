@@ -1,13 +1,12 @@
 <div>
     <table class="list payRoll-list tableFixed">
-        <colgroup class="borders" span="9">
+        <colgroup class="borders" span="8">
             <col span="1" width="5%">
             <col span="1" width="5%">
             <col span="1" width="5%">
             <col span="1" width="25%">
             <col span="1" width="15%">
             <col span="1" width="15%">
-            <col span="1" width="10%">
             <col span="1" width="15%">
             <col span="1" width="15%">
         </colgroup>
@@ -15,14 +14,11 @@
         <tr>
             <th><a id="expandAll">#</a></th>
             <th class="notForm centerCell"><input type="checkbox" class="check_all"/></th>
-            <th class="notForm centerCell">Expand</th>
+            <th class="notForm centerCell">Report</th>
             <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span
                     class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th>Month</th>
-
-            <th class="oe_sortable" data-sort="type.name">Payment Type<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
 
             <th class="oe_sortable" data-sort="calc">Calc<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -37,14 +33,13 @@
             <td id="payRoll-Table" colspan="9">
                 <div class="scrollit">
                     <table class="list enable_hover tableFixed" id="payRoll-listTable">
-                        <colgroup class="borders" span="9">
+                        <colgroup class="borders" span="8">
                             <col span="1" width="5%">
                             <col span="1" width="5%">
                             <col span="1" width="5%">
                             <col span="1" width="25%">
                             <col span="1" width="15%">
                             <col span="1" width="15%">
-                            <col span="1" width="10%">
                             <col span="1" width="15%">
                             <col span="1" width="15%">
                         </colgroup>
@@ -55,10 +50,9 @@
                         <tr data-id="<%=model._id%>" class="mainTr">
                             <td data-content="number"><%=index+1%></td>
                             <td class="notForm centerCell"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
-                            <td class="centerCell expand">+</td>
+                            <td class="centerCell expand"><span class="centerCell fa fa-university"></span></td>
                             <td class="" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
                             <td data-content="dataKey"><%=model.month + '/' + model.year%></td>
-                            <td class="" data-content="paymentType"><%=model.type ? model.type.name : ''%></td>
 
                             <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
                                 data-cash="<%=model.calc%>">
@@ -85,7 +79,7 @@
         </tr>
         <tfoot id="payRoll-listTotal">
         <tr>
-            <td colspan="6"></td>
+            <td colspan="5"></td>
             <td>
                 <label>Calc: </label>
                 <span data-id="value" class="money" id="totalCalc" data-cash="0">0</span>

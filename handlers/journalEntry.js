@@ -5665,9 +5665,16 @@ var Module = function (models) {
 
     this.removeByDocId = function (docId, dbIndex, callback) {
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var id = docId;
+        var query;
 
+        if (id.length >= 24){
+          query = {'sourceDocument._id': id};
+        } else {
+            query = id;
+        }
         Model
-            .remove({'sourceDocument._id': docId}, callback);
+            .remove(query, callback);
     };
 };
 
