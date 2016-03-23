@@ -191,7 +191,8 @@ define([
                         pId          : self.projectID,
                         customerId   : self.customerId,
                         collection   : self.collection,
-                        hidePrAndCust: true
+                        hidePrAndCust: true,
+                        eventChannel: self.eventChannel
                     });
 
                     //self.collection.remove(id);

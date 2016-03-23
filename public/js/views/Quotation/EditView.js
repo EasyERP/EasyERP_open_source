@@ -254,9 +254,9 @@ define([
                 if (!err) {
 
                     dataService.postData(url, data, function (err, response) {
-                        var filter;
-                        var _id;
                         var tr;
+                       /* var _id;
+                        var filter;
 
                         function createView() {
                             this.proformaView = new ProformaView({
@@ -264,8 +264,9 @@ define([
                                 model    : self.collection,
                                 activeTab: true
                             });
+
                             this.proformaView.showDialog(quotationId);
-                        }
+                        }*/
 
                         if (err) {
                             App.render({
@@ -274,11 +275,11 @@ define([
                             });
                         } else {
 
-                            _id = window.location.hash.split('form/')[1];
-                            tr = $('[data-id=' + quotationId + ']');
+                            App.projectInfo.currentTab = 'proforma';
 
-                            tr.find('.checkbox').addClass('notRemovable');
-                            tr.find('.workflow').find('a').text('Proformed');
+                            self.eventChannel.trigger('newProforma', quotationId);
+
+                            /*_id = window.location.hash.split('form/')[1];
 
                             filter = {
                                 project: {
@@ -295,7 +296,11 @@ define([
                             });
 
                             self.collection.unbind();
-                            self.collection.bind('reset', createView);
+                            self.collection.bind('reset', createView);*/
+
+                            tr = $('[data-id=' + quotationId + ']');
+                            tr.find('.checkbox').addClass('notRemovable');
+                            tr.find('.workflow').find('a').text('Proformed');
                         }
                     });
                 }
@@ -497,13 +502,13 @@ define([
                     success: function () {
                         var url = window.location.hash;
 
-                        self.hideDialog();
-
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-
-                        App.projectInfo = App.projectInfo || {};
-                        App.projectInfo.currentTab = 'quotations';
+                        if (url === '#easyErp/salesQuotation/list') {
+                            self.hideDialog();
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
+                        } else {
+                            self.hideDialog();
+                        }
 
                         if (proformaCb && typeof proformaCb === 'function') {
                             return proformaCb(null);

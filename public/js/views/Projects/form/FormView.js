@@ -132,6 +132,7 @@ define([
 
                 this.listenTo(eventChannel, 'newPayment', this.newPayment);
                 this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
+                this.listenTo(eventChannel, 'newProforma', this.createProforma);
             },
 
             viewQuotation: function (e) {
@@ -1053,7 +1054,7 @@ define([
 
             },
 
-            getProforma: function (cb) {
+            getProforma: function (cb, quotationId) {
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
@@ -1072,16 +1073,21 @@ define([
                 });
 
                 function createView() {
+                    var proformaView;
                     var payments = [];
                     
                     //App.proformaCollection = self.pCollection;
 
-                    new ProformaView({
+                    proformaView = new ProformaView({
                         el    : '#proforma',
                         model : self.pCollection,
                         filter: filter,
                         eventChannel: self.eventChannel
                     }).render();
+
+                    if (quotationId) {
+                        proformaView.showDialog(quotationId);
+                    }
 
                     self.pCollection.toJSON().forEach(function (element) {
                         if (element.payments) {
@@ -1094,7 +1100,9 @@ define([
                     self.payments = self.payments || {};
                     self.payments.fromProformas = payments;
 
-                    callback();
+                    if (typeof(cb) === 'function') {
+                        callback();
+                    }
                 }
 
                 callback = _.once(cb);
@@ -1410,8 +1418,29 @@ define([
                     self.getProformaStats
                 ];
 
+                App.startPreload();
+
                 async.parallel(paralellTasks, function () {
                     self.getPayments(true);
+                    App.stopPreload();
+                });
+
+            },
+
+            createProforma : function(quotationId) {
+                var self = this;
+                var paralellTasks;
+
+                paralellTasks = [
+                    self.renderProformRevenue,
+                    self.getProformaStats
+                ];
+                App.startPreload();
+
+                async.parallel(paralellTasks, function () {
+                    self.getProforma(null, quotationId);
+                    self.activeTab();
+                    App.stopPreload();
                 });
 
             },
