@@ -1773,12 +1773,16 @@ var Module = function (models) {
                         findAllDevs = function (callback) {
                             Employee
                                 .aggregate([{
+                                    $match: {
+                                        'department': {$nin: notDevArray.objectID()},
+                                        hire        : {$ne: []}
+                                    }
+                                }, {
                                     $project: {
                                         isEmployee: 1,
                                         hire      : 1,
                                         name      : 1,
                                         lastFire  : 1,
-                                        department: 1,
                                         lastHire  : {
                                             $let: {
                                                 vars: {
@@ -1792,9 +1796,8 @@ var Module = function (models) {
                                     $match: matchObj
                                 }, {
                                     $project: {
-                                        _id       : 1,
-                                        hire      : 1,
-                                        department: 1
+                                        _id : 1,
+                                        hire: 1
                                     }
                                 }], function (err, result) {
                                     if (err) {
@@ -1892,19 +1895,9 @@ var Module = function (models) {
                                         }
                                     };
 
-                                    var bodySalaryForNotDevs = {
-                                        currency      : CONSTANTS.CURRENCY_USD,
-                                        journal       : CONSTANTS.SALARY_PAYABLE,
-                                        date          : date.set(timeToSet),
-                                        sourceDocument: {
-                                            model: 'Employees'
-                                        }
-                                    };
-
                                     var idleTime = HOURSCONSTANT - totalWorkedForDay;
 
                                     bodySalaryIdle.sourceDocument._id = employee;
-                                    bodySalaryForNotDevs.sourceDocument._id = employee;
 
                                     if (totalWorkedForDay - HOURSCONSTANT < 0) {
                                         if (!vacation) {
@@ -1926,20 +1919,7 @@ var Module = function (models) {
                                         bodySalaryIdle.amount = 0;
                                     }
 
-                                    if (employeesIds.indexOf(employee) !== -1) {
-                                        bodySalaryForNotDevs.amount = 0;
-                                        bodySalaryIdle.amount = 0;
-                                    }
-
-                                    if (notDevArray.indexOf(employeeNotTracked.department.toString()) !== -1) {
-                                        bodySalaryForNotDevs.amount = costHour * HOURSCONSTANT * 100;
-                                        if (sameDayHoliday) {
-                                            bodySalaryForNotDevs.amount = 0;
-                                        }
-                                        createReconciled(bodySalaryForNotDevs, req.session.lastDb, cb, req.session.uId);
-                                    } else {
-                                        createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
-                                    }
+                                    createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
                                 }
                             }, function (err, result) {
                                 callback(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
@@ -4273,8 +4253,7 @@ var Module = function (models) {
                                 $gte: new Date(startDate),
                                 $lte: new Date(endDate)
                             },
-                            account: objectId(CONSTANTS.PRODUCT_SALES),
-                            credit : {$gt: 0}
+                            account: objectId(CONSTANTS.PRODUCT_SALES)
                         }
                     }, {
                         $lookup: {
@@ -4285,18 +4264,21 @@ var Module = function (models) {
                     }, {
                         $project: {
                             date   : 1,
+                            debit  : {$divide: ['$debit', '$currency.rate']},
                             credit : {$divide: ['$credit', '$currency.rate']},
                             account: {$arrayElemAt: ["$account", 0]}
                         }
                     }, {
                         $group: {
-                            _id  : '$account._id',
-                            name : {$addToSet: '$account.name'},
-                            debit: {$sum: '$credit'}
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
                         }
                     }, {
                         $project: {
-                            debit: {$divide: ['$debit', 100]}
+                            debit : {$divide: ['$debit', 100]},
+                            credit: {$divide: ['$credit', 100]}
                         }
                     }], function (err, result) {
                         if (err) {
@@ -4314,8 +4296,7 @@ var Module = function (models) {
                                 $gte: new Date(startDate),
                                 $lte: new Date(endDate)
                             },
-                            account: objectId(CONSTANTS.COGS),
-                            debit  : {$gt: 0}
+                            account: objectId(CONSTANTS.COGS)
                         }
                     }, {
                         $lookup: {
@@ -4327,17 +4308,20 @@ var Module = function (models) {
                         $project: {
                             date   : 1,
                             debit  : {$divide: ['$debit', '$currency.rate']},
+                            credit : {$divide: ['$credit', '$currency.rate']},
                             account: {$arrayElemAt: ["$account", 0]}
                         }
                     }, {
                         $group: {
-                            _id  : '$account._id',
-                            name : {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'}
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            credit: {$sum: '$credit'},
+                            debit : {$sum: '$debit'}
                         }
                     }, {
                         $project: {
-                            debit: {$divide: ['$debit', 100]}
+                            debit : {$divide: ['$debit', 100]},
+                            credit: {$divide: ['$credit', 100]}
                         }
                     }], function (err, result) {
                         if (err) {
@@ -4353,10 +4337,10 @@ var Module = function (models) {
                         return cb(err);
                     }
 
-                    var grossProfit = result[0] && result[0][0] ? result[0][0].debit : 0;
-                    var expenses = result[1] && result[1][0] ? result[1][0].debit : 0;
+                    var grossProfit = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
+                    var expenses = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
 
-                    var EBIT = grossProfit - expenses;
+                    var EBIT = Math.abs(grossProfit + expenses);
 
                     cb(null, [{name: 'Operating Income (EBIT)', debit: EBIT}]);
                 });
@@ -4370,8 +4354,7 @@ var Module = function (models) {
                                 $gte: new Date(startDate),
                                 $lte: new Date(startDate)
                             },
-                            account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE),
-                            credit : {$gt: 0}
+                            account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE)
                         }
                     }, {
                         $lookup: {
@@ -4382,18 +4365,21 @@ var Module = function (models) {
                     }, {
                         $project: {
                             date   : 1,
+                            debit  : {$divide: ['$debit', '$currency.rate']},
                             credit : {$divide: ['$credit', '$currency.rate']},
                             account: {$arrayElemAt: ["$account", 0]}
                         }
                     }, {
                         $group: {
-                            _id  : '$account._id',
-                            name : {$addToSet: '$account.name'},
-                            debit: {$sum: '$credit'}
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
                         }
                     }, {
                         $project: {
-                            debit: {$divide: ['$debit', 100]}
+                            debit : {$divide: ['$debit', 100]},
+                            credit: {$divide: ['$credit', 100]}
                         }
                     }], function (err, result) {
                         if (err) {
@@ -4411,8 +4397,7 @@ var Module = function (models) {
                                 $gte: new Date(startDate),
                                 $lte: new Date(endDate)
                             },
-                            account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE),
-                            debit  : {$gt: 0}
+                            account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE)
                         }
                     }, {
                         $lookup: {
@@ -4424,17 +4409,20 @@ var Module = function (models) {
                         $project: {
                             date   : 1,
                             debit  : {$divide: ['$debit', '$currency.rate']},
+                            credit : {$divide: ['$credit', '$currency.rate']},
                             account: {$arrayElemAt: ["$account", 0]}
                         }
                     }, {
                         $group: {
                             _id  : '$account._id',
                             name : {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'}
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
                         }
                     }, {
                         $project: {
-                            debit: {$divide: ['$debit', 100]}
+                            debit : {$divide: ['$debit', 100]},
+                            credit: {$divide: ['$credit', 100]}
                         }
                     }], function (err, result) {
                         if (err) {
@@ -4450,10 +4438,10 @@ var Module = function (models) {
                         return cb(err);
                     }
 
-                    var arFirst = result[0] && result[0][0] ? result[0][0].debit : 0;
-                    var arLast = result[1] && result[1][0] ? result[1][0].debit : 0;
+                    var arFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
+                    var arLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
 
-                    var ar = Math.abs(arFirst - arLast) * (-1);
+                    var ar = Math.abs(arFirst - arLast);
 
                     var fieldName = ar > 0 ? 'Decrease in Accounts Receivable' : 'Increase in Accounts Receivable';
 
@@ -4566,8 +4554,8 @@ var Module = function (models) {
                         return cb(err);
                     }
 
-                    var spFirst = result[0] && result[0][0] ? result[0][0].debit + result[0][0].credit : 0;
-                    var spLast = result[1] && result[1][0] ? result[1][0].debit + result[1][0].credit : 0;
+                    var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
+                    var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
 
                     var sp = spLast - spFirst;
 
@@ -4820,7 +4808,7 @@ var Module = function (models) {
 
         Model.aggregate([{
             $match: {
-                date   : {
+                date: {
                     $gte: new Date(startDate),
                     $lte: new Date(endDate)
                 }

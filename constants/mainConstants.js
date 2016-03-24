@@ -45,6 +45,8 @@ module.exports = {
 
     INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
 
+    ADMIN_SALARY_JOURNAL: '56f3fac93fb451104c75a477',
+
     BANK_AND_CASH: [
         '565eb53a6aa50532e5df0bd6', //bank and Cash
         '565eb53a6aa50532e5df0bd3',
@@ -72,7 +74,9 @@ module.exports = {
 
     EQUITY: [
         '565eb53a6aa50532e5df0bf3', //dividends
-        '565eb53a6aa50532e5df0bf2' //capital
+        '565eb53a6aa50532e5df0bf2', //capital
+        '565eb53a6aa50532e5df0be0', //productSales
+        '565eb53a6aa50532e5df0be2'//COGS
     ],
 
     SALARY_PAYABLE_ACCOUNT : '56c4444eb81fd51e19207f3e',

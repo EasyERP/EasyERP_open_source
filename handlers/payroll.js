@@ -790,6 +790,7 @@ var PayRoll = function (models) {
 
     function generate(req, res, next, cbFromRecalc) {
         var db = req.session.lastDb;
+        var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
         var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var data = req.body;
@@ -797,10 +798,56 @@ var PayRoll = function (models) {
         var year = parseInt(data.year, 10);
         var dataKey = year * 100 + month;
         var waterfallTasks;
-        var date = moment().isoWeekYear(year).month(month - 1).startOf('month');
+        var employees;
+        var ids = {};
+        var i;
+        var date = moment().isoWeekYear(year).month(month - 1).date(1);
         var endDate = moment(date).endOf('month');
 
-        function getJournalEntries(callback) {
+        function getEmployees(callback) {
+            var queryObject = {
+                isEmployee: true,
+                department: {
+                    $in: departmentArray
+                }
+            };
+
+            var query = Employee.find(queryObject, {hire: 1}).lean();
+
+            query.exec(function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                employees = result;
+
+                result.forEach(function (elem) {
+                    var salary = 0;
+                    var hire = elem.hire;
+                    var length = hire.length;
+                    var date = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
+
+                    journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: new Date(moment(endDate).set({hours: 18, minutes: 1, seconds: 0}))}, req.session.lastDb, function () {
+
+                    });
+
+                    for (i = length - 1; i >= 0; i--) {
+                        if (date >= hire[i].date) {
+                            salary = hire[i].salary;
+                            break;
+                        }
+                    }
+
+                    if (salary) {
+                        ids[elem._id] = salary;
+                    }
+                });
+
+                callback(null, ids);
+            });
+        }
+
+        function getJournalEntries(ids, callback) {
             function matchEmployee(pcb) {
                 JournalEntry.aggregate([{
                     $match: {
@@ -891,7 +938,8 @@ var PayRoll = function (models) {
                 callback(null, {
                     resultByEmployee: result[0],
                     resultByWTrack  : result[1],
-                    ids             : _.union(empIds, empIdsSecond)
+                    ids             : _.union(empIds, empIdsSecond),
+                    empIds          : ids
                 });
             });
         }
@@ -900,51 +948,100 @@ var PayRoll = function (models) {
             var resultByEmployee = resultItems.resultByEmployee;
             var resultByWTrack = resultItems.resultByWTrack;
             var ids = resultItems.ids;
+            var empIds = resultItems.empIds;
+            var empKeys = Object.keys(empIds);
             var newPayroll;
+            var parallelTasks;
             var startBody = {
                 year   : year,
                 month  : month,
                 dataKey: dataKey,
                 paid   : 0
             };
-            var newArray = [];
 
-            ids.forEach(function (el) {
-                newArray.push(el.toString());
-            });
+            function createForNotDev(pCb) {
+                async.each(empKeys, function (employee, asyncCb) {
+                    startBody.employee = employee;
+                    startBody.calc = empIds[employee];
+                    startBody.diff = empIds[employee];
 
-            newArray = _.uniq(newArray);
+                    var cb = _.after(2, asyncCb);
 
-            async.each(newArray, function (id, asyncCb) {
-                var journalEntryEmp = _.find(resultByEmployee, function (el) {
-                    return el._id.toString() === id.toString();
+                    var bodyAdminSalary = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.ADMIN_SALARY_JOURNAL,
+                        date          : date,
+                        sourceDocument: {
+                            model: 'Employees'
+                        }
+                    };
+
+                    newPayroll = new Payroll(startBody);
+
+                    bodyAdminSalary.sourceDocument._id = employee;
+                    bodyAdminSalary.amount = empIds[employee] * 100;
+
+                    journalEntry.createReconciled(bodyAdminSalary, req.session.lastDb, cb, req.session.uId);
+
+                    newPayroll.save(cb);
+                }, function () {
+                    pCb();
+                });
+            }
+
+            function createForDev(pCb) {
+                var newArray = [];
+
+                ids.forEach(function (el) {
+                    newArray.push(el.toString());
                 });
 
-                var journalEntrywTrack = _.find(resultByWTrack, function (el) {
-                    return el._id.toString() === id.toString();
+                newArray = _.uniq(newArray);
+
+                async.each(newArray, function (id, asyncCb) {
+                    var journalEntryEmp = _.find(resultByEmployee, function (el) {
+                        return el._id.toString() === id.toString();
+                    });
+
+                    var journalEntrywTrack = _.find(resultByWTrack, function (el) {
+                        return el._id.toString() === id.toString();
+                    });
+
+                    var sumFirst = parseFloat(journalEntryEmp ? (journalEntryEmp.debit || journalEntryEmp.credit).toFixed(2) : '0');
+                    var sumSecond = parseFloat(journalEntrywTrack ? (journalEntrywTrack.debit || journalEntrywTrack.credit).toFixed(2) : '0');
+
+                    if (id.toString() === '55b92ad221e4b7c40f000073'){
+                        console.log('fffff');
+                    }
+
+                    startBody.employee = id;
+                    startBody.calc = sumFirst + sumSecond;
+                    startBody.diff = startBody.calc;
+                    startBody.month = month;
+                    startBody.year = year;
+                    startBody.dataKey = startBody.year * 100 + startBody.month;
+                    startBody.date = new Date(moment().isoWeekYear(year).month(month).date(1));
+
+                    newPayroll = new Payroll(startBody);
+
+                    newPayroll.save(asyncCb);
+                }, function () {
+                    pCb();
                 });
+            }
 
-                var sumFirst = parseFloat(journalEntryEmp ? (journalEntryEmp.debit || journalEntryEmp.credit).toFixed(2) : '0');
-                var sumSecond = parseFloat(journalEntrywTrack ? (journalEntrywTrack.debit || journalEntrywTrack.credit).toFixed(2) : '0');
+            parallelTasks = [createForDev, createForNotDev];
 
-                startBody.employee = id;
-                startBody.calc = sumFirst + sumSecond;
-                startBody.diff = startBody.calc;
-                startBody.month = month;
-                startBody.year = year;
-                startBody.dataKey = startBody.year * 100 + startBody.month;
-                startBody.date = new Date(moment().isoWeekYear(year).month(month).date(1));
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
 
-                newPayroll = new Payroll(startBody);
-
-                newPayroll.save(asyncCb);
-            }, function () {
                 callback();
             });
-
         }
 
-        waterfallTasks = [getJournalEntries, savePayroll];
+        waterfallTasks = [getEmployees, getJournalEntries, savePayroll];
 
         async.waterfall(waterfallTasks, function (err) {
             if (err) {

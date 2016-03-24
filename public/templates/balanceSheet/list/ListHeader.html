@@ -23,7 +23,8 @@
             </tr>
             </thead>
             <tfoot>
-            <td colspan="4" id="assetsFooter"></td>
+            <td>Total Assets</td>
+            <td colspan="3" id="assetsFooter"></td>
             </tfoot>
             <tbody id="listTableAssets" class="enableTableOdd"></tbody>
         </table>
@@ -53,7 +54,8 @@
             </tr>
             </thead>
             <tfoot>
-            <td colspan="4" id="liabilitiesFooter"></td>
+            <td>Total Liabilities</td>
+            <td colspan="3" id="liabilitiesFooter"></td>
             </tfoot>
             <tbody id="listTableLiabilities" class="enableTableOdd"></tbody>
         </table>
@@ -82,10 +84,28 @@
             </tr>
             </thead>
             <tfoot>
-            <td colspan="4" id="equityFooter"></td>
+            <td>Total Net Profit</td>
+            <td colspan="3" id="equityFooter"></td>
             </tfoot>
             <tbody id="listTableEquity" class="enableTableOdd"></tbody>
         </table>
     </div>
-
+    <br/>
+    <br/>
+    <div>
+        <table class="list gl-list">
+            <colgroup span="4">
+                <col span="3" width="20%">
+                <col span="1" width="40%">
+            </colgroup>
+            <thead>
+            </thead>
+            <tbody id="total">
+            <tr>
+                <td>Equity + Liabilities</td>
+                <td colspan="3" id="totalSumm"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

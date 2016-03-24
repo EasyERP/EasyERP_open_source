@@ -45,10 +45,12 @@ define([
                 var equity = 0;
                 var row;
                 var rowTd;
+                var totalEquityAndLiabilities;
 
                 var assetsFooter = this.$el.find('#assetsFooter');
                 var liabilitiesFooter = this.$el.find('#liabilitiesFooter');
                 var equityFooter = this.$el.find('#equityFooter');
+                var equtotalEquityityFooter = this.$el.find('#totalSumm');
 
                 $(trsAssets).each(function (index, element) {
                     row = $(element).closest('tr');
@@ -74,10 +76,12 @@ define([
                 assetsFooter.text('');
                 liabilitiesFooter.text('');
                 equityFooter.text('');
+                equtotalEquityityFooter.text('');
 
-                assetsFooter.text(helpers.currencySplitter(assets.toFixed(2)));
-                liabilitiesFooter.text(helpers.currencySplitter(liabilities.toFixed(2)));
-                equityFooter.text(helpers.currencySplitter(equity.toFixed(2)));
+                assetsFooter.text(helpers.currencySplitter(Math.abs(assets).toFixed(2)));
+                liabilitiesFooter.text(helpers.currencySplitter(Math.abs(liabilities).toFixed(2)));
+                equityFooter.text(helpers.currencySplitter(Math.abs(equity).toFixed(2)));
+                equtotalEquityityFooter.text(helpers.currencySplitter(Math.abs(equity + liabilities).toFixed(2)));
             },
 
             render: function () {
