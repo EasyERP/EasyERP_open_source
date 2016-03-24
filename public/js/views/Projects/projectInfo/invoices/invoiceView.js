@@ -212,6 +212,7 @@ define([
         },
 
         showDialog: function (orderId) {
+            var self = this;
             var invoice = _.find(this.collection.toJSON(), function (el) {
                 return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null)
             });
@@ -225,7 +226,13 @@ define([
                     currentDb: App.currentDb
                 },
                 success: function (model) {
-                    new editView({model: model, redirect: true, collection: this.collection, notCreate: true});
+                    new editView({
+                        model: model,
+                        redirect: true,
+                        collection: this.collection,
+                        notCreate: true,
+                        eventChannel: self.eventChannel
+                    });
                 },
                 error  : function () {
                     App.render({

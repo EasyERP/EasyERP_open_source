@@ -98,7 +98,8 @@ define([
                         model         : model,
                         redirect      : true,
                         projectManager: self.projectManager,
-                        onlyView      : onlyView
+                        onlyView      : onlyView,
+                        eventChannel: self.eventChannel
                     });
                 },
                 error  : function () {

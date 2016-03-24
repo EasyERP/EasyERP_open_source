@@ -32,6 +32,7 @@ define([
                 this.onlyView = !!options.onlyView;
 
                 this.projectManager = options.projectManager;
+                this.eventChannel = options.eventChannel || {};
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
@@ -193,7 +194,8 @@ define([
 
                                         this.invoiceView = new InvoiceView({
                                             model    : self.collection,
-                                            activeTab: true
+                                            activeTab: true,
+                                            eventChannel: self.eventChannel
                                         });
 
                                         this.invoiceView.showDialog(orderId);
