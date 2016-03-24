@@ -1140,11 +1140,8 @@ var Payment = function (models, event) {
                             invoices.forEach(function(inv) {
                                 Invoice.findByIdAndUpdate(inv._id, {$pull: {payments: removed._id}}, function (err, invoice) {
 
-                                    invoiceId = invoice._id;
-
-                                    paymentInfo = invoice.get('paymentInfo');
-
-                                    project = invoice ? invoice.get('project') : null;
+                                    var paymentInfo = invoice.get('paymentInfo');
+                                    var project = invoice ? invoice.get('project') : null;
 
                                     if (invoice._type === 'wTrackInvoice') {
                                         wId = 'Sales Invoice';
@@ -1173,6 +1170,7 @@ var Payment = function (models, event) {
 
                                     workflowHandler.getFirstForConvert(request, function (err, workflow) {
                                         var query = {};
+                                        var paymentInfoNew = {};
 
                                         if (err) {
                                             return next(err);
@@ -1205,7 +1203,7 @@ var Payment = function (models, event) {
 
                                             var products = result.get('products');
 
-                                            payments = result.get('payments') ? result.get('payments') : [];
+                                            var payments = result.get('payments') ? result.get('payments') : [];
 
                                             async.each(products, function (product) {
 
