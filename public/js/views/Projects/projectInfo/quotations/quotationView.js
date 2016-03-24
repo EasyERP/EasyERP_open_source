@@ -316,7 +316,8 @@ define([
                 projectManager  : this.projectManager,
                 projectModel    : this.projectModel,
                 wTrackCollection: this.wTrackCollection,
-                createJob       : this.createJob
+                createJob       : this.createJob,
+                eventChannel    : this.eventChannel
             });
         },
 
