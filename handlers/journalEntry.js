@@ -5120,6 +5120,7 @@ var Module = function (models) {
         var endDate = data.endDate;
         var findJobsFinished;
         var findPayments;
+        var findSalaryPayments;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -5619,6 +5620,108 @@ var Module = function (models) {
                                 'sourceDocument.model'  : 1,
                                 'sourceDocument.subject': '$sourceDocument._id.supplier',
                                 'sourceDocument.name'   : 1,
+                                account                 : 1
+                            }
+                        }, {
+                            $match: filterObj
+                        }, {
+                            $sort: sort
+                        }, {
+                            $skip: skip
+                        }, {
+                            $limit: count
+                        }]);
+
+                    query.options = {allowDiskUse: true};
+
+                    query.exec(function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+                };
+
+                findSalaryPayments = function (cb) {
+                    var query = Model
+                        .aggregate([{
+                            $match: matchObject
+                        }, {
+                            $match: {
+                                "sourceDocument.model": "salaryPayment",
+                                debit                 : {$gt: 0}
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "chartOfAccount",
+                                localField             : "account",
+                                foreignField: "_id", as: "account"
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "Employees",
+                                localField             : "sourceDocument._id",
+                                foreignField: "_id", as: "sourceDocument._id"
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "journals",
+                                localField             : "journal",
+                                foreignField: "_id", as: "journal"
+                            }
+                        }, {
+                            $project: {
+                                debit                 : {$divide: ['$debit', '$currency.rate']},
+                                currency              : 1,
+                                journal               : {$arrayElemAt: ["$journal", 0]},
+                                account               : {$arrayElemAt: ["$account", 0]},
+                                'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]},
+                                'sourceDocument.model': 1,
+                                date                  : 1
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "chartOfAccount",
+                                localField             : "journal.debitAccount",
+                                foreignField: "_id", as: "journal.debitAccount"
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "chartOfAccount",
+                                localField             : "journal.creditAccount",
+                                foreignField: "_id", as: "journal.creditAccount"
+                            }
+                        }, {
+                            $lookup: {
+                                from                   : "Department",
+                                localField             : "sourceDocument._id.department",
+                                foreignField: "_id", as: "sourceDocument._id.department"
+                            }
+                        }, {
+                            $project: {
+                                debit                        : 1,
+                                currency                     : 1,
+                                'journal.debitAccount'       : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                                'journal.creditAccount'      : {$arrayElemAt: ["$journal.creditAccount", 0]},
+                                'journal.name'               : 1,
+                                date                         : 1,
+                                'sourceDocument.model'       : 1,
+                                'sourceDocument.subject'     : '$sourceDocument._id',
+                                'sourceDocument.name'        : '$sourceDocument._id.department',
+                                account                      : 1
+                            }
+                        }, {
+                            $project: {
+                                debit                   : 1,
+                                currency                : 1,
+                                'journal.debitAccount'  : 1,
+                                'journal.creditAccount' : 1,
+                                'journal.name'          : 1,
+                                date                    : 1,
+                                'sourceDocument.model'  : 1,
+                                'sourceDocument.subject': '$sourceDocument._id.supplier',
+                                'sourceDocument.name'   : '$sourceDocument.name.departmentName' ,
                                 account                 : 1
                             }
                         }, {

@@ -352,7 +352,7 @@ var Payment = function (models, event) {
                 query = Payment.findById(id);
 
                 query
-                    .populate('supplier', '_id name fullName')
+                    .populate('supplier._id', '_id name fullName')
                     .populate('paymentMethod', '_id name');
 
                 query.exec(function (err, payment) {
