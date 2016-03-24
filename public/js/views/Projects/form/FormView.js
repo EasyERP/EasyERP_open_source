@@ -26,7 +26,6 @@ define([
         'views/Projects/projectInfo/quotations/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
         'views/Projects/projectInfo/orders/orderView',
-        'views/Projects/projectInfo/salesManagers/chooseSalesManager',
         'collections/wTrack/filterCollection',
         'collections/Quotation/filterCollection',
         'collections/salesInvoice/filterCollection',
@@ -43,7 +42,7 @@ define([
         'helpers'
     ],
 
-    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, SalesManagersView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, chooseSalesManager, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, SalesManagersView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -61,9 +60,8 @@ define([
                 "click .current-selected:not(.disabled)"                                                                                                                                     : "showNewSelect",
                 "click #createItem"                                                                                                                                                          : "createDialog",
                 "click #createJob"                                                                                                                                                           : "createJob",
-                "change input:not(.checkbox, .salesManager-checkbox, .bonus-checkbox, .check_all, #check_all_bonus, #check_all_salesManagers, .statusCheckbox, #inputAttach, #noteTitleArea)": "showSaveButton",  // added id for noteView
+                "change input:not(.checkbox, .bonus-checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)"                                                  : "showSaveButton",  // added id for noteView
                 "change #description"                                                                                                                                                        : "showSaveButton",
-                "click #projectManager"                                                                                                                                                      : "chooseSalesManager",
                 "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)"                                                                                                          : "renderJobWTracks",
                 "mouseover #jobsItem"                                                                                                                                                        : "showRemoveButton",
                 "mouseleave #jobsItem"                                                                                                                                                       : "hideRemoveButton",
@@ -208,10 +206,6 @@ define([
                 insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                 return false;
-            },
-
-            chooseSalesManager: function () {
-                new chooseSalesManager({model: this.formModel});
             },
 
             saveNewJobName: function (e) {
@@ -550,19 +544,26 @@ define([
 
                 salesManagerRow.each(function (key, val) {
                     var employeeId = $(val).attr('data-id');
-                    var date = $(val).find(".salesManagerDate").text();
+                    var dateEl = $(val).find('.salesManagerDate');
+                    var inputInside = dateEl.find('input');
+                    var date;
 
-                    if (!employeeId) {
-                        value = 'Employee';
+                    if (inputInside.length) {
+                        dateEl.text(inputInside.val());
+                    }
+
+                    date = dateEl.text();
+
+                    if (employeeId === 'false') {
                         App.render({
                             type   : 'error',
-                            message: 'Please, choose ' + value + ' first.'
+                            message: 'Please, select Sales Manager first.'
                         });
                         validation = false;
                     }
 
                     salesManagers.push({
-                        manager : employeeId,
+                        manager   : employeeId,
                         date      : date
                     });
                 });

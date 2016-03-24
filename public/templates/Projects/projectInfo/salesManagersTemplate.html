@@ -1,23 +1,14 @@
-<div id="top-bar-salesManagers" class="projectInfoTopBar">
-    <div id="createBtnHolder">
-        <button  title="Update" id="updateSalesManager">Update</button>
-        <a href="javascript;" class="fa fa-times" title="Remove" id="removeSalesManager"></a>
-        <a href="javascript;" class="fa fa-check" title="Save" id="saveSalesManager"></a>
-    </div>
-</div>
 <table class="list">
     <colgroup>
-        <col width="2%"/>
         <col width="2%"/>
         <col width="20%"/>
         <col width="20%"/>
     </colgroup>
     <thead>
     <tr >
-        <th class="centerCell"><input type="checkbox" id="check_all_salesManagers"/></th>
-        <th class="centerCell">N</th>
-        <th>Sales Manager</th>
+        <th class="centerCell">X</th>
         <th>Date</th>
+        <th>Sales Manager</th>
         <th></th>
     </tr>
 
@@ -28,20 +19,21 @@
 
     <tr data-id="<%=salesManager.manager ? salesManager.manager._id : ''%>">
 
-        <td class="centerCell">
-            <input type="checkbox" value="<%=salesManager.manager ? salesManager.manager._id : ''%>" class="salesManager-checkbox <%= index === salesManagers.length -1 ? 'notRemovable' : ''%>"/>
-        </td>
-        <td class="centerCell countNumber"><%=index + 1 %></td>
-
-        <td>
-            <%=salesManager.manager ? salesManager.manager.fullName : '' %>
-        </td>
+        <td class="centerCell deleteItem"></td>
         <td class="salesManagerDate">
             <%= salesManager.date ? utcDateToLocaleDate(salesManager.date) : ''%>
         </td>
 
+        <td>
+            <%=salesManager.manager ? salesManager.manager.fullName : '' %>
+        </td>
+
+
     </tr>
 
     <% }) %>
+
     </tbody>
+
 </table>
+<a href="javascript;" title="Add" id="addSalesManager">Add</a>

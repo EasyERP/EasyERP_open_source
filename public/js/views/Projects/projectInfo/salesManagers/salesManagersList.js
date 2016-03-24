@@ -7,115 +7,75 @@ define([
     'views/selectView/selectView',
     'common',
     'dataService'
-], function (Backbone, $, _, salesManagersTemplate, updateSalesManager, selectView, common, dataService) {
+], function (Backbone, $, _, salesManagersTemplate, updateSalesManager, SelectView, common, dataService) {
     'use strict';
+
     var SalesManagersView = Backbone.View.extend({
 
         initialize: function (options) {
             this.model = options.model;
             this.responseObj = {};
-            this.selectedSalesManagers = [];
             this.modelJSON = this.model.id ? this.model.toJSON() : this.model;
         },
 
         template: _.template(salesManagersTemplate),
 
         events: {
+            'click'                                            : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click a.current-selected'                         : 'showNewSelect',
-            'click'                                            : 'hideNewSelect',
-            'click #updateSalesManager'                        : 'updateSalesManager',
-            'click #saveSalesManager'                          : 'saveSalesManager',
+            'click #addSalesManager'                           : 'addSalesManager',
             'click .editable'                                  : 'editNewRow',
-            'click #removeSalesManager'                        : 'removeSalesManager',
-            'click .salesManager-checkbox'                     : 'checkSalesManager',
-            'click #check_all_salesManagers'                   : 'checkAllSalesManagers'
+            'click .fa-trash'                                  : 'removeSalesManager'
         },
 
-        checkSalesManager: function (e) {
-            var self = this;
-            var element = e.target;
-            var checked = element.checked;
-            var salesManagerId = element.value;
-            var countCheckbox = $('input.salesManager-checkbox').length;
-            var totalCount = $('input.salesManager-checkbox:checked').length;
+        renderRemoveBtn: function () {
+            var table = this.$el.find('#salesManagersTable');
+            var trs = table.find('tr');
+            var removeBtn = '<a class="fa fa-trash"></a>';
 
-            if ($(element).hasClass('notRemovable')) {
-                $(element).prop('checked', false);
-
-                return false;
-            }
-
-            if (checked) {
-                self.selectedSalesManagers.push(salesManagerId);
-            } else if (this.selectedSalesManagers.length > 1) {
-                self.selectedSalesManagers = _.without(self.selectedSalesManagers, salesManagerId);
-            }
-
-            if (totalCount === 0) {
-                self.selectedSalesManagers = [];
-                self.$el.find('#removeSalesManager').hide();
-            } else {
-                self.$el.find('#removeSalesManager').show();
-            }
-
-            if (totalCount > 0 && totalCount === countCheckbox) {
-                $('#check_all_salesManagers').prop('checked', true);
-            } else {
-                $('#check_all_salesManagers').prop('checked', false);
-            }
+            trs.find('td:first-child').text('');
+            trs.last().find('td').first().html(removeBtn);
         },
 
-        editNewRow : function (e){
-            e.stopPropagation();
+        editNewRow: function (e) {
             var target = $(e.target);
-            var text = target.text();
-            target.html('<input class="extrainfo" type="text" name="date" id="date" value="'+ text + '" readonly="" placeholder="Date">');
+            var row = target.parent('tr');
+            var prevSalesDate = row.prev().find('.salesManagerDate').text();
+            var prevDate = common.utcDateToLocaleDate(prevSalesDate);
+            var text;
+            if (target.prop('tagName') !== 'INPUT') {
+                this.hideNewSelect();
+            }
+            text = (target.text()).trim();
+
+            target.html('<input class="extrainfo" type="text" name="date" id="date" value="' + text + '" readonly="" placeholder="Date">');
 
             this.$el.find('#date').datepicker({
-                dateFormat : "d M, yy",
+                dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : this.model.get('StartDate')
+                minDate    : prevDate || this.model.get('StartDate'),
+                onSelect   : function (dateText) {
+                    var $editedCol = target.closest('td');
+                    $editedCol.text(dateText);
+                }
             });
+            this.$el.find('#date').datepicker('show');
 
+            return false;
         },
 
         hideNewSelect: function () {
-            var editedElement = this.$el.find('.extrainfo');
-            var editedElementValue = editedElement.val();
-            var $editedCol = editedElement.closest('td');
-            $editedCol.text(editedElementValue);
-            editedElement.remove();
+            var $editedDate = this.$el.find('.extrainfo');
+            var $editedCol = $editedDate.closest('td');
 
-            $(".newSelectList").hide();
+            $editedCol.text($editedDate.val());
+            $('.newSelectList').hide();
 
             if (this.selectView) {
                 this.selectView.remove();
             }
-        },
-
-        saveSalesManager: function (e) {
-            e.preventDefault();
-
-            var thisEl = this.$el;
-            var newSalesManager = thisEl.find('tr a.current-selected');
-            var managerTd = newSalesManager.closest('td');
-            var managerRow = newSalesManager.closest('tr');
-            var elValue = newSalesManager.text();
-            newSalesManager.remove();
-            managerTd.text(elValue);
-            thisEl.find('.editable').removeClass('editable');
-            thisEl.find('.notRemovable').removeClass('notRemovable');
-            managerRow.find('.salesManager-checkbox').addClass('notRemovable');
-
-            this.rerenderNumbers();
-
-            thisEl.find('#saveSalesManager').hide();
-            thisEl.find('#updateSalesManager').show();
-
-
-            this.trigger('save');
         },
 
         showNewSelect: function (e) {
@@ -130,7 +90,7 @@ define([
                 this.selectView.remove();
             }
             if (Object.keys(this.responseObj).length) {
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -140,50 +100,56 @@ define([
             return false;
         },
 
-
         chooseOption: function (e) {
 
             var target = $(e.target);
             var targetElement = target.parents('td');
             var targetRow = target.parents('tr');
             var id = target.attr('id');
+            var prevSales = targetRow.prev().attr('data-id');
             var selectorContainer;
-            var i;
-            var salesManagers = this.modelJSON.salesManagers;
-            var prevSales = salesManagers[salesManagers.length - 1].manager._id;
 
             if (prevSales === id) {
                 return false;
             }
 
-
-            targetElement.attr('data-id', id);
             targetRow.attr('data-id', id);
             selectorContainer = targetElement.find('a.current-selected');
 
             selectorContainer.text(target.text());
+
             this.hideNewSelect();
 
             return false;
         },
 
-        updateSalesManager: function (e) {
-            e.preventDefault();
+        addSalesManager: function () {
             var self = this;
-            var target = $(e.target);
+            var employeeSelect = this.$el.find('.current-selected');
+            var newElements = this.$el.find('[data-id="false"]');
+            var prevDate = this.$el.find('#salesManagersTable .salesManagerDate').last().text();
+            var date = common.utcDateToLocaleDate(prevDate || this.model.get('StartDate'));
 
-
-            var newElements = this.$el.find('#false');
-
-            var date = common.utcDateToLocaleDate(new Date().toString());
-            if (!newElements.length){
-                this.$el.find('#salesManagersTable').append(_.template(updateSalesManager, {date : date}));
+            if (newElements.length) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please select Sales Manager first.'
+                });
             }
-            target.hide();
-            self.$el.find('#saveSalesManager').show();
 
-            if (!Object.keys(this.responseObj).length){
-                dataService.getData('/employee/getByDepartments', {departments: ["BusinessDev", "PM"]}, function (employees) {
+            if (this.$el.find('.editable').length && employeeSelect.length) {
+                this.$el.find('.editable').removeClass('editable');
+                employeeSelect.parent('td').text(employeeSelect.text());
+                employeeSelect.remove();
+            }
+
+            this.$el.find('#salesManagersTable').append(_.template(updateSalesManager, {date: date}));
+
+            $('#top-bar-saveBtn').show();
+            this.renderRemoveBtn();
+
+            if (!Object.keys(this.responseObj).length) {
+                dataService.getData('/employee/getByDepartments', {departments: ['BusinessDev', 'PM']}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -196,52 +162,14 @@ define([
         },
 
         removeSalesManager: function (e) {
+            var target = $(e.target);
+            var row = target.closest('tr');
+
             e.preventDefault();
+            row.remove();
+            $('#top-bar-saveBtn').show();
 
-            var self = this;
-            var element;
-
-            self.selectedSalesManagers.forEach(function (salesManager) {
-                element = self.$el.find("tr[data-id=" + salesManager + "]");
-                element.remove();
-            });
-
-            self.selectedSalesManagers = [];
-            self.$el.find('#removeSalesManager').hide();
-            $('#check_all_salesManagers').prop('checked', false);
-            this.rerenderNumbers();
-            this.trigger('save');
-        },
-
-        rerenderNumbers: function () {
-            var tableTr = $('#salesManagersTable').find('tr');
-
-            tableTr.each(function (index) {
-                $(this).find('.countNumber').text(index + 1);
-            });
-
-        },
-
-        checkAllSalesManagers: function (e) {
-            var self = this;
-            var element = e.target;
-            var checked = element.checked;
-            var bonusId;
-
-            if (checked) {
-                $('input.salesManager-checkbox:not(.notRemovable)').each(function (key, input) {
-                    $(input).prop('checked', true);
-                    bonusId = input.value;
-                    self.selectedSalesManagers.push(bonusId);
-                    self.$el.find('#removeSalesManager').show();
-                });
-            } else {
-                $('input.salesManager-checkbox').each(function (key, input) {
-                    self.selectedSalesManagers = [];
-                    $(input).prop('checked', false);
-                    self.$el.find('#removeSalesManager').hide();
-                });
-            }
+            this.renderRemoveBtn();
         },
 
         render: function () {
@@ -254,7 +182,7 @@ define([
             }));
 
             self.$el.find('#removeSalesManager, #saveSalesManager').hide();
-            /*self.$el.find('#saveSalesManager').hide();*/
+            this.renderRemoveBtn();
 
             return this;
         }
