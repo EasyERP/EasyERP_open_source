@@ -121,7 +121,7 @@ define([
 
 				tr.remove();
 
-				this.$el.find('#update').show();
+				/*this.$el.find('#update').show();*/ // commented by Pasha
 				this.$el.find('.withEndContract').show();
 
 				this.renderRemoveBtn();
@@ -161,7 +161,7 @@ define([
 
 				table.append(newTr);
 
-				this.$el.find('#update').hide();
+				/*this.$el.find('#update').hide();*/ // commented by Pasha:  possibility to put few jobPositions
 				this.$el.find('.withEndContract').hide();
 
 				this.renderRemoveBtn();
