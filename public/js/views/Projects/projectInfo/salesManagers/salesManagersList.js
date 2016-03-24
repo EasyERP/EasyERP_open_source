@@ -32,7 +32,7 @@ define([
         renderRemoveBtn: function () {
             var table = this.$el.find('#salesManagersTable');
             var trs = table.find('tr');
-            var removeBtn = '<a class="fa fa-trash"></a>';
+            var removeBtn = '<a href="javascript;" class="fa fa-trash"></a>';
 
             trs.find('td:first-child').text('');
             trs.last().find('td').first().html(removeBtn);
@@ -101,7 +101,6 @@ define([
         },
 
         chooseOption: function (e) {
-
             var target = $(e.target);
             var targetElement = target.parents('td');
             var targetRow = target.parents('tr');
@@ -123,12 +122,14 @@ define([
             return false;
         },
 
-        addSalesManager: function () {
+        addSalesManager: function (e) {
             var self = this;
             var employeeSelect = this.$el.find('.current-selected');
             var newElements = this.$el.find('[data-id="false"]');
             var prevDate = this.$el.find('#salesManagersTable .salesManagerDate').last().text();
             var date = common.utcDateToLocaleDate(prevDate || this.model.get('StartDate'));
+
+            e.preventDefault();
 
             if (newElements.length) {
                 return App.render({
