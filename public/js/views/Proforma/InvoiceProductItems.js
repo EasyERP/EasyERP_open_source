@@ -37,8 +37,8 @@ define([
                 this.visible = !!options.balanceVisible;
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
-            }
-            ;
+                this.paid = options.paid;
+            };
 
             this.forSales = options.forSales;
 
@@ -247,6 +247,7 @@ define([
             var $currentEl;
             var quantity;
             var cost;
+            var balance;
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
@@ -267,10 +268,13 @@ define([
             taxes = parseFloat(taxes);
 
             total = totalUntax + taxes;
+            balance = total - this.paid;
             total = total.toFixed(2);
+            balance = balance.toFixed(2);
+
             totalContainer.text(total);
 
-            balanceContainer.text(total);
+            balanceContainer.text(balance);
 
         },
 
@@ -305,7 +309,8 @@ define([
                         products  : products,
                         forSales  : self.forSales,
                         isPaid    : self.isPaid,
-                        notAddItem: this.notAddItem
+                        notAddItem: this.notAddItem,
+                        model     : options.model
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');

@@ -42,7 +42,7 @@ var Proforma = function (models, event) {
 				.populate('products.jobs')
 				.populate('project', '_id projectName projectmanager');
 
-			query.exec(callback)
+			query.exec(callback);
 		};
 
 		function parallel(callback) {
@@ -55,7 +55,6 @@ var Proforma = function (models, event) {
 			var err;
 			var proforma;
 			var supplier;
-			var query;
 
 			if (parallelResponse && parallelResponse.length) {
 				quotation    = parallelResponse[0];
@@ -68,7 +67,6 @@ var Proforma = function (models, event) {
 			}
 
 			delete quotation._id;
-
 
 			proforma = new Proforma(quotation);
 
@@ -83,25 +81,14 @@ var Proforma = function (models, event) {
 			proforma.workflow            = workflow._id;
 			proforma.paymentInfo.balance = quotation.paymentInfo.total;
 
+			if (!proforma.project) {
+				proforma.project = quotation.project ? order.quotation._id : null;
+			}
 
 			proforma.supplier = quotation['supplier'];
+			proforma.salesPerson = quotation.project.projectmanager ? quotation.project.projectmanager : null;
 
-
-			query = Company.findById(proforma.supplier).lean();
-
-			query.populate('salesPurchases.salesPerson', 'name');
-
-			query.exec(function (err, result) {
-				if (err) {
-					callback(err)
-				}
-
-				if (result && result.salesPurchases.salesPerson) {
-					proforma.salesPerson = result.salesPurchases.salesPerson._id;
-				}
-
-				proforma.save(callback);
-			});
+			proforma.save(callback);
 		};
 
 		parallelTasks  = [findQuotation, fetchFirstWorkflow];

@@ -134,6 +134,7 @@ define([
                 this.listenTo(eventChannel, 'paymentRemoved', this.newPayment);
                 this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
                 this.listenTo(eventChannel, 'newProforma', this.createProforma);
+                this.listenTo(eventChannel, 'savedProforma', this.createProforma);
             },
 
             viewQuotation: function (e) {
@@ -1316,7 +1317,7 @@ define([
                     $tab = $(tab);
                     tabText = $tab.text().split('(')[0];
 
-                    tabText += '(';
+                    tabText += ' (';
                     tabText += tabs[tab] >= 0 ? tabs[tab] : 0;
                     tabText += ')';
 

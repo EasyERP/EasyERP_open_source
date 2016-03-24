@@ -6,31 +6,9 @@
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
-                        <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
-                        <%if(model.workflow.status === 'New'){%>
+                        <%if(model.workflow && model.workflow.name !== 'Invoiced'){%>
                         <button class="btn newPayment">
                             <span>Pay</span>
-                        </button>
-                        <!--<button class="btn cancelInvoice">-->
-                        <!--<span>Cancel</span>-->
-                        <!--</button>-->
-                        <%} else if(model.workflow.status === 'Done'){%>
-                        <% if(!isWtrack) {%>
-                        <!--<button class="red refund">-->
-                        <!--<span>Refund</span>-->
-                        <!--</button>-->
-                        <%}%>
-                        <%} else {%>
-                        <button class="red newPayment">
-                            <span>Pay</span>
-                        </button>
-                        <!--<button class="red refund">-->
-                        <!--<span>Refund</span>-->
-                        <!--</button>-->
-                        <%}%>
-                        <%} else {%>
-                        <button class="red setDraft">
-                            <span>Set Draft</span>
                         </button>
                         <%}%>
                     </li>

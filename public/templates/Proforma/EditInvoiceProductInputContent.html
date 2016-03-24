@@ -7,7 +7,7 @@
     <td data-name="productDescr"><span class=""><%=product.description ? product.description : ' '%></span></td>
     <% } %>
     <td data-name="quantity" class=""><span><%=product.quantity%></span></td>
-    <td data-name="price" class="editable"><span><%=product.unitPrice%></span></td>
+    <td data-name="price" class="<%model.workflow && model.workflow.name !== 'Invoiced' ? 'editable' : ''{%>"><span><%=product.unitPrice%></span></td>
     <td class="taxes"><span><%=product.taxes%></span></td>
     <td class="amount"><span><%=product.subTotal%></span></td>
 </tr>

@@ -161,6 +161,7 @@ var Invoice = function (models, event) {
                 {
                     $project: {
                         payments: 1,
+                        paymentDate: 1,
                         _id: 0
                     }
                 },
@@ -169,24 +170,36 @@ var Invoice = function (models, event) {
                 },
                 {
                     $lookup: {
-                        from                   : "Payment",
-                        localField             : "payments",
-                        foreignField: "_id", as: "payment"
+                        from                   : 'Payment',
+                        localField             : 'payments',
+                        foreignField: '_id', as: 'payment'
                     }
                 },
                 {
                     $project: {
-                        payment: {$arrayElemAt: ["$payment", 0]}
+                        payment: {$arrayElemAt: ['$payment', 0]},
+                        paymentDate: 1
                     }
                 },
                 {
                     $group: {
                         _id: null,
-                        paidAmount: {$sum: "$payment.paidAmount"},
-                        payments: {$push: "$payment._id"}
+                        paidAmount: {$sum: '$payment.paidAmount'},
+                        payments: {$push: '$payment._id'},
+                        paymentDate: {$first: '$paymentDate'}
                     }
                 }
             ], callback);
+        };
+
+        function changeProformaWorkflow(callback) {
+            Invoice.update(
+                {
+                    sourceDocument: objectId(id)
+                },
+                {
+                    workflow: objectId('55647b962e4aa3804a765ec6')
+                }, callback);
         };
 
         function parallel(callback) {
@@ -216,17 +229,18 @@ var Invoice = function (models, event) {
                 return callback(err);
             }
 
-            if (proforma) {
-                paidAmount = proforma.paidAmount / 100;
-                payments = proforma.payments;
-            }
-
             delete order._id;
 
-            if (forSales === "true") {
+            if (forSales === 'true') {
                 invoice = new wTrackInvoice(order);
             } else {
                 invoice = new Invoice(order);
+            }
+
+            if (proforma) {
+                paidAmount = proforma.paidAmount / 100;
+                payments = proforma.payments;
+                invoice.paymentDate = proforma.paymentDate;
             }
 
             if (req.session.uId) {
@@ -234,23 +248,22 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
-
             // invoice.sourceDocument = order.name;
             invoice.payments = payments;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
-            invoice.workflow = paidAmount ? objectId("55647d952e4aa3804a765eca") : workflow._id;
+            invoice.workflow = paidAmount ? objectId('55647d952e4aa3804a765eca') : workflow._id;
             invoice.paymentInfo.balance = order.paymentInfo.total - (paidAmount || 0);
 
-            if (forSales === "true") {
+            if (forSales === 'true') {
                 if (!invoice.project) {
                     invoice.project = order.project ? order.project._id : null;
                 }
             }
 
-            invoice.supplier = order['supplier'];
+            invoice.supplier = order.supplier;
 
-            if (forSales === "true") {
+            if (forSales === 'true') {
                 invoice.salesPerson = order.project.projectmanager ? order.project.projectmanager : null;
 
                 invoice.save(callback);
@@ -270,13 +283,13 @@ var Invoice = function (models, event) {
                     }
 
                     invoice.save(callback);
-                })
+                });
 
             }
 
         };
 
-        parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments];
+        parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow];
         waterFallTasks = [parallel, createInvoice];
 
         async.waterfall(waterFallTasks, function (err, result) {

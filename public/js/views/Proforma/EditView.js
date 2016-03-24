@@ -356,13 +356,8 @@ define([
                                 return paymentCb(null);
                             }
 
-                            if (self.redirect) {
-                                Backbone.history.navigate(url, {trigger: true});
-                                $dueDateEl = $('#' + result.id).closest('tr').find('[data-content="dueDate"]');
-                                $dueDateEl.text(result.dueDate);
-                            } else {
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
-                            }
+                            self.eventChannel.trigger('savedProforma');
+
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
@@ -571,7 +566,8 @@ define([
                         balanceVisible: true,
                         forSales      : self.forSales,
                         isPaid        : this.isPaid,
-                        notAddItem    : this.notAddItem
+                        notAddItem    : this.notAddItem,
+                        paid          : this.model.get('paymentInfo').paid
                     }).render({model: model}).el
                 );
 
