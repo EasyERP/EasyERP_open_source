@@ -800,11 +800,22 @@ var Module = function (models) {
         var workflow = options.workflow;
         var remove = false;
         var wTracks = options.wTracks;
-        var date = moment(options.date).subtract(60, 'seconds');
+        var date = moment(options.date).subtract(1, 'seconds');
         var bodyFinishedJob = {
             currency      : CONSTANTS.CURRENCY_USD,
             journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
             date          : new Date(date),
+            sourceDocument: {
+                model: 'jobs',
+                _id  : jobId
+            },
+            amount        : 0
+        };
+
+        var bodyClosedJob = {
+            currency      : CONSTANTS.CURRENCY_USD,
+            journal       : CONSTANTS.CLOSED_JOB,
+            date          : new Date(moment(date).subtract(1, 'seconds')),
             sourceDocument: {
                 model: 'jobs',
                 _id  : jobId
@@ -822,7 +833,7 @@ var Module = function (models) {
 
         if (remove) {
             Model.remove({
-                journal             : CONSTANTS.FINISHED_JOB_JOURNAL,
+                journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]},
                 "sourceDocument._id": jobId
             }, function (err, result) {
                 if (err) {
@@ -846,8 +857,10 @@ var Module = function (models) {
                 }
 
                 bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+                bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
 
                 createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
             });
         }
 
@@ -3412,6 +3425,7 @@ var Module = function (models) {
         var endDate = data.endDate || filter.endDate.value;
         var findJobsFinished;
         var findPayments;
+        var findSalaryPayments;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -3728,7 +3742,66 @@ var Module = function (models) {
                     });
                 };
 
-                var parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments];
+                findSalaryPayments = function (cb) {
+                    var aggregate;
+                    var query = [{
+                        $match: matchObject
+                    }, {
+                        $match: {
+                            "sourceDocument.model": "salaryPayment",
+                            debit                 : {$gt: 0}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "Employees",
+                            localField  : "sourceDocument._id",
+                            foreignField: "_id", as: "sourceDocument._id"
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "journals",
+                            localField  : "journal",
+                            foreignField: "_id", as: "journal"
+                        }
+                    }, {
+                        $project: {
+                            debit               : 1,
+                            journal             : {$arrayElemAt: ["$journal", 0]},
+                            'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "journal.creditAccount",
+                            foreignField: "_id", as: "journal.creditAccount"
+                        }
+                    }, {
+                        $project: {
+                            debit                   : 1,
+                            'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
+                            'journal.name'          : 1,
+                            'sourceDocument.subject': '$sourceDocument._id'
+                        }
+                    }];
+
+                    if (filterObj.$and && filterObj.$and.length) {
+                        query.push({$match: filterObj});
+                    }
+
+                    aggregate = Model.aggregate(query);
+
+                    aggregate.options = {allowDiskUse: true};
+
+                    aggregate.exec(function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+                };
+
+                var parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments];
 
                 async.parallel(parallelTasks, function (err, result) {
                     if (err) {
@@ -3737,17 +3810,17 @@ var Module = function (models) {
                     var invoices = result[0];
                     var salary = result[1];
                     var jobsFinished = result[3];
-                    var salaryEmployee = result[2].concat(jobsFinished);
-                    var models = (invoices.concat(salary)).concat(salaryEmployee);
+                    var salaryEmployee = result[2];
                     var paymentsResult = result[4];
+                    var salaryPaymentsResult = result[5];
                     var totalValue = 0;
-                    var resultArray = models.concat(paymentsResult);
+                    var models = _.union(invoices, salary, jobsFinished, salaryEmployee, paymentsResult, salaryPaymentsResult);
 
-                    resultArray.forEach(function (model) {
+                    models.forEach(function (model) {
                         totalValue += model.debit / 100;
                     });
 
-                    res.status(200).send({count: resultArray.length, totalValue: totalValue});
+                    res.status(200).send({count: models.length, totalValue: totalValue});
                 });
             } else {
                 res.status(403).send();
@@ -4750,8 +4823,7 @@ var Module = function (models) {
                 date   : {
                     $gte: new Date(startDate),
                     $lte: new Date(endDate)
-                },
-                account: {$nin: [objectId(CONSTANTS.PRODUCT_SALES), objectId(CONSTANTS.COGS)]}
+                }
             }
         }, {
             $lookup: {
@@ -5700,16 +5772,16 @@ var Module = function (models) {
                             }
                         }, {
                             $project: {
-                                debit                        : 1,
-                                currency                     : 1,
-                                'journal.debitAccount'       : {$arrayElemAt: ["$journal.debitAccount", 0]},
-                                'journal.creditAccount'      : {$arrayElemAt: ["$journal.creditAccount", 0]},
-                                'journal.name'               : 1,
-                                date                         : 1,
-                                'sourceDocument.model'       : 1,
-                                'sourceDocument.subject'     : '$sourceDocument._id',
-                                'sourceDocument.name'        : '$sourceDocument._id.department',
-                                account                      : 1
+                                debit                   : 1,
+                                currency                : 1,
+                                'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                                'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
+                                'journal.name'          : 1,
+                                date                    : 1,
+                                'sourceDocument.model'  : 1,
+                                'sourceDocument.subject': '$sourceDocument._id',
+                                'sourceDocument.name'   : {$arrayElemAt: ["$sourceDocument._id.department", 0]},
+                                account                 : 1
                             }
                         }, {
                             $project: {
@@ -5720,8 +5792,8 @@ var Module = function (models) {
                                 'journal.name'          : 1,
                                 date                    : 1,
                                 'sourceDocument.model'  : 1,
-                                'sourceDocument.subject': '$sourceDocument._id.supplier',
-                                'sourceDocument.name'   : '$sourceDocument.name.departmentName' ,
+                                'sourceDocument.subject': 1,
+                                'sourceDocument.name'   : '$sourceDocument.name.departmentName',
                                 account                 : 1
                             }
                         }, {
@@ -5745,7 +5817,7 @@ var Module = function (models) {
                     });
                 };
 
-                var parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments];
+                var parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments];
 
                 async.parallel(parallelTasks, function (err, result) {
                     if (err) {
@@ -5756,9 +5828,10 @@ var Module = function (models) {
                     var salaryEmployee = result[2];
                     var jobsResult = result[3];
                     var paymentsResult = result[4];
-                    var models = invoices.concat(salary);
+                    var salaryPaymentResult = result[5];
+                    var models = _.union(invoices, salary, salaryEmployee, jobsResult, paymentsResult, salaryPaymentResult);
 
-                    res.status(200).send(((models.concat(salaryEmployee)).concat(jobsResult)).concat(paymentsResult));
+                    res.status(200).send(models);
                 });
             } else {
                 res.status(403).send();
@@ -5771,8 +5844,8 @@ var Module = function (models) {
         var id = docId;
         var query;
 
-        if (id.length >= 24){
-          query = {'sourceDocument._id': id};
+        if (id.length >= 24) {
+            query = {'sourceDocument._id': id};
         } else {
             query = id;
         }

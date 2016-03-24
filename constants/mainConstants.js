@@ -36,6 +36,8 @@ module.exports = {
     JOB_FINISHED        : '56337c675d49d8d6537832ea',
     FINISHED_JOB_JOURNAL: '56ebb636b2a906141f194fa5',
 
+    CLOSED_JOB: '56f2a96f58dfeeac4be1582a',
+
     PRODUCT_SALES: '565eb53a6aa50532e5df0be0',
     COGS         : '565eb53a6aa50532e5df0be2',
 

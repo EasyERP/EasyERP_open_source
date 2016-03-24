@@ -532,12 +532,13 @@ var Payment = function (models, event) {
                         var bodySalary = {
                             currency: MAIN_CONSTANTS.CURRENCY_USD,
                             journal: MAIN_CONSTANTS.SALARY_PAYMENT_JOURNAL,
-                            date: _payment.date,
+                           // date: _payment.date,
+                            date: '2014-8-31',
                             sourceDocument: {
                                 model: 'salaryPayment',
                                 _id: _payment.supplier._id
                             },
-                            amount: _payment.paidAmount
+                            amount: _payment.paidAmount * 100
                         };
 
                         _journalEntryHandler.createReconciled(bodySalary, req.session.lastDb, function () {

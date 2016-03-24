@@ -140,9 +140,9 @@ dbObject.once('open', function callback() {
 
     query.exec(function (err, result) {
 
-        JE.remove({ journal       : CONSTANTS.FINISHED_JOB_JOURNAL}, function (err, removed) {
+        JE.remove({ journal       : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}}, function (err, removed) {
             async.each(result, function (model, cb) {
-                var date = moment(new Date(model.invoice.invoiceDate)).subtract(60, 'seconds');
+                var date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
                 var wTracks = model.wTracks;
 
                 var bodyFinishedJob = {
@@ -155,6 +155,19 @@ dbObject.once('open', function callback() {
                     },
                     amount        : 0
                 };
+
+                var bodyClosedJob = {
+                    currency      : CONSTANTS.CURRENCY_USD,
+                    journal       : CONSTANTS.CLOSED_JOB,
+                    date          : new Date(moment(date).subtract(1, 'seconds')),
+                    sourceDocument: {
+                        model: 'jobs',
+                        _id  : result._id
+                    },
+                    amount        : 0
+                };
+
+                var callback = _.after(2, cb);
 
                 JE.aggregate([{
                     $match: {
@@ -174,8 +187,10 @@ dbObject.once('open', function callback() {
                     ++count;
 
                     bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+                    bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
 
-                    createReconciled(bodyFinishedJob, 'production', cb, '52203e707d4dba8813000003');
+                    createReconciled(bodyFinishedJob, 'production', callback, '52203e707d4dba8813000003');
+                    createReconciled(bodyClosedJob, 'production', callback, '52203e707d4dba8813000003');
                 });
             }, function () {
                 console.log(count++);
