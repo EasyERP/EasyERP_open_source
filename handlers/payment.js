@@ -1106,12 +1106,11 @@ var Payment = function (models, event) {
         var moduleId = req.headers.mid || returnModuleId(req);
         var workflowHandler = new WorkflowHandler(models);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var type = "Invoiced";
+        var type = 'Invoiced';
         var isNotFullPaid;
         var payments;
 
         moduleId = parseInt(moduleId);
-
         Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
         access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
