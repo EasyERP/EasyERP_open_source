@@ -1190,7 +1190,7 @@ var Payment = function (models, event) {
 
                                         query.paymentInfo = paymentInfoNew;
 
-                                        if (invoice.kind !== 'Proforma') {
+                                        if (invoice.workflow !== '55647b962e4aa3804a765ec6') {
                                             query.workflow = workflowObj;
                                         }
 

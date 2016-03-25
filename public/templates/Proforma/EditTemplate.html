@@ -6,7 +6,7 @@
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
-                        <%if(model.workflow && model.workflow.name !== 'Invoiced'){%>
+                        <%if(model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid'){%>
                         <button class="btn newPayment">
                             <span>Pay</span>
                         </button>
