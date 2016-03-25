@@ -27,6 +27,7 @@ define([
         initialize: function (options) {
             if (options) {
                 this.visible = options.visible;
+                this.eventChannel = options.eventChannel || {};
             }
 
             _.bindAll(this, "render", "saveItem");
@@ -213,7 +214,8 @@ define([
                                         customerId    : self.customerId,
                                         projectManager: self.projectManager,
                                         filter        : filter,
-                                        activeTab     : true
+                                        activeTab     : true,
+                                        eventChannel: self.eventChannel
                                     });
 
                                     self.ordersView.showOrderDialog(id);

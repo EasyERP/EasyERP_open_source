@@ -65,7 +65,12 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true, projectManager: self.projectManager});
+                    new editView({
+                        model: model,
+                        redirect: true,
+                        projectManager: self.projectManager,
+                        eventChannel: self.eventChannel
+                    });
                 },
                 error  : function () {
                     App.render({
