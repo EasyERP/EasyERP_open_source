@@ -13,8 +13,10 @@ module.exports = function (models) {
     router.get('/journalEntry/getForReport', _journalEntryHandler.getForReport);
     router.get('/journalEntry/getAsyncData', _journalEntryHandler.getAsyncData);
     router.get('/journalEntry/getAsyncDataForGL', _journalEntryHandler.getAsyncDataForGL);
+    router.get('/journalEntry/getAsyncCloseMonth', _journalEntryHandler.getAsyncCloseMonth);
     router.get('/journalEntry/getTrialBalance', _journalEntryHandler.getForGL);
     router.get('/journalEntry/getBalanceSheet', _journalEntryHandler.getBalanceSheet);
+    router.get('/journalEntry/getCloseMonth', _journalEntryHandler.getCloseMonth);
     router.get('/journalEntry/getProfitAndLoss', _journalEntryHandler.getProfitAndLoss);
     router.get('/journalEntry/getCashFlow', _journalEntryHandler.getCashFlow);
     router.get('/journalEntry/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
@@ -24,6 +26,7 @@ module.exports = function (models) {
     router.post('/', _journalHandler.create);
     router.post('/journalEntry', _journalEntryHandler.create);
     router.post('/reconcile', _journalEntryHandler.reconcile);
+    router.post('/journalEntry/closeMonth', _journalEntryHandler.closeMonth);
     router.delete('/:id', _journalHandler.remove);
     router.patch('/', _journalHandler.putchBulk);
 

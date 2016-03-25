@@ -22,6 +22,10 @@ define([
 
                 this.keys = options.keys;
 
+                this.url = options.url || '/payroll/generate/';
+
+                this.title = options.url ? 'Close Month': "Generate Payroll Expenses";
+
                 this.render();
             },
 
@@ -107,7 +111,7 @@ define([
                     self.year = $('#year').val();
                 }
 
-                key = parseInt(self.year) * 100 + parseInt(self.month);
+                key = parseInt(self.year, 10) * 100 + parseInt(self.month, 10);
 
                 if (this.keys.indexOf(key.toString()) > -1) {
                     return App.render({
@@ -121,7 +125,7 @@ define([
 
                 $.ajax({
                     type       : 'POST',
-                    url        : '/payroll/generate/',
+                    url        : this.url,
                     contentType: "application/json",
                     data       : JSON.stringify(data),
 
@@ -165,7 +169,7 @@ define([
                 this.$el = newDialog.dialog({
                     dialogClass: "edit-dialog",
                     width      : 300,
-                    title      : "Generate Payroll Expenses",
+                    title      : self.title,
                     buttons    : {
                         save  : {
                             text : "Generate",

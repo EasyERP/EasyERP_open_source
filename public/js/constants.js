@@ -495,6 +495,7 @@ define([], function () {
         PROFITANDLOSS     : "profitAndLoss",
         BALANCESHEET      : 'balanceSheet',
         CASHFLOW          : 'cashFlow',
+        CLOSEMONTH        : 'closeMonth',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

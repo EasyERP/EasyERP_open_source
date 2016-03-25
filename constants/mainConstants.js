@@ -47,6 +47,14 @@ module.exports = {
 
     ADMIN_SALARY_JOURNAL: '56f3fac93fb451104c75a477',
 
+    VACATION_EXPENSES: '56c9d4c7c3b88f6d64490fb4',
+
+    IDLE_EXPENSES: '56cc6b62541812c071973569',
+
+    ADMIN_SALARY_EXPENSES: '565eb53a6aa50532e5df0bed',
+
+    INCOME_SUMMARY_ACCOUNT: '56f538149c85020807b4001f',
+
     BANK_AND_CASH: [
         '565eb53a6aa50532e5df0bd6', //bank and Cash
         '565eb53a6aa50532e5df0bd3',
@@ -73,10 +81,10 @@ module.exports = {
     ],
 
     EQUITY: [
-        '565eb53a6aa50532e5df0bf3', //dividends
-        '565eb53a6aa50532e5df0bf2', //capital
-        '565eb53a6aa50532e5df0be0', //productSales
-        '565eb53a6aa50532e5df0be2'//COGS
+        '565eb53a6aa50532e5df0bf3' //retained Earnings
+        //'565eb53a6aa50532e5df0bf2', //capital
+       // '565eb53a6aa50532e5df0be0', //productSales
+        //'565eb53a6aa50532e5df0be2'//COGS
     ],
 
     SALARY_PAYABLE_ACCOUNT : '56c4444eb81fd51e19207f3e',
@@ -103,6 +111,22 @@ module.exports = {
         "55b92ace21e4b7c40f000013",
         "55b92ace21e4b7c40f000014",
         "55b92ace21e4b7c40f000015"
+    ],
+
+    CREDIT_IS: '56f5383a9c85020807b40020',
+    CLOSE_COGS: '56f538679c85020807b40022',
+    RETAINED_EARNINGS: '56f538c39c85020807b40024',
+    CLOSE_VAC_EXP: '56efc13cfd70ba6414bd3de7',
+    CLOSE_IDLE_EXP: '56efc15bfd70ba6414bd3de9',
+    CLOSE_ADMIN_EXP: '56efc1affd70ba6414bd3deb',
+
+    CLOSE_MONTH_JOURNALS: [
+        '56f5383a9c85020807b40020', //credit Income Summary
+        '56f538679c85020807b40022', //close COGS
+        '56f538c39c85020807b40024', //retained earnings
+        '56efc13cfd70ba6414bd3de7', //close Vacation Expenses
+        '56efc15bfd70ba6414bd3de9', //close idle Expenses
+        '56efc1affd70ba6414bd3deb' //close admin expenses
     ]
 }
 ;

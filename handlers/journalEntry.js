@@ -1295,6 +1295,269 @@ var Module = function (models) {
         });
     };
 
+    this.closeMonth = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = req.body;
+        var month = parseInt(query.month, 10);
+        var year = parseInt(query.year, 10);
+        var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
+        var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month');
+        var waterlallTasks;
+
+        var parallelCreate = function (wfCb) {
+            var parallelTasks;
+
+            var createIncomeSummary = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date   : {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.PRODUCT_SALES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var debit = result[0] ? result[0].debit : 0;
+                    var credit = result[0] ? result[0].credit : 0;
+                    var balance = Math.abs(debit - credit);
+
+                    var body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CREDIT_IS,
+                        date          : new Date(endDate),
+                        sourceDocument: {
+                            model: 'closeMonth',
+                            _id  : null
+                        },
+                        amount        : balance
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                })
+            };
+
+            var createCloseCOGS = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date   : {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.COGS)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var debit = result[0] ? result[0].debit : 0;
+                    var credit = result[0] ? result[0].credit : 0;
+                    var balance = Math.abs(debit - credit);
+
+                    var body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_COGS,
+                        date          : new Date(endDate),
+                        sourceDocument: {
+                            model: 'closeMonth',
+                            _id  : null
+                        },
+                        amount        : balance
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                })
+            };
+
+            var cretaeCloseVacation = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date   : {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.VACATION_EXPENSES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var debit = result[0] ? result[0].debit : 0;
+                    var credit = result[0] ? result[0].credit : 0;
+                    var balance = Math.abs(debit - credit);
+
+                    var body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_VAC_EXP,
+                        date          : new Date(endDate),
+                        sourceDocument: {
+                            model: 'closeMonth'
+                        },
+                        amount        : balance,
+                        _id           : null
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                })
+            };
+
+            var createCloseIdle = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date   : {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.IDLE_EXPENSES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var debit = result[0] ? result[0].debit : 0;
+                    var credit = result[0] ? result[0].credit : 0;
+                    var balance = Math.abs(debit - credit);
+
+                    var body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_IDLE_EXP,
+                        date          : new Date(endDate),
+                        sourceDocument: {
+                            model: 'closeMonth'
+                        },
+                        amount        : balance
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                })
+            };
+
+            var createCloseAdminSalary = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date   : {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.ADMIN_SALARY_EXPENSES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var debit = result[0] ? result[0].debit : 0;
+                    var credit = result[0] ? result[0].credit : 0;
+                    var balance = Math.abs(debit - credit);
+
+                    var body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_ADMIN_EXP,
+                        date          : new Date(endDate),
+                        sourceDocument: {
+                            model: 'closeMonth'
+                        },
+                        amount        : balance
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                })
+            };
+            parallelTasks = [createIncomeSummary, createCloseCOGS, cretaeCloseVacation, createCloseIdle, createCloseAdminSalary];
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                wfCb(null, result);
+            });
+        };
+
+        var createRE = function (result, wfCb) {
+            Model.aggregate([{
+                $match: {
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    account: objectId(CONSTANTS.INCOME_SUMMARY_ACCOUNT)
+                }
+            }, {
+                $group: {
+                    _id   : null,
+                    debit : {$sum: '$debit'},
+                    credit: {$sum: '$credit'}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                var debit = result[0] ? result[0].debit : 0;
+                var credit = result[0] ? result[0].credit : 0;
+                var balance = Math.abs(debit - credit);
+
+                var body = {
+                    currency      : CONSTANTS.CURRENCY_USD,
+                    journal       : CONSTANTS.RETAINED_EARNINGS,
+                    date          : new Date(endDate),
+                    sourceDocument: {
+                        model: 'closeMonth'
+                    },
+                    amount        : balance
+                };
+
+                createReconciled(body, req.session.lastDb, wfCb, req.session.uId);
+            })
+        };
+
+        waterlallTasks = [parallelCreate, createRE];
+
+        async.waterfall(waterlallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({'success': true});
+        })
+    };
+
     this.reconcile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
@@ -3808,6 +4071,60 @@ var Module = function (models) {
         });
     };
 
+    this.getAsyncCloseMonth = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = req.query;
+        var date = query._id;
+
+        if (!date) {
+            return res.status(200).send({journalEntries: []});
+        }
+
+        Model.aggregate([{
+            $match: {
+                date: new Date(date)
+            }
+        }, {
+            $project: {
+                date   : 1,
+                debit  : {$divide: ['$debit', '$currency.rate']},
+                credit : {$divide: ['$credit', '$currency.rate']},
+                journal: 1
+            }
+        }, {
+            $group: {
+                _id   : '$journal',
+                debit : {$sum: '$debit'},
+                credit: {$sum: '$credit'},
+                date  : {$addToSet: '$date'}
+            }
+        }, {
+            $lookup: {
+                from        : "journals",
+                localField  : "_id",
+                foreignField: "_id", as: "journal"
+            }
+        }, {
+            $project: {
+                _id   : 1,
+                date  : {$arrayElemAt: ["$date", 0]},
+                debit : 1,
+                credit: 1,
+                journal: {$arrayElemAt: ["$journal", 0]}
+            }
+        }, {
+            $sort: {
+                _id: -1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({journalEntries: result});
+        });
+    };
+
     this.getAsyncDataForGL = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = req.query;
@@ -3818,8 +4135,8 @@ var Module = function (models) {
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
 
-        if (!account){
-          return  res.status(200).send({journalEntries: []});
+        if (!account) {
+            return res.status(200).send({journalEntries: []});
         }
 
         Model.aggregate([{
@@ -4065,6 +4382,31 @@ var Module = function (models) {
         });
     };
 
+    this.getCloseMonth = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var closeMonth = CONSTANTS.CLOSE_MONTH_JOURNALS;
+
+        Model.aggregate([{
+            $match: {
+                journal: {$in: closeMonth.objectID()}
+            }
+        }, {
+            $group: {
+                _id: '$date'
+            }
+        }, {
+            $sort: {
+                _id: 1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getBalanceSheet = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var getAssets;
@@ -4077,7 +4419,6 @@ var Module = function (models) {
         var equity = CONSTANTS.EQUITY.objectID();
         var currentAssets = [CONSTANTS.ACCOUNT_RECEIVABLE, CONSTANTS.WORK_IN_PROCESS, CONSTANTS.FINISHED_GOODS];
         var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
-        var getCOGS;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -4206,13 +4547,6 @@ var Module = function (models) {
                     name  : {$addToSet: '$account.name'},
                     credit: {$sum: '$credit'},
                     debit : {$sum: '$debit'}
-                }
-            }, {
-                $group: {
-                    _id: null,
-                    credit: {$sum: '$credit'},
-                    debit : {$sum: '$debit'},
-                    name  : {$addToSet: 'Retained Earnings'}
                 }
             }, {
                 $sort: {
@@ -4404,8 +4738,8 @@ var Module = function (models) {
                         }
                     }, {
                         $group: {
-                            _id  : '$account._id',
-                            name : {$addToSet: '$account.name'},
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
                             debit : {$sum: '$debit'},
                             credit: {$sum: '$credit'}
                         }
@@ -4428,7 +4762,7 @@ var Module = function (models) {
 
                     var ar = arFirst - arLast;
 
-                    if (ar > 0){
+                    if (ar > 0) {
                         ar = ar * (-1);
                     }
 
@@ -4538,7 +4872,7 @@ var Module = function (models) {
 
                     var sp = spLast - spFirst;
 
-                    if (sp < 0){
+                    if (sp < 0) {
                         sp = sp * (-1);
                     }
 
@@ -4547,7 +4881,6 @@ var Module = function (models) {
                     cb(null, [{name: fieldName, debit: sp}]);
                 });
             };
-
 
             var getWIP = function (cb) {
                 var getSPFirst = function (pcb) {
@@ -4585,7 +4918,7 @@ var Module = function (models) {
                             _id   : null,
                             debit : {$sum: '$debit'},
                             credit: {$sum: '$credit'},
-                            name: {$addToSet: '$name'}
+                            name  : {$addToSet: '$name'}
                         }
                     }], function (err, result) {
                         if (err) {
@@ -4630,7 +4963,7 @@ var Module = function (models) {
                             _id   : null,
                             debit : {$sum: '$debit'},
                             credit: {$sum: '$credit'},
-                            name: {$addToSet: '$name'}
+                            name  : {$addToSet: '$name'}
                         }
                     }], function (err, result) {
                         if (err) {
@@ -4651,7 +4984,7 @@ var Module = function (models) {
 
                     var sp = spLast - spFirst;
 
-                    if (sp > 0){
+                    if (sp > 0) {
                         sp = sp * (-1);
                     }
 
@@ -4714,7 +5047,7 @@ var Module = function (models) {
                                 $gte: new Date(startDate),
                                 $lte: new Date(endDate)
                             },
-                            account:  objectId(CONSTANTS.FINISHED_GOODS)
+                            account: objectId(CONSTANTS.FINISHED_GOODS)
                         }
                     }, {
                         $lookup: {
