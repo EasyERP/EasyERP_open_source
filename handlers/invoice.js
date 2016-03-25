@@ -259,6 +259,14 @@ var Invoice = function (models, event) {
             invoice.workflow = paidAmount ? objectId('55647d952e4aa3804a765eca') : workflow._id;
             invoice.paymentInfo.balance = order.paymentInfo.total - (paidAmount || 0);
 
+            if (paidAmount === order.paymentInfo.total) {
+                invoice.workflow = objectId('55647d982e4aa3804a765ecb');
+            } else if (paidAmount) {
+                invoice.workflow = objectId('55647d952e4aa3804a765eca');
+            } else {
+                invoice.workflow = workflow._id;
+            }
+
             if (forSales === 'true') {
                 if (!invoice.project) {
                     invoice.project = order.project ? order.project._id : null;
