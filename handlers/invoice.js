@@ -10,6 +10,7 @@ var Invoice = function (models, event) {
     var InvoiceSchema = mongoose.Schemas.Invoice;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var OrderSchema = mongoose.Schemas.Quotation;
+    var ProformaSchema  = mongoose.Schemas.Proforma;
     var DepartmentSchema = mongoose.Schemas.Department;
     var CustomerSchema = mongoose.Schemas.Customer;
     var PaymentSchema = mongoose.Schemas.Payment;
@@ -848,6 +849,7 @@ var Invoice = function (models, event) {
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
         var Order = models.get(db, 'Quotation', OrderSchema);
+        var Proforma = models.get(db, 'Proforma', ProformaSchema);
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var editedBy = {
             user: req.session.uId,
@@ -855,7 +857,7 @@ var Invoice = function (models, event) {
         };
 
         if (checkDb(db)) {
-            moduleId = 64
+            moduleId = 64;
         }
 
         if (req.session && req.session.loggedIn && db) {
@@ -881,6 +883,7 @@ var Invoice = function (models, event) {
                             }
                         });
 
+
                         async.each(invoiceDeleted.products, function (product) {
                             jobs.push(product.jobs);
                         });
@@ -888,9 +891,17 @@ var Invoice = function (models, event) {
                             paymentIds.push(payment);
                         });
 
+                        function proformaUpdate(parallelCb) {
+                            Proforma.update({sourceDocument: orderId, kind: 'Proforma'}, {
+                                $set: {
+                                    workflow: CONSTANTS.ORDERNEW
+                                }
+                            }, parallelCb);
+                        };
+
                         function paymentsRemove(parallelCb) {
-                            async.each(paymentIds, function (id) {
-                                Payment.findByIdAndRemove(id, parallelCb);
+                            async.each(paymentIds, function (pid) {
+                                Payment.remove({invoice: id}, parallelCb);
                             });
                         };
 
@@ -947,7 +958,7 @@ var Invoice = function (models, event) {
                             });
                         };
 
-                        async.parallel([paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
+                        async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
                                 next(err)
                             }
