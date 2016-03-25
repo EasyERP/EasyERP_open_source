@@ -66,7 +66,7 @@ define([
 
             App.startPreload();
 
-            async.each(listTableCheckedInput, function (checkbox, cb) {
+            async.eachSeries(listTableCheckedInput, function (checkbox, cb) {
                 model = that.collection.get(checkbox.value);
                 model.destroy({
                     wait   : true,

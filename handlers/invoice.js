@@ -200,6 +200,9 @@ var Invoice = function (models, event) {
                 },
                 {
                     workflow: objectId('55647b962e4aa3804a765ec6')
+                },
+                {
+                    multi: true
                 }, callback);
         };
 
@@ -892,11 +895,19 @@ var Invoice = function (models, event) {
                         });
 
                         function proformaUpdate(parallelCb) {
-                            Proforma.update({sourceDocument: orderId, kind: 'Proforma'}, {
-                                $set: {
-                                    workflow: CONSTANTS.ORDERNEW
-                                }
-                            }, parallelCb);
+                            Proforma.update(
+                                {
+                                    sourceDocument: orderId, kind: 'Proforma'
+                                },
+                                {
+                                    $set: {
+                                        workflow: CONSTANTS.ORDERNEW
+                                    }
+                                },
+                                {
+                                    multi: true
+                                },
+                                    parallelCb);
                         };
 
                         function paymentsRemove(parallelCb) {
