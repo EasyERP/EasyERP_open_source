@@ -82,13 +82,6 @@
                                     <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
                                 </dd>-->
 
-                                <dt><label for="journal">Journal</label></dt>
-                                <dd>
-                                    <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>"
-                                       class="current-selected" href="javascript:;"><%=model.journal ? model.journal._id
-                                        : 'Select'%></a>
-                                </dd>
-
                                 <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
                                     <a id="currencyDd" class="current-selected"
@@ -140,14 +133,6 @@
                                     <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
                                 </dd>
 
-                                <dt><label for="journal">Journal</label></dt>
-                                <dd>
-                                    <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class=""
-                                       href="javascript:;"><%=model.journal ? model.journal._id : ''%></a>
-                                </dd>
-
-                                <dt><label for="currencyDd">Currency</label></dt>
-                                <dd>
                                     <a id="currencyDd" class=""
                                        data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>"
                                        href="javascript:;"><%= model.currency && model.currency.name ?
