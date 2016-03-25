@@ -779,6 +779,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2.enable_hover tbody tr:hover {
   background-color: #565658;
 }
+.list2 .overtime {
+  background-color: #3d3d4e !important;
+}
 .list2 td,
 .list2 th {
   height: 20px;
@@ -860,6 +863,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2.enable_hover tbody tr:hover {
   background-color: #565658;
+}
+.list2 .overtime {
+  background-color: #3d3d4e !important;
 }
 .list2 thead th:first-of-type {
   width: 15%;
@@ -5728,6 +5734,9 @@ ul.dialog-tabs li.right button {
 }
 .list.enable_hover tbody tr:hover {
   background-color: #565658;
+}
+.list .overtime {
+  background-color: #3d3d4e !important;
 }
 .thumbnail {
   float: left;

@@ -92,6 +92,7 @@ define([
         events: {
             'click .stageSelect'                               : 'showNewSelect',
             'click tr.enableEdit td.editable:not(.disabled)'   : 'editRow',
+            'click  #overtime'                                 : 'setOverTime',
             'click td.disabled'                                : 'notify',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'change .autoCalc'                                 : 'autoCalc',
@@ -229,6 +230,29 @@ define([
             //$('#top-bar-generateBtn').hide();
             $('#top-bar-copyBtn').hide();
             $('#top-bar-createBtn').show();
+        },
+
+        setOverTime: function (e) {
+            var target = $(e.target);
+            var newRow = this.$el.find('.false');
+            var id = newRow.attr('data-id');
+            var holidayDays = newRow.find('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
+
+            if (holidayDays.length && holidayDays.text() && parseInt(holidayDays.text())) {
+                return false;
+            }
+
+            if (!this.changedModels[id]) {
+                this.changedModels[id] = {};
+            }
+
+            if (target.prop('checked')){
+                this.changedModels[id]._type = 'overtime';
+                newRow.addClass('overtime');
+            } else {
+                this.changedModels[id]._type = 'ordinary';
+                newRow.removeClass('overtime');
+            }
         },
 
         copyRow: function (e) {
@@ -477,6 +501,7 @@ define([
             var isYear = el.attr('data-content') === 'year';
             var isMonth = el.attr('data-content') === 'month';
             var isDay = el.hasClass('autoCalc');
+            var isOvertime = $tr.hasClass('overtime');
             var month = $tr.find('[data-content="month"]').text() || $tr.find('.editing').val();
             var year = $tr.find('[data-content="year"]').text() || $tr.find('.editing').val();
 
@@ -491,9 +516,21 @@ define([
                 var currentYear;
                 var previousYear;
                 var nextYear;
+                var maxlength;
                 var projectId = $tr.find('[data-content="project"]').attr('data-id');
+                var holiday = $td.is('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
+
 
                 if ($td.hasClass('disabled')) {
+                    return false;
+                }
+
+
+                if (!isOvertime && holiday){
+                    App.render({
+                        type   : 'error',
+                        message: 'Please create Overtime tCard'
+                    });
                     return false;
                 }
 
@@ -559,17 +596,30 @@ define([
 
                     // validation for month and days of week
                     if (isMonth || isDay) {
-                        insertedInput.attr('maxLength', '2');
+                        maxlength = 2;
+
                         if (isMonth) {
                             maxValue = 12;
+                        } else {
+                            if (isOvertime){
+                                maxValue = 24;
+                            } else {
+                                maxValue = 8;
+                                maxlength = 1;
+                            }
+
                         }
-                        if (isDay) {
-                            maxValue = 24;
-                        }
+                        insertedInput.attr('maxLength', maxlength);
                     }
 
                     insertedInput.keyup(function (e) {
                         if (insertedInput.val() > maxValue) {
+                            if (isDay && !isOvertime){
+                                App.render({
+                                    type   : 'error',
+                                    message: 'Сreate Overtime tCard for input more than 8 hours'
+                                });
+                            }
                             e.preventDefault();
                             insertedInput.val('' + maxValue);
                         }
@@ -870,6 +920,7 @@ define([
                 function (nonWorkingDays, self) {
                     var days = Object.keys(nonWorkingDays);
                     var length = days.length - 1;
+                    var isOverTime;
                     var _class;
                     var isDefaultHours;
                     var $el;
@@ -884,6 +935,7 @@ define([
                         if (day) {
                             value = nonWorkingDays[day];
                             $el = $targetTr.find('[data-content="' + day + '"]');
+                            isOverTime = $el.closest('tr').hasClass('overtime');
                             isDefaultHours = day !== '7' && day !== '6' /* && value === '' */ && _class !== 'disabled' && !wTrack;
 
                             if (value) {
@@ -896,7 +948,9 @@ define([
                                 $el.addClass(_class);
 
                                 if (_class !== 'disabled') {
-                                    $el.text(value);
+                                    if (!isOverTime) {
+                                        $el.text(value);
+                                    }
                                 } else {
                                     $el.text('');
                                 }
@@ -1003,7 +1057,13 @@ define([
             }
 
             this.hideSaveCancelBtns();
+            this.hideOvertime();
             this.resetCollection(modelObject);
+        },
+
+        hideOvertime: function () {
+            this.$el.find('#overtime input').attr('checked', false);
+            this.$el.find('#overtime').hide();
         },
 
         resetCollection: function (model) {
@@ -1091,8 +1151,11 @@ define([
                 month       : month,
                 week        : week,
                 //rate        : rate,
-                projectModel: null
+                projectModel: null,
+                _type       : 'ordinary'
             };
+
+            this.$el.find('#overtime').show();
 
             var model = new currentModel(startData);
 
@@ -1384,6 +1447,7 @@ define([
                     tr.remove();
                     model = self.changedModels;
 
+
                     if (model) {
                         delete model[id];
                     }
@@ -1408,6 +1472,7 @@ define([
 
             if (this.createdCopied) {
                 copiedCreated = this.$el.find('.false');
+                this.hideOvertime();
                 copiedCreated.each(function () {
                     dataId = $(this).attr('data-id');
                     self.editCollection.remove(dataId);
