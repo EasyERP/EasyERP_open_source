@@ -2,12 +2,13 @@
  * Created by liliy on 20.01.2016.
  */
 define([
-    "Backbone",
+        "Backbone",
+        'Underscore',
         "text!templates/jobsDashboard/DashboardTemplate.html",
-    "helpers"
+        "helpers"
     ],
 
-    function (Backbone, listTemplate, helpers) {
+    function (Backbone, _, listTemplate, helpers) {
         var jobsListItemView = Backbone.View.extend({
             el: '#listTable',
 

@@ -14,8 +14,9 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai',
-    'custom'
-], function (fixtures, router, CompanyModel, CompaniesCollection, MainView, TopBarView, CreateView, EditView, FormView, ListView, ThumbnailsView, $, chai, chaiJquery, sinonChai, Custom) {
+    'custom',
+    'constants'
+], function (fixtures, router, CompanyModel, CompaniesCollection, MainView, TopBarView, CreateView, EditView, FormView, ListView, ThumbnailsView, $, chai, chaiJquery, sinonChai, Custom, CONSTANTS) {
     'use strict';
     var expect;
 
@@ -13797,6 +13798,7 @@ define([
     var createView;
     var editView;
     var windowConfirmStub;
+    var companiesCollection;
 
     describe('CompaniesView', function () {
         var $fixture;
@@ -13869,7 +13871,6 @@ define([
         });
 
         describe('TopBar View', function () {
-            var companiesCollection;
             var server;
 
             before(function () {
@@ -13926,7 +13927,6 @@ define([
 
 
         describe('Companies list View', function () {
-            var companiesCollection;
             var server;
 
             before(function () {
@@ -13945,27 +13945,15 @@ define([
                 var companiesTotalCollUrl = new RegExp('\/customers\/totalCollectionLength', 'i');
                 var companiesAlphabetUrl = new RegExp('\/customers\/getCompaniesAlphabet', 'i');
 
-                server.respondWith('GET', companiesListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCompaniesList)]);
-                server.respondWith('GET', companiesTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCollectionTotal)]);
-
-                companiesCollection = new CompaniesCollection({
-                    contentType: 'Companies',
-                    count: 100,
-                    filter: null,
-                    newCollection: false,
-                    viewType: 'list',
-                    page: 1
-                });
-
-                server.respond();
-
                 server.respondWith('GET', companiesAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAlphabet)]);
+                server.respondWith('GET', companiesListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCompaniesList)]);
 
                 listView = new ListView({
                     collection: companiesCollection,
                     startTime: new Date()
                 });
 
+                server.respond();
                 server.respond();
 
                 $contentHolderEl = listView.$el;
@@ -13980,7 +13968,6 @@ define([
             });
 
         });
-
 
         describe('Companies thumbnail view', function () {
             var companiesCollection;

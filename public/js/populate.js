@@ -452,7 +452,7 @@ define([
                 data = {wId: 'Purchase Order'};
             }
 
-            dataService.getData('workflow/getFirstForConvert', data, callback);
+            dataService.getData('workflows/getFirstForConvert', data, callback);  //todo changed after ui-tests
         };
 
         return {

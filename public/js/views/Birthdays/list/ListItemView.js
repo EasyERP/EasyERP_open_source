@@ -1,8 +1,11 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Birthdays/list/ListItemTemplate.html",
         "common"
     ],
-    function (ListItemTemplate, common) {
+    function (Backbone, $, _, ListItemTemplate, common) {
         var ListItemView = Backbone.View.extend({
             initialize: function (options) {
                 this.collection = options.collection;

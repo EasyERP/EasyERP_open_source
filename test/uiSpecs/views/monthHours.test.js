@@ -785,7 +785,6 @@ define([
             describe('INITIALIZE', function(){
 
                 it('Try to create monthHours list view', function (done) {
-                    this.timeout(150);
 
                     setTimeout(function(){
                         var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
@@ -804,7 +803,7 @@ define([
                         server.respond();
 
                         done();
-                    }, 50);
+                    }, 200);
                 });
 
                 it('Try to delete item', function(){

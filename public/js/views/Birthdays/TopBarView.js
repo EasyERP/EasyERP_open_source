@@ -1,7 +1,10 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Birthdays/TopBarTemplate.html'
     ],
-    function (ContentTopBarTemplate) {
+    function (Backbone, $, _, ContentTopBarTemplate) {
         var TopBarView = Backbone.View.extend({
             el        : '#top-bar',
             template  : _.template(ContentTopBarTemplate),

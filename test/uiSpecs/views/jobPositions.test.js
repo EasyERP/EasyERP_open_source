@@ -12724,7 +12724,6 @@ define([
     var topBarView;
     var listView;
     var formView;
-    var thumbnailView;
     var windowConfirmStub;
     var createView;
 
@@ -12742,7 +12741,6 @@ define([
             listView.remove();
             createView.remove();
             formView.remove();
-            //thumbnailView.remove();
 
             windowConfirmStub.restore();
         });
@@ -12833,16 +12831,13 @@ define([
 
         describe('JobPosition list view', function () {
             var server;
-            var mainSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
-                mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
-                mainSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -12936,11 +12931,13 @@ define([
                     var $deleteBtn = $dialogEl.find('button:nth-child(3)');
                     var jobPositionUrl = new RegExp('\/JobPositions\/', 'i');
 
+                    windowConfirmStub.returns(true);
+
                     server.respondWith('DELETE', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/form/55b92acf21e4b7c40f000017');
+                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions');
                 });
 
                 it('Try to save JobPosition', function(){
@@ -12969,7 +12966,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/form/55b92acf21e4b7c40f000017');
+                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions');
 
                 });
 
@@ -13110,6 +13107,8 @@ define([
 
             it('Try to delete item', function(){
                 var jobPositionUrl = new RegExp('\/JobPositions\/', 'i');
+
+                windowConfirmStub.returns(true);
 
                 server.respondWith('DELETE', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
                 formView.deleteItems();

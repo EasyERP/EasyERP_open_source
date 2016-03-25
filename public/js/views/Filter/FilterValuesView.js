@@ -3,11 +3,12 @@
  */
 define([
         'Backbone',
+        'Underscore',
         'text!templates/Filter/filterGroup.html',
         'collections/Filter/filterCollection',
         'constants'
     ],
-    function (Backbone, valuesTemplate, filterCollection, CONSTANTS) {
+    function (Backbone, _, valuesTemplate, filterCollection, CONSTANTS) {
         var filterValuesView = Backbone.View.extend({
             initialize: function (options) {
                 var sortOptions = options.sortOptions ? options.sortOptions : {};

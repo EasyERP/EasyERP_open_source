@@ -15,9 +15,9 @@ module.exports = function (config) {
             {pattern: 'public/js/libs/**/*.js', included: false, watching: false},
 
             {pattern: 'test/uiSpecs/jqueryPrivate.js', included: false, watching: false},
-            {pattern: 'public/js/populate.js', included: false, watching: false},
+           /* {pattern: 'public/js/populate.js', included: false, watching: false},
             {pattern: 'public/js/dataService.js', included: false, watching: false},
-            {pattern: 'public/js/router.js', included: false, watching: false},
+            {pattern: 'public/js/router.js', included: false, watching: false},*/
 
             {pattern: 'node_modules/chai/chai.js', included: false, watching: false},
             {pattern: 'node_modules/chai-jquery/chai-jquery.js', included: false, watching: false},

@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Opportunities/EditTemplate.html",
         "text!templates/Opportunities/editSelectTemplate.html",
         'views/selectView/selectView',
@@ -11,7 +14,7 @@
         "dataService",
         'constants'
     ],
-    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, CONSTANTS) {
         "use strict";
         var EditView = Backbone.View.extend({
             el         : "#content-holder",

@@ -22312,7 +22312,6 @@ define([
                     var $listHolder;
                     var supplierPaymentsUrl = new RegExp('\/payment\/supplier\/list', 'i');
 
-
                     setTimeout(function(){
                         server.respondWith('GET', '/bonusType/getForDD', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypeForDD)]);
                         server.respondWith('GET', '/employees/getForDD', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplForDD)]);
@@ -22325,13 +22324,15 @@ define([
                         });
 
                         server.respond();
+                        server.respond();
+                        server.respond();
 
                         $listHolder = listView.$el;
 
                         expect($listHolder.find('table')).to.exist;
 
                         done();
-                    }, 50);
+                    }, 200);
 
                 });
 

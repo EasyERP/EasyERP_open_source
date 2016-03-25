@@ -5871,8 +5871,8 @@ define([
                     var employeeListUrl = new RegExp('\/employees\/list', 'i');
                     var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
 
-                    server.respondWith('GET', employeeListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForList)]);
                     server.respondWith('GET', employeeAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAphabet)]);
+                    server.respondWith('GET', employeeListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForList)]);
 
                     listView = new ListView({
                         collection: employeeCollection,
@@ -5880,6 +5880,7 @@ define([
                     });
 
                     server.respond();
+                    //server.respond();
 
                     $listHolder = listView.$el;
 

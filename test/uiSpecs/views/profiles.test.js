@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Profiles/ProfilesCollection',
@@ -24309,7 +24308,7 @@ define([
 
                 });
 
-                /!*it ('Try to edit profile', function(){
+                /*it ('Try to edit profile', function(){
                     var $editBtn = topBarView.$el.find('#top-bar-editBtn')[0];
                     var $profilesMenu= listView.$el.find('.workflow-list-wrapper');
                     var $needA = $profilesMenu.find('a[data-id="1438768659000"]')[0];
@@ -24329,7 +24328,7 @@ define([
                     //expect($needA).to.have.css('display', 'none');
                     expect($profilesMenu.find('.editProfileContainer')).to.exist;
                     //expect($editBtn).to.have.css('display', 'none');
-                });*!/
+                });*/
 
                 it ('Try to delete profile with not empty user', function(){
                     var $profilesMenu= listView.$el.find('.workflow-list-wrapper');
@@ -24390,4 +24389,3 @@ define([
 
 
 });
-*/

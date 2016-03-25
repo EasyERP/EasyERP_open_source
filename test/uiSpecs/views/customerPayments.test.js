@@ -25708,7 +25708,7 @@ define([
 
         });
 
-        describe('SupplierPayments list view', function () {
+        describe('CustomerPayments list view', function () {
             var server;
             var mainSpy;
 
@@ -25744,7 +25744,7 @@ define([
                         expect($listHolder.find('table')).to.exist;
 
                         done();
-                    }, 50);
+                    }, 200);
 
 
                 });

@@ -95,7 +95,7 @@ define([
                     currentUser = response.user || {};
 
                     App.currentUser = currentUser;
-                    App.savedFilters = response.savedFilters;
+                    App.savedFilters = response.savedFilters || {};
 
                     if (currentUser.profile && currentUser.profile.profileName == 'baned') {
                         $('title').text("EasyERP");

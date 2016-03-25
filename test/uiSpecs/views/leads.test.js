@@ -22642,7 +22642,7 @@ define([
 
             before(function () {
                 server = sinon.fakeServer.create();
-                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);
+                windowConfirmStub = sinon.stub(window, 'confirm');
                 windowAlertStub = sinon.stub(window, 'alert').returns(true);
                 mainSpy = sinon.spy(App, 'render');
             });
@@ -22671,12 +22671,16 @@ define([
 
                 server.respond();
 
+                server.respondWith('GET', leadsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeLeads)]);
+
                 listView = new ListView({
                     collection: leadsCollection,
                     startTime: new Date(),
                     newCollection: true,
                     page: 1
                 });
+
+                server.respond();
 
                 $contentHolderEl = view.$el.find('#content-holder');
                 $listContainerEl = $contentHolderEl.find('table');
@@ -22709,9 +22713,19 @@ define([
 
             });
 
+            it('Try to switch content type', function(){
+                var $listBtn = topBarView.$el.find('#listBtn');
+
+                $listBtn.click();
+
+                expect(window.location.hash).to.be.equals('#easyErp/Leads/list');
+            });
+
             it('Try to delete leads', function () {
                 var $needCheckBox = listView.$el.find('input[value="56c1c4ecc99aad5365bff221"]');
                 var $deleteBtnEl;
+
+                windowConfirmStub.returns(true);
 
                 server.respondWith('DELETE', '/leads/56c1c4ecc99aad5365bff221', [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Opportunities removed'})]);
 
@@ -22727,6 +22741,7 @@ define([
 
             it('Try to create leads', function () {
                 var $dialogContainer = $('#dialogContainer');
+                var $createBtn = topBarView.$el.find('#top-bar-createBtn');
 
                 expect($dialogContainer).to.be.empty;
 
@@ -22738,6 +22753,7 @@ define([
                 server.respondWith('GET', '/customers/', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
                 server.respondWith('GET', '/employees/getForDdByRelatedUser', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeRelatedUser)]);
 
+                $createBtn.click();
                 createForm = new CreateView();
 
                 server.respond();
@@ -22807,7 +22823,7 @@ define([
 
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Leads');
+                expect(window.location.hash).to.be.equals('#easyErp/Leads/list');
                 expect($('#leadForm')).to.not.exist;
 
             });
@@ -22864,16 +22880,6 @@ define([
             it('Try to delete item through edit form', function(){
                 var $needTd = listView.$el.find('tr[data-id="56c1c4ecc99aad5365bff221"] td')[1];
 
-
-                //TODO Change URLs through RegExp
-
-                server.respondWith('GET', '/users/forDd', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', /\/workflows\/getWorkflowsForDd/, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflowsForDD)]);
-                server.respondWith('GET', '/employees/sources', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplSources)]);
-                server.respondWith('GET', '/tasks/priority', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTaskPriotity)]);
-                server.respondWith('GET', '/Campaigns', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCampaigns)]);
-                server.respondWith('GET', '/customers/', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
-                server.respondWith('GET', '/employees/getForDdByRelatedUser', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeRelatedUser)]);
                 server.respondWith('GET', '/Leads/form?id=56c1c4ecc99aad5365bff221', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeLeadId)]);
 
                 $needTd.click();
@@ -22920,6 +22926,8 @@ define([
             it('Try to delete item with good result', function(){
                 var $deleteBtn;
                 var leadUrl = new RegExp('\/leads\/', 'i');
+
+                windowConfirmStub.returns(true);
 
                 $deleteBtn = $('.btn');
 

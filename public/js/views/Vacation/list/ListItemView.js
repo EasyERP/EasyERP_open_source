@@ -1,8 +1,10 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/Vacation/list/ListTemplate.html'
     ],
 
-    function (listTemplate) {
+    function (Backbone, _, listTemplate) {
         var VacationListItemView = Backbone.View.extend({
             el: '#listTable',
 

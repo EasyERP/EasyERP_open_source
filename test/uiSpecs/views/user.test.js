@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Users/filterCollection',
@@ -3533,4 +3532,3 @@ define([
 
 
 });
-*/

@@ -17597,19 +17597,22 @@ define([
 
                 it('Try to create bonusType list view', function (done) {
                     var $listHolder;
+                    var payRollUrl = new RegExp('\/payroll\/list', 'i');
 
                     setTimeout(function(){
+                        server.respondWith('GET', payRollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePayRoll)]);
                         listView = new ListView({
                             collection: payRollCollection,
                             startTime: new Date()
                         });
+                        server.respond();
 
                         $listHolder = listView.$el;
 
                         expect($listHolder.find('table')).to.exist;
 
                         done();
-                    }, 50);
+                    }, 100);
 
                 });
 

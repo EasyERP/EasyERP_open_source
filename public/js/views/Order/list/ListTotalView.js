@@ -2,10 +2,12 @@
  * Created by soundstorm on 14.05.15.
  */
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/Order/list/ListTotal.html'
     ],
 
-    function (listTemplate) {
+    function (Backbone, _, listTemplate) {
         var OrderListTotalView = Backbone.View.extend({
             el: '#listTotal',
 

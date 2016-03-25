@@ -1,6 +1,7 @@
 var allTestFiles = [];
 var TEST_REGEXP = /(spec|test)\.js$/i;
 var App = App || {
+        savedFilters: {},
         weTrack: true,
         render: function (options) {
             "use strict";

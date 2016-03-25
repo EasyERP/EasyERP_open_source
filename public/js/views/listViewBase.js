@@ -1,6 +1,7 @@
 define([
         'Backbone',
         'jQuery',
+        'Underscore',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'text!templates/Notes/importTemplate.html',
@@ -10,7 +11,7 @@ define([
         'constants'
     ],
 
-    function (Backbone, $, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService, CONSTANTS) {
+    function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService, CONSTANTS) {
         "use strict";
 
         var ListViewBase = Backbone.View.extend({

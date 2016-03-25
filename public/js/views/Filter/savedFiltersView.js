@@ -3,11 +3,12 @@
  */
 define([
         'Backbone',
+        'Underscore',
         'text!templates/Filter/filterFavourites.html',
         'models/UsersModel',
         'custom'
     ],
-    function (Backbone, ContentFilterTemplate, usersModel, custom) {
+    function (Backbone, _, ContentFilterTemplate, usersModel, custom) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el          : '#favoritesContent',
