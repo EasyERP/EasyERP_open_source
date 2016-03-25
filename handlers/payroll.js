@@ -825,9 +825,13 @@ var PayRoll = function (models) {
                     var salary = 0;
                     var hire = elem.hire;
                     var length = hire.length;
-                    var date = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
+                    var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
 
-                    journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: new Date(moment(endDate).set({hours: 18, minutes: 1, seconds: 0}))}, req.session.lastDb, function () {
+                    if (elem._id.toString() === '55b92ad221e4b7c40f000073'){
+                        console.log('Ira');
+                    }
+
+                    journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: localDate}, req.session.lastDb, function (err, result) {
 
                     });
 
@@ -958,6 +962,7 @@ var PayRoll = function (models) {
                 dataKey: dataKey,
                 paid   : 0
             };
+            var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
 
             function createForNotDev(pCb) {
                 async.each(empKeys, function (employee, asyncCb) {
@@ -970,7 +975,7 @@ var PayRoll = function (models) {
                     var bodyAdminSalary = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.ADMIN_SALARY_JOURNAL,
-                        date          : date,
+                        date          : localDate,
                         sourceDocument: {
                             model: 'Employees'
                         }
@@ -1010,17 +1015,13 @@ var PayRoll = function (models) {
                     var sumFirst = parseFloat(journalEntryEmp ? (journalEntryEmp.debit || journalEntryEmp.credit).toFixed(2) : '0');
                     var sumSecond = parseFloat(journalEntrywTrack ? (journalEntrywTrack.debit || journalEntrywTrack.credit).toFixed(2) : '0');
 
-                    if (id.toString() === '55b92ad221e4b7c40f000073'){
-                        console.log('fffff');
-                    }
-
                     startBody.employee = id;
                     startBody.calc = sumFirst + sumSecond;
                     startBody.diff = startBody.calc;
                     startBody.month = month;
                     startBody.year = year;
                     startBody.dataKey = startBody.year * 100 + startBody.month;
-                    startBody.date = new Date(moment().isoWeekYear(year).month(month).date(1));
+                    startBody.date = localDate;
 
                     newPayroll = new Payroll(startBody);
 

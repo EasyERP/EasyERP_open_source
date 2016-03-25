@@ -102,7 +102,7 @@ define([
                 idleBudget = this.changedModels[editedElementRowId].idleBudget || editModel.get('idleBudget');
                 actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
                 hours = actualHours || estimatedHours;
-                sumBudget = parseInt(adminBudget, 10) + parseInt(adminSalaryBudget, 10) + parseInt(vacationBudget, 10) + parseInt(idleBudget, 10);
+                sumBudget = parseFloat(adminBudget) + parseFloat(adminSalaryBudget) + parseFloat(vacationBudget) + parseFloat(idleBudget);
 
                 if (isFinite(sumBudget / hours)) {
                     this.changedModels[editedElementRowId].overheadRate = sumBudget / hours;

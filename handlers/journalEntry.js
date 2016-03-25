@@ -98,7 +98,7 @@ var Module = function (models) {
             }
         }, {
             $project: {
-                debit                        : {$divide: ['$debit', 100]},
+                debit                        : 1,
                 'journal.debitAccount'       : 1,
                 'journal.creditAccount'      : 1,
                 'journal.name'               : 1,
@@ -172,7 +172,7 @@ var Module = function (models) {
         }
     }, {
         $project: {
-            debit                        : {$divide: ['$debit', 100]},
+            debit                        : 1,
             'journal.debitAccount'       : 1,
             'journal.creditAccount'      : 1,
             'sourceDocument._id'         : 1,
@@ -3797,7 +3797,7 @@ var Module = function (models) {
                     var models = _.union(invoices, salary, jobsFinished, salaryEmployee, paymentsResult, salaryPaymentsResult);
 
                     models.forEach(function (model) {
-                        totalValue += model.debit / 100;
+                        totalValue += model.debit;
                     });
 
                     res.status(200).send({count: models.length, totalValue: totalValue});
@@ -3817,6 +3817,10 @@ var Module = function (models) {
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
+
+        if (!account){
+          return  res.status(200).send({journalEntries: []});
+        }
 
         Model.aggregate([{
             $match: {
@@ -4073,6 +4077,7 @@ var Module = function (models) {
         var equity = CONSTANTS.EQUITY.objectID();
         var currentAssets = [CONSTANTS.ACCOUNT_RECEIVABLE, CONSTANTS.WORK_IN_PROCESS, CONSTANTS.FINISHED_GOODS];
         var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
+        var getCOGS;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -4108,8 +4113,8 @@ var Module = function (models) {
             }, {
                 $project: {
                     _id   : 1,
-                    debit : {$divide: ['$debit', 100]},
-                    credit: {$divide: ['$credit', 100]},
+                    debit : 1,
+                    credit: 1,
                     name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
@@ -4156,8 +4161,8 @@ var Module = function (models) {
             }, {
                 $project: {
                     _id   : 1,
-                    debit : {$divide: ['$debit', 100]},
-                    credit: {$divide: ['$credit', 100]},
+                    debit : 1,
+                    credit: 1,
                     name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
@@ -4203,11 +4208,11 @@ var Module = function (models) {
                     debit : {$sum: '$debit'}
                 }
             }, {
-                $project: {
-                    _id   : 1,
-                    credit: {$divide: ['$credit', 100]},
-                    debit : {$divide: ['$debit', 100]},
-                    name  : {$arrayElemAt: ["$name", 0]}
+                $group: {
+                    _id: null,
+                    credit: {$sum: '$credit'},
+                    debit : {$sum: '$debit'},
+                    name  : {$addToSet: 'Retained Earnings'}
                 }
             }, {
                 $sort: {
@@ -4275,11 +4280,6 @@ var Module = function (models) {
                             debit : {$sum: '$debit'},
                             credit: {$sum: '$credit'}
                         }
-                    }, {
-                        $project: {
-                            debit : {$divide: ['$debit', 100]},
-                            credit: {$divide: ['$credit', 100]}
-                        }
                     }], function (err, result) {
                         if (err) {
                             return pcb(err);
@@ -4317,11 +4317,6 @@ var Module = function (models) {
                             name  : {$addToSet: '$account.name'},
                             credit: {$sum: '$credit'},
                             debit : {$sum: '$debit'}
-                        }
-                    }, {
-                        $project: {
-                            debit : {$divide: ['$debit', 100]},
-                            credit: {$divide: ['$credit', 100]}
                         }
                     }], function (err, result) {
                         if (err) {
@@ -4376,11 +4371,6 @@ var Module = function (models) {
                             debit : {$sum: '$debit'},
                             credit: {$sum: '$credit'}
                         }
-                    }, {
-                        $project: {
-                            debit : {$divide: ['$debit', 100]},
-                            credit: {$divide: ['$credit', 100]}
-                        }
                     }], function (err, result) {
                         if (err) {
                             return pcb(err);
@@ -4419,11 +4409,6 @@ var Module = function (models) {
                             debit : {$sum: '$debit'},
                             credit: {$sum: '$credit'}
                         }
-                    }, {
-                        $project: {
-                            debit : {$divide: ['$debit', 100]},
-                            credit: {$divide: ['$credit', 100]}
-                        }
                     }], function (err, result) {
                         if (err) {
                             return pcb(err);
@@ -4441,9 +4426,9 @@ var Module = function (models) {
                     var arFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
                     var arLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
 
-                    var ar = Math.abs(arFirst - arLast);
+                    var ar = arFirst - arLast;
 
-                    var fieldName = ar > 0 ? 'Decrease in Accounts Receivable' : 'Increase in Accounts Receivable';
+                    var fieldName = result[1][0].name[0];
 
                     cb(null, [{name: fieldName, debit: ar}]);
                 });
@@ -4479,11 +4464,6 @@ var Module = function (models) {
                             name  : {$addToSet: '$account.name'},
                             debit : {$sum: '$debit'},
                             credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $project: {
-                            debit : {$divide: ['$debit', 100]},
-                            credit: {$divide: ['$credit', 100]}
                         }
                     }, {
                         $group: {
@@ -4530,11 +4510,6 @@ var Module = function (models) {
                             credit: {$sum: '$credit'}
                         }
                     }, {
-                        $project: {
-                            debit : {$divide: ['$debit', 100]},
-                            credit: {$divide: ['$credit', 100]}
-                        }
-                    }, {
                         $group: {
                             _id   : null,
                             debit : {$sum: '$debit'},
@@ -4557,20 +4532,238 @@ var Module = function (models) {
                     var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
                     var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
 
-                    var sp = spLast - spFirst;
+                    var sp = Math.abs(spLast + spFirst);
 
-                    var fieldName = sp < 0 ? 'Decrease in Salary Payable' : 'Increase in Salary Payable';
+                    var fieldName = 'Salary Payable';
 
                     cb(null, [{name: fieldName, debit: sp}]);
                 });
             };
 
-            async.parallel([getEBIT, getAR, getSalaryPayable], function (err, result) {
+
+            var getWIP = function (cb) {
+                var getSPFirst = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                //$lte: new Date(moment(startDate).endOf('day'))
+                                $lte: new Date(startDate)
+                            },
+                            account: objectId(CONSTANTS.WORK_IN_PROCESS)
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'},
+                            name: {$addToSet: '$name'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                var getSPLast = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            },
+                            account: objectId(CONSTANTS.WORK_IN_PROCESS)
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'},
+                            name: {$addToSet: '$name'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                async.parallel([getSPFirst, getSPLast], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
+                    var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+
+                    var sp = spLast - spFirst;
+
+                    var fieldName = result[1][0].name[0];
+
+                    cb(null, [{name: fieldName, debit: sp}]);
+                });
+            };
+
+            var getCOGS = function (cb) {
+                var getSPFirst = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                //$lte: new Date(moment(startDate).endOf('day'))
+                                $lte: new Date(startDate)
+                            },
+                            account: objectId(CONSTANTS.FINISHED_GOODS)
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                var getSPLast = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            },
+                            account:  objectId(CONSTANTS.FINISHED_GOODS)
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'},
+                            name  : {$addToSet: '$name'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                async.parallel([getSPFirst, getSPLast], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
+                    var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+
+                    var sp = Math.abs(spLast - spFirst);
+
+                    var fieldName = result[1][0].name[0];
+
+                    cb(null, [{name: fieldName, debit: sp}]);
+                });
+            };
+
+            async.parallel([getEBIT, getAR, getCOGS, getWIP, getSalaryPayable], function (err, result) {
                 if (err) {
                     return cb(err);
                 }
 
-                cb(null, (result[0].concat(result[1]).concat(result[2])));
+                var result = _.union(result[0], result[1], result[2], result[3], result[4]);
+
+                cb(null, result);
             });
         };
 
@@ -4606,8 +4799,8 @@ var Module = function (models) {
             }, {
                 $project: {
                     _id   : 1,
-                    debit : {$divide: ['$debit', 100]},
-                    credit: {$divide: ['$credit', 100]},
+                    debit : 1,
+                    credit: 1,
                     name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
@@ -4655,8 +4848,8 @@ var Module = function (models) {
             }, {
                 $project: {
                     _id   : 1,
-                    debit : {$divide: ['$debit', 100]},
-                    credit: {$divide: ['$credit', 100]},
+                    debit : 1,
+                    credit: 1,
                     name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
@@ -4723,7 +4916,7 @@ var Module = function (models) {
             }, {
                 $project: {
                     _id  : 1,
-                    debit: {$divide: ['$debit', 100]},
+                    debit: 1,
                     name : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
@@ -4770,7 +4963,7 @@ var Module = function (models) {
             }, {
                 $project: {
                     _id  : 1,
-                    debit: {$divide: ['$debit', 100]},
+                    debit: 1,
                     name : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
@@ -5838,7 +6031,9 @@ var Module = function (models) {
             query = id;
         }
         Model
-            .remove(query, callback);
+            .remove(query, function (err, result) {
+                callback(err, result);
+            });
     };
 };
 

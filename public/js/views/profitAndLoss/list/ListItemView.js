@@ -66,10 +66,10 @@ define([
                 grossFooter.text('');
                 expFooter.text('');
 
-                totalTd.text(helpers.currencySplitter((rowTdValGoss - rowTdValExp).toFixed(2)));
-                grossFooter.text(helpers.currencySplitter(rowTdValGoss.toFixed(2)));
-                expFooter.text(helpers.currencySplitter(rowTdValExp.toFixed(2)));
-                totalTd.attr('data-value', rowTdVal);
+                totalTd.text(helpers.currencySplitter(((rowTdValGoss - rowTdValExp) / 100).toFixed(2)));
+                grossFooter.text(helpers.currencySplitter((rowTdValGoss / 100).toFixed(2)));
+                expFooter.text(helpers.currencySplitter((rowTdValExp / 100).toFixed(2)));
+                totalTd.attr('data-value', (rowTdValGoss - rowTdValExp));
 
             },
 

@@ -75,9 +75,9 @@ define([
                 investingFooter.text('');
                 financingFooter.text('');
 
-                operatingFooter.text(helpers.currencySplitter(operatings.toFixed(2)));
-                investingFooter.text(helpers.currencySplitter(investings.toFixed(2)));
-                financingFooter.text(helpers.currencySplitter(financing.toFixed(2)));
+                operatingFooter.text(helpers.currencySplitter((operatings / 100).toFixed(2)));
+                investingFooter.text(helpers.currencySplitter((investings / 100).toFixed(2)));
+                financingFooter.text(helpers.currencySplitter((financing / 100).toFixed(2)));
             },
 
             render: function () {
