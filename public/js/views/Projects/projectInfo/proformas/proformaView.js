@@ -36,7 +36,7 @@ define([
 
         events: {
             "click .checkbox"                          : "checked",
-            "click  .list td:not(.notForm, .validated)": "goToEditDialog",
+            //"click  .list td:not(.notForm, .validated)": "goToEditDialog",
             "click #removeInvoice"                     : "deleteItems",
             "click #saveInvoice"                       : "saveItems",
             "click .selectList"                        : "showSelects",

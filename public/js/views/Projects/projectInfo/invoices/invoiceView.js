@@ -35,12 +35,12 @@ define([
         template: _.template(invoiceTemplate),
 
         events: {
-            "click .checkbox"                          : "checked",
-            "click  .list td:not(.notForm, .validated)": "goToEditDialog",
-            "click #removeInvoice"                     : "deleteItems",
-            "click #saveInvoice"                       : "saveItems",
-            "click .selectList"                        : "showSelects",
-            "click .newSelectList li"                  : "chooseOption"
+            "click .checkbox"                               : "checked",
+            "click .list tbody td:not(.notForm, .validated)": "goToEditDialog",
+            "click #removeInvoice"                          : "deleteItems",
+            "click #saveInvoice"                            : "saveItems",
+            "click .selectList"                             : "showSelects",
+            "click .newSelectList li"                       : "chooseOption"
         },
 
         showSelects: function (e) {
